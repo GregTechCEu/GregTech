@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
-import gregtech.api.unification.material.properties.ToolProperty;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.Materials.*;
@@ -38,20 +38,20 @@ public class HigherDegreeMaterials {
                 .ingot(3).fluid()
                 .color(0x8C6464).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_GEAR)
-                .components(SterlingSilver, 1, BismuthBronze, 1, Steel, 2, BlackSteel, 4)
-                .toolStats(ToolProperty.Builder.of(7.0F, 6.0F, 2560, 3)
+                .components(RoseGold, 1, Brass, 1, Steel, 2, BlackSteel, 4)
+                .toolStats(MaterialToolProperty.Builder.of(7.0F, 6.0F, 2560, 3)
                         .attackSpeed(0.1F).enchantability(21).build())
-                .blast(b -> b.temp(1300, GasTier.LOW).blastStats(VA[HV], 1000))
+                .blast(b -> b.temp(1813, GasTier.LOW).blastStats(VA[HV], 1000))
                 .build();
 
         BlueSteel = new Material.Builder(2511, gregtechId("blue_steel"))
                 .ingot(3).fluid()
                 .color(0x64648C).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FRAME, GENERATE_GEAR)
-                .components(RoseGold, 1, Brass, 1, Steel, 2, BlackSteel, 4)
-                .toolStats(ToolProperty.Builder.of(15.0F, 6.0F, 1024, 3)
+                .components(SterlingSilver, 1, BismuthBronze, 1, Steel, 2, BlackSteel, 4)
+                .toolStats(MaterialToolProperty.Builder.of(15.0F, 6.0F, 1024, 3)
                         .attackSpeed(0.1F).enchantability(33).build())
-                .blast(b -> b.temp(1400, GasTier.LOW).blastStats(VA[HV], 1000))
+                .blast(b -> b.temp(1813, GasTier.LOW).blastStats(VA[HV], 1000))
                 .build();
 
         Basalt = new Material.Builder(2512, gregtechId("basalt"))
@@ -117,7 +117,7 @@ public class HigherDegreeMaterials {
                 .color(0x336600).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING, GENERATE_GEAR)
                 .components(HSSG, 6, Cobalt, 1, Manganese, 1, Silicon, 1)
-                .toolStats(ToolProperty.Builder.of(5.0F, 10.0F, 3072, 4)
+                .toolStats(MaterialToolProperty.Builder.of(5.0F, 10.0F, 3072, 4)
                         .attackSpeed(0.3F).enchantability(33).build())
                 .rotorStats(10.0f, 8.0f, 5120)
                 .blast(b -> b

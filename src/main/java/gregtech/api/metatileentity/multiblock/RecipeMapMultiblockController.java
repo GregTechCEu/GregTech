@@ -70,6 +70,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected Deque<FluidStack> bufferedFluidOutputs;
     protected boolean awaitingFluidOutputSpace;
 
+    @Nullable
     private ICleanroomProvider cleanroom;
 
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
@@ -441,7 +442,14 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     @Override
-    public void setCleanroom(ICleanroomProvider provider) {
-        this.cleanroom = provider;
+    public void setCleanroom(@NotNull ICleanroomProvider provider) {
+        if (cleanroom == null || provider.getPriority() > cleanroom.getPriority()) {
+            this.cleanroom = provider;
+        }
+    }
+
+    @Override
+    public void unsetCleanroom() {
+        this.cleanroom = null;
     }
 }

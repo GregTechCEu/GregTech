@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -65,6 +66,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
 
     @Override
     public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
+        var panel = GTGuis.createPanel(guiData.getUsedItemStack(), 176, 120);
         ItemDrawable circuitPreview = new ItemDrawable(guiData.getUsedItemStack());
         for (int i = 0; i <= 32; i++) {
             int finalI = i;
@@ -73,6 +75,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                         ItemStack item = IntCircuitIngredient.getIntegratedCircuit(finalI);
                         item.setCount(guiData.getUsedItemStack().getCount());
                         circuitPreview.setItem(item);
+                        if (Interactable.hasShiftDown()) panel.animateClose();
                         guiData.getPlayer().setHeldItem(guiData.getHand(), item);
                     }));
         }
@@ -91,8 +94,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                         .syncHandler("config", index));
             }
         }
-        return GTGuis.createPanel(guiData.getUsedItemStack(), 176, 120)
-                .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
+        return panel.child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
                 .child(circuitPreview.asIcon().size(16).asWidget()
                         .size(18)
                         .top(19).alignX(0.5f)

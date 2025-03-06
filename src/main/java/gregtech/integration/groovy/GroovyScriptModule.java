@@ -316,9 +316,11 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         ExpansionHelper.mixinMethod(RecipeBuilder.class, GroovyExpansions.class, "property");
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "materialBuilder");
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "toolBuilder");
+        ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "overrideToolBuilder");
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "fluidBuilder");
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "addElement");
         ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "toolBuilder");
+        ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "overrideToolBuilder");
         ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "fluidBuilder");
         ExpansionHelper.mixinMethod(FluidBuilder.class, GroovyExpansions.class, "acidic");
     }

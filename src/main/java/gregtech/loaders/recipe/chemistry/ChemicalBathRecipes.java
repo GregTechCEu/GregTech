@@ -102,5 +102,41 @@ public class ChemicalBathRecipes {
                 .fluidInputs(DistilledWater.getFluid(100))
                 .outputItem(ingot, Silicon)
                 .duration(125).volts(VA[MV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(ingotHot, BlackSteel)
+                .fluidInputs(Water.getFluid(100))
+                .output(ingot, BlackSteel)
+                .duration(200).EUt(VA[MV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(ingotHot, BlackSteel)
+                .fluidInputs(DistilledWater.getFluid(100))
+                .output(ingot, BlackSteel)
+                .duration(125).EUt(VA[MV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(ingotHot, RedSteel)
+                .fluidInputs(Water.getFluid(100))
+                .output(ingot, RedSteel)
+                .duration(400).EUt(VA[MV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(ingotHot, RedSteel)
+                .fluidInputs(DistilledWater.getFluid(100))
+                .output(ingot, RedSteel)
+                .duration(250).EUt(VA[MV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(ingotHot, BlueSteel)
+                .fluidInputs(Water.getFluid(100))
+                .output(ingot, BlueSteel)
+                .duration(400).EUt(VA[MV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(ingotHot, BlueSteel)
+                .fluidInputs(DistilledWater.getFluid(100))
+                .output(ingot, BlueSteel)
+                .duration(250).EUt(VA[MV]).buildAndRegister();
     }
 }

@@ -31,13 +31,15 @@ public class QuantumStorageProvider implements IProbeInfoProvider {
         if (blockState.getBlock().hasTileEntity(blockState) &&
                 world.getTileEntity(data.getPos()) instanceof IGregTechTileEntity gtte) {
             if (gtte.getMetaTileEntity() instanceof IQuantumController controller) {
+                String eutText = configureEnergyUsage(controller.getEnergyUsage() / 10);
                 if (controller.getCount(IQuantumStorage.Type.ENERGY) == 0) {
                     probeInfo.text("{*gregtech.top.quantum_controller.no_hatches*}");
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_required*} " + eutText);
                 } else if (!controller.isPowered()) {
                     probeInfo.text("{*gregtech.top.quantum_controller.no_power*}");
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_required*} " + eutText);
                 } else {
-                    long usage = controller.getEnergyUsage();
-                    configureEnergyUsage(usage / 10, probeInfo);
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} " + eutText);
                 }
             } else if (gtte.getMetaTileEntity() instanceof IQuantumStorage<?>storage &&
                     (storage.getType() == IQuantumStorage.Type.ITEM ||
@@ -59,10 +61,8 @@ public class QuantumStorageProvider implements IProbeInfoProvider {
                 "{*" + status + "*}";
     }
 
-    public void configureEnergyUsage(long EUs, IProbeInfo probeInfo) {
-        if (EUs == 0) return;
-        String text = TextFormatting.RED.toString() + EUs + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN +
+    public String configureEnergyUsage(long EUs) {
+        return TextFormatting.RED.toString() + EUs + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN +
                 " (" + GTValues.VNF[GTUtility.getTierByVoltage(EUs)] + TextFormatting.GREEN + ")";
-        probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} " + text);
     }
 }

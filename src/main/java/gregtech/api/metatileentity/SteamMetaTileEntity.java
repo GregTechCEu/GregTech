@@ -331,15 +331,6 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ICon
         }
     }
 
-    /** @deprecated No longer used, look at {@link VanillaParticleEffects#defaultFrontEffect} to see old logic. */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @SideOnly(Side.CLIENT)
-    protected void randomDisplayTick(float x, float y, float z, EnumParticleTypes flame, EnumParticleTypes smoke) {
-        getWorld().spawnParticle(smoke, x, y, z, 0, 0, 0);
-        getWorld().spawnParticle(flame, x, y, z, 0, 0, 0);
-    }
-
     @Override
     public boolean needsSneakToRotate() {
         return true;

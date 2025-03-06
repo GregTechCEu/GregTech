@@ -288,7 +288,7 @@ public class MixerRecipes {
                 .inputItem(dust, BlackSteel, 4)
                 .inputItem(dust, Steel, 2)
                 .circuitMeta(1)
-                .outputItem(dust, BlueSteel, 8)
+                .outputItem(dust, RedSteel, 8)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(800).volts(VA[ULV])
@@ -297,7 +297,7 @@ public class MixerRecipes {
                 .inputItem(dust, BlackSteel, 4)
                 .inputItem(dust, Steel, 2)
                 .circuitMeta(1)
-                .outputItem(dust, RedSteel, 8)
+                .outputItem(dust, BlueSteel, 8)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(900).volts(VA[ULV])

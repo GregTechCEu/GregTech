@@ -1,13 +1,12 @@
 package gregtech.common.metatileentities.electric;
 
 import gregtech.api.GTValues;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
@@ -15,7 +14,6 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -30,9 +28,19 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityFisher extends TieredMetaTileEntity {
@@ -57,25 +65,41 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         int rowSize = (int) Math.sqrt(inventorySize);
+        guiSyncManager.registerSlotGroup("item_in", 1);
+        guiSyncManager.registerSlotGroup("item_out", rowSize);
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                18 + 18 * rowSize + 94)
-                .label(10, 5, getMetaFullName())
-                .widget(new SlotWidget(importItems, 0, 18, 18, true, true)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.STRING_SLOT_OVERLAY));
-
-        for (int y = 0; y < rowSize; y++) {
-            for (int x = 0; x < rowSize; x++) {
-                int index = y * rowSize + x;
-                builder.widget(new SlotWidget(exportItems, index, 89 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT));
+        List<List<IWidget>> widgets = new ArrayList<>();
+        for (int i = 0; i < rowSize; i++) {
+            widgets.add(new ArrayList<>());
+            for (int j = 0; j < rowSize; j++) {
+                int index = i * rowSize + j;
+                widgets.get(i).add(new ItemSlot()
+                        .slot(SyncHandlers.itemSlot(exportItems, index)
+                                .slotGroup("item_out")
+                                .accessibility(false, true)));
             }
         }
 
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);
-        return builder.build(getHolder(), entityPlayer);
+        return GTGuis.createPanel(this, 176, 18 + 18 * rowSize + 94)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(new ItemSlot().slot(SyncHandlers.itemSlot(importItems, 0)
+                        .slotGroup("item_in"))
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.STRING_SLOT_OVERLAY)
+                        .pos(7 + 9, 9 * (rowSize + 1)))
+                .child(new Grid()
+                        .top(18).alignX(0.5f)
+                        .height(rowSize * 18)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .matrix(widgets));
     }
 
     @Override
@@ -142,6 +166,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.fisher.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.fisher.speed", fishingTicks));
         tooltip.add(I18n.format("gregtech.machine.fisher.requirement", (int) Math.sqrt(WATER_CHECK_SIZE),
@@ -150,7 +175,6 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
                 GTValues.VNF[getTier()]));
         tooltip.add(
                 I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        super.addInformation(stack, player, tooltip, advanced);
     }
 
     @Override

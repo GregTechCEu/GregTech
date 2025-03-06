@@ -144,7 +144,8 @@ public abstract class BaseFilter implements IFilter {
                         .value(new BooleanSyncValue(
                                 this::isBlacklistFilter,
                                 this::setBlacklistFilter))
-                        .textureGetter(state -> GTGuiTextures.BUTTON_BLACKLIST[state])
+                        .stateBackground(0, GTGuiTextures.BUTTON_BLACKLIST[0])
+                        .stateBackground(1, GTGuiTextures.BUTTON_BLACKLIST[1])
                         .addTooltip(0, IKey.lang("cover.filter.blacklist.disabled"))
                         .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")));
     }

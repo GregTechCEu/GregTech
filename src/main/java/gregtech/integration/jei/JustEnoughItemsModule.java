@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
+import gregtech.api.mui.GregTechGuiTransferHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.category.GTRecipeCategory;
@@ -26,8 +27,8 @@ import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.jei.basic.GTFluidVeinCategory;
@@ -82,6 +83,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_BOLT_SCREW;
+import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_RING;
 
 @JEIPlugin
 @GregTechModule(
@@ -149,7 +153,6 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         // register transfer handler for all categories, but not for the crafting station
         ModularUIGuiHandler modularUIGuiHandler = new ModularUIGuiHandler(jeiHelpers.recipeTransferHandlerHelper());
-        modularUIGuiHandler.setValidHandlers(widget -> !(widget instanceof CraftingSlotWidget));
         modularUIGuiHandler.blacklistCategory(
                 IntCircuitCategory.UID,
                 GTValues.MODID + ":material_tree",
@@ -158,13 +161,12 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler,
                 Constants.UNIVERSAL_RECIPE_TRANSFER_UID);
 
+        // register transfer handler for crafting recipes
+        registry.getRecipeTransferRegistry().addRecipeTransferHandler(new GregTechGuiTransferHandler(
+                jeiHelpers.recipeTransferHandlerHelper()), VanillaRecipeCategoryUid.CRAFTING);
+
         registry.addAdvancedGuiHandlers(modularUIGuiHandler);
         registry.addGhostIngredientHandler(modularUIGuiHandler.getGuiContainerClass(), modularUIGuiHandler);
-        // register transfer handler for crafting recipes
-        ModularUIGuiHandler craftingStationGuiHandler = new ModularUIGuiHandler(
-                jeiHelpers.recipeTransferHandlerHelper());
-        registry.getRecipeTransferRegistry().addRecipeTransferHandler(craftingStationGuiHandler,
-                VanillaRecipeCategoryUid.CRAFTING);
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
             if (recipeMap.getRecipeMapUI().isJEIVisible()) {
@@ -218,11 +220,22 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
 
         List<OreByProduct> oreByproductList = new ArrayList<>();
+        List<MaterialTree> materialTreeList = new ArrayList<>();
         for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
             if (material.hasProperty(PropertyKey.ORE)) {
                 oreByproductList.add(new OreByProduct(material));
             }
+            if (material.hasProperty(PropertyKey.DUST)) {
+                materialTreeList.add(new MaterialTree(material));
+            }
+            if (material.hasFlag(GENERATE_BOLT_SCREW) && material.hasFlag(GENERATE_RING) &&
+                    material.hasProperty(PropertyKey.TOOL)) {
+                registry.addIngredientInfo(ToolItems.TOOLBELT.get(material), VanillaTypes.ITEM,
+                        "item.gt.tool.toolbelt.tooltip", "item.gt.tool.toolbelt.paint", "item.gt.tool.toolbelt.dye",
+                        "item.gt.tool.toolbelt.maintenance");
+            }
         }
+
         String oreByProductId = GTValues.MODID + ":" + "ore_by_product";
         registry.addRecipes(oreByproductList, oreByProductId);
         MetaTileEntity[][] machineLists = {
@@ -240,12 +253,6 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
 
         // Material Tree
-        List<MaterialTree> materialTreeList = new ArrayList<>();
-        for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
-            if (material.hasProperty(PropertyKey.DUST)) {
-                materialTreeList.add(new MaterialTree(material));
-            }
-        }
         registry.addRecipes(materialTreeList, GTValues.MODID + ":" + "material_tree");
 
         // Ore Veins

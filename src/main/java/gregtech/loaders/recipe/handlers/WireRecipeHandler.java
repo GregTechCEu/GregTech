@@ -66,13 +66,14 @@ public class WireRecipeHandler {
     public static void processWireSingle(OrePrefix wirePrefix, Material material, WireProperties property) {
         OrePrefix prefix = material.hasProperty(PropertyKey.INGOT) ? ingot :
                 material.hasProperty(PropertyKey.GEM) ? gem : dust;
+        int workingTier = material.getWorkingTier();
 
         EXTRUDER_RECIPES.recipeBuilder()
                 .inputItem(prefix, material)
                 .notConsumable(SHAPE_EXTRUDER_WIRE)
                 .outputItem(wireGtSingle, material, 2)
                 .duration((int) material.getMass() * 2)
-                .volts(6 * getVoltageMultiplier(material))
+                .volts(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                 .buildAndRegister();
 
         WIREMILL_RECIPES.recipeBuilder()
@@ -80,7 +81,7 @@ public class WireRecipeHandler {
                 .circuitMeta(1)
                 .outputItem(wireGtSingle, material, 2)
                 .duration((int) material.getMass())
-                .volts(getVoltageMultiplier(material))
+                .volts(GTUtility.scaleVoltage(getVoltageMultiplier(material), workingTier))
                 .buildAndRegister();
 
         for (OrePrefix wireSize : wireSizes) {
@@ -90,11 +91,11 @@ public class WireRecipeHandler {
                     .circuitMeta(multiplier * 2)
                     .outputItem(wireSize, material)
                     .duration((int) (material.getMass() * multiplier))
-                    .volts(getVoltageMultiplier(material))
+                    .volts(GTUtility.scaleVoltage(getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         }
 
-        if (!material.hasFlag(NO_WORKING) && material.hasFlag(GENERATE_PLATE)) {
+        if (!material.hasFlag(NO_WORKING) && material.hasFlag(GENERATE_PLATE) && workingTier <= HV) {
             ModHandler.addShapedRecipe(String.format("%s_wire_single", material),
                     OreDictUnifier.get(wireGtSingle, material), "Xx",
                     'X', new UnificationEntry(plate, material));
@@ -185,7 +186,7 @@ public class WireRecipeHandler {
                 .buildAndRegister();
     }
 
-    private static int getVoltageMultiplier(Material material) {
+    private static long getVoltageMultiplier(Material material) {
         return material.getBlastTemperature() >= 2800 ? VA[LV] : VA[ULV];
     }
 }

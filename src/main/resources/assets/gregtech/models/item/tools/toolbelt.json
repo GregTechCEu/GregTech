@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "gregtech:items/tools/toolbelt_belt",
+    "layer1": "gregtech:items/tools/toolbelt_loops"
+  }
+}

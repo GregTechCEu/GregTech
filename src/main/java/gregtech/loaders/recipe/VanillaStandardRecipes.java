@@ -91,9 +91,6 @@ public class VanillaStandardRecipes {
 
         COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.ICE, 2, GTValues.W))
                 .outputs(new ItemStack(Blocks.PACKED_ICE)).buildAndRegister();
-        COMPRESSOR_RECIPES.recipeBuilder().inputItem(OrePrefix.dust, Materials.Ice, 1)
-                .outputs(new ItemStack(Blocks.ICE))
-                .buildAndRegister();
 
         PACKER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.WHEAT, 9))
@@ -1189,16 +1186,6 @@ public class VanillaStandardRecipes {
                 .fluidInputs(DistilledWater.getFluid(250))
                 .outputs(new ItemStack(Items.CLAY_BALL))
                 .duration(300).volts(24).buildAndRegister();
-
-        COMPRESSOR_RECIPES.recipeBuilder()
-                .inputItem(dust, Redstone, 9)
-                .outputItem(block, Redstone)
-                .duration(300).volts(2).buildAndRegister();
-
-        COMPRESSOR_RECIPES.recipeBuilder()
-                .inputItem(dust, Bone, 9)
-                .outputItem(block, Bone)
-                .duration(300).volts(2).buildAndRegister();
 
         COMPRESSOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.CHORUS_FRUIT_POPPED, 4))

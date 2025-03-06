@@ -18,29 +18,23 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
-import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -52,13 +46,6 @@ public class BloomEffectUtil {
 
     private static final ReentrantLock BLOOM_RENDER_LOCK = new ReentrantLock();
 
-    /**
-     * @deprecated use {@link #getBloomLayer()}
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static BlockRenderLayer BLOOM;
-
     private static BlockRenderLayer bloom;
     private static Framebuffer bloomFBO;
 
@@ -68,16 +55,6 @@ public class BloomEffectUtil {
     @NotNull
     public static BlockRenderLayer getBloomLayer() {
         return Objects.requireNonNull(bloom, "Bloom effect is not initialized yet");
-    }
-
-    /**
-     * @deprecated renamed for clarity; use {@link #getEffectiveBloomLayer()}.
-     */
-    @NotNull
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static BlockRenderLayer getRealBloomLayer() {
-        return getEffectiveBloomLayer();
     }
 
     /**
@@ -314,46 +291,8 @@ public class BloomEffectUtil {
         }
     }
 
-    /**
-     * @deprecated use ticket-based bloom render hooks
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static void requestCustomBloom(IBloomRenderFast handler, Consumer<BufferBuilder> render) {
-        BloomType bloomType = BloomType.fromValue(handler.customBloomStyle());
-        var validityChecker = new Predicate<BloomRenderTicket>() {
-
-            boolean invalid;
-
-            @Override
-            public boolean test(BloomRenderTicket bloomRenderTicket) {
-                return !invalid;
-            }
-        };
-        registerBloomRender(handler, bloomType, (b, c) -> {
-            render.accept(b);
-            validityChecker.invalid = true;
-        }, validityChecker);
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void init() {
-        bloom = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[] { String.class }, "Bloom");
-        BLOOM = bloom;
-        if (Mods.Nothirium.isModLoaded()) {
-            try {
-                // Nothirium hard copies the BlockRenderLayer enum into a ChunkRenderPass enum. Add our BLOOM layer to
-                // that too.
-                Class crp = Class.forName("meldexun.nothirium.api.renderer.chunk.ChunkRenderPass", false,
-                        Launch.classLoader);
-                EnumHelper.addEnum(crp, "BLOOM", new Class[] {});
-                Field all = FieldUtils.getField(crp, "ALL", false);
-                FieldUtils.removeFinalModifier(all);
-                FieldUtils.writeStaticField(all, crp.getEnumConstants());
-            } catch (ClassNotFoundException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        bloom = BlockRenderLayer.valueOf("BLOOM");
     }
 
     // Calls injected via ASM
@@ -619,20 +558,6 @@ public class BloomEffectUtil {
             this.worldContext = worldContext;
         }
 
-        @Nullable
-        @Deprecated
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        public IRenderSetup getRenderSetup() {
-            return this.renderSetup;
-        }
-
-        @NotNull
-        @Deprecated
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        public BloomType getBloomType() {
-            return this.bloomType;
-        }
-
         public boolean isValid() {
             return !this.invalidated;
         }
@@ -646,26 +571,5 @@ public class BloomEffectUtil {
                 invalidate();
             }
         }
-    }
-
-    /**
-     * @deprecated use ticket-based bloom render hooks
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public interface IBloomRenderFast extends IRenderSetup {
-
-        /**
-         * Custom Bloom Style.
-         *
-         * @return 0 - Simple Gaussian Blur Bloom
-         *         <p>
-         *         1 - Unity Bloom
-         *         </p>
-         *         <p>
-         *         2 - Unreal Bloom
-         *         </p>
-         */
-        int customBloomStyle();
     }
 }

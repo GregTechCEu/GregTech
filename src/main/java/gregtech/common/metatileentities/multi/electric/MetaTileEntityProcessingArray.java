@@ -316,8 +316,14 @@ public class MetaTileEntityProcessingArray extends DistinctRecipeMapMultiblockCo
     }
 
     @Override
-    public void setCleanroom(ICleanroomProvider provider) {
+    public void setCleanroom(@NotNull ICleanroomProvider provider) {
         super.setCleanroom(provider);
+        updateCleanroom();
+    }
+
+    @Override
+    public void unsetCleanroom() {
+        super.unsetCleanroom();
         updateCleanroom();
     }
 }

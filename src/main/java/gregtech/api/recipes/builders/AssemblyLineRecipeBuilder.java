@@ -143,7 +143,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         private final ItemStack dataStack;
         private final boolean ignoreNBT;
         private final int duration;
-        private final int EUt;
+        private final long EUt;
         private final int CWUt;
 
         /**
@@ -155,10 +155,10 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
          * @param CWUt          how much computation per tick this recipe needs if in Research Station
          *                      <p>
          *                      By default, will ignore NBT on researchStack input. If NBT matching is desired, see
-         *                      {@link #ResearchRecipeEntry(String, ItemStack, ItemStack, boolean, int, int, int)}
+         *                      {@link #ResearchRecipeEntry(String, ItemStack, ItemStack, boolean, int, long, int)}
          */
         public ResearchRecipeEntry(@NotNull String researchId, @NotNull ItemStack researchStack,
-                                   @NotNull ItemStack dataStack, int duration, int EUt, int CWUt) {
+                                   @NotNull ItemStack dataStack, int duration, long EUt, int CWUt) {
             this.researchId = researchId;
             this.researchStack = researchStack;
             this.dataStack = dataStack;
@@ -177,7 +177,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
          * @param CWUt          how much computation per tick this recipe needs if in Research Station
          */
         public ResearchRecipeEntry(@NotNull String researchId, @NotNull ItemStack researchStack,
-                                   @NotNull ItemStack dataStack, boolean ignoreNBT, int duration, int EUt, int CWUt) {
+                                   @NotNull ItemStack dataStack, boolean ignoreNBT, int duration, long EUt, int CWUt) {
             this.researchId = researchId;
             this.researchStack = researchStack;
             this.dataStack = dataStack;
@@ -210,7 +210,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
             return duration;
         }
 
-        public int getEUt() {
+        public long getEUt() {
             return EUt;
         }
 
