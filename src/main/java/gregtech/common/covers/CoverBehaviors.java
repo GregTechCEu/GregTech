@@ -9,6 +9,7 @@ import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.detector.*;
 import gregtech.common.covers.ender.CoverEnderFluidLink;
+import gregtech.common.covers.ender.CoverEnderItemLink;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.CoverDigitalInterfaceWirelessPlaceBehaviour;
 
@@ -118,6 +119,7 @@ public final class CoverBehaviors {
                 CoverDetectorMaintenance::new);
         registerBehavior(gregtechId("infinite_water"), MetaItems.COVER_INFINITE_WATER, CoverInfiniteWater::new);
         registerBehavior(gregtechId("ender_fluid_link"), MetaItems.COVER_ENDER_FLUID_LINK, CoverEnderFluidLink::new);
+        registerBehavior(gregtechId("ender_fluid_link"), MetaItems.COVER_ENDER_ITEM_LINK, CoverEnderItemLink::new);
         registerBehavior(gregtechId("cover.digital"), MetaItems.COVER_DIGITAL_INTERFACE, CoverDigitalInterface::new);
 
         // Custom cover behaviour

@@ -1,7 +1,10 @@
 package gregtech.common.covers.ender;
 
+import com.cleanroommc.modularui.utils.Alignment;
+
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.virtualregistry.EntryTypes;
@@ -10,6 +13,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.ItemFilterContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -21,26 +25,25 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.function.IntFunction;
 
 public class CoverEnderItemLink extends CoverAbstractEnderLink<VirtualChest> {
 
     protected final ItemFilterContainer container;
-    @Nullable
-    private IPanelHandler chestPanel;
 
     public CoverEnderItemLink(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                               @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
         container = new ItemFilterContainer(this);
-    }
-
-    private ModularPanel createChestPanel(ModularPanel parentPanel, EntityPlayer player) {
-        return GTGuis.createPopupPanel(getDefinition().getResourceLocation().getPath(), 100, 100);
     }
 
     @Override
@@ -55,11 +58,12 @@ public class CoverEnderItemLink extends CoverAbstractEnderLink<VirtualChest> {
 
     @Override
     protected IWidget createEntrySlot(ModularPanel panel, PanelSyncManager syncManager) {
-        IPanelHandler panelHandler = getChestPanel(panel);
+        IPanelHandler panelHandler = IPanelHandler.simple(panel, this::createChestPanel, true);
         return new ButtonWidget<>()
                 .onMousePressed(mouseButton -> {
                     if (panelHandler.isPanelOpen()) {
                         panelHandler.closePanel();
+                        panelHandler.deleteCachedPanel();
                     } else {
                         panelHandler.openPanel();
                     }
@@ -67,17 +71,30 @@ public class CoverEnderItemLink extends CoverAbstractEnderLink<VirtualChest> {
                 });
     }
 
-    @NotNull
-    private IPanelHandler getChestPanel(ModularPanel modularPanel) {
-        if (chestPanel == null) {
-            chestPanel = IPanelHandler.simple(modularPanel, this::createChestPanel, true);
-        }
-        return chestPanel;
+    private ModularPanel createChestPanel(ModularPanel parentPanel, EntityPlayer player) {
+        IntFunction<ItemStack> getStack = activeEntry::getStackInSlot;
+        return GTGuis.createPopupPanel("chest_panel", 100, 100)
+                .padding(16, 4)
+                .coverChildren()
+                .child(new Grid().coverChildren()
+                        .mapTo(3, activeEntry.getSlots(), value -> {
+                            var item = new ItemDrawable();
+                            // fake item slot because i don't want to deal with syncing
+                            return new Widget<>()
+                                    .size(18)
+                                    .background(GTGuiTextures.SLOT)
+                                    .tooltipAutoUpdate(true)
+                                    .tooltipBuilder(tooltip -> tooltip.addFromItem(getStack.apply(value)))
+                                    .overlay(new DynamicDrawable(() -> item.setItem(getStack.apply(value)))
+                                            .asIcon()
+                                            .alignment(Alignment.Center)
+                                            .size(16));
+                        }));
     }
 
     @Override
     protected IWidget createSlotWidget(VirtualChest entry) {
-        return null;
+        return GTGuiTextures.FILTER_SETTINGS_OVERLAY.asWidget();
     }
 
     @Override
