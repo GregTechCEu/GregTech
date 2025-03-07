@@ -177,8 +177,8 @@ public class CoverEnderItemLink extends CoverAbstractEnderLink<VirtualChest> {
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                             @NotNull IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox,
                             @NotNull BlockRenderLayer layer) {
-        // todo new texture
-        Textures.ENDER_FLUID_LINK.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
+        // todo work on new texture
+        Textures.ENDER_ITEM_LINK.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override

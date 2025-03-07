@@ -197,14 +197,12 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     protected IWidget createPrivateButton() {
         return new ToggleButton()
                 .value(new BooleanSyncValue(this::isPrivate, this::setPrivate))
-                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                 .background(GTGuiTextures.PRIVATE_MODE_BUTTON[0])
                 .hoverBackground(GTGuiTextures.PRIVATE_MODE_BUTTON[0])
                 .selectedBackground(GTGuiTextures.PRIVATE_MODE_BUTTON[1])
                 .selectedHoverBackground(GTGuiTextures.PRIVATE_MODE_BUTTON[1])
-                .tooltipBuilder(tooltip -> tooltip.addLine(IKey.lang(this.isPrivate ?
-                        "cover.ender_fluid_link.private.tooltip.enabled" :
-                        "cover.ender_fluid_link.private.tooltip.disabled")))
+                .addTooltip(true, IKey.lang("cover.ender_fluid_link.private.tooltip.enabled"))
+                .addTooltip(false, IKey.lang("cover.ender_fluid_link.private.tooltip.disabled"))
                 .marginRight(2);
     }
 
