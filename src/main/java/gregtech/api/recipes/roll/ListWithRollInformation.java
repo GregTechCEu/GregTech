@@ -107,7 +107,7 @@ public final class ListWithRollInformation<T> extends AbstractList<T> {
     }
 
     public boolean isRolled(int index) {
-        return index >= unrolled.length;
+        return index >= unrolled.length && index < size();
     }
 
     public long getMaxYield(int index) {

@@ -45,6 +45,13 @@ public class GTValues {
 
     public static final Random RNG = new XoShiRo256PlusPlusRandom();
 
+    /**
+     * @return RNG with the {@link Random#nextLong(long)} method available in java 8
+     */
+    public static XoShiRo256PlusPlusRandom randomWithBoundedLong() {
+        return (XoShiRo256PlusPlusRandom) RNG;
+    }
+
     /** Current time on the Client. Will always be zero on the server. */
     public static long CLIENT_TIME = 0;
 

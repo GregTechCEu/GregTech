@@ -1,6 +1,5 @@
 package gregtech.integration.jei.recipe;
 
-import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.items.metaitem.MetaItem;
@@ -20,7 +19,6 @@ import gregtech.api.recipes.properties.impl.ComputationProperty;
 import gregtech.api.recipes.properties.impl.ScanProperty;
 import gregtech.api.recipes.properties.impl.TotalComputationProperty;
 import gregtech.api.recipes.roll.ListWithRollInformation;
-import gregtech.api.recipes.roll.RollInterpreter;
 import gregtech.api.recipes.roll.RollInterpreterApplication;
 import gregtech.api.recipes.ui.JEIDisplayControl;
 import gregtech.api.util.AssemblyLineManager;
@@ -154,6 +152,16 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
     }
 
+    public long getInputItemCount(int index) {
+        if (index >= itemIngredients.size()) return 0;
+        return itemIngredients.get(index).getRequiredCount();
+    }
+
+    public long getInputFluidCount(int index) {
+        if (index >= fluidIngredients.size()) return 0;
+        return fluidIngredients.get(index).getRequiredCount();
+    }
+
     public JEIDisplayControl getItemInDisplayControl() {
         if (itemInDisplayControl != null) return itemInDisplayControl;
         return itemInDisplayControl = new JEIDisplayControl() {
@@ -198,10 +206,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     public void addItemTooltip(int slotIndex, boolean input, ItemStack ingredient, List<String> tooltip) {
         if (input) {
-            RollInterpreter interpreter = itemIngredients.getInterpreter();
-            tooltip.add(interpreter.interpretTooltip(slotIndex, RollInterpreterApplication.ITEM_INPUT,
-                    itemIngredients.getMaxYield(slotIndex), itemIngredients.getRollValue(slotIndex),
-                    itemIngredients.getRollBoost(slotIndex)));
+            // RollInterpreter interpreter = itemIngredients.getInterpreter();
+            // tooltip.add(interpreter.interpretTooltip(slotIndex, RollInterpreterApplication.ITEM_INPUT,
+            // itemIngredients.getMaxYield(slotIndex), itemIngredients.getRollValue(slotIndex),
+            // itemIngredients.getRollBoost(slotIndex)));
         } else {
             // tooltip.add(recipe.getItemOutputProvider().addTooltip(slotIndex - recipeMap.getMaxInputs()));
 
@@ -228,10 +236,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         TankWidget.addIngotMolFluidTooltip(ingredient, tooltip);
 
         if (input) {
-            RollInterpreter interpreter = fluidIngredients.getInterpreter();
-            tooltip.add(interpreter.interpretTooltip(slotIndex, RollInterpreterApplication.FLUID_INPUT,
-                    fluidIngredients.getMaxYield(slotIndex), fluidIngredients.getRollValue(slotIndex),
-                    fluidIngredients.getRollBoost(slotIndex)));
+            // RollInterpreter interpreter = fluidIngredients.getInterpreter();
+            // tooltip.add(interpreter.interpretTooltip(slotIndex, RollInterpreterApplication.FLUID_INPUT,
+            // fluidIngredients.getMaxYield(slotIndex), fluidIngredients.getRollValue(slotIndex),
+            // fluidIngredients.getRollBoost(slotIndex)));
         } else {
             // tooltip.add(recipe.getFluidOutputProvider().addTooltip(slotIndex - recipeMap.getMaxFluidInputs()));
         }
@@ -246,15 +254,16 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         boolean drawEUt = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideEUt);
         boolean drawDuration = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideDuration);
 
-        int defaultLines = 0;
-        if (drawTotalEU) defaultLines++;
-        if (drawEUt) defaultLines++;
-        if (drawDuration) defaultLines++;
-
-        int unhiddenCount = (int) storage.entrySet().stream()
-                .filter((property) -> !property.getKey().isHidden())
-                .count();
-        int yPosition = recipeHeight - ((unhiddenCount + defaultLines) * 10 - 3);
+        // int defaultLines = 0;
+        // if (drawTotalEU) defaultLines++;
+        // if (drawEUt) defaultLines++;
+        // if (drawDuration) defaultLines++;
+        //
+        // int unhiddenCount = (int) storage.entrySet().stream()
+        // .filter((property) -> !property.getKey().isHidden())
+        // .count();
+        // int yPosition = recipeHeight - ((unhiddenCount + defaultLines) * 10 - 3);
+        int yPosition = 80;
 
         // Default entries
         if (drawTotalEU) {
@@ -269,14 +278,14 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", eu), 0, yPosition, 0x111111);
             }
         }
-        if (drawEUt) {
-            minecraft.fontRenderer.drawString(
-                    I18n.format(
-                            recipeMap.getRecipeMapUI().isGenerator() ? "gregtech.recipe.eu_inverted" :
-                                    "gregtech.recipe.eu",
-                            recipe.getVoltage(), GTValues.VN[GTUtility.getTierByVoltage(recipe.getVoltage())]),
-                    0, yPosition += LINE_HEIGHT, 0x111111);
-        }
+        // if (drawEUt) {
+        // minecraft.fontRenderer.drawString(
+        // I18n.format(
+        // recipeMap.getRecipeMapUI().isGenerator() ? "gregtech.recipe.eu_inverted" :
+        // "gregtech.recipe.eu",
+        // recipe.getVoltage(), GTValues.VN[GTUtility.getTierByVoltage(recipe.getVoltage())]),
+        // 0, yPosition += LINE_HEIGHT, 0x111111);
+        // }
         if (drawDuration) {
             minecraft.fontRenderer.drawString(
                     I18n.format("gregtech.recipe.duration",

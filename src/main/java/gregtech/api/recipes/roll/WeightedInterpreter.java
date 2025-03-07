@@ -43,7 +43,7 @@ public final class WeightedInterpreter implements RollInterpreter {
             mainloop:
             for (int i = 0; i < attempts; i++) {
                 if (GTValues.RNG.nextInt(10_000) < chancePerRoll) {
-                    long pick = GTValues.RNG.nextLong(sum);
+                    long pick = GTValues.randomWithBoundedLong().nextLong(sum);
                     int pointer = 0;
                     for (; pointer < maxYield.length; pointer++) {
                         while (picked[pointer]) {
@@ -69,8 +69,7 @@ public final class WeightedInterpreter implements RollInterpreter {
                                                  long rollBoost) {
         if (rollValue == Long.MIN_VALUE) return InterpreterTextHelp.notConsumedSmallDisplay();
         String s = String.valueOf(rollValue);
-        String b = InterpreterTextHelp.formatBoost(rollBoost / 100d);
-        if (b != null) s += " " + b + "/t";
+        if (rollBoost != 0) s += InterpreterTextHelp.boostSign(rollBoost);
         return s;
     }
 

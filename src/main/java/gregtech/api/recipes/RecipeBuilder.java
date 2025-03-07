@@ -212,7 +212,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         recipePropertyStorage = recipeBuilder.recipePropertyStorage.copy();
         duration = recipeBuilder.duration;
         hidden = recipeBuilder.hidden;
-        category = recipeBuilder.category;
         recipeStatus = recipeBuilder.recipeStatus;
         this.ignoreAllBuildActions = recipeBuilder.ignoreAllBuildActions;
         if (recipeBuilder.ignoredBuildActions != null) {
@@ -1404,9 +1403,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public ValidationResult<Recipe> build() {
-        EnumValidationResult result = recipePropertyStorage == RecipePropertyStorage.EMPTY ?
-                EnumValidationResult.INVALID : validate();
-        return ValidationResult.newResult(result, new Recipe(
+        return ValidationResult.newResult(validate(), new Recipe(
                 new ListWithRollInformation<>(GTItemIngredient::getRequiredCount, itemInputs, rolledItemInputs,
                         itemInputInterpreter),
                 new ListWithRollInformation<>(GTFluidIngredient::getRequiredCount, fluidInputs, rolledFluidInputs,
@@ -1431,6 +1428,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     protected EnumValidationResult validate() {
+        if (recipePropertyStorage == RecipePropertyStorage.ERRORED) {
+            GTLog.logger.error("Recipe property storage errored during recipe construction", new Throwable());
+            recipeStatus = EnumValidationResult.INVALID;
+        }
         if (GroovyScriptModule.isCurrentlyRunning()) {
             GroovyLog.Msg msg = GroovyLog.msg("Error adding GregTech " + recipeMap.unlocalizedName + " recipe").error();
             validateGroovy(msg);

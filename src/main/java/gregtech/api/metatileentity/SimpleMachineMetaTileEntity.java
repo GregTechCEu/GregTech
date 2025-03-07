@@ -122,6 +122,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
 
     @Override
     protected void initializeInventory() {
+        if (recipeMap == null) return;
         super.initializeInventory();
         this.outputItemInventory = new ItemHandlerProxy(new GTItemStackHandler(this, 0), exportItems);
         this.outputFluidInventory = new FluidHandlerProxy(new FluidTankList(false), exportFluids);

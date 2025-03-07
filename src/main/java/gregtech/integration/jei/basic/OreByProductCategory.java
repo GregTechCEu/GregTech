@@ -150,7 +150,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         itemOutputExists.clear();
         for (int i = 0; i < ITEM_OUTPUT_LOCATIONS.size(); i += 2) {
             itemStackGroup.init(i / 2 + itemInputs.size(), false,
-                    new ItemStackTextRenderer(i / 2 + itemInputs.size(), recipeWrapper.outputControl()),
+                    new ItemStackTextRenderer(1, i / 2 + itemInputs.size(), recipeWrapper.outputControl()),
                     ITEM_OUTPUT_LOCATIONS.get(i) + 1, ITEM_OUTPUT_LOCATIONS.get(i + 1) + 1, 16, 16, 0, 0);
             itemOutputExists.add(!itemOutputs.get(i / 2).isEmpty());
         }

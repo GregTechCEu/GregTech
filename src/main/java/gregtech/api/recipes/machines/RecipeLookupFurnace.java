@@ -99,7 +99,7 @@ public final class RecipeLookupFurnace extends RecipeLookup {
 
         @Override
         public boolean matches(ItemStack stack) {
-            return context.matches(this.stack, stack);
+            return context.equals(this.stack, stack);
         }
 
         @Override

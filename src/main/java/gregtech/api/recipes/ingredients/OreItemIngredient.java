@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Range;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Objects;
-import java.util.Set;
 
 public final class OreItemIngredient implements GTItemIngredient {
 
@@ -120,8 +119,9 @@ public final class OreItemIngredient implements GTItemIngredient {
         protected void rebuildCache() {
             localStandard = STANDARD;
             matching.clear();
-            Set<ItemStack> item = new ObjectOpenCustomHashSet<>(ItemStackApplicatorMap.ITEM);
-            Set<ItemStack> itemDamage = new ObjectOpenCustomHashSet<>(ItemStackApplicatorMap.ITEM_DAMAGE);
+            ObjectOpenCustomHashSet<ItemStack> item = new ObjectOpenCustomHashSet<>(ItemStackApplicatorMap.ITEM);
+            ObjectOpenCustomHashSet<ItemStack> itemDamage = new ObjectOpenCustomHashSet<>(
+                    ItemStackApplicatorMap.ITEM_DAMAGE);
             for (ItemStack stack : OreDictionary.getOres(OreDictionary.getOreName(oreID))) {
                 if (stack.getItemDamage() == GTValues.W) item.add(stack);
                 else itemDamage.add(stack);

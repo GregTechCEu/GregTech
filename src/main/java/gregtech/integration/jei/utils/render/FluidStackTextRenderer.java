@@ -19,12 +19,14 @@ import java.util.List;
 
 public class FluidStackTextRenderer extends FluidStackRenderer {
 
+    private final int amount;
     private final int index;
     private final @Nullable JEIDisplayControl provider;
 
     public FluidStackTextRenderer(int capacityMb, boolean showCapacity, int width, int height,
                                   @Nullable IDrawable overlay) {
         super(capacityMb, showCapacity, width, height, overlay);
+        amount = capacityMb;
         this.index = 0;
         this.provider = null;
     }
@@ -32,6 +34,7 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
     public FluidStackTextRenderer(int capacityMb, boolean showCapacity, int width, int height,
                                   @Nullable IDrawable overlay, int index, @Nullable JEIDisplayControl provider) {
         super(capacityMb, showCapacity, width, height, overlay);
+        amount = capacityMb;
         this.index = index;
         this.provider = provider;
     }
@@ -44,12 +47,12 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
 
         GlStateManager.disableBlend();
 
-        RenderUtil.drawFluidForGui(fluidStack, fluidStack.amount, xPosition, yPosition, 17, 17);
+        RenderUtil.drawFluidForGui(fluidStack, amount, xPosition, yPosition, 17, 17);
 
         GlStateManager.pushMatrix();
         GlStateManager.scale(0.5, 0.5, 1);
 
-        String s = TextFormattingUtil.formatLongToCompactString(fluidStack.amount, 4) + "L";
+        String s = TextFormattingUtil.formatLongToCompactString(amount, 4) + "L";
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         fontRenderer.drawStringWithShadow(s, (xPosition + 6) * 2 - fontRenderer.getStringWidth(s) + 19,
@@ -76,6 +79,8 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
     @Override
     public @NotNull List<String> getTooltip(@NotNull Minecraft minecraft, @NotNull FluidStack fluidStack,
                                             @NotNull ITooltipFlag tooltipFlag) {
+        fluidStack = fluidStack.copy();
+        fluidStack.amount = amount;
         List<String> tooltips = super.getTooltip(minecraft, fluidStack, tooltipFlag);
         if (provider != null) {
             String s = provider.addTooltip(index);

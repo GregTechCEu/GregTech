@@ -1,7 +1,6 @@
 package gregtech.api.recipes.ingredients;
 
 import gregtech.api.recipes.ingredients.nbt.NBTMatcher;
-import gregtech.api.recipes.lookup.flag.ItemStackApplicatorMap;
 import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
 
 import net.minecraft.block.Block;
@@ -9,8 +8,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,8 +18,8 @@ import org.jetbrains.annotations.Range;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public final class StandardItemIngredient implements GTItemIngredient {
 
@@ -70,15 +69,16 @@ public final class StandardItemIngredient implements GTItemIngredient {
 
     public static class ItemIngredientBacker {
 
-        protected final @NotNull EnumMap<ItemStackMatchingContext, Collection<ItemStack>> matching;
+        protected final @NotNull EnumMap<ItemStackMatchingContext, ObjectOpenCustomHashSet<ItemStack>> matching;
 
-        protected ItemIngredientBacker(@NotNull EnumMap<ItemStackMatchingContext, Collection<ItemStack>> matching) {
+        protected ItemIngredientBacker(@NotNull EnumMap<ItemStackMatchingContext, ObjectOpenCustomHashSet<ItemStack>> matching) {
             this.matching = matching;
         }
 
-        public @NotNull Collection<ItemStack> getMatchingStacksWithinContext(
-                                                                             @NotNull ItemStackMatchingContext context) {
-            return matching.getOrDefault(context, Collections.emptyList());
+        public @NotNull Collection<ItemStack> getMatchingStacksWithinContext(@NotNull ItemStackMatchingContext context) {
+            Collection<ItemStack> fetch = matching.get(context);
+            if (fetch == null) fetch = Collections.emptyList();
+            return fetch;
         }
 
         public boolean matches(ItemStack stack) {
@@ -116,10 +116,10 @@ public final class StandardItemIngredient implements GTItemIngredient {
 
     public static class ItemIngredientBuilder {
 
-        private final EnumMap<ItemStackMatchingContext, Collection<ItemStack>> matching = new EnumMap<>(
+        private final EnumMap<ItemStackMatchingContext, ObjectOpenCustomHashSet<ItemStack>> matching = new EnumMap<>(
                 ItemStackMatchingContext.class);
 
-        private Set<ItemStack> stacks = new ObjectOpenCustomHashSet<>(ItemStackApplicatorMap.ITEM_DAMAGE_NBT);
+        private List<ItemStack> stacks = new ObjectArrayList<>();
         private @Nullable NBTMatcher matcher = null;
 
         private long count = 1;
@@ -175,9 +175,10 @@ public final class StandardItemIngredient implements GTItemIngredient {
 
         @SuppressWarnings("UnusedReturnValue")
         public ItemIngredientBuilder clearToContext(@NotNull ItemStackMatchingContext context) {
-            matching.put(context, stacks);
-            stacks = new ObjectOpenHashSet<>();
-            matcher = null;
+            ObjectOpenCustomHashSet<ItemStack> set = new ObjectOpenCustomHashSet<>(context);
+            set.addAll(stacks);
+            matching.put(context, set);
+            stacks.clear();
             return this;
         }
 

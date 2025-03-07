@@ -37,6 +37,7 @@ import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +48,6 @@ import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenSetter;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -71,12 +71,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private int maxFluidInputs;
     private int maxFluidOutputs;
 
+    private boolean allowEmptyInput;
     private boolean allowEmptyOutput;
 
     private final Object grsVirtualizedRecipeMap;
     protected final @NotNull AbstractRecipeLookup lookup;
-    private boolean hasOreDictedInputs = false;
-    private boolean hasNBTMatcherInputs = false;
 
     private final Map<GTRecipeCategory, List<Recipe>> recipeByCategory = new Object2ObjectOpenHashMap<>();
 
@@ -322,6 +321,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this.recipeBuildActions;
     }
 
+    public RecipeMap<R> allowEmptyInput() {
+        this.allowEmptyInput = true;
+        return this;
+    }
+
     public RecipeMap<R> allowEmptyOutput() {
         this.allowEmptyOutput = true;
         return this;
@@ -371,6 +375,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (recipe == null) {
             return false;
         }
+        recipeByCategory.computeIfAbsent(recipe.getRecipeCategory(), c -> new ObjectArrayList<>()).add(recipe);
         return lookup.addRecipe(recipe);
     }
 
@@ -410,7 +415,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             return validationResult;
         }
 
-        boolean emptyInputs = recipe.getItemIngredients().isEmpty() && recipe.getFluidIngredients().isEmpty();
+        boolean emptyInputs = !this.allowEmptyInput && recipe.getItemIngredients().isEmpty() &&
+                recipe.getFluidIngredients().isEmpty();
         if (emptyInputs) {
             GTLog.logger.error("Invalid amount of recipe inputs. Recipe inputs are empty.", new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
@@ -652,8 +658,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return the recipes stored by category.
      */
     @NotNull
+    @UnmodifiableView
     public Map<GTRecipeCategory, List<Recipe>> getRecipesByCategory() {
-        return Collections.unmodifiableMap(recipeByCategory);
+        return recipeByCategory;
     }
 
     /**

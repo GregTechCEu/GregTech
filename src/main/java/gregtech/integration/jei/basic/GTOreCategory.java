@@ -58,7 +58,7 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
             int xPos = 70 + (i % NUM_OF_SLOTS) * SLOT_WIDTH;
 
             itemStackGroup.init(i + 2, false,
-                    new ItemStackTextRenderer(i, recipeWrapper.outputControl()),
+                    new ItemStackTextRenderer(1, i, recipeWrapper.outputControl()),
                     xPos + 1, yPos + 1, 16, 16, 0, 0);
         }
 

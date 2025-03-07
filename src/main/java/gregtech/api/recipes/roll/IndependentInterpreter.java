@@ -33,8 +33,7 @@ public final class IndependentInterpreter implements RollInterpreter {
                                                  long rollBoost) {
         if (rollValue == Long.MIN_VALUE) return InterpreterTextHelp.notConsumedSmallDisplay();
         String s = (rollValue / 100d) + "%";
-        String b = InterpreterTextHelp.formatBoost(rollBoost / 100d);
-        if (b != null) s += " " + b + "%/t";
+        if (rollBoost != 0) s += InterpreterTextHelp.boostSign(rollBoost);
         return s;
     }
 

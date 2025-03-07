@@ -42,8 +42,7 @@ public final class OverrideInterpreter implements RollInterpreter {
                                                  long rollBoost) {
         if (rollValue == Long.MIN_VALUE) return InterpreterTextHelp.notConsumedSmallDisplay();
         String s = (chance / 100d) + "%";
-        String b = formatBoost(rollBoost / 100d);
-        if (b != null) s += " " + b + "%/t";
+        if (rollBoost != 0) s += InterpreterTextHelp.boostSign(rollBoost);
         return s;
     }
 

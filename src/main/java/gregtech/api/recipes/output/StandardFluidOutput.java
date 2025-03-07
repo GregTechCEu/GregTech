@@ -99,4 +99,13 @@ public final class StandardFluidOutput implements FluidOutputProvider {
         }
         return null;
     }
+
+    @Override
+    public @Nullable String addTooltip(int index) {
+        if (outputs.isRolled(index)) {
+            return outputs.getInterpreter().interpretTooltip(index, RollInterpreterApplication.FLUID_OUTPUT,
+                    outputs.getMaxYield(index), outputs.getRollValue(index), outputs.getRollBoost(index));
+        }
+        return null;
+    }
 }

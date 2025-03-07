@@ -21,7 +21,8 @@ public class GrSRecipeHelper {
         builder.append("mods.gregtech.")
                 .append(recipeMap.unlocalizedName)
                 .append(".removeByInput(")
-                .append(recipe.getEUt())
+                .append(recipe.getVoltage())
+                .append(recipe.getAmperage())
                 .append(", ");
 
         if (!recipe.getItemIngredients().isEmpty()) {

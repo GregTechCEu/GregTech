@@ -102,4 +102,13 @@ public final class StandardItemOutput implements ItemOutputProvider {
         }
         return null;
     }
+
+    @Override
+    public @Nullable String addTooltip(int index) {
+        if (outputs.isRolled(index)) {
+            return outputs.getInterpreter().interpretTooltip(index, RollInterpreterApplication.ITEM_OUTPUT,
+                    outputs.getMaxYield(index), outputs.getRollValue(index), outputs.getRollBoost(index));
+        }
+        return null;
+    }
 }

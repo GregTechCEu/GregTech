@@ -2,7 +2,9 @@ package gregtech.api.recipes.lookup.flag;
 
 import net.minecraftforge.fluids.FluidStack;
 
-public enum FluidStackMatchingContext {
+import it.unimi.dsi.fastutil.Hash;
+
+public enum FluidStackMatchingContext implements Hash.Strategy<FluidStack> {
 
     FLUID,
     FLUID_NBT;
@@ -13,10 +15,19 @@ public enum FluidStackMatchingContext {
         return this == FLUID_NBT;
     }
 
-    public boolean matches(FluidStack a, FluidStack b) {
+    @Override
+    public boolean equals(FluidStack a, FluidStack b) {
         return switch (this) {
             case FLUID -> FluidStackApplicatorMap.FLUID.equals(a, b);
             case FLUID_NBT -> FluidStackApplicatorMap.FLUID_NBT.equals(a, b);
+        };
+    }
+
+    @Override
+    public int hashCode(FluidStack o) {
+        return switch (this) {
+            case FLUID -> FluidStackApplicatorMap.FLUID.hashCode(o);
+            case FLUID_NBT -> FluidStackApplicatorMap.FLUID_NBT.hashCode(o);
         };
     }
 }

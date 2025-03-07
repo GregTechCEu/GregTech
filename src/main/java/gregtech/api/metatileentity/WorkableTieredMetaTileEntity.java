@@ -92,6 +92,11 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
         reinitializeEnergyContainer();
     }
 
+    @Override
+    protected void initializeInventory() {
+        if (recipeMap != null) super.initializeInventory();
+    }
+
     /**
      * Called during initialization. Should not require any fields to be populated for the state machine to be
      * constructed.

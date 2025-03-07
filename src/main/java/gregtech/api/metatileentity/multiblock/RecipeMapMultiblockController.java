@@ -76,11 +76,11 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
         super(metaTileEntityId);
         this.recipeMap = recipeMap;
+        this.bufferedItemOutputs = new ArrayDeque<>();
+        this.bufferedFluidOutputs = new ArrayDeque<>();
         RecipeStandardStateMachineBuilder std = new RecipeStandardStateMachineBuilder(this::getLookup);
         modifyRecipeLogicStandardBuilder(std);
         this.workable = new RecipeWorkable(this, std);
-        this.bufferedItemOutputs = new ArrayDeque<>();
-        this.bufferedFluidOutputs = new ArrayDeque<>();
         resetTileAbilities();
     }
 

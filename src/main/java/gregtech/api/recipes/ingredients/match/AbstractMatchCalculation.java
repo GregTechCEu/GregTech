@@ -13,8 +13,8 @@ import java.util.List;
 
 public abstract class AbstractMatchCalculation<T> implements MatchCalculation<T> {
 
-    protected Int2ObjectAVLTreeMap<long[]> cache;
-    protected Long2ObjectOpenHashMap<long[]> cacheRolled;
+    protected Int2ObjectAVLTreeMap<long[]> cache = new Int2ObjectAVLTreeMap<>();
+    protected Long2ObjectOpenHashMap<long[]> cacheRolled = new Long2ObjectOpenHashMap<>();
     protected int scaling = 1;
 
     /**

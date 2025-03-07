@@ -45,8 +45,7 @@ public final class RangedInterpreter implements RollInterpreter {
                                                  long rollBoost) {
         if (rollValue == Long.MIN_VALUE) return InterpreterTextHelp.notConsumedSmallDisplay();
         String s = (rollValue) + "%";
-        String b = formatBoost(rollBoost);
-        if (b != null) s += " " + b + "%/t";
+        if (rollBoost != 0) s += InterpreterTextHelp.boostSign(rollBoost);
         return s;
     }
 

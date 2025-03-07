@@ -981,6 +981,7 @@ public final class RecipeMaps {
                     .fluidSlotOverlay(GuiTextures.CENTRIFUGE_OVERLAY, true)
                     .progressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR)
                     .sound(GTSoundEvents.COOLING)
+                    .allowEmptyInputs()
                     .build();
 
     /**

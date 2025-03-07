@@ -47,6 +47,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private RecipeMapUIFunction recipeMapUIFunction = this::buildUI;
 
     private SoundEvent sound;
+    private boolean allowEmptyInputs;
     private boolean allowEmptyOutputs;
 
     private @Nullable Map<ResourceLocation, RecipeBuildAction<B>> buildActions;
@@ -260,6 +261,17 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
+     * Make the recipemap accept recipes without any inputs. Use this if your recipes are
+     * differentiated only by circuit number, e.g. the gas collector.
+     *
+     * @return this
+     */
+    public @NotNull RecipeMapBuilder<B> allowEmptyInputs() {
+        this.allowEmptyInputs = true;
+        return this;
+    }
+
+    /**
      * Make the recipemap accept recipes without any outputs
      *
      * @return this
@@ -300,6 +312,9 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
         RecipeMap<B> recipeMap = new RecipeMap<>(unlocalizedName, defaultRecipeBuilder, this.recipeMapUIFunction,
                 itemInputs, itemOutputs, fluidInputs, fluidOutputs, lookup);
         recipeMap.setSound(sound);
+        if (allowEmptyInputs) {
+            recipeMap.allowEmptyInput();
+        }
         if (allowEmptyOutputs) {
             recipeMap.allowEmptyOutput();
         }

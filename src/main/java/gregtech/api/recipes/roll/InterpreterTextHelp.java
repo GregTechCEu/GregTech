@@ -5,17 +5,26 @@ import gregtech.client.utils.TooltipHelper;
 import net.minecraft.client.resources.I18n;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 abstract class InterpreterTextHelp {
 
-    static @Nullable String formatBoost(double rollBoost) {
+    static @NotNull String formatBoost(double rollBoost) {
         if (rollBoost > 0) {
             return "+" + rollBoost;
         } else if (rollBoost < 0) {
             return "-" + -rollBoost;
         } else {
-            return null;
+            return "0";
+        }
+    }
+
+    static @NotNull String boostSign(long rollBoost) {
+        if (rollBoost > 0) {
+            return "+";
+        } else if (rollBoost < 0) {
+            return "-";
+        } else {
+            return "0";
         }
     }
 

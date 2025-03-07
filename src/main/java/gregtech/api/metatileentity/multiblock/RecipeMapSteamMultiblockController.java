@@ -66,6 +66,9 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
         this.recipeMap = recipeMap;
         this.conversionRate = conversionRate;
         this.bufferedItemOutputs = new ArrayDeque<>();
+        RecipeStandardStateMachineBuilder std = new RecipeStandardStateMachineBuilder(recipeMap::getLookup);
+        modifyRecipeLogicStandardBuilder(std);
+        this.workable = new RecipeSteamWorkable(this, std);
         resetTileAbilities();
     }
 

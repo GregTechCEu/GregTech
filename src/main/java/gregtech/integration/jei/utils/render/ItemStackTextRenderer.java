@@ -1,6 +1,7 @@
 package gregtech.integration.jei.utils.render;
 
 import gregtech.api.recipes.ui.JEIDisplayControl;
+import gregtech.api.util.GTUtility;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -10,21 +11,32 @@ import net.minecraft.item.ItemStack;
 
 import mezz.jei.plugins.vanilla.ingredients.item.ItemStackRenderer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class ItemStackTextRenderer extends ItemStackRenderer {
 
+    private final long countOverride;
     private final int index;
     private final @NotNull JEIDisplayControl provider;
 
-    public ItemStackTextRenderer(int index, @NotNull JEIDisplayControl provider) {
+    public ItemStackTextRenderer(long countOverride, int index, @NotNull JEIDisplayControl provider) {
+        this.countOverride = countOverride;
         this.index = index;
         this.provider = provider;
     }
 
+    public ItemStackTextRenderer(int index, @NotNull JEIDisplayControl provider) {
+        this(-1, index, provider);
+    }
+
     @Override
-    public void render(@NotNull Minecraft minecraft, int xPosition, int yPosition, @NotNull ItemStack ingredient) {
+    public void render(@NotNull Minecraft minecraft, int xPosition, int yPosition, @Nullable ItemStack ingredient) {
+        if (countOverride > 0 && ingredient != null) {
+            ingredient = ingredient.copy();
+            ingredient.setCount(GTUtility.safeCastLongToInt(countOverride));
+        }
         super.render(minecraft, xPosition, yPosition, ingredient);
         String s = provider.addSmallDisplay(index);
         if (s == null) return;

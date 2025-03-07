@@ -1,15 +1,14 @@
 package gregtech.api.recipes.ingredients;
 
 import gregtech.api.recipes.ingredients.nbt.NBTMatcher;
-import gregtech.api.recipes.lookup.flag.FluidStackApplicatorMap;
 import gregtech.api.recipes.lookup.flag.FluidStackMatchingContext;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,8 +17,8 @@ import org.jetbrains.annotations.Range;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public final class StandardFluidIngredient implements GTFluidIngredient {
 
@@ -69,15 +68,17 @@ public final class StandardFluidIngredient implements GTFluidIngredient {
 
     public static class FluidIngredientBacker {
 
-        protected final @NotNull EnumMap<FluidStackMatchingContext, Collection<FluidStack>> matching;
+        protected final @NotNull EnumMap<FluidStackMatchingContext, ObjectOpenCustomHashSet<FluidStack>> matching;
 
-        protected FluidIngredientBacker(@NotNull EnumMap<FluidStackMatchingContext, Collection<FluidStack>> matching) {
+        protected FluidIngredientBacker(@NotNull EnumMap<FluidStackMatchingContext, ObjectOpenCustomHashSet<FluidStack>> matching) {
             this.matching = matching;
         }
 
         public @NotNull Collection<FluidStack> getMatchingStacksWithinContext(
                                                                               @NotNull FluidStackMatchingContext context) {
-            return matching.getOrDefault(context, Collections.emptyList());
+            Collection<FluidStack> fetch = matching.get(context);
+            if (fetch == null) fetch = Collections.emptyList();
+            return fetch;
         }
 
         public boolean matches(FluidStack stack) {
@@ -114,10 +115,10 @@ public final class StandardFluidIngredient implements GTFluidIngredient {
 
     public static class FluidIngredientBuilder {
 
-        private final EnumMap<FluidStackMatchingContext, Collection<FluidStack>> matching = new EnumMap<>(
+        private final EnumMap<FluidStackMatchingContext, ObjectOpenCustomHashSet<FluidStack>> matching = new EnumMap<>(
                 FluidStackMatchingContext.class);
 
-        private Set<FluidStack> stacks = new ObjectOpenCustomHashSet<>(FluidStackApplicatorMap.FLUID_NBT);
+        private List<FluidStack> stacks = new ObjectArrayList<>();
         private @Nullable NBTMatcher matcher = null;
 
         private long count;
@@ -151,9 +152,10 @@ public final class StandardFluidIngredient implements GTFluidIngredient {
 
         @SuppressWarnings("UnusedReturnValue")
         public FluidIngredientBuilder clearToContext(@NotNull FluidStackMatchingContext context) {
-            matching.put(context, stacks);
-            stacks = new ObjectOpenHashSet<>();
-            matcher = null;
+            ObjectOpenCustomHashSet<FluidStack> set = new ObjectOpenCustomHashSet<>(context);
+            set.addAll(stacks);
+            matching.put(context, set);
+            stacks.clear();
             return this;
         }
 
