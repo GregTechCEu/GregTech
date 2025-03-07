@@ -166,7 +166,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.pumpMode = PumpMode.values()[tagCompound.getInteger("PumpMode")];
+        this.pumpMode = PumpMode.VALUES[tagCompound.getInteger("PumpMode")];
         this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
     }
 

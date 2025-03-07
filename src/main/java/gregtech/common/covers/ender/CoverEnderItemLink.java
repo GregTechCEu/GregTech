@@ -14,6 +14,7 @@ import gregtech.common.covers.filter.ItemFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -88,7 +89,8 @@ public class CoverEnderItemLink extends CoverAbstractEnderLink<VirtualChest> {
     private ModularPanel createChestPanel(String color, ModularPanel parentPanel, EntityPlayer player) {
         IntFunction<ItemStack> getStack = activeEntry::getStackInSlot;
         return GTGuis.createPopupPanel("chest_panel#" + color, 100, 100)
-                .padding(16, 4)
+                .padding(4)
+                .paddingRight(16)
                 .coverChildren()
                 .child(new Grid().coverChildren()
                         .mapTo(3, activeEntry.getSlots(), value -> {
@@ -200,5 +202,19 @@ public class CoverEnderItemLink extends CoverAbstractEnderLink<VirtualChest> {
         } else {
             GTTransferUtils.moveInventoryItems(this.activeEntry, handler, this.container::test);
         }
+    }
+
+    @Override
+    public void writeToNBT(@NotNull NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        nbt.setInteger("ConveyorMode", this.conveyorMode.ordinal());
+        nbt.setTag("Filter", this.container.serializeNBT());
+    }
+
+    @Override
+    public void readFromNBT(@NotNull NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        this.conveyorMode = ConveyorMode.VALUES[nbt.getInteger("ConveyorMode")];
+        this.container.deserializeNBT(nbt.getCompoundTag("Filter"));
     }
 }

@@ -22,6 +22,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.text.TextFormatting;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -42,7 +43,6 @@ import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListValueWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import org.jetbrains.annotations.NotNull;
@@ -153,7 +153,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         return Flow.column().coverChildrenHeight().top(24)
                 .margin(7, 0).widthRel(1f)
-                .child(new Row().marginBottom(2)
+                .child(Flow.row()
+                        .marginBottom(2)
                         .coverChildrenHeight()
                         .child(createPrivateButton())
                         .child(createColorIcon())
@@ -208,16 +209,21 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     protected IWidget createIoRow() {
-        return Flow.row().marginBottom(2)
+        return Flow.row()
+                .marginBottom(2)
                 .coverChildrenHeight()
                 .child(new ToggleButton()
+                        .value(new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled))
+                        .overlay(true, IKey.lang("behaviour.soft_hammer.enabled").style(TextFormatting.WHITE))
+                        .overlay(false, IKey.lang("behaviour.soft_hammer.disabled").style(TextFormatting.WHITE))
+                        .widthRel(0.525f)
+                        .left(0))
+                .child(new ToggleButton()
                         .value(new BooleanSyncValue(this::isIoEnabled, this::setIoEnabled))
-                        .overlay(IKey.dynamic(() -> IKey.lang(this.ioEnabled ?
-                                "behaviour.soft_hammer.enabled" :
-                                "behaviour.soft_hammer.disabled").get())
-                                .color(Color.WHITE.darker(1)))
-                        .widthRel(0.6f)
-                        .left(0));
+                        .overlay(true, IKey.lang("cover.generic.ender.iomode.enabled").style(TextFormatting.WHITE))
+                        .overlay(false, IKey.lang("cover.generic.ender.iomode.disabled").style(TextFormatting.WHITE))
+                        .widthRel(0.425f)
+                        .right(0));
     }
 
     @Override
