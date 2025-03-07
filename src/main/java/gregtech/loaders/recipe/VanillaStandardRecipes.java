@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
+import gregtech.api.items.OreDictNames;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
@@ -121,10 +122,10 @@ public class VanillaStandardRecipes {
                 "dustFlint");
 
         ModHandler.addShapedRecipe("quartz_sand", OreDictUnifier.get(OrePrefix.dust, Materials.QuartzSand), "S", "m",
-                'S', new ItemStack(Blocks.SAND));
+                'S', OreDictNames.sand);
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.SAND))
+                .input(OreDictNames.sand.name())
                 .output(OrePrefix.dust, Materials.QuartzSand)
                 .duration(30).buildAndRegister();
 
@@ -145,7 +146,7 @@ public class VanillaStandardRecipes {
                 .buildAndRegister();
 
         RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder().duration(20).EUt(VA[LV])
-                .inputs(new ItemStack(Blocks.SAND, 1))
+                .input(OreDictNames.sand.name())
                 .outputs(new ItemStack(Blocks.GLASS, 2))
                 .buildAndRegister();
 
