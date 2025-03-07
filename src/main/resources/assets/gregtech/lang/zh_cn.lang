@@ -1043,7 +1043,8 @@ item.gt.tool.plunger.tooltip=§8从机器中抽除流体
 item.gt.tool.wire_cutter_lv.name=%s剪线钳（LV）
 item.gt.tool.wire_cutter_hv.name=%s剪线钳（HV）
 item.gt.tool.wire_cutter_iv.name=%s剪线钳（IV）
-item.gt.tool.toolbelt.name=%s工具皮带%s
+item.gt.tool.toolbelt.name=%s工具皮带
+item.gt.tool.toolbelt.name.select=%s工具皮带（%s）
 item.gt.tool.toolbelt.size=§a共有%s个工具槽
 item.gt.tool.toolbelt.tooltip=存放GT或类原版工具，可以在世界内手动选择工具并使用，在合成时自动选择工具并使用，或用于维修维护问题。
 item.gt.tool.toolbelt.paint=也支持喷漆罐。
@@ -1211,8 +1212,10 @@ metaitem.blacklight.tooltip=长波§d紫外线§7光源
 gui.widget.incrementButton.default_tooltip=按住Shift，Ctrl或两者来更改数量
 gui.widget.recipeProgressWidget.default_tooltip=显示配方
 
+gregtech.recipe_memory_widget.tooltip.0=使用次数：%d
 gregtech.recipe_memory_widget.tooltip.1=§7左键点击可自动将该配方输入至合成格
 gregtech.recipe_memory_widget.tooltip.2=§7按住Shift并点击以锁定或解锁该配方
+gregtech.recipe_memory_widget.tooltip.3=§7右击以移除未锁定的配方
 
 cover.filter.blacklist.disabled=白名单
 cover.filter.blacklist.enabled=黑名单
@@ -1396,7 +1399,7 @@ cover.generic.ender.delete_entry=删除条目
 
 cover.generic.advanced_detector.latched=锁存
 cover.generic.advanced_detector.continuous=线性
-cover.generic.advanced_detector.latch_tooltip=更改此覆盖板的红石行为。/n§e线性§7 - 默认值；物品数量小于最小值时不发出红石信号，大于最大值时发出信号强度15的红石信号，数量介于二者之间发出信号强度在0 - 15之间的红石信号/n§e锁存§7 - 发出满级红石信号，直到物品数量大于最大值；然后停止发出红石信号，直到数量低于最小值。
+cover.generic.advanced_detector.latch_tooltip=更改此覆盖板的红石行为。/n§e线性§7 - 默认模式；物品数量小于最小值时不发出红石信号，大于最大值时发出信号强度15的红石信号，数量介于二者之间发出信号强度在0 - 15之间的红石信号/n§e锁存§7 - 发出满级红石信号，直到物品数量大于最大值；然后停止发出红石信号，直到数量低于最小值。
 cover.generic.advanced_detector.invert_label=红石输出：
 cover.generic.advanced_detector.latch_label=行为：
 cover.generic.advanced_detector.invert_tooltip=切换以反转红石逻辑
@@ -2831,8 +2834,8 @@ gregtech.machine.workbench.tooltip1=比林业的好
 gregtech.machine.workbench.tooltip2=能存物品，能放工具，能从紧邻的物品容器里取出东西，还能保存配方。
 gregtech.machine.workbench.tab.workbench=合成界面
 gregtech.machine.workbench.tab.item_list=存储空间
-gregtech.machine.workbench.storage_note_1=（相邻的物品容器中
-gregtech.machine.workbench.storage_note_2=可参与合成的物品）
+gregtech.machine.workbench.storage_note=（相邻的物品容器中\n可参与合成的物品）
+gregtech.machine.workbench.clear_grid=清除合成格
 gregtech.item_list.item_stored=§7储量：%,d
 
 gregtech.machine.workbench.tab.crafting=合成
