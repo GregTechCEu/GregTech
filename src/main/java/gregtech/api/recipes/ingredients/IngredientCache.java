@@ -51,7 +51,7 @@ public final class IngredientCache {
                 @Override
                 public boolean equals(EnumMap<ItemStackMatchingContext, ObjectOpenCustomHashSet<ItemStack>> a,
                                       EnumMap<ItemStackMatchingContext, ObjectOpenCustomHashSet<ItemStack>> b) {
-                    if (a == null && b == null) return true;
+                    if (a == b) return true;
                     if (a == null ^ b == null) return false;
                     for (ItemStackMatchingContext context : ItemStackMatchingContext.VALUES) {
                         ObjectOpenCustomHashSet<ItemStack> cA = a.get(context);
@@ -83,7 +83,7 @@ public final class IngredientCache {
                 @Override
                 public boolean equals(EnumMap<FluidStackMatchingContext, ObjectOpenCustomHashSet<FluidStack>> a,
                                       EnumMap<FluidStackMatchingContext, ObjectOpenCustomHashSet<FluidStack>> b) {
-                    if (a == null && b == null) return true;
+                    if (a == b) return true;
                     if (a == null ^ b == null) return false;
                     for (FluidStackMatchingContext context : FluidStackMatchingContext.VALUES) {
                         ObjectOpenCustomHashSet<FluidStack> cA = a.get(context);

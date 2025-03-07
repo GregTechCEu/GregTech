@@ -35,6 +35,7 @@ import gregtech.api.util.GTUtility;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
@@ -89,8 +90,7 @@ public class RecipeStandardStateMachineBuilder {
     protected @NotNull GTStateMachineTransientOperator itemMatchOperator = RecipeItemMatchOperator.STANDARD_INSTANCE;
     protected @NotNull GTStateMachineTransientOperator fluidMatchOperator = RecipeFluidMatchOperator.STANDARD_INSTANCE;
     protected @NotNull RecipeFinalizer recipeFinalizer = RecipeFinalizer.STANDARD_INSTANCE;
-    protected @NotNull Predicate<RecipeRun> finalCheck = RecipeRunCheckOperator.standardConsumptionCheck(itemInput,
-            fluidInput);
+    protected @Nullable Predicate<RecipeRun> finalCheck = null;
     protected @NotNull Predicate<NBTTagCompound> perTickWorkerCheck = workerNBT -> true;
     protected @NotNull Predicate<NBTTagCompound> perTickRecipeCheck = recipe -> true;
     protected @NotNull RecipeStallType stallType = RecipeStallType.DEGRESS;
@@ -376,6 +376,10 @@ public class RecipeStandardStateMachineBuilder {
 
     protected void buildProgressTrack(GTStateMachineBuilder builder, int startOp) {
         builder.setPointer(startOp);
+        if (finalCheck == null) {
+            finalCheck = RecipeRunCheckOperator.standardConsumptionCheck(itemInput == null ? () -> null : itemInput,
+                    fluidInput == null ? () -> null : fluidInput);
+        }
         builder.andThenDefault(data -> {
             while (!preparedRecipeBuffer.isEmpty()) {
                 RecipePair next = preparedRecipeBuffer.removeFirst();
@@ -395,6 +399,7 @@ public class RecipeStandardStateMachineBuilder {
                 }
                 if (next.run().getRequiredAmperage() > availableAmperage) return;
                 if (finalCheck.test(next.run)) {
+                    if (!data.hasKey("ActiveRecipes")) data.setTag("ActiveRecipes", new NBTTagList());
                     data.getTagList("ActiveRecipes", Constants.NBT.TAG_COMPOUND).appendTag(next.finalized);
                     if (onRecipeStarted != null) onRecipeStarted.accept(next.finalized);
                 }
@@ -402,12 +407,16 @@ public class RecipeStandardStateMachineBuilder {
         }, false);
         builder.andThenDefault(d -> d.setBoolean("TickCheckSuccess", perTickWorkerCheck.test(d)), false);
 
-        builder.andThenDefault(d -> d.setInteger("Index", d.getInteger("Index") + 1), false);
+        builder.andThenDefault(d -> {
+            if (d.hasKey("Index")) d.setInteger("Index", d.getInteger("Index") + 1);
+            else d.setInteger("Index", 0);
+        }, false);
+        int indexIncrement = builder.getPointer();
         builder.andThenIf(
                 d -> d.getInteger("Index") >= d.getTagList("ActiveRecipes", Constants.NBT.TAG_COMPOUND).tagCount(),
-                d -> d.removeTag("Integer"), false).movePointerBack();
-        int indexIncrement = builder.getPointer();
-        builder.andThenDefault(d -> d.setTag(RecipeCleanupOperation.STANDARD_RECIPE_KEY,
+                d -> d.removeTag("Index"), false);
+        int indexPosCheck = builder.getPointer();
+        builder.movePointerBack().andThenDefault(d -> d.setTag(RecipeCleanupOperation.STANDARD_RECIPE_KEY,
                 d.getTagList(RecipeFinalizer.STANDARD_RECIPES_KEY, Constants.NBT.TAG_COMPOUND)
                         .getCompoundTagAt(d.getInteger("Index"))),
                 false);
@@ -437,7 +446,9 @@ public class RecipeStandardStateMachineBuilder {
         } else {
             builder.andThenDefault(cleanupOperator, false);
         }
-        builder.andThenToDefault(indexIncrement);
+        builder.andThenDefault(
+                d -> d.getTagList("ActiveRecipes", Constants.NBT.TAG_COMPOUND).removeTag(d.getInteger("Index")), false);
+        builder.andThenToDefault(indexPosCheck);
     }
 
     protected void buildLookupTrack(GTStateMachineBuilder builder, int startOp) {
@@ -457,7 +468,15 @@ public class RecipeStandardStateMachineBuilder {
 
         // first, the async-incompatible operations, e.g. item/fluid availability and output space info.
         if (hasNextDistinctGroup == null) {
-            builder.andThenIf(t -> !t.getBoolean("AwaitingInputUpdate") && shouldStartRecipeLookup.test(t),
+            builder.andThenIf(t -> t.getBoolean("AwaitingInputUpdate"), t -> {
+                List<IItemHandlerModifiable> notifiedItems = notifiedItemInputs.get();
+                List<IFluidHandler> notifiedFluids = notifiedFluidInputs.get();
+                if (notifiedItems.isEmpty() && notifiedFluids.isEmpty()) return;
+                notifiedItems.clear();
+                notifiedFluids.clear();
+                t.removeTag("AwaitingInputUpdate");
+            }, false).movePointerBack();
+            builder.andThenIf(t -> shouldStartRecipeLookup.test(t),
                     GTStateMachineOperator.emptyOp(), false);
             if (itemInput != null) {
                 builder.andThenDefault(RecipeSearchOperator.standardItemsProvider(itemInputView), false);
@@ -466,7 +485,30 @@ public class RecipeStandardStateMachineBuilder {
                 builder.andThenDefault(RecipeSearchOperator.standardFluidsProvider(fluidInputView), false);
             }
         } else {
-            builder.andThenIf(t -> hasNextDistinctGroup.getAsBoolean() && shouldStartRecipeLookup.test(t),
+            builder.andThenIf(t -> !hasNextDistinctGroup.getAsBoolean(), t -> {
+                List<IItemHandlerModifiable> notifiedItems = notifiedItemInputs.get();
+                List<IFluidHandler> notifiedFluids = notifiedFluidInputs.get();
+                if (notifiedItems.isEmpty() && notifiedFluids.isEmpty()) return;
+                Collection<DistinctInputGroup> distincts = getDistinctInputGroups.get();
+                outer:
+                for (DistinctInputGroup group : distincts) {
+                    for (IItemHandlerModifiable handler : notifiedItems) {
+                        if (group.containsItemHandler(handler)) {
+                            group.setAwaitingUpdate(false);
+                            continue outer;
+                        }
+                    }
+                    for (IFluidHandler handler : notifiedFluids) {
+                        if (group.containsFluidHandler(handler)) {
+                            group.setAwaitingUpdate(false);
+                            continue outer;
+                        }
+                    }
+                }
+                notifiedItems.clear();
+                notifiedFluids.clear();
+            }, false).movePointerBack();
+            builder.andThenIf(t -> shouldStartRecipeLookup.test(t),
                     RecipeSearchOperator.standardCombinedProvider(() -> toTuple(getNextDistinctGroup.get())), false);
         }
         if (properties != null) {

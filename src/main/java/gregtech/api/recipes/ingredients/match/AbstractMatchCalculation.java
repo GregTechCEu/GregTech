@@ -104,12 +104,17 @@ public abstract class AbstractMatchCalculation<T> implements MatchCalculation<T>
     @Override
     public long @Nullable [] getConsumeResultsForScaleAndBoost(int scale, int rollBoost) {
         if (scaling == 0) return null;
-        if (!cache.containsKey(scale)) attemptScale(scale);
-        long[] arr = cache.get(scale);
-        if (arr == null) return null;
+        long[] arr;
         long key = (((long) scale) << 32) | (rollBoost & 0xFFFFFFFFL);
-        if (!cacheRolled.containsKey(key)) cacheRolled.put(key, convertToConsumeResults(arr, scale, rollBoost));
-        return cacheRolled.get(scale);
+        if (!cacheRolled.containsKey(key)) {
+            if (!cache.containsKey(scale)) attemptScale(scale);
+            arr = cache.get(scale);
+            if (arr != null) arr = convertToConsumeResults(arr, scale, rollBoost);
+            cacheRolled.put(key, arr);
+        } else {
+            arr = cacheRolled.get(key);
+        }
+        return arr;
     }
 
     protected abstract long @NotNull [] convertToConsumeResults(long @NotNull @Unmodifiable [] matchResults, int scale,

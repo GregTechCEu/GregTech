@@ -31,7 +31,8 @@ public final class IngredientMatchHelper {
         }
 
         @Override
-        public ItemStack withCount(ItemStack value, long count) {
+        public ItemStack withCount(@Nullable ItemStack value, long count) {
+            if (value == null) return null;
             ItemStack stack = value.copy();
             stack.setCount((int) count);
             return stack;
@@ -45,7 +46,8 @@ public final class IngredientMatchHelper {
         }
 
         @Override
-        public FluidStack withCount(FluidStack value, long count) {
+        public FluidStack withCount(@Nullable FluidStack value, long count) {
+            if (value == null) return null;
             FluidStack stack = value.copy();
             stack.amount = (int) count;
             return stack;
@@ -87,6 +89,7 @@ public final class IngredientMatchHelper {
             graph.addVertex(cacheMatchers[i]);
             matcherEdges[i] = graph.addEdge(cacheMatchers[i], sink);
             long r = matchers.get(i).getRequiredCount();
+            graph.setEdgeWeight(matcherEdges[i], r);
             required += r;
         }
         DefaultWeightedEdge[] matchableEdges = new DefaultWeightedEdge[matchables.size()];

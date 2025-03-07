@@ -52,8 +52,8 @@ public class RecipeSearchOperator implements GTStateMachineTransientOperator {
         List<ItemStack> items = (List<ItemStack>) transientData.get(keyItems);
         List<FluidStack> fluids = (List<FluidStack>) transientData.get(keyFluids);
         PropertySet properties = (PropertySet) transientData.get(keyProperties);
-
         if (items == null || fluids == null) throw new IllegalStateException();
+        if (properties != null) properties.circuits(items);
         transientData.put(keyResult, lookup.get().findRecipes(items, fluids, properties));
     }
 

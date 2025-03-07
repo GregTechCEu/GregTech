@@ -20,7 +20,7 @@ public class GTStateMachineStandardWorker implements INBTSerializable<NBTTagComp
 
     private static final NBTTagCompound EMPTY = new NBTTagCompound();
     protected final NBTTagCompound defaultTag;
-    protected boolean logicEnabled;
+    protected boolean logicEnabled = true;
     protected NBTTagCompound logicData = new NBTTagCompound();
     protected int logicPosition;
     protected NBTTagCompound logicDataSafe = new NBTTagCompound();

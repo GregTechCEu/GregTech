@@ -32,15 +32,15 @@ public class RecipeCleanupOperation implements GTStateMachineOperator {
 
     @Override
     public void operate(NBTTagCompound data) {
-        int progress = data.getInteger(keyProgress);
-        double duration = data.getCompoundTag(keyRecipe).getDouble("Duration");
+        NBTTagCompound recipe = data.getCompoundTag(keyRecipe);
+        int progress = recipe.getInteger(keyProgress);
+        double duration = recipe.getDouble("Duration");
         if (duration > progress) throw new IllegalStateException();
 
         double bonus = progress - duration;
         if (bonus > 0) {
             data.setDouble(keyBonus, data.getDouble(keyBonus) + bonus);
         }
-        data.removeTag(keyRecipe);
     }
 
     @Contract(pure = true)

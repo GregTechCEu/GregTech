@@ -57,7 +57,8 @@ final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
         long[] matchResults = new long[matchableEdges.length];
         var map = flow.getFlowMap();
         for (int i = 0; i < matchableEdges.length; i++) {
-            matchResults[i] = map.get(matchableEdges[i]).longValue();
+            Double flow = map.get(matchableEdges[i]);
+            if (flow != null) matchResults[i] = flow.longValue();
         }
         return matchResults;
     }
@@ -93,7 +94,8 @@ final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
             var map = flow.getFlowMap();
             matchResults = new long[matchableEdges.length];
             for (int i = 0; i < matchableEdges.length; i++) {
-                matchResults[i] = map.get(matchableEdges[i]).longValue();
+                Double flow = map.get(matchableEdges[i]);
+                if (flow != null) matchResults[i] = flow.longValue();
             }
         }
 

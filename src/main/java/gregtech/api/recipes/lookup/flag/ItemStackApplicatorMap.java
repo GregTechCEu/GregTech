@@ -39,13 +39,15 @@ public class ItemStackApplicatorMap extends Object2ApplicatorMapMap<ItemStack> {
     public static final Hash.Strategy<ItemStack> ITEM = new Strategy<>() {
 
         @Override
-        public int hashCode(ItemStack o) {
+        public int hashCode(@Nullable ItemStack o) {
+            if (o == null) return 0;
             return o.getItem().hashCode();
         }
 
         @Override
-        public boolean equals(ItemStack a, ItemStack b) {
-            if (a == null || b == null) return false;
+        public boolean equals(@Nullable ItemStack a, @Nullable ItemStack b) {
+            if (a == b) return true;
+            if (a == null ^ b == null) return false;
             return a.getItem().equals(b.getItem());
         }
     };
@@ -53,13 +55,15 @@ public class ItemStackApplicatorMap extends Object2ApplicatorMapMap<ItemStack> {
     public static final Hash.Strategy<ItemStack> ITEM_DAMAGE = new Strategy<>() {
 
         @Override
-        public int hashCode(ItemStack o) {
+        public int hashCode(@Nullable ItemStack o) {
+            if (o == null) return 0;
             return 97 * o.getItem().hashCode() + 31 * o.getItemDamage();
         }
 
         @Override
-        public boolean equals(ItemStack a, ItemStack b) {
-            if (a == null || b == null) return false;
+        public boolean equals(@Nullable ItemStack a, @Nullable ItemStack b) {
+            if (a == b) return true;
+            if (a == null ^ b == null) return false;
             return a.getItem().equals(b.getItem()) && a.getItemDamage() == b.getItemDamage();
         }
     };
@@ -67,13 +71,15 @@ public class ItemStackApplicatorMap extends Object2ApplicatorMapMap<ItemStack> {
     public static final Hash.Strategy<ItemStack> ITEM_NBT = new Strategy<>() {
 
         @Override
-        public int hashCode(ItemStack o) {
+        public int hashCode(@Nullable ItemStack o) {
+            if (o == null) return 0;
             return 97 * o.getItem().hashCode() + hashNBT(o.getTagCompound());
         }
 
         @Override
-        public boolean equals(ItemStack a, ItemStack b) {
-            if (a == null || b == null) return false;
+        public boolean equals(@Nullable ItemStack a, @Nullable ItemStack b) {
+            if (a == b) return true;
+            if (a == null ^ b == null) return false;
             return a.getItem().equals(b.getItem()) && Objects.equals(a.getTagCompound(), b.getTagCompound());
         }
     };
@@ -81,13 +87,15 @@ public class ItemStackApplicatorMap extends Object2ApplicatorMapMap<ItemStack> {
     public static final Hash.Strategy<ItemStack> ITEM_DAMAGE_NBT = new Strategy<>() {
 
         @Override
-        public int hashCode(ItemStack o) {
+        public int hashCode(@Nullable ItemStack o) {
+            if (o == null) return 0;
             return 97 * o.getItem().hashCode() + 31 * o.getItemDamage() + hashNBT(o.getTagCompound());
         }
 
         @Override
-        public boolean equals(ItemStack a, ItemStack b) {
-            if (a == null || b == null) return false;
+        public boolean equals(@Nullable ItemStack a, @Nullable ItemStack b) {
+            if (a == b) return true;
+            if (a == null ^ b == null) return false;
             return a.getItem().equals(b.getItem()) && a.getItemDamage() == b.getItemDamage() &&
                     Objects.equals(a.getTagCompound(), b.getTagCompound());
         }

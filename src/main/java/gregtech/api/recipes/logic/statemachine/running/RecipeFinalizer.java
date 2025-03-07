@@ -27,24 +27,28 @@ public class RecipeFinalizer {
 
         NBTTagList list = new NBTTagList();
         for (ItemStack item : run.getItemsConsumed()) {
+            if (item == null) continue;
             list.appendTag(item.writeToNBT(new NBTTagCompound()));
         }
         tag.setTag("ItemsIn", list);
 
         list = new NBTTagList();
         for (FluidStack fluid : run.getFluidsConsumed()) {
+            if (fluid == null) continue;
             list.appendTag(fluid.writeToNBT(new NBTTagCompound()));
         }
         tag.setTag("FluidsIn", list);
 
         list = new NBTTagList();
         for (ItemStack item : run.getItemsOut()) {
+            if (item == null) continue;
             list.appendTag(item.writeToNBT(new NBTTagCompound()));
         }
         tag.setTag("ItemsOut", list);
 
         list = new NBTTagList();
         for (FluidStack fluid : run.getFluidsOut()) {
+            if (fluid == null) continue;
             list.appendTag(fluid.writeToNBT(new NBTTagCompound()));
         }
         tag.setTag("FluidsOut", list);
