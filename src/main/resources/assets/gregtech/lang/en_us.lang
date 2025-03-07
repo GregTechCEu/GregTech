@@ -1328,7 +1328,6 @@ cover.generic.enabled=Enabled
 cover.generic.transfer_mode=Transfer Mode
 cover.generic.manual_io=Manual IO Mode
 cover.generic.io=IO Mode
-cover.pump.mode=Pump Mode
 cover.conveyor.title=Conveyor Cover Settings (%s)
 cover.conveyor.transfer_rate=§7items/sec
 cover.conveyor.mode.export=Mode: Export

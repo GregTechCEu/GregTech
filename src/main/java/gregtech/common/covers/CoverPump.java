@@ -262,7 +262,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         if (createPumpModeRow())
             column.child(new EnumRowBuilder<>(PumpMode.class)
                     .value(pumpMode)
-                    .lang("cover.pump.mode")
+                    .lang("cover.generic.io")
                     .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY) // todo pump mode overlays
                     .build());
 

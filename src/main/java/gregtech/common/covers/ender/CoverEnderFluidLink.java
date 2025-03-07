@@ -11,7 +11,7 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.virtualregistry.EntryTypes;
 import gregtech.api.util.virtualregistry.entries.VirtualTank;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.covers.CoverPump;
+import gregtech.common.covers.CoverPump.PumpMode;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import gregtech.common.mui.widget.GTFluidSlot;
 
@@ -39,7 +39,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
 
     public static final int TRANSFER_RATE = 8000; // mB/t
 
-    protected CoverPump.PumpMode pumpMode = CoverPump.PumpMode.IMPORT;
+    protected PumpMode pumpMode = PumpMode.IMPORT;
     private final FluidTankSwitchShim linkedTank;
     protected final FluidFilterContainer fluidFilter;
 
@@ -105,17 +105,17 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
         }
     }
 
-    public void setPumpMode(CoverPump.PumpMode pumpMode) {
+    public void setPumpMode(PumpMode pumpMode) {
         this.pumpMode = pumpMode;
         markDirty();
     }
 
-    public CoverPump.PumpMode getPumpMode() {
+    public PumpMode getPumpMode() {
         return pumpMode;
     }
 
     @Override
-    protected IWidget createSlotWidget(VirtualTank entry) {
+    protected IWidget createSlotWidget(VirtualTank entry, ModularPanel panel, PanelSyncManager syncManager) {
         var fluidTank = GTFluidSlot.sync(entry)
                 .accessibility(false, false);
 
@@ -143,16 +143,16 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     protected Flow createWidgets(ModularPanel modularPanel, PanelSyncManager syncManager) {
         getFluidFilterContainer().setMaxTransferSize(1);
 
-        var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
+        var pumpMode = new EnumSyncValue<>(PumpMode.class, this::getPumpMode, this::setPumpMode);
         syncManager.syncValue("pump_mode", pumpMode);
-        pumpMode.updateCacheFromSource(true);
 
         return super.createWidgets(modularPanel, syncManager)
                 .child(getFluidFilterContainer().initUI(modularPanel, syncManager))
-                .child(new EnumRowBuilder<>(CoverPump.PumpMode.class)
+                .child(new EnumRowBuilder<>(PumpMode.class)
                         .value(pumpMode)
+                        // todo pump mode overlay?
                         .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
-                        .lang("cover.pump.mode")
+                        .lang("cover.generic.io")
                         .build());
     }
 
@@ -166,7 +166,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.pumpMode = CoverPump.PumpMode.values()[tagCompound.getInteger("PumpMode")];
+        this.pumpMode = PumpMode.values()[tagCompound.getInteger("PumpMode")];
         this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
     }
 

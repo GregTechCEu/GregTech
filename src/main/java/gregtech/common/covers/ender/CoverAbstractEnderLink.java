@@ -39,18 +39,19 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ListWidget;
+import com.cleanroommc.modularui.widgets.ListValueWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -157,7 +158,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                         .child(createPrivateButton())
                         .child(createColorIcon())
                         .child(new TextFieldWidget()
-                                .height(18)
+                                .height(16) // todo height is actually 20 for some reason?
                                 .value(name)
                                 .setPattern(COLOR_INPUT_PATTERN)
                                 .widthRel(0.5f)
@@ -283,19 +284,20 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     protected PanelSyncHandler.IPanelBuilder entrySelector(EntryTypes<T> type) {
         return (syncManager, syncHandler) -> {
-            List<IWidget> rows = new ArrayList<>();
-            for (String name : VirtualEnderRegistry.getEntryNames(getOwner(), type)) {
-                rows.add(createRow(name, syncManager, type));
-            }
-            return GTGuis.createPopupPanel("entry_selector", 168, 112, true)
-                    .child(IKey.lang("cover.generic.ender.known_channels")
-                            .color(UI_TITLE_COLOR)
-                            .asWidget()
-                            .top(6)
-                            .left(4))
-                    .child(new ListWidget<>()
-                            .children(rows)
-                            // .builder(names, name -> createRow(name, syncManager, type))
+            Set<String> names = VirtualEnderRegistry.getEntryNames(getOwner(), type);
+            Map<IWidget, String> reverse = new Reference2ObjectArrayMap<>(names.size());
+            var panel = GTGuis.createPopupPanel("entry_selector", 168, 112, true);
+            return panel.child(IKey.lang("cover.generic.ender.known_channels")
+                    .color(UI_TITLE_COLOR)
+                    .asWidget()
+                    .top(6)
+                    .left(4))
+                    .child(new ListValueWidget<>(reverse::get)
+                            .children(names, name -> {
+                                IWidget row = createRow(name, panel, syncManager, type);
+                                reverse.put(row, name);
+                                return row;
+                            })
                             .background(GTGuiTextures.DISPLAY.asIcon()
                                     .width(168 - 8)
                                     .height(112 - 20))
@@ -338,7 +340,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         };
     }
 
-    protected IWidget createRow(final String name, final PanelSyncManager syncManager, final EntryTypes<T> type) {
+    protected IWidget createRow(final String name, final ModularPanel mainPanel,
+                                final PanelSyncManager syncManager, final EntryTypes<T> type) {
         final T entry = VirtualEnderRegistry.getEntry(getOwner(), type, name);
         var key = String.format("entry#%s_description", entry.getColorStr());
         var syncKey = PanelSyncManager.makeSyncKey(key, isPrivate ? 1 : 0);
@@ -382,7 +385,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             }
                             return true;
                         }))
-                .child(createSlotWidget(entry))
+                .child(createSlotWidget(entry, mainPanel, syncManager))
                 .child(new ButtonWidget<>()
                         .overlay(GTGuiTextures.BUTTON_CROSS)
                         .setEnabledIf(w -> !Objects.equals(entry.getColor(), activeEntry.getColor()))
@@ -399,7 +402,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                         }));
     }
 
-    protected abstract IWidget createSlotWidget(T entry);
+    protected abstract IWidget createSlotWidget(T entry, ModularPanel panel, PanelSyncManager syncManager);
 
     protected void deleteEntry(UUID player, String name) {
         VirtualEnderRegistry.deleteEntry(player, getType(), name, this::shouldDeleteEntry);
