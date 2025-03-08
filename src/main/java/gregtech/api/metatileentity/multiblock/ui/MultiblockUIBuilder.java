@@ -10,9 +10,8 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
-import gregtech.api.util.FluidStackHashStrategy;
+import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
@@ -32,8 +31,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.objects.Object2LongLinkedOpenCustomHashMap;
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -559,15 +557,10 @@ public class MultiblockUIBuilder {
 
         // items
 
-        Object2LongMap<ItemStack> itemMap = new Object2LongLinkedOpenCustomHashMap<>(
-                ItemStackHashStrategy.comparingAllButCount());
-
-        for (ItemStack stack : itemOutputs) {
-            itemMap.merge(stack, (long) stack.getCount(), Long::sum);
-        }
+        Object2IntMap<ItemStack> itemMap = GTHashMaps.fromItemStackCollection(itemOutputs);
 
         for (var stack : itemMap.keySet()) {
-            addItemOutputLine(stack, itemMap.getLong(stack), arl.getMaxProgress());
+            addItemOutputLine(stack, itemMap.getInt(stack), arl.getMaxProgress());
         }
 
         for (var chancedItemOutput : chancedItemOutputs) {
@@ -576,15 +569,10 @@ public class MultiblockUIBuilder {
 
         // fluids
 
-        Object2LongMap<FluidStack> fluidMap = new Object2LongLinkedOpenCustomHashMap<>(
-                FluidStackHashStrategy.comparingAllButAmount());
-
-        for (FluidStack stack : fluidOutputs) {
-            fluidMap.merge(stack, (long) stack.amount, Long::sum);
-        }
+        Object2IntMap<FluidStack> fluidMap = GTHashMaps.fromFluidCollection(fluidOutputs);
 
         for (var stack : fluidMap.keySet()) {
-            addFluidOutputLine(stack, fluidMap.getLong(stack), arl.getMaxProgress());
+            addFluidOutputLine(stack, fluidMap.getInt(stack), arl.getMaxProgress());
         }
 
         for (var chancedFluidOutput : chancedFluidOutputs) {
