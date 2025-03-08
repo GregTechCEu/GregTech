@@ -97,6 +97,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 
 import static gregtech.api.GregTechAPI.*;
@@ -215,8 +216,10 @@ public class CoreModule implements IGregTechModule {
         MetaEntities.init();
 
         /* Start API Block Registration */
-        for (BlockWireCoil.CoilType type : BlockWireCoil.getCoilTypes()) {
-            HEATING_COILS.put(MetaBlocks.WIRE_COIL.getState(type), type);
+        List<BlockWireCoil.CoilType> coilTypes = BlockWireCoil.getCoilTypes();
+        for (int i = 0; i < coilTypes.size(); i++) {
+            var type = coilTypes.get(i);
+            HEATING_COILS.put(MetaBlocks.WIRE_COILS[i / 8].getState(type), type);
         }
         for (BlockBatteryPart.BatteryPartType type : BlockBatteryPart.BatteryPartType.values()) {
             PSS_BATTERIES.put(MetaBlocks.BATTERY_BLOCK.getState(type), type);

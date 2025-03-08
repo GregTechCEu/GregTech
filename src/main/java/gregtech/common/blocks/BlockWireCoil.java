@@ -35,6 +35,8 @@ import java.util.List;
 
 public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
+    private static int index;
+
     public BlockWireCoil() {
         super(net.minecraft.block.material.Material.IRON);
         setTranslationKey("wire_coil");
@@ -53,7 +55,9 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
     @Override
     protected @NotNull Collection<CoilType> computeVariants() {
-        return Collections.unmodifiableCollection(CoilType.COIL_TYPES);
+        int min = 8 * index++;
+        int max = Math.min(min + 8, getCoilTypes().size());
+        return Collections.unmodifiableCollection(getCoilTypes().subList(min, max));
     }
 
     @Override
@@ -150,6 +154,12 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
                 .tier(GTValues.UV)
                 .coilTemp(10800)
                 .multiSmelter(16, 8)
+                .build();
+
+        public static final CoilType NEUTRONIUM = coilType(Materials.Neutronium)
+                .tier(GTValues.UHV)
+                .coilTemp(17800)
+                .multiSmelter(32, 16)
                 .build();
 
         public static Builder coilType(Material material) {

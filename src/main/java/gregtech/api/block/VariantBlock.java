@@ -166,6 +166,7 @@ public abstract class VariantBlock<T extends IStringSerializable & Comparable<T>
         protected PropertyIntMap(String name, Collection<O> values) {
             super(name, Integer.class);
             if (values.isEmpty()) throw new IllegalArgumentException("values are empty!");
+            if (values.size() > 16) throw new IllegalArgumentException("values cannot be greater than 16!");
 
             this.intMap = new Int2ObjectArrayMap<>(values.size());
             this.reverse = new Object2IntArrayMap<>(values.size());
