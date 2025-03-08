@@ -72,7 +72,6 @@ import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -847,8 +846,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void update() {
-        if (!getWorld().isRemote && !allowTickAcceleration()) {
-            int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        if (!allowTickAcceleration() && getWorld().getMinecraftServer() != null) {
+            int currentTick = getWorld().getMinecraftServer().getTickCounter();
             if (currentTick == lastTick) {
                 return;
             }
