@@ -8,8 +8,8 @@ import java.util.Objects;
 
 public interface FluidStackHashStrategy extends Hash.Strategy<FluidStack> {
 
-    static FluidStackHashStrategyBuilder builder() {
-        return new FluidStackHashStrategyBuilder();
+    static Builder builder() {
+        return new Builder();
     }
 
     static FluidStackHashStrategy comparingAll() {
@@ -25,21 +25,21 @@ public interface FluidStackHashStrategy extends Hash.Strategy<FluidStack> {
                 .build();
     }
 
-    class FluidStackHashStrategyBuilder {
+    class Builder {
 
         private boolean fluid, amount, nbt;
 
-        public FluidStackHashStrategyBuilder compareFluid(boolean choice) {
+        public Builder compareFluid(boolean choice) {
             this.fluid = choice;
             return this;
         }
 
-        public FluidStackHashStrategyBuilder compareAmount(boolean choice) {
+        public Builder compareAmount(boolean choice) {
             this.amount = choice;
             return this;
         }
 
-        public FluidStackHashStrategyBuilder compareNBT(boolean choice) {
+        public Builder compareNBT(boolean choice) {
             this.nbt = choice;
             return this;
         }
