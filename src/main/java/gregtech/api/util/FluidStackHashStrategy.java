@@ -12,33 +12,35 @@ public interface FluidStackHashStrategy extends Hash.Strategy<FluidStack> {
         return new FluidStackHashStrategyBuilder();
     }
 
-    FluidStackHashStrategy comparingAll = builder()
-            .compareFluid()
-            .compareAmount()
-            .compareNBT()
-            .build();
+    static FluidStackHashStrategy comparingAll() {
+        return builder().compareFluid(true)
+                .compareAmount(true)
+                .compareNBT(true)
+                .build();
+    }
 
-    FluidStackHashStrategy comparingAllButAmount = builder()
-            .compareFluid()
-            .compareNBT()
-            .build();
+    static FluidStackHashStrategy comparingAllButAmount() {
+        return builder().compareFluid(true)
+                .compareNBT(true)
+                .build();
+    }
 
     class FluidStackHashStrategyBuilder {
 
-        private boolean fluid, amount, nbt = false;
+        private boolean fluid, amount, nbt;
 
-        public FluidStackHashStrategyBuilder compareFluid() {
-            this.fluid = true;
+        public FluidStackHashStrategyBuilder compareFluid(boolean choice) {
+            this.fluid = choice;
             return this;
         }
 
-        public FluidStackHashStrategyBuilder compareAmount() {
-            this.amount = true;
+        public FluidStackHashStrategyBuilder compareAmount(boolean choice) {
+            this.amount = choice;
             return this;
         }
 
-        public FluidStackHashStrategyBuilder compareNBT() {
-            this.nbt = true;
+        public FluidStackHashStrategyBuilder compareNBT(boolean choice) {
+            this.nbt = choice;
             return this;
         }
 
