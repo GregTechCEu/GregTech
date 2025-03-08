@@ -577,7 +577,7 @@ public class MultiblockUIBuilder {
         // fluids
 
         Object2LongMap<FluidStack> fluidMap = new Object2LongLinkedOpenCustomHashMap<>(
-                FluidStackHashStrategy.comparingAllButAmount);
+                FluidStackHashStrategy.comparingAllButAmount());
 
         for (FluidStack stack : fluidOutputs) {
             fluidMap.merge(stack, (long) stack.amount, Long::sum);
