@@ -7,11 +7,9 @@ import gregtech.api.block.VariantItemBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.util.GTUtility;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
-import gregtech.core.unification.material.internal.MaterialRegistryManager;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -21,7 +19,6 @@ import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -56,7 +53,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
     @Override
     protected @NotNull Collection<CoilType> computeVariants() {
-        return Collections.unmodifiableCollection(CoilType.REGISTERED_TYPES);
+        return Collections.unmodifiableCollection(CoilType.COIL_TYPES);
     }
 
     @Override
@@ -99,11 +96,15 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         return ConfigHolder.client.coilsActiveEmissiveTextures;
     }
 
+    public static List<CoilType> getCoilTypes() {
+        return Collections.unmodifiableList(CoilType.COIL_TYPES);
+    }
+
     public static abstract class CoilType implements IStringSerializable, IHeatingCoilBlockStats, Comparable<CoilType> {
 
-        public static final List<CoilType> REGISTERED_TYPES = new ArrayList<>();
+        private static final List<CoilType> COIL_TYPES = new ArrayList<>();
 
-        public static final CoilType CUPRONICKEL = coilType("cupronickel")
+        public static final CoilType CUPRONICKEL = coilType(Materials.Cupronickel)
                 .tier(GTValues.LV)
                 .coilTemp(1800)
                 .multiSmelter(1, 1)
@@ -127,7 +128,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
                 .multiSmelter(4, 2)
                 .build();
 
-        public static final CoilType HSS_G = coilType(Materials.HSSG)
+        public static final CoilType HSS_G = coilType("hss_g", Materials.HSSG)
                 .tier(GTValues.IV)
                 .coilTemp(5400)
                 .multiSmelter(4, 4)
@@ -155,16 +156,12 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             return new Builder(material);
         }
 
-        public static Builder coilType(String material) {
-            return coilType(GTUtility.gregtechId(material));
-        }
-
-        public static Builder coilType(ResourceLocation material) {
-            return new Builder(material.getPath(), material.toString());
+        public static Builder coilType(String name, Material material) {
+            return new Builder(name, material);
         }
 
         public CoilType() {
-            REGISTERED_TYPES.add(this);
+            COIL_TYPES.add(this);
         }
 
         @Override
@@ -189,9 +186,9 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             this.name = material.getResourceLocation().getPath();
         }
 
-        private Builder(String name, String material) {
+        private Builder(String name, Material material) {
+            this.material = material;
             this.name = name;
-            this.material = MaterialRegistryManager.getInstance().getMaterial(material);
         }
 
         public Builder coilTemp(int coilTemperature) {

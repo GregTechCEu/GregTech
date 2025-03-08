@@ -34,8 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class VariantBlock<T extends IStringSerializable & Comparable<T>> extends Block
-                                   {
+public abstract class VariantBlock<T extends IStringSerializable & Comparable<T>> extends Block {
 
     protected PropertyIntMap<T> VARIANT;
     protected T[] VALUES;
@@ -156,7 +155,8 @@ public abstract class VariantBlock<T extends IStringSerializable & Comparable<T>
         return (Class<T>) pType.getActualTypeArguments()[0];
     }
 
-    protected static class PropertyIntMap<O extends Comparable<O> & IStringSerializable> extends PropertyHelper<Integer> {
+    protected static class PropertyIntMap<O extends Comparable<O> & IStringSerializable>
+                                         extends PropertyHelper<Integer> {
 
         private final Int2ObjectMap<O> intMap;
         private final Object2IntMap<O> reverse;
