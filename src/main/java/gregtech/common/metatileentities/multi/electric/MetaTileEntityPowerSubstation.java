@@ -600,12 +600,9 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     public static class PowerStationEnergyBank {
-
         private static final String NBT_SIZE = "Size";
         private static final String NBT_STORED = "Stored";
         private static final String NBT_MAX = "Max";
-        public static final String NBT_DRAIN = "Drain";
-        public static final String NBT_DRAIN_MOD = "Drain_Mod";
         private final long[] stored = new long[2], max = new long[2];
         private BigInteger capacity;
         private long drain, drainMod;
@@ -631,10 +628,6 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
             } else {
                 stored[0] = storageTag.getLong(NBT_STORED + "0");
                 stored[1] = storageTag.getLong(NBT_STORED + "1");
-                max[0] = storageTag.getLong(NBT_MAX + "0");
-                max[1] = storageTag.getLong(NBT_MAX + "1");
-                drain = storageTag.getLong(NBT_DRAIN);
-                drainMod = storageTag.getLong(NBT_DRAIN_MOD);
             }
             capacity = summarize(max);
         }
@@ -642,10 +635,6 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         public NBTTagCompound writeToNBT(NBTTagCompound compound) {
             compound.setLong(NBT_STORED + "0", stored[0]);
             compound.setLong(NBT_STORED + "1", stored[1]);
-            compound.setLong(NBT_MAX + "0", max[0]);
-            compound.setLong(NBT_MAX + "1", max[1]);
-            compound.setLong(NBT_DRAIN, drain);
-            compound.setLong(NBT_DRAIN_MOD, drainMod);
             return compound;
         }
 
