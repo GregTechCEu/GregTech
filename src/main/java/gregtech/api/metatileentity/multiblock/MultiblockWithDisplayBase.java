@@ -5,7 +5,6 @@ import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.*;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
@@ -13,6 +12,8 @@ import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.IndicatorImageWidget;
 import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
@@ -33,9 +34,13 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.BiFunction;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
@@ -45,6 +50,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private static final String NBT_VOIDING_MODE = "VoidingMode";
     private static final String NBT_VOIDING_ITEMS = "VoidingItems";
     private static final String NBT_VOIDING_FLUIDS = "VoidingFluids";
+    private MultiblockUIFactory uiFactory;
 
     private boolean voidingItems = false;
     private boolean voidingFluids = false;
@@ -355,6 +361,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * each element of list is displayed on new line
      * to use translation, use TextComponentTranslation
      */
+    @Deprecated
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed());
     }
@@ -364,8 +371,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * with special click event handler
      * Data is the data specified in the component
      */
+    @Deprecated
     protected void handleDisplayClick(String componentData, ClickData clickData) {}
 
+    @Deprecated
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 198, 208);
 
@@ -447,7 +456,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (shouldShowVoidingModeButton()) {
             builder.widget(new ImageCycleButtonWidget(173, 161, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
                     4, this::getVoidingMode, this::setVoidingMode)
-                            .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
+                            .setTooltipHoverString(this::getVoidingModeTooltip));
         } else {
             builder.widget(new ImageWidget(173, 161, 18, 18, GuiTextures.BUTTON_VOID_NONE)
                     .setTooltip("gregtech.gui.multiblock_voiding_not_supported"));
@@ -472,15 +481,17 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     /**
-     * Add a custom third button to the Multiblock UI. By default, this is a placeholder
-     * stating that there is no additional functionality for this Multiblock.
+     * Add a custom third button to the Multiblock UI. By default, this is a placeholder stating that there is no
+     * additional functionality for this Multiblock.
      * <br>
      * <br>
      * Parameters should be passed directly to the created widget. Size will be 18x18.
+     *
+     * @deprecated override {@link MultiblockUIFactory#createFlexButton(BiFunction)}
      */
+    @Deprecated
     @SuppressWarnings("SameParameterValue")
-    @NotNull
-    protected Widget getFlexButton(int x, int y, int width, int height) {
+    protected gregtech.api.gui.@NotNull Widget getFlexButton(int x, int y, int width, int height) {
         return new ImageWidget(x, y, width, height, GuiTextures.BUTTON_NO_FLEX)
                 .setTooltip("gregtech.multiblock.universal.no_flex_button");
     }
@@ -501,6 +512,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Returns a list of text indicating any current warnings in this Multiblock.
      * Recommended to only display warnings if the structure is already formed.
      */
+    @Deprecated
     protected void addWarningText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addMaintenanceProblemLines(getMaintenanceProblems());
@@ -510,20 +522,21 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Returns a list of translation keys indicating any current errors in this Multiblock.
      * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#addWarningText}.
      */
+    @Deprecated
     protected void addErrorText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .addMufflerObstructedLine(hasMufflerMechanics() && !isMufflerFaceFree());
     }
 
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return true;
     }
 
-    protected int getVoidingMode() {
+    public final int getVoidingMode() {
         return voidingMode.ordinal();
     }
 
-    protected void setVoidingMode(int mode) {
+    public final void setVoidingMode(int mode) {
         this.voidingMode = VoidingMode.VALUES[mode];
 
         this.voidingFluids = mode >= 2;
@@ -541,8 +554,32 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         markDirty();
     }
 
-    protected static String getVoidingModeTooltip(int mode) {
+    public @NotNull String getVoidingModeTooltip(int mode) {
         return VoidingMode.VALUES[mode].getName();
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    protected void configureDisplayText(MultiblockUIBuilder builder) {}
+
+    protected void configureErrorText(MultiblockUIBuilder builder) {}
+
+    protected void configureWarningText(MultiblockUIBuilder builder) {}
+
+    protected MultiblockUIFactory createUIFactory() {
+        return new MultiblockUIFactory(this)
+                .configureDisplayText(this::configureDisplayText)
+                .configureWarningText(this::configureWarningText)
+                .configureErrorText(this::configureErrorText);
+    }
+
+    @Override
+    public final ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+        if (uiFactory == null) uiFactory = createUIFactory();
+        return this.uiFactory.buildUI(guiData, panelSyncManager);
     }
 
     @Override
