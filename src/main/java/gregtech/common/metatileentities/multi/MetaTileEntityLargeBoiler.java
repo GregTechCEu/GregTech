@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi;
 
 import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.BoilerLogic;
 import gregtech.api.capability.impl.CommonFluidFilters;
@@ -32,12 +33,14 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -64,7 +67,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     private int throttlePercentage = 100;
 
-    private boolean workingEnabled;
+    private boolean workingEnabled = true;
 
     public MetaTileEntityLargeBoiler(ResourceLocation metaTileEntityId, BoilerType boilerType) {
         super(metaTileEntityId);
@@ -120,10 +123,22 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                 "gregtech.multiblock.large_boiler.steam_output",
                                 steamOutput));
 
+                        // Temperature line
+                        int temp = logic.getChassisTemperature(logic.getChassisHeat());
+                        ITextComponent temperature = TextComponentUtil.stringWithColor(TextFormatting.RED,
+                                TextFormattingUtil.formatNumbers(temp) + "K");
+
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.large_boiler.temperature",
+                                temperature));
+
                         // Efficiency line
-                        int heat = logic.getChassisHeat();
-                        int loss = logic.getHeatLoss(logic.getChassisTemperature(heat));
-                        double eff = (double) (heat - loss) / heat;
+                        int convert = logic.getWaterBoilAmount(temp) * BoilerLogic.EU_PER_WATER;
+                        int loss = logic.getHeatLoss(temp);
+                        // the efficiency is EU converted to steam divided by total EU spent.
+                        double eff = 100D * convert / (convert + loss);
+                        if (Double.isNaN(eff)) eff = 0;
                         ITextComponent efficiency = TextComponentUtil.stringWithColor(
                                 getNumberColor(eff * 100), TextFormattingUtil.formatNumbers(eff) + "%");
 
@@ -286,12 +301,14 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         data.setInteger("ThrottlePercentage", throttlePercentage);
+        data.setTag("Logic", logic.serializeNBT());
         return super.writeToNBT(data);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         throttlePercentage = data.getInteger("ThrottlePercentage");
+        logic.deserializeNBT(data.getCompoundTag("Logic"));
         super.readFromNBT(data);
     }
 
@@ -414,5 +431,13 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             workingEnabled = buf.readBoolean();
         }
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+        return super.getCapability(capability, side);
     }
 }

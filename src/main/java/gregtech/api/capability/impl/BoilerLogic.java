@@ -29,6 +29,7 @@ public class BoilerLogic {
     public static final int STEAM_PER_WATER = 160;
     public static final int EU_PER_WATER = 160;
     public static final int EU_PER_SOLID_BURNTIME = 20;
+    public static final int SAFETY_CUTOFF = 473;
 
     private static final int BUFFER_TICKS = 80;
 
@@ -71,7 +72,7 @@ public class BoilerLogic {
     }
 
     public int getHeatLoss(int chassisTemperature) {
-        return (int) Math.sqrt(chassisTemperature - getAmbientTemperature());
+        return chassisTemperature - getAmbientTemperature();
     }
 
     protected int getAmbientTemperature() {
@@ -79,20 +80,13 @@ public class BoilerLogic {
     }
 
     /**
-     * @return target EU generation, such that EU transferred into the chassis matches the amount of EU used to boil
-     *         water at maximum chassis temperature.
+     * @return target EU generation, such that EU transferred into the chassis matches the amount of EU used at
+     *         maximum chassis temperature, modified by throttle.
      */
     protected int targetFuelEUGeneration() {
         if (targetEUt != -1) return adjustEUtForThrottle(targetEUt);
-        return adjustEUtForThrottle(
-                targetEUt = getWaterBoilAmount(boilerType.maximumChassisTemperature()) * EU_PER_WATER);
-    }
-
-    /**
-     * @return the maximum temperature the boiler can be at when water is introduced without exploding.
-     */
-    protected int safetyCutoff() {
-        return 473;
+        return adjustEUtForThrottle(targetEUt = getWaterBoilAmount(boilerType.maximumChassisTemperature()) *
+                EU_PER_WATER + getHeatLoss(boilerType.maximumChassisTemperature()));
     }
 
     protected int tryDrainWater(final int amount) {
@@ -151,7 +145,7 @@ public class BoilerLogic {
             ItemStack extract = items.extractItem(i, Integer.MAX_VALUE, true);
             // don't burn something that has a container.
             if (extract.getItem().hasContainerItem(extract)) continue;
-            int burn = TileEntityFurnace.getItemBurnTime(extract);
+            int burn = TileEntityFurnace.getItemBurnTime(extract) * EU_PER_SOLID_BURNTIME;
             if (burn > 0) {
                 int consumption = 1;
                 // TODO make this a binary search
@@ -219,11 +213,13 @@ public class BoilerLogic {
     public void update() {
         if (boiler.canOperate() && getChassisTemperature(chassisHeat) < boilerType.maximumChassisTemperature()) {
             int generation = targetFuelEUGeneration();
-            if (remainingBurnEU > generation) {
+            if (remainingBurnEU <= generation * 5) {
+                tryStartNextBurn();
+                generation = Math.min(remainingBurnEU, generation);
+            }
+            if (remainingBurnEU > 0) {
                 remainingBurnEU -= generation;
                 chassisHeat += generation * getBurnEfficiencyFromMaintenance();
-            } else {
-                tryStartNextBurn();
             }
         }
         int temperature = getChassisTemperature(chassisHeat);
@@ -233,8 +229,8 @@ public class BoilerLogic {
         if (boil == 0) {
             isDry = true;
         } else if (isDry) {
-            if (temperature > safetyCutoff()) {
-                boiler.explodeMultiblock(8.0f * temperature / boilerType.maximumChassisTemperature());
+            if (temperature > SAFETY_CUTOFF) {
+                boiler.explodeMultiblock((float) Math.pow(temperature, 0.3));
                 return;
             }
             isDry = false;

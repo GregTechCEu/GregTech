@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
+import gregtech.api.recipes.logic.statemachine.running.RecipeFinalizer;
 import gregtech.api.recipes.logic.statemachine.running.RecipeProgressOperation;
 import gregtech.api.recipes.logic.workable.RecipeWorkable;
 import gregtech.api.recipes.lookup.property.CleanroomFulfilmentProperty;
@@ -24,6 +25,7 @@ import gregtech.client.renderer.ICubeRenderer;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -319,17 +321,27 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
         return recipeMap.getSound();
     }
 
+    protected double recipeProgressPercent() {
+        NBTTagCompound recipe = RecipeFinalizer.getFirstActiveRecipe(workable.getProgressAndComplete().logicData());
+        if (recipe == null) return 0;
+        return RecipeFinalizer.progress(recipe) / RecipeFinalizer.duration(recipe);
+    }
+
     @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
 
-        // TODO multiple recipe display
-        // list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
-        // new TextComponentTranslation(TextFormattingUtil.formatNumbers(progress() / 20))
-        // .setStyle(new Style().setColor(TextFormatting.GREEN)),
-        // new TextComponentTranslation(TextFormattingUtil.formatNumbers(maxProgress() / 20))
-        // .setStyle(new Style().setColor(TextFormatting.YELLOW))));
+        NBTTagCompound recipe = RecipeFinalizer.getFirstActiveRecipe(workable.getProgressAndComplete().logicData());
+        if (recipe != null) {
+            list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
+                    new TextComponentTranslation(
+                            TextFormattingUtil.formatNumbers(RecipeFinalizer.progress(recipe) / 20))
+                                    .setStyle(new Style().setColor(TextFormatting.GREEN)),
+                    new TextComponentTranslation(
+                            TextFormattingUtil.formatNumbers(RecipeFinalizer.duration(recipe) / 20))
+                                    .setStyle(new Style().setColor(TextFormatting.YELLOW))));
+        }
 
         if (energyContainer != null) {
             list.add(new TextComponentTranslation("behavior.tricorder.workable_stored_energy",
@@ -339,27 +351,25 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
                     new TextComponentTranslation(
                             TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()))
                                     .setStyle(new Style().setColor(TextFormatting.YELLOW))));
-            // }
-            // if (isRecipeSelected()) {
-            // if (isGenerating()) {
-            // list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
-            // new TextComponentTranslation(
-            // TextFormattingUtil.formatNumbers(recipeEUt()))
-            // .setStyle(new Style().setColor(TextFormatting.RED)),
-            // new TextComponentTranslation(
-            // TextFormattingUtil.formatNumbers(recipeEUt() == 0 ? 0 :
-            // recipeAmperage()))
-            // .setStyle(new Style().setColor(TextFormatting.RED))));
-            // } else {
-            // list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
-            // new TextComponentTranslation(
-            // TextFormattingUtil.formatNumbers(recipeEUt()))
-            // .setStyle(new Style().setColor(TextFormatting.RED)),
-            // new TextComponentTranslation(
-            // TextFormattingUtil.formatNumbers(recipeEUt() == 0 ? 0 :
-            // recipeAmperage()))
-            // .setStyle(new Style().setColor(TextFormatting.RED))));
-            // }
+        }
+        if (recipe != null) {
+            if (RecipeFinalizer.isGenerating(recipe)) {
+                list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
+                        new TextComponentTranslation(
+                                TextFormattingUtil.formatNumbers(RecipeFinalizer.voltage(recipe)))
+                                        .setStyle(new Style().setColor(TextFormatting.RED)),
+                        new TextComponentTranslation(
+                                TextFormattingUtil.formatNumbers(RecipeFinalizer.amperage(recipe)))
+                                        .setStyle(new Style().setColor(TextFormatting.RED))));
+            } else {
+                list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
+                        new TextComponentTranslation(
+                                TextFormattingUtil.formatNumbers(RecipeFinalizer.voltage(recipe)))
+                                        .setStyle(new Style().setColor(TextFormatting.RED)),
+                        new TextComponentTranslation(
+                                TextFormattingUtil.formatNumbers(RecipeFinalizer.amperage(recipe)))
+                                        .setStyle(new Style().setColor(TextFormatting.RED))));
+            }
         }
         return list;
     }

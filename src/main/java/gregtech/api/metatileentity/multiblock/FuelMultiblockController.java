@@ -10,7 +10,6 @@ import gregtech.api.recipes.logic.statemachine.builder.RecipeStallType;
 import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
 import gregtech.api.recipes.logic.statemachine.overclock.RecipeNoOverclockingOperator;
 import gregtech.api.recipes.logic.statemachine.running.RecipeCleanupSaveOperation;
-import gregtech.api.recipes.logic.statemachine.running.RecipeFinalizingOperator;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
@@ -193,7 +192,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
     }
 
     /**
-     * See {@link RecipeFinalizingOperator} for encoding pattern.
+     * See {@link gregtech.api.recipes.logic.statemachine.running.RecipeFinalizer} for encoding pattern.
      */
     protected @Nullable NBTTagCompound getMostUpToDateRecipe() {
         // TODO multiple recipe display

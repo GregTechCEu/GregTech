@@ -108,10 +108,9 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
 
         ModularUI.Builder builder;
         if (handlesRecipeOutputs)
-            // TODO multiple recipe display
-            builder = recipeMap.getRecipeMapUI().createUITemplate(/* this::recipeProgressPercent */() -> 0,
+            builder = recipeMap.getRecipeMapUI().createUITemplate(this::recipeProgressPercent,
                     importItems, exportItems, importFluids, exportFluids, yOffset);
-        else builder = recipeMap.getRecipeMapUI().createUITemplateNoOutputs(/* this::recipeProgressPercent */() -> 0,
+        else builder = recipeMap.getRecipeMapUI().createUITemplateNoOutputs(this::recipeProgressPercent,
                 importItems,
                 exportItems, importFluids, exportFluids, yOffset);
         builder.widget(new LabelWidget(6, 6, getMetaFullName()))

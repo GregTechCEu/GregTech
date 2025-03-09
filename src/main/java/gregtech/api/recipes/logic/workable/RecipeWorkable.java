@@ -132,7 +132,9 @@ public class RecipeWorkable extends MTETrait {
                 }
             }
         }
-        if (getSupport().areOutputsClogged()) return;
+        // do not recipe lookup if we are on the remote world, this will lead to the client seeing input consumptions
+        // that the server does not.
+        if (getSupport().areOutputsClogged() || getMetaTileEntity().getWorld().isRemote) return;
         // progress recipe lookup
         if (lookupAndSetup.isLogicEnabled() && lookupAndSetup.hasAsyncWalkCompleted()) {
             if (lookupAndSetup.logicPosition() < 0) {

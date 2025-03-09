@@ -61,7 +61,7 @@ public class RecipeRunCheckOperator implements GTStateMachineTransientOperator {
         Int2IntOpenHashMap fluidConsumptions = new Int2IntOpenHashMap();
         if (itemHandler != null) {
             for (ItemStack stack : items) {
-                if (stack == null) continue;
+                if (stack == null || stack.isEmpty()) continue;
                 int req = stack.getCount();
                 for (int i = 0; i < itemHandler.getSlots(); i++) {
                     int taken = itemConsumptions.get(i);
@@ -77,7 +77,7 @@ public class RecipeRunCheckOperator implements GTStateMachineTransientOperator {
         }
         if (fluidHandler != null) {
             for (FluidStack stack : fluids) {
-                if (stack == null) continue;
+                if (stack == null || stack.amount <= 0) continue;
                 int req = stack.amount;
                 for (int i = 0; i < fluidHandler.getTanks(); i++) {
                     int taken = fluidConsumptions.get(i);

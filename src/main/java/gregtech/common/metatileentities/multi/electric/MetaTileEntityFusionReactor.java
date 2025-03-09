@@ -36,7 +36,6 @@ import gregtech.api.recipes.logic.statemachine.RecipeRunCheckOperator;
 import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
 import gregtech.api.recipes.logic.statemachine.overclock.RecipeStandardOverclockingOperator;
 import gregtech.api.recipes.logic.statemachine.running.RecipeCleanupSaveOperation;
-import gregtech.api.recipes.logic.statemachine.running.RecipeFinalizingOperator;
 import gregtech.api.recipes.lookup.property.EUToStartProperty;
 import gregtech.api.recipes.lookup.property.PowerCapacityProperty;
 import gregtech.api.recipes.lookup.property.PowerSupplyProperty;
@@ -371,7 +370,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     }
 
     /**
-     * See {@link RecipeFinalizingOperator} for encoding pattern.
+     * See {@link gregtech.api.recipes.logic.statemachine.running.RecipeFinalizer} for encoding pattern.
      */
     protected @Nullable NBTTagCompound getMostUpToDateRecipe() {
         // TODO multiple recipe display

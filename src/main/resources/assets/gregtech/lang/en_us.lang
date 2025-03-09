@@ -5836,15 +5836,16 @@ gregtech.multiblock.turbine.obstructed.desc=Turbine must have air space in the 3
 gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 adds §f10%% efficiency§7.
 
 gregtech.multiblock.large_boiler.efficiency=Efficiency: %s
+gregtech.multiblock.large_boiler.temperature=Chassis Temperature: %s
 gregtech.multiblock.large_boiler.steam_output=Steam Output: %s
 gregtech.multiblock.large_boiler.throttle=Throttle: %s
-gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
-gregtech.multiblock.large_boiler.throttle_increment=Increase throttle by §a+5%%§r/n§7Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
-gregtech.multiblock.large_boiler.throttle_decrement=Decrease throttle by §c-5%%§r/n§7Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
+gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can consume less fuel to operate at a lower temperature and produce less steam (efficiency will be lost, but not as much as when the boiler stalls or voids steam)
+gregtech.multiblock.large_boiler.throttle_increment=Increase throttle by §a+5%%§r/n§7Boiler can consume less fuel to operate at a lower temperature
+gregtech.multiblock.large_boiler.throttle_decrement=Decrease throttle by §c-5%%§r/n§7Boiler can consume less fuel to operate at a lower temperature
 gregtech.multiblock.large_boiler.rate_tooltip=§7Produces §f%d L §7of Steam with §f1 Coal
 gregtech.multiblock.large_boiler.heat_time_tooltip=§7Has a max temperature of §f%,d K §7and a thermal inertia of §f%,d
-gregtech.multiblock.large_boiler.max_rate_tooltip=§7Produces §f%,d L/t of steam at maximum temperature.
-gregtech.multiblock.large_boiler.explosion_tooltip=Will explode if provided Fuel with no Water
+gregtech.multiblock.large_boiler.max_rate_tooltip=§7Produces §f%,d L/t §7of steam at maximum temperature.
+gregtech.multiblock.large_boiler.explosion_tooltip=Will explode if dry and provided Water when chassis is hotter than 473 K!
 gregtech.multiblock.large_boiler.water_bar_hover=Water: %s
 gregtech.multiblock.large_boiler.no_water=No Water!
 

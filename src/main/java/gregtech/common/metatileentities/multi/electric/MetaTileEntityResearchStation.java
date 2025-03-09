@@ -83,7 +83,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
             holder.setLocked(true);
             return true;
         }).setOutputOperation(() -> workerNBT -> {
-            NBTTagCompound recipe = workerNBT.getCompoundTag(RecipeCleanupOperation.STANDARD_RECIPE_KEY);
+            NBTTagCompound recipe = RecipeCleanupOperation.selected(workerNBT);
             NBTTagList list = recipe.getTagList("ItemsOut", Constants.NBT.TAG_COMPOUND);
             IObjectHolder holder = getObjectHolder();
             holder.setHeldItem(ItemStack.EMPTY);
@@ -127,7 +127,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                 })
                 .setProgressOperationOverride((b, s) -> {
                     b.andThenDefault(d -> {
-                        NBTTagCompound recipe = d.getCompoundTag(RecipeCleanupOperation.STANDARD_RECIPE_KEY);
+                        NBTTagCompound recipe = RecipeCleanupOperation.selected(d);
                         if (!d.getBoolean("RecipeCheckSuccess")) {
                             if (s == RecipeStallType.RESET) {
                                 recipe.setInteger(RecipeProgressOperation.STANDARD_PROGRESS_KEY, 0);

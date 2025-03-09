@@ -35,9 +35,7 @@ import gregtech.api.util.GTUtility;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -399,8 +397,8 @@ public class RecipeStandardStateMachineBuilder {
                 }
                 if (next.run().getRequiredAmperage() > availableAmperage) return;
                 if (finalCheck.test(next.run)) {
-                    if (!data.hasKey("ActiveRecipes")) data.setTag("ActiveRecipes", new NBTTagList());
-                    data.getTagList("ActiveRecipes", Constants.NBT.TAG_COMPOUND).appendTag(next.finalized);
+                    RecipeFinalizer.ensureTagList(data);
+                    RecipeFinalizer.getActiveRecipes(data).appendTag(next.finalized);
                     if (onRecipeStarted != null) onRecipeStarted.accept(next.finalized);
                 }
             }
@@ -412,17 +410,14 @@ public class RecipeStandardStateMachineBuilder {
             else d.setInteger("Index", 0);
         }, false);
         int indexIncrement = builder.getPointer();
-        builder.andThenIf(
-                d -> d.getInteger("Index") >= d.getTagList("ActiveRecipes", Constants.NBT.TAG_COMPOUND).tagCount(),
+        builder.andThenIf(d -> d.getInteger("Index") >= RecipeFinalizer.activeRecipeCount(d),
                 d -> d.removeTag("Index"), false);
         int indexPosCheck = builder.getPointer();
         builder.movePointerBack().andThenDefault(d -> d.setTag(RecipeCleanupOperation.STANDARD_RECIPE_KEY,
-                d.getTagList(RecipeFinalizer.STANDARD_RECIPES_KEY, Constants.NBT.TAG_COMPOUND)
-                        .getCompoundTagAt(d.getInteger("Index"))),
-                false);
+                RecipeFinalizer.recipeAtPosition(d.getInteger("Index"), d)), false);
 
         builder.andThenDefault(d -> d.setBoolean("RecipeCheckSuccess", d.getBoolean("TickCheckSuccess") &&
-                perTickRecipeCheck.test(d.getCompoundTag(RecipeCleanupOperation.STANDARD_RECIPE_KEY))), false);
+                perTickRecipeCheck.test(RecipeCleanupOperation.selected(d))), false);
         if (progressOperationOverride == null) {
             if (stallType == RecipeStallType.DEGRESS) {
                 builder.andThenDefault(RecipeDegressOperation.STANDARD_INSTANCE, false);
@@ -441,13 +436,11 @@ public class RecipeStandardStateMachineBuilder {
         if (onRecipeCompleted != null) {
             // do not save the cleanup to nbt unless onRecipeCompleted was notified successfully.
             builder.andThenDefaultTransient(cleanupOperator, false);
-            builder.andThenDefault(
-                    d -> onRecipeCompleted.accept(d.getCompoundTag(RecipeCleanupOperation.STANDARD_RECIPE_KEY)), false);
+            builder.andThenDefault(d -> onRecipeCompleted.accept(RecipeCleanupOperation.selected(d)), false);
         } else {
             builder.andThenDefault(cleanupOperator, false);
         }
-        builder.andThenDefault(
-                d -> d.getTagList("ActiveRecipes", Constants.NBT.TAG_COMPOUND).removeTag(d.getInteger("Index")), false);
+        builder.andThenDefault(d -> RecipeFinalizer.getActiveRecipes(d).removeTag(d.getInteger("Index")), false);
         builder.andThenToDefault(indexPosCheck);
     }
 

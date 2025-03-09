@@ -487,8 +487,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         }
 
         ModularUI.Builder builder = recipeMap.getRecipeMapUI()
-                // TODO multiple recipe display
-                .createUITemplate(/* this::recipeProgressPercent */ () -> 0, importItems, exportItems, importFluids,
+                .createUITemplate(this::recipeProgressPercent, importItems, exportItems, importFluids,
                         exportFluids,
                         yOffset)
                 .widget(new LabelWidget(5, 5, getMetaFullName()))

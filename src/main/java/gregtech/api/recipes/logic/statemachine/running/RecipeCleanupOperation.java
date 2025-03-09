@@ -50,7 +50,11 @@ public class RecipeCleanupOperation implements GTStateMachineOperator {
 
     @Contract(pure = true)
     public static @NotNull Predicate<NBTTagCompound> recipeIsComplete(String keyRecipe, String keyProgress) {
-        return t -> t.getCompoundTag(keyRecipe).getInteger(keyProgress) >
+        return t -> t.getCompoundTag(keyRecipe).getInteger(keyProgress) >=
                 t.getCompoundTag(keyRecipe).getDouble("Duration");
+    }
+
+    public static NBTTagCompound selected(NBTTagCompound workerNBT) {
+        return workerNBT.getCompoundTag(STANDARD_RECIPE_KEY);
     }
 }
