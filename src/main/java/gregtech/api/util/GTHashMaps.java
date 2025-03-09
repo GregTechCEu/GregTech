@@ -1,7 +1,5 @@
 package gregtech.api.util;
 
-import gregtech.api.recipes.FluidKey;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -97,12 +95,20 @@ public final class GTHashMaps {
         return map;
     }
 
+    /**
+     * @param linked if the map should respect the order that keys are added
+     * @return an Object2IntMap
+     */
     @NotNull
     public static Object2IntMap<ItemStack> createItemStackMap(boolean linked) {
         ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingAllButCount();
         return linked ? new Object2IntLinkedOpenCustomHashMap<>(strategy) : new Object2IntOpenCustomHashMap<>(strategy);
     }
 
+    /**
+     * @param linked if the map should respect the order that keys are added
+     * @return an Object2IntMap
+     */
     @NotNull
     public static Object2IntMap<FluidStack> createFluidStackMap(boolean linked) {
         var strategy = FluidStackHashStrategy.comparingAllButAmount();
@@ -110,10 +116,10 @@ public final class GTHashMaps {
     }
 
     /**
-     * Maps all fluids in the {@link IFluidHandler} into a {@link FluidKey}, {@link Integer} value as amount
+     * Maps all fluids in the {@link IFluidHandler} into a {@link FluidStack}, {@link Integer} value as amount
      *
      * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
-     * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if
+     * @return a {@link Set} of unique {@link FluidStack}s for each fluid in the handler. Will be oversized stacks if
      *         required
      */
     public static Object2IntMap<FluidStack> fromFluidHandler(IFluidHandler fluidInputs) {
@@ -121,10 +127,10 @@ public final class GTHashMaps {
     }
 
     /**
-     * Maps all fluids in the {@link IFluidHandler} into a {@link FluidKey}, {@link Integer} value as amount
+     * Maps all fluids in the {@link IFluidHandler} into a {@link FluidStack}, {@link Integer} value as amount
      *
      * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
-     * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if
+     * @return a {@link Set} of unique {@link FluidStack}s for each fluid in the handler. Will be oversized stacks if
      *         required
      */
     public static Object2IntMap<FluidStack> fromFluidHandler(IFluidHandler fluidInputs, boolean linked) {
@@ -134,7 +140,7 @@ public final class GTHashMaps {
 
         for (var prop : fluidInputs.getTankProperties()) {
             FluidStack fluidStack = prop.getContents();
-            if (fluidStack == null || fluidStack.amount <= 0)
+            if (GTUtility.isEmpty(fluidStack))
                 continue;
 
             if (map.containsKey(fluidStack)) {
@@ -148,11 +154,11 @@ public final class GTHashMaps {
     }
 
     /**
-     * Maps all fluids in the {@link FluidStack} {@link Collection} into a {@link FluidKey}, {@link Integer} value as
+     * Maps all fluids in the {@link FluidStack} {@link Collection} into a {@link FluidStack}, {@link Integer} value as
      * amount
      *
      * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
-     * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if
+     * @return a {@link Set} of unique {@link FluidStack}s for each fluid in the handler. Will be oversized stacks if
      *         required
      */
     public static Object2IntMap<FluidStack> fromFluidCollection(Collection<FluidStack> fluidInputs) {
@@ -160,11 +166,11 @@ public final class GTHashMaps {
     }
 
     /**
-     * Maps all fluids in the {@link FluidStack} {@link Collection} into a {@link FluidKey}, {@link Integer} value as
+     * Maps all fluids in the {@link FluidStack} {@link Collection} into a {@link FluidStack}, {@link Integer} value as
      * amount
      *
      * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
-     * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if
+     * @return a {@link Set} of unique {@link FluidStack}s for each fluid in the handler. Will be oversized stacks if
      *         required
      */
     public static Object2IntMap<FluidStack> fromFluidCollection(Collection<FluidStack> fluidInputs, boolean linked) {
@@ -173,7 +179,7 @@ public final class GTHashMaps {
         // Create a single stack of the combined count for each item
 
         for (FluidStack fluidStack : fluidInputs) {
-            if (fluidStack == null || fluidStack.amount <= 0)
+            if (GTUtility.isEmpty(fluidStack))
                 continue;
 
             if (map.containsKey(fluidStack)) {
