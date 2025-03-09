@@ -45,6 +45,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -140,7 +141,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         if (this.energyBank == null) {
             this.energyBank = new PowerStationEnergyBank(parts);
         } else {
-            this.energyBank = energyBank.rebuild(parts);
+            this.energyBank.rebuild(parts);
         }
         this.passiveDrain = this.energyBank.getPassiveDrainPerTick();
     }
@@ -603,46 +604,59 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         private static final String NBT_SIZE = "Size";
         private static final String NBT_STORED = "Stored";
         private static final String NBT_MAX = "Max";
-
-        private final long[] storage;
-        private final long[] maximums;
-        private final BigInteger capacity;
-        private int index;
+        public static final String NBT_DRAIN = "Drain";
+        private final long[] stored = new long[2], max = new long[2];
+        private BigInteger capacity;
+        private long drain, drainMod;
 
         public PowerStationEnergyBank(List<IBatteryData> batteries) {
-            storage = new long[batteries.size()];
-            maximums = new long[batteries.size()];
-            for (int i = 0; i < batteries.size(); i++) {
-                maximums[i] = batteries.get(i).getCapacity();
+            for (IBatteryData i : batteries) {
+                add(max, i.getCapacity());
+                updateDrain(i.getCapacity());
             }
-            capacity = summarize(maximums);
+            capacity = summarize(max);
         }
 
         public PowerStationEnergyBank(NBTTagCompound storageTag) {
-            int size = storageTag.getInteger(NBT_SIZE);
-            storage = new long[size];
-            maximums = new long[size];
-            for (int i = 0; i < size; i++) {
-                NBTTagCompound subtag = storageTag.getCompoundTag(String.valueOf(i));
-                if (subtag.hasKey(NBT_STORED)) {
-                    storage[i] = subtag.getLong(NBT_STORED);
+            if (storageTag.hasKey(NBT_SIZE, Constants.NBT.TAG_INT)) {
+                int size = storageTag.getInteger(NBT_SIZE);
+                for (int i = 0; i < size; i++) {
+                    NBTTagCompound tag = storageTag.getCompoundTag(String.valueOf(i));
+                    if (tag.hasKey(NBT_STORED)) add(stored, tag.getLong(NBT_STORED));
+                    long store = tag.getLong(NBT_MAX);
+                    add(max, store);
+                    updateDrain(store);
                 }
-                maximums[i] = subtag.getLong(NBT_MAX);
+            } else {
+                stored[0] = storageTag.getLong(NBT_STORED + "0");
+                stored[1] = storageTag.getLong(NBT_STORED + "1");
+                max[0] = storageTag.getLong(NBT_MAX + "0");
+                max[1] = storageTag.getLong(NBT_MAX + "1");
+                drain = storageTag.getLong(NBT_DRAIN);
             }
-            capacity = summarize(maximums);
+            capacity = summarize(max);
         }
 
-        private NBTTagCompound writeToNBT(NBTTagCompound compound) {
-            compound.setInteger(NBT_SIZE, storage.length);
-            for (int i = 0; i < storage.length; i++) {
-                NBTTagCompound subtag = new NBTTagCompound();
-                if (storage[i] > 0) {
-                    subtag.setLong(NBT_STORED, storage[i]);
-                }
-                subtag.setLong(NBT_MAX, maximums[i]);
-                compound.setTag(String.valueOf(i), subtag);
-            }
+        public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+            compound.setLong(NBT_STORED + "0", stored[0]);
+            compound.setLong(NBT_STORED + "1", stored[1]);
+            compound.setLong(NBT_MAX + "0", max[0]);
+            compound.setLong(NBT_MAX + "1", max[1]);
+            compound.setLong(NBT_DRAIN, drain);
             return compound;
+        }
+
+        private void updateDrain(long val) {
+            if (val / PASSIVE_DRAIN_DIVISOR >= PASSIVE_DRAIN_MAX_PER_STORAGE) {
+                drain += PASSIVE_DRAIN_MAX_PER_STORAGE;
+            } else {
+                drain += val / PASSIVE_DRAIN_DIVISOR;
+                drainMod += (val % PASSIVE_DRAIN_DIVISOR);
+                if (drainMod >= PASSIVE_DRAIN_DIVISOR) {
+                    drain++;
+                    drainMod -= PASSIVE_DRAIN_DIVISOR;
+                }
+            }
         }
 
         /**
@@ -650,76 +664,58 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
          * Will use existing stored power and try to map it onto new batteries.
          * If there was more power before the rebuild operation, it will be lost.
          */
-        public PowerStationEnergyBank rebuild(@NotNull List<IBatteryData> batteries) {
+        public void rebuild(@NotNull List<IBatteryData> batteries) {
             if (batteries.isEmpty()) {
                 throw new IllegalArgumentException("Cannot rebuild Power Substation power bank with no batteries!");
             }
-            PowerStationEnergyBank newStorage = new PowerStationEnergyBank(batteries);
-            for (long stored : storage) {
-                newStorage.fill(stored);
+            Arrays.fill(max, 0);
+            drain = 0;
+            for (IBatteryData i : batteries) {
+                add(max, i.getCapacity());
+                updateDrain(i.getCapacity());
             }
-            return newStorage;
+
+            if (stored[0] > max[0]) {
+                stored[0] = max[0];
+                stored[1] = max[1];
+            } else if (stored[0] == max[0]) {
+                stored[1] = Math.min(stored[1], max[1]);
+            }
+            capacity = summarize(max);
         }
 
         /** @return Amount filled into storage */
         public long fill(long amount) {
             if (amount < 0) throw new IllegalArgumentException("Amount cannot be negative!");
-
-            // ensure index
-            if (index != storage.length - 1 && storage[index] == maximums[index]) {
-                index++;
+            // can't overflow, just add normally
+            if (max[0] == stored[0]) {
+                amount = Math.min(max[1] - stored[1], amount);
+                stored[1] += amount;
+                return amount;
             }
-
-            long maxFill = Math.min(maximums[index] - storage[index], amount);
-
-            // storage is completely full
-            if (maxFill == 0 && index == storage.length - 1) {
-                return 0;
+            if (stored[1] + amount < 0) {
+                stored[0]++;
+                stored[1] += Long.MIN_VALUE;
+                if (max[0] == stored[0] && max[1] < stored[1] + amount) amount = max[1] - stored[1];
             }
-
-            // fill this "battery" as much as possible
-            storage[index] += maxFill;
-            amount -= maxFill;
-
-            // try to fill other "batteries" if necessary
-            if (amount > 0 && index != storage.length - 1) {
-                return maxFill + fill(amount);
-            }
-
-            // other fill not necessary, either because the storage is now completely full,
-            // or we were able to consume all the energy in this "battery"
-            return maxFill;
+            stored[1] += amount;
+            return amount;
         }
 
         /** @return Amount drained from storage */
         public long drain(long amount) {
             if (amount < 0) throw new IllegalArgumentException("Amount cannot be negative!");
-
-            // ensure index
-            if (index != 0 && storage[index] == 0) {
-                index--;
+            // cant borrow, just subtract normally
+            if (stored[0] == 0) {
+                long sub = Math.min(stored[1], amount);
+                stored[1] -= sub;
+                return sub;
             }
-
-            long maxDrain = Math.min(storage[index], amount);
-
-            // storage is completely empty
-            if (maxDrain == 0 && index == 0) {
-                return 0;
-            }
-
-            // drain this "battery" as much as possible
-            storage[index] -= maxDrain;
-            amount -= maxDrain;
-
-            // try to drain other "batteries" if necessary
-            if (amount > 0 && index != 0) {
-                index--;
-                return maxDrain + drain(amount);
-            }
-
-            // other drain not necessary, either because the storage is now completely empty,
-            // or we were able to drain all the energy from this "battery"
-            return maxDrain;
+            if (stored[1] < amount) {
+                stored[0]--;
+                stored[1] = stored[1] - amount + Long.MAX_VALUE + 1;
+            } else stored[1] -= amount;
+            return amount;
         }
 
         public BigInteger getCapacity() {
@@ -727,51 +723,28 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         }
 
         public BigInteger getStored() {
-            return summarize(storage);
+            return summarize(stored);
         }
 
         public boolean hasEnergy() {
-            for (long l : storage) {
-                if (l > 0) return true;
-            }
-            return false;
+            return stored[0] != 0 && stored[1] != 0;
         }
 
-        private static BigInteger summarize(long[] values) {
-            BigInteger retVal = BigInteger.ZERO;
-            long currentSum = 0;
-            for (long value : values) {
-                if (currentSum != 0 && value > Long.MAX_VALUE - currentSum) {
-                    // will overflow if added
-                    retVal = retVal.add(BigInteger.valueOf(currentSum));
-                    currentSum = 0;
-                }
-                currentSum += value;
+        private static BigInteger summarize(long[] num) {
+            return BigInteger.valueOf(num[0]).shiftLeft(63).add(BigInteger.valueOf(num[1]));
+        }
+
+        private static void add(long[] num, long val) {
+            if (val + num[1] < 0) {
+                num[0]++;
+                num[1] += Long.MIN_VALUE;
             }
-            if (currentSum != 0) {
-                retVal = retVal.add(BigInteger.valueOf(currentSum));
-            }
-            return retVal;
+            num[1] += val;
         }
 
         @VisibleForTesting
         public long getPassiveDrainPerTick() {
-            long[] maximumsExcl = new long[maximums.length];
-            int index = 0;
-            int numExcl = 0;
-            for (long maximum : maximums) {
-                if (maximum / PASSIVE_DRAIN_DIVISOR >= PASSIVE_DRAIN_MAX_PER_STORAGE) {
-                    numExcl++;
-                } else {
-                    maximumsExcl[index++] = maximum;
-                }
-            }
-            maximumsExcl = Arrays.copyOf(maximumsExcl, index);
-            BigInteger capacityExcl = summarize(maximumsExcl);
-
-            return capacityExcl.divide(BigInteger.valueOf(PASSIVE_DRAIN_DIVISOR))
-                    .add(BigInteger.valueOf(PASSIVE_DRAIN_MAX_PER_STORAGE * numExcl))
-                    .longValue();
+            return drain;
         }
     }
 

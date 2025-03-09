@@ -4,6 +4,8 @@ import gregtech.Bootstrap;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation.PowerStationEnergyBank;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.jetbrains.annotations.NotNull;
@@ -237,7 +239,7 @@ public class PowerSubstationTest {
         MatcherAssert.assertThat(storage.getStored(), isBigInt(3000));
 
         // Rebuild with more storage than needed
-        storage = rebuildStorage(storage, 1000, 4000, 4000);
+        rebuildStorage(storage, 1000, 4000, 4000);
         MatcherAssert.assertThat(storage.getCapacity(), isBigInt(9000));
         MatcherAssert.assertThat(storage.getStored(), isBigInt(3000));
 
@@ -250,7 +252,7 @@ public class PowerSubstationTest {
         MatcherAssert.assertThat(storage.getStored(), isBigInt(3000));
 
         // Rebuild with less storage than needed
-        storage = rebuildStorage(storage, 100, 100, 400, 500);
+        rebuildStorage(storage, 100, 100, 400, 500);
         MatcherAssert.assertThat(storage.getCapacity(), isBigInt(1100));
         MatcherAssert.assertThat(storage.getStored(), isBigInt(1100));
     }
@@ -288,7 +290,9 @@ public class PowerSubstationTest {
 
             long[] storageValues = new long[9 * MAX_BATTERY_LAYERS];
             for (int i = 0; i < storageValues.length; i++) {
-                long randomLong = Math.abs(r.nextLong());
+                // hack around not having bounded long
+                // PASSIVE_DRAIN_MAX_PER_STORAGE * PASSIVE_DRAIN_DIVISOR * 2 is pretty close to 1 << 45
+                long randomLong = (long) Math.abs(r.nextInt()) << 14 | Math.abs(r.nextInt(1 << 14));
                 storageValues[i] = randomLong;
                 if (randomLong / PASSIVE_DRAIN_DIVISOR >= PASSIVE_DRAIN_MAX_PER_STORAGE) {
                     numTruncated++;
@@ -312,48 +316,68 @@ public class PowerSubstationTest {
     @Test
     public void Test_Fill_Drain_Randomized() {
         Consumer<Random> testRunner = r -> {
-            BigInteger totalStorage = BigInteger.ZERO;
+            BigInteger capacity = BigInteger.ZERO;
             long[] storageValues = new long[9 * MAX_BATTERY_LAYERS];
             for (int i = 0; i < storageValues.length; i++) {
                 long randomLong = Math.abs(r.nextLong());
                 storageValues[i] = randomLong;
-                totalStorage = totalStorage.add(BigInteger.valueOf(randomLong));
+                capacity = capacity.add(BigInteger.valueOf(randomLong));
             }
 
             PowerStationEnergyBank storage = createStorage(storageValues);
 
             // test capacity
-            MatcherAssert.assertThat(storage.getCapacity(), is(totalStorage));
+            MatcherAssert.assertThat(storage.getCapacity(), is(capacity));
 
-            // test fill
-            BigInteger amountToFill = totalStorage;
-            do {
-                long randomLong = Math.abs(r.nextLong());
-                BigInteger randomBigInt = BigInteger.valueOf(randomLong);
+            BigInteger current = BigInteger.ZERO;
 
-                if (amountToFill.compareTo(randomBigInt) <= 0) {
-                    MatcherAssert.assertThat(storage.fill(randomLong), is(amountToFill.longValue()));
-                    amountToFill = BigInteger.ZERO;
+            for (int i = 0; i < 100; i++) {
+                int randInt = r.nextInt(4);
+                long randLong = Math.abs(r.nextLong());
+                BigInteger randBig = BigInteger.valueOf(randLong);
+                if (randInt == 0) {
+                    if (current.add(randBig).compareTo(capacity) > 0) {
+                        MatcherAssert.assertThat(storage.fill(randLong), is(capacity.subtract(randBig).longValue()));
+                        current = capacity;
+                    } else {
+                        MatcherAssert.assertThat(storage.fill(randLong), is(randLong));
+                        current = current.add(randBig);
+                    }
+                    MatcherAssert.assertThat(storage.getStored(), is(current));
+                } else if (randInt == 1) {
+                    if (current.compareTo(randBig) < 0) {
+                        MatcherAssert.assertThat(storage.drain(randLong), is(current.longValue()));
+                        current = BigInteger.ZERO;
+                    } else {
+                        MatcherAssert.assertThat(storage.drain(randLong), is(randLong));
+                        current = current.subtract(randBig);
+                    }
+                    MatcherAssert.assertThat(storage.getStored(), is(current));
+                } else if (randInt == 2) {
+                    capacity = BigInteger.ZERO;
+                    for (int j = 0; j < storageValues.length; j++) {
+                        long randomLong = Math.abs(r.nextLong());
+                        storageValues[j] = randomLong;
+                        capacity = capacity.add(BigInteger.valueOf(randomLong));
+                    }
+
+                    BigInteger oldStored = storage.getStored();
+                    rebuildStorage(storage, storageValues);
+                    MatcherAssert.assertThat(storage.getCapacity(), is(capacity));
+                    MatcherAssert.assertThat(storage.getStored(), is(capacity.min(oldStored)));
                 } else {
-                    MatcherAssert.assertThat(storage.fill(randomLong), is(randomLong));
-                    amountToFill = amountToFill.subtract(randomBigInt);
-                }
-            } while (!amountToFill.equals(BigInteger.ZERO));
+                    BigInteger oldStored = storage.getStored();
+                    BigInteger oldMax = storage.getCapacity();
+                    long oldDrain = storage.getPassiveDrainPerTick();
+                    NBTTagCompound nbt = new NBTTagCompound();
+                    storage.writeToNBT(nbt);
 
-            // test drain
-            BigInteger amountToDrain = totalStorage;
-            do {
-                long randomLong = Math.abs(r.nextLong());
-                BigInteger randomBigInt = BigInteger.valueOf(randomLong);
-
-                if (amountToDrain.compareTo(randomBigInt) <= 0) {
-                    MatcherAssert.assertThat(storage.drain(randomLong), is(amountToDrain.longValue()));
-                    amountToDrain = BigInteger.ZERO;
-                } else {
-                    MatcherAssert.assertThat(storage.drain(randomLong), is(randomLong));
-                    amountToDrain = amountToDrain.subtract(randomBigInt);
+                    storage = new PowerStationEnergyBank(nbt);
+                    MatcherAssert.assertThat(storage.getStored(), is(oldStored));
+                    MatcherAssert.assertThat(storage.getCapacity(), is(oldMax));
+                    MatcherAssert.assertThat(storage.getPassiveDrainPerTick(), is(oldDrain));
                 }
-            } while (!amountToDrain.equals(BigInteger.ZERO));
+            }
         };
 
         for (int i = 0; i < 100; i++) {
@@ -379,12 +403,12 @@ public class PowerSubstationTest {
         return new PowerStationEnergyBank(batteries);
     }
 
-    private static PowerStationEnergyBank rebuildStorage(PowerStationEnergyBank storage, long... storageValues) {
+    private static void rebuildStorage(PowerStationEnergyBank storage, long... storageValues) {
         List<IBatteryData> batteries = new ArrayList<>();
         for (long value : storageValues) {
             batteries.add(new TestBattery(value));
         }
-        return storage.rebuild(batteries);
+        storage.rebuild(batteries);
     }
 
     private static class TestBattery implements IBatteryData {
