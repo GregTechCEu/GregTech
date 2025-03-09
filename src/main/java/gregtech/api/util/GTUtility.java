@@ -510,6 +510,40 @@ public class GTUtility {
     }
 
     /**
+     * Copies the FluidStack with new stack size.
+     *
+     * @param stack item stack for copying
+     * @return a copy of FluidStack, or {@code null} if the stack is empty
+     */
+    @Nullable
+    public static FluidStack copy(int newCount, @Nullable FluidStack stack) {
+        if (isEmpty(stack)) return null;
+        FluidStack copy = stack.copy();
+        copy.amount = newCount;
+        return copy;
+    }
+
+    /**
+     * Copies the FluidStack.
+     *
+     * @param stack fluid stack for copying
+     * @return a copy of FluidStack, or {@code null} if the stack is empty
+     */
+    @Nullable
+    public static FluidStack copy(@Nullable FluidStack stack) {
+        if (isEmpty(stack)) return null;
+        return stack.copy();
+    }
+
+    /**
+     * @param stack fluid stack to check if empty
+     * @return true if the stack is null or amount is <= 0
+     */
+    public static boolean isEmpty(FluidStack stack) {
+        return stack == null || stack.amount <= 0;
+    }
+
+    /**
      * Copies first non-empty ItemStack from stacks.
      *
      * @param stacks list of candidates for copying
