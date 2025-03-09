@@ -46,8 +46,12 @@ public final class GTHashMaps {
 
         for (int i = 0; i < inputs.getSlots(); i++) {
             ItemStack stack = inputs.getStackInSlot(i);
-            if (!stack.isEmpty()) {
-                map.put(stack.copy(), map.getInt(stack) + stack.getCount());
+            if (stack.isEmpty()) continue;
+            if (map.containsKey(stack)) {
+                map.merge(stack, stack.getCount(), Integer::sum);
+            } else {
+                ItemStack key = GTUtility.copy(1, stack);
+                map.put(key, stack.getCount());
             }
         }
 
@@ -82,8 +86,11 @@ public final class GTHashMaps {
         // Create a single stack of the combined count for each item
 
         for (ItemStack stack : inputs) {
-            if (!stack.isEmpty()) {
-                map.put(stack.copy(), map.getInt(stack) + stack.getCount());
+            if (stack.isEmpty()) continue;
+            if (map.containsKey(stack)) {
+                map.merge(stack, stack.getCount(), Integer::sum);
+            } else {
+                map.put(GTUtility.copy(1, stack), stack.getCount());
             }
         }
 
@@ -133,9 +140,7 @@ public final class GTHashMaps {
             if (map.containsKey(fluidStack)) {
                 map.merge(fluidStack, fluidStack.amount, Integer::sum);
             } else {
-                FluidStack key = fluidStack.copy();
-                key.amount = 1;
-                map.put(key, fluidStack.amount);
+                map.put(GTUtility.copy(1, fluidStack), fluidStack.amount);
             }
         }
 
@@ -174,9 +179,7 @@ public final class GTHashMaps {
             if (map.containsKey(fluidStack)) {
                 map.merge(fluidStack, fluidStack.amount, Integer::sum);
             } else {
-                FluidStack key = fluidStack.copy();
-                key.amount = 1;
-                map.put(key, fluidStack.amount);
+                map.put(GTUtility.copy(1, fluidStack), fluidStack.amount);
             }
         }
 
