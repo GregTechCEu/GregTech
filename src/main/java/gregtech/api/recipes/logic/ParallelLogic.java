@@ -423,7 +423,7 @@ public abstract class ParallelLogic {
                         needed -= available;
                         break;
                     } else {
-                        fluidCountMap.replace(inputFluid, 0);
+                        countFluid.replace(inputFluid, 0);
                         notConsumableMap.replace(notConsumableFluid, needed - available);
                         needed -= available;
                     }
