@@ -419,7 +419,7 @@ public abstract class ParallelLogic {
                 if (fluidStrategy.equals(notConsumableFluid, inputFluid)) {
                     available = countFluid.getInt(inputFluid);
                     if (available > needed) {
-                        fluidCountMap.replace(inputFluid, available - needed);
+                        countFluid.replace(inputFluid, available - needed);
                         needed -= available;
                         break;
                     } else {
