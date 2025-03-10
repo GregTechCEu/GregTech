@@ -10,7 +10,6 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.DummyContainer;
@@ -44,7 +43,6 @@ import crafttweaker.mc1120.actions.ActionAddFurnaceRecipe;
 import crafttweaker.mc1120.furnace.MCFurnaceManager;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -415,19 +413,6 @@ public final class ModHandler {
                             ingredient.getClass().getSimpleName() + " type is not suitable for crafting input.");
                 }
         return ingredient;
-    }
-
-    /**
-     * @param outputCount the amount of outputs the recipe has
-     * @param recipe      the recipe to retrieve from
-     * @return the recycling ingredients for a recipe
-     * @deprecated Use {@link RecyclingHandler#getRecyclingIngredients(int, Object...)}. Will be removed in 2.9
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Nullable
-    public static ItemMaterialInfo getRecyclingIngredients(int outputCount, @NotNull Object... recipe) {
-        return RecyclingHandler.getRecyclingIngredients(outputCount, recipe);
     }
 
     /**

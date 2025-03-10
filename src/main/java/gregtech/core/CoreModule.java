@@ -29,7 +29,6 @@ import gregtech.api.unification.material.event.PostMaterialEvent;
 import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.Mods;
-import gregtech.api.util.input.KeyBind;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.virtualregistry.VirtualEnderRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -66,6 +65,7 @@ import gregtech.core.network.packets.PacketNotifyCapeChange;
 import gregtech.core.network.packets.PacketPluginSynced;
 import gregtech.core.network.packets.PacketRecoverMTE;
 import gregtech.core.network.packets.PacketReloadShaders;
+import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 import gregtech.core.network.packets.PacketUIClientAction;
 import gregtech.core.network.packets.PacketUIOpen;
 import gregtech.core.network.packets.PacketUIWidgetUpdate;
@@ -227,7 +227,6 @@ public class CoreModule implements IGregTechModule {
         /* End API Block Registration */
 
         proxy.onPreLoad();
-        KeyBind.init();
     }
 
     @Override
@@ -245,6 +244,8 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.networkHandler.registerPacket(PacketNotifyCapeChange.class);
         GregTechAPI.networkHandler.registerPacket(PacketReloadShaders.class);
         GregTechAPI.networkHandler.registerPacket(PacketClipboardNBTUpdate.class);
+        GregTechAPI.networkHandler.registerPacket(PacketToolbeltSelectionChange.Server.class);
+        GregTechAPI.networkHandler.registerPacket(PacketToolbeltSelectionChange.Client.class);
     }
 
     @Override

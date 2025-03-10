@@ -1,12 +1,14 @@
 package gregtech.modules;
 
+import gregtech.api.GTValues;
 import gregtech.api.modules.IModuleContainer;
 
-public class GregTechModules implements IModuleContainer {
+public final class GregTechModules implements IModuleContainer {
 
     public static final String MODULE_CORE = "core";
     public static final String MODULE_TOOLS = "tools";
     public static final String MODULE_INTEGRATION = "integration";
+    public static final String MODULE_WORLDGEN = "worldgen";
 
     // Integration modules
     public static final String MODULE_JEI = "jei_integration";
@@ -22,6 +24,6 @@ public class GregTechModules implements IModuleContainer {
 
     @Override
     public String getID() {
-        return "gregtech";
+        return GTValues.MODID;
     }
 }

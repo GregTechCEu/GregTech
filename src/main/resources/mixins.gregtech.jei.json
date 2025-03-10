@@ -1,12 +1,17 @@
 {
-  "package" : "gregtech.mixins.jei",
-  "refmap" : "mixins.gregtech.refmap.json",
-  "target" : "@env(DEFAULT)",
-  "minVersion" : "0.8",
-  "compatibilityLevel" : "JAVA_8",
-  "mixins" : [
-    "JEITooltipMixin"
+  "package": "gregtech.mixins.jei",
+  "refmap": "mixins.gregtech.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "BasicRecipeTransferHandlerServerMixin",
+    "DragManagerAccessor",
+    "GhostDragAccessor",
+    "IngredientGridMixin",
+    "JEITooltipMixin",
+    "StackHelperMixin"
   ],
-  "client" : [],
-  "server" : []
+  "client": [],
+  "server": []
 }

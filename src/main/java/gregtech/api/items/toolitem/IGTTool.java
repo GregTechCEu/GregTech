@@ -5,20 +5,18 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.impl.CombinedCapabilityProvider;
 import gregtech.api.capability.impl.ElectricItem;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.DynamicLabelWidget;
 import gregtech.api.items.gui.ItemUIFactory;
-import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
@@ -48,7 +46,13 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
@@ -63,6 +67,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import appeng.api.implementations.items.IAEWrench;
 import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.factory.HandGuiData;
+import com.cleanroommc.modularui.factory.ItemGuiFactory;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.TextWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -150,6 +165,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return stack;
     }
 
+    /**
+     * @return A tool made from the given material. The tool property (at least overriding) for the material must be
+     *         set.
+     */
     default ItemStack get(Material material) {
         ItemStack stack = new ItemStack(get());
 
@@ -170,35 +189,38 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
 
         // Set other tool stats (durability)
-        ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
-
+        ToolProperty finalToolProperty = getToolProperty(material);
         // Durability formula we are working with:
         // Final Durability = (material durability * material durability multiplier) + (tool definition durability *
         // definition durability multiplier) - 1
         // Subtracts 1 internally since Minecraft treats "0" as a valid durability, but we don't want to display this.
 
-        int durability = toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
+        // Tool material modifiers.
+        int durability = finalToolProperty.getToolDurability() * finalToolProperty.getDurabilityMultiplier();
 
+        // Tool type modifiers.
         // Most Tool Definitions do not set a base durability, which will lead to ignoring the multiplier if present. So
         // apply the multiplier to the material durability if that would happen
         if (toolStats.getBaseDurability(stack) == 0) {
-            durability *= toolStats.getDurabilityMultiplier(stack);
+            durability = (int) (durability * toolStats.getDurabilityMultiplier(stack));
         } else {
-            durability += toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack);
+            durability += (int) (toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack));
         }
 
-        toolTag.setInteger(MAX_DURABILITY_KEY, durability - 1);
+        durability -= 1; // Finally adjust for MC
+        toolTag.setInteger(MAX_DURABILITY_KEY, durability);
         toolTag.setInteger(DURABILITY_KEY, 0);
-        if (toolProperty.getUnbreakable()) {
+
+        if (finalToolProperty.getUnbreakable()) {
             stackCompound.setBoolean(UNBREAKABLE_KEY, true);
         }
 
         // Set tool and material enchantments
         Object2IntMap<Enchantment> enchantments = new Object2IntOpenHashMap<>();
-        toolProperty.getEnchantments().forEach((enchantment, level) -> enchantments.put(enchantment,
-                level.getLevel(toolProperty.getToolHarvestLevel())));
+        finalToolProperty.getEnchantments().forEach((enchantment, level) -> enchantments.put(enchantment,
+                level.getLevel(finalToolProperty.getToolHarvestLevel())));
         toolStats.getDefaultEnchantments(stack).forEach((enchantment, level) -> enchantments.put(enchantment,
-                level.getLevel(toolProperty.getToolHarvestLevel())));
+                level.getLevel(finalToolProperty.getToolHarvestLevel())));
         enchantments.forEach((enchantment, level) -> {
             if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
                 stack.addEnchantment(enchantment, level);
@@ -207,7 +229,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         // Set behaviours
         NBTTagCompound behaviourTag = getBehaviorsTag(stack);
-        getToolStats().getBehaviors().forEach(behavior -> behavior.addBehaviorNBT(stack, behaviourTag));
+        getBehaviors(stack).forEach(behavior -> behavior.addBehaviorNBT(stack, behaviourTag));
 
         if (aoeDefinition != AoESymmetrical.none()) {
             behaviourTag.setInteger(MAX_AOE_COLUMN_KEY, aoeDefinition.column);
@@ -218,7 +240,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             behaviourTag.setInteger(AOE_LAYER_KEY, aoeDefinition.layer);
         }
 
-        if (toolProperty.isMagnetic()) {
+        if (finalToolProperty.isMagnetic()) {
             behaviourTag.setBoolean(RELOCATE_MINED_BLOCKS_KEY, true);
         }
 
@@ -253,8 +275,23 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     @Nullable
+    default ToolProperty getToolProperty(Material material) {
+        ToolProperty finalToolProperty;
+        {
+            MaterialToolProperty materialToolProperty = material.getProperty(PropertyKey.TOOL);
+            if (material.hasProperty(PropertyKey.EXTRATOOL)) {
+                finalToolProperty = material.getProperty(PropertyKey.EXTRATOOL)
+                        .getOverriddenResult(this.getToolId(), materialToolProperty);
+            } else {
+                finalToolProperty = materialToolProperty;
+            }
+        }
+        return finalToolProperty;
+    }
+
+    @Nullable
     default ToolProperty getToolProperty(ItemStack stack) {
-        return getToolMaterial(stack).getProperty(PropertyKey.TOOL);
+        return getToolProperty(getToolMaterial(stack));
     }
 
     @Nullable
@@ -409,14 +446,14 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        getToolStats().getBehaviors().forEach(behavior -> behavior.hitEntity(stack, target, attacker));
+        getBehaviors(stack).forEach(behavior -> behavior.hitEntity(stack, target, attacker));
         damageItem(stack, attacker, getToolStats().getToolDamagePerAttack(stack));
         return true;
     }
 
     default boolean definition$onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
         if (player.world.isRemote) return false;
-        getToolStats().getBehaviors().forEach(behavior -> behavior.onBlockStartBreak(stack, pos, player));
+        getBehaviors(stack).forEach(behavior -> behavior.onBlockStartBreak(stack, pos, player));
 
         if (!player.isSneaking()) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
@@ -458,7 +495,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default boolean definition$onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos,
                                                 EntityLivingBase entityLiving) {
         if (!worldIn.isRemote) {
-            getToolStats().getBehaviors()
+            getBehaviors(stack)
                     .forEach(behavior -> behavior.onBlockDestroyed(stack, worldIn, state, pos, entityLiving));
 
             if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
@@ -522,7 +559,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default boolean definition$canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity,
                                                 EntityLivingBase attacker) {
-        return getToolStats().getBehaviors().stream()
+        return getBehaviors(stack).stream()
                 .anyMatch(behavior -> behavior.canDisableShield(stack, shield, entity, attacker));
     }
 
@@ -570,7 +607,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
-        getToolStats().getBehaviors().forEach(behavior -> behavior.onEntitySwing(entityLiving, stack));
+        getBehaviors(stack).forEach(behavior -> behavior.onEntitySwing(entityLiving, stack));
         return false;
     }
 
@@ -612,8 +649,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default double definition$getDurabilityForDisplay(ItemStack stack) {
         int damage = stack.getItem().getDamage(stack);
         int maxDamage = stack.getItem().getMaxDamage(stack);
-        if (damage == 0) return 1.0;
-        return (double) (maxDamage - damage) / (double) maxDamage;
+        return (double) damage / (double) maxDamage;
     }
 
     @Nullable
@@ -622,7 +658,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (isElectric()) {
             providers.add(ElectricStats.createElectricItem(0L, getElectricTier()).createProvider(stack));
         }
-        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
+        for (IToolBehavior behavior : getBehaviors(stack)) {
             ICapabilityProvider behaviorProvider = behavior.createProvider(stack, nbt);
             if (behaviorProvider != null) {
                 providers.add(behaviorProvider);
@@ -633,10 +669,15 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return new CombinedCapabilityProvider(providers);
     }
 
+    @NotNull
+    default List<IToolBehavior> getBehaviors(ItemStack stack) {
+        return getToolStats().getBehaviors();
+    }
+
     default EnumActionResult definition$onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world,
                                                        @NotNull BlockPos pos, @NotNull EnumFacing facing, float hitX,
                                                        float hitY, float hitZ, @NotNull EnumHand hand) {
-        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
+        for (IToolBehavior behavior : getBehaviors(player.getHeldItem(hand))) {
             if (behavior.onItemUseFirst(player, world, pos, facing, hitX, hitY, hitZ, hand) ==
                     EnumActionResult.SUCCESS) {
                 return EnumActionResult.SUCCESS;
@@ -648,8 +689,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default EnumActionResult definition$onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
                                                   EnumFacing facing, float hitX, float hitY, float hitZ) {
-        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
-            if (behavior.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+        for (IToolBehavior behavior : getBehaviors(player.getHeldItem(hand))) {
+            if (behavior.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) ==
+                    EnumActionResult.SUCCESS) {
                 return EnumActionResult.SUCCESS;
             }
         }
@@ -662,12 +704,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (!world.isRemote) {
             // TODO: relocate to keybind action when keybind PR happens
             if (player.isSneaking() && getMaxAoEDefinition(stack) != AoESymmetrical.none()) {
-                PlayerInventoryHolder.openHandItemUI(player, hand);
+                ItemGuiFactory.INSTANCE.open((EntityPlayerMP) player, hand);
                 return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
             }
         }
 
-        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
+        for (IToolBehavior behavior : getBehaviors(stack)) {
             if (behavior.onItemRightClick(world, player, hand).getType() == EnumActionResult.SUCCESS) {
                 return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
             }
@@ -762,10 +804,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             tooltip.add(I18n.format("item.gt.tool.behavior.relocate_mining"));
         }
 
-        if (!addedBehaviorNewLine && !toolStats.getBehaviors().isEmpty()) {
+        if (!addedBehaviorNewLine && !getBehaviors(stack).isEmpty()) {
             tooltip.add("");
         }
-        toolStats.getBehaviors().forEach(behavior -> behavior.addInformation(stack, world, tooltip, flag));
+        getBehaviors(stack).forEach(behavior -> behavior.addInformation(stack, world, tooltip, flag));
 
         // unique tooltip
         String uniqueTooltip = "item.gt.tool." + getToolId() + ".tooltip";
@@ -878,6 +920,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // Sound Playing
     default void playCraftingSound(EntityPlayer player, ItemStack stack) {
+        stack = toolbeltPassthrough(stack);
         // player null check for things like auto-crafters
         if (ConfigHolder.client.toolCraftingSounds && getSound() != null && player != null) {
             if (canPlaySound(stack)) {
@@ -903,45 +946,76 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
     }
 
-    default ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        NBTTagCompound tag = getBehaviorsTag(holder.getCurrentItem());
-        AoESymmetrical defaultDefinition = getMaxAoEDefinition(holder.getCurrentItem());
-        return ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 120, 80)
-                .label(6, 10, "item.gt.tool.aoe.columns")
-                .label(49, 10, "item.gt.tool.aoe.rows")
-                .label(79, 10, "item.gt.tool.aoe.layers")
-                .widget(new ClickButtonWidget(15, 24, 20, 20, "+", data -> {
-                    AoESymmetrical.increaseColumn(tag, defaultDefinition);
-                    holder.markAsDirty();
-                }))
-                .widget(new ClickButtonWidget(15, 44, 20, 20, "-", data -> {
-                    AoESymmetrical.decreaseColumn(tag, defaultDefinition);
-                    holder.markAsDirty();
-                }))
-                .widget(new ClickButtonWidget(50, 24, 20, 20, "+", data -> {
-                    AoESymmetrical.increaseRow(tag, defaultDefinition);
-                    holder.markAsDirty();
-                }))
-                .widget(new ClickButtonWidget(50, 44, 20, 20, "-", data -> {
-                    AoESymmetrical.decreaseRow(tag, defaultDefinition);
-                    holder.markAsDirty();
-                }))
-                .widget(new ClickButtonWidget(85, 24, 20, 20, "+", data -> {
-                    AoESymmetrical.increaseLayer(tag, defaultDefinition);
-                    holder.markAsDirty();
-                }))
-                .widget(new ClickButtonWidget(85, 44, 20, 20, "-", data -> {
-                    AoESymmetrical.decreaseLayer(tag, defaultDefinition);
-                    holder.markAsDirty();
-                }))
-                .widget(new DynamicLabelWidget(23, 65, () -> Integer.toString(
-                        1 + 2 * AoESymmetrical.getColumn(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
-                .widget(new DynamicLabelWidget(58, 65, () -> Integer.toString(
-                        1 + 2 * AoESymmetrical.getRow(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
-                .widget(new DynamicLabelWidget(93, 65,
-                        () -> Integer.toString(1 +
-                                AoESymmetrical.getLayer(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
-                .build(holder, entityPlayer);
+    @Override
+    default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager manager) {
+        final var usedStack = guiData.getUsedItemStack();
+        final var behaviorsTag = getBehaviorsTag(usedStack);
+        final var defaultDefinition = getMaxAoEDefinition(usedStack);
+
+        var columnValue = new IntSyncValue(
+                () -> AoESymmetrical.getColumn(behaviorsTag, defaultDefinition),
+                i -> AoESymmetrical.setColumn(behaviorsTag, i, defaultDefinition));
+        var rowValue = new IntSyncValue(
+                () -> AoESymmetrical.getRow(behaviorsTag, defaultDefinition),
+                i -> AoESymmetrical.setRow(behaviorsTag, i, defaultDefinition));
+        var layerValue = new IntSyncValue(
+                () -> AoESymmetrical.getLayer(behaviorsTag, defaultDefinition),
+                i -> AoESymmetrical.setLayer(behaviorsTag, i, defaultDefinition));
+
+        manager.syncValue("row_value", rowValue);
+        manager.syncValue("column_value", columnValue);
+        manager.syncValue("layer_value", layerValue);
+
+        return GTGuis.createPanel(usedStack.getTranslationKey(), 120, 80)
+                .child(Flow.row()
+                        .widthRel(1f)
+                        .margin(4, 0)
+                        .alignY(0.5f)
+                        .coverChildrenHeight()
+                        .mainAxisAlignment(Alignment.MainAxis.SPACE_BETWEEN)
+                        .child(createColumn(columnValue, "columns", true, defaultDefinition.column))
+                        .child(createColumn(rowValue, "rows", true, defaultDefinition.row))
+                        .child(createColumn(layerValue, "layers", false, defaultDefinition.layer)));
+    }
+
+    default Flow createColumn(IntSyncValue syncValue, String lang, boolean shouldDouble, int max) {
+        final var display = IKey.dynamic(
+                () -> String.valueOf(1 + (shouldDouble ? 2 * syncValue.getIntValue() : syncValue.getIntValue())));
+
+        IWidget increaseButton = new ButtonWidget<>()
+                .size(9, 18)
+                .background(GTGuiTextures.MC_BUTTON)
+                .overlay(GTGuiTextures.PLUS)
+                .disableHoverBackground()
+                .onMousePressed(data -> {
+                    int val = syncValue.getIntValue();
+                    if (val < max) syncValue.setIntValue(++val);
+                    return true;
+                });
+
+        IWidget decreaseButton = new ButtonWidget<>()
+                .size(9, 18)
+                .background(GTGuiTextures.MC_BUTTON)
+                .overlay(GTGuiTextures.MINUS)
+                .disableHoverBackground()
+                .onMousePressed(data -> {
+                    int val = syncValue.getIntValue();
+                    if (val > 0) syncValue.setIntValue(--val);
+                    return true;
+                });
+
+        return Flow.column()
+                .coverChildren()
+                .child(new TextWidget(IKey.lang("item.gt.tool.aoe." + lang))
+                        .marginBottom(5))
+                .child(Flow.row()
+                        .coverChildren()
+                        .marginBottom(5)
+                        .child(increaseButton)
+                        .child(decreaseButton))
+                .child(new TextWidget(display)
+                        .alignment(Alignment.Center)
+                        .widthRel(1f));
     }
 
     Set<String> getToolClasses(ItemStack stack);

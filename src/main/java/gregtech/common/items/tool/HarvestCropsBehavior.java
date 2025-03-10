@@ -42,6 +42,7 @@ public class HarvestCropsBehavior implements IToolBehavior {
         if (world.isRemote) {
             return EnumActionResult.PASS;
         }
+
         ItemStack stack = player.getHeldItem(hand);
 
         AoESymmetrical aoeDefinition = ToolHelper.getAoEDefinition(stack);
