@@ -72,6 +72,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     // this tile was loaded from datafixed NBT and needs to initialize its connections
     private boolean legacy;
+    // used to prevent firing neighbor block updates during chunkload, which will cause a CME
+    private boolean suppressUpdates;
 
     // information that is only required for determining graph topology should be stored on the tile entity level,
     // while information interacted with during graph traversal should be stored on the NetLogicData level.
@@ -529,7 +531,9 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             this.netLogicDatas.trim();
             this.netCapabilities.trim();
             this.listeners.trim();
+            this.suppressUpdates = true;
             updateActiveStatus(null, false);
+            this.suppressUpdates = false;
         } else {
             getBlockType(); // ensure block is cached on client for later reference
         }
@@ -740,7 +744,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     @Override
     public void notifyBlockUpdate() {
-        getWorld().notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
+        if (!suppressUpdates) getWorld().notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
     }
 
     @SuppressWarnings("ConstantConditions") // yes this CAN actually be null

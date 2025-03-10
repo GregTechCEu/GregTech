@@ -115,7 +115,7 @@ public abstract class WorldPipeNet extends WorldSavedNet {
             }
             dirty |= predicateEdge(edge, node, cNode, neighbor, cNeighbor);
         }
-        if (dirty) markDirty();
+        if (dirty) markAsDirty();
     }
 
     /**
