@@ -78,7 +78,7 @@ import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
@@ -273,11 +273,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                   @NotNull IntUnaryOperator maxTransfer, @Nullable BiIntConsumer transferReport) {
         FluidFilterContainer filter = this.getFluidFilter();
         byFilterSlot = byFilterSlot && filter != null; // can't be by filter slot if there is no filter
-        Object2IntOpenHashMap<FluidTestObject> contained = new Object2IntOpenHashMap<>();
+        Object2IntLinkedOpenHashMap<FluidTestObject> contained = new Object2IntLinkedOpenHashMap<>();
         var tanks = sourceHandler.getTankProperties();
         for (IFluidTankProperties tank : tanks) {
             FluidStack contents = tank.getContents();
-            if (contents != null) contained.merge(new FluidTestObject(contents), contents.amount, Integer::sum);
+            if (contents != null) contained.addTo(new FluidTestObject(contents), contents.amount);
         }
         var iter = contained.object2IntEntrySet().fastIterator();
         int totalTransfer = 0;

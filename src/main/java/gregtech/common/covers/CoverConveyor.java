@@ -76,7 +76,7 @@ import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.google.common.collect.ImmutableList;
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -251,7 +251,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                   @NotNull IntUnaryOperator maxTransfer, @Nullable BiIntConsumer transferReport) {
         ItemFilterContainer filter = this.getItemFilter();
         byFilterSlot = byFilterSlot && filter != null; // can't be by filter slot if there is no filter
-        Int2IntArrayMap containedByFilterSlot = new Int2IntArrayMap();
+        Int2IntLinkedOpenHashMap containedByFilterSlot = new Int2IntLinkedOpenHashMap();
         Int2ObjectArrayMap<MergabilityInfo<ItemTestObject>> filterSlotToMergability = new Int2ObjectArrayMap<>();
         for (int i = 0; i < sourceHandler.getSlots(); i++) {
             ItemStack stack = sourceHandler.getStackInSlot(i);
@@ -263,7 +263,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 if (byFilterSlot) {
                     filterSlot = match.getFilterIndex();
                 }
-                containedByFilterSlot.merge(filterSlot, extracted, Integer::sum);
+                containedByFilterSlot.addTo(filterSlot, extracted);
                 final int handlerSlot = i;
                 filterSlotToMergability.compute(filterSlot, (k, v) -> {
                     if (v == null) v = new MergabilityInfo<>();
@@ -283,11 +283,10 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             int slotTransfer = 0;
             if (next.getIntValue() >= min) {
                 MergabilityInfo<ItemTestObject> mergabilityInfo = filterSlotToMergability.get(filterSlot);
-                MergabilityInfo<ItemTestObject>.Merge merge = mergabilityInfo.getLargestMerge();
-                // since we can't guarantee the transferability of multiple stack types while just simulating,
-                // if the largest merge is not large enough we have to give up.
-                if (merge.getCount() >= min) {
-                    int transfer = Math.min(merge.getCount(), max);
+                var merges = mergabilityInfo.getMerges();
+                for (var merge : merges) {
+                    if (merge.getCount() + slotTransfer < min) break;
+                    int transfer = Math.min(merge.getCount(), max - slotTransfer);
                     transfer = doInsert(destHandler, merge.getTestObject(), transfer, true);
                     if (transfer < min) continue;
                     transfer = doExtract(sourceHandler, merge.getTestObject(), transfer, true);
@@ -296,24 +295,11 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     doInsert(destHandler, merge.getTestObject(), transfer, false);
                     int remaining = max - transfer;
                     slotTransfer += transfer;
-                    if (remaining <= 0) continue;
-                    for (MergabilityInfo<ItemTestObject>.Merge otherMerge : mergabilityInfo
-                            .getNonLargestMerges(merge)) {
-                        transfer = Math.min(otherMerge.getCount(), remaining);
-                        transfer = doInsert(destHandler, otherMerge.getTestObject(), transfer, true);
-                        if (transfer < min) continue;
-                        transfer = doExtract(sourceHandler, otherMerge.getTestObject(), transfer, true);
-                        if (transfer < min) continue;
-                        doExtract(sourceHandler, otherMerge.getTestObject(), transfer, false);
-                        doInsert(destHandler, otherMerge.getTestObject(), transfer, false);
-                        remaining -= transfer;
-                        slotTransfer += transfer;
-                        if (remaining <= 0) break;
-                    }
+                    if (remaining <= 0 || slotTransfer >= max) break;
                 }
+                if (transferReport != null) transferReport.accept(filterSlot, slotTransfer);
+                totalTransfer += slotTransfer;
             }
-            if (transferReport != null) transferReport.accept(filterSlot, slotTransfer);
-            totalTransfer += slotTransfer;
         }
         return totalTransfer;
     }
