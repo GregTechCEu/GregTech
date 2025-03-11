@@ -19,7 +19,6 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
@@ -31,6 +30,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -451,11 +451,15 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                 .setScreenHeight(138)
                 .disableDisplayText()
                 .addScreenChildren((parent, syncManager) -> {
-                    MultiblockUIBuilder status = MultiblockUIFactory.builder();
+                    var status = MultiblockUIFactory.builder("status", syncManager);
                     status.setAction(b -> b.structureFormed(true)
                             .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                            .addWorkingStatusLine());
-                    status.sync("status", syncManager);
+                            .addWorkingStatusLine()
+                            .addCustom((keyManager, uiSyncer) -> {
+                                long stored = uiSyncer.syncLong(energyContainer.getEnergyStored());
+                                long cap = uiSyncer.syncLong(energyContainer.getEnergyCapacity());
+                                keyManager.add(KeyUtil.string(TextFormatting.WHITE, "%,d / %,d EU", stored, cap));
+                            }));
                     parent.child(new Column()
                             .padding(4)
                             .expanded()

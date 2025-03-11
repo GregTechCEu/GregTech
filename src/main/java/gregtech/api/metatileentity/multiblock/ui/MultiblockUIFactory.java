@@ -428,4 +428,10 @@ public class MultiblockUIFactory {
     public static MultiblockUIBuilder builder() {
         return new MultiblockUIBuilder();
     }
+
+    public static MultiblockUIBuilder builder(String key, PanelSyncManager syncManager) {
+        var b = builder();
+        b.sync(key, syncManager);
+        return b;
+    }
 }
