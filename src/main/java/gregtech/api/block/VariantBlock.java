@@ -41,16 +41,19 @@ public abstract class VariantBlock<T extends IStringSerializable & Comparable<T>
 
     public VariantBlock(@NotNull Material materialIn) {
         super(materialIn);
-        if (VALUES.length > 0 && VALUES[0] instanceof IStateHarvestLevel) {
-            for (T t : VALUES) {
-                IStateHarvestLevel stateHarvestLevel = (IStateHarvestLevel) t;
-                IBlockState state = getState(t);
-                setHarvestLevel(stateHarvestLevel.getHarvestTool(state), stateHarvestLevel.getHarvestLevel(state),
-                        state);
-            }
-        }
+        updateHarvestLevels();
         setCreativeTab(GTCreativeTabs.TAB_GREGTECH);
         setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, 0));
+    }
+
+    protected void updateHarvestLevels() {
+        if (VALUES.length > 0 && VALUES[0] instanceof IStateHarvestLevel stateHarvestLevel) {
+            for (T t : VALUES) {
+                IBlockState state = getState(t);
+                setHarvestLevel(stateHarvestLevel.getHarvestTool(state),
+                        stateHarvestLevel.getHarvestLevel(state), state);
+            }
+        }
     }
 
     @Override

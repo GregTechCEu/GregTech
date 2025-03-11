@@ -217,9 +217,8 @@ public class CoreModule implements IGregTechModule {
 
         /* Start API Block Registration */
         List<BlockWireCoil.CoilType> coilTypes = BlockWireCoil.getCoilTypes();
-        for (int i = 0; i < coilTypes.size(); i++) {
-            var type = coilTypes.get(i);
-            HEATING_COILS.put(MetaBlocks.WIRE_COILS[i / 8].getState(type), type);
+        for (BlockWireCoil.CoilType type : coilTypes) {
+            HEATING_COILS.put(MetaBlocks.WIRE_COIL.getState(type), type);
         }
         for (BlockBatteryPart.BatteryPartType type : BlockBatteryPart.BatteryPartType.values()) {
             PSS_BATTERIES.put(MetaBlocks.BATTERY_BLOCK.getState(type), type);

@@ -8,7 +8,6 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.client.utils.TooltipHelper;
-import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 
 import net.minecraft.block.SoundType;
@@ -35,8 +34,6 @@ import java.util.List;
 
 public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
-    private static int index;
-
     public BlockWireCoil() {
         super(net.minecraft.block.material.Material.IRON);
         setTranslationKey("wire_coil");
@@ -55,9 +52,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
     @Override
     protected @NotNull Collection<CoilType> computeVariants() {
-        int min = 8 * index++;
-        int max = Math.min(min + 8, getCoilTypes().size());
-        return Collections.unmodifiableCollection(getCoilTypes().subList(min, max));
+        return getCoilTypes();
     }
 
     @Override
@@ -95,11 +90,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         return false;
     }
 
-    @Override
-    protected boolean isBloomEnabled(CoilType value) {
-        return ConfigHolder.client.coilsActiveEmissiveTextures;
-    }
-
     public static List<CoilType> getCoilTypes() {
         return Collections.unmodifiableList(CoilType.COIL_TYPES);
     }
@@ -108,59 +98,57 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
         private static final List<CoilType> COIL_TYPES = new ArrayList<>();
 
-        public static final CoilType CUPRONICKEL = coilType(Materials.Cupronickel)
-                .tier(GTValues.LV)
-                .coilTemp(1800)
-                .multiSmelter(1, 1)
-                .build();
+        public static final CoilType CUPRONICKEL;
+        public static final CoilType KANTHAL;
+        public static final CoilType NICHROME;
+        public static final CoilType RTM_ALLOY;
+        public static final CoilType HSS_G;
+        public static final CoilType NAQUADAH;
+        public static final CoilType TRINIUM;
+        public static final CoilType TRITANIUM;
 
-        public static final CoilType KANTHAL = coilType(Materials.Kanthal)
-                .tier(GTValues.MV)
-                .coilTemp(2700)
-                .multiSmelter(2, 1)
-                .build();
-
-        public static final CoilType NICHROME = coilType(Materials.Nichrome)
-                .tier(GTValues.HV)
-                .coilTemp(3600)
-                .multiSmelter(2, 2)
-                .build();
-
-        public static final CoilType RTM_ALLOY = coilType(Materials.RTMAlloy)
-                .tier(GTValues.EV)
-                .coilTemp(4500)
-                .multiSmelter(4, 2)
-                .build();
-
-        public static final CoilType HSS_G = coilType("hss_g", Materials.HSSG)
-                .tier(GTValues.IV)
-                .coilTemp(5400)
-                .multiSmelter(4, 4)
-                .build();
-
-        public static final CoilType NAQUADAH = coilType(Materials.Naquadah)
-                .tier(GTValues.LuV)
-                .coilTemp(7200)
-                .multiSmelter(8, 8)
-                .build();
-
-        public static final CoilType TRINIUM = coilType(Materials.Trinium)
-                .tier(GTValues.ZPM)
-                .coilTemp(9001)
-                .multiSmelter(8, 8)
-                .build();
-
-        public static final CoilType TRITANIUM = coilType(Materials.Tritanium)
-                .tier(GTValues.UV)
-                .coilTemp(10800)
-                .multiSmelter(16, 8)
-                .build();
-
-        public static final CoilType NEUTRONIUM = coilType(Materials.Neutronium)
-                .tier(GTValues.UHV)
-                .coilTemp(17800)
-                .multiSmelter(32, 16)
-                .build();
+        static {
+            CUPRONICKEL = coilType(Materials.Cupronickel)
+                    .tier(GTValues.LV)
+                    .coilTemp(1800)
+                    .multiSmelter(1, 1)
+                    .build();
+            KANTHAL = coilType(Materials.Kanthal)
+                    .tier(GTValues.MV)
+                    .coilTemp(2700)
+                    .multiSmelter(2, 1)
+                    .build();
+            NICHROME = coilType(Materials.Nichrome)
+                    .tier(GTValues.HV)
+                    .coilTemp(3600)
+                    .multiSmelter(2, 2)
+                    .build();
+            RTM_ALLOY = coilType(Materials.RTMAlloy)
+                    .tier(GTValues.EV)
+                    .coilTemp(4500)
+                    .multiSmelter(4, 2)
+                    .build();
+            HSS_G = coilType("hss_g", Materials.HSSG)
+                    .tier(GTValues.IV)
+                    .coilTemp(5400)
+                    .multiSmelter(4, 4)
+                    .build();
+            NAQUADAH = coilType(Materials.Naquadah)
+                    .tier(GTValues.LuV)
+                    .coilTemp(7200)
+                    .multiSmelter(8, 8)
+                    .build();
+            TRINIUM = coilType(Materials.Trinium)
+                    .tier(GTValues.ZPM)
+                    .coilTemp(9001)
+                    .multiSmelter(8, 8)
+                    .build();
+            TRITANIUM = coilType(Materials.Tritanium)
+                    .tier(GTValues.UV)
+                    .coilTemp(10800)
+                    .multiSmelter(16, 8)
+                    .build();
+        }
 
         public static Builder coilType(Material material) {
             return new Builder(material);
@@ -207,7 +195,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         }
 
         public Builder tier(int tier) {
-            this.tier = Math.max(0, 1 - tier);
+            this.tier = Math.max(0, tier);
             return this;
         }
 

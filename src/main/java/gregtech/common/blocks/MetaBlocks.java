@@ -131,7 +131,6 @@ public class MetaBlocks {
     public static BlockMultiblockCasing MULTIBLOCK_CASING;
     public static BlockGlassCasing TRANSPARENT_CASING;
     public static BlockWireCoil WIRE_COIL;
-    public static BlockWireCoil[] WIRE_COILS;
     public static BlockFusionCasing FUSION_CASING;
     public static BlockWarningSign WARNING_SIGN;
     public static BlockWarningSign1 WARNING_SIGN_1;
@@ -248,22 +247,8 @@ public class MetaBlocks {
         MULTIBLOCK_CASING.setRegistryName("multiblock_casing");
         TRANSPARENT_CASING = new BlockGlassCasing();
         TRANSPARENT_CASING.setRegistryName("transparent_casing");
-
-        // init coils
-        int size = BlockWireCoil.getCoilTypes().size();
-        int coils = Math.floorDiv(size, 8) + 1;
-        WIRE_COILS = new BlockWireCoil[coils];
-        for (int i = 0; i < coils; i++) {
-            if (i == 0) {
-                WIRE_COIL = new BlockWireCoil();
-                WIRE_COIL.setRegistryName("wire_coil");
-                WIRE_COILS[i] = WIRE_COIL;
-            } else {
-                WIRE_COILS[i] = new BlockWireCoil();
-                WIRE_COILS[i].setRegistryName("wire_coil_" + i);
-            }
-        }
-
+        WIRE_COIL = new BlockWireCoil();
+        WIRE_COIL.setRegistryName("wire_coil");
         FUSION_CASING = new BlockFusionCasing();
         FUSION_CASING.setRegistryName("fusion_casing");
         WARNING_SIGN = new BlockWarningSign();

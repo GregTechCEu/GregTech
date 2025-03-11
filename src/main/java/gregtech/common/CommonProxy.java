@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.event.CoilEvent;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
@@ -12,6 +13,7 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -21,6 +23,7 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.BlockLamp;
@@ -218,6 +221,26 @@ public class CommonProxy {
         FLUID_BLOCKS.forEach(event.getRegistry()::register);
     }
 
+    // todo REMOVE, THIS IS FOR TESTING
+    @SubscribeEvent
+    public static void registerCoils(CoilEvent.Register event) {
+        event.addCoilType("custom_coil")
+                .coilTemp(42069)
+                .tier(GTValues.UHV)
+                .multiSmelter(69, 98)
+                .material(Materials.Chlorine)
+                .register();
+
+        event.addCoilType("custom_coil")
+                .coilTemp(696969)
+                .tier(GTValues.UHV)
+                .multiSmelter(69, 99)
+                .material(Materials.Neutronium)
+                .register();
+
+        event.register(GTUtility.gregtechId("custom_coil"));
+    }
+
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
         GTLog.logger.info("Registering Items...");
@@ -263,8 +286,10 @@ public class CommonProxy {
         registry.register(createItemBlock(STEAM_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(MULTIBLOCK_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(TRANSPARENT_CASING, VariantItemBlock::new));
-        for (var coil : WIRE_COILS)
-            registry.register(createItemBlock(coil, VariantItemBlock::new));
+
+        MinecraftForge.EVENT_BUS.post(new CoilEvent.Register());
+        CoilEvent.registerBlocks(registry);
+        registry.register(createItemBlock(WIRE_COIL, VariantItemBlock::new));
         registry.register(createItemBlock(FUSION_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN_1, VariantItemBlock::new));
