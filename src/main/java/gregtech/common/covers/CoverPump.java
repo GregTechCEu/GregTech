@@ -224,6 +224,9 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                     .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
             IFluidHandler myFluidHandler = getCoverableView().getCapability(
                     CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
+            // if we're on a pipe, we shouldn't see said pipe's sided handler, but instead its unsided handler.
+            IFluidHandler h = FluidCapabilityObject.instanceOf(myFluidHandler);
+            if (h != null) myFluidHandler = h;
             if (myFluidHandler != null && fluidHandler != null) {
                 if (pumpMode == PumpMode.EXPORT) {
                     performTransferOnUpdate(myFluidHandler, fluidHandler);

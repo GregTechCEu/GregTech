@@ -202,6 +202,9 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             IItemHandler itemHandler = tileEntity == null ? null :
                     tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
             IItemHandler myItemHandler = coverable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+            // if we're on a pipe, we shouldn't see said pipe's sided handler, but instead its unsided handler.
+            IItemHandler h = ItemCapabilityObject.instanceOf(myItemHandler);
+            if (h != null) myItemHandler = h;
             if (itemHandler != null && myItemHandler != null) {
                 if (conveyorMode == ConveyorMode.EXPORT) {
                     performTransferOnUpdate(myItemHandler, itemHandler);
