@@ -20,6 +20,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -218,6 +219,7 @@ public abstract class CoilEvent extends Event {
         }
     }
 
+    // todo render block with respect to material rgb color
     public static final class CustomCoilBlock extends VariantActiveBlock<CustomCoilStats> {
 
         private static final AtomicReference<List<CustomCoilStats>> activeSublist = new AtomicReference<>();
@@ -238,6 +240,12 @@ public abstract class CoilEvent extends Event {
             setSoundType(SoundType.METAL);
             setHarvestLevel(ToolClasses.WRENCH, 2);
             setDefaultState(getState(VALUES[0]));
+        }
+
+        @NotNull
+        @Override
+        public BlockRenderLayer getRenderLayer() {
+            return BlockRenderLayer.SOLID;
         }
 
         @Override
