@@ -5657,9 +5657,9 @@ gregtech.jei.fluid.dep_chance_hover=The percentage chance for the vein to be dep
 gregtech.jei.fluid.dep_amount_hover=The amount the vein will be depleted by
 gregtech.jei.fluid.dep_yield_hover=The maximum yield of the vein when it is fully depleted
 
-gregtech.jei.materials.average_mass=Average mass: %,d
-gregtech.jei.materials.average_protons=Average protons: %,d
-gregtech.jei.materials.average_neutrons=Average neutrons: %,d
+gregtech.jei.materials.average_mass=Average mass per mole: %,d
+gregtech.jei.materials.average_protons=Average protons per mole: %,d
+gregtech.jei.materials.average_neutrons=Average neutrons per mole: %,d
 
 gregtech.veins.ore.bauxite=Bauxite Vein
 gregtech.veins.ore.magnetite=Magnetite Vein
