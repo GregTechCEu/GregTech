@@ -4,7 +4,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-
 import gregtech.api.unification.stack.MaterialStack;
 
 import net.minecraft.item.ItemStack;
