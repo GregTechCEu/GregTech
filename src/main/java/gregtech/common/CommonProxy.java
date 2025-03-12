@@ -23,7 +23,6 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.BlockLamp;
@@ -224,21 +223,18 @@ public class CommonProxy {
     // todo REMOVE, THIS IS FOR TESTING
     @SubscribeEvent
     public static void registerCoils(CoilEvent.Register event) {
-        event.addCoilType("custom_coil")
-                .coilTemp(42069)
-                .tier(GTValues.UHV)
-                .multiSmelter(69, 98)
-                .material(Materials.Chlorine)
+        event.create("custom_coil")
+                .addCoilType(b -> b
+                        .coilTemp(42069)
+                        .tier(GTValues.UHV)
+                        .multiSmelter(69, 98)
+                        .material(Materials.Chlorine))
+                .addCoilType(b -> b
+                        .coilTemp(696969)
+                        .tier(GTValues.UHV)
+                        .multiSmelter(69, 99)
+                        .material(Materials.Neutronium))
                 .register();
-
-        event.addCoilType("custom_coil")
-                .coilTemp(696969)
-                .tier(GTValues.UHV)
-                .multiSmelter(69, 99)
-                .material(Materials.Neutronium)
-                .register();
-
-        event.register(GTUtility.gregtechId("custom_coil"));
     }
 
     @SubscribeEvent

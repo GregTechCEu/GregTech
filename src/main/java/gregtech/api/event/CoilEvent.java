@@ -8,7 +8,6 @@ import gregtech.api.block.VariantItemBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.util.GTUtility;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 
@@ -42,6 +41,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public abstract class CoilEvent extends Event {
 
@@ -70,44 +70,12 @@ public abstract class CoilEvent extends Event {
 
     public static class Register extends CoilEvent {
 
-        private static final AtomicReference<List<CustomCoilStats>> activeSublist = new AtomicReference<>();
-
-        public Builder addCoilType(ResourceLocation location) {
-            return new Builder(location);
+        public CoilBlockBuilder create(String modid, String path) {
+            return new CoilBlockBuilder(new ResourceLocation(modid, path));
         }
 
-        public Builder addCoilType(String modid, String path) {
-            return addCoilType(new ResourceLocation(modid, path));
-        }
-
-        public Builder addCoilType(String path) {
-            return addCoilType(GTUtility.gregtechId(path));
-        }
-
-        public void register(ResourceLocation location) {
-            List<CustomCoilStats> variants = STATS.get(location);
-            if (variants.isEmpty())
-                throw new IllegalArgumentException("Variants is empty!");
-
-            int blocks = (variants.size() / ACTIVE_META_LIMIT) + 1;
-            CustomCoilBlock[] customCoilBlocks = new CustomCoilBlock[blocks];
-            Arrays.setAll(customCoilBlocks, value -> createBlock(value, location, variants));
-            BLOCKS.put(location, customCoilBlocks);
-        }
-
-        private CustomCoilBlock createBlock(int index, ResourceLocation location, List<CustomCoilStats> variants) {
-            int metaIndex = index / ACTIVE_META_LIMIT;
-            int from = 8 * metaIndex;
-            int to = Math.min(from + 8, variants.size());
-            List<CustomCoilStats> subList = variants.subList(from, to);
-            activeSublist.set(subList);
-            var block = new CustomCoilBlock();
-            for (var stat : subList) {
-                GregTechAPI.HEATING_COILS.put(block.getState(stat), stat);
-            }
-            activeSublist.set(null);
-            block.setRegistryName(location);
-            return block;
+        public CoilBlockBuilder create(String path) {
+            return create(GTValues.MODID, path);
         }
     }
 
@@ -115,43 +83,82 @@ public abstract class CoilEvent extends Event {
 
     }
 
-    public static class Builder {
+    public static class CoilBlockBuilder {
 
         private final ResourceLocation location;
+        private final List<CustomCoilStats> stats = new ArrayList<>(ACTIVE_META_LIMIT);
+
+        public CoilBlockBuilder(ResourceLocation location) {
+            this.location = location;
+        }
+
+        public CoilBlockBuilder addCoilType(UnaryOperator<CoilStatBuilder> builder) {
+            stats.add(builder.apply(new CoilStatBuilder()).build());
+            return this;
+        }
+
+        public void register() {
+            if (this.stats.isEmpty())
+                throw new IllegalArgumentException("Variants is empty!");
+
+            int blocks = (this.stats.size() / ACTIVE_META_LIMIT) + 1;
+            CustomCoilBlock[] customCoilBlocks = new CustomCoilBlock[blocks];
+            Arrays.setAll(customCoilBlocks, value -> createBlock(value, this.location, this.stats));
+            BLOCKS.put(this.location, customCoilBlocks);
+        }
+
+        private static CustomCoilBlock createBlock(int index, ResourceLocation location,
+                                                   List<CustomCoilStats> variants) {
+            int metaIndex = index / ACTIVE_META_LIMIT;
+            int from = 8 * metaIndex;
+            int to = Math.min(from + 8, variants.size());
+
+            List<CustomCoilStats> subList = variants.subList(from, to);
+            CustomCoilBlock.setActiveSublist(subList);
+            var block = new CustomCoilBlock();
+            CustomCoilBlock.clearSubList();
+
+            for (var stat : subList) {
+                GregTechAPI.HEATING_COILS.put(block.getState(stat), stat);
+            }
+
+            block.setRegistryName(location);
+            return block;
+        }
+    }
+
+    public static class CoilStatBuilder {
+
         private final CustomCoilStats stats;
 
-        private Builder(ResourceLocation location) {
-            this.location = location;
+        private CoilStatBuilder() {
             this.stats = new CustomCoilStats();
         }
 
-        public Builder material(Material material) {
+        public CoilStatBuilder material(Material material) {
             stats.material = material;
             stats.name = material.getResourceLocation().getPath();
             return this;
         }
 
-        public Builder coilTemp(int coilTemperature) {
+        public CoilStatBuilder coilTemp(int coilTemperature) {
             stats.coilTemperature = coilTemperature;
             return this;
         }
 
-        public Builder tier(int tier) {
+        public CoilStatBuilder tier(int tier) {
             stats.tier = Math.max(0, tier);
             return this;
         }
 
-        public Builder multiSmelter(int level, int energyDiscount) {
+        public CoilStatBuilder multiSmelter(int level, int energyDiscount) {
             stats.level = level;
             stats.energyDiscount = energyDiscount;
             return this;
         }
 
-        public void register() {
-            if (!STATS.containsKey(this.location))
-                STATS.put(location, new ArrayList<>(ACTIVE_META_LIMIT));
-
-            STATS.get(this.location).add(this.stats);
+        private CustomCoilStats build() {
+            return this.stats;
         }
     }
 
@@ -213,6 +220,16 @@ public abstract class CoilEvent extends Event {
 
     public static final class CustomCoilBlock extends VariantActiveBlock<CustomCoilStats> {
 
+        private static final AtomicReference<List<CustomCoilStats>> activeSublist = new AtomicReference<>();
+
+        private static void setActiveSublist(List<CustomCoilStats> sublist) {
+            activeSublist.set(sublist);
+        }
+
+        private static void clearSubList() {
+            activeSublist.set(null);
+        }
+
         public CustomCoilBlock() {
             super(net.minecraft.block.material.Material.IRON);
             setTranslationKey("wire_coil");
@@ -225,7 +242,7 @@ public abstract class CoilEvent extends Event {
 
         @Override
         protected @NotNull Collection<CustomCoilStats> computeVariants() {
-            return Register.activeSublist.get(); // stupid super constructor nonsense
+            return activeSublist.get(); // stupid super constructor nonsense
         }
 
         @Override
