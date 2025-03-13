@@ -39,7 +39,7 @@ public class SimpleFluidFilter extends BaseFilter {
 
     @Override
     public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
-        return GTGuis.createPopupPanel("simple_fluid_filter", 98, 81)
+        return GTGuis.createPopupPanel("simple_fluid_filter", 98, 81, false)
                 .padding(4)
                 .child(CoverWithUI.createTitleRow(getContainerStack()))
                 .child(createWidgets(syncManager).top(22));

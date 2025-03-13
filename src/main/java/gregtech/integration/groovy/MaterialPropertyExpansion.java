@@ -13,9 +13,9 @@ import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.GemProperty;
 import gregtech.api.unification.material.properties.IngotProperty;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.material.properties.WoodProperty;
 
@@ -269,13 +269,13 @@ public class MaterialPropertyExpansion {
         } else m.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, transferRate));
     }
 
-    public static void addTools(Material m, ToolProperty.Builder builder) {
+    public static void addTools(Material m, MaterialToolProperty.Builder builder) {
         addTools(m, builder.build());
     }
 
-    public static void addTools(Material m, ToolProperty prop) {
+    public static void addTools(Material m, MaterialToolProperty prop) {
         if (checkFrozen("add Tools to a material")) return;
-        ToolProperty property = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty property = m.getProperty(PropertyKey.TOOL);
         if (property != null) {
             property.setToolSpeed(prop.getToolSpeed());
             property.setToolAttackDamage(prop.getToolAttackDamage());
@@ -313,7 +313,7 @@ public class MaterialPropertyExpansion {
                                 int durabilityMultiplier) {
         if (toolEnchantability == 0) toolEnchantability = 10;
         if (durabilityMultiplier <= 0) durabilityMultiplier = 1;
-        addTools(m, ToolProperty.Builder.of(toolSpeed, toolAttackDamage, toolDurability, toolHarvestLevel)
+        addTools(m, MaterialToolProperty.Builder.of(toolSpeed, toolAttackDamage, toolDurability, toolHarvestLevel)
                 .attackSpeed(toolAttackSpeed)
                 .enchantability(toolEnchantability)
                 .durabilityMultiplier(durabilityMultiplier));

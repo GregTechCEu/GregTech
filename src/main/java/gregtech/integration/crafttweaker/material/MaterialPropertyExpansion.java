@@ -238,7 +238,7 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.TOOL).setToolEnchantability(toolEnchantability);
             m.getProperty(PropertyKey.TOOL).setDurabilityMultiplier(durabilityMultiplier);
         } else m.setProperty(PropertyKey.TOOL,
-                ToolProperty.Builder.of(toolSpeed, toolAttackDamage, toolDurability, toolHarvestLevel)
+                MaterialToolProperty.Builder.of(toolSpeed, toolAttackDamage, toolDurability, toolHarvestLevel)
                         .attackSpeed(toolAttackSpeed).enchantability(toolEnchantability)
                         .durabilityMultiplier(durabilityMultiplier).build());
     }

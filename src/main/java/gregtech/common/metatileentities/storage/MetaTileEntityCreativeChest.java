@@ -105,7 +105,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
             active = value;
             scheduleRenderUpdate();
             var c = getQuantumController();
-            if (c != null) c.updateHandler();
+            if (c != null) c.onHandlerUpdate();
         }, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
 
         builder.widget(createConnectedGui(6));

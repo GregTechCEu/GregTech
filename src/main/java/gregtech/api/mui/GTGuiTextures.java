@@ -2,6 +2,8 @@ package gregtech.api.mui;
 
 import gregtech.api.GTValues;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.UITexture;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -177,6 +179,9 @@ public class GTGuiTextures {
     public static final UITexture OREDICT_WAITING = fullImage("textures/gui/widget/ore_filter/waiting.png");
     public static final UITexture OREDICT_WARN = fullImage("textures/gui/widget/ore_filter/warn.png");
 
+    public static final IDrawable PLUS = IKey.str("+").asIcon().marginLeft(1);
+    public static final IDrawable MINUS = IKey.str("-").asIcon().marginLeft(1);
+
     public static final UITexture[] MANUAL_IO_OVERLAY_IN = slice("textures/gui/overlay/manual_io_overlay_in.png",
             18, 18 * 3, 18, 18, true);
     public static final UITexture[] MANUAL_IO_OVERLAY_OUT = slice("textures/gui/overlay/manual_io_overlay_out.png",
@@ -208,6 +213,8 @@ public class GTGuiTextures {
             18, 36, 18, 18, true);
 
     public static final UITexture MENU_OVERLAY = fullImage("textures/gui/overlay/menu_overlay.png");
+
+    public static final UITexture RECIPE_LOCK = fullImage("textures/gui/widget/lock.png");
 
     // todo bronze/steel/primitive fluid slots?
 
@@ -350,10 +357,13 @@ public class GTGuiTextures {
     public static final UITexture BUTTON_AUTO_COLLAPSE = fullImage(
             "textures/gui/widget/button_auto_collapse_overlay.png");
     public static final UITexture BUTTON_X = fullImage("textures/gui/widget/button_x_overlay.png", true);
+    public static final UITexture BUTTON_CLEAR_GRID = fullImage("textures/gui/widget/button_clear_grid.png", false);
 
     public static final UITexture BUTTON_CROSS = fullImage("textures/gui/widget/button_cross.png");
     public static final UITexture BUTTON_REDSTONE_ON = fullImage("textures/gui/widget/button_redstone_on.png");
     public static final UITexture BUTTON_REDSTONE_OFF = fullImage("textures/gui/widget/button_redstone_off.png");
+    public static final UITexture BUTTON_THROTTLE_PLUS = fullImage("textures/gui/widget/button_throttle_plus.png");
+    public static final UITexture BUTTON_THROTTLE_MINUS = fullImage("textures/gui/widget/button_throttle_minus.png");
 
     // PROGRESS BARS
     public static final UITexture PROGRESS_BAR_ARC_FURNACE = progressBar(

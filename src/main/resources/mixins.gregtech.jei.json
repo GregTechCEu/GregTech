@@ -5,8 +5,12 @@
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "BasicRecipeTransferHandlerServerMixin",
+    "DragManagerAccessor",
+    "GhostDragAccessor",
     "IngredientGridMixin",
-    "JEITooltipMixin"
+    "JEITooltipMixin",
+    "StackHelperMixin"
   ],
   "client": [],
   "server": []
