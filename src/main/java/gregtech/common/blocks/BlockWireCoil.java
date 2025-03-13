@@ -128,6 +128,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
                     .coilTemp(4500)
                     .multiSmelter(4, 2)
                     .build();
+            // material path is "hssg" but texture needs "hss_g"
             HSS_G = coilType("hss_g", Materials.HSSG)
                     .tier(GTValues.IV)
                     .coilTemp(5400)
@@ -150,15 +151,15 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
                     .build();
         }
 
-        public static Builder coilType(Material material) {
-            return new Builder(material);
+        private static Builder coilType(Material material) {
+            return coilType(material.getResourceLocation().getPath(), material);
         }
 
-        public static Builder coilType(String name, Material material) {
+        private static Builder coilType(String name, Material material) {
             return new Builder(name, material);
         }
 
-        public CoilType() {
+        private CoilType() {
             COIL_TYPES.add(this);
         }
 
@@ -166,9 +167,14 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         public int compareTo(@NotNull BlockWireCoil.CoilType o) {
             return Integer.compare(o.getTier(), getTier());
         }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
     }
 
-    public static class Builder {
+    private static class Builder {
 
         private final String name;
         // electric blast furnace properties
@@ -178,11 +184,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         private int energyDiscount;
         private int tier;
         private final Material material;
-
-        private Builder(Material material) {
-            this.material = material;
-            this.name = material.getResourceLocation().getPath();
-        }
 
         private Builder(String name, Material material) {
             this.material = material;
@@ -236,11 +237,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
                 @Override
                 public @Nullable Material getMaterial() {
                     return material;
-                }
-
-                @Override
-                public String toString() {
-                    return getName();
                 }
             };
         }
