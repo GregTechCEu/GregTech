@@ -2,17 +2,16 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.TankWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -34,11 +33,25 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -97,33 +110,63 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         int invTier = tier + 2;
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND,
-                176, 18 + Math.max(166, 112 + 18 * invTier));// 176, 166
-        for (int i = 0; i < this.fluidTankList.getTanks(); i++) {
-            builder.widget(new TankWidget(this.fluidTankList.getTankAt(i), 151, 18 * (i + 1), 18, 18)
-                    .setAlwaysShowFull(true)
-                    .setBackgroundTexture(GuiTextures.FLUID_SLOT)
-                    .setContainerClicking(true, true));
-        }
+        guiSyncManager.registerSlotGroup("item_inv", invTier);
+
+        List<List<IWidget>> slotWidgets = new ArrayList<>();
         for (int y = 0; y < invTier; y++) {
+            slotWidgets.add(new ArrayList<>());
             for (int x = 0; x < invTier; x++) {
                 int index = y * invTier + x;
-                builder.slot(itemStackHandler, index, 8 + x * 18, 18 * (y + 1), GuiTextures.SLOT);
+                slotWidgets.get(y)
+                        .add(new ItemSlot().slot(SyncHandlers.itemSlot(itemStackHandler, index).slotGroup("item_inv")));
             }
         }
-        builder.widget(new ToggleButtonWidget(8, 18 * invTier + 21, 18, 18,
-                GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
-                        .setTooltipText("gregtech.gui.item_auto_output.tooltip")
-                        .shouldUseBaseBackground());
-        builder.widget(new ToggleButtonWidget(26, 18 * invTier + 21, 18, 18,
-                GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
-                        .setTooltipText("gregtech.gui.item_auto_output.tooltip")
-                        .shouldUseBaseBackground());
-        return builder.label(6, 6, getMetaFullName())
-                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 8, 42 + 18 * invTier)
-                .build(getHolder(), entityPlayer);
+
+        BooleanSyncValue workingStateValueItems = new BooleanSyncValue(this::isAutoOutputItems,
+                this::setAutoOutputItems);
+        guiSyncManager.syncValue("working_state_items", workingStateValueItems);
+        BooleanSyncValue workingStateValueFluids = new BooleanSyncValue(this::isAutoOutputFluids,
+                this::setAutoOutputFluids);
+        guiSyncManager.syncValue("working_state_fluids", workingStateValueFluids);
+
+        List<List<IWidget>> tankWidgets = new ArrayList<>();
+        for (int i = 0; i < this.fluidTankList.getTanks(); i++) {
+            tankWidgets.add(new ArrayList<>());
+            tankWidgets.get(i).add(new GTFluidSlot().syncHandler(this.fluidTankList.getTankAt(i)));
+        }
+
+        // TODO: Change the position of the name when it's standardized.
+        return GTGuis.createPanel(this, 176, 18 + Math.max(166, 112 + 18 * invTier))
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(new Grid()
+                        .top(18).height(18 * invTier)
+                        .left(7)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .matrix(slotWidgets))
+                .child(new Grid()
+                        .top(18).height(18 * invTier)
+                        .left(144 + 7)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .matrix(tankWidgets))
+                .child(Flow.row().pos(7, 18 * invTier + 23).width(36).height(18)
+                        .child(new ToggleButton()
+                                .value(new BoolValue.Dynamic(workingStateValueItems::getBoolValue,
+                                        workingStateValueItems::setBoolValue))
+                                .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT))
+                        .child(new ToggleButton()
+                                .value(new BoolValue.Dynamic(workingStateValueFluids::getBoolValue,
+                                        workingStateValueFluids::setBoolValue))
+                                .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)));
     }
 
     @Override
