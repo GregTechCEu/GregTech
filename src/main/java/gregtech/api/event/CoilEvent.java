@@ -177,6 +177,7 @@ public abstract class CoilEvent extends Event {
 
         // voltage tier
         private int tier = GTValues.ULV;
+        private int color = 0xFFFFFFFF;
 
         private Material material = Materials.Iron;
 
@@ -213,13 +214,18 @@ public abstract class CoilEvent extends Event {
         }
 
         @Override
+        public int getCoilColor() {
+            return color;
+        }
+
+        @Override
         public int compareTo(@NotNull CustomCoilStats o) {
             // todo add more comparisons?
             return Integer.compare(o.getTier(), this.getTier());
         }
     }
 
-    // todo render block with respect to material rgb color
+    // todo render block with respect to material rgb color or custom color
     public static final class CustomCoilBlock extends VariantActiveBlock<CustomCoilStats> {
 
         private static final AtomicReference<List<CustomCoilStats>> activeSublist = new AtomicReference<>();

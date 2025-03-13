@@ -52,4 +52,6 @@ public interface IHeatingCoilBlockStats {
      */
     @Nullable
     Material getMaterial();
+
+    int getCoilColor();
 }

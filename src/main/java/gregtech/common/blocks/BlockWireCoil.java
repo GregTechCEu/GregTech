@@ -7,30 +7,42 @@ import gregtech.api.block.VariantItemBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.client.model.ActiveVariantBlockBakedModel;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.cleanroommc.modularui.utils.Color;
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
@@ -88,6 +100,47 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
     public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
                                     @NotNull SpawnPlacementType type) {
         return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void onModelRegister() {
+        var mrl = new ModelResourceLocation(Objects.requireNonNull(getRegistryName()), "normal");
+        var model = new ActiveVariantBlockBakedModel(mrl, mrl, null);
+        Item item = Item.getItemFromBlock(this);
+
+        for (CoilType value : VALUES) {
+            // inactive
+            ModelLoader.setCustomModelResourceLocation(item, VARIANT.getIndexOf(value), mrl);
+
+            // active
+            ModelLoader.registerItemVariants(item, mrl);
+        }
+
+        ModelLoader.setCustomStateMapper(this, b -> {
+            Map<IBlockState, ModelResourceLocation> map = new HashMap<>();
+            for (IBlockState s : b.getBlockState().getValidStates()) {
+                map.put(s, model.getModelLocation());
+            }
+            return map;
+        });
+    }
+
+    public void onColorRegister(BlockColors blockColors, ItemColors itemColors) {
+        Int2IntMap colorMap = new Int2IntArrayMap();
+        Item item = Item.getItemFromBlock(this);
+
+        for (CoilType value : VALUES) {
+            colorMap.put(VARIANT.getIndexOf(value), getColor(value));
+        }
+
+        blockColors.registerBlockColorHandler((state, worldIn, pos, tintIndex) -> colorMap.get(state.getValue(VARIANT)),
+                this);
+
+        itemColors.registerItemColorHandler((stack, tintIndex) -> colorMap.get(item.getMetadata(stack)), item);
+    }
+
+    private int getColor(CoilType type) {
+        return type.getMaterial() == null ? 0xFFFFFFFF : type.getMaterial().getMaterialRGB();
     }
 
     public static List<CoilType> getCoilTypes() {
@@ -183,6 +236,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         private int level;
         private int energyDiscount;
         private int tier;
+        private int color = Color.WHITE.main;
         private final Material material;
 
         private Builder(String name, Material material) {
@@ -200,10 +254,28 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             return this;
         }
 
+        public Builder color(int color) {
+            this.color = color;
+            return this;
+        }
+
+        public Builder color(String color) {
+            return color(parseColor(color));
+        }
+
         public Builder multiSmelter(int level, int energyDiscount) {
             this.level = level;
             this.energyDiscount = energyDiscount;
             return this;
+        }
+
+        private int parseColor(String s) {
+            // stupid java not having actual unsigned ints
+            long tmp = Long.parseLong(s, 16);
+            if (tmp > 0x7FFFFFFF) {
+                tmp -= 0x100000000L;
+            }
+            return (int) tmp;
         }
 
         public CoilType build() {
@@ -237,6 +309,11 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
                 @Override
                 public @Nullable Material getMaterial() {
                     return material;
+                }
+
+                @Override
+                public int getCoilColor() {
+                    return color;
                 }
             };
         }

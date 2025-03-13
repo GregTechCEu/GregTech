@@ -74,6 +74,11 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
         return this.material;
     }
 
+    @Override
+    public int getCoilColor() {
+        return getMaterial().getMaterialRGB();
+    }
+
     @ZenMethod
     public static void add(@NotNull IBlockState state, @NotNull String name, int coilTemperature, int level,
                            int energyDiscount, int tier, @Nullable Material material) {
