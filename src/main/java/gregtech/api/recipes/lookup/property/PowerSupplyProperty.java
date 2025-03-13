@@ -8,6 +8,10 @@ public record PowerSupplyProperty(long voltage, long amperage) implements IRecip
 
     public static final PowerSupplyProperty EMPTY = new PowerSupplyProperty(0, 0);
 
+    public long eut() {
+        return voltage * amperage;
+    }
+
     @Override
     public boolean propertyEquals(@Nullable IRecipeSearchProperty other) {
         return other instanceof PowerSupplyProperty;

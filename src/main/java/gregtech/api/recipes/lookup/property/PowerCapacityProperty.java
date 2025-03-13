@@ -8,6 +8,10 @@ public record PowerCapacityProperty(long voltage, long amperage) implements IRec
 
     public static final PowerCapacityProperty EMPTY = new PowerCapacityProperty(0, 0);
 
+    public long eut() {
+        return voltage * amperage;
+    }
+
     @Override
     public boolean propertyEquals(@Nullable IRecipeSearchProperty other) {
         return other instanceof PowerCapacityProperty;

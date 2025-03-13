@@ -102,8 +102,9 @@ public final class IngredientMatchHelper {
             matchableEdges[i] = graph.addEdge(source, cacheMatchables[i]);
             graph.setEdgeWeight(matchableEdges[i], c);
             for (int j = 0; j < matchers.size(); j++) {
-                if (matchers.get(j).matches(matchable))
+                if (matchers.get(j).matches(matchable)) {
                     graph.setEdgeWeight(graph.addEdge(cacheMatchables[i], cacheMatchers[j]), required);
+                }
             }
         }
         return new GraphMatchCalculation<>(graph, matcherEdges, matchableEdges, matchers, matchables, counter,

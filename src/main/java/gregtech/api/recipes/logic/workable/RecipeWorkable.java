@@ -5,6 +5,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
+import gregtech.api.recipes.logic.statemachine.running.RecipeFinalizer;
 import gregtech.api.statemachine.GTStateMachine;
 import gregtech.api.statemachine.GTStateMachineStandardWorker;
 import gregtech.api.util.GTLog;
@@ -16,6 +17,7 @@ import net.minecraftforge.common.util.Constants;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class RecipeWorkable extends MTETrait {
@@ -26,29 +28,36 @@ public class RecipeWorkable extends MTETrait {
 
     protected int skippedWorkTicks;
 
+    protected final AtomicBoolean forceResetInputInvalidation = new AtomicBoolean();
+
     protected int consumedParallel;
-    protected long consumedAmperage;
+    protected long consumedPower;
+    protected final boolean downTransforming;
 
     public <T extends MetaTileEntity & ISupportsRecipeWorkable> RecipeWorkable(@NotNull T metaTileEntity,
                                                                                @NotNull RecipeStandardStateMachineBuilder builder) {
         super(metaTileEntity);
-        builder.setConsumedAmperageSupplier(this::getConsumedAmperage);
+        builder.setConsumedPowerSupplier(this::getConsumedPower);
         builder.setConsumedParallelSupplier(this::getConsumedParallel);
         builder.setOnRecipeStarted(this::onRecipeStarted);
         builder.setOnRecipeCompleted(this::onRecipeCompleted);
+        builder.setForceResetInvalidInputs(forceResetInputInvalidation);
         recipeStateMachine = builder.build();
         this.lookupAndSetup = new GTStateMachineStandardWorker(recipeStateMachine);
         this.progressAndComplete = new GTStateMachineStandardWorker(recipeStateMachine);
+        downTransforming = builder.canDownTransformForParallels();
     }
 
     // state machine standard convention is op 0 for the recipe progression track, op 1 for the recipe lookup track
     protected <
             T extends MetaTileEntity & ISupportsRecipeWorkable> RecipeWorkable(@NotNull T metaTileEntity,
-                                                                               @NotNull GTStateMachine recipeStateMachine) {
+                                                                               @NotNull GTStateMachine recipeStateMachine,
+                                                                               boolean downTransforming) {
         super(metaTileEntity);
         this.recipeStateMachine = recipeStateMachine;
         this.lookupAndSetup = new GTStateMachineStandardWorker(recipeStateMachine);
         this.progressAndComplete = new GTStateMachineStandardWorker(recipeStateMachine);
+        this.downTransforming = downTransforming;
     }
 
     public @NotNull GTStateMachine getRecipeStateMachine() {
@@ -67,18 +76,20 @@ public class RecipeWorkable extends MTETrait {
         return getSupport().shouldRecipeWorkableUpdate() && progressAndComplete.isLogicEnabled() && isRecipeSelected();
     }
 
-    public long getConsumedAmperage() {
-        return consumedAmperage;
+    public long getConsumedPower() {
+        return consumedPower;
     }
 
     protected void onRecipeStarted(NBTTagCompound recipe) {
-        consumedAmperage += recipe.getLong("Amperage");
-        consumedParallel += recipe.getInteger("Parallel");
+        consumedPower += RecipeFinalizer.amperage(recipe) * (downTransforming ? RecipeFinalizer.voltage(recipe) : 1);
+        consumedParallel += RecipeFinalizer.parallels(recipe);
     }
 
     protected void onRecipeCompleted(NBTTagCompound recipe) {
-        consumedAmperage = Math.max(0, consumedAmperage - recipe.getLong("Amperage"));
-        consumedParallel = Math.max(0, consumedParallel - recipe.getInteger("Parallel"));
+        consumedPower = Math.max(0, consumedPower -
+                RecipeFinalizer.amperage(recipe) * (downTransforming ? RecipeFinalizer.voltage(recipe) : 1));
+        consumedParallel = Math.max(0, consumedParallel - RecipeFinalizer.parallels(recipe));
+        forceResetInputInvalidation.set(true);
     }
 
     public void applyToBothWorkers(@NotNull Consumer<GTStateMachineStandardWorker> consumer) {
@@ -166,14 +177,15 @@ public class RecipeWorkable extends MTETrait {
         super.deserializeNBT(compound);
         lookupAndSetup.deserializeNBT(compound.getCompoundTag("Lookup"));
         progressAndComplete.deserializeNBT(compound.getCompoundTag("Runner"));
-        NBTTagList recipes = progressAndComplete.logicData().getTagList("ActiveRecipes", Constants.NBT.TAG_COMPOUND);
+        NBTTagList recipes = RecipeFinalizer.getActiveRecipes(progressAndComplete.logicData());
         // regenerate consumption information instead of serializing it to prevent long-term errors.
         consumedParallel = 0;
-        consumedAmperage = 0;
+        consumedPower = 0;
         for (int i = 0; i < recipes.tagCount(); i++) {
             NBTTagCompound recipe = recipes.getCompoundTagAt(i);
-            consumedAmperage += recipe.getLong("Amperage");
-            consumedParallel += recipe.getInteger("Parallel");
+            consumedPower += RecipeFinalizer.amperage(recipe) *
+                    (downTransforming ? RecipeFinalizer.voltage(recipe) : 1);
+            consumedParallel += RecipeFinalizer.parallels(recipe);
         }
     }
 

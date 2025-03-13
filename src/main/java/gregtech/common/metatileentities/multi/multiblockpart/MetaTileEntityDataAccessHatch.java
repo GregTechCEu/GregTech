@@ -192,7 +192,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         list.add(new TextComponentString(""));
         Collection<ItemStack> itemsAdded = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAll());
         for (Recipe recipe : recipes) {
-            ItemStack stack = recipe.getOutputs().get(0);
+            ItemStack stack = recipe.getItemOutputProvider().getCompleteOutputs(1, 1).get(0);
             if (!itemsAdded.contains(stack)) {
                 itemsAdded.add(stack);
                 list.add(new TextComponentTranslation("behavior.data_item.assemblyline.data",

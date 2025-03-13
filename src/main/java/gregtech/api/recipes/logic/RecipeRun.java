@@ -47,5 +47,10 @@ public interface RecipeRun {
     @Range(from = 0, to = Long.MAX_VALUE)
     long getRequiredAmperage();
 
+    @Range(from = 0, to = Long.MAX_VALUE)
+    default long getRequiredEUt() {
+        return getRequiredVoltage() * getRequiredAmperage();
+    }
+
     boolean isGenerating();
 }

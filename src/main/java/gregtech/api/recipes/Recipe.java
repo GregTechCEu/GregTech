@@ -15,17 +15,12 @@ import gregtech.api.recipes.properties.impl.PowerUsageProperty;
 import gregtech.api.recipes.roll.ListWithRollInformation;
 import gregtech.integration.groovy.GroovyScriptModule;
 
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-
 import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Class that represent machine recipe.
@@ -244,10 +239,6 @@ public class Recipe {
         return recipePropertyStorage.get(property, defaultValue);
     }
 
-    public RecipePropertyStorage getRecipePropertyStorage() {
-        return recipePropertyStorage;
-    }
-
     /**
      * @see RecipePropertyStorageImpl#contains(RecipeProperty)
      */
@@ -260,15 +251,5 @@ public class Recipe {
      */
     public @NotNull RecipePropertyStorage propertyStorage() {
         return recipePropertyStorage;
-    }
-
-    // TODO
-
-    public List<ItemStack> getOutputs() {
-        return null;
-    }
-
-    public List<FluidStack> getFluidOutputs() {
-        return null;
     }
 }

@@ -44,7 +44,7 @@ public class DataItemBehavior implements IItemBehaviour, IDataItem {
             lines.add(I18n.format("behavior.data_item.assemblyline.title"));
             Collection<ItemStack> added = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount());
             for (Recipe recipe : recipes) {
-                ItemStack output = recipe.getOutputs().get(0);
+                ItemStack output = recipe.getItemOutputProvider().getCompleteOutputs(1, 1).get(0);
                 if (added.add(output)) {
                     lines.add(I18n.format("behavior.data_item.assemblyline.data", output.getDisplayName()));
                 }

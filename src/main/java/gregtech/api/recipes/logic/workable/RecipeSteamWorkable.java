@@ -40,8 +40,9 @@ public class RecipeSteamWorkable extends RecipeWorkable implements IVentable {
     }
 
     protected <T extends MetaTileEntity & ISupportsRecipeSteamWorkable> RecipeSteamWorkable(@NotNull T metaTileEntity,
-                                                                                            @NotNull GTStateMachine recipeStateMachine) {
-        super(metaTileEntity, recipeStateMachine);
+                                                                                            @NotNull GTStateMachine recipeStateMachine,
+                                                                                            boolean downTransform) {
+        super(metaTileEntity, recipeStateMachine, downTransform);
     }
 
     @Override

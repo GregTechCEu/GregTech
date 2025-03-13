@@ -51,6 +51,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -69,6 +70,7 @@ public class RecipeStandardStateMachineBuilder {
     protected @Nullable Supplier<PropertySet> properties = null;
     protected @Nullable Supplier<IItemHandlerModifiable> itemInput = null;
     protected @NotNull Supplier<List<ItemStack>> itemInputView = () -> GTUtility.itemHandlerToList(itemInput.get());
+    protected @Nullable AtomicBoolean forceResetInvalidInputs = null;
     protected @NotNull Supplier<List<IItemHandlerModifiable>> notifiedItemInputs = Collections::emptyList;
     protected @Nullable Supplier<IMultipleTankHandler> fluidInput = null;
     protected @NotNull Supplier<List<FluidStack>> fluidInputView = () -> GTUtility.fluidHandlerToList(fluidInput.get());
@@ -99,7 +101,7 @@ public class RecipeStandardStateMachineBuilder {
     protected @Nullable Supplier<RecipeMaintenanceOperator.MaintenanceValues> maintenance = null;
 
     protected @Nullable IntSupplier consumedParallelSupplier = null;
-    protected @Nullable LongSupplier consumedAmperageSupplier = null;
+    protected @Nullable LongSupplier consumedPowerSupplier = null;
     protected @Nullable Consumer<NBTTagCompound> onRecipeStarted = null;
     protected @Nullable Consumer<NBTTagCompound> onRecipeCompleted = null;
 
@@ -243,9 +245,17 @@ public class RecipeStandardStateMachineBuilder {
         return this;
     }
 
+    public boolean canDownTransformForParallels() {
+        return downTransformForParallels;
+    }
+
     public RecipeStandardStateMachineBuilder setUpTransformForOverclocks(boolean upTransformForOverclocks) {
         this.upTransformForOverclocks = upTransformForOverclocks;
         return this;
+    }
+
+    public boolean canUpTransformForOverclocks() {
+        return upTransformForOverclocks;
     }
 
     public RecipeStandardStateMachineBuilder setDistinct(@NotNull BooleanSupplier hasNextDistinctGroup,
@@ -340,8 +350,8 @@ public class RecipeStandardStateMachineBuilder {
     }
 
     @ApiStatus.Internal
-    public RecipeStandardStateMachineBuilder setConsumedAmperageSupplier(@Nullable LongSupplier consumedAmperageSupplier) {
-        this.consumedAmperageSupplier = consumedAmperageSupplier;
+    public RecipeStandardStateMachineBuilder setConsumedPowerSupplier(@Nullable LongSupplier consumedPowerSupplier) {
+        this.consumedPowerSupplier = consumedPowerSupplier;
         return this;
     }
 
@@ -368,6 +378,11 @@ public class RecipeStandardStateMachineBuilder {
         return this;
     }
 
+    public RecipeStandardStateMachineBuilder setForceResetInvalidInputs(@Nullable AtomicBoolean forceResetInvalidInputs) {
+        this.forceResetInvalidInputs = forceResetInvalidInputs;
+        return this;
+    }
+
     protected static Tuple<List<ItemStack>, List<FluidStack>> toTuple(DistinctInputGroup group) {
         return new Tuple<>(group.itemInventoryView(), group.fluidInventoryView());
     }
@@ -384,18 +399,22 @@ public class RecipeStandardStateMachineBuilder {
                 int availableParallel = (parallelLimit == null ? 1 : parallelLimit.getAsInt());
                 if (consumedParallelSupplier != null) availableParallel -= consumedParallelSupplier.getAsInt();
                 if (next.run().getParallel() > availableParallel) return;
-                long availableAmperage;
+                long availablePower;
                 if (properties == null) {
-                    availableAmperage = 0;
+                    availablePower = 0;
                 } else if (next.run().isGenerating()) {
-                    availableAmperage = properties.get().getDefaultable(PowerCapacityProperty.EMPTY).amperage();
+                    PowerCapacityProperty property = properties.get().getDefaultable(PowerCapacityProperty.EMPTY);
+                    availablePower = downTransformForParallels ? property.eut() : property.amperage();
                 } else {
-                    availableAmperage = properties.get().getDefaultable(PowerSupplyProperty.EMPTY).amperage();
+                    PowerSupplyProperty property = properties.get().getDefaultable(PowerSupplyProperty.EMPTY);
+                    availablePower = downTransformForParallels ? property.eut() : property.amperage();
                 }
-                if (consumedAmperageSupplier != null) {
-                    availableAmperage -= consumedAmperageSupplier.getAsLong();
+                if (consumedPowerSupplier != null) {
+                    availablePower -= consumedPowerSupplier.getAsLong();
                 }
-                if (next.run().getRequiredAmperage() > availableAmperage) return;
+                if ((downTransformForParallels ? next.run().getRequiredEUt() : next.run().getRequiredAmperage()) >
+                        availablePower)
+                    return;
                 if (finalCheck.test(next.run)) {
                     RecipeFinalizer.ensureTagList(data);
                     RecipeFinalizer.getActiveRecipes(data).appendTag(next.finalized);
@@ -462,6 +481,10 @@ public class RecipeStandardStateMachineBuilder {
         // first, the async-incompatible operations, e.g. item/fluid availability and output space info.
         if (hasNextDistinctGroup == null) {
             builder.andThenIf(t -> t.getBoolean("AwaitingInputUpdate"), t -> {
+                if (forceResetInvalidInputs != null && forceResetInvalidInputs.getAndSet(false)) {
+                    t.removeTag("AwaitingInputUpdate");
+                    return;
+                }
                 List<IItemHandlerModifiable> notifiedItems = notifiedItemInputs.get();
                 List<IFluidHandler> notifiedFluids = notifiedFluidInputs.get();
                 if (notifiedItems.isEmpty() && notifiedFluids.isEmpty()) return;
@@ -506,20 +529,22 @@ public class RecipeStandardStateMachineBuilder {
         }
         if (properties != null) {
             builder.andThenDefault(RecipeSearchOperator.standardPropertiesProvider(properties), false);
-            if (consumedAmperageSupplier != null) {
+            if (consumedPowerSupplier != null) {
                 builder.andThenDefault((d, t) -> {
-                    long consumed = consumedAmperageSupplier.getAsLong();
+                    long consumed = consumedPowerSupplier.getAsLong();
                     if (consumed > 0) {
                         PropertySet props = (PropertySet) t.get(RecipeSearchOperator.STANDARD_PROPERTIES_KEY);
                         if (props == null) return;
                         PowerSupplyProperty supply = props.getNullable(PowerSupplyProperty.EMPTY);
                         if (supply != null) {
-                            long result = Math.max(supply.amperage() - consumed, 0);
+                            long result = Math.max(supply.amperage() - (downTransformForParallels ?
+                                    (long) Math.ceil((double) consumed / supply.voltage()) : consumed), 0);
                             props.add(new PowerSupplyProperty(supply.voltage(), result));
                         }
                         PowerCapacityProperty capacity = props.getNullable(PowerCapacityProperty.EMPTY);
                         if (capacity != null) {
-                            long result = Math.max(capacity.amperage() - consumed, 0);
+                            long result = Math.max(capacity.amperage() - (downTransformForParallels ?
+                                    (long) Math.ceil((double) consumed / capacity.voltage()) : consumed), 0);
                             props.add(new PowerCapacityProperty(capacity.voltage(), result));
                         }
                     }

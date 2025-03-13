@@ -47,6 +47,13 @@ final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
             graph.setEdgeWeight(edge, req);
             required += req;
         }
+        for (DefaultWeightedEdge edge : graph.edgeSet()) {
+            // rescale the "internal" webbing edges
+            if (graph.getEdgeSource(edge) != IngredientMatchHelper.source &&
+                    graph.getEdgeTarget(edge) != IngredientMatchHelper.sink) {
+                graph.setEdgeWeight(edge, required);
+            }
+        }
     }
 
     @Override

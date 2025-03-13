@@ -8,6 +8,7 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.MaterialToolProperty;
@@ -701,30 +702,31 @@ public final class ToolHelper {
                 EnchantmentHelper.getEnchantmentLevel(EnchantmentHardHammer.INSTANCE, tool) > 0) {
             ItemStack silktouchDrop = getSilkTouchDrop(state);
             if (!silktouchDrop.isEmpty()) {
-                // Stack lists can be immutable going into Recipe#matches barring no rewrites
-                // Search for forge hammer recipes from all drops individually (only LV or under)
-                Recipe hammerRecipe = RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(V[LV],
-                        Collections.singletonList(silktouchDrop),
-                        Collections.emptyList(), false);
-                if (hammerRecipe != null &&
-                        hammerRecipe.getItemIngredients().stream().anyMatch(i -> i.matches(silktouchDrop))) {
-                    drops.clear();
-                    OrePrefix prefix = OreDictUnifier.getPrefix(silktouchDrop);
-                    if (prefix == null) {
-                        for (ItemStack output : hammerRecipe.getOutputs()) {
-                            if (dropChance == 1.0F || random.nextFloat() <= dropChance) {
-                                drops.add(output.copy());
-                            }
+                var list = Collections.singletonList(silktouchDrop);
+                // Search for forge hammer recipes from silk drop (only 1a LV or under)
+                PropertySet props = PropertySet.empty().supply(V[LV], 1);
+                Iterator<Recipe> iter = RecipeMaps.FORGE_HAMMER_RECIPES.findRecipes(list,
+                        Collections.emptyList(), props);
+                if (!iter.hasNext()) return;
+                Recipe hammerRecipe = iter.next();
+                drops.clear();
+                OrePrefix prefix = OreDictUnifier.getPrefix(silktouchDrop);
+                if (prefix == null) {
+                    for (ItemStack output : hammerRecipe.getItemOutputProvider().computeOutputs(list,
+                            Collections.emptyList(), props, 1, 1, 1)) {
+                        if (dropChance == 1.0F || random.nextFloat() <= dropChance) {
+                            drops.add(output.copy());
                         }
-                    } else if (prefix.name.startsWith("ore")) {
-                        for (ItemStack output : hammerRecipe.getOutputs()) {
-                            if (dropChance == 1.0F || random.nextFloat() <= dropChance) {
-                                // Only apply fortune on ore -> crushed forge hammer recipes
-                                if (OreDictUnifier.getPrefix(output) == OrePrefix.crushed) {
-                                    output = output.copy();
-                                    output.grow(random.nextInt(fortune));
-                                    drops.add(output);
-                                }
+                    }
+                } else if (prefix.name.startsWith("ore")) {
+                    for (ItemStack output : hammerRecipe.getItemOutputProvider().computeOutputs(list,
+                            Collections.emptyList(), props, 1, 1, 1)) {
+                        if (dropChance == 1.0F || random.nextFloat() <= dropChance) {
+                            // Only apply fortune on ore -> crushed forge hammer recipes
+                            if (OreDictUnifier.getPrefix(output) == OrePrefix.crushed) {
+                                output = output.copy();
+                                output.grow(random.nextInt(fortune));
+                                drops.add(output);
                             }
                         }
                     }

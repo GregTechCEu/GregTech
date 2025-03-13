@@ -109,7 +109,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 scannerPossibilities = new ArrayList<>();
                 // Scanner Output replacing, used for cycling research outputs
                 String researchId = null;
-                for (ItemStack stack : recipe.getOutputs()) {
+                for (ItemStack stack : recipe.getItemOutputProvider().getCompleteOutputs(1, Integer.MAX_VALUE)) {
                     researchId = AssemblyLineManager.readResearchId(stack);
                     if (researchId != null) break;
                 }
@@ -118,7 +118,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                             .getDataStickEntry(researchId);
                     if (possibleRecipes != null) {
                         for (Recipe r : possibleRecipes) {
-                            ItemStack researchItem = r.getOutputs().get(0);
+                            ItemStack researchItem = r.getItemOutputProvider().getCompleteOutputs(1, 1).get(0);
                             researchItem = researchItem.copy();
                             researchItem.setCount(1);
                             boolean didMatch = false;

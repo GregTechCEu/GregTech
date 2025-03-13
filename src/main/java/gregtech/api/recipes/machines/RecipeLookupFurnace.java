@@ -52,9 +52,11 @@ public final class RecipeLookupFurnace extends RecipeLookup {
 
     @Override
     public @NotNull @UnmodifiableView List<Recipe> getAllRecipes() {
-        if (combined == null) combined = new ObjectArrayList<>(recipesFurnace.size() + recipes.size());
-        combined.addAll(recipesFurnace);
-        combined.addAll(recipes);
+        if (combined == null) {
+            combined = new ObjectArrayList<>(recipesFurnace.size() + recipes.size());
+            combined.addAll(recipesFurnace);
+            combined.addAll(recipes);
+        }
         return combined;
     }
 

@@ -95,7 +95,7 @@ public class RecipeStandardOverclockingOperator implements GTStateMachineTransie
             overclocks = (int) (Math.log((double) (machineVoltage * amperage) / view.getActualEUt()) /
                     Math.log(costFactor));
         } else {
-            overclocks = machineVoltageTier - recipeVoltageTier;
+            overclocks = machineVoltageTier - Math.min(1, recipeVoltageTier);
             while (view.getActualEUt() * Math.pow(costFactor, overclocks) > machineVoltage * amperage) overclocks--;
         }
         overclocks = Math.max(0, overclocks);

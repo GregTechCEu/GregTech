@@ -48,8 +48,9 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
         super.modifyRecipeLogicStandardBuilder(builder);
         builder.setDownTransformForParallels(true)
+                .setUpTransformForOverclocks(false)
                 .setParallelLimit(() -> getMaxParallel(heatingCoilLevel))
-                .setVoltageDiscount(() -> heatingCoilDiscount);
+                .setVoltageDiscount(() -> 1D / heatingCoilDiscount);
     }
 
     @Override
@@ -122,7 +123,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     public void invalidateStructure() {
         super.invalidateStructure();
         this.heatingCoilLevel = 0;
-        this.heatingCoilDiscount = 0;
+        this.heatingCoilDiscount = 1;
     }
 
     @NotNull
