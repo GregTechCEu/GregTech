@@ -8,6 +8,7 @@ import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTUtility;
@@ -116,8 +117,8 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void registerAbilities(List<IEnergyContainer> abilityList) {
-        abilityList.add(energyContainer);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(energyContainer);
     }
 
     @Override
@@ -177,7 +178,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     @Override
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         // override here is gross, but keeps things in order despite
-        // IDs being out of order, due to EV 4A hatches being added later
+        // IDs being out of order, due to EV 4A and UEV+ 4A+ hatches being added later
         if (this == MetaTileEntities.ENERGY_INPUT_HATCH[0]) {
             for (MetaTileEntityEnergyHatch hatch : MetaTileEntities.ENERGY_INPUT_HATCH) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
@@ -203,7 +204,11 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
             for (MetaTileEntityEnergyHatch hatch : MetaTileEntities.SUBSTATION_ENERGY_OUTPUT_HATCH) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
             }
-        }
+        } else if (this.getClass() != MetaTileEntityEnergyHatch.class &&
+                this.getClass() != MetaTileEntitySubstationEnergyHatch.class) {
+                    // let subclasses fall through this override
+                    super.getSubItems(creativeTab, subItems);
+                }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package gregtech.api.metatileentity.multiblock;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -19,5 +20,11 @@ public interface ICleanroomReceiver {
      *
      * @param provider the cleanroom to assign to this machine
      */
-    void setCleanroom(ICleanroomProvider provider);
+    void setCleanroom(@NotNull ICleanroomProvider provider);
+
+    /**
+     * Set the receiver's reference to null. Use instead of passing {@code null} to
+     * {@link ICleanroomReceiver#setCleanroom(ICleanroomProvider)}
+     */
+    void unsetCleanroom();
 }

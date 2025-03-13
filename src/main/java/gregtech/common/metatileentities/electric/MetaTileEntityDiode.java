@@ -9,6 +9,7 @@ import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -50,17 +51,22 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     private static final String AMP_NBT_KEY = "amp_mode";
     private int amps;
     private boolean isWorkingEnabled;
+    private final int maxAmps;
 
-    public MetaTileEntityDiode(ResourceLocation metaTileEntityId, int tier) {
+    /**
+     * @param maxAmps Must be power of 2
+     */
+    public MetaTileEntityDiode(ResourceLocation metaTileEntityId, int tier, int maxAmps) {
         super(metaTileEntityId, tier);
         amps = 1;
         reinitializeEnergyContainer();
         isWorkingEnabled = true;
+        this.maxAmps = maxAmps;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityDiode(metaTileEntityId, getTier());
+        return new MetaTileEntityDiode(metaTileEntityId, getTier(), getMaxAmperage());
     }
 
     @Override
@@ -115,14 +121,14 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
         }
     }
 
-    /** Change this value (or override) to make the Diode able to handle more amps. Must be a power of 2 */
     protected int getMaxAmperage() {
-        return 16;
+        return maxAmps;
     }
 
     protected void reinitializeEnergyContainer() {
         long tierVoltage = GTValues.V[getTier()];
-        this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 16, tierVoltage, amps, tierVoltage, amps);
+        this.energyContainer = new EnergyContainerHandler(this, tierVoltage * getMaxAmperage(), tierVoltage, amps,
+                tierVoltage, amps);
         ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s != getFrontFacing());
         ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing());
     }
@@ -177,8 +183,8 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void registerAbilities(@NotNull List<IPassthroughHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(this);
     }
 
     @NotNull

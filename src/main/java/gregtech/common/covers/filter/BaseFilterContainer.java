@@ -10,12 +10,13 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.factory.GuiData;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
@@ -23,8 +24,6 @@ import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
 
 public abstract class BaseFilterContainer extends ItemStackHandler {
 
@@ -213,7 +212,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
     /** Uses Cleanroom MUI */
     public IWidget initUI(GuiData data, PanelSyncManager manager) {
-        PanelSyncHandler panel = (PanelSyncHandler) manager.panel("filter_panel", (syncManager, syncHandler) -> {
+        IPanelHandler panel = manager.panel("filter_panel", (syncManager, syncHandler) -> {
             var filter = hasFilter() ? getFilter() : BaseFilter.ERROR_FILTER;
             filter.setMaxTransferSize(getMaxTransferSize());
             return filter.createPopupPanel(syncManager);
@@ -253,17 +252,13 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
-        packetBuffer.writeItemStack(this.getFilterStack());
+        NetworkUtils.writeItemStack(packetBuffer, this.getFilterStack());
         packetBuffer.writeInt(this.maxTransferSize);
         packetBuffer.writeInt(this.transferSize);
     }
 
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
-        var stack = ItemStack.EMPTY;
-        try {
-            stack = packetBuffer.readItemStack();
-        } catch (IOException ignore) {}
-        this.setFilterStack(stack);
+        this.setFilterStack(NetworkUtils.readItemStack(packetBuffer));
         this.setMaxTransferSize(packetBuffer.readInt());
         this.setTransferSize(packetBuffer.readInt());
     }

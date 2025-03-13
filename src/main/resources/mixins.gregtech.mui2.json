@@ -8,17 +8,10 @@
     "maxShiftBy": 10
   },
   "mixins": [
-    "ItemSlotSHMixin",
-    "PanelSyncHandlerMixin",
-    "PanelSyncManagerMixin",
-    "StyledTextMixin",
-    "TextWidgetMixin",
-    "ToggleButtonMixin",
-    "TooltipMixin",
-    "TooltipMixin$RichTextWidgetMixin"
+    "ModularPanelMixin"
   ],
   "client": [
-    "ClientEventHandlerMixin"
+    "LangKeyMixin"
   ],
   "server": []
 }

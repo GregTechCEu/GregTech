@@ -270,8 +270,11 @@ public class ConfigHolder {
         @Config.Comment({ "Whether to make the recipe for the EBF Controller harder.", "Default: false" })
         public boolean harderEBFControllerRecipe = false;
 
-        @Config.Comment({ "How many Multiblock Casings to make per craft. Either 1, 2, or 3.", "Default: 2" })
-        @Config.RangeInt(min = 1, max = 3)
+        @Config.Comment({
+                "How many Multiblock Casings to make per craft. Must be greater than 0 and fit in a stack.",
+                "'Normal' values would be 1, 2, or 3.",
+                "Default: 2" })
+        @Config.RangeInt(min = 1, max = 64)
         public int casingsPerCraft = 2;
 
         @Config.Comment({
@@ -380,6 +383,9 @@ public class ConfigHolder {
         @Config.Comment("Config options for Shaders and Post-processing Effects")
         @Config.Name("Shader Options")
         public ShaderOptions shader = new ShaderOptions();
+
+        @Config.Name("Toolbelt Config")
+        public ToolbeltConfig toolbeltConfig = new ToolbeltConfig();
 
         @Config.Comment({ "Terminal root path.", "Default: {.../config}/gregtech/terminal" })
         @Config.RequiresMcRestart
@@ -553,6 +559,22 @@ public class ConfigHolder {
             @Config.Comment({ "Blur Step (bloom range)", "Default: 1" })
             @Config.RangeDouble(min = 0)
             public double step = 1;
+        }
+
+        public static class ToolbeltConfig {
+
+            @Config.Comment({ "Enable the capturing of hotbar scroll while sneaking by a selected toolbelt.",
+                    "Default: true" })
+            public boolean enableToolbeltScrollingCapture = true;
+
+            @Config.Comment({ "Enable the capturing of hotbar keypresses while sneaking by a selected toolbelt.",
+                    "Default: true" })
+            public boolean enableToolbeltKeypressCapture = true;
+
+            @Config.Comment({
+                    "Enable the display of a second hotbar representing the toolbelt's inventory when one is selected.",
+                    "Default: true" })
+            public boolean enableToolbeltHotbarDisplay = true;
         }
     }
 

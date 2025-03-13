@@ -5,20 +5,22 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.IGTTool;
-import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.materials.SoftToolAddition;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.GTUtility;
 import gregtech.common.crafting.ToolHeadReplaceRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
@@ -121,7 +123,7 @@ public class ToolRecipeHandler {
         }
     }
 
-    private static void processTool(OrePrefix prefix, Material material, ToolProperty property) {
+    private static void processTool(OrePrefix prefix, Material material, MaterialToolProperty property) {
         UnificationEntry stick = new UnificationEntry(OrePrefix.stick, Materials.Wood);
         UnificationEntry plate = new UnificationEntry(OrePrefix.plate, material);
         UnificationEntry ingot = new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot,
@@ -215,6 +217,14 @@ public class ToolRecipeHandler {
                 }
             }
 
+            if (material.hasFlag(GENERATE_BOLT_SCREW) && material.hasFlag(GENERATE_RING)) {
+                addToolRecipe(material, ToolItems.TOOLBELT, false,
+                        "SSS", "LLL", "RSR",
+                        'L', Items.LEATHER,
+                        'S', new UnificationEntry(OrePrefix.screw, material),
+                        'R', new UnificationEntry(OrePrefix.ring, material));
+            }
+
             addToolRecipe(material, ToolItems.SCREWDRIVER, true,
                     " fS", " Sh", "W  ",
                     'S', rod,
@@ -227,8 +237,8 @@ public class ToolRecipeHandler {
         }
     }
 
-    private static void processElectricTool(OrePrefix prefix, Material material, ToolProperty property) {
-        final int voltageMultiplier = material.getBlastTemperature() > 2800 ? VA[LV] : VA[ULV];
+    private static void processElectricTool(OrePrefix prefix, Material material, MaterialToolProperty property) {
+        final long voltageMultiplier = material.getBlastTemperature() > 2800 ? VA[LV] : VA[ULV];
         OrePrefix toolPrefix;
 
         if (material.hasFlag(GENERATE_PLATE)) {
@@ -284,7 +294,7 @@ public class ToolRecipeHandler {
                         .input(OrePrefix.gear, material)
                         .output(toolPrefix, material)
                         .duration((int) material.getMass() * 4)
-                        .EUt(8 * voltageMultiplier)
+                        .EUt(GTUtility.scaleVoltage(8 * voltageMultiplier, material.getWorkingTier()))
                         .buildAndRegister();
             }
 
@@ -406,31 +416,23 @@ public class ToolRecipeHandler {
     }
 
     private static void registerSoftToolRecipes() {
-        final Material[] softMaterials = new Material[] {
-                Materials.Wood, Materials.Rubber, Materials.Polyethylene,
-                Materials.Polytetrafluoroethylene, Materials.Polybenzimidazole
-        };
+        final Material[] softMaterials = SoftToolAddition.softMaterials;
 
         final UnificationEntry stick = new UnificationEntry(OrePrefix.stick, Materials.Wood);
 
-        for (int i = 0; i < softMaterials.length; i++) {
-            Material material = softMaterials[i];
-
+        for (Material material : softMaterials) {
             if (ModHandler.isMaterialWood(material)) {
-                ModHandler.addMirroredShapedRecipe(String.format("soft_mallet_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 47, 1, 4F, 1F),
+                addToolRecipe(material, ToolItems.SOFT_MALLET, true,
                         "II ", "IIS", "II ",
                         'I', new UnificationEntry(OrePrefix.plank, material),
                         'S', stick);
             } else {
-                ModHandler.addMirroredShapedRecipe(String.format("soft_mallet_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 128 * (1 << i) - 1, 1, 4F, 1F),
+                addToolRecipe(material, ToolItems.SOFT_MALLET, true,
                         "II ", "IIS", "II ",
                         'I', new UnificationEntry(OrePrefix.ingot, material),
                         'S', stick);
 
-                ModHandler.addMirroredShapedRecipe(String.format("plunger_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.PLUNGER, material, 128 * (i << 1) - 1, 1, 4F, 0F),
+                addToolRecipe(material, ToolItems.PLUNGER, true,
                         "xPP", " SP", "S f",
                         'P', new UnificationEntry(OrePrefix.plate, material),
                         'S', stick);

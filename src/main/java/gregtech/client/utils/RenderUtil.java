@@ -26,6 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.MCHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -382,6 +383,24 @@ public class RenderUtil {
         renderItem.renderItemAndEffectIntoGUI(itemStack, 0, 0);
         GlStateManager.popMatrix();
         net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+    }
+
+    // adapted from com.cleanroommc.modularui.drawable.GuiDraw.java
+    // todo merge this with the method from the qstorage mui2 port
+    public static void renderItem(ItemStack item, int x, int y, float width, float height) {
+        if (item.isEmpty()) return;
+        GlStateManager.pushMatrix();
+        RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.enableDepth();
+        GlStateManager.translate(x, y, 0);
+        GlStateManager.scale(width / 16f, height / 16f, 1);
+        RenderItem renderItem = MCHelper.getMc().getRenderItem();
+        renderItem.renderItemAndEffectIntoGUI(MCHelper.getPlayer(), item, 0, 0);
+        renderItem.renderItemOverlayIntoGUI(MCHelper.getFontRenderer(), item, 0, 0, null);
+        GlStateManager.disableDepth();
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.disableLighting();
+        GlStateManager.popMatrix();
     }
 
     public static void renderFluidOverLay(float x, float y, float width, float height, float z, FluidStack fluidStack,

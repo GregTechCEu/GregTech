@@ -7,51 +7,55 @@ import gregtech.api.util.input.KeyBind;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class PacketKeysPressed implements IPacket, IServerExecutor {
 
-    private Object updateKeys;
+    private List<KeyBind> clientKeysUpdated;
+    private int[] serverKeysUpdated;
+    private boolean[] serverKeysPressed;
+    private boolean[] serverKeysDown;
 
     @SuppressWarnings("unused")
     public PacketKeysPressed() {}
 
-    public PacketKeysPressed(List<KeyBind> updateKeys) {
-        this.updateKeys = updateKeys;
+    public PacketKeysPressed(@NotNull List<KeyBind> clientKeysUpdated) {
+        this.clientKeysUpdated = clientKeysUpdated;
     }
 
     @Override
-    public void encode(PacketBuffer buf) {
-        List<KeyBind> updateKeys = (List<KeyBind>) this.updateKeys;
-        buf.writeVarInt(updateKeys.size());
-        for (KeyBind keyBind : updateKeys) {
-            buf.writeVarInt(keyBind.ordinal());
+    public void encode(@NotNull PacketBuffer buf) {
+        buf.writeVarInt(clientKeysUpdated.size());
+        for (KeyBind keyBind : clientKeysUpdated) {
+            buf.writeByte(keyBind.ordinal());
             buf.writeBoolean(keyBind.isPressed());
             buf.writeBoolean(keyBind.isKeyDown());
         }
     }
 
     @Override
-    public void decode(PacketBuffer buf) {
-        this.updateKeys = new Pair[KeyBind.VALUES.length];
-        Pair<Boolean, Boolean>[] updateKeys = (Pair<Boolean, Boolean>[]) this.updateKeys;
-        int size = buf.readVarInt();
+    public void decode(@NotNull PacketBuffer buf) {
+        final int size = buf.readVarInt();
+        this.serverKeysUpdated = new int[size];
+        this.serverKeysPressed = new boolean[size];
+        this.serverKeysDown = new boolean[size];
         for (int i = 0; i < size; i++) {
-            updateKeys[buf.readVarInt()] = Pair.of(buf.readBoolean(), buf.readBoolean());
+            serverKeysUpdated[i] = buf.readByte();
+            serverKeysPressed[i] = buf.readBoolean();
+            serverKeysDown[i] = buf.readBoolean();
         }
     }
 
     @Override
     public void executeServer(NetHandlerPlayServer handler) {
-        KeyBind[] keybinds = KeyBind.VALUES;
-        Pair<Boolean, Boolean>[] updateKeys = (Pair<Boolean, Boolean>[]) this.updateKeys;
-        for (int i = 0; i < updateKeys.length; i++) {
-            Pair<Boolean, Boolean> pair = updateKeys[i];
-            if (pair != null) {
-                keybinds[i].update(pair.getLeft(), pair.getRight(), handler.player);
-            }
+        if (serverKeysUpdated == null) {
+            throw new IllegalStateException("PacketKeysPressed called executeServer() before decode()");
+        }
+
+        for (int i = 0; i < serverKeysUpdated.length; i++) {
+            KeyBind.VALUES[i].updateServerState(handler.player, serverKeysPressed[i], serverKeysDown[i]);
         }
     }
 }
