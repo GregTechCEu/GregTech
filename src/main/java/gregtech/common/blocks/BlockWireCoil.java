@@ -59,7 +59,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
     @NotNull
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.SOLID;
+        return BlockRenderLayer.CUTOUT;
     }
 
     @Override
@@ -104,16 +104,17 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
     @SideOnly(Side.CLIENT)
     public void onModelRegister() {
-        var mrl = new ModelResourceLocation(Objects.requireNonNull(getRegistryName()), "normal");
-        var model = new ActiveVariantBlockBakedModel(mrl, mrl, null);
+        var inactive = new ModelResourceLocation(Objects.requireNonNull(getRegistryName()), "normal");
+        var active = new ModelResourceLocation(Objects.requireNonNull(getRegistryName()), "active");
+        var model = new ActiveVariantBlockBakedModel(inactive, active, null);
         Item item = Item.getItemFromBlock(this);
 
         for (CoilType value : VALUES) {
             // inactive
-            ModelLoader.setCustomModelResourceLocation(item, VARIANT.getIndexOf(value), mrl);
+            ModelLoader.setCustomModelResourceLocation(item, VARIANT.getIndexOf(value), inactive);
 
             // active
-            ModelLoader.registerItemVariants(item, mrl);
+            ModelLoader.registerItemVariants(item, active);
         }
 
         ModelLoader.setCustomStateMapper(this, b -> {

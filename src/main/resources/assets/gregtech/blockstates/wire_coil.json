@@ -7,6 +7,14 @@
         "bot_all": "gregtech:blocks/casings/coils/machine_coil_generic_base",
         "top_all": "gregtech:blocks/casings/coils/machine_coil_generic"
       }
+    },
+    "active": {
+      "model": "gregtech:cube_3_layer_all_tint",
+      "textures": {
+        "bot_all": "gregtech:blocks/casings/coils/machine_coil_generic_base",
+        "mid_all": "gregtech:blocks/casings/coils/machine_coil_generic",
+        "top_all": "gregtech:blocks/casings/coils/machine_coil_generic_bloom"
+      }
     }
   }
 }
