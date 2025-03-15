@@ -2,9 +2,12 @@ package gregtech.api.block;
 
 import gregtech.api.recipes.properties.impl.TemperatureProperty;
 import gregtech.api.unification.material.Material;
+import gregtech.client.model.ActiveVariantBlockBakedModel;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Predicate;
 
 /**
  * Implement this interface on the Block Enum for your Heating Coil block
@@ -54,4 +57,6 @@ public interface IHeatingCoilBlockStats {
     Material getMaterial();
 
     int getCoilColor();
+
+    ActiveVariantBlockBakedModel createModel(Predicate<Object> bloomConfig);
 }

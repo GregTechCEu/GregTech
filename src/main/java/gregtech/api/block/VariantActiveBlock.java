@@ -168,7 +168,7 @@ public abstract class VariantActiveBlock<T extends IStringSerializable & Compara
     }
 
     @SideOnly(Side.CLIENT)
-    protected boolean isBloomEnabled(T value) {
+    public boolean isBloomEnabled(T value) {
         return ConfigHolder.client.machinesEmissiveTextures;
     }
 }

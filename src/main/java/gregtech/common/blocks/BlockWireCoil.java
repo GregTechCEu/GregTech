@@ -7,6 +7,7 @@ import gregtech.api.block.VariantItemBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.GTUtility;
 import gregtech.client.model.ActiveVariantBlockBakedModel;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
@@ -23,6 +24,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -33,6 +35,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import com.cleanroommc.modularui.utils.Color;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
@@ -59,7 +64,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
     @NotNull
     @Override
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override
@@ -104,23 +109,25 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
     @SideOnly(Side.CLIENT)
     public void onModelRegister() {
-        var inactive = new ModelResourceLocation(Objects.requireNonNull(getRegistryName()), "normal");
-        var active = new ModelResourceLocation(Objects.requireNonNull(getRegistryName()), "active");
-        var model = new ActiveVariantBlockBakedModel(inactive, active, null);
         Item item = Item.getItemFromBlock(this);
+        Int2ObjectMap<ModelResourceLocation> modelMap = new Int2ObjectArrayMap<>();
 
         for (CoilType value : VALUES) {
+            var model = value.createModel(object -> isBloomEnabled((CoilType) object));
+            modelMap.put(VARIANT.getIndexOf(value), model.getModelLocation());
+
             // inactive
-            ModelLoader.setCustomModelResourceLocation(item, VARIANT.getIndexOf(value), inactive);
+            ModelLoader.setCustomModelResourceLocation(item, VARIANT.getIndexOf(value),
+                    model.getInactiveModelLocation());
 
             // active
-            ModelLoader.registerItemVariants(item, active);
+            ModelLoader.registerItemVariants(item, model.getActiveModelLocation());
         }
 
         ModelLoader.setCustomStateMapper(this, b -> {
             Map<IBlockState, ModelResourceLocation> map = new HashMap<>();
             for (IBlockState s : b.getBlockState().getValidStates()) {
-                map.put(s, model.getModelLocation());
+                map.put(s, modelMap.get(s.getValue(VARIANT)));
             }
             return map;
         });
@@ -148,22 +155,38 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         return Collections.unmodifiableList(CoilType.COIL_TYPES);
     }
 
-    public static abstract class CoilType implements IStringSerializable, IHeatingCoilBlockStats, Comparable<CoilType> {
+    public abstract static class CoilType implements IStringSerializable, IHeatingCoilBlockStats, Comparable<CoilType> {
 
         private static final List<CoilType> COIL_TYPES = new ArrayList<>();
 
-        public static final CoilType CUPRONICKEL;
-        public static final CoilType KANTHAL;
-        public static final CoilType NICHROME;
-        public static final CoilType RTM_ALLOY;
-        public static final CoilType HSS_G;
-        public static final CoilType NAQUADAH;
-        public static final CoilType TRINIUM;
-        public static final CoilType TRITANIUM;
+        public static CoilType CUPRONICKEL;
+        public static CoilType KANTHAL;
+        public static CoilType NICHROME;
+        public static CoilType RTM_ALLOY;
+        public static CoilType HSS_G;
+        public static CoilType NAQUADAH;
+        public static CoilType TRINIUM;
+        public static CoilType TRITANIUM;
+
+        private CoilType() {
+            COIL_TYPES.add(this);
+        }
+
+        @Override
+        public int compareTo(@NotNull BlockWireCoil.CoilType o) {
+            return Integer.compare(o.getTier(), getTier());
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
 
         static {
             CUPRONICKEL = coilType(Materials.Cupronickel)
                     .tier(GTValues.LV)
+                    // this works, but requires SOLID, while everything else needs CUTOUT
+                    .texture(GTUtility.gregtechId("wire_coil"), false)
                     .coilTemp(1800)
                     .multiSmelter(1, 1)
                     .build();
@@ -212,20 +235,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         private static Builder coilType(String name, Material material) {
             return new Builder(name, material);
         }
-
-        private CoilType() {
-            COIL_TYPES.add(this);
-        }
-
-        @Override
-        public int compareTo(@NotNull BlockWireCoil.CoilType o) {
-            return Integer.compare(o.getTier(), getTier());
-        }
-
-        @Override
-        public String toString() {
-            return getName();
-        }
     }
 
     private static class Builder {
@@ -239,6 +248,8 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         private int tier;
         private int color = Color.WHITE.main;
         private final Material material;
+        private ModelResourceLocation inactive;
+        private ModelResourceLocation active;
 
         private Builder(String name, Material material) {
             this.material = material;
@@ -260,8 +271,14 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             return this;
         }
 
-        public Builder color(String color) {
-            return color(parseColor(color));
+        public Builder texture(ResourceLocation location, boolean generic) {
+            ResourceLocation loc = Objects.requireNonNull(location);
+            String variant = generic ? "%s" : "active=%s,variant=%s";
+            this.inactive = new ModelResourceLocation(loc,
+                    generic ? String.format(variant, false) : String.format(variant, false, name));
+            this.active = new ModelResourceLocation(loc,
+                    generic ? String.format(variant, true) : String.format(variant, true, name));
+            return this;
         }
 
         public Builder multiSmelter(int level, int energyDiscount) {
@@ -270,16 +287,13 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             return this;
         }
 
-        private int parseColor(String s) {
-            // stupid java not having actual unsigned ints
-            long tmp = Long.parseLong(s, 16);
-            if (tmp > 0x7FFFFFFF) {
-                tmp -= 0x100000000L;
-            }
-            return (int) tmp;
-        }
-
         public CoilType build() {
+            if (inactive == null) {
+                inactive = new ModelResourceLocation(GTUtility.gregtechId("wire_coil"), "normal");
+            }
+            if (active == null) {
+                active = inactive;
+            }
             return new CoilType() {
 
                 @Override
@@ -315,6 +329,11 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
                 @Override
                 public int getCoilColor() {
                     return color;
+                }
+
+                @Override
+                public ActiveVariantBlockBakedModel createModel(Predicate<Object> bloomConfig) {
+                    return new ActiveVariantBlockBakedModel(inactive, active, () -> bloomConfig.test(this));
                 }
             };
         }

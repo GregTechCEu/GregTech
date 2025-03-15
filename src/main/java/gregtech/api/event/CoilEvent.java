@@ -8,6 +8,7 @@ import gregtech.api.block.VariantItemBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.client.model.ActiveVariantBlockBakedModel;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 
@@ -42,6 +43,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 public abstract class CoilEvent extends Event {
@@ -216,6 +218,11 @@ public abstract class CoilEvent extends Event {
         @Override
         public int getCoilColor() {
             return color;
+        }
+
+        @Override
+        public ActiveVariantBlockBakedModel createModel(Predicate<Object> bloomConfig) {
+            return null;
         }
 
         @Override

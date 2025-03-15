@@ -3,6 +3,7 @@ package gregtech.integration.crafttweaker.block;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.unification.material.Material;
+import gregtech.client.model.ActiveVariantBlockBakedModel;
 
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.block.IBlockState;
@@ -11,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
+
+import java.util.function.Predicate;
 
 @ZenClass("mods.gregtech.blocks.HeatingCoils")
 @ZenRegister
@@ -77,6 +80,11 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
     @Override
     public int getCoilColor() {
         return getMaterial().getMaterialRGB();
+    }
+
+    @Override
+    public ActiveVariantBlockBakedModel createModel(Predicate<Object> bloomConfig) {
+        return null;
     }
 
     @ZenMethod
