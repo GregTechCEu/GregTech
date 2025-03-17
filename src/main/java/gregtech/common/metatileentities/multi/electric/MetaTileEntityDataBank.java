@@ -50,7 +50,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     private IEnergyContainer energyContainer;
 
-    private boolean isActive = false;
+    private boolean isActive;
     private boolean isWorkingEnabled = true;
     protected boolean hasNotEnoughEnergy;
 
@@ -124,18 +124,14 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     }
 
     @Override
-    public boolean isActive() {
-        return super.isActive() && this.isActive;
+    public boolean shouldBeActive() {
+        return super.shouldBeActive() && this.isActive;
     }
 
     public void setActive(boolean active) {
         if (this.isActive != active) {
             this.isActive = active;
             markDirty();
-            World world = getWorld();
-            if (world != null && !world.isRemote) {
-                writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
-            }
         }
     }
 
@@ -293,17 +289,13 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.isActive = buf.readBoolean();
         this.isWorkingEnabled = buf.readBoolean();
     }
 
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.IS_WORKING) {
-            this.isActive = buf.readBoolean();
-            scheduleRenderUpdate();
-        } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+        if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.isWorkingEnabled = buf.readBoolean();
             scheduleRenderUpdate();
         }

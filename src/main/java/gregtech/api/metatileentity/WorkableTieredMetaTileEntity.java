@@ -16,6 +16,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
 import gregtech.api.recipes.logic.statemachine.running.RecipeFinalizer;
 import gregtech.api.recipes.logic.statemachine.running.RecipeProgressOperation;
+import gregtech.api.recipes.logic.workable.OutputBufferTrait;
 import gregtech.api.recipes.logic.workable.RecipeWorkable;
 import gregtech.api.recipes.lookup.property.CleanroomFulfilmentProperty;
 import gregtech.api.recipes.lookup.property.PropertySet;
@@ -46,15 +47,14 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 import java.util.function.Function;
 
 public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
                                                    implements IDataInfoProvider, ICleanroomReceiver, IHasRecipeMap,
-                                                   IControllable, RecipeWorkable.ISupportsRecipeWorkable {
+                                                   IControllable, RecipeWorkable.ISupportsRecipeWorkable,
+                                                   OutputBufferTrait.IBufferingMTE {
 
     protected RecipeWorkable workable;
 
@@ -65,8 +65,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
 
     public final boolean handlesRecipeOutputs;
 
-    protected Deque<ItemStack> bufferedItemOutputs;
-    protected Deque<FluidStack> bufferedFluidOutputs;
+    protected final OutputBufferTrait outputBuffer;
 
     @Nullable
     private ICleanroomProvider cleanroom;
@@ -84,8 +83,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
         this.renderer = renderer;
         this.handlesRecipeOutputs = handlesRecipeOutputs;
         this.recipeMap = recipeMap;
-        this.bufferedItemOutputs = new ArrayDeque<>();
-        this.bufferedFluidOutputs = new ArrayDeque<>();
+        this.outputBuffer = new OutputBufferTrait(this);
         RecipeStandardStateMachineBuilder std = new RecipeStandardStateMachineBuilder(recipeMap::getLookup);
         modifyRecipeLogicStandardBuilder(std);
         this.workable = new RecipeWorkable(this, std);
@@ -109,9 +107,9 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
                 .setItemInput(this::getImportItems)
                 .setFluidInput(this::getImportFluids)
                 .setProperties(this::computePropertySet)
-                .setFluidOutput(bufferedFluidOutputs::addAll)
+                .setFluidOutput(outputBuffer::bufferFluids)
                 .setFluidTrim(this::getFluidOutputLimit)
-                .setItemOutput(bufferedItemOutputs::addAll)
+                .setItemOutput(outputBuffer::bufferItems)
                 .setItemTrim(this::getItemOutputLimit)
                 .setNotifiedFluidInputs(this::getNotifiedFluidInputList)
                 .setNotifiedItemInputs(this::getNotifiedItemInputList)
@@ -185,7 +183,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
     @Override
     public void update() {
         super.update();
-        updateBufferedOutputs();
+        outputBuffer.updateBufferedOutputs();
     }
 
     @Override
@@ -195,28 +193,18 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
 
     @Override
     public boolean areOutputsClogged() {
-        updateBufferedOutputs();
-        return !bufferedItemOutputs.isEmpty() || !bufferedFluidOutputs.isEmpty();
+        outputBuffer.updateBufferedOutputs();
+        return outputBuffer.awaitingSpace();
     }
 
-    protected void updateBufferedOutputs() {
-        while (!bufferedItemOutputs.isEmpty()) {
-            ItemStack first = bufferedItemOutputs.removeFirst();
-            ItemStack remainder = GTTransferUtils.insertItem(getExportItems(), first, false);
-            if (!remainder.isEmpty() && !canVoidRecipeItemOutputs()) {
-                bufferedItemOutputs.addFirst(remainder);
-                break;
-            }
-        }
-        while (!bufferedFluidOutputs.isEmpty()) {
-            FluidStack first = bufferedFluidOutputs.peekFirst();
-            first.amount -= getExportFluids().fill(first, true);
-            if (first.amount <= 0 || canVoidRecipeFluidOutputs()) {
-                bufferedFluidOutputs.removeFirst();
-            } else {
-                break;
-            }
-        }
+    @Override
+    public @NotNull ItemStack outputFromBuffer(@NotNull ItemStack stack) {
+        return GTTransferUtils.insertItem(getExportItems(), stack, false);
+    }
+
+    @Override
+    public int outputFromBuffer(@NotNull FluidStack stack) {
+        return getExportFluids().fill(stack, true);
     }
 
     @Override

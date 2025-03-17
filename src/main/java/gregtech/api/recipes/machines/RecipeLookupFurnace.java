@@ -21,11 +21,9 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
-import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public final class RecipeLookupFurnace extends RecipeLookup {
@@ -35,9 +33,7 @@ public final class RecipeLookupFurnace extends RecipeLookup {
 
     private final RecipeBuilder<?> furnaceBuilder;
 
-    private final ObjectArrayList<Recipe> recipesFurnace = new ObjectArrayList<>();
-
-    private @Nullable List<Recipe> combined;
+    private final ObjectArrayList<Recipe> combined = new ObjectArrayList<>();
 
     public static <T extends RecipeBuilder<T>> RecipeMap<T> createMap(@NotNull String unlocalizedName,
                                                                       @NotNull T defaultRecipeBuilder,
@@ -51,25 +47,10 @@ public final class RecipeLookupFurnace extends RecipeLookup {
     }
 
     @Override
-    public @NotNull @UnmodifiableView List<Recipe> getAllRecipes() {
-        if (combined == null) {
-            combined = new ObjectArrayList<>(recipesFurnace.size() + recipes.size());
-            combined.addAll(recipesFurnace);
-            combined.addAll(recipes);
-        }
-        return combined;
-    }
-
-    @Override
-    protected void invalidate() {
-        super.invalidate();
-        recipesFurnace.clear();
-        combined = null;
-    }
-
-    @Override
-    public void rebuild() {
-        super.rebuild();
+    public Collection<Recipe> rebuildInternal() {
+        super.rebuildInternal();
+        combined.clear();
+        combined.addAll(recipes);
         int i = recipes.size();
         for (Map.Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet()) {
             boolean wildcard = entry.getKey().getItemDamage() == GTValues.W;
@@ -80,11 +61,13 @@ public final class RecipeLookupFurnace extends RecipeLookup {
                     .duration(RecipeLookupFurnace.STANDARD_DURATION).volts(RecipeLookupFurnace.STANDARD_VOLTAGE)
                     .build().getResult();
             ItemStackApplicatorMap map = wildcard ? getItem() : getItemDamage();
-            recipesFurnace.add(recipe);
+            combined.add(recipe);
             assert recipe.ingredientFlags == 1;
             map.getOrCreate(entry.getKey()).insertApplicator(i, new SingleFlagApplicator<>((byte) 0));
             i++;
         }
+        combined.trim();
+        return combined;
     }
 
     protected static final class FurnaceRecipeIngredient implements GTItemIngredient {

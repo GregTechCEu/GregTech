@@ -495,8 +495,12 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY)
                         .setTooltipText("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
                                 GTValues.VNF[getTier()]))
-                .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_ENERGY).setIgnoreColor(true)
+                .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_ENERGY)
+                        .setIgnoreColor(true)
                         .setPredicate(this::insufficientEnergy))
+                .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_SPACE)
+                        .setIgnoreColor(true)
+                        .setPredicate(this::areOutputsClogged))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
         int leftButtonStartX = 7;

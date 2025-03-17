@@ -73,7 +73,8 @@ public class RecipeWorkable extends MTETrait {
     }
 
     public boolean isRunning() {
-        return getSupport().shouldRecipeWorkableUpdate() && progressAndComplete.isLogicEnabled() && isRecipeSelected();
+        return getSupport().shouldRecipeWorkableUpdate() && !getSupport().areOutputsClogged() &&
+                progressAndComplete.isLogicEnabled() && isRecipeSelected();
     }
 
     public long getConsumedPower() {
@@ -115,47 +116,57 @@ public class RecipeWorkable extends MTETrait {
 
     @Override
     public void update() {
-        if (!getSupport().shouldRecipeWorkableUpdate() || getSupport().areOutputsClogged()) return;
-        // progress worker
-        skippedWorkTicks++;
-        if (progressAndComplete.isLogicEnabled() && progressAndComplete.hasAsyncWalkCompleted()) {
-            int terminate = 0;
-            while (skippedWorkTicks > 0) {
-                if (progressAndComplete.logicPosition() < 0) {
-                    progressAndComplete.setPosition(0);
-                    terminate = 0;
-                    skippedWorkTicks--;
+        if (getMetaTileEntity().getWorld().isRemote) return;
+        try {
+            if (!getSupport().shouldRecipeWorkableUpdate() || getSupport().areOutputsClogged()) return;
+            // progress worker
+            skippedWorkTicks++;
+            if (progressAndComplete.isLogicEnabled() && progressAndComplete.hasAsyncWalkCompleted()) {
+                int terminate = 0;
+                while (skippedWorkTicks > 0) {
+                    if (progressAndComplete.logicPosition() < 0) {
+                        progressAndComplete.setPosition(0);
+                        terminate = 0;
+                        skippedWorkTicks--;
+                    }
+                    // only dispatch async if we haven't built up a significant backlog.
+                    progressAndComplete.walk(skippedWorkTicks < 10);
+                    getMetaTileEntity().markDirty();
+                    if (terminate > 10) {
+                        GTLog.logger.error("A GTStateMachine used for recipe logic was walked more than 10 times " +
+                                "without finishing! It will now be forcibly terminated. The offender was an instance of " +
+                                "class " + this.getClass().getName() +
+                                ". Developers - make sure your state machines end " +
+                                "at a negative operator index within a reasonable number of walks!");
+                        break;
+                    }
+                    terminate++;
+                    if (progressAndComplete.logicPosition() >= 0) {
+                        progressAndComplete.dispatchAsyncWalk();
+                        break;
+                    }
                 }
-                // only dispatch async if we haven't built up a significant backlog.
-                progressAndComplete.walk(skippedWorkTicks < 10);
+            }
+            // do not recipe lookup if we are on the remote world, this will lead to the client seeing input
+            // consumptions
+            // that the server does not.
+            if (getSupport().areOutputsClogged() || getMetaTileEntity().getWorld().isRemote) return;
+            // progress recipe lookup
+            if (lookupAndSetup.isLogicEnabled() && lookupAndSetup.hasAsyncWalkCompleted()) {
+                if (lookupAndSetup.logicPosition() < 0) {
+                    lookupAndSetup.setPosition(1);
+                }
+                lookupAndSetup.walk(true);
                 getMetaTileEntity().markDirty();
-                if (terminate > 10) {
-                    GTLog.logger.error("A GTStateMachine used for recipe logic was walked more than 10 times " +
-                            "without finishing! It will now be forcibly terminated. The offender was an instance of " +
-                            "class " + this.getClass().getName() + ". Developers - make sure your state machines end " +
-                            "at a negative operator index within a reasonable number of walks!");
-                    break;
-                }
-                terminate++;
-                if (progressAndComplete.logicPosition() >= 0) {
-                    progressAndComplete.dispatchAsyncWalk();
-                    break;
+                if (lookupAndSetup.logicPosition() >= 0) {
+                    lookupAndSetup.dispatchAsyncWalk();
                 }
             }
-        }
-        // do not recipe lookup if we are on the remote world, this will lead to the client seeing input consumptions
-        // that the server does not.
-        if (getSupport().areOutputsClogged() || getMetaTileEntity().getWorld().isRemote) return;
-        // progress recipe lookup
-        if (lookupAndSetup.isLogicEnabled() && lookupAndSetup.hasAsyncWalkCompleted()) {
-            if (lookupAndSetup.logicPosition() < 0) {
-                lookupAndSetup.setPosition(1);
-            }
-            lookupAndSetup.walk(true);
-            getMetaTileEntity().markDirty();
-            if (lookupAndSetup.logicPosition() >= 0) {
-                lookupAndSetup.dispatchAsyncWalk();
-            }
+        } catch (IllegalStateException stateMachineException) {
+            GTLog.logger.error("A RecipeWorkable attached to " + getMetaTileEntity() + " at position " +
+                    getMetaTileEntity().getPos() + " had a state machine error! To prevent world corruption, " +
+                    "this exception has been caught and the tile entity removed.", stateMachineException);
+            getMetaTileEntity().getWorld().setBlockToAir(getMetaTileEntity().getPos());
         }
     }
 

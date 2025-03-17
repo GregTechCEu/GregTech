@@ -47,9 +47,12 @@ public class RecipeItemMatchOperator implements GTStateMachineTransientOperator 
     public void operate(NBTTagCompound data, Map<String, Object> transientData) {
         List<ItemStack> items = (List<ItemStack>) transientData.get(keyItems);
         Recipe recipe = (Recipe) transientData.get(keyRecipe);
-
         int limit = data.hasKey(keyLimit) ? data.getInteger(keyLimit) : 1;
-        if (items != null && recipe != null && limit > 0) {
+        if (items == null) {
+            data.setInteger(keyMaxOut, limit);
+            return;
+        }
+        if (recipe != null && limit > 0) {
             MatchCalculation<ItemStack> match = IngredientMatchHelper.matchItems(recipe.getItemIngredients(), items);
             transientData.put(keyResult, match);
             data.setInteger(keyMaxOut, match.largestSucceedingScale(limit));

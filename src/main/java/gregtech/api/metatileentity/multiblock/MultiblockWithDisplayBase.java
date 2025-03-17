@@ -215,7 +215,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            boolean state = isActive();
+            boolean state = shouldBeActive();
             if (lastActive != state) {
                 this.setLastActive(state);
                 this.markDirty();
@@ -301,7 +301,11 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * @return whether the current multiblock is active or not
      */
     public boolean isActive() {
-        return isStructureFormed();
+        return lastActive;
+    }
+
+    public boolean shouldBeActive() {
+        return isStructureFormed() && !isStructureObstructed();
     }
 
     @Override
@@ -595,6 +599,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         buf.writeBoolean(voidingFluids);
         buf.writeBoolean(voidingItems);
         buf.writeInt(voidingMode.ordinal());
+        buf.writeBoolean(lastActive);
     }
 
     @Override
@@ -605,6 +610,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         voidingFluids = buf.readBoolean();
         voidingItems = buf.readBoolean();
         voidingMode = VoidingMode.values()[buf.readInt()];
+        lastActive = buf.readBoolean();
     }
 
     @Override
@@ -644,6 +650,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
         if (dataId == IS_WORKING) {
             lastActive = buf.readBoolean();
+            scheduleRenderUpdate();
         }
     }
 

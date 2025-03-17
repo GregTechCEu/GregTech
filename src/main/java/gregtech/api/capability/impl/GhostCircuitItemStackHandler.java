@@ -73,11 +73,7 @@ public class GhostCircuitItemStackHandler extends GTItemStackHandler
         } else {
             throw new IllegalArgumentException("Circuit value out of range: " + config);
         }
-        for (MetaTileEntity mte : notifiableEntities) {
-            if (mte != null && mte.isValid()) {
-                addToNotifiedList(mte, this, false);
-            }
-        }
+        notifyNotifiables();
     }
 
     /**
@@ -160,6 +156,15 @@ public class GhostCircuitItemStackHandler extends GTItemStackHandler
     @Override
     public void removeNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
         this.notifiableEntities.remove(metaTileEntity);
+    }
+
+    @Override
+    public void notifyNotifiables() {
+        for (MetaTileEntity mte : notifiableEntities) {
+            if (mte != null && mte.isValid()) {
+                addToNotifiedList(mte, this, false);
+            }
+        }
     }
 
     public void write(@NotNull NBTTagCompound tag) {

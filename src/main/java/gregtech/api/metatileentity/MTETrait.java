@@ -69,6 +69,8 @@ public abstract class MTETrait implements ISyncedTileEntity {
 
     public void update() {}
 
+    public void onRemoval() {}
+
     @NotNull
     public NBTTagCompound serializeNBT() {
         return new NBTTagCompound();

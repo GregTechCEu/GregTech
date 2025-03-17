@@ -65,7 +65,7 @@ public class ExportOnlyAEFluidSlot extends ExportOnlyAESlot<IAEFluidStack>
         } else {
             this.stock.add(stack);
         }
-        trigger();
+        notifyNotifiables();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class ExportOnlyAEFluidSlot extends ExportOnlyAESlot<IAEFluidStack>
         } else if (this.stock.getStackSize() != stack.getStackSize()) {
             this.stock.setStackSize(stack.getStackSize());
         } else return;
-        trigger();
+        notifyNotifiables();
     }
 
     @Override
@@ -151,7 +151,7 @@ public class ExportOnlyAEFluidSlot extends ExportOnlyAESlot<IAEFluidStack>
             if (this.stock.getStackSize() == 0) {
                 this.stock = null;
             }
-            trigger();
+            notifyNotifiables();
         }
         return result;
     }
@@ -166,7 +166,8 @@ public class ExportOnlyAEFluidSlot extends ExportOnlyAESlot<IAEFluidStack>
         this.notifiableEntities.remove(metaTileEntity);
     }
 
-    protected void trigger() {
+    @Override
+    public void notifyNotifiables() {
         for (MetaTileEntity metaTileEntity : this.notifiableEntities) {
             if (metaTileEntity != null && metaTileEntity.isValid()) {
                 this.addToNotifiedList(metaTileEntity, this, false);

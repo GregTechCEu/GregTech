@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.steam.multiblockpart;
 
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -55,11 +56,6 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus {
         return isExportHatch ? MultiblockAbility.STEAM_EXPORT_ITEMS : MultiblockAbility.STEAM_IMPORT_ITEMS;
     }
 
-    @Override
-    public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
-        abilityList.add(isExportHatch ? this.exportItems : this.importItems);
-    }
-
     // Override base texture to have a bus with 4 slots, but ULV textures
     @Override
     public ICubeRenderer getBaseTexture() {
@@ -90,13 +86,20 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus {
         guiSyncManager.registerSlotGroup("item_inv", 2);
 
         List<List<IWidget>> widgets = new ArrayList<>();
+        IItemHandlerModifiable handler = isExportHatch ? exportItems : importItems;
         for (int i = 0; i < 2; i++) {
             widgets.add(new ArrayList<>());
             for (int j = 0; j < 2; j++) {
+                int index = i * 2 + j;
                 widgets.get(i)
                         .add(new ItemSlot()
-                                .slot(SyncHandlers.itemSlot(isExportHatch ? exportItems : importItems, i * 2 + j)
+                                .slot(SyncHandlers.itemSlot(handler, i * 2 + j)
                                         .slotGroup("item_inv")
+                                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                            if (handler instanceof GTItemStackHandler gtHandler) {
+                                                gtHandler.onContentsChanged(index);
+                                            }
+                                        })
                                         .accessibility(!isExportHatch, true)));
             }
         }

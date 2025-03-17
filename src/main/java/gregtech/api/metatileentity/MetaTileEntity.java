@@ -1408,7 +1408,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * at this stage tile entity inventory is already dropped on ground, but drops aren't fetched yet
      * tile entity will still get getDrops called after this, if player broke block
      */
-    public void onRemoval() {}
+    public void onRemoval() {
+        for (MTETrait mteTrait : this.mteTraits.values()) {
+            mteTrait.onRemoval();
+        }
+    }
 
     public void invalidate() {
         if (getWorld() != null && getWorld().isRemote) {

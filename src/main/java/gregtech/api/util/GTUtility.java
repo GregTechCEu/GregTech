@@ -65,6 +65,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -74,6 +75,7 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 public class GTUtility {
@@ -972,5 +974,39 @@ public class GTUtility {
 
         // Sanity check to make sure we don't accidentally create full-amp recipes.
         return Math.min(voltage, GTValues.VA[workingTier]);
+    }
+
+    public static NBTTagList serializeItems(Collection<ItemStack> items) {
+        NBTTagList list = new NBTTagList();
+        for (ItemStack item : items) {
+            if (item == null || item.isEmpty()) continue;
+            list.appendTag(item.writeToNBT(new NBTTagCompound()));
+        }
+        return list;
+    }
+
+    public static <T extends Collection<ItemStack>> T deserializeItems(NBTTagList list, IntFunction<T> func) {
+        T items = func.apply(list.tagCount());
+        for (int i = 0; i < list.tagCount(); i++) {
+            items.add(new ItemStack(list.getCompoundTagAt(i)));
+        }
+        return items;
+    }
+
+    public static NBTTagList serializeFluids(Collection<FluidStack> fluids) {
+        NBTTagList list = new NBTTagList();
+        for (FluidStack fluid : fluids) {
+            if (fluid == null || fluid.amount <= 0) continue;
+            list.appendTag(fluid.writeToNBT(new NBTTagCompound()));
+        }
+        return list;
+    }
+
+    public static <T extends Collection<FluidStack>> T deserializeFluids(NBTTagList list, IntFunction<T> func) {
+        T fluids = func.apply(list.tagCount());
+        for (int i = 0; i < list.tagCount(); i++) {
+            fluids.add(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
+        }
+        return fluids;
     }
 }

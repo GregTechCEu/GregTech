@@ -228,18 +228,14 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     }
 
     @Override
-    public boolean isActive() {
-        return super.isActive() && this.isWorkingEnabled;
+    public boolean shouldBeActive() {
+        return super.shouldBeActive() && this.isWorkingEnabled;
     }
 
     public void setActive(boolean active) {
         if (this.isActive != active) {
             this.isActive = active;
             markDirty();
-            World world = getWorld();
-            if (world != null && !world.isRemote) {
-                writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
-            }
         }
     }
 
@@ -275,10 +271,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.IS_WORKING) {
-            this.isActive = buf.readBoolean();
-            scheduleRenderUpdate();
-        } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+        if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.isWorkingEnabled = buf.readBoolean();
             scheduleRenderUpdate();
         }

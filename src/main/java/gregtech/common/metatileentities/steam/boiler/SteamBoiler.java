@@ -57,8 +57,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
-
 public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoProvider {
 
     private static final Pattern STRING_SUBSTITUTION_PATTERN = Pattern.compile("%s", Pattern.LITERAL);
@@ -159,15 +157,6 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isBurning = buf.readBoolean();
-    }
-
-    @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        if (dataId == IS_WORKING) {
-            this.isBurning = buf.readBoolean();
-            scheduleRenderUpdate();
-        }
     }
 
     public void setFuelMaxBurnTime(int fuelMaxBurnTime) {
@@ -287,7 +276,6 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
         this.isBurning = burning;
         if (!getWorld().isRemote) {
             markDirty();
-            writeCustomData(IS_WORKING, buf -> buf.writeBoolean(burning));
         }
     }
 

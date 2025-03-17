@@ -58,7 +58,7 @@ public class GregtechDataCodes {
     // Pump
     public static final int PUMP_HEAD_LEVEL = assignId();
 
-    // Item Collector, Magic Energy Absorber, Large Boiler, Steam Oven, etc; most workables.
+    // Item Collector, Magic Energy Absorber, MultiblockWithDisplayBase, etc; most workables.
     public static final int IS_WORKING = assignId();
 
     // Adjustable Transformer, Adjustable Energy Hatch, Diode
@@ -182,6 +182,7 @@ public class GregtechDataCodes {
 
     public static final String ABSTRACT_WORKABLE_TRAIT = "RecipeMapWorkable";
     public static final String WORKABLE_TRAIT = "RecipeWorkable";
+    public static final String OUTPUT_BUFFER_TRAIT = "OutputBuffer";
     public static final String ENERGY_CONTAINER_TRAIT = "EnergyContainer";
     public static final String ENERGY_CONVERTER_TRAIT = "EnergyConvertTrait";
     public static final String FUSION_REACTOR_ENERGY_CONTAINER_TRAIT = "EnergyContainerInternal";

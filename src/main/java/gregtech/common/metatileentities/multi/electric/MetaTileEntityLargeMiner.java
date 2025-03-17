@@ -543,8 +543,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     }
 
     @Override
-    public boolean isActive() {
-        return minerLogic.isActive() && isWorkingEnabled();
+    public boolean shouldBeActive() {
+        return super.shouldBeActive() && minerLogic.isActive() && isWorkingEnabled();
     }
 
     @NotNull

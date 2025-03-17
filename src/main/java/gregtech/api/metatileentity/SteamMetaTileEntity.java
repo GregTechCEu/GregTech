@@ -6,12 +6,16 @@ import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
+import gregtech.api.recipes.logic.statemachine.overclock.RecipeNoOverclockingOperator;
+import gregtech.api.recipes.logic.statemachine.running.RecipeFinalizer;
 import gregtech.api.recipes.logic.statemachine.running.RecipeProgressOperation;
+import gregtech.api.recipes.logic.workable.OutputBufferTrait;
 import gregtech.api.recipes.logic.workable.RecipeSteamWorkable;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.util.FacingPos;
@@ -38,6 +42,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -49,15 +54,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 
 public abstract class SteamMetaTileEntity extends MetaTileEntity implements IControllable,
-                                          RecipeSteamWorkable.ISupportsRecipeSteamWorkable {
+                                          RecipeSteamWorkable.ISupportsRecipeSteamWorkable,
+                                          OutputBufferTrait.IBufferingMTE {
 
     protected static final int STEAM_CAPACITY = 16000;
 
@@ -68,16 +72,15 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ICon
     protected FluidTank steamFluidTank;
     protected @NotNull EnumFacing ventingSide = EnumFacing.UP;
 
-    protected Deque<ItemStack> bufferedItemOutputs;
-    protected Deque<FluidStack> bufferedFluidOutputs;
+    protected final OutputBufferTrait outputBuffer;
 
     public SteamMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer,
                                boolean isHighPressure) {
         super(metaTileEntityId);
         this.isHighPressure = isHighPressure;
         this.recipeMap = recipeMap;
-        this.bufferedItemOutputs = new ArrayDeque<>();
-        this.bufferedFluidOutputs = new ArrayDeque<>();
+        initializeInventory();
+        this.outputBuffer = new OutputBufferTrait(this);
         RecipeStandardStateMachineBuilder std = new RecipeStandardStateMachineBuilder(this.recipeMap::getLookup);
         modifyRecipeLogicStandardBuilder(std);
         workable = new RecipeSteamWorkable(this, std);
@@ -86,12 +89,13 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ICon
 
     protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
         builder.setOffthreadSearchAndSetup(true)
+                .setOverclockFactory(RecipeNoOverclockingOperator::create)
                 .setItemInput(this::getImportItems)
                 .setFluidInput(this::getImportFluids)
                 .setProperties(this::computePropertySet)
-                .setFluidOutput(bufferedFluidOutputs::addAll)
+                .setFluidOutput(outputBuffer::bufferFluids)
                 .setFluidTrim(this::getFluidOutputLimit)
-                .setItemOutput(bufferedItemOutputs::addAll)
+                .setItemOutput(outputBuffer::bufferItems)
                 .setItemTrim(this::getItemOutputLimit)
                 .setNotifiedFluidInputs(this::getNotifiedFluidInputList)
                 .setNotifiedItemInputs(this::getNotifiedItemInputList)
@@ -125,6 +129,11 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ICon
         } else {
             builder.setDurationDiscount(() -> 2);
         }
+    }
+
+    @Override
+    protected void initializeInventory() {
+        if (recipeMap != null) super.initializeInventory();
     }
 
     @Override
@@ -205,33 +214,39 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ICon
     @Override
     public void update() {
         super.update();
-        updateBufferedOutputs();
+        outputBuffer.updateBufferedOutputs();
     }
 
     @Override
     public boolean areOutputsClogged() {
-        updateBufferedOutputs();
-        return !bufferedItemOutputs.isEmpty() || !bufferedFluidOutputs.isEmpty();
+        outputBuffer.updateBufferedOutputs();
+        return outputBuffer.awaitingSpace();
     }
 
-    protected void updateBufferedOutputs() {
-        while (!bufferedItemOutputs.isEmpty()) {
-            ItemStack first = bufferedItemOutputs.removeFirst();
-            ItemStack remainder = GTTransferUtils.insertItem(getExportItems(), first, false);
-            if (!remainder.isEmpty() && !canVoidRecipeItemOutputs()) {
-                bufferedItemOutputs.addFirst(remainder);
-                break;
-            }
-        }
-        while (!bufferedFluidOutputs.isEmpty()) {
-            FluidStack first = bufferedFluidOutputs.peekFirst();
-            first.amount -= getExportFluids().fill(first, true);
-            if (first.amount <= 0 || canVoidRecipeFluidOutputs()) {
-                bufferedFluidOutputs.removeFirst();
-            } else {
-                break;
-            }
-        }
+    @Override
+    public @NotNull ItemStack outputFromBuffer(@NotNull ItemStack stack) {
+        return GTTransferUtils.insertItem(getExportItems(), stack, false);
+    }
+
+    @Override
+    public int outputFromBuffer(@NotNull FluidStack stack) {
+        return getExportFluids().fill(stack, true);
+    }
+
+    @Override
+    protected IItemHandlerModifiable createImportItemHandler() {
+        return new NotifiableItemStackHandler(this, recipeMap.getMaxInputs(), this, false);
+    }
+
+    @Override
+    protected IItemHandlerModifiable createExportItemHandler() {
+        return new NotifiableItemStackHandler(this, recipeMap.getMaxOutputs(), this, true);
+    }
+
+    protected double recipeProgressPercent() {
+        NBTTagCompound recipe = RecipeFinalizer.getFirstActiveRecipe(workable.getProgressAndComplete().logicData());
+        if (recipe == null) return 0;
+        return RecipeFinalizer.progress(recipe) / RecipeFinalizer.duration(recipe);
     }
 
     @SideOnly(Side.CLIENT)
@@ -302,6 +317,9 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ICon
                 .label(6, 6, getMetaFullName()).shouldColor(false)
                 .widget(new ImageWidget(79, 42, 18, 18, GuiTextures.INDICATOR_NO_STEAM.get(isHighPressure))
                         .setPredicate(this::insufficientSteam))
+                .widget(new ImageWidget(79, 42, 18, 18, GuiTextures.INDICATOR_NO_SPACE)
+                        .setIgnoreColor(true)
+                        .setPredicate(this::areOutputsClogged))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT_STEAM.get(isHighPressure), 0);
     }
 

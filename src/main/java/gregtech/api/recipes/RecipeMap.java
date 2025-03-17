@@ -395,7 +395,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @ApiStatus.Internal
     protected void removeAllRecipes() {
         if (GroovyScriptModule.isCurrentlyRunning()) {
-            this.lookup.getAllRecipes().forEach(this.getGroovyScriptRecipeMap()::addBackup);
+            this.lookup.getPendingRecipes().forEach(this.getGroovyScriptRecipeMap()::addBackup);
         }
         this.lookup.clear();
         this.recipeByCategory.clear();
@@ -565,7 +565,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @NotNull
     @UnmodifiableView
     public Collection<Recipe> getRecipeList() {
-        return lookup.getAllRecipes();
+        return lookup.getPendingRecipes();
     }
 
     public @Nullable SoundEvent getSound() {

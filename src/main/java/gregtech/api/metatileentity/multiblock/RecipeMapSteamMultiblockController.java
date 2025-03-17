@@ -1,5 +1,6 @@
 package gregtech.api.metatileentity.multiblock;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -14,8 +15,11 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
+import gregtech.api.recipes.logic.statemachine.overclock.RecipeNoOverclockingOperator;
 import gregtech.api.recipes.logic.statemachine.running.RecipeProgressOperation;
+import gregtech.api.recipes.logic.workable.OutputBufferTrait;
 import gregtech.api.recipes.logic.workable.RecipeSteamWorkable;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.TextComponentUtil;
@@ -37,14 +41,13 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.List;
 
 public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase implements IControllable,
-                                                         RecipeSteamWorkable.ISupportsRecipeSteamWorkable {
+                                                         RecipeSteamWorkable.ISupportsRecipeSteamWorkable,
+                                                         OutputBufferTrait.IBufferingMTE {
 
     protected static final double CONVERSION_RATE = ConfigHolder.machines.multiblockSteamToEU;
 
@@ -55,8 +58,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     protected IItemHandlerModifiable outputInventory;
     protected IMultipleTankHandler steamFluidTank;
 
-    protected Deque<ItemStack> bufferedItemOutputs;
-    protected boolean awaitingItemOutputSpace;
+    protected final OutputBufferTrait outputBuffer;
 
     protected final double conversionRate;
 
@@ -65,7 +67,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
         super(metaTileEntityId);
         this.recipeMap = recipeMap;
         this.conversionRate = conversionRate;
-        this.bufferedItemOutputs = new ArrayDeque<>();
+        this.outputBuffer = new OutputBufferTrait(this);
         RecipeStandardStateMachineBuilder std = new RecipeStandardStateMachineBuilder(recipeMap::getLookup);
         modifyRecipeLogicStandardBuilder(std);
         this.workable = new RecipeSteamWorkable(this, std);
@@ -79,13 +81,15 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
      */
     protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
         builder.setOffthreadSearchAndSetup(true)
+                .setOverclockFactory(RecipeNoOverclockingOperator::create)
                 .setDownTransformForParallels(true)
                 .setParallelLimit(this::getBaseParallelLimit)
                 .setDurationDiscount(() -> 1.5)
                 .setMaintenance(this::getMaintenanceValues)
                 .setItemInput(this::getInputInventory)
                 .setProperties(this::computePropertySet)
-                .setItemOutput(bufferedItemOutputs::addAll)
+                .setItemOutput(outputBuffer::bufferItems)
+                .setFluidOutput(outputBuffer::bufferFluids)
                 .setItemTrim(this::getItemOutputLimit)
                 .setNotifiedItemInputs(this::getNotifiedItemInputList)
                 .setItemOutAmountLimit(() -> getOutputInventory().getSlots() * 64)
@@ -97,13 +101,21 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
                     long amperage = recipe.getLong("Amperage");
                     long eut = (long) (Math.min(1, maxProgress - progress) * voltage * amperage);
                     boolean generating = recipe.getBoolean("Generating");
+                    int steam = (int) (eut / conversionRate);
                     if (!generating) {
-                        FluidStack drain = getSteamFluidTank().drain((int) (eut * conversionRate), true);
-                        return (drain == null ? 0 : drain.amount) >= eut;
+                        FluidStack drain = getSteamFluidTank().drain(steam, true);
+                        return (drain == null ? 0 : drain.amount) >= steam;
                     } else {
                         return true;
                     }
                 });
+    }
+
+    @Override
+    protected @NotNull PropertySet computePropertySet() {
+        PropertySet set = super.computePropertySet();
+        set.supply(GTValues.V[GTValues.LV], 8); // 8 amperage required for 8 parallels
+        return set;
     }
 
     public IMultipleTankHandler getSteamFluidTank() {
@@ -124,7 +136,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected void updateFormedValid() {
-        updateBufferedOutputs();
+        outputBuffer.updateBufferedOutputs();
     }
 
     @Override
@@ -134,27 +146,18 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     public boolean areOutputsClogged() {
-        updateBufferedOutputs();
-        return awaitingItemOutputSpace;
+        outputBuffer.updateBufferedOutputs();
+        return outputBuffer.awaitingSpace();
     }
 
-    protected void updateBufferedOutputs() {
-        if (awaitingItemOutputSpace && !getNotifiedItemOutputList().isEmpty()) {
-            awaitingItemOutputSpace = false;
-        }
-        getNotifiedItemOutputList().clear();
-        getNotifiedFluidInputList().clear();
-        if (!awaitingItemOutputSpace) {
-            while (!bufferedItemOutputs.isEmpty()) {
-                ItemStack first = bufferedItemOutputs.removeFirst();
-                ItemStack remainder = GTTransferUtils.insertItem(getOutputInventory(), first, false);
-                if (!remainder.isEmpty() && !canVoidRecipeItemOutputs()) {
-                    bufferedItemOutputs.addFirst(remainder);
-                    awaitingItemOutputSpace = true;
-                    break;
-                }
-            }
-        }
+    @Override
+    public @NotNull ItemStack outputFromBuffer(@NotNull ItemStack stack) {
+        return GTTransferUtils.insertItem(getOutputInventory(), stack, false);
+    }
+
+    @Override
+    public int outputFromBuffer(@NotNull FluidStack stack) {
+        return stack.amount;
     }
 
     protected void initializeAbilities() {
@@ -216,6 +219,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
                                 "gregtech.multiblock.steam.low_steam"));
                     }
                 })
+                .addNoSpaceLine(areOutputsClogged())
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
@@ -280,8 +284,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     }
 
     @Override
-    public boolean isActive() {
-        return workable.isRunning();
+    public boolean shouldBeActive() {
+        return super.shouldBeActive() && workable.isRunning();
     }
 
     protected boolean insufficientSteam() {

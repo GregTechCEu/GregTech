@@ -65,7 +65,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
     protected void bufferOutputs(List<FluidStack> fluids) {
         if (handler == null) {
-            bufferedFluidOutputs.addAll(fluids);
+            outputBuffer.bufferFluids(fluids);
             return;
         }
         int s = Math.min(fluids.size(), fluidOutputBuffer.length);
@@ -80,14 +80,11 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     }
 
     @Override
-    protected void updateBufferedOutputs() {
-        super.updateBufferedOutputs();
+    protected void updateFormedValid() {
+        super.updateFormedValid();
         if (handler == null) return;
-        if (!awaitingFluidOutputSpace) {
-            getNotifiedFluidOutputList().clear();
-            if (!handler.applyFluidToOutputs(fluidOutputBuffer, true)) {
-                awaitingFluidOutputSpace = true;
-            }
+        if (!outputBuffer.awaitingFluidOutputSpace() && !handler.applyFluidToOutputs(fluidOutputBuffer, true)) {
+            outputBuffer.setAwaitingFluidOutputSpace(true);
         }
     }
 

@@ -17,6 +17,7 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
 import gregtech.api.recipes.logic.statemachine.running.RecipeProgressOperation;
+import gregtech.api.recipes.logic.workable.OutputBufferTrait;
 import gregtech.api.recipes.logic.workable.RecipeWorkable;
 import gregtech.api.recipes.lookup.AbstractRecipeLookup;
 import gregtech.api.recipes.lookup.property.CleanroomFulfilmentProperty;
@@ -46,16 +47,15 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider,
                                                     ICleanroomReceiver,
                                                     IControllable,
                                                     IHasRecipeMap,
-                                                    RecipeWorkable.ISupportsRecipeWorkable {
+                                                    RecipeWorkable.ISupportsRecipeWorkable,
+                                                    OutputBufferTrait.IBufferingMTE {
 
     public final RecipeMap<?> recipeMap;
     protected RecipeWorkable workable;
@@ -65,10 +65,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected IMultipleTankHandler outputFluidInventory;
     protected IEnergyContainer energyContainer;
 
-    protected Deque<ItemStack> bufferedItemOutputs;
-    protected boolean awaitingItemOutputSpace;
-    protected Deque<FluidStack> bufferedFluidOutputs;
-    protected boolean awaitingFluidOutputSpace;
+    protected final OutputBufferTrait outputBuffer;
 
     @Nullable
     private ICleanroomProvider cleanroom;
@@ -76,8 +73,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
         super(metaTileEntityId);
         this.recipeMap = recipeMap;
-        this.bufferedItemOutputs = new ArrayDeque<>();
-        this.bufferedFluidOutputs = new ArrayDeque<>();
+        this.outputBuffer = new OutputBufferTrait(this);
         RecipeStandardStateMachineBuilder std = new RecipeStandardStateMachineBuilder(this::getLookup);
         modifyRecipeLogicStandardBuilder(std);
         this.workable = new RecipeWorkable(this, std);
@@ -98,9 +94,9 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 .setItemInput(this::getInputInventory)
                 .setFluidInput(this::getInputFluidInventory)
                 .setProperties(this::computePropertySet)
-                .setFluidOutput(bufferedFluidOutputs::addAll)
+                .setFluidOutput(outputBuffer::bufferFluids)
                 .setFluidTrim(this::getFluidOutputLimit)
-                .setItemOutput(bufferedItemOutputs::addAll)
+                .setItemOutput(outputBuffer::bufferItems)
                 .setItemTrim(this::getItemOutputLimit)
                 .setNotifiedFluidInputs(this::getNotifiedFluidInputList)
                 .setNotifiedItemInputs(this::getNotifiedItemInputList)
@@ -196,7 +192,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     protected void updateFormedValid() {
-        updateBufferedOutputs();
+        outputBuffer.updateBufferedOutputs();
     }
 
     @Override
@@ -206,48 +202,23 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     public boolean areOutputsClogged() {
-        updateBufferedOutputs();
-        return awaitingItemOutputSpace || awaitingFluidOutputSpace;
-    }
-
-    protected void updateBufferedOutputs() {
-        if (awaitingItemOutputSpace && !getNotifiedItemOutputList().isEmpty()) {
-            awaitingItemOutputSpace = false;
-        }
-        if (awaitingFluidOutputSpace && !getNotifiedFluidInputList().isEmpty()) {
-            awaitingFluidOutputSpace = false;
-        }
-        getNotifiedItemOutputList().clear();
-        getNotifiedFluidInputList().clear();
-        if (!awaitingItemOutputSpace) {
-            while (!bufferedItemOutputs.isEmpty()) {
-                ItemStack first = bufferedItemOutputs.removeFirst();
-                ItemStack remainder = GTTransferUtils.insertItem(getOutputInventory(), first, false);
-                if (!remainder.isEmpty() && !canVoidRecipeItemOutputs()) {
-                    bufferedItemOutputs.addFirst(remainder);
-                    awaitingItemOutputSpace = true;
-                    break;
-                }
-            }
-        }
-        if (!awaitingFluidOutputSpace) {
-            getNotifiedFluidOutputList().clear();
-            while (!bufferedFluidOutputs.isEmpty()) {
-                FluidStack first = bufferedFluidOutputs.peekFirst();
-                first.amount -= getOutputFluidInventory().fill(first, true);
-                if (first.amount <= 0 || canVoidRecipeFluidOutputs()) {
-                    bufferedFluidOutputs.removeFirst();
-                } else {
-                    awaitingFluidOutputSpace = true;
-                    break;
-                }
-            }
-        }
+        outputBuffer.updateBufferedOutputs();
+        return outputBuffer.awaitingSpace();
     }
 
     @Override
-    public boolean isActive() {
-        return workable.isRunning();
+    public boolean shouldBeActive() {
+        return super.shouldBeActive() && workable.isRunning();
+    }
+
+    @Override
+    public @NotNull ItemStack outputFromBuffer(@NotNull ItemStack stack) {
+        return GTTransferUtils.insertItem(getOutputInventory(), stack, false);
+    }
+
+    @Override
+    public int outputFromBuffer(@NotNull FluidStack stack) {
+        return getOutputFluidInventory().fill(stack, true);
     }
 
     @Override
@@ -305,6 +276,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected void addWarningText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(insufficientEnergy())
+                .addNoSpaceLine(areOutputsClogged())
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
@@ -377,7 +349,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
-                workable.isRunning(), isWorkingEnabled());
+                isActive(), isWorkingEnabled());
     }
 
     @Override

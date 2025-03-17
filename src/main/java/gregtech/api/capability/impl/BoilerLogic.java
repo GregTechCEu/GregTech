@@ -30,6 +30,7 @@ public class BoilerLogic {
     public static final int EU_PER_WATER = 160;
     public static final int EU_PER_SOLID_BURNTIME = 20;
     public static final int SAFETY_CUTOFF = 473;
+    public static final int THERMAL_INERTIA = 1000;
 
     private static final int BUFFER_TICKS = 80;
 
@@ -60,7 +61,8 @@ public class BoilerLogic {
     public int getWaterBoilAmount(int chassisTemperature) {
         if (chassisTemperature <= 373) return 0;
         int excess = chassisTemperature - 373;
-        return (int) (0.0000313916 * (excess * excess) + 0.0317136 * excess);
+        int target = boilerType.maximumChassisTemperature();
+        return boilerType.targetWaterBoilRate() * excess / target;
     }
 
     public int getChassisHeat() {
@@ -68,7 +70,7 @@ public class BoilerLogic {
     }
 
     public int getChassisTemperature(int chassisHeat) {
-        return chassisHeat / boilerType.chassisThermalInertia() + getAmbientTemperature();
+        return chassisHeat / THERMAL_INERTIA + getAmbientTemperature();
     }
 
     public int getHeatLoss(int chassisTemperature) {

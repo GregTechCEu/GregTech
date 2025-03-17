@@ -336,6 +336,20 @@ public class MultiblockDisplayText {
         }
 
         /**
+         * Adds a warning line when the machine is low on power.
+         * <br>
+         * Added if the structure is formed and if the passed parameter is true.
+         */
+        public Builder addNoSpaceLine(boolean isNoSpace) {
+            if (!isStructureFormed) return this;
+            if (isNoSpace) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
+                        "gregtech.multiblock.not_enough_space"));
+            }
+            return this;
+        }
+
+        /**
          * Adds a warning line when the machine is low on computation.
          * <br>
          * Added if the structure is formed and if the passed parameter is true.

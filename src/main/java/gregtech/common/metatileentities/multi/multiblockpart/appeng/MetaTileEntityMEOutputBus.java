@@ -225,7 +225,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEI
         public void setStackInSlot(int slot, @NotNull ItemStack stack) {
             this.internalBuffer.add(AEItemStack.fromItemStack(stack));
             this.holder.markDirty();
-            this.trigger();
+            this.notifyNotifiables();
         }
 
         @Override
@@ -249,7 +249,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEI
                 this.internalBuffer.add(AEItemStack.fromItemStack(stack));
                 this.holder.markDirty();
             }
-            this.trigger();
+            this.notifyNotifiables();
             return ItemStack.EMPTY;
         }
 
@@ -274,7 +274,8 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEI
             this.notifiableEntities.remove(metaTileEntity);
         }
 
-        private void trigger() {
+        @Override
+        public void notifyNotifiables() {
             for (MetaTileEntity metaTileEntity : this.notifiableEntities) {
                 if (metaTileEntity != null && metaTileEntity.isValid()) {
                     this.addToNotifiedList(metaTileEntity, this, true);

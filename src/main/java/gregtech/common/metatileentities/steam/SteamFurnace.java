@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.steam;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
@@ -21,7 +20,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class SteamFurnace extends SteamMetaTileEntity {
 
@@ -40,22 +38,11 @@ public class SteamFurnace extends SteamMetaTileEntity {
     }
 
     @Override
-    protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(this, 1, this, false);
-    }
-
-    @Override
-    protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(this, 1, this, true);
-    }
-
-    @Override
     public ModularUI createUI(EntityPlayer player) {
         return createUITemplate(player)
                 .slot(this.importItems, 0, 53, 25, GuiTextures.SLOT_STEAM.get(isHighPressure),
                         GuiTextures.FURNACE_OVERLAY_STEAM.get(isHighPressure))
-                // TODO multiple recipe display
-                .progressBar(/* workableHandler::getProgressPercent */() -> 0, 79, 26, 20, 16,
+                .progressBar(this::recipeProgressPercent, 79, 26, 20, 16,
                         GuiTextures.PROGRESS_BAR_ARROW_STEAM.get(isHighPressure), MoveType.HORIZONTAL,
                         getRecipeMap())
                 .slot(this.exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure))

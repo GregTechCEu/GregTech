@@ -606,8 +606,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     @Override
-    public boolean isActive() {
-        return super.isActive() && this.cleanroomLogic.isActive();
+    public boolean shouldBeActive() {
+        return super.shouldBeActive() && this.cleanroomLogic.isActive();
     }
 
     @Override
@@ -678,9 +678,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
             this.bDist = buf.readInt();
             this.fDist = buf.readInt();
             this.hDist = buf.readInt();
-        } else if (dataId == GregtechDataCodes.IS_WORKING) {
-            this.cleanroomLogic.setActive(buf.readBoolean());
-            scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.cleanroomLogic.setWorkingEnabled(buf.readBoolean());
             scheduleRenderUpdate();

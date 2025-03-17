@@ -111,10 +111,6 @@ public class CleanroomLogic {
         if (this.isActive != active) {
             this.isActive = active;
             this.metaTileEntity.markDirty();
-            World world = this.metaTileEntity.getWorld();
-            if (world != null && !world.isRemote) {
-                this.metaTileEntity.writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
-            }
         }
     }
 
@@ -226,18 +222,6 @@ public class CleanroomLogic {
         setWasActiveAndNeedsUpdate(buf.readBoolean());
         this.progressTime = buf.readInt();
         this.maxProgress = buf.readInt();
-    }
-
-    /**
-     * reads all needed values from CustomData
-     * This MUST be called and returned in the MetaTileEntity's
-     * {@link MetaTileEntity#receiveCustomData(int, PacketBuffer)} method
-     */
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if (dataId == GregtechDataCodes.IS_WORKING) {
-            setActive(buf.readBoolean());
-            metaTileEntity.scheduleRenderUpdate();
-        }
     }
 
     /**

@@ -24,14 +24,12 @@ public class RecipeParallelLimitOperator implements GTStateMachineTransientOpera
 
     public static final Predicate<NBTTagCompound> SUCCESS_PREDICATE = t -> t.getInteger(STANDARD_LIMIT_KEY) > 0;
 
-    protected final @NotNull IntSupplier limit;
     protected final boolean canDownTransform;
     protected final String keyLimit;
     protected final String keyRecipeView;
     protected final String keyProperties;
 
-    public RecipeParallelLimitOperator(@NotNull IntSupplier limit, boolean canDownTransform) {
-        this.limit = limit;
+    public RecipeParallelLimitOperator(boolean canDownTransform) {
         this.canDownTransform = canDownTransform;
         keyLimit = STANDARD_LIMIT_KEY;
         keyRecipeView = RecipeViewOperator.STANDARD_VIEW_KEY;
@@ -40,7 +38,6 @@ public class RecipeParallelLimitOperator implements GTStateMachineTransientOpera
 
     public RecipeParallelLimitOperator(@NotNull IntSupplier limit, boolean canDownTransform, String keyLimit,
                                        String keyRecipeView, String keyProperties) {
-        this.limit = limit;
         this.canDownTransform = canDownTransform;
         this.keyLimit = keyLimit;
         this.keyRecipeView = keyRecipeView;
@@ -53,9 +50,7 @@ public class RecipeParallelLimitOperator implements GTStateMachineTransientOpera
         PropertySet properties = (PropertySet) transientData.get(keyProperties);
         if (recipe == null) throw new IllegalStateException();
 
-        if (recipe.getActualEUt() == 0) {
-            data.setInteger(keyLimit, limit.getAsInt());
-        } else if (properties != null) {
+        if (recipe.getActualEUt() != 0 && properties != null) {
             long amperage;
             long voltage;
             if (recipe.getRecipe().isGenerating()) {
@@ -71,18 +66,19 @@ public class RecipeParallelLimitOperator implements GTStateMachineTransientOpera
             if (canDownTransform) {
                 voltageBoost = (double) voltage / recipe.getActualVoltage();
             }
-            int limit = Math.min(this.limit.getAsInt(), (int) (voltageBoost * amperage / recipe.getActualAmperage()));
+            int limit = Math.min(data.getInteger(keyLimit),
+                    (int) (voltageBoost * amperage / recipe.getActualAmperage()));
             data.setInteger(keyLimit, limit);
         }
     }
 
     @Contract(pure = true)
-    public static @NotNull GTStateMachineOperator basic(IntSupplier limit) {
-        return basic(limit, RecipeParallelLimitOperator.STANDARD_LIMIT_KEY);
+    public static @NotNull GTStateMachineOperator limitSupplier(IntSupplier limit) {
+        return limitSupplier(limit, RecipeParallelLimitOperator.STANDARD_LIMIT_KEY);
     }
 
     @Contract(pure = true)
-    public static @NotNull GTStateMachineOperator basic(IntSupplier limit, String key) {
+    public static @NotNull GTStateMachineOperator limitSupplier(IntSupplier limit, String key) {
         return d -> d.setInteger(key, limit.getAsInt());
     }
 }

@@ -1,5 +1,6 @@
 package gregtech.api.recipes.ui;
 
+import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -252,8 +253,14 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
                            FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
         if (!isFluid) {
-            builder.widget(new SlotWidget(itemHandler, slotIndex, x, y, true, !isOutputs).setBackgroundTexture(
-                    getOverlaysForSlot(isOutputs, false, slotIndex == itemHandler.getSlots() - 1)));
+            builder.widget(new SlotWidget(itemHandler, slotIndex, x, y, true, !isOutputs)
+                    .setChangeListener(() -> {
+                        if (itemHandler instanceof INotifiableHandler notifiable) {
+                            notifiable.notifyNotifiables();
+                        }
+                    })
+                    .setBackgroundTexture(
+                            getOverlaysForSlot(isOutputs, false, slotIndex == itemHandler.getSlots() - 1)));
         } else {
             builder.widget(new TankWidget(fluidHandler.getTankAt(slotIndex), x, y, 18, 18).setAlwaysShowFull(true)
                     .setBackgroundTexture(getOverlaysForSlot(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1))

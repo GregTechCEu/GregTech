@@ -255,8 +255,9 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         writeCustomData(GregtechDataCodes.UPDATE_ACTIVE, buf -> buf.writeBoolean(this.isActive));
     }
 
-    public boolean isActive() {
-        return isStructureFormed() && isActive;
+    @Override
+    public boolean shouldBeActive() {
+        return super.shouldBeActive() && isActive;
     }
 
     private void clearScreens() {

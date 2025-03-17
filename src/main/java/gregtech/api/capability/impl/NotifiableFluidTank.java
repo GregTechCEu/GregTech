@@ -22,11 +22,7 @@ public class NotifiableFluidTank extends FluidTank implements INotifiableHandler
     @Override
     protected void onContentsChanged() {
         super.onContentsChanged();
-        for (MetaTileEntity metaTileEntity : notifiableEntities) {
-            if (metaTileEntity != null && metaTileEntity.isValid()) {
-                addToNotifiedList(metaTileEntity, this, isExport);
-            }
-        }
+        notifyNotifiables();
     }
 
     @Override
@@ -37,5 +33,14 @@ public class NotifiableFluidTank extends FluidTank implements INotifiableHandler
     @Override
     public void removeNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
         this.notifiableEntities.remove(metaTileEntity);
+    }
+
+    @Override
+    public void notifyNotifiables() {
+        for (MetaTileEntity metaTileEntity : notifiableEntities) {
+            if (metaTileEntity != null && metaTileEntity.isValid()) {
+                addToNotifiedList(metaTileEntity, this, isExport);
+            }
+        }
     }
 }

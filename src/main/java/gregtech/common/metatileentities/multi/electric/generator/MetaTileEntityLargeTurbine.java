@@ -172,6 +172,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                     }
                 })
                 .addLowDynamoTierLine(isDynamoTierTooLow())
+                .addNoSpaceLine(areOutputsClogged())
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 

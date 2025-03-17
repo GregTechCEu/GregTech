@@ -536,15 +536,17 @@ public class RecipeStandardStateMachineBuilder {
                         PropertySet props = (PropertySet) t.get(RecipeSearchOperator.STANDARD_PROPERTIES_KEY);
                         if (props == null) return;
                         PowerSupplyProperty supply = props.getNullable(PowerSupplyProperty.EMPTY);
-                        if (supply != null) {
+                        if (supply != null && supply.eut() != 0) {
                             long result = Math.max(supply.amperage() - (downTransformForParallels ?
                                     (long) Math.ceil((double) consumed / supply.voltage()) : consumed), 0);
+                            props.remove(supply);
                             props.add(new PowerSupplyProperty(supply.voltage(), result));
                         }
                         PowerCapacityProperty capacity = props.getNullable(PowerCapacityProperty.EMPTY);
-                        if (capacity != null) {
+                        if (capacity != null && capacity.eut() != 0) {
                             long result = Math.max(capacity.amperage() - (downTransformForParallels ?
                                     (long) Math.ceil((double) consumed / capacity.voltage()) : consumed), 0);
+                            props.remove(capacity);
                             props.add(new PowerCapacityProperty(capacity.voltage(), result));
                         }
                     }
@@ -578,8 +580,21 @@ public class RecipeStandardStateMachineBuilder {
         builder.andThenDefault(new RecipeSearchOperator(lookup), asyncSearchAndSetup);
         builder.andThenDefault(new RecipeSelectionOperator(recipeSearchPredicate), asyncSearchAndSetup);
         int selectionOp = builder.getPointer();
+        IntSupplier supplier;
+        if (parallelLimit == null && consumedParallelSupplier == null) {
+            supplier = () -> 1;
+        } else if (parallelLimit != null && consumedParallelSupplier == null) {
+            supplier = () -> parallelLimit.getAsInt();
+        } else if (parallelLimit == null) {
+            supplier = () -> Math.max(0, 1 - consumedParallelSupplier.getAsInt());
+        } else {
+            supplier = () -> Math.max(0, parallelLimit.getAsInt() - consumedParallelSupplier.getAsInt());
+        }
         builder.andThenToDefault(inputsInvalidPointer).movePointerBack()
-                .andThenIf(RecipeSelectionOperator.SUCCESS_PREDICATE, itemMatchOperator, asyncSearchAndSetup);
+                .andThenIfTransient(RecipeSelectionOperator.SUCCESS_PREDICATE,
+                        RecipeParallelLimitOperator.limitSupplier(supplier), asyncSearchAndSetup);
+        builder.andThenToDefault(selectionOp).movePointerBack()
+                .andThenIf(RecipeParallelLimitOperator.SUCCESS_PREDICATE, itemMatchOperator, asyncSearchAndSetup);
         builder.andThenToDefault(selectionOp).movePointerBack()
                 .andThenIf(RecipeItemMatchOperator.SUCCESS_PREDICATE, fluidMatchOperator, asyncSearchAndSetup);
         builder.andThenToDefault(selectionOp).movePointerBack()
@@ -587,15 +602,10 @@ public class RecipeStandardStateMachineBuilder {
                         asyncSearchAndSetup);
         builder.andThenDefault(new RecipeViewOperator(voltageDiscount, itemTrim, fluidTrim), asyncSearchAndSetup);
         if (parallelLimit != null) {
-            builder.andThenDefault(parallelLimitFactory.produce(
-                    () -> Math.max(0, parallelLimit.getAsInt() - consumedParallelSupplier.getAsInt()),
-                    downTransformForParallels), asyncSearchAndSetup);
+            builder.andThenDefault(parallelLimitFactory.produce(downTransformForParallels), asyncSearchAndSetup);
             builder.andThenToDefault(selectionOp).movePointerBack()
                     .andThenIf(RecipeParallelLimitOperator.SUCCESS_PREDICATE, GTStateMachineTransientOperator.emptyOp(),
                             asyncSearchAndSetup);
-        } else if (consumedParallelSupplier != null) {
-            // if we have no parallel limit, exit if parallel is consumed.
-            builder.andThenToIf(t -> consumedParallelSupplier.getAsInt() > 0, -1).movePointerBack();
         }
         builder.andThenDefault(RecipeParallelMatchingOperator.STANDARD_INSTANCE, asyncSearchAndSetup);
         builder.andThenDefault(

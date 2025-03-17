@@ -1,6 +1,7 @@
 package gregtech.api.recipes.logic.statemachine.running;
 
 import gregtech.api.recipes.logic.RecipeRun;
+import gregtech.api.util.GTUtility;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,33 +31,10 @@ public class RecipeFinalizer {
         tag.setInteger("Parallel", run.getParallel());
         tag.setInteger("Overclock", run.getOverclocks());
 
-        NBTTagList list = new NBTTagList();
-        for (ItemStack item : run.getItemsConsumed()) {
-            if (item == null || item.isEmpty()) continue;
-            list.appendTag(item.writeToNBT(new NBTTagCompound()));
-        }
-        tag.setTag("ItemsIn", list);
-
-        list = new NBTTagList();
-        for (FluidStack fluid : run.getFluidsConsumed()) {
-            if (fluid == null || fluid.amount <= 0) continue;
-            list.appendTag(fluid.writeToNBT(new NBTTagCompound()));
-        }
-        tag.setTag("FluidsIn", list);
-
-        list = new NBTTagList();
-        for (ItemStack item : run.getItemsOut()) {
-            if (item == null || item.isEmpty()) continue;
-            list.appendTag(item.writeToNBT(new NBTTagCompound()));
-        }
-        tag.setTag("ItemsOut", list);
-
-        list = new NBTTagList();
-        for (FluidStack fluid : run.getFluidsOut()) {
-            if (fluid == null || fluid.amount <= 0) continue;
-            list.appendTag(fluid.writeToNBT(new NBTTagCompound()));
-        }
-        tag.setTag("FluidsOut", list);
+        tag.setTag("ItemsIn", GTUtility.serializeItems(run.getItemsConsumed()));
+        tag.setTag("FluidsIn", GTUtility.serializeFluids(run.getFluidsConsumed()));
+        tag.setTag("ItemsOut", GTUtility.serializeItems(run.getItemsOut()));
+        tag.setTag("FluidsOut", GTUtility.serializeFluids(run.getFluidsOut()));
 
         return tag;
     }
@@ -90,39 +68,23 @@ public class RecipeFinalizer {
     }
 
     public static List<ItemStack> itemsIn(NBTTagCompound recipe) {
-        NBTTagList list = recipe.getTagList("ItemsIn", Constants.NBT.TAG_COMPOUND);
-        List<ItemStack> itemsIn = new ObjectArrayList<>(list.tagCount());
-        for (int i = 0; i < list.tagCount(); i++) {
-            itemsIn.add(new ItemStack(list.getCompoundTagAt(i)));
-        }
-        return itemsIn;
+        return GTUtility.deserializeItems(recipe.getTagList("ItemsIn", Constants.NBT.TAG_COMPOUND),
+                ObjectArrayList::new);
     }
 
     public static List<FluidStack> fluidsIn(NBTTagCompound recipe) {
-        NBTTagList list = recipe.getTagList("FluidsIn", Constants.NBT.TAG_COMPOUND);
-        List<FluidStack> fluidsIn = new ObjectArrayList<>(list.tagCount());
-        for (int i = 0; i < list.tagCount(); i++) {
-            fluidsIn.add(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
-        }
-        return fluidsIn;
+        return GTUtility.deserializeFluids(recipe.getTagList("FluidsIn", Constants.NBT.TAG_COMPOUND),
+                ObjectArrayList::new);
     }
 
     public static List<ItemStack> itemsOut(NBTTagCompound recipe) {
-        NBTTagList list = recipe.getTagList("ItemsOut", Constants.NBT.TAG_COMPOUND);
-        List<ItemStack> itemsOut = new ObjectArrayList<>(list.tagCount());
-        for (int i = 0; i < list.tagCount(); i++) {
-            itemsOut.add(new ItemStack(list.getCompoundTagAt(i)));
-        }
-        return itemsOut;
+        return GTUtility.deserializeItems(recipe.getTagList("ItemsOut", Constants.NBT.TAG_COMPOUND),
+                ObjectArrayList::new);
     }
 
     public static List<FluidStack> fluidsOut(NBTTagCompound recipe) {
-        NBTTagList list = recipe.getTagList("FluidsOut", Constants.NBT.TAG_COMPOUND);
-        List<FluidStack> fluidsOut = new ObjectArrayList<>(list.tagCount());
-        for (int i = 0; i < list.tagCount(); i++) {
-            fluidsOut.add(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
-        }
-        return fluidsOut;
+        return GTUtility.deserializeFluids(recipe.getTagList("FluidsOut", Constants.NBT.TAG_COMPOUND),
+                ObjectArrayList::new);
     }
 
     public static void ensureTagList(NBTTagCompound workerNBT) {

@@ -17,7 +17,7 @@ public final class FlagMap extends Short2LongArrayMap {
     private final BitSet filter;
 
     public FlagMap(@NotNull IndexedRecipeLookup lookup, BitSet filter) {
-        super(lookup.getRecipeCount() / 4);
+        super(lookup.getBuiltRecipes().size() / 4);
         this.lookup = lookup;
         this.filter = filter;
     }
@@ -49,9 +49,9 @@ public final class FlagMap extends Short2LongArrayMap {
         }
 
         private boolean movePointer() {
-            if (pointer >= lookup.getRecipeCount()) return false;
+            if (pointer >= lookup.getBuiltRecipes().size()) return false;
             pointer = filter.nextClearBit(pointer + 1);
-            return pointer < lookup.getRecipeCount();
+            return pointer < lookup.getBuiltRecipes().size();
         }
 
         @Override
@@ -66,7 +66,7 @@ public final class FlagMap extends Short2LongArrayMap {
         public @NotNull Iterator<Recipe> compact() {
             BitSet fullmatch = (BitSet) filter.clone();
             int pointer = this.pointer + 1;
-            while (pointer < lookup.getRecipeCount()) {
+            while (pointer < lookup.getBuiltRecipes().size()) {
                 // pre-emptively calculate all the matches to pass on to the compacted iterator
                 if (lookup.getRecipeByIndex(pointer).ingredientFlags != get((short) pointer)) fullmatch.set(pointer);
                 pointer = filter.nextClearBit(pointer + 1);
@@ -98,9 +98,9 @@ public final class FlagMap extends Short2LongArrayMap {
         }
 
         private boolean movePointer() {
-            if (pointer >= tree.getRecipeCount()) return false;
+            if (pointer >= tree.getBuiltRecipes().size()) return false;
             pointer = filter.nextClearBit(pointer + 1);
-            return pointer < tree.getRecipeCount();
+            return pointer < tree.getBuiltRecipes().size();
         }
 
         @Override

@@ -27,11 +27,7 @@ public class NotifiableItemStackHandler extends GTItemStackHandler
     @Override
     public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
-        for (MetaTileEntity metaTileEntity : notifiableEntities) {
-            if (metaTileEntity != null && metaTileEntity.isValid()) {
-                addToNotifiedList(metaTileEntity, this, isExport);
-            }
-        }
+        notifyNotifiables();
     }
 
     @Override
@@ -43,5 +39,14 @@ public class NotifiableItemStackHandler extends GTItemStackHandler
     @Override
     public void removeNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
         this.notifiableEntities.remove(metaTileEntity);
+    }
+
+    @Override
+    public void notifyNotifiables() {
+        for (MetaTileEntity metaTileEntity : notifiableEntities) {
+            if (metaTileEntity != null && metaTileEntity.isValid()) {
+                addToNotifiedList(metaTileEntity, this, isExport);
+            }
+        }
     }
 }

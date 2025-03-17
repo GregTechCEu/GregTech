@@ -17,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -40,8 +39,6 @@ public class RecipeLookup extends IndexedRecipeLookup {
     private @Nullable FluidStackApplicatorMap fluid = null;
     private @Nullable FluidStackApplicatorMap fluidNBT = null;
 
-    private boolean valid = false;
-
     @Override
     public boolean addRecipe(@NotNull Recipe recipe) {
         if (recipes.size() == 65536) return false;
@@ -55,13 +52,12 @@ public class RecipeLookup extends IndexedRecipeLookup {
     }
 
     @Override
-    public @NotNull @UnmodifiableView List<Recipe> getAllRecipes() {
+    public @NotNull @UnmodifiableView List<Recipe> getPendingRecipes() {
         return recipes;
     }
 
     @Override
     public void clear() {
-        invalidate();
         recipes.clear();
     }
 
@@ -69,24 +65,25 @@ public class RecipeLookup extends IndexedRecipeLookup {
     @NotNull
     public CompactibleIterator<Recipe> findRecipes(@NotNull List<ItemStack> items, @NotNull List<FluidStack> fluids,
                                                    @Nullable PropertySet properties) {
-        if (!valid) {
-            if (recipes.isEmpty()) return CompactibleIterator.empty();
-            rebuild();
+        try {
+            lock.readLock().lock();
+            BitSet filter = properties == null ? new BitSet() : filters.filter(properties);
+            if (filter.cardinality() == getBuiltRecipes().size()) return CompactibleIterator.empty();
+            FlagMap map = new FlagMap(this, filter);
+            for (ItemStack stack : items) {
+                if (item != null) item.getApplicator(stack).applyFlags(map, stack);
+                if (itemDamage != null) itemDamage.getApplicator(stack).applyFlags(map, stack);
+                if (itemNBT != null) itemNBT.getApplicator(stack).applyFlags(map, stack);
+                if (itemDamageNBT != null) itemDamageNBT.getApplicator(stack).applyFlags(map, stack);
+            }
+            for (FluidStack stack : fluids) {
+                if (fluid != null) fluid.getApplicator(stack).applyFlags(map, stack);
+                if (fluidNBT != null) fluidNBT.getApplicator(stack).applyFlags(map, stack);
+            }
+            return map.matchedIterator();
+        } finally {
+            lock.readLock().unlock();
         }
-        BitSet filter = properties == null ? new BitSet() : filters.filter(properties);
-        if (filter.cardinality() == getRecipeCount()) return CompactibleIterator.empty();
-        FlagMap map = new FlagMap(this, filter);
-        for (ItemStack stack : items) {
-            if (item != null) item.getApplicator(stack).applyFlags(map, stack);
-            if (itemDamage != null) itemDamage.getApplicator(stack).applyFlags(map, stack);
-            if (itemNBT != null) itemNBT.getApplicator(stack).applyFlags(map, stack);
-            if (itemDamageNBT != null) itemDamageNBT.getApplicator(stack).applyFlags(map, stack);
-        }
-        for (FluidStack stack : fluids) {
-            if (fluid != null) fluid.getApplicator(stack).applyFlags(map, stack);
-            if (fluidNBT != null) fluidNBT.getApplicator(stack).applyFlags(map, stack);
-        }
-        return map.matchedIterator();
     }
 
     protected @NotNull ItemStackApplicatorMap getItem() {
@@ -100,7 +97,7 @@ public class RecipeLookup extends IndexedRecipeLookup {
     }
 
     protected @NotNull ItemStackApplicatorMap getItemNBT() {
-        if (itemNBT == null) itemNBT = ItemStackApplicatorMap.itemDamageNBT();
+        if (itemNBT == null) itemNBT = ItemStackApplicatorMap.itemNBT();
         return itemNBT;
     }
 
@@ -119,9 +116,8 @@ public class RecipeLookup extends IndexedRecipeLookup {
         return fluidNBT;
     }
 
-    @MustBeInvokedByOverriders
-    protected void invalidate() {
-        valid = false;
+    @Override
+    public Collection<Recipe> rebuildInternal() {
         filters.clear();
         item = null;
         itemDamage = null;
@@ -129,11 +125,6 @@ public class RecipeLookup extends IndexedRecipeLookup {
         itemDamageNBT = null;
         fluid = null;
         fluidNBT = null;
-    }
-
-    @Override
-    public void rebuild() {
-        invalidate();
         for (int i = 0; i < recipes.size(); i++) {
             Recipe recipe = recipes.get(i);
             filters.addFilters(i, recipe.propertyStorage());
@@ -194,6 +185,6 @@ public class RecipeLookup extends IndexedRecipeLookup {
             }
         }
         filters.trim(2);
-        valid = true;
+        return recipes;
     }
 }

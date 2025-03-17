@@ -47,9 +47,12 @@ public class RecipeFluidMatchOperator implements GTStateMachineTransientOperator
     public void operate(NBTTagCompound data, Map<String, Object> transientData) {
         List<FluidStack> fluids = (List<FluidStack>) transientData.get(keyFluids);
         Recipe recipe = (Recipe) transientData.get(keyRecipe);
-
         int limit = data.hasKey(keyLimit) ? data.getInteger(keyLimit) : 1;
-        if (fluids != null && recipe != null && limit > 0) {
+        if (fluids == null) {
+            data.setInteger(keyMaxOut, limit);
+            return;
+        }
+        if (recipe != null && limit > 0) {
             MatchCalculation<FluidStack> match = IngredientMatchHelper.matchFluids(recipe.getFluidIngredients(),
                     fluids);
             transientData.put(keyResult, match);

@@ -253,7 +253,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart<IA
                 this.internalBuffer.add(AEFluidStack.fromFluidStack(resource));
                 holder.markDirty();
             }
-            this.trigger();
+            this.notifyNotifiables();
             return resource.amount;
         }
 
@@ -273,7 +273,8 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart<IA
             this.notifiableEntities.remove(metaTileEntity);
         }
 
-        private void trigger() {
+        @Override
+        public void notifyNotifiables() {
             for (MetaTileEntity metaTileEntity : this.notifiableEntities) {
                 if (metaTileEntity != null && metaTileEntity.isValid()) {
                     this.addToNotifiedList(metaTileEntity, this, true);

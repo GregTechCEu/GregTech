@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -23,6 +24,8 @@ public final class CompositeRecipeLookup extends AbstractRecipeLookup {
 
     private final @NotNull AbstractRecipeLookup @NotNull [] lookups;
 
+    private @Nullable ObjectArrayList<Recipe> built;
+
     /**
      * @param internalLookup the lookup that all modifications of this composite lookup will be directed to. Can be
      *                       null.
@@ -34,6 +37,16 @@ public final class CompositeRecipeLookup extends AbstractRecipeLookup {
             throw new IllegalArgumentException("Should not use a composite recipe lookup without additional lookups!");
         this.internalLookup = internalLookup;
         this.lookups = lookups;
+    }
+
+    @ApiStatus.Internal
+    public @Nullable AbstractRecipeLookup getInternalLookup() {
+        return internalLookup;
+    }
+
+    @ApiStatus.Internal
+    public AbstractRecipeLookup[] getLookups() {
+        return lookups;
     }
 
     @Override
@@ -54,13 +67,26 @@ public final class CompositeRecipeLookup extends AbstractRecipeLookup {
     }
 
     @Override
-    public @NotNull @UnmodifiableView Collection<Recipe> getAllRecipes() {
-        Collection<Recipe> collection = new ObjectArrayList<>(lookups.length + (internalLookup == null ? 0 : 1));
-        if (internalLookup != null) collection.addAll(internalLookup.getAllRecipes());
+    public @NotNull @UnmodifiableView Collection<Recipe> getPendingRecipes() {
+        Collection<Recipe> collection = new ObjectArrayList<>();
+        if (internalLookup != null) collection.addAll(internalLookup.getPendingRecipes());
         for (AbstractRecipeLookup lookup : lookups) {
-            collection.addAll(lookup.getAllRecipes());
+            collection.addAll(lookup.getPendingRecipes());
         }
         return collection;
+    }
+
+    @Override
+    public @NotNull @UnmodifiableView Collection<Recipe> getBuiltRecipes() {
+        if (built == null) {
+            built = new ObjectArrayList<>();
+            if (internalLookup != null) built.addAll(internalLookup.getPendingRecipes());
+            for (AbstractRecipeLookup lookup : lookups) {
+                built.addAll(lookup.getPendingRecipes());
+            }
+            built.trim();
+        }
+        return built;
     }
 
     @Override
@@ -75,8 +101,13 @@ public final class CompositeRecipeLookup extends AbstractRecipeLookup {
         return new CompoundCompactibleIterator(iterators);
     }
 
+    /**
+     * Internal lookups should have their rebuilds triggered separately.
+     */
     @Override
-    protected void rebuild() {}
+    protected void rebuild() {
+        built = null;
+    }
 
     private final static class CompoundCompactibleIterator implements CompactibleIterator<Recipe> {
 

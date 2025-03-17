@@ -208,8 +208,8 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    public boolean isActive() {
-        return super.isActive() && logic.isBurningFuel();
+    public boolean shouldBeActive() {
+        return super.shouldBeActive() && logic.isBurningFuel();
     }
 
     public boolean canOperate() {
@@ -245,7 +245,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         tooltip.add(I18n.format("gregtech.multiblock.large_boiler.rate_tooltip",
                 1600 * BoilerLogic.EU_PER_SOLID_BURNTIME * BoilerLogic.STEAM_PER_WATER / BoilerLogic.EU_PER_WATER));
         tooltip.add(I18n.format("gregtech.multiblock.large_boiler.heat_time_tooltip",
-                boilerType.maximumChassisTemperature(), boilerType.chassisThermalInertia()));
+                boilerType.maximumChassisTemperature()));
         tooltip.add(I18n.format("gregtech.multiblock.large_boiler.max_rate_tooltip",
                 logic.getWaterBoilAmount(boilerType.maximumChassisTemperature()) * BoilerLogic.STEAM_PER_WATER));
         tooltip.add(TooltipHelper.BLINKING_RED + I18n.format("gregtech.multiblock.large_boiler.explosion_tooltip"));

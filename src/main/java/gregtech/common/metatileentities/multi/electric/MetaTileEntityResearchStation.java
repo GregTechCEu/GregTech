@@ -336,6 +336,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     protected void addWarningText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(insufficientEnergy())
+                .addNoSpaceLine(areOutputsClogged())
                 .addLowComputationLine(lackedComputation)
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }

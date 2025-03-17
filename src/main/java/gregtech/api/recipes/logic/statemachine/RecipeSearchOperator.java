@@ -12,6 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -49,8 +50,8 @@ public class RecipeSearchOperator implements GTStateMachineTransientOperator {
 
     @Override
     public void operate(NBTTagCompound data, Map<String, Object> transientData) {
-        List<ItemStack> items = (List<ItemStack>) transientData.get(keyItems);
-        List<FluidStack> fluids = (List<FluidStack>) transientData.get(keyFluids);
+        List<ItemStack> items = (List<ItemStack>) transientData.getOrDefault(keyItems, Collections.emptyList());
+        List<FluidStack> fluids = (List<FluidStack>) transientData.getOrDefault(keyFluids, Collections.emptyList());
         PropertySet properties = (PropertySet) transientData.get(keyProperties);
         if (items == null || fluids == null) throw new IllegalStateException();
         if (properties != null) properties.circuits(items);

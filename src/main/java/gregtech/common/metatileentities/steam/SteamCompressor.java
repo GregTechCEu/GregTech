@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.steam;
 
-import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
@@ -14,7 +13,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class SteamCompressor extends SteamMetaTileEntity {
 
@@ -28,22 +26,11 @@ public class SteamCompressor extends SteamMetaTileEntity {
     }
 
     @Override
-    protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(this, 1, this, false);
-    }
-
-    @Override
-    protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(this, 1, this, true);
-    }
-
-    @Override
     public ModularUI createUI(EntityPlayer player) {
         return createUITemplate(player)
                 .slot(this.importItems, 0, 53, 25, GuiTextures.SLOT_STEAM.get(isHighPressure),
                         GuiTextures.COMPRESSOR_OVERLAY_STEAM.get(isHighPressure))
-                // TODO multiple recipe display
-                .progressBar(/* workableHandler::getProgressPercent */() -> 0, 78, 25, 20, 18,
+                .progressBar(this::recipeProgressPercent, 78, 25, 20, 18,
                         GuiTextures.PROGRESS_BAR_COMPRESS_STEAM.get(isHighPressure), MoveType.HORIZONTAL,
                         getRecipeMap())
                 .slot(this.exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure))

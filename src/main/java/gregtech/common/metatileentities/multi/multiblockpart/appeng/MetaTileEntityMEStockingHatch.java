@@ -354,7 +354,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
                 if (result != null) {
                     int extracted = (int) Math.min(result.getStackSize(), maxDrain);
                     this.stock.decStackSize(extracted);
-                    trigger();
+                    notifyNotifiables();
                     if (extracted != 0) {
                         FluidStack resultStack = this.config.getFluidStack();
                         resultStack.amount = extracted;
