@@ -17,6 +17,8 @@
   ],
   "client": [
     "BlockMixin",
+    "AOMixin",
+    "BlockRendererMixin",
     "EntityRendererMixin",
     "LayerArmorBaseMixin",
     "LayerCustomHeadMixin",
