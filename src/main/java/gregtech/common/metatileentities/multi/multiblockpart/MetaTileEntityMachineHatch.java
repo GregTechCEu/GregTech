@@ -225,9 +225,9 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
         }
 
         @Override
-        public <T> void addToNotifiedList(MetaTileEntity metaTileEntity, T handler, boolean isExport) {
-            if (metaTileEntity instanceof IMachineHatchMultiblock && metaTileEntity.isValid()) {
-                ((IMachineHatchMultiblock) metaTileEntity).notifyMachineChanged();
+        public void addToNotifiedList(MetaTileEntity metaTileEntity, Object handler, boolean isExport) {
+            if (metaTileEntity.isValid() && metaTileEntity instanceof IMachineHatchMultiblock multi) {
+                multi.notifyMachineChanged();
             }
         }
 

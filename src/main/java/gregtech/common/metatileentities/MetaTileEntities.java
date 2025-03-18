@@ -92,6 +92,7 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPasst
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityReservoirHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityRotorHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntitySubstationEnergyHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityCraftingInputBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputBus;
@@ -226,6 +227,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[6]; // HV, EV, IV, LuV, ZPM, UV
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UHV + 1]; // LV-UHV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
+    private static MetaTileEntityCraftingInputBus CRAFTING_INPUT_BUS;
     public static MetaTileEntityQuantumStorageController QUANTUM_STORAGE_CONTROLLER;
     public static MetaTileEntityQuantumProxy QUANTUM_STORAGE_PROXY;
     public static MetaTileEntityQuantumExtender QUANTUM_STORAGE_EXTENDER;
@@ -1178,6 +1180,8 @@ public class MetaTileEntities {
             STOCKING_HATCH_ME = registerMetaTileEntity(1753,
                     new MetaTileEntityMEStockingHatch(gregtechId("me_stocking_fluid_hatch")));
             // 1754: Crafting Input Bus
+            CRAFTING_INPUT_BUS = registerMetaTileEntity(1754,
+                    new MetaTileEntityCraftingInputBus(gregtechId("me_crafting_input_bus")));
             // 1755: Crafting Input Buffer
             // 1756: Crafting Input Slave
         }
