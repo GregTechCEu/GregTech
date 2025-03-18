@@ -6119,3 +6119,4 @@ gregtech.machine.substation_hatch.output_64a.max.name=Энергетически
 item.gt.tool.toolbelt.name=Пояс для инструментов (%s)
 item.gt.tool.toolbelt.name.select=Пояс для инструментов (%s) (%s)
 item.gt.tool.toolbelt.size=§a%s Слотов
+gregtech.subtitle.click=Что-то щелкает
