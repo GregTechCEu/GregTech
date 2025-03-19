@@ -95,7 +95,7 @@ public abstract class MultipleTankHandler implements IFluidHandler, Iterable<Mul
         return getFluidTanks().iterator();
     }
 
-    protected final Entry wrap(IFluidTank tank) {
+    protected Entry wrap(IFluidTank tank) {
         return tank instanceof Entry ? (Entry) tank : new Entry(tank, this);
     }
 
@@ -108,13 +108,15 @@ public abstract class MultipleTankHandler implements IFluidHandler, Iterable<Mul
      * Entry of multi fluid tanks. Retains reference to original {@link MultipleTankHandler} for accessing
      * information such as {@link MultipleTankHandler#allowSameFluidFill()}.
      */
-    public static class Entry implements IFluidTank, IFilteredHandler<FluidStack>, INBTSerializable<NBTTagCompound>,
-                              IFluidTankProperties {
+    public static class Entry implements IFluidTank, IFilteredHandler<FluidStack>,
+                              INBTSerializable<NBTTagCompound>, IFluidTankProperties {
 
+        @NotNull
         private final IFluidTank tank;
+        @NotNull
         private final MultipleTankHandler parent;
 
-        private Entry(IFluidTank tank, MultipleTankHandler parent) {
+        protected Entry(@NotNull IFluidTank tank, @NotNull MultipleTankHandler parent) {
             this.tank = tank;
             this.parent = parent;
         }

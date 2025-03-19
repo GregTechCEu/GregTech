@@ -4,7 +4,6 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IFilter;
-import gregtech.api.capability.IFilteredFluidContainer;
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
@@ -425,7 +424,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         }
     }
 
-    protected class HatchFluidTank extends NotifiableFluidTank {
+    protected class HatchFluidTank extends NotifiableFluidTank implements IFilter<FluidStack> {
 
         public HatchFluidTank(int capacity, MetaTileEntity entityToNotify, boolean isExport) {
             super(capacity, entityToNotify, isExport);

@@ -1,6 +1,5 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.capability.IFilter;
 import gregtech.api.capability.MultipleTankHandler;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,7 +7,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -21,7 +19,6 @@ import java.util.List;
 
 public final class FluidTankList extends MultipleTankHandler {
 
-    private final ITankEntry[] fluidTanks;
     private final boolean allowSameFluidFill;
     private Entry[] tanks = new Entry[0];
 
@@ -219,118 +216,5 @@ public final class FluidTankList extends MultipleTankHandler {
         }
         if (lineBreak) stb.append('\n');
         return stb.append(']').toString();
-    }
-
-    /**
-     * Entry of multi fluid tanks. Retains reference to original {@link IMultipleTankHandler} for accessing
-     * information such as {@link IMultipleTankHandler#allowSameFluidFill()}.
-     */
-    private static final class MultiFluidTankEntry implements ITankEntry {
-
-        private final IMultipleTankHandler tank;
-        private final IFluidTank delegate;
-        private final IFluidTankProperties[] fallback;
-
-        public MultiFluidTankEntry(@NotNull IMultipleTankHandler tank, @NotNull IFluidTank delegate) {
-            this.tank = tank;
-            this.delegate = delegate;
-            this.fallback = new IFluidTankProperties[] {
-                    new FallbackTankProperty()
-            };
-        }
-
-        @NotNull
-        @Override
-        public IMultipleTankHandler getParent() {
-            return tank;
-        }
-
-        @NotNull
-        @Override
-        public IFluidTank getDelegate() {
-            return delegate;
-        }
-
-        @NotNull
-        public IFluidTankProperties[] getTankProperties() {
-            return delegate instanceof IFluidHandler fluidHandler ?
-                    fluidHandler.getTankProperties() : fallback;
-        }
-
-        @Override
-        public int fill(FluidStack resource, boolean doFill) {
-            return delegate.fill(resource, doFill);
-        }
-
-        @Nullable
-        @Override
-        public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null || resource.amount <= 0) {
-                return null;
-            }
-            if (delegate instanceof IFluidHandler fluidHandler) {
-                return fluidHandler.drain(resource, doDrain);
-            }
-            // just imitate the logic
-            FluidStack fluid = delegate.getFluid();
-            return fluid != null && fluid.isFluidEqual(resource) ? drain(resource.amount, doDrain) : null;
-        }
-
-        @Nullable
-        @Override
-        public FluidStack drain(int maxDrain, boolean doDrain) {
-            return delegate.drain(maxDrain, doDrain);
-        }
-
-        @Override
-        public int hashCode() {
-            return delegate.hashCode();
-        }
-
-        @Override
-        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-        public boolean equals(Object obj) {
-            return this == obj || delegate.equals(obj);
-        }
-
-        @Override
-        public String toString() {
-            return delegate.toString();
-        }
-
-        private final class FallbackTankProperty implements IFluidTankProperties {
-
-            @Nullable
-            @Override
-            public FluidStack getContents() {
-                return delegate.getFluid();
-            }
-
-            @Override
-            public int getCapacity() {
-                return delegate.getCapacity();
-            }
-
-            @Override
-            public boolean canFill() {
-                return true;
-            }
-
-            @Override
-            public boolean canDrain() {
-                return true;
-            }
-
-            @Override
-            public boolean canFillFluidType(FluidStack fluidStack) {
-                IFilter<FluidStack> filter = getFilter();
-                return filter == null || filter.test(fluidStack);
-            }
-
-            @Override
-            public boolean canDrainFluidType(FluidStack fluidStack) {
-                return true;
-            }
-        }
     }
 }
