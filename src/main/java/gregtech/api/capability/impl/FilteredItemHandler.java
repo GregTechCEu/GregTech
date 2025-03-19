@@ -12,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
+/**
+ * Deprecated, use {@link GTItemStackHandler} instead
+ */
 @Deprecated
 public class FilteredItemHandler extends GTItemStackHandler {
 
