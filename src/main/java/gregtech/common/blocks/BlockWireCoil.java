@@ -288,6 +288,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
     }
 
     private static class VertexData {
+
         float[] pos = new float[3];
         int[] color = new int[4];
         float[] uv = new float[2];
