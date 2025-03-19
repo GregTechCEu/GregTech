@@ -8,9 +8,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
@@ -49,15 +47,6 @@ public class MultiblockRecipeLogicTest {
     @Test
     public void trySearchNewRecipe() {
         World world = DummyWorld.INSTANCE;
-
-        // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("test_recipemap",
-                3,
-                3,
-                1,
-                1,
-                new BlastRecipeBuilder().EUt(32),
-                false);
 
         RecipeMaps.BLAST_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
@@ -194,7 +183,7 @@ public class MultiblockRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -284,15 +273,6 @@ public class MultiblockRecipeLogicTest {
     @Test
     public void trySearchNewRecipeDistinct() {
         World world = DummyWorld.INSTANCE;
-
-        // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("test_recipemap_2",
-                3,
-                3,
-                1,
-                1,
-                new BlastRecipeBuilder().EUt(32),
-                false);
 
         RecipeMaps.BLAST_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
@@ -441,7 +421,7 @@ public class MultiblockRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -668,7 +648,7 @@ public class MultiblockRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 

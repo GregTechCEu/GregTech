@@ -27,7 +27,7 @@ public class DiodeDataProvider extends ElectricContainerDataProvider {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.diode");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.diode");
     }
 
     @Override

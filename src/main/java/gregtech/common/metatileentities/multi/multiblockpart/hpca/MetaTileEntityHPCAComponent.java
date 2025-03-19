@@ -5,7 +5,7 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IHPCAComponentHatch;
 import gregtech.api.capability.IHPCAComputationProvider;
 import gregtech.api.capability.IHPCACoolantProvider;
-import gregtech.api.gui.ModularUI;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.unification.material.Materials;
@@ -25,7 +25,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -64,18 +63,13 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
-    @Override
     public MultiblockAbility<IHPCAComponentHatch> getAbility() {
         return MultiblockAbility.HPCA_COMPONENT;
     }
 
     @Override
-    public void registerAbilities(List<IHPCAComponentHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(this);
     }
 
     @Override
@@ -236,7 +230,7 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> dropsList, @Nullable EntityPlayer harvester) {
+    public void getDrops(@NotNull List<@NotNull ItemStack> dropsList, @Nullable EntityPlayer harvester) {
         if (canBeDamaged() && isDamaged()) {
             if (isAdvanced()) {
                 dropsList.add(MetaBlocks.COMPUTER_CASING

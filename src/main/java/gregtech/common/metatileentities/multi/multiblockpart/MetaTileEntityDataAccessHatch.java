@@ -9,6 +9,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -175,6 +176,11 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         } else {
             tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.2", getInventorySize()));
         }
+        if (canPartShare()) {
+            tooltip.add(I18n.format("gregtech.universal.enabled"));
+        } else {
+            tooltip.add(I18n.format("gregtech.universal.disabled"));
+        }
     }
 
     @NotNull
@@ -199,7 +205,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public boolean canPartShare() {
-        return false;
+        return isCreative;
     }
 
     @Override
@@ -208,8 +214,8 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void registerAbilities(List<IDataAccessHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(this);
     }
 
     @Override

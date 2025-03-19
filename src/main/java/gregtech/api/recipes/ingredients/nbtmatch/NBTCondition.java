@@ -37,8 +37,7 @@ public class NBTCondition {
         this.nbtKey = nbtKey;
         this.value = value;
         if (tagType == null || nbtKey == null || value == null) {
-            GTLog.logger.error("NBTCondition must not have null parameters.");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("NBTCondition must not have null parameters.", new Throwable());
         }
     }
 

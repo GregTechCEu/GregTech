@@ -57,7 +57,7 @@ Anything else? Sure come to [Discord](https://discord.gg/bWSWuYvURP).
 ## Credited Works
 Heating Coil Textures, Wooden Forms, World Accelerators, and the Extreme Combustion Engine are from the **[GregTech: New Horizons Modpack](https://www.curseforge.com/minecraft/modpacks/gt-new-horizons)**.
 
-Primitive Water Pump and Super Tank GUI Textures are from the **[IMPACT: GREGTECH EDITION Modpack](https://gtimpact.space/)**.
+Primitive Water Pump and Super Tank GUI Textures are from the **[IMPACT: GREGTECH EDITION Modpack](https://gt-impact.github.io/)**.
 
 Ender Fluid Link Cover, Auto-Maintenance Hatch, Optical Fiber, and Data Bank Textures are from **[TecTech](https://github.com/Technus/TecTech)**.
 

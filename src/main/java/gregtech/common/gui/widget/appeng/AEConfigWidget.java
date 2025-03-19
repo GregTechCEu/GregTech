@@ -6,7 +6,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.gui.widget.appeng.slot.AEConfigSlot;
 import gregtech.common.gui.widget.appeng.slot.AmountSetSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 
 import appeng.api.storage.data.IAEStack;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -26,26 +26,34 @@ public abstract class AEConfigWidget<T extends IAEStack<T>> extends AbstractWidg
     protected Int2ObjectMap<IConfigurableSlot<T>> changeMap = new Int2ObjectOpenHashMap<>();
     protected IConfigurableSlot<T>[] displayList;
     protected AmountSetSlot<T> amountSetWidget;
+    protected final boolean isStocking;
     protected final static int UPDATE_ID = 1000;
 
-    public AEConfigWidget(int x, int y, IConfigurableSlot<T>[] config) {
+    public AEConfigWidget(int x, int y, IConfigurableSlot<T>[] config, boolean isStocking) {
         super(new Position(x, y), new Size(config.length * 18, 18 * 2));
+        this.isStocking = isStocking;
         this.config = config;
         this.init();
-        this.amountSetWidget = new AmountSetSlot<>(80, -40, this);
-        this.addWidget(this.amountSetWidget);
-        this.addWidget(this.amountSetWidget.getText());
-        this.amountSetWidget.setVisible(false);
-        this.amountSetWidget.getText().setVisible(false);
+        if (!isStocking()) {
+            this.amountSetWidget = new AmountSetSlot<>(80, -40, this);
+            this.addWidget(this.amountSetWidget);
+            this.addWidget(this.amountSetWidget.getText());
+            this.amountSetWidget.setVisible(false);
+            this.amountSetWidget.getText().setVisible(false);
+        }
     }
 
     public void enableAmount(int slotIndex) {
+        // Only allow the amount set widget if not stocking, as amount is useless for stocking
+        if (isStocking()) return;
         this.amountSetWidget.setSlotIndex(slotIndex);
         this.amountSetWidget.setVisible(true);
         this.amountSetWidget.getText().setVisible(true);
     }
 
     public void disableAmount() {
+        // Only allow the amount set widget if not stocking, as amount is useless for stocking
+        if (isStocking()) return;
         this.amountSetWidget.setSlotIndex(-1);
         this.amountSetWidget.setVisible(false);
         this.amountSetWidget.getText().setVisible(false);
@@ -53,21 +61,28 @@ public abstract class AEConfigWidget<T extends IAEStack<T>> extends AbstractWidg
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        if (this.amountSetWidget.isVisible()) {
-            if (this.amountSetWidget.getText().mouseClicked(mouseX, mouseY, button)) {
-                return true;
+        // Only allow the amount set widget if not stocking, as amount is useless for stocking
+        if (!isStocking()) {
+            if (this.amountSetWidget.isVisible()) {
+                if (this.amountSetWidget.getText().mouseClicked(mouseX, mouseY, button)) {
+                    return true;
+                }
             }
-        }
-        for (Widget w : this.widgets) {
-            if (w instanceof AEConfigSlot<?>) {
-                ((AEConfigSlot<?>) w).setSelect(false);
+            for (Widget w : this.widgets) {
+                if (w instanceof AEConfigSlot<?>) {
+                    ((AEConfigSlot<?>) w).setSelect(false);
+                }
             }
+            this.disableAmount();
         }
-        this.disableAmount();
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     abstract void init();
+
+    public boolean isStocking() {
+        return isStocking;
+    }
 
     @Override
     public void detectAndSendChanges() {

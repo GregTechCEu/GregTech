@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.DualHandler;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleRecipeMaps;
@@ -10,7 +11,9 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.logic.OCParams;
+import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 
@@ -24,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import static gregtech.api.recipes.logic.OverclockingLogic.subTickParallelOC;
 
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
@@ -55,19 +60,11 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     /**
      * Used to reset cached values in the Recipe Logic on structure deform
      */
+    @Override
     public void invalidate() {
-        previousRecipe = null;
-        progressTime = 0;
-        maxProgressTime = 0;
-        recipeEUt = 0;
-        fluidOutputs = null;
-        itemOutputs = null;
+        super.invalidate();
         lastRecipeIndex = 0;
-        parallelRecipesPerformed = 0;
-        isOutputsFull = false;
-        invalidInputsForRecipes = false;
         invalidatedInputList.clear();
-        setActive(false); // this marks dirty for us
     }
 
     public void onDistinctChanged() {
@@ -101,6 +98,21 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     protected IMultipleTankHandler getInputTank() {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         return controller.getInputFluidInventory();
+    }
+
+    /**
+     * Overload of {@link #getInputTank()} to gather extra fluid tanks
+     * that could exist in a distinct item handler (such as a {@link DualHandler})
+     * 
+     * @param items Handler to gather fluid tanks from
+     * @return a new FluidTankList with extra fluid tanks on top of the existing fluid tanks
+     */
+    protected IMultipleTankHandler getInputTank(IItemHandler items) {
+        var tanks = new ArrayList<>(getInputTank().getFluidTanks());
+        if (items instanceof IMultipleTankHandler tankHandler) {
+            tanks.addAll(tankHandler.getFluidTanks());
+        }
+        return new FluidTankList(getInputTank().allowSameFluidFill(), tanks);
     }
 
     @Override
@@ -204,7 +216,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         long maxVoltage = getMaxVoltage();
         Recipe currentRecipe;
         List<IItemHandlerModifiable> importInventory = getInputBuses();
-        IMultipleTankHandler importFluids = getInputTank();
 
         // Our caching implementation
         // This guarantees that if we get a recipe cache hit, our efficiency is no different from other machines
@@ -227,7 +238,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 continue;
             }
             // Look for a new recipe after a cache miss
-            currentRecipe = findRecipe(maxVoltage, bus, importFluids);
+            currentRecipe = findRecipe(maxVoltage, bus, getInputTank(bus));
             // Cache the current recipe, if one is found
             if (currentRecipe != null && checkRecipe(currentRecipe)) {
                 this.previousRecipe = currentRecipe;
@@ -257,7 +268,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     protected boolean checkPreviousRecipeDistinct(IItemHandlerModifiable previousBus) {
-        return previousRecipe != null && previousRecipe.matches(false, previousBus, getInputTank());
+        return previousRecipe != null && previousRecipe.matches(false, previousBus, getInputTank(previousBus));
     }
 
     protected boolean prepareRecipeDistinct(Recipe recipe) {
@@ -267,43 +278,54 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         recipe = findParallelRecipe(
                 recipe,
                 currentDistinctInputBus,
-                getInputTank(),
+                getInputTank(currentDistinctInputBus),
                 getOutputInventory(),
                 getOutputTank(),
                 getMaxParallelVoltage(),
                 getParallelLimit());
 
-        if (recipe != null && setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus)) {
-            setupRecipe(recipe);
-            return true;
+        if (recipe != null) {
+            recipe = setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus,
+                    getInputTank(currentDistinctInputBus));
+            if (recipe != null) {
+                setupRecipe(recipe);
+                return true;
+            }
         }
 
         return false;
     }
 
     @Override
-    protected void modifyOverclockPre(int @NotNull [] values, @NotNull IRecipePropertyStorage storage) {
-        super.modifyOverclockPre(values, storage);
+    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull RecipePropertyStorage storage) {
+        super.modifyOverclockPre(ocParams, storage);
 
         // apply maintenance bonuses
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
         // duration bonus
         if (maintenanceValues.getSecond() != 1.0) {
-            values[1] = (int) Math.round(values[1] * maintenanceValues.getSecond());
+            ocParams.setDuration((int) Math.round(ocParams.duration() * maintenanceValues.getSecond()));
         }
     }
 
     @Override
-    protected void modifyOverclockPost(int[] overclockResults, @NotNull IRecipePropertyStorage storage) {
-        super.modifyOverclockPost(overclockResults, storage);
+    protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
+                                        @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
+        subTickParallelOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(),
+                getOverclockingVoltageFactor());
+    }
+
+    @Override
+    protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {
+        super.modifyOverclockPost(ocResult, storage);
 
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
         // duration penalty
         if (maintenanceValues.getFirst() > 0) {
-            overclockResults[1] = (int) (overclockResults[1] * (1 + 0.1 * maintenanceValues.getFirst()));
+            ocResult.setDuration((int) (ocResult.duration() * (1 + 0.1 * maintenanceValues.getFirst())));
         }
     }
 
@@ -325,7 +347,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 // amperage is 1 when the energy is not exactly on a tier
 
                 // the voltage for recipe search is always on tier, so take the closest lower tier
-                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+                return GTValues.VOC[GTUtility.getFloorTierByVoltage(voltage)];
             } else {
                 // amperage != 1 means the voltage is exactly on a tier
                 // ignore amperage, since only the voltage is relevant for recipe search
@@ -379,34 +401,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected long getEnergyInputPerSecond() {
-        return getEnergyContainer().getInputPerSec();
-    }
-
-    @Override
-    protected long getEnergyStored() {
-        return getEnergyContainer().getEnergyStored();
-    }
-
-    @Override
-    protected long getEnergyCapacity() {
-        return getEnergyContainer().getEnergyCapacity();
-    }
-
-    @Override
-    protected boolean drawEnergy(int recipeEUt, boolean simulate) {
-        long resultEnergy = getEnergyStored() - recipeEUt;
-        if (resultEnergy >= 0L && resultEnergy <= getEnergyCapacity()) {
-            if (!simulate) getEnergyContainer().changeEnergy(-recipeEUt);
-            return true;
-        } else return false;
-    }
-
-    @Override
     public long getMaxVoltage() {
         IEnergyContainer energyContainer = getEnergyContainer();
         if (!consumesEnergy()) {
-            // Generators
+            // Generator Multiblocks
             long voltage = energyContainer.getOutputVoltage();
             long amperage = energyContainer.getOutputAmperage();
             if (energyContainer instanceof EnergyContainerList && amperage == 1) {
@@ -414,11 +412,11 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 // The voltage for recipe search is always on tier, so take the closest lower tier.
                 // List check is done because single hatches will always be a "clean voltage," no need
                 // for any additional checks.
-                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+                return GTValues.VOC[GTUtility.getFloorTierByVoltage(voltage)];
             }
             return voltage;
         } else {
-            // Machines
+            // Machine Multiblocks
             if (energyContainer instanceof EnergyContainerList energyList) {
                 long highestVoltage = energyList.getHighestInputVoltage();
                 if (energyList.getNumHighestInputContainers() > 1) {
@@ -432,6 +430,11 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 return energyContainer.getInputVoltage();
             }
         }
+    }
+
+    @Override
+    protected long getMaxParallelVoltage() {
+        return getMaximumOverclockVoltage();
     }
 
     @Nullable

@@ -33,7 +33,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -272,16 +271,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
         return isStructureFormed() && hasMufflerMechanics() &&
                 getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0).isFrontFaceFree();
-    }
-
-    /**
-     * @deprecated Override {@link #getMufflerParticle()} instead.
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    @SideOnly(Side.CLIENT)
-    public void runMufflerEffect(float xPos, float yPos, float zPos, float xSpd, float ySpd, float zSpd) {
-        getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos, yPos, zPos, xSpd, ySpd, zSpd);
     }
 
     @SideOnly(Side.CLIENT)
@@ -546,7 +535,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         for (IFluidTank tank : this.getAbilities(MultiblockAbility.IMPORT_FLUIDS)) {
             this.getNotifiedFluidInputList().add((IFluidHandler) tank);
         }
-        this.getNotifiedItemInputList().addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+        this.getNotifiedItemInputList()
+                .addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
 
         markDirty();
     }

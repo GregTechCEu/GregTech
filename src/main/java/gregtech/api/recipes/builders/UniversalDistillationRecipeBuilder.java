@@ -10,7 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.Nullable;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.STANDARD_OVERCLOCK_DURATION_DIVISOR;
+import static gregtech.api.recipes.logic.OverclockingLogic.STD_DURATION_FACTOR_INV;
 
 public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalDistillationRecipeBuilder> {
 
@@ -45,7 +45,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
             int ratio = getRatioForDistillery(this.fluidInputs.get(0).getInputFluidStack(), this.fluidOutputs.get(i),
                     !this.outputs.isEmpty() ? this.outputs.get(0) : null);
 
-            int recipeDuration = (int) (this.duration * STANDARD_OVERCLOCK_DURATION_DIVISOR);
+            int recipeDuration = (int) (this.duration * STD_DURATION_FACTOR_INV);
 
             boolean shouldDivide = ratio != 1;
 
@@ -64,12 +64,20 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
                         .duration(Math.max(1, recipeDuration / ratio));
 
             else if (!shouldDivide) {
-                builder.fluidInputs(this.fluidInputs.get(0))
+                RecipeBuilder<?> distilleryBuilder = builder.fluidInputs(this.fluidInputs.get(0))
                         .fluidOutputs(this.fluidOutputs.get(i))
                         .outputs(this.outputs)
                         .duration(recipeDuration)
-                        .cleanroom(getCleanroom())
-                        .buildAndRegister();
+                        .cleanroom(getCleanroom());
+
+                if (!this.chancedOutputs.isEmpty()) {
+                    distilleryBuilder.chancedOutput(this.chancedOutputs.get(0).getIngredient(),
+                            this.chancedOutputs.get(0).getChance() / this.fluidOutputs.size(),
+                            this.chancedOutputs.get(0).getChanceBoost());
+                }
+
+                distilleryBuilder.buildAndRegister();
+
                 continue;
             }
 
@@ -82,6 +90,13 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
 
                     builder.outputs(stack);
                 }
+            } else if (!this.chancedOutputs.isEmpty()) {
+                int dividedChance = this.chancedOutputs.get(0).getChance() / this.fluidOutputs.size();
+                if (dividedChance > 0) {
+                    builder.chancedOutput(this.chancedOutputs.get(0).getIngredient().copy(), dividedChance,
+                            this.chancedOutputs.get(0).getChanceBoost());
+                }
+
             }
             builder.buildAndRegister();
         }

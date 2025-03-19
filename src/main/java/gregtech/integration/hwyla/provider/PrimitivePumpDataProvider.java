@@ -29,7 +29,7 @@ public class PrimitivePumpDataProvider implements IWailaDataProvider {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, IGregTechTileEntity.class);
         registrar.registerNBTProvider(this, IGregTechTileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.primitive_pump");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.primitive_pump");
     }
 
     @NotNull

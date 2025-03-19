@@ -1,7 +1,6 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
-import gregtech.api.block.IWalkingSpeedBonus;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -12,7 +11,8 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.BlockUtility;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.VirtualTankRegistry;
+import gregtech.api.util.Mods;
+import gregtech.api.util.virtualregistry.VirtualEnderRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.common.entities.EntityGTExplosive;
 import gregtech.common.items.MetaItems;
@@ -23,6 +23,7 @@ import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEn
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -62,6 +63,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
+
+import appeng.entity.EntitySingularity;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class EventHandlers {
@@ -232,15 +235,6 @@ public class EventHandlers {
                 IBlockState state = player.world.getBlockState(new BlockPos(
                         player.posX, player.getEntityBoundingBox().minY - 1, player.posZ));
                 speedBonus = BlockUtility.WALKING_SPEED_BONUS.getDouble(state);
-                // { remove this bit while removing IWalkingSpeedBonus
-                if (speedBonus == 0 &&
-                        state.getBlock() instanceof IWalkingSpeedBonus walkingSpeedBonus &&
-                        walkingSpeedBonus.getWalkingSpeedBonus() != 1 &&
-                        walkingSpeedBonus.bonusSpeedCondition(player) &&
-                        walkingSpeedBonus.checkApplicableBlocks(state)) {
-                    speedBonus = walkingSpeedBonus.getWalkingSpeedBonus() - 1;
-                }
-                // }
             }
             if (modifier != null) {
                 if (speedBonus == modifier.getAmount()) return;
@@ -323,7 +317,7 @@ public class EventHandlers {
 
     @SubscribeEvent
     public static void onWorldLoadEvent(WorldEvent.Load event) {
-        VirtualTankRegistry.initializeStorage(event.getWorld());
+        VirtualEnderRegistry.initializeStorage(event.getWorld());
         CapesRegistry.checkAdvancements(event.getWorld());
     }
 
@@ -381,8 +375,12 @@ public class EventHandlers {
     public static void onExplosionDetonate(ExplosionEvent.Detonate event) {
         if (event.getExplosion().exploder instanceof EntityGTExplosive explosive) {
             if (explosive.dropsAllBlocks()) {
-                event.getAffectedEntities().removeIf(entity -> entity instanceof EntityItem);
+                event.getAffectedEntities().removeIf(entity -> entity instanceof EntityItem && !checkAEEntity(entity));
             }
         }
+    }
+
+    private static boolean checkAEEntity(Entity entity) {
+        return Mods.AppliedEnergistics2.isModLoaded() && entity instanceof EntitySingularity;
     }
 }

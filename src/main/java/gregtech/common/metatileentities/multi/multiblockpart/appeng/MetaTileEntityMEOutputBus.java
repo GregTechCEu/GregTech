@@ -8,10 +8,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEItemGridWidget;
 import gregtech.common.inventory.appeng.SerializableItemList;
@@ -30,9 +27,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
-import appeng.me.GridAccessException;
 import appeng.util.item.AEItemStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -43,22 +40,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @Author GlodBlock
- * @Description The Output Bus that can directly send its contents to ME storage network.
- * @Date 2023/4/19-20:37
- */
-public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart
+public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEItemStack>
                                        implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
     public final static String ITEM_BUFFER_TAG = "ItemBuffer";
     public final static String WORKING_TAG = "WorkingEnabled";
-    private boolean workingEnabled;
+    private boolean workingEnabled = true;
     private SerializableItemList internalBuffer;
 
     public MetaTileEntityMEOutputBus(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.UHV, true);
-        this.workingEnabled = true;
+        super(metaTileEntityId, GTValues.EV, true, IItemStorageChannel.class);
     }
 
     @Override
@@ -70,21 +61,18 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME()) {
-            if (this.updateMEStatus()) {
-                if (!this.internalBuffer.isEmpty()) {
-                    try {
-                        IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
-                        for (IAEItemStack item : this.internalBuffer) {
-                            IAEItemStack notInserted = aeNetwork.injectItems(item.copy(), Actionable.MODULATE,
-                                    this.getActionSource());
-                            if (notInserted != null && notInserted.getStackSize() > 0) {
-                                item.setStackSize(notInserted.getStackSize());
-                            } else {
-                                item.reset();
-                            }
-                        }
-                    } catch (GridAccessException ignore) {}
+        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME() && this.updateMEStatus()) {
+            if (this.internalBuffer.isEmpty()) return;
+
+            IMEMonitor<IAEItemStack> monitor = getMonitor();
+            if (monitor == null) return;
+
+            for (IAEItemStack item : this.internalBuffer) {
+                IAEItemStack notInserted = monitor.injectItems(item.copy(), Actionable.MODULATE, getActionSource());
+                if (notInserted != null && notInserted.getStackSize() > 0) {
+                    item.setStackSize(notInserted.getStackSize());
+                } else {
+                    item.reset();
                 }
             }
         }
@@ -92,12 +80,12 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart
 
     @Override
     public void onRemoval() {
-        try {
-            IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
+        IMEMonitor<IAEItemStack> monitor = getMonitor();
+        if (monitor != null) {
             for (IAEItemStack item : this.internalBuffer) {
-                aeNetwork.injectItems(item.copy(), Actionable.MODULATE, this.getActionSource());
+                monitor.injectItems(item.copy(), Actionable.MODULATE, this.getActionSource());
             }
-        } catch (GridAccessException ignore) {}
+        }
         super.onRemoval();
     }
 
@@ -115,7 +103,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
                 I18n.format("gregtech.gui.me_network.online") :
                 I18n.format("gregtech.gui.me_network.offline"),
-                0xFFFFFFFF);
+                0x404040);
         builder.label(10, 25, "gregtech.gui.waiting_list", 0xFFFFFFFF);
         builder.widget(new AEItemGridWidget(10, 35, 3, this.internalBuffer));
 
@@ -180,7 +168,11 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            Textures.ME_OUTPUT_BUS.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            if (isOnline) {
+                Textures.ME_OUTPUT_BUS_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            } else {
+                Textures.ME_OUTPUT_BUS.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            }
         }
     }
 
@@ -190,7 +182,8 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.item_bus.export.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.item_export.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.me.export.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.item_export.tooltip.2"));
+        tooltip.add(I18n.format("gregtech.machine.me.extra_connections.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
@@ -200,8 +193,8 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart
     }
 
     @Override
-    public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
-        abilityList.add(new InaccessibleInfiniteSlot(this, this.internalBuffer, this.getController()));
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(new InaccessibleInfiniteSlot(this, this.internalBuffer, this.getController()));
     }
 
     @Override

@@ -1,17 +1,18 @@
 package gregtech.api.unification.material.properties;
 
+import gregtech.integration.groovy.GroovyScriptModule;
+
 import crafttweaker.CraftTweakerAPI;
 import org.jetbrains.annotations.NotNull;
 
 public class BlastProperty implements IMaterialProperty {
 
     /**
-     * Blast Furnace Temperature of this Material.
-     * If below 1000K, Primitive Blast Furnace recipes will be also added.
+     * Blast Furnace Temperature of this Material. If below 1000K, Primitive Blast Furnace recipes will be also added.
      * If above 1750K, a Hot Ingot and its Vacuum Freezer recipe will be also added.
      * <p>
-     * If a Material with this Property has a Fluid, its temperature
-     * will be set to this if it is the default Fluid temperature.
+     * If a Material with this Property has a Fluid, its temperature will be set to this if it is the default Fluid
+     * temperature.
      */
     private int blastTemperature;
 
@@ -132,7 +133,10 @@ public class BlastProperty implements IMaterialProperty {
 
     public static GasTier validateGasTier(String gasTierName) {
         if (gasTierName == null) return null;
-        else if ("LOW".equalsIgnoreCase(gasTierName)) return GasTier.LOW;
+        if (GroovyScriptModule.isCurrentlyRunning()) {
+            return GroovyScriptModule.parseAndValidateEnumValue(GasTier.class, gasTierName, "gas tier");
+        }
+        if ("LOW".equalsIgnoreCase(gasTierName)) return GasTier.LOW;
         else if ("MID".equalsIgnoreCase(gasTierName)) return GasTier.MID;
         else if ("HIGH".equalsIgnoreCase(gasTierName)) return GasTier.HIGH;
         else if ("HIGHER".equalsIgnoreCase(gasTierName)) return GasTier.HIGHER;

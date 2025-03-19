@@ -93,7 +93,7 @@ public class MultiblockDisplayText {
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
                 ITextComponent voltageName = new TextComponentString(
-                        GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
+                        GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
                 ITextComponent bodyText = TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
@@ -138,7 +138,7 @@ public class MultiblockDisplayText {
                 String energyFormatted = TextFormattingUtil.formatNumbers(energyUsage);
                 // wrap in text component to keep it from being formatted
                 ITextComponent voltageName = new TextComponentString(
-                        GTValues.VNF[GTUtility.getTierByVoltage(energyUsage)]);
+                        GTValues.VOCNF[GTUtility.getOCTierByVoltage(energyUsage)]);
 
                 textList.add(TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
@@ -155,11 +155,11 @@ public class MultiblockDisplayText {
          */
         public Builder addEnergyProductionLine(long maxVoltage, long recipeEUt) {
             if (!isStructureFormed) return this;
-            if (maxVoltage != 0 && maxVoltage >= -recipeEUt) {
+            if (maxVoltage != 0 && maxVoltage >= recipeEUt) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
                 ITextComponent voltageName = new TextComponentString(
-                        GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
+                        GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
                 textList.add(TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
@@ -182,7 +182,7 @@ public class MultiblockDisplayText {
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
                 ITextComponent voltageName = new TextComponentString(
-                        GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
+                        GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
                 textList.add(TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
@@ -456,7 +456,7 @@ public class MultiblockDisplayText {
          * Added if structure is formed, the machine is active, and the passed fuelName parameter is not null.
          */
         public Builder addFuelNeededLine(String fuelName, int previousRecipeDuration) {
-            if (!isStructureFormed || !isActive) return this;
+            if (!isStructureFormed || !isActive || fuelName == null) return this;
             ITextComponent fuelNeeded = TextComponentUtil.stringWithColor(TextFormatting.RED, fuelName);
             ITextComponent numTicks = TextComponentUtil.stringWithColor(TextFormatting.AQUA,
                     TextFormattingUtil.formatNumbers(previousRecipeDuration));

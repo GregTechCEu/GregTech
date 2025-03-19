@@ -4,10 +4,9 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
-import gregtech.api.recipes.recipeproperties.ImplosionExplosiveProperty;
+import gregtech.api.recipes.properties.impl.ImplosionExplosiveProperty;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.ValidationResult;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -34,61 +33,52 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
     }
 
     @Override
-    public boolean applyProperty(@NotNull String key, Object value) {
+    public boolean applyPropertyCT(@NotNull String key, @NotNull Object value) {
         if (key.equals(ImplosionExplosiveProperty.KEY)) {
-            if (value instanceof ItemStack) {
-                this.applyProperty(ImplosionExplosiveProperty.getInstance(), value);
-            } else {
-                this.applyProperty(ImplosionExplosiveProperty.getInstance(), new ItemStack(Blocks.TNT, (int) value));
+            if (value instanceof ItemStack stack) {
+                return this.applyProperty(ImplosionExplosiveProperty.getInstance(), stack);
+            } else if (value instanceof Number number) {
+                return this.applyProperty(ImplosionExplosiveProperty.getInstance(), number.intValue());
             }
-            return true;
+            return false;
         }
-        return super.applyProperty(key, value);
+        return super.applyPropertyCT(key, value);
     }
 
     @ZenMethod
-    public ImplosionRecipeBuilder explosivesAmount(int explosivesAmount) {
-        if (1 > explosivesAmount || explosivesAmount > 64) {
-            GTLog.logger.error("Amount of explosives should be from 1 to 64 inclusive", new IllegalArgumentException());
-            recipeStatus = EnumValidationResult.INVALID;
-        }
-        this.applyProperty(ImplosionExplosiveProperty.getInstance(), new ItemStack(Blocks.TNT, explosivesAmount));
-        return this;
+    public ImplosionRecipeBuilder explosives(int amount) {
+        return explosives(new ItemStack(Blocks.TNT, amount));
     }
 
     @ZenMethod
-    public ImplosionRecipeBuilder explosivesType(ItemStack explosivesType) {
-        if (1 > explosivesType.getCount() || explosivesType.getCount() > 64) {
-            GTLog.logger.error("Amount of explosives should be from 1 to 64 inclusive", new IllegalArgumentException());
-            recipeStatus = EnumValidationResult.INVALID;
+    public ImplosionRecipeBuilder explosives(@NotNull ItemStack explosive) {
+        if (explosive.isEmpty()) {
+            GTLog.logger.error("Cannot use empty explosives", new Throwable());
+            this.recipeStatus = EnumValidationResult.INVALID;
+            return this;
         }
-        this.applyProperty(ImplosionExplosiveProperty.getInstance(), explosivesType);
+
+        int count = explosive.getCount();
+        if (count < 1 || count > 64) {
+            GTLog.logger.error("Amount of explosives should be from 1 to 64 inclusive", new Throwable());
+            recipeStatus = EnumValidationResult.INVALID;
+            return this;
+        }
+        if (this.applyProperty(ImplosionExplosiveProperty.getInstance(), explosive)) {
+            this.inputs.add(new GTRecipeItemInput(explosive));
+        }
         return this;
     }
 
-    public ItemStack getExplosivesType() {
-        if (this.recipePropertyStorage == null) {
-            return ItemStack.EMPTY;
-        }
-        return this.recipePropertyStorage.getRecipePropertyValue(ImplosionExplosiveProperty.getInstance(),
-                ItemStack.EMPTY);
-    }
-
-    public ValidationResult<Recipe> build() {
-        ItemStack explosivesType = getExplosivesType();
-        if (!explosivesType.isEmpty()) {
-            this.inputs.add(new GTRecipeItemInput(explosivesType));
-        } else {
-            this.recipePropertyStorageErrored = true;
-        }
-        return super.build();
+    public @NotNull ItemStack getExplosives() {
+        return this.recipePropertyStorage.get(ImplosionExplosiveProperty.getInstance(), ItemStack.EMPTY);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append(ImplosionExplosiveProperty.getInstance().getKey(), getExplosivesType())
+                .append(ImplosionExplosiveProperty.getInstance().getKey(), getExplosives())
                 .toString();
     }
 }

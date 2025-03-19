@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.IThemeApi;
 import com.cleanroommc.modularui.drawable.UITexture;
-import com.cleanroommc.modularui.screen.Tooltip;
+import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.theme.ReloadThemeEvent;
 import com.cleanroommc.modularui.utils.JsonBuilder;
 import org.jetbrains.annotations.Nullable;
@@ -108,7 +108,7 @@ public class GTGuiTheme {
     public static Builder templateBuilder(String themeId) {
         Builder builder = new Builder(themeId);
         builder.openCloseAnimation(0);
-        builder.tooltipPos(Tooltip.Pos.NEXT_TO_MOUSE);
+        builder.tooltipPos(RichTooltip.Pos.NEXT_TO_MOUSE);
         builder.smoothProgressBar(true);
         return builder;
     }
@@ -163,7 +163,7 @@ public class GTGuiTheme {
         }
 
         /** Set the tooltip pos for this theme. Overrides global cfg. */
-        public Builder tooltipPos(Tooltip.Pos tooltipPos) {
+        public Builder tooltipPos(RichTooltip.Pos tooltipPos) {
             theme.elementBuilder.add(b -> b.add("tooltipPos", tooltipPos.name()));
             return this;
         }
@@ -229,7 +229,9 @@ public class GTGuiTheme {
                             .add("background", new JsonBuilder()
                                     .add("type", "texture")
                                     .add("id", buttonId))
-                            .add("hoverBackground", hoverId)
+                            .add("hoverBackground", new JsonBuilder()
+                                    .add("type", "texture")
+                                    .add("id", hoverId))
                             .add("textColor", textColor)
                             .add("textShadow", textShadow)));
             return this;

@@ -2,7 +2,6 @@ package gregtech.client.shader;
 
 import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.Mods;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.Minecraft;
@@ -16,7 +15,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.shader.ShaderObject;
 import codechicken.lib.render.shader.ShaderProgram;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -105,13 +103,6 @@ public class Shaders {
         return OpenGlHelper.shadersSupported && ConfigHolder.client.shader.useShader;
     }
 
-    /** @deprecated Use {@link Mods#Optifine} to check this instead. */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static boolean isOptiFineShaderPackLoaded() {
-        return Mods.Optifine.isModLoaded();
-    }
-
     public static Framebuffer renderFullImageInFBO(Framebuffer fbo, ShaderObject frag,
                                                    Consumer<ShaderProgram.UniformCache> uniformCache) {
         if (fbo == null || frag == null || !allowedShader()) return fbo;
@@ -148,6 +139,7 @@ public class Shaders {
         // GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
 
         // OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastID);
+        fbo.bindFramebuffer(false);
         return fbo;
     }
 }

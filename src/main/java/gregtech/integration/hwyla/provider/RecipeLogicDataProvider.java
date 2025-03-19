@@ -3,6 +3,7 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.capability.impl.PrimitiveRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -34,7 +35,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.recipe_logic");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.recipe_logic");
     }
 
     @Override
@@ -46,8 +47,8 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
     protected NBTTagCompound getNBTData(AbstractRecipeLogic capability, NBTTagCompound tag) {
         NBTTagCompound subTag = new NBTTagCompound();
         subTag.setBoolean("Working", capability.isWorking());
-        if (capability.isWorking()) {
-            subTag.setInteger("RecipeEUt", capability.getInfoProviderEUt());
+        if (capability.isWorking() && !(capability instanceof PrimitiveRecipeLogic)) {
+            subTag.setLong("RecipeEUt", capability.getInfoProviderEUt());
         }
         tag.setTag("gregtech.AbstractRecipeLogic", subTag);
         return tag;
@@ -64,16 +65,15 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
         if (accessor.getNBTData().hasKey("gregtech.AbstractRecipeLogic")) {
             NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gregtech.AbstractRecipeLogic");
             if (tag.getBoolean("Working")) {
-                int EUt = tag.getInteger("RecipeEUt");
-                int absEUt = Math.abs(EUt);
-                boolean consumer = EUt > 0;
+                long eut = tag.getLong("RecipeEUt");
+                boolean consumer = false;
                 String endText = null;
 
                 if (accessor.getTileEntity() instanceof IGregTechTileEntity gtte) {
                     MetaTileEntity mte = gtte.getMetaTileEntity();
                     if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler ||
                             mte instanceof RecipeMapSteamMultiblockController) {
-                        endText = ": " + TextFormattingUtil.formatNumbers(absEUt) + TextFormatting.RESET + " L/t " +
+                        endText = ": " + TextFormattingUtil.formatNumbers(eut) + TextFormatting.RESET + " L/t " +
                                 I18n.format(Materials.Steam.getUnlocalizedName());
                     }
                     AbstractRecipeLogic arl = mte.getRecipeLogic();
@@ -82,11 +82,11 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
                     }
                 }
                 if (endText == null) {
-                    endText = ": " + TextFormattingUtil.formatNumbers(absEUt) + TextFormatting.RESET + " EU/t (" +
-                            GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.RESET + ")";
+                    endText = ": " + TextFormattingUtil.formatNumbers(eut) + TextFormatting.RESET + " EU/t (" +
+                            GTValues.VOCNF[GTUtility.getOCTierByVoltage(eut)] + TextFormatting.RESET + ")";
                 }
 
-                if (EUt == 0) return tooltip;
+                if (eut == 0) return tooltip;
 
                 if (consumer) {
                     tooltip.add(I18n.format("gregtech.top.energy_consumption") + endText);

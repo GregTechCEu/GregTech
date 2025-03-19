@@ -39,6 +39,10 @@ death.attack.screwdriver_lv=%s had their screws removed by %s
 
 enchantment.disjunction=Disjunction
 
+gregtech.jei.remove_recipe.tooltip=Copies a %s Snippet to Remove this Recipe
+gregtech.jei.ct_recipe.tooltip=CraftTweaker Recipe
+gregtech.jei.gs_recipe.tooltip=GroovyScript Recipe
+
 gregtech.machine.steam_grinder.name=Steam Grinder
 gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Steam Age. Requires at least 14 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.
 gregtech.multiblock.steam.low_steam=Not enough Steam to run!
@@ -53,16 +57,25 @@ gregtech.multiblock.steam_oven.description=A Multi Smelter at the Steam Age. Req
 gregtech.multiblock.require_steam_parts=Requires Steam Hatches and Buses!
 gregtech.multiblock.steam_.duration_modifier=Takes §f1.5x §7base duration to process, not affected by number of items.
 
+gregtech.top.quantum_status.label=Status:
+gregtech.top.quantum_status.powered=§bOnline
+gregtech.top.quantum_status.connected=§cNo Power
+gregtech.top.quantum_status.disconnected=Not connected
+gregtech.top.quantum_controller.no_hatches=§cNo Energy Hatches Connected
+gregtech.top.quantum_controller.no_power=§cNo Power
+
 gregtech.top.working_disabled=Working Disabled
 
 gregtech.top.energy_consumption=Using
 gregtech.top.energy_production=Producing
+gregtech.top.energy_required=Requires
 
 gregtech.top.transform_up=Step Up
 gregtech.top.transform_down=Step Down
 gregtech.top.transform_input=Input:
 gregtech.top.transform_output=Output:
-gregtech.top.steam_heating_up=Heating up
+gregtech.top.steam_heating_up=Heating Up:
+gregtech.top.steam_cooling_down=Cooling Down
 gregtech.top.steam_no_water=No Water
 
 gregtech.top.convert_eu=Converting §eEU§r -> §cFE§r
@@ -104,11 +117,29 @@ gregtech.top.ld_pipe_output=Output
 gregtech.top.ld_pipe_input_endpoint=Input Endpoint:
 gregtech.top.ld_pipe_output_endpoint=Output Endpoint:
 
-gregtech.waila.energy_stored=Energy: %d EU / %d EU
+option.gregtech.block_ore=Ore Blocks
+option.gregtech.controllable=Controllable Machines
+option.gregtech.converter=Energy Converters
+option.gregtech.diode=Diodes
+option.gregtech.energy=Energy Containers
+option.gregtech.block_lamp=Lamp Blocks
+option.gregtech.maintenance=Maintenance Problems
+option.gregtech.multi_recipemap=Machine Modes
+option.gregtech.multiblock=Multiblocks
+option.gregtech.primitive_pump=Primitive Pump
+option.gregtech.recipe_logic=Recipes
+option.gregtech.steam_boiler=Steam Boilers
+option.gregtech.transformer=Transformers
+option.gregtech.workable=Workable Machines
+
+gregtech.waila.energy_stored=Energy: %s EU / %s EU
+gregtech.waila.energy_input=Input: %s EU/t
+gregtech.waila.energy_output=Output: %s EU/t
 gregtech.waila.progress_idle=Idle
 gregtech.waila.progress_tick=Progress: %d t / %d t
 gregtech.waila.progress_sec=Progress: %d s / %d s
 gregtech.waila.progress_computation=Computation: %s / %s
+gregtech.waila.active_transformer.average_io=Average I/O: %s EU/t
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
@@ -822,6 +853,7 @@ metaitem.fluid_filter.name=Fluid Filter
 metaitem.fluid_filter.tooltip=Filters §fFluid§7 I/O as §fCover§7./nCan be used as an §fElectric Pump§7 and §fFluid Regulator§7 upgrade.
 metaitem.smart_item_filter.name=Smart Item Filter
 metaitem.smart_item_filter.tooltip=Filters §fItem§7 I/O with §fMachine Recipes§7 as §fCover§7./nCan be used as a §fConveyor Module§7 and §fRobotic Arm§7 upgrade.
+behaviour.filter_ui_manager=§fRight-Click§7 to configure, §fShift Right-Click§7 to clear configuration
 
 metaitem.cover.controller.name=Machine Controller
 metaitem.cover.controller.tooltip=Turns Machines §fON/OFF§7 as §fCover§7.
@@ -1008,6 +1040,18 @@ item.gt.tool.screwdriver_lv.name=%s Screwdriver (LV)
 item.gt.tool.screwdriver_lv.tooltip=§8Adjusts Covers and Machines
 item.gt.tool.plunger.name=%s Plunger
 item.gt.tool.plunger.tooltip=§8Removes Fluids from Machines
+item.gt.tool.wire_cutter_lv.name=%s Wire Cutter (LV)
+item.gt.tool.wire_cutter_hv.name=%s Wire Cutter (HV)
+item.gt.tool.wire_cutter_iv.name=%s Wire Cutter (IV)
+item.gt.tool.toolbelt.name=%s Toolbelt
+item.gt.tool.toolbelt.name.select=%s Toolbelt (%s)
+item.gt.tool.toolbelt.size=§a%s Tool Slots
+item.gt.tool.toolbelt.tooltip=Holds GT or vanilla-esque tools that can be manually selected for in-world use, automatically selected for crafting, or stored for maintenance repair.
+item.gt.tool.toolbelt.paint=Also supports Spray Cans.
+item.gt.tool.toolbelt.dye=Can be dyed like leather equipment, and the dye can be removed via water cauldron, also like leather equipment.
+item.gt.tool.toolbelt.maintenance=Repairs maintenance problems with only inserted tools upon interacting with a maintenance hatch in-world.
+item.gt.tool.toolbelt.tool=§aSlot %s: §f%s
+item.gt.tool.toolbelt.selected=- §aSlot %s: §f%s
 
 
 item.gt.tool.tooltip.crafting_uses=§a%s Crafting Uses
@@ -1168,14 +1212,18 @@ metaitem.blacklight.tooltip=Long-Wave §dUltraviolet§7 light source
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 gui.widget.recipeProgressWidget.default_tooltip=Show Recipes
 
+gregtech.recipe_memory_widget.tooltip.0=Times used: %d
 gregtech.recipe_memory_widget.tooltip.1=§7Left click to automatically input this recipe into the crafting grid
 gregtech.recipe_memory_widget.tooltip.2=§7Shift click to lock/unlock this recipe
+gregtech.recipe_memory_widget.tooltip.3=§7Right click to remove this recipe if it is unlocked
 
 cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
 
 cover.ore_dictionary_filter.title=Ore Dictionary Filter
-cover.ore_dictionary_filter.info=§bAccepts complex expressions/n§6a & b§r = AND/n§6a | b§r = OR/n§6a ^ b§r = XOR/n§6! abc§r = NOT/n§6( abc )§r for grouping/n§6*§r for wildcard (i.e. 0 or more characters)/n§6?§r for any 1 character/n§6()§r for matching empty entry (including items with no ore dictionary)/n§bExample:/n§6dust*Gold | (plate* & !*Double*)/nWill match all gold dusts of all sizes or all plates, but not double plates
+cover.ore_dictionary_filter.info=§bAccepts complex expressions\n§6a & b§r = AND\n§6a | b§r = OR\n§6a ^ b§r = XOR\n§6! abc§r = NOT\n§6( abc )§r for grouping\n§6*§r for wildcard (i.e. 0 or more characters)\n§6?§r for any 1 character\n§6()§r for matching empty entry (including items with no ore dictionary)\n§bExample:\n§6dust*Gold | (plate* & !*Double*)\nWill match all gold dusts of all sizes or all plates, but not double plates
+cover.ore_dictionary_filter.match_all=Match All: %s
+cover.ore_dictionary_filter.case_sensitive=Case Sensitive: %s
 cover.ore_dictionary_filter.test_slot.info=Insert a item to test if it matches the filter expression
 cover.ore_dictionary_filter.test_slot.matches=§a* %s
 cover.ore_dictionary_filter.test_slot.matches_not=§c* %s
@@ -1240,16 +1288,21 @@ cover.fluid_filter.mode.filter_drain=Filter Drain
 cover.fluid_filter.mode.filter_both=Filter Fill & Drain
 
 cover.item_filter.title=Item Filter
+cover.filter.mode.title=Filter Mode
 cover.filter.mode.filter_insert=Filter Insert
 cover.filter.mode.filter_extract=Filter Extract
 cover.filter.mode.filter_both=Filter Insert/Extract
+cover.filter.allow_flow.label=Allow Flow
+cover.filter.allow_flow.tooltip=By default, Items/Fluids can only move in the direction\nof the filter with respect to the filter's setting.\n\nIf Enabled, Items/Fluids are allowed to pass unfiltered\nthrough the opposite direction of this filter.
 cover.item_filter.ignore_damage.enabled=Ignore Damage
 cover.item_filter.ignore_damage.disabled=Respect Damage
 cover.item_filter.ignore_nbt.enabled=Ignore NBT
 cover.item_filter.ignore_nbt.disabled=Respect NBT
+cover.item_filter.config_amount=Scroll wheel up increases amount, down decreases.\nShift[§6x4§r], Ctrl[§ex16§r], Alt[§ax64§r]\nRight click increases amount, left click decreases.\nShift Left-Click to clear
 
 cover.voiding.voiding_mode.void_any=Void Matching
 cover.voiding.voiding_mode.void_overflow=Void Overflow
+cover.voiding.voiding_mode=Voiding Mode
 cover.voiding.voiding_mode.description=§eVoid Matching§r will void anything matching the filter. /n§eVoid Overflow§r will void anything matching the filter, up to the specified amount.
 cover.fluid.voiding.title=Fluid Voiding Settings
 cover.fluid.voiding.advanced.title=Advanced Fluid Voiding Settings
@@ -1270,13 +1323,20 @@ cover.smart_item_filter.filtering_mode.centrifuge=Centrifuge
 cover.smart_item_filter.filtering_mode.sifter=Sifter
 cover.smart_item_filter.filtering_mode.description=Select Machine this Smart Filter will use for filtering./nIt will automatically pick right portions of items for robotic arm.
 
+cover.generic.disabled=Disabled
+cover.generic.enabled=Enabled
+cover.generic.transfer_mode=Transfer Mode
+cover.generic.manual_io=Manual IO Mode
+cover.generic.io=IO Mode
+cover.pump.mode=Pump Mode
 cover.conveyor.title=Conveyor Cover Settings (%s)
 cover.conveyor.transfer_rate=§7items/sec
 cover.conveyor.mode.export=Mode: Export
 cover.conveyor.mode.import=Mode: Import
-cover.conveyor.distribution.round_robin_enhanced=Distribution Mode/n§bEnhanced Round Robin§r/n§7Splits items equally to all inventories
-cover.conveyor.distribution.round_robin=Distribution Mode/n§bRound Robin§r with Priority/n§7Tries to split items equally to inventories
-cover.conveyor.distribution.first_insert=Distribution Mode/n§bFirst Insert§r/n§7Will insert into the first inventory it finds
+cover.conveyor.distribution.name=Distribution Mode
+cover.conveyor.distribution.round_robin_enhanced=§bEnhanced Round Robin§r\n§7Splits items equally to all inventories
+cover.conveyor.distribution.round_robin=§bRound Robin§r with Priority\n§7Tries to split items equally to inventories
+cover.conveyor.distribution.first_insert=§bFirst Insert§r\n§7Will insert into the first inventory it finds
 cover.conveyor.blocks_input.enabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§aEnabled
 cover.conveyor.blocks_input.disabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§cDisabled
 cover.universal.manual_import_export.mode.disabled=Manual I/O: Disabled
@@ -1287,6 +1347,7 @@ cover.conveyor.item_filter.title=Item Filter
 cover.conveyor.ore_dictionary.title=Ore Dictionary Name
 cover.conveyor.ore_dictionary.title2=(use * for wildcard)
 cover.robotic_arm.title=Robotic Arm Settings (%s)
+cover.robotic_arm.exact=§7items
 cover.robotic_arm.transfer_mode.transfer_any=Transfer Any
 cover.robotic_arm.transfer_mode.transfer_exact=Supply Exact
 cover.robotic_arm.transfer_mode.keep_exact=Keep Exact
@@ -1297,8 +1358,12 @@ cover.pump.transfer_rate=%s
 cover.pump.mode.export=Mode: Export
 cover.pump.mode.import=Mode: Import
 cover.pump.fluid_filter.title=Fluid Filter
-cover.bucket.mode.bucket=kL/s
-cover.bucket.mode.milli_bucket=L/s
+cover.bucket.mode.bucket=Bucket Mode: kL
+cover.bucket.mode.milli_bucket=Bucket Mode: L
+cover.bucket.mode.bucket_rate=kL/s
+cover.bucket.mode.bucket_exact=kL
+cover.bucket.mode.milli_bucket_rate=L/s
+cover.bucket.mode.milli_bucket_exact=L
 cover.fluid_regulator.title=Fluid Regulator Settings (%s)
 cover.fluid_regulator.transfer_mode.description=§eTransfer Any§r - in this mode, cover will transfer as many fluids matching its filter as possible./n§eSupply Exact§r - in this mode, cover will supply fluids in portions specified in the window underneath this button. If amount of fluids is less than portion size, fluids won't be moved./n§eKeep Exact§r - in this mode, cover will keep specified amount of fluids in the destination inventory, supplying additional amount of fluids if required./n§7Tip: shift click will multiply increase/decrease amounts by 10 and ctrl click will multiply by 100.
 cover.fluid_regulator.supply_exact=Supply Exact: %s
@@ -1321,9 +1386,16 @@ cover.machine_controller.disable_with_redstone=Disable with Redstone
 cover.ender_fluid_link.title=Ender Fluid Link
 cover.ender_fluid_link.iomode.enabled=I/O Enabled
 cover.ender_fluid_link.iomode.disabled=I/O Disabled
-cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode/nPrivate mode uses the player who originally placed the cover
+cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode\nPrivate mode uses the player who originally placed the cover
 cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
+cover.ender_fluid_link.transfer_unit=L/t
+
+cover.generic.ender.known_channels=Known Channels
+cover.generic.ender.open_selector=Open Entry Selector
+cover.generic.ender.set_description.tooltip=Set Description
+cover.generic.ender.set_description.title=Set Description [%s]
+cover.generic.ender.delete_entry=Delete Entry
 
 cover.generic.advanced_detector.latched=Latched
 cover.generic.advanced_detector.continuous=Continuous
@@ -1538,7 +1610,8 @@ gregtech.material.palladium=Palladium
 gregtech.material.phosphorus=Phosphorus
 gregtech.material.polonium=Polonium
 gregtech.material.platinum=Platinum
-gregtech.material.plutonium=Plutonium 239
+gregtech.material.plutonium=Plutonium
+gregtech.material.plutonium_239=Plutonium 239
 gregtech.material.plutonium_241=Plutonium 241
 gregtech.material.potassium=Potassium
 gregtech.material.praseodymium=Praseodymium
@@ -1573,8 +1646,9 @@ gregtech.material.tin=Tin
 gregtech.material.titanium=Titanium
 gregtech.material.tritium=Tritium
 gregtech.material.tungsten=Tungsten
-gregtech.material.uranium=Uranium 238
+gregtech.material.uranium=Uranium
 gregtech.material.uranium_235=Uranium 235
+gregtech.material.uranium_238=Uranium 238
 gregtech.material.vanadium=Vanadium
 gregtech.material.xenon=Xenon
 gregtech.material.ytterbium=Ytterbium
@@ -1794,6 +1868,14 @@ gregtech.material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
 gregtech.material.naquadria_sulfate=Naquadria Sulfate
 gregtech.material.pyrochlore=Pyrochlore
 gregtech.material.rtm_alloy=RTM Alloy
+gregtech.material.ilmenite_slag=Ilmenite Slag
+gregtech.material.zircon=Zircon
+gregtech.material.zirconia=Zirconia
+gregtech.material.zirconium_tetrachloride=Zirconium Tetrachloride
+gregtech.material.hafnia=Hafnia
+gregtech.material.hafnium_tetrachloride=Hafnium Tetrachloride
+gregtech.material.zircaloy_4=Zircaloy-4
+gregtech.material.inconel_718=Inconel-718
 
 
 # Organic Chemistry Materials
@@ -2007,6 +2089,11 @@ gregtech.material.acidic_naquadria_solution=Acidic Naquadria Solution
 gregtech.material.naquadria_waste=Naquadria Waste
 gregtech.material.lapotron=Lapotron
 gregtech.material.uu_matter=UU-Matter
+gregtech.material.bauxite_slurry=Bauxite Slurry
+gregtech.material.cracked_bauxite_slurry=Cracked Bauxite Slurry
+gregtech.material.bauxite_sludge=Bauxite Sludge
+gregtech.material.decalcified_bauxite_sludge=Decalcified Bauxite Sludge
+gregtech.material.bauxite_slag=Bauxite Slag
 
 
 # Second Degree Materials
@@ -2417,6 +2504,13 @@ behavior.tricorder.debug_machine_invalid_null=invalid! MetaTileEntity == null!
 behavior.tricorder.debug_cpu_load=Average CPU load of ~%sns over %s ticks with worst time of %sns.
 behavior.tricorder.debug_cpu_load_seconds=This is %s seconds.
 behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking longer than %sms) on the Server.
+behavior.tricorder.mte_owner=Owner: %s
+behavior.tricorder.mte_owner_offline=Owner is Offline or Offworld!
+behavior.tricorder.mte_owner_null=This wasn't placed by a player!
+behavior.tricorder.quantum_controller.usage=Using %s EU/t (%s)
+behavior.tricorder.quantum_controller.connected_items=Connected item storages: %s
+behavior.tricorder.quantum_controller.connected_fluids=Connected fluid storages: %s
+behavior.tricorder.quantum_storage.usage=Contributing %s EU/t to Quantum Controller
 
 metaitem.item_magnet.lv.name=Low Voltage Item Magnet
 metaitem.item_magnet.hv.name=High Voltage Item Magnet
@@ -2740,8 +2834,8 @@ gregtech.machine.workbench.tooltip1=Better than Forestry
 gregtech.machine.workbench.tooltip2=Has Item Storage, Tool Storage, pulls from adjacent Inventories, and saves Recipes.
 gregtech.machine.workbench.tab.workbench=Crafting
 gregtech.machine.workbench.tab.item_list=Storage
-gregtech.machine.workbench.storage_note_1=(Available items from connected
-gregtech.machine.workbench.storage_note_2=inventories usable for crafting)
+gregtech.machine.workbench.storage_note=(Available items from connected\ninventories usable for crafting)
+gregtech.machine.workbench.clear_grid=Clear Crafting Grid
 gregtech.item_list.item_stored=§7Stored: %,d
 
 gregtech.machine.workbench.tab.crafting=Crafting
@@ -4101,6 +4195,8 @@ gregtech.machine.battery_buffer.max.16.name=Maximum Voltage 16x Battery Buffer
 
 gregtech.battery_buffer.average_input=Average input: %s EU/t
 gregtech.battery_buffer.average_output=Average output: %s EU/t
+gregtech.battery_buffer.average_input.top=Input: %s
+gregtech.battery_buffer.average_output.top=Output: %s
 
 # Transformers
 gregtech.machine.transformer.description=Transforms Energy between voltage tiers
@@ -4160,9 +4256,9 @@ gregtech.machine.transformer.adjustable.opv.name=Overpowered Voltage Power Trans
 
 # Diodes
 gregtech.machine.diode.message=Max Amperage throughput: %s
-gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Mallet to change Amperage flow.
+gregtech.machine.diode.tooltip_tool_usage_screwdriver=§8Use Screwdriver to change Amperage flow or access Covers
 gregtech.machine.diode.tooltip_general=Allows Energy Flow in one direction and limits Amperage
-gregtech.machine.diode.tooltip_starts_at=Starts as §f1A§7, use Soft Mallet to change
+gregtech.machine.diode.tooltip_starts_at=Starts as §f1A§7, use Screwdriver to change
 
 gregtech.machine.diode.ulv.name=Ultra Low Voltage Diode
 gregtech.machine.diode.lv.name=Low Voltage Diode
@@ -4291,6 +4387,7 @@ gregtech.machine.alarm.tooltip=Plays a Sound when given a Redstone signal
 
 #Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Better than Storage Drawers
+gregtech.machine.super_chest.ulv.name=Primitive Chest I
 gregtech.machine.super_chest.lv.name=Super Chest I
 gregtech.machine.super_chest.mv.name=Super Chest II
 gregtech.machine.super_chest.hv.name=Super Chest III
@@ -4306,6 +4403,7 @@ gregtech.machine.quantum_chest.items_stored=Item Amount:
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=Compact place to store all your fluids
 gregtech.machine.quantum_tank.tooltip.voiding_enabled=Excess Fluid Voiding §aEnabled
+gregtech.machine.super_tank.ulv.name=Primitive Tank I
 gregtech.machine.super_tank.lv.name=Super Tank I
 gregtech.machine.super_tank.mv.name=Super Tank II
 gregtech.machine.super_tank.hv.name=Super Tank III
@@ -4316,6 +4414,16 @@ gregtech.machine.quantum_tank.luv.name=Quantum Tank II
 gregtech.machine.quantum_tank.zpm.name=Quantum Tank III
 gregtech.machine.quantum_tank.uv.name=Quantum Tank IV
 gregtech.machine.quantum_tank.uhv.name=Quantum Tank V
+
+#Quantum Storage Controller
+gregtech.machine.quantum_storage_controller.name=Quantum Storage Controller
+gregtech.machine.quantum_storage_controller.tooltip=Heart of the Quantum Storage Network/nConnect Energy Hatches to power the Quantum Storage Network
+gregtech.machine.quantum_storage_proxy.name=Quantum Storage Proxy
+gregtech.machine.quantum_storage_proxy.tooltip=Proxies the Quantum Storage Network's inventory
+gregtech.machine.quantum_storage_extender.name=Quantum Storage Extender
+gregtech.machine.quantum_storage_extender.tooltip=Extends the Quantum Storage Network to other chests/tanks
+gregtech.machine.quantum_storage.connected=Connected to Quantum Controller at [%d, %d, %d]/n/nClick to highlight the controller
+gregtech.machine.quantum_storage.disconnected=Not Connected
 
 #Buffers
 gregtech.machine.buffer.tooltip=A Small Buffer to store Items and Fluids
@@ -4679,6 +4787,7 @@ behaviour.softhammer=Activates and Deactivates Machines
 behaviour.hammer=Turns on and off Muffling for Machines (by hitting them)
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
+behaviour.cell_bucket.tooltip=Can pickup or place fluids
 behaviour.paintspray.solvent.tooltip=Can remove color from things
 behaviour.paintspray.white.tooltip=Can paint things in White
 behaviour.paintspray.orange.tooltip=Can paint things in Orange
@@ -4797,6 +4906,7 @@ gregtech.multiblock.cleanroom.clean_status=Status: %s
 gregtech.multiblock.cleanroom.clean_state=Clean (%s%%)
 gregtech.multiblock.cleanroom.dirty_state=Contaminated (%s%%)
 gregtech.multiblock.cleanroom.warning_contaminated=Contaminated!
+gregtech.multiblock.cleanroom.low_tier=Energy tier too low, minimum of %s!
 
 gregtech.machine.charcoal_pile.name=Charcoal Pile Igniter
 gregtech.machine.charcoal_pile.tooltip.1=Turns Logs into §aCharcoal§7 when §cignited§7.
@@ -4830,6 +4940,9 @@ gregtech.machine.active_transformer.tooltip3=Can transmit power at incredible di
 gregtech.machine.active_transformer.tooltip3.5= Lasers§7.
 gregtech.multiblock.active_transformer.description=The Active Transformer is a multiblock structure that can accept any number or tier of Energy Hatches, and transform them into any number or tier of Dynamo Hatches. They can be chained with Laser Source and Target Hatches, allowing long distance power transportation without any losses. Lasers must be in a straight line, otherwise they will not send energy.
 gregtech.machine.active_transformer.routing=Routing.
+gregtech.multiblock.active_transformer.max_in=Max Input: %s
+gregtech.multiblock.active_transformer.max_out=Max Output: %s
+gregtech.multiblock.active_transformer.average_io=Average I/O: %s
 
 gregtech.machine.research_station.name=Research Station
 gregtech.machine.research_station.tooltip.1=More than just a Multiblock Scanner
@@ -4933,6 +5046,11 @@ gregtech.machine.item_bus.import.luv.name=LuV Input Bus
 gregtech.machine.item_bus.import.zpm.name=ZPM Input Bus
 gregtech.machine.item_bus.import.uv.name=UV Input Bus
 gregtech.machine.item_bus.import.uhv.name=UHV Input Bus
+gregtech.machine.item_bus.import.uev.name=UEV Input Bus
+gregtech.machine.item_bus.import.uiv.name=UIV Input Bus
+gregtech.machine.item_bus.import.uxv.name=UXV Input Bus
+gregtech.machine.item_bus.import.opv.name=OpV Input Bus
+gregtech.machine.item_bus.import.max.name=MAX Input Bus
 
 gregtech.machine.item_bus.export.tooltip=Item Output for Multiblocks
 
@@ -4946,6 +5064,11 @@ gregtech.machine.item_bus.export.luv.name=LuV Output Bus
 gregtech.machine.item_bus.export.zpm.name=ZPM Output Bus
 gregtech.machine.item_bus.export.uv.name=UV Output Bus
 gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
+gregtech.machine.item_bus.export.uev.name=UEV Output Bus
+gregtech.machine.item_bus.export.uiv.name=UIV Output Bus
+gregtech.machine.item_bus.export.uxv.name=UXV Output Bus
+gregtech.machine.item_bus.export.opv.name=OpV Output Bus
+gregtech.machine.item_bus.export.max.name=MAX Output Bus
 
 gregtech.bus.collapse_true=Bus will collapse Items
 gregtech.bus.collapse_false=Bus will not collapse Items
@@ -4962,6 +5085,11 @@ gregtech.machine.fluid_hatch.import.luv.name=LuV Input Hatch
 gregtech.machine.fluid_hatch.import.zpm.name=ZPM Input Hatch
 gregtech.machine.fluid_hatch.import.uv.name=UV Input Hatch
 gregtech.machine.fluid_hatch.import.uhv.name=UHV Input Hatch
+gregtech.machine.fluid_hatch.import.uev.name=UEV Input Hatch
+gregtech.machine.fluid_hatch.import.uiv.name=UIV Input Hatch
+gregtech.machine.fluid_hatch.import.uxv.name=UXV Input Hatch
+gregtech.machine.fluid_hatch.import.opv.name=OpV Input Hatch
+gregtech.machine.fluid_hatch.import.max.name=MAX Input Hatch
 
 gregtech.machine.fluid_hatch.export.tooltip=Fluid Output for Multiblocks
 
@@ -4971,6 +5099,11 @@ gregtech.machine.fluid_hatch.import_4x.luv.name=LuV Quadruple Input Hatch
 gregtech.machine.fluid_hatch.import_4x.zpm.name=ZPM Quadruple Input Hatch
 gregtech.machine.fluid_hatch.import_4x.uv.name=UV Quadruple Input Hatch
 gregtech.machine.fluid_hatch.import_4x.uhv.name=UHV Quadruple Input Hatch
+gregtech.machine.fluid_hatch.import_4x.uev.name=UEV Quadruple Input Hatch
+gregtech.machine.fluid_hatch.import_4x.uiv.name=UIV Quadruple Input Hatch
+gregtech.machine.fluid_hatch.import_4x.uxv.name=UXV Quadruple Input Hatch
+gregtech.machine.fluid_hatch.import_4x.opv.name=OpV Quadruple Input Hatch
+gregtech.machine.fluid_hatch.import_4x.max.name=MAX Quadruple Input Hatch
 
 gregtech.machine.fluid_hatch.import_9x.name=EV Nonuple Input Hatch
 gregtech.machine.fluid_hatch.import_9x.iv.name=IV Nonuple Input Hatch
@@ -4978,6 +5111,11 @@ gregtech.machine.fluid_hatch.import_9x.luv.name=LuV Nonuple Input Hatch
 gregtech.machine.fluid_hatch.import_9x.zpm.name=ZPM Nonuple Input Hatch
 gregtech.machine.fluid_hatch.import_9x.uv.name=UV Nonuple Input Hatch
 gregtech.machine.fluid_hatch.import_9x.uhv.name=UHV Nonuple Input Hatch
+gregtech.machine.fluid_hatch.import_9x.uev.name=UEV Nonuple Input Hatch
+gregtech.machine.fluid_hatch.import_9x.uiv.name=UIV Nonuple Input Hatch
+gregtech.machine.fluid_hatch.import_9x.uxv.name=UXV Nonuple Input Hatch
+gregtech.machine.fluid_hatch.import_9x.opv.name=OpV Nonuple Input Hatch
+gregtech.machine.fluid_hatch.import_9x.max.name=MAX Nonuple Input Hatch
 
 gregtech.machine.fluid_hatch.export_4x.name=EV Quadruple Output Hatch
 gregtech.machine.fluid_hatch.export_4x.iv.name=IV Quadruple Output Hatch
@@ -4985,6 +5123,11 @@ gregtech.machine.fluid_hatch.export_4x.luv.name=LuV Quadruple Output Hatch
 gregtech.machine.fluid_hatch.export_4x.zpm.name=ZPM Quadruple Output Hatch
 gregtech.machine.fluid_hatch.export_4x.uv.name=UV Quadruple Output Hatch
 gregtech.machine.fluid_hatch.export_4x.uhv.name=UHV Quadruple Output Hatch
+gregtech.machine.fluid_hatch.export_4x.uev.name=UEV Quadruple Output Hatch
+gregtech.machine.fluid_hatch.export_4x.uiv.name=UIV Quadruple Output Hatch
+gregtech.machine.fluid_hatch.export_4x.uxv.name=UXV Quadruple Output Hatch
+gregtech.machine.fluid_hatch.export_4x.opv.name=OpV Quadruple Output Hatch
+gregtech.machine.fluid_hatch.export_4x.max.name=MAX Quadruple Output Hatch
 
 gregtech.machine.fluid_hatch.export_9x.name=EV Nonuple Output Hatch
 gregtech.machine.fluid_hatch.export_9x.iv.name=IV Nonuple Output Hatch
@@ -4992,6 +5135,11 @@ gregtech.machine.fluid_hatch.export_9x.luv.name=LuV Nonuple Output Hatch
 gregtech.machine.fluid_hatch.export_9x.zpm.name=ZPM Nonuple Output Hatch
 gregtech.machine.fluid_hatch.export_9x.uv.name=UV Nonuple Output Hatch
 gregtech.machine.fluid_hatch.export_9x.uhv.name=UHV Nonuple Output Hatch
+gregtech.machine.fluid_hatch.export_9x.uev.name=UEV Nonuple Output Hatch
+gregtech.machine.fluid_hatch.export_9x.uiv.name=UIV Nonuple Output Hatch
+gregtech.machine.fluid_hatch.export_9x.uxv.name=UXV Nonuple Output Hatch
+gregtech.machine.fluid_hatch.export_9x.opv.name=OpV Nonuple Output Hatch
+gregtech.machine.fluid_hatch.export_9x.max.name=MAX Nonuple Output Hatch
 
 gregtech.machine.fluid_hatch.export.ulv.name=ULV Output Hatch
 gregtech.machine.fluid_hatch.export.lv.name=LV Output Hatch
@@ -5003,6 +5151,11 @@ gregtech.machine.fluid_hatch.export.luv.name=LuV Output Hatch
 gregtech.machine.fluid_hatch.export.zpm.name=ZPM Output Hatch
 gregtech.machine.fluid_hatch.export.uv.name=UV Output Hatch
 gregtech.machine.fluid_hatch.export.uhv.name=UHV Output Hatch
+gregtech.machine.fluid_hatch.export.uev.name=UEV Output Hatch
+gregtech.machine.fluid_hatch.export.uiv.name=UIV Output Hatch
+gregtech.machine.fluid_hatch.export.uxv.name=UXV Output Hatch
+gregtech.machine.fluid_hatch.export.opv.name=OpV Output Hatch
+gregtech.machine.fluid_hatch.export.max.name=MAX Output Hatch
 
 gregtech.machine.energy_hatch.input.tooltip=Energy Input for Multiblocks
 
@@ -5030,12 +5183,22 @@ gregtech.machine.energy_hatch.input_4a.luv.name=LuV 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.zpm.name=ZPM 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.uv.name=UV 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.uhv.name=UHV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.uev.name=UEV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.uiv.name=UIV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.uxv.name=UXV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.opv.name=OpV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.max.name=MAX 4A Energy Hatch
 
 gregtech.machine.energy_hatch.input_16a.iv.name=IV 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.luv.name=LuV 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.zpm.name=ZPM 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.uv.name=UV 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.uhv.name=UHV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.uev.name=UEV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.uiv.name=UIV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.uxv.name=UXV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.opv.name=OpV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.max.name=MAX 16A Energy Hatch
 
 gregtech.machine.substation_hatch.input.tooltip=Energy Input for the Power Substation
 
@@ -5044,6 +5207,11 @@ gregtech.machine.substation_hatch.input_64a.luv.name=LuV 64A Substation Energy H
 gregtech.machine.substation_hatch.input_64a.zpm.name=ZPM 64A Substation Energy Hatch
 gregtech.machine.substation_hatch.input_64a.uv.name=UV 64A Substation Energy Hatch
 gregtech.machine.substation_hatch.input_64a.uhv.name=UHV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.uev.name=UEV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.uiv.name=UIV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.uxv.name=UXV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.opv.name=OpV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.max.name=MAX 64A Substation Energy Hatch
 
 gregtech.machine.energy_hatch.output.tooltip=Energy Output for Multiblocks
 
@@ -5071,12 +5239,22 @@ gregtech.machine.energy_hatch.output_4a.luv.name=LuV 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.zpm.name=ZPM 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.uv.name=UV 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.uhv.name=UHV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.uev.name=UEV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.uiv.name=UIV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.uxv.name=UXV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.opv.name=OpV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.max.name=MAX 4A Dynamo Hatch
 
 gregtech.machine.energy_hatch.output_16a.iv.name=IV 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.luv.name=LuV 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.zpm.name=ZPM 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.uv.name=UV 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.uhv.name=UHV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.uev.name=UEV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.uiv.name=UIV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.uxv.name=UXV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.opv.name=OpV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.max.name=MAX 16A Dynamo Hatch
 
 gregtech.machine.substation_hatch.output.tooltip=Energy Output for the Power Substation
 
@@ -5085,6 +5263,11 @@ gregtech.machine.substation_hatch.output_64a.luv.name=LuV 64A Substation Dynamo 
 gregtech.machine.substation_hatch.output_64a.zpm.name=ZPM 64A Substation Dynamo Hatch
 gregtech.machine.substation_hatch.output_64a.uv.name=UV 64A Substation Dynamo Hatch
 gregtech.machine.substation_hatch.output_64a.uhv.name=UHV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.uev.name=UEV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.uiv.name=UIV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.uxv.name=UXV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.opv.name=OpV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.max.name=MAX 64A Substation Dynamo Hatch
 
 gregtech.machine.rotor_holder.tooltip1=Rotor Holder for Multiblocks
 gregtech.machine.rotor_holder.tooltip2=Holds Rotor in place so it will not fly away
@@ -5254,15 +5437,35 @@ gregtech.machine.laser_hatch.tooltip2=§cLaser Cables must be in a straight line
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
 
-gregtech.machine.me_export_fluid_hatch.name=ME Output Hatch
+# ME Parts
+gregtech.machine.me_import_item_bus.name=ME Input Bus
+gregtech.machine.me.item_import.tooltip=Extracts specified items from the ME network
+gregtech.machine.me_stocking_item_bus.name=ME Stocking Input Bus
+gregtech.machine.me.stocking_item.tooltip=Retrieves items directly from the ME network
+gregtech.machine.me.stocking_item.tooltip.2=Auto-Pull from ME mode will automatically stock the first 16 items in the ME system, updated every 5 seconds.
+gregtech.machine.me_import_item_hatch.configs.tooltip=Keeps 16 item types in stock
+gregtech.machine.me_import_fluid_hatch.name=ME Input Hatch
+gregtech.machine.me.fluid_import.tooltip=Extracts specified fluids from ME network
+gregtech.machine.me_stocking_fluid_hatch.name=ME Stocking Input Hatch
+gregtech.machine.me.stocking_fluid.tooltip=Retrieves fluids directly from the ME network
+gregtech.machine.me.stocking_fluid.tooltip.2=Auto-Pull from ME mode will automatically stock the first 16 fluids in the ME system, updated every 5 seconds.
+gregtech.machine.me_import_fluid_hatch.configs.tooltip=Keeps 16 fluid types in stock
 gregtech.machine.me_export_item_bus.name=ME Output Bus
-gregtech.machine.me_import_fluid_hatch.name=ME Stocking Input Hatch
-gregtech.machine.me_import_item_bus.name=ME Stocking Input Bus
-gregtech.machine.me.fluid_export.tooltip=Stores fluid directly into ME network.
-gregtech.machine.me.item_export.tooltip=Stores item directly into ME network.
-gregtech.machine.me.fluid_import.tooltip=Fetch fluids from ME network automatically.
-gregtech.machine.me.item_import.tooltip=Fetch items from ME network automatically.
-gregtech.machine.me.export.tooltip=It has infinite capacity before connecting to ME network.
+gregtech.machine.me.item_export.tooltip=Stores items directly into the ME network
+gregtech.machine.me.item_export.tooltip.2=Can cache an infinite amount of items
+gregtech.machine.me_export_fluid_hatch.name=ME Output Hatch
+gregtech.machine.me.fluid_export.tooltip=Stores fluids directly into the ME network
+gregtech.machine.me.fluid_export.tooltip.2=Can cache an infinite amount of fluid
+gregtech.machine.me.stocking_auto_pull_enabled=Auto-Pull Enabled
+gregtech.machine.me.stocking_auto_pull_disabled=Auto-Pull Disabled
+gregtech.machine.me.copy_paste.tooltip=Left-click with Data Stick to copy settings, right-click to apply
+gregtech.machine.me.import_copy_settings=Saved settings to Data Stick
+gregtech.machine.me.import_paste_settings=Applied settings from Data Stick
+gregtech.machine.me.item_import.data_stick.name=§oME Input Bus Configuration Data
+gregtech.machine.me.fluid_import.data_stick.name=§oME Input Hatch Configuration Data
+gregtech.machine.me.extra_connections.enabled=Allow connections from all sides
+gregtech.machine.me.extra_connections.disabled=Allow connection only on front face
+gregtech.machine.me.extra_connections.tooltip=Right-click with wire cutters to allow connecting to AE2 on all sides
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
@@ -5300,7 +5503,7 @@ gregtech.universal.tooltip.uses_per_op=Uses §f%,d EU/operation
 gregtech.universal.tooltip.base_production_eut=§eBase Production: §f%,d EU/t
 gregtech.universal.tooltip.base_production_fluid=§eBase Production: §f%,d L/t
 gregtech.universal.tooltip.produces_fluid=§eProduces: §f%,d L/t
-gregtech.universal.tooltip.terrain_resist=This Machine will not explode when exposed to the Elements
+gregtech.universal.tooltip.terrain_resist=§eThis Machine will not explode when exposed to the Elements
 gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
 
 gregtech.block.tooltip.no_mob_spawning=§bMobs cannot spawn on this block
@@ -5322,6 +5525,7 @@ gregtech.recipe.temperature=Temperature: %,dK (%s)
 gregtech.recipe.explosive=Explosive: %s
 gregtech.recipe.eu_to_start=Energy To Start: %sEU
 gregtech.recipe.dimensions=Dimensions: %s
+gregtech.recipe.dimensions_blocked=Blocked Dimensions: %s
 gregtech.recipe.cleanroom=Requires %s
 gregtech.recipe.cleanroom.display_name=Cleanroom
 gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
@@ -5379,6 +5583,8 @@ gregtech.gui.overclock.off=X
 gregtech.gui.sort=Sort
 gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
+gregtech.gui.item_auto_input.tooltip.enabled=Item Auto-Input Enabled
+gregtech.gui.item_auto_input.tooltip.disabled=Item Auto-Input Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
 gregtech.gui.item_auto_collapse.tooltip.enabled=Item Auto-Collapse Enabled
@@ -5403,9 +5609,17 @@ gregtech.gui.me_network.offline=Network Status: §4Offline§r
 gregtech.gui.waiting_list=Sending Queue:
 gregtech.gui.config_slot=§fConfig Slot§r
 gregtech.gui.config_slot.set=§7Click to §bset/select§7 config slot.§r
+gregtech.gui.config_slot.set_only=§7Click to §bset§7 config slot.§r
 gregtech.gui.config_slot.scroll=§7Scroll wheel to §achange§7 config amount.§r
 gregtech.gui.config_slot.remove=§7Right click to §4clear§7 config slot.§r
+gregtech.gui.config_slot.auto_pull_managed=§4Disabled:§7 Managed by Auto-Pull
+gregtech.gui.me_bus.extra_slot=Extra Slot/n§7Put extra items for recipes here, like Molds or Lenses
+gregtech.gui.me_bus.auto_pull_button=Click to toggle automatic item pulling from ME
 gregtech.gui.alarm.radius=Radius:
+gregtech.gui.item_passthrough.enabled=Item Passthough Enabled
+gregtech.gui.item_passthrough.disabled=Item Passthough Disabled
+gregtech.gui.fluid_passthrough.enabled=Fluid Passthough Enabled
+gregtech.gui.fluid_passthrough.disabled=Fluid Passthough Disabled
 
 
 ore.spawnlocation.name=Ore Spawn Information
@@ -5694,7 +5908,7 @@ gregtech.multiblock.hpca.info_coolant_name=PCB Coolant
 gregtech.multiblock.hpca.info_bridging_enabled=Bridging Enabled
 gregtech.multiblock.hpca.info_bridging_disabled=Bridging Disabled
 
-gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
+gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck/datafix>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=Worldgen successfully reloaded from config.
@@ -5721,6 +5935,12 @@ gregtech.command.copy.copied_and_click=copied to clipboard. Click to copy again
 gregtech.command.copy.click_to_copy=Click to copy
 gregtech.command.copy.copied_start=Copied [
 gregtech.command.copy.copied_end=] to the clipboard
+gregtech.command.datafix.usage=Usage: /gregtech datafix <bqu>
+gregtech.command.datafix.bqu.usage=Usage: /gregtech datafix bqu [confirm]
+gregtech.command.datafix.bqu.backup=Backup your save and BQu config dir, then rerun with the 'confirm' arg
+gregtech.command.datafix.bqu.start=Started Migrating BQu Quest Database...
+gregtech.command.datafix.bqu.complete=Finished Migrating BQu Quest Database
+gregtech.command.datafix.bqu.failed=Failed Migrating BQu Quest Database. Restore your backups!
 
 gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selector terminal app to use it.§r
 
@@ -6029,6 +6249,9 @@ gregtech.subtitle.entity.portal_opening=Portal opens
 gregtech.subtitle.entity.portal_closing=Portal closes
 gregtech.subtitle.maintenance.electrical=Electrical breakdown
 gregtech.subtitle.maintenance.mechanical=Mechanical breakdown
+gregtech.subtitle.alarm=Alarm Whines
+gregtech.subtitle.click=Something Clicks
+
 
 # Debug messaging
 gregtech.debug.f3_h.enabled=GregTech has modified the debug info! For Developers: enable the misc:debug config option in the GregTech config file to see more
@@ -6230,3 +6453,8 @@ gregtech.scanner.forestry.larvae=§oScanned Larvae
 gregtech.scanner.forestry.serum=§oScanned Serum
 gregtech.scanner.forestry.caterpillar=§oScanned Caterpillar
 gregtech.scanner.forestry.pollen=§oScanned Pollen
+
+# Mutation
+gregtech.mutation.block_of=Block of %s
+
+record.sus=Leonz - Among Us Drip

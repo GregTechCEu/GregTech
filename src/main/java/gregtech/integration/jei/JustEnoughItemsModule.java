@@ -10,11 +10,14 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
+import gregtech.api.mui.GregTechGuiTransferHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.category.GTRecipeCategory;
+import gregtech.api.recipes.category.ICategoryOverride;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
@@ -25,8 +28,8 @@ import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.jei.basic.GTFluidVeinCategory;
@@ -82,6 +85,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_BOLT_SCREW;
+import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_RING;
+
 @JEIPlugin
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_JEI,
@@ -113,8 +119,10 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         for (MetaItem<?> metaItem : MetaItems.ITEMS) {
             subtypeRegistry.registerSubtypeInterpreter(metaItem, subtype);
         }
-        subtypeRegistry.registerSubtypeInterpreter(Item.getItemFromBlock(MetaBlocks.MACHINE),
-                new MachineSubtypeHandler());
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            subtypeRegistry.registerSubtypeInterpreter(Item.getItemFromBlock(registry.getBlock()),
+                    new MachineSubtypeHandler());
+        }
     }
 
     @Override
@@ -146,7 +154,6 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         // register transfer handler for all categories, but not for the crafting station
         ModularUIGuiHandler modularUIGuiHandler = new ModularUIGuiHandler(jeiHelpers.recipeTransferHandlerHelper());
-        modularUIGuiHandler.setValidHandlers(widget -> !(widget instanceof CraftingSlotWidget));
         modularUIGuiHandler.blacklistCategory(
                 IntCircuitCategory.UID,
                 GTValues.MODID + ":material_tree",
@@ -155,13 +162,12 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler,
                 Constants.UNIVERSAL_RECIPE_TRANSFER_UID);
 
+        // register transfer handler for crafting recipes
+        registry.getRecipeTransferRegistry().addRecipeTransferHandler(new GregTechGuiTransferHandler(
+                jeiHelpers.recipeTransferHandlerHelper()), VanillaRecipeCategoryUid.CRAFTING);
+
         registry.addAdvancedGuiHandlers(modularUIGuiHandler);
         registry.addGhostIngredientHandler(modularUIGuiHandler.getGuiContainerClass(), modularUIGuiHandler);
-        // register transfer handler for crafting recipes
-        ModularUIGuiHandler craftingStationGuiHandler = new ModularUIGuiHandler(
-                jeiHelpers.recipeTransferHandlerHelper());
-        registry.getRecipeTransferRegistry().addRecipeTransferHandler(craftingStationGuiHandler,
-                VanillaRecipeCategoryUid.CRAFTING);
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
             if (recipeMap.getRecipeMapUI().isJEIVisible()) {
@@ -190,37 +196,65 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             }
         }
 
-        for (ResourceLocation metaTileEntityId : GregTechAPI.MTE_REGISTRY.getKeys()) {
-            MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
-            assert metaTileEntity != null;
-            if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
-                IControllable workableCapability = metaTileEntity
-                        .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+        for (MTERegistry mteRegistry : GregTechAPI.mteManager.getRegistries()) {
+            for (ResourceLocation metaTileEntityId : mteRegistry.getKeys()) {
+                MetaTileEntity metaTileEntity = mteRegistry.getObject(metaTileEntityId);
+                assert metaTileEntity != null;
 
-                if (workableCapability instanceof AbstractRecipeLogic logic) {
-                    if (metaTileEntity instanceof IMultipleRecipeMaps) {
-                        for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps()) {
+                if (metaTileEntity instanceof ICategoryOverride override && override.shouldOverride()) {
+                    for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
+                        registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
+                    }
+                    if (override.getJEICategoryOverrides().length != 0)
+                        registry.addRecipeCatalyst(metaTileEntity.getStackForm(), override.getJEICategoryOverrides());
+                    if (override.shouldReplace()) continue;
+                }
+
+                if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
+                    IControllable workableCapability = metaTileEntity
+                            .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+
+                    if (workableCapability instanceof ICategoryOverride override && override.shouldOverride()) {
+                        for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
                             registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                         }
-                    } else if (logic.getRecipeMap() != null) {
-                        registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
+                        if (override.getJEICategoryOverrides().length != 0)
+                            registry.addRecipeCatalyst(metaTileEntity.getStackForm(),
+                                    override.getJEICategoryOverrides());
+                        if (override.shouldReplace()) continue;
+                    }
+
+                    if (workableCapability instanceof AbstractRecipeLogic logic) {
+                        if (metaTileEntity instanceof IMultipleRecipeMaps) {
+                            for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity)
+                                    .getAvailableRecipeMaps()) {
+                                registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
+                            }
+                        } else if (logic.getRecipeMap() != null) {
+                            registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
+                        }
                     }
                 }
             }
         }
 
-        String semiFluidMapId = GTValues.MODID + ":" + RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.getUnlocalizedName();
-        registry.addRecipeCatalyst(MetaTileEntities.LARGE_BRONZE_BOILER.getStackForm(), semiFluidMapId);
-        registry.addRecipeCatalyst(MetaTileEntities.LARGE_STEEL_BOILER.getStackForm(), semiFluidMapId);
-        registry.addRecipeCatalyst(MetaTileEntities.LARGE_TITANIUM_BOILER.getStackForm(), semiFluidMapId);
-        registry.addRecipeCatalyst(MetaTileEntities.LARGE_TUNGSTENSTEEL_BOILER.getStackForm(), semiFluidMapId);
-
         List<OreByProduct> oreByproductList = new ArrayList<>();
+        List<MaterialTree> materialTreeList = new ArrayList<>();
         for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
             if (material.hasProperty(PropertyKey.ORE)) {
                 oreByproductList.add(new OreByProduct(material));
             }
+            if (material.hasProperty(PropertyKey.DUST)) {
+                materialTreeList.add(new MaterialTree(material));
+            }
+            if (material.hasFlag(GENERATE_BOLT_SCREW) && material.hasFlag(GENERATE_RING) &&
+                    material.hasProperty(PropertyKey.TOOL)) {
+                registry.addIngredientInfo(ToolItems.TOOLBELT.get(material), VanillaTypes.ITEM,
+                        "item.gt.tool.toolbelt.tooltip", "item.gt.tool.toolbelt.paint", "item.gt.tool.toolbelt.dye",
+                        "item.gt.tool.toolbelt.maintenance");
+            }
         }
+
         String oreByProductId = GTValues.MODID + ":" + "ore_by_product";
         registry.addRecipes(oreByproductList, oreByProductId);
         MetaTileEntity[][] machineLists = {
@@ -238,12 +272,6 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
 
         // Material Tree
-        List<MaterialTree> materialTreeList = new ArrayList<>();
-        for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
-            if (material.hasProperty(PropertyKey.DUST)) {
-                materialTreeList.add(new MaterialTree(material));
-            }
-        }
         registry.addRecipes(materialTreeList, GTValues.MODID + ":" + "material_tree");
 
         // Ore Veins
@@ -296,6 +324,9 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         });
         registry.addIngredientInfo(new ItemStack(MetaBlocks.BRITTLE_CHARCOAL), VanillaTypes.ITEM,
                 I18n.format("tile.brittle_charcoal.tooltip.1", I18n.format("tile.brittle_charcoal.tooltip.2")));
+
+        // Refresh Ore Ingredients Cache
+        GTRecipeOreInput.refreshStackCache();
     }
 
     private void setupInputHandler() {

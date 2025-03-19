@@ -25,8 +25,8 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.MCHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -385,6 +385,24 @@ public class RenderUtil {
         net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
     }
 
+    // adapted from com.cleanroommc.modularui.drawable.GuiDraw.java
+    // todo merge this with the method from the qstorage mui2 port
+    public static void renderItem(ItemStack item, int x, int y, float width, float height) {
+        if (item.isEmpty()) return;
+        GlStateManager.pushMatrix();
+        RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.enableDepth();
+        GlStateManager.translate(x, y, 0);
+        GlStateManager.scale(width / 16f, height / 16f, 1);
+        RenderItem renderItem = MCHelper.getMc().getRenderItem();
+        renderItem.renderItemAndEffectIntoGUI(MCHelper.getPlayer(), item, 0, 0);
+        renderItem.renderItemOverlayIntoGUI(MCHelper.getFontRenderer(), item, 0, 0, null);
+        GlStateManager.disableDepth();
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.disableLighting();
+        GlStateManager.popMatrix();
+    }
+
     public static void renderFluidOverLay(float x, float y, float width, float height, float z, FluidStack fluidStack,
                                           float alpha) {
         if (fluidStack != null) {
@@ -392,7 +410,7 @@ public class RenderUtil {
             float r = (color >> 16 & 255) / 255.0f;
             float g = (color >> 8 & 255) / 255.0f;
             float b = (color & 255) / 255.0f;
-            TextureAtlasSprite sprite = TextureUtils.getTexture(fluidStack.getFluid().getStill(fluidStack));
+            TextureAtlasSprite sprite = getTexture(fluidStack.getFluid().getStill(fluidStack));
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
                     GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -530,8 +548,7 @@ public class RenderUtil {
         heightT--;
         Fluid fluid = contents.getFluid();
         ResourceLocation fluidStill = fluid.getStill(contents);
-        TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks()
-                .getAtlasSprite(fluidStill.toString());
+        TextureAtlasSprite fluidStillSprite = getTexture(fluidStill);
         int fluidColor = fluid.getColor(contents);
         int scaledAmount;
         if (contents.amount == tankCapacity) {
@@ -666,5 +683,32 @@ public class RenderUtil {
         quad.pipe(builder);
         builder.setApplyDiffuseLighting(false);
         return builder.build();
+    }
+
+    /**
+     * @return the block texture map
+     */
+    public static @NotNull TextureMap getTextureMap() {
+        return Minecraft.getMinecraft().getTextureMapBlocks();
+    }
+
+    /**
+     * @param location the location of the texture in the Block Texture Map
+     * @return the texture at the location
+     * @throws IllegalArgumentException if the texture does not exist in the atlas
+     */
+    public static @NotNull TextureAtlasSprite getTexture(@NotNull ResourceLocation location) {
+        TextureAtlasSprite sprite = getTextureMap().getTextureExtry(location.toString());
+        if (sprite == null) {
+            throw new IllegalArgumentException("Texture does not exist at " + location);
+        }
+        return sprite;
+    }
+
+    /**
+     * @return the missing texture atlas sprite
+     */
+    public static @NotNull TextureAtlasSprite getMissingSprite() {
+        return getTextureMap().getMissingSprite();
     }
 }

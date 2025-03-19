@@ -165,6 +165,7 @@ public class ToolEventHandlers {
                         // only try once, so future water placement does not get eaten too
                         return false;
                     });
+                    stack = ToolHelper.toolbeltPassthrough(stack);
                     ((IGTTool) stack.getItem()).playSound(player);
                 }
             }
@@ -477,6 +478,8 @@ public class ToolEventHandlers {
 
     @SideOnly(Side.CLIENT)
     private static void drawGridOverlays(EnumFacing facing, AxisAlignedBB box, Predicate<EnumFacing> test) {
+        if (facing == null) return;
+
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(3, DefaultVertexFormats.POSITION_COLOR);

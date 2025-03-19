@@ -14,7 +14,7 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
-import gregtech.api.recipes.recipeproperties.ResearchProperty;
+import gregtech.api.recipes.properties.impl.ResearchProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.particle.GTLaserBeamParticle;
@@ -65,6 +65,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     @SideOnly(Side.CLIENT)
     private GTLaserBeamParticle[][] beamParticles;
     private int beamCount;
+    private int beamTime;
 
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
@@ -189,14 +190,22 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 // beams and the maximum progress in the recipe.
                 int beamTime = Math.max(1, maxProgress / maxBeams);
 
-                int currentBeamCount = Math.min(maxBeams, getRecipeMapWorkable().getProgress() / beamTime);
+                int beamCount = Math.min(maxBeams, getRecipeMapWorkable().getProgress() / beamTime + 1);
 
-                if (currentBeamCount != beamCount) {
-                    beamCount = currentBeamCount;
+                if (beamCount != this.beamCount) {
+                    if (beamCount < this.beamCount) {
+                        // if beam count decreases, the last beam in the queue needs to be removed for the sake of fade
+                        // time.
+                        this.beamCount = Math.max(0, beamCount - 1);
+                        writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
+                    }
+                    this.beamTime = beamTime;
+                    this.beamCount = beamCount;
                     writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
                 }
             } else if (beamCount != 0) {
-                beamCount = 0;
+                this.beamTime = 0;
+                this.beamCount = 0;
                 writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
             }
         }
@@ -239,11 +248,13 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     private void writeParticles(@NotNull PacketBuffer buf) {
         buf.writeVarInt(beamCount);
+        buf.writeVarInt(beamTime);
     }
 
     @SideOnly(Side.CLIENT)
     private void readParticles(@NotNull PacketBuffer buf) {
         beamCount = buf.readVarInt();
+        beamTime = buf.readVarInt();
         if (beamParticles == null) {
             beamParticles = new GTLaserBeamParticle[17][2];
         }
@@ -306,7 +317,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     @NotNull
     @SideOnly(Side.CLIENT)
     private GTLaserBeamParticle createALParticles(Vector3 startPos, Vector3 endPos) {
-        return new GTLaserBeamParticle(this, startPos, endPos)
+        return new GTLaserBeamParticle(this, startPos, endPos, beamTime)
                 .setBody(LASER_LOCATION)
                 .setBeamHeight(0.125f)
                 // Try commenting or adjusting on the next four lines to see what happens

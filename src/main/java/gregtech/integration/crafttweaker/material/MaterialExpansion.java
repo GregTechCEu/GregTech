@@ -60,7 +60,7 @@ public class MaterialExpansion {
     @ZenGetter
     public static boolean isGaseous(Material m) {
         FluidProperty prop = m.getProperty(PropertyKey.FLUID);
-        return prop != null && prop.getStorage().get(FluidStorageKeys.GAS) != null;
+        return prop != null && prop.get(FluidStorageKeys.GAS) != null;
     }
 
     // TODO May need to move this to Material
@@ -120,7 +120,7 @@ public class MaterialExpansion {
 
     @ZenGetter("toolSpeed")
     public static float toolSpeed(Material m) {
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             return prop.getToolSpeed();
         } else logError(m, "get the tool speed", "Tool");
@@ -129,7 +129,7 @@ public class MaterialExpansion {
 
     @ZenGetter("toolAttackDamage")
     public static float attackDamage(Material m) {
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             return prop.getToolAttackDamage();
         } else logError(m, "get the tool attack damage", "Tool");
@@ -138,7 +138,7 @@ public class MaterialExpansion {
 
     @ZenGetter("toolDurability")
     public static int toolDurability(Material m) {
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             return prop.getToolDurability();
         } else logError(m, "get the tool durability", "Tool");
@@ -147,7 +147,7 @@ public class MaterialExpansion {
 
     @ZenGetter("toolHarvestLevel")
     public static int toolHarvestLevel(Material m) {
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             return prop.getToolHarvestLevel();
         } else logError(m, "get the tool harvest level", "Tool");
@@ -156,7 +156,7 @@ public class MaterialExpansion {
 
     @ZenGetter("toolEnchantability")
     public static int toolEnchant(Material m) {
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             return prop.getToolEnchantability();
         } else logError(m, "get the tool enchantability", "Tool");
@@ -173,7 +173,7 @@ public class MaterialExpansion {
     @net.minecraftforge.fml.common.Optional.Method(modid = Mods.Names.CRAFT_TWEAKER)
     public static void addScaledToolEnchantment(Material m, IEnchantment enchantment, double levelGrowth) {
         if (checkFrozen("add tool enchantment")) return;
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             Enchantment enchantmentType = (Enchantment) enchantment.getDefinition().getInternal();
             prop.addEnchantmentForTools(enchantmentType, enchantment.getLevel(), levelGrowth);
@@ -191,7 +191,7 @@ public class MaterialExpansion {
                                     @Optional int enchantability, @Optional int toolHarvestLevel,
                                     @Optional boolean shouldIngoreCraftingTools) {
         if (checkFrozen("set tool stats")) return;
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             prop.setToolSpeed(toolSpeed);
             prop.setToolAttackDamage(toolAttackDamage);

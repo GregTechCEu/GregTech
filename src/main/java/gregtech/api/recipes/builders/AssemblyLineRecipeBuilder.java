@@ -4,8 +4,8 @@ import gregtech.api.items.metaitem.stats.IDataItem;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipeproperties.ResearchProperty;
-import gregtech.api.recipes.recipeproperties.ResearchPropertyData;
+import gregtech.api.recipes.properties.impl.ResearchProperty;
+import gregtech.api.recipes.properties.impl.ResearchPropertyData;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
@@ -14,7 +14,6 @@ import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,40 +44,39 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     @Override
-    public boolean applyProperty(@NotNull String key, @Nullable Object value) {
+    public boolean applyPropertyCT(@NotNull String key, @NotNull Object value) {
         if (key.equals(ResearchProperty.KEY)) {
             if (value instanceof ItemStack itemStack) {
                 scannerResearch(itemStack);
                 return true;
             }
+            return false;
         }
-        return super.applyProperty(key, value);
+        return super.applyPropertyCT(key, value);
     }
 
     private boolean applyResearchProperty(ResearchPropertyData.ResearchEntry researchEntry) {
         if (!ConfigHolder.machines.enableResearch) return false;
         if (researchEntry == null) {
-            GTLog.logger.error("Assembly Line Research Entry cannot be empty.", new IllegalArgumentException());
+            GTLog.logger.error("Assembly Line Research Entry cannot be empty.", new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return false;
         }
 
         if (!generatingRecipes) {
             GTLog.logger.error("Cannot generate recipes when using researchWithoutRecipe()",
-                    new IllegalArgumentException());
+                    new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return false;
         }
 
-        if (recipePropertyStorage != null && recipePropertyStorage.hasRecipeProperty(ResearchProperty.getInstance())) {
-            ResearchPropertyData property = recipePropertyStorage.getRecipePropertyValue(ResearchProperty.getInstance(),
-                    null);
-            if (property == null) throw new IllegalStateException("Property storage has a null property");
+        ResearchPropertyData property = recipePropertyStorage.get(ResearchProperty.getInstance(), null);
+        if (property != null) {
             property.add(researchEntry);
             return true;
         }
 
-        ResearchPropertyData property = new ResearchPropertyData();
+        property = new ResearchPropertyData();
         if (applyProperty(ResearchProperty.getInstance(), property)) {
             property.add(researchEntry);
             return true;
@@ -157,7 +155,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         private final ItemStack dataStack;
         private final boolean ignoreNBT;
         private final int duration;
-        private final int EUt;
+        private final long EUt;
         private final int CWUt;
 
         /**
@@ -169,10 +167,10 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
          * @param CWUt          how much computation per tick this recipe needs if in Research Station
          *                      <p>
          *                      By default, will ignore NBT on researchStack input. If NBT matching is desired, see
-         *                      {@link #ResearchRecipeEntry(String, ItemStack, ItemStack, boolean, int, int, int)}
+         *                      {@link #ResearchRecipeEntry(String, ItemStack, ItemStack, boolean, int, long, int)}
          */
         public ResearchRecipeEntry(@NotNull String researchId, @NotNull ItemStack researchStack,
-                                   @NotNull ItemStack dataStack, int duration, int EUt, int CWUt) {
+                                   @NotNull ItemStack dataStack, int duration, long EUt, int CWUt) {
             this.researchId = researchId;
             this.researchStack = researchStack;
             this.dataStack = dataStack;
@@ -191,7 +189,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
          * @param CWUt          how much computation per tick this recipe needs if in Research Station
          */
         public ResearchRecipeEntry(@NotNull String researchId, @NotNull ItemStack researchStack,
-                                   @NotNull ItemStack dataStack, boolean ignoreNBT, int duration, int EUt, int CWUt) {
+                                   @NotNull ItemStack dataStack, boolean ignoreNBT, int duration, long EUt, int CWUt) {
             this.researchId = researchId;
             this.researchStack = researchStack;
             this.dataStack = dataStack;
@@ -224,7 +222,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
             return duration;
         }
 
-        public int getEUt() {
+        public long getEUt() {
             return EUt;
         }
 

@@ -1,16 +1,17 @@
 package gregtech.api;
 
 import gregtech.api.advancement.IAdvancementManager;
+import gregtech.api.block.ICleanroomFilter;
 import gregtech.api.block.IHeatingCoilBlockStats;
-import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.event.HighTierEvent;
 import gregtech.api.gui.UIFactory;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
+import gregtech.api.metatileentity.registry.MTEManager;
 import gregtech.api.modules.IModuleManager;
 import gregtech.api.network.INetworkHandler;
+import gregtech.api.recipes.properties.RecipePropertyRegistry;
 import gregtech.api.sound.ISoundManager;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.registry.IMaterialRegistryManager;
@@ -20,6 +21,7 @@ import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.ConfigHolder;
+import gregtech.datafix.migration.lib.MigrationAPI;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
@@ -51,23 +53,26 @@ public class GregTechAPI {
     public static IMaterialRegistryManager materialManager;
     /** Will be available at the Pre-Initialization stage */
     public static MarkerMaterialRegistry markerMaterialRegistry;
+    /** Will be available at the Pre-Initialization stage */
+    public static MTEManager mteManager;
+    /** GT's data migrations API */
+    public static final MigrationAPI MIGRATIONS = new MigrationAPI();
+    public static final RecipePropertyRegistry RECIPE_PROPERTIES = new RecipePropertyRegistry();
 
     /** Will be available at the Pre-Initialization stage */
     private static boolean highTier;
     private static boolean highTierInitialized;
 
-    public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(
-            Short.MAX_VALUE);
     @Deprecated
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(
             Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTControlledRegistry<>(
             Integer.MAX_VALUE);
 
-    public static BlockMachine MACHINE;
     public static final Map<Material, Map<StoneType, IBlockOre>> oreBlockTable = new HashMap<>();
     public static final Object2ObjectMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
     public static final Object2ObjectMap<IBlockState, IBatteryData> PSS_BATTERIES = new Object2ObjectOpenHashMap<>();
+    public static final Object2ObjectMap<IBlockState, ICleanroomFilter> CLEANROOM_FILTERS = new Object2ObjectOpenHashMap<>();
 
     /** Will be available at the Pre-Initialization stage */
     public static boolean isHighTier() {

@@ -11,7 +11,8 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -172,18 +173,20 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected void modifyOverclockPost(int[] resultOverclock, @NotNull IRecipePropertyStorage storage) {
-            super.modifyOverclockPost(resultOverclock, storage);
+        protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {
+            super.modifyOverclockPost(ocResult, storage);
 
             int coilTier = ((MetaTileEntityPyrolyseOven) metaTileEntity).getCoilTier();
             if (coilTier == -1)
                 return;
 
             if (coilTier == 0) {
-                resultOverclock[1] *= 5.0 / 4; // 25% slower with cupronickel (coilTier = 0)
-            } else resultOverclock[1] *= 2.0f / (coilTier + 1); // each coil above kanthal (coilTier = 1) is 50% faster
-
-            resultOverclock[1] = Math.max(1, resultOverclock[1]);
+                // 75% speed with cupronickel (coilTier = 0)
+                ocResult.setDuration(Math.max(1, (int) (ocResult.duration() * 4.0 / 3)));
+            } else {
+                // each coil above kanthal (coilTier = 1) is 50% faster
+                ocResult.setDuration(Math.max(1, (int) (ocResult.duration() * 2.0 / (coilTier + 1))));
+            }
         }
     }
 }

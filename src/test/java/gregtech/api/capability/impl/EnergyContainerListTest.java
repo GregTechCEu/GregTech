@@ -1,15 +1,15 @@
 package gregtech.api.capability.impl;
 
+import gregtech.Bootstrap;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import org.hamcrest.MatcherAssert;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -20,18 +20,16 @@ import static org.hamcrest.CoreMatchers.is;
 
 public class EnergyContainerListTest {
 
-    @NotNull
-    private static MetaTileEntity createDummyMTE() {
-        return new MetaTileEntity(new ResourceLocation("")) {
+    private static MetaTileEntity dummyMTE;
+
+    @BeforeAll
+    public static void prepare() {
+        Bootstrap.perform();
+        dummyMTE = new MetaTileEntity(new ResourceLocation(MODID, "dummy")) {
 
             @Override
             public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-                return null;
-            }
-
-            @Override
-            protected ModularUI createUI(EntityPlayer entityPlayer) {
-                return null;
+                return dummyMTE;
             }
         };
     }
@@ -43,7 +41,7 @@ public class EnergyContainerListTest {
 
     @NotNull
     private static IEnergyContainer createContainer(int amps, int tier) {
-        return EnergyContainerHandler.receiverContainer(createDummyMTE(),
+        return EnergyContainerHandler.receiverContainer(dummyMTE,
                 V[tier] * 64L * amps, V[tier], amps);
     }
 

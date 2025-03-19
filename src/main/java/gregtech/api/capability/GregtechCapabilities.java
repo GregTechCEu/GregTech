@@ -2,7 +2,6 @@ package gregtech.api.capability;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.EUToFEProvider;
-import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.converter.ConverterTrait;
 
@@ -25,9 +24,6 @@ public class GregtechCapabilities {
 
     @CapabilityInject(IMultiblockController.class)
     public static Capability<IMultiblockController> CAPABILITY_MULTIBLOCK_CONTROLLER = null;
-
-    @CapabilityInject(HardwareProvider.class)
-    public static Capability<HardwareProvider> CAPABILITY_HARDWARE_PROVIDER = null;
 
     @CapabilityInject(ConverterTrait.class)
     public static Capability<ConverterTrait> CAPABILITY_CONVERTER = null;

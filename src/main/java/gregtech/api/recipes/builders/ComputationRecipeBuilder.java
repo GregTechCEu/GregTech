@@ -3,8 +3,8 @@ package gregtech.api.recipes.builders;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipeproperties.ComputationProperty;
-import gregtech.api.recipes.recipeproperties.TotalComputationProperty;
+import gregtech.api.recipes.properties.impl.ComputationProperty;
+import gregtech.api.recipes.properties.impl.TotalComputationProperty;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 
@@ -28,7 +28,7 @@ public class ComputationRecipeBuilder extends RecipeBuilder<ComputationRecipeBui
     }
 
     @Override
-    public boolean applyProperty(@NotNull String key, Object value) {
+    public boolean applyPropertyCT(@NotNull String key, @NotNull Object value) {
         if (key.equals(ComputationProperty.KEY)) {
             this.CWUt(((Number) value).intValue());
             return true;
@@ -37,12 +37,12 @@ public class ComputationRecipeBuilder extends RecipeBuilder<ComputationRecipeBui
             this.totalCWU(((Number) value).intValue());
             return true;
         }
-        return super.applyProperty(key, value);
+        return super.applyPropertyCT(key, value);
     }
 
     public ComputationRecipeBuilder CWUt(int cwut) {
         if (cwut < 0) {
-            GTLog.logger.error("CWU/t cannot be less than 0", new IllegalArgumentException());
+            GTLog.logger.error("CWU/t cannot be less than 0", new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         }
         this.applyProperty(ComputationProperty.getInstance(), cwut);
@@ -54,7 +54,7 @@ public class ComputationRecipeBuilder extends RecipeBuilder<ComputationRecipeBui
      */
     public ComputationRecipeBuilder totalCWU(int totalCWU) {
         if (totalCWU < 0) {
-            GTLog.logger.error("Total CWU cannot be less than 0", new IllegalArgumentException());
+            GTLog.logger.error("Total CWU cannot be less than 0", new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         }
         this.applyProperty(TotalComputationProperty.getInstance(), totalCWU);

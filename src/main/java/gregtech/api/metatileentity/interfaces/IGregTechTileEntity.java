@@ -3,6 +3,11 @@ package gregtech.api.metatileentity.interfaces;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.metatileentity.MetaTileEntity;
 
+import net.minecraft.nbt.NBTTagCompound;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * A simple compound Interface for all my TileEntities.
  * <p/>
@@ -13,7 +18,11 @@ public interface IGregTechTileEntity extends IHasWorldObjectAndCoords, INeighbor
 
     MetaTileEntity getMetaTileEntity();
 
-    MetaTileEntity setMetaTileEntity(MetaTileEntity metaTileEntity);
+    default MetaTileEntity setMetaTileEntity(MetaTileEntity metaTileEntity) {
+        return setMetaTileEntity(metaTileEntity, null);
+    }
+
+    MetaTileEntity setMetaTileEntity(@NotNull MetaTileEntity metaTileEntity, @Nullable NBTTagCompound tagCompound);
 
     long getOffsetTimer(); // todo might not keep this one
 

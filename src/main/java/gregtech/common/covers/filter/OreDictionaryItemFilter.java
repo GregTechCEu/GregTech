@@ -1,78 +1,68 @@
 package gregtech.common.covers.filter;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.DrawableWidget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.cover.CoverWithUI;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.ItemVariantMap;
 import gregtech.api.unification.stack.MultiItemVariantMap;
 import gregtech.api.unification.stack.SingleItemVariantMap;
-import gregtech.api.util.function.BooleanConsumer;
-import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
-import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
-import gregtech.common.gui.widget.HighlightedTextField;
-import gregtech.common.gui.widget.orefilter.ItemOreFilterTestSlot;
-import gregtech.common.gui.widget.orefilter.OreGlobCompileStatusWidget;
+import gregtech.common.covers.filter.readers.OreDictFilterReader;
+import gregtech.common.mui.widget.HighlightedTextField;
+import gregtech.common.mui.widget.orefilter.OreFilterTestSlot;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.UITexture;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.utils.BooleanConsumer;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class OreDictionaryItemFilter extends ItemFilter {
+public class OreDictionaryItemFilter extends BaseFilter {
 
     private final Map<Item, ItemVariantMap.Mutable<Boolean>> matchCache = new Object2ObjectOpenHashMap<>();
     private final SingleItemVariantMap<Boolean> noOreDictMatch = new SingleItemVariantMap<>();
+    private final OreDictFilterReader filterReader;
 
-    protected String expression = "";
+    public OreDictionaryItemFilter(ItemStack stack) {
+        this.filterReader = new OreDictFilterReader(stack);
+        recompile();
+    }
 
-    private OreGlob glob = ImpossibleOreGlob.getInstance();
-    private boolean error;
-
-    private boolean caseSensitive;
-    /**
-     * {@code false} requires any of the entry to be match in order for the match to be success, {@code true} requires
-     * all entries to match
-     */
-    private boolean matchAll;
+    @Override
+    public OreDictFilterReader getFilterReader() {
+        return filterReader;
+    }
 
     @NotNull
     public String getExpression() {
-        return expression;
+        return this.filterReader.getExpression();
     }
 
-    @NotNull
-    public OreGlob getGlob() {
-        return this.glob;
-    }
-
-    protected void recompile(@Nullable Consumer<@Nullable OreGlobCompileResult> callback) {
+    protected void recompile() {
         clearCache();
-        String expr = this.expression;
-        if (!expr.isEmpty()) {
-            OreGlobCompileResult result = OreGlob.compile(expr, !this.caseSensitive);
-            this.glob = result.getInstance();
-            this.error = result.hasError();
-            if (callback != null) callback.accept(result);
-        } else {
-            this.glob = ImpossibleOreGlob.getInstance();
-            this.error = true;
-            if (callback != null) callback.accept(null);
-        }
+        this.filterReader.recompile();
     }
 
     protected void clearCache() {
@@ -81,106 +71,197 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    public void initUI(Consumer<Widget> widgetGroup) {
-        ItemOreFilterTestSlot[] testSlot = new ItemOreFilterTestSlot[5];
-        for (int i = 0; i < testSlot.length; i++) {
-            ItemOreFilterTestSlot slot = new ItemOreFilterTestSlot(20 + 22 * i, 0);
-            slot.setGlob(getGlob());
-            slot.setMatchAll(this.matchAll);
-            widgetGroup.accept(slot);
-            testSlot[i] = slot;
-        }
-        OreGlobCompileStatusWidget compilationStatus = new OreGlobCompileStatusWidget(10, 10);
+    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {}
 
-        Consumer<@Nullable OreGlobCompileResult> compileCallback = result -> {
-            compilationStatus.setCompileResult(result);
-            for (ItemOreFilterTestSlot slot : testSlot) {
-                slot.setGlob(getGlob());
-            }
-        };
-
-        HighlightedTextField textField = new HighlightedTextField(14, 26, 152, 14, () -> this.expression,
-                s -> {
-                    if (s.equals(this.expression)) return;
-                    this.expression = s;
-                    markDirty();
-                    recompile(compileCallback);
-                });
-        compilationStatus.setTextField(textField);
-
-        widgetGroup.accept(new ImageWidget(10, 0, 7, 7, GuiTextures.ORE_FILTER_INFO)
-                .setTooltip("cover.ore_dictionary_filter.info"));
-        widgetGroup.accept(compilationStatus);
-        widgetGroup.accept(new DrawableWidget(10, 22, 156, 16)
-                .setBackgroundDrawer((mouseX, mouseY, partialTicks, context, widget) -> {
-                    Widget.drawGradientRect(widget.getPosition().x, widget.getPosition().y,
-                            widget.getSize().width, widget.getSize().height,
-                            0xFF808080, 0xFF808080, false);
-                    Widget.drawGradientRect(widget.getPosition().x + 1, widget.getPosition().y + 1,
-                            widget.getSize().width - 2, widget.getSize().height - 2,
-                            0xFF000000, 0xFF000000, false);
-                }));
-        widgetGroup.accept(textField
-                .setHighlightRule(h -> {
-                    String t = h.getOriginalText();
-                    for (int i = 0; i < t.length(); i++) {
-                        switch (t.charAt(i)) {
-                            case '|', '&', '^', '(', ')' -> h.format(i, TextFormatting.GOLD);
-                            case '*', '?' -> h.format(i, TextFormatting.GREEN);
-                            case '!' -> h.format(i, TextFormatting.RED);
-                            case '\\' -> h.format(i++, TextFormatting.YELLOW);
-                            case '$' -> { // TODO: remove this switch case in 2.9
-                                h.format(i, TextFormatting.DARK_GREEN);
-                                for (; i < t.length(); i++) {
-                                    switch (t.charAt(i)) {
-                                        case ' ', '\t', '\n', '\r' -> {}
-                                        case '\\' -> {
-                                            i++;
-                                            continue;
-                                        }
-                                        default -> {
-                                            continue;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                            default -> {
-                                continue;
-                            }
-                        }
-                        h.format(i + 1, TextFormatting.RESET);
-                    }
-                }).setMaxLength(64));
-        widgetGroup.accept(new ForcedInitialSyncImageCycleButtonWidget(130, 38, 18, 18,
-                GuiTextures.ORE_FILTER_BUTTON_CASE_SENSITIVE, () -> this.caseSensitive, caseSensitive -> {
-                    if (this.caseSensitive == caseSensitive) return;
-                    this.caseSensitive = caseSensitive;
-                    markDirty();
-                    recompile(compileCallback);
-                }).setTooltipHoverString(
-                        i -> "cover.ore_dictionary_filter.button.case_sensitive." + (i == 0 ? "disabled" : "enabled")));
-        widgetGroup.accept(new ForcedInitialSyncImageCycleButtonWidget(148, 38, 18, 18,
-                GuiTextures.ORE_FILTER_BUTTON_MATCH_ALL, () -> this.matchAll, matchAll -> {
-                    if (this.matchAll == matchAll) return;
-                    this.matchAll = matchAll;
-                    markDirty();
-                    clearCache();
-                    for (ItemOreFilterTestSlot slot : testSlot) {
-                        slot.setMatchAll(matchAll);
-                    }
-                }).setTooltipHoverString(
-                        i -> "cover.ore_dictionary_filter.button.match_all." + (i == 0 ? "disabled" : "enabled")));
+    @Override
+    public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
+        return GTGuis.createPopupPanel("ore_dict_filter", 188, 76, false)
+                .padding(7)
+                .child(CoverWithUI.createTitleRow(getContainerStack()))
+                .child(createWidgets(syncManager).top(22));
     }
 
     @Override
-    public Object matchItemStack(ItemStack itemStack) {
-        return matchesItemStack(itemStack) ?
-                "wtf is this system?? i can put any non null object here and it i will work??? $arch" : null;
+    public @NotNull ModularPanel createPanel(PanelSyncManager syncManager) {
+        return GTGuis.createPanel("ore_dict_filter", 100, 100);
+    }
+
+    @Override
+    public @NotNull Widget<?> createWidgets(PanelSyncManager syncManager) {
+        List<OreFilterTestSlot> oreSlots = new ArrayList<>();
+        var expression = new StringSyncValue(this.filterReader::getExpression, this.filterReader::setExpression);
+
+        BooleanConsumer setCaseSensitive = b -> {
+            this.filterReader.setCaseSensitive(b);
+            if (!syncManager.isClient()) return;
+            for (var slot : oreSlots) {
+                slot.updatePreview();
+            }
+        };
+
+        BooleanConsumer setMatchAll = b -> {
+            this.clearCache();
+            this.filterReader.setMatchAll(b);
+            if (!syncManager.isClient()) return;
+            for (var slot : oreSlots) {
+                slot.setMatchAll(b);
+            }
+        };
+
+        var caseSensitive = new BooleanSyncValue(this.filterReader::isCaseSensitive, setCaseSensitive);
+        var matchAll = new BooleanSyncValue(this.filterReader::shouldMatchAll, setMatchAll);
+
+        return Flow.column().widthRel(1f).coverChildrenHeight()
+                .child(new HighlightedTextField()
+                        .setHighlightRule(this::highlightRule)
+                        .onUnfocus(() -> {
+                            for (var slot : oreSlots) {
+                                slot.updatePreview();
+                            }
+                        })
+                        .setTextColor(Color.WHITE.darker(1))
+                        .value(expression).marginBottom(4)
+                        .height(18).widthRel(1f))
+                .child(Flow.row().coverChildrenHeight()
+                        .widthRel(1f)
+                        .child(Flow.column().height(18)
+                                .coverChildrenWidth().marginRight(2)
+                                .child(GTGuiTextures.OREDICT_INFO.asWidget()
+                                        .size(8).top(0)
+                                        .addTooltipLine(IKey.lang("cover.ore_dictionary_filter.info")))
+                                .child(new Widget<>()
+                                        .size(8).bottom(0)
+                                        .onUpdateListener(this::getStatusIcon)
+                                        .tooltipBuilder(this::createStatusTooltip)
+                                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))))
+                        .child(SlotGroupWidget.builder()
+                                .row("XXXXX")
+                                .key('X', i -> {
+                                    var slot = new OreFilterTestSlot()
+                                            .setGlobSupplier(this.filterReader::getGlob);
+                                    slot.setMatchAll(this.filterReader.shouldMatchAll());
+                                    oreSlots.add(slot);
+                                    return slot;
+                                })
+                                .build().marginRight(2))
+                        .child(new CycleButtonWidget()
+                                .size(18).value(caseSensitive)
+                                .marginRight(2)
+                                .stateBackground(0, GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
+                                .stateBackground(1, GTGuiTextures.BUTTON_CASE_SENSITIVE[1])
+                                .addTooltip(0,
+                                        IKey.lang("cover.ore_dictionary_filter.button.case_sensitive.disabled"))
+                                .addTooltip(1,
+                                        IKey.lang("cover.ore_dictionary_filter.button.case_sensitive.enabled")))
+                        .child(new CycleButtonWidget()
+                                .size(18).value(matchAll)
+                                .marginRight(2)
+                                .stateBackground(0, GTGuiTextures.BUTTON_MATCH_ALL[0])
+                                .stateBackground(1, GTGuiTextures.BUTTON_MATCH_ALL[1])
+                                .addTooltip(0,
+                                        IKey.lang("cover.ore_dictionary_filter.button.match_all.disabled"))
+                                .addTooltip(1,
+                                        IKey.lang("cover.ore_dictionary_filter.button.match_all.enabled")))
+                        .child(createBlacklistUI()));
+    }
+
+    protected void getStatusIcon(Widget<?> widget) {
+        UITexture texture;
+        var result = this.filterReader.getResult();
+
+        if (result == null) {
+            texture = GTGuiTextures.OREDICT_WAITING;
+        } else if (result.getReports().length == 0) {
+            texture = GTGuiTextures.OREDICT_SUCCESS;
+        } else if (result.hasError()) {
+            texture = GTGuiTextures.OREDICT_ERROR;
+        } else {
+            texture = GTGuiTextures.OREDICT_WARN;
+        }
+        widget.background(texture);
+    }
+
+    protected void createStatusTooltip(RichTooltip tooltip) {
+        var result = this.filterReader.getResult();
+        if (result == null) return;
+        List<String> list = new ArrayList<>();
+
+        int error = 0, warn = 0;
+        for (OreGlobCompileResult.Report report : result.getReports()) {
+            if (report.isError()) error++;
+            else warn++;
+            list.add((report.isError() ? TextFormatting.RED : TextFormatting.GOLD) + report.toString());
+        }
+        if (error > 0) {
+            if (warn > 0) {
+                list.add(0, I18n.format("cover.ore_dictionary_filter.status.err_warn", error, warn));
+            } else {
+                list.add(0, I18n.format("cover.ore_dictionary_filter.status.err", error));
+            }
+        } else {
+            if (warn > 0) {
+                list.add(0, I18n.format("cover.ore_dictionary_filter.status.warn", warn));
+            } else {
+                list.add(I18n.format("cover.ore_dictionary_filter.status.no_issues"));
+            }
+            list.add("");
+            list.add(I18n.format("cover.ore_dictionary_filter.status.explain"));
+            list.add("");
+            list.addAll(result.getInstance().toFormattedString());
+        }
+        tooltip.addStringLines(list);
+    }
+
+    protected String highlightRule(String text) {
+        StringBuilder builder = new StringBuilder(text);
+        for (int i = 0; i < builder.length(); i++) {
+            switch (builder.charAt(i)) {
+                case '|', '&', '^', '(', ')' -> {
+                    builder.insert(i, TextFormatting.GOLD);
+                    i += 2;
+                }
+                case '*', '?' -> {
+                    builder.insert(i, TextFormatting.GREEN);
+                    i += 2;
+                }
+                case '!' -> {
+                    builder.insert(i, TextFormatting.RED);
+                    i += 2;
+                }
+                case '\\' -> {
+                    builder.insert(i++, TextFormatting.YELLOW);
+                    i += 2;
+                }
+                default -> {
+                    continue;
+                }
+            }
+            builder.insert(i + 1, TextFormatting.RESET);
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public MatchResult matchItem(ItemStack itemStack) {
+        // "wtf is this system?? i can put any non null object here and it i will work??? $arch"
+        // not anymore :thanosdaddy: -ghzdude
+        var match = matchesItemStack(itemStack);
+        return MatchResult.create(match != isBlacklistFilter(), match ? itemStack.copy() : ItemStack.EMPTY, -1);
+    }
+
+    @Override
+    public boolean testItem(ItemStack toTest) {
+        return matchesItemStack(toTest);
+    }
+
+    @Override
+    public FilterType getType() {
+        return FilterType.ITEM;
     }
 
     public boolean matchesItemStack(@NotNull ItemStack itemStack) {
-        if (this.error) return false;
+        var result = this.filterReader.getResult();
+        if (result == null || result.hasError()) return false;
         Item item = itemStack.getItem();
         ItemVariantMap<Set<String>> oreDictEntry = OreDictUnifier.getOreDictionaryEntry(item);
 
@@ -188,7 +269,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
             // no oredict entries associated
             Boolean cached = this.noOreDictMatch.getEntry();
             if (cached == null) {
-                cached = this.glob.matches("");
+                cached = this.filterReader.getGlob().matches("");
             }
             this.matchCache.put(item, this.noOreDictMatch);
             return cached;
@@ -205,7 +286,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                 // no oredict entries associated
                 Boolean cached = this.noOreDictMatch.getEntry();
                 if (cached == null) {
-                    cached = this.glob.matches("");
+                    cached = this.filterReader.getGlob().matches("");
                     this.noOreDictMatch.put(cached);
                 }
                 this.matchCache.put(item, this.noOreDictMatch);
@@ -217,64 +298,15 @@ public class OreDictionaryItemFilter extends ItemFilter {
             }
             this.matchCache.put(item, cacheEntry);
         }
-        boolean matches = this.matchAll ? this.glob.matchesAll(itemStack) : this.glob.matchesAny(itemStack);
+        boolean matches = this.filterReader.shouldMatchAll() ?
+                this.filterReader.getGlob().matchesAll(itemStack) :
+                this.filterReader.getGlob().matchesAny(itemStack);
         cacheEntry.put(itemStack, matches);
         return matches;
     }
 
     @Override
-    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
-        return globalTransferLimit;
-    }
-
-    @Override
     public boolean showGlobalTransferLimitSlider() {
         return true;
-    }
-
-    @Override
-    public int getTotalOccupiedHeight() {
-        return 37;
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound tag) {
-        tag.setString("OreDictionaryFilter", expression);
-        if (this.caseSensitive) tag.setBoolean("caseSensitive", true);
-        if (this.matchAll) tag.setBoolean("matchAll", true);
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        this.expression = tag.getString("OreDictionaryFilter");
-        this.caseSensitive = tag.getBoolean("caseSensitive");
-        this.matchAll = tag.getBoolean("matchAll");
-        recompile(null);
-    }
-
-    public static class ForcedInitialSyncImageCycleButtonWidget extends ImageCycleButtonWidget {
-
-        private final BooleanConsumer updater;
-
-        public ForcedInitialSyncImageCycleButtonWidget(int xPosition, int yPosition, int width, int height,
-                                                       TextureArea buttonTexture, BooleanSupplier supplier,
-                                                       BooleanConsumer updater) {
-            super(xPosition, yPosition, width, height, buttonTexture, supplier, updater);
-            this.currentOption = 0;
-            this.updater = updater;
-        }
-
-        @Override
-        public void readUpdateInfo(int id, PacketBuffer buffer) {
-            if (id == 1) {
-                int currentOptionCache = this.currentOption;
-                super.readUpdateInfo(id, buffer);
-                if (this.currentOption != currentOptionCache) {
-                    this.updater.apply(currentOption >= 1); // call updater to apply necessary state changes
-                }
-            } else {
-                super.readUpdateInfo(id, buffer);
-            }
-        }
     }
 }

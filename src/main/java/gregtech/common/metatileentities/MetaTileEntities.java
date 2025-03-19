@@ -2,6 +2,7 @@ package gregtech.common.metatileentities;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.capability.FeCompat;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
@@ -95,6 +96,8 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEnti
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEStockingBus;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEStockingHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCABridge;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCAComputation;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCACooler;
@@ -122,6 +125,9 @@ import gregtech.common.metatileentities.storage.MetaTileEntityCreativeEnergy;
 import gregtech.common.metatileentities.storage.MetaTileEntityCreativeTank;
 import gregtech.common.metatileentities.storage.MetaTileEntityDrum;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumExtender;
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumProxy;
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumStorageController;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
 import gregtech.common.pipelike.fluidpipe.longdistance.MetaTileEntityLDFluidEndpoint;
@@ -129,6 +135,8 @@ import gregtech.common.pipelike.itempipe.longdistance.MetaTileEntityLDItemEndpoi
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
 
 import net.minecraft.util.ResourceLocation;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -199,25 +207,28 @@ public class MetaTileEntities {
     public static final SimpleGeneratorMetaTileEntity[] GAS_TURBINE = new SimpleGeneratorMetaTileEntity[4];
 
     // MULTIBLOCK PARTS SECTION
-    public static final MetaTileEntityItemBus[] ITEM_IMPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV + 1]; // ULV-UHV
-    public static final MetaTileEntityItemBus[] ITEM_EXPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV + 1];
-    public static final MetaTileEntityFluidHatch[] FLUID_IMPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
-    public static final MetaTileEntityFluidHatch[] FLUID_EXPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
-    public static final MetaTileEntityMultiFluidHatch[] QUADRUPLE_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[6]; // EV-UHV
-    public static final MetaTileEntityMultiFluidHatch[] NONUPLE_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[6]; // EV-UHV
-    public static final MetaTileEntityMultiFluidHatch[] QUADRUPLE_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[6]; // EV-UHV
-    public static final MetaTileEntityMultiFluidHatch[] NONUPLE_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[6]; // EV-UHV
+    public static final MetaTileEntityItemBus[] ITEM_IMPORT_BUS = new MetaTileEntityItemBus[GTValues.V.length - 1]; // All tiers but MAX
+    public static final MetaTileEntityItemBus[] ITEM_EXPORT_BUS = new MetaTileEntityItemBus[GTValues.V.length - 1];
+    public static final MetaTileEntityFluidHatch[] FLUID_IMPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.V.length - 1];
+    public static final MetaTileEntityFluidHatch[] FLUID_EXPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.V.length - 1];
+    public static final MetaTileEntityMultiFluidHatch[] QUADRUPLE_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[11]; // EV+
+    public static final MetaTileEntityMultiFluidHatch[] NONUPLE_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[11]; // EV+
+    public static final MetaTileEntityMultiFluidHatch[] QUADRUPLE_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[11]; // EV+
+    public static final MetaTileEntityMultiFluidHatch[] NONUPLE_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[11]; // EV+
     public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
-    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_4A = new MetaTileEntityEnergyHatch[6]; // EV, IV, LuV, ZPM, UV, UHV
-    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_16A = new MetaTileEntityEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
+    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_4A = new MetaTileEntityEnergyHatch[11]; // EV+
+    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_16A = new MetaTileEntityEnergyHatch[10]; // IV+
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
-    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_4A = new MetaTileEntityEnergyHatch[6]; // EV, IV, LuV, ZPM, UV, UHV
-    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_16A = new MetaTileEntityEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
-    public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_INPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
-    public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_OUTPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
+    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_4A = new MetaTileEntityEnergyHatch[11]; // EV+
+    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_16A = new MetaTileEntityEnergyHatch[10]; // IV+
+    public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_INPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[10]; // IV+
+    public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_OUTPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[10]; // IV+
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[6]; // HV, EV, IV, LuV, ZPM, UV
-    public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV + 1]; // LV-UV
+    public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UHV + 1]; // LV-UHV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
+    public static MetaTileEntityQuantumStorageController QUANTUM_STORAGE_CONTROLLER;
+    public static MetaTileEntityQuantumProxy QUANTUM_STORAGE_PROXY;
+    public static MetaTileEntityQuantumExtender QUANTUM_STORAGE_EXTENDER;
     public static final MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[10];
     public static final MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[10];
     public static final MetaTileEntityBuffer[] BUFFER = new MetaTileEntityBuffer[3];
@@ -362,10 +373,13 @@ public class MetaTileEntities {
     public static MetaTileEntity ITEM_EXPORT_BUS_ME;
     public static MetaTileEntity FLUID_IMPORT_HATCH_ME;
     public static MetaTileEntity ITEM_IMPORT_BUS_ME;
+    public static MetaTileEntity STOCKING_BUS_ME;
+    public static MetaTileEntity STOCKING_HATCH_ME;
     public static MetaTileEntityLDItemEndpoint LONG_DIST_ITEM_ENDPOINT;
     public static MetaTileEntityLDFluidEndpoint LONG_DIST_FLUID_ENDPOINT;
     public static MetaTileEntityAlarm ALARM;
 
+    // todo
     public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[4][GTValues.V.length];
 
     //spotless:on
@@ -595,7 +609,7 @@ public class MetaTileEntities {
 
         // Circuit Assembler, IDs 650-664
         registerSimpleMetaTileEntity(CIRCUIT_ASSEMBLER, 635, "circuit_assembler", RecipeMaps.CIRCUIT_ASSEMBLER_RECIPES,
-                Textures.ASSEMBLER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
+                Textures.CIRCUIT_ASSEMBLER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
         // Rock Breaker, IDs 665-679
         registerMetaTileEntities(ROCK_BREAKER, 665, "rock_breaker",
@@ -679,7 +693,7 @@ public class MetaTileEntities {
                 new MetaTileEntityImplosionCompressor(gregtechId("implosion_compressor")));
         PYROLYSE_OVEN = registerMetaTileEntity(1004, new MetaTileEntityPyrolyseOven(gregtechId("pyrolyse_oven")));
         DISTILLATION_TOWER = registerMetaTileEntity(1005,
-                new MetaTileEntityDistillationTower(gregtechId("distillation_tower")));
+                new MetaTileEntityDistillationTower(gregtechId("distillation_tower"), true));
         MULTI_FURNACE = registerMetaTileEntity(1006, new MetaTileEntityMultiSmelter(gregtechId("multi_furnace")));
         LARGE_COMBUSTION_ENGINE = registerMetaTileEntity(1007,
                 new MetaTileEntityLargeCombustionEngine(gregtechId("large_combustion_engine"), GTValues.EV));
@@ -771,7 +785,8 @@ public class MetaTileEntities {
         // MISC MTE's START: IDs 1150-2000
 
         // Import/Export Buses/Hatches, IDs 1150-1209
-        for (int i = 0; i < ITEM_IMPORT_BUS.length; i++) {
+        endPos = GregTechAPI.isHighTier() ? ITEM_IMPORT_BUS.length : GTValues.UHV + 1;
+        for (int i = 0; i < endPos; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             ITEM_IMPORT_BUS[i] = new MetaTileEntityItemBus(gregtechId("item_bus.import." + voltageName), i, false);
             ITEM_EXPORT_BUS[i] = new MetaTileEntityItemBus(gregtechId("item_bus.export." + voltageName), i, true);
@@ -780,15 +795,22 @@ public class MetaTileEntities {
             FLUID_EXPORT_HATCH[i] = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.export." + voltageName), i,
                     true);
 
-            registerMetaTileEntity(1150 + i, ITEM_IMPORT_BUS[i]);
-            registerMetaTileEntity(1165 + i, ITEM_EXPORT_BUS[i]);
-            registerMetaTileEntity(1180 + i, FLUID_IMPORT_HATCH[i]);
-            registerMetaTileEntity(1195 + i, FLUID_EXPORT_HATCH[i]);
+            if (i <= GTValues.UHV) {
+                registerMetaTileEntity(1150 + i, ITEM_IMPORT_BUS[i]);
+                registerMetaTileEntity(1165 + i, ITEM_EXPORT_BUS[i]);
+                registerMetaTileEntity(1180 + i, FLUID_IMPORT_HATCH[i]);
+                registerMetaTileEntity(1195 + i, FLUID_EXPORT_HATCH[i]);
+            } else {
+                registerMetaTileEntity(1850 + i, ITEM_IMPORT_BUS[i]);
+                registerMetaTileEntity(1855 + i, ITEM_EXPORT_BUS[i]);
+                registerMetaTileEntity(1860 + i, FLUID_IMPORT_HATCH[i]);
+                registerMetaTileEntity(1865 + i, FLUID_EXPORT_HATCH[i]);
+            }
         }
 
         // IDs 1190, 1191, 1205, and 1206 reserved for multi-fluid hatches
 
-        // Energy Input/Output Hatches, IDs 1210-1269
+        // Energy Input/Output Hatches, IDs 1210-1269, 1800-1829
         endPos = GregTechAPI.isHighTier() ? ENERGY_INPUT_HATCH.length - 1 :
                 Math.min(ENERGY_INPUT_HATCH.length - 1, GTValues.UV + 2);
         for (int i = 0; i < endPos; i++) {
@@ -798,21 +820,23 @@ public class MetaTileEntities {
             ENERGY_OUTPUT_HATCH[i] = registerMetaTileEntity(1225 + i,
                     new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output." + voltageName), i, 2, true));
 
-            if (i >= GTValues.IV && i <= GTValues.UHV) {
-                ENERGY_INPUT_HATCH_4A[i + 1 - GTValues.IV] = registerMetaTileEntity(1240 + i - GTValues.IV,
+            if (i >= GTValues.IV) {
+                int baseId = (i <= GTValues.UHV ? 1240 : 1820);
+
+                ENERGY_INPUT_HATCH_4A[i + 1 - GTValues.IV] = registerMetaTileEntity(baseId + i - GTValues.IV,
                         new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a." + voltageName), i, 4, false));
-                ENERGY_INPUT_HATCH_16A[i - GTValues.IV] = registerMetaTileEntity(1245 + i - GTValues.IV,
+                ENERGY_INPUT_HATCH_16A[i - GTValues.IV] = registerMetaTileEntity(baseId + 5 + i - GTValues.IV,
                         new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_16a." + voltageName), i, 16,
                                 false));
-                ENERGY_OUTPUT_HATCH_4A[i + 1 - GTValues.IV] = registerMetaTileEntity(1250 + i - GTValues.IV,
+                ENERGY_OUTPUT_HATCH_4A[i + 1 - GTValues.IV] = registerMetaTileEntity(baseId + 10 + i - GTValues.IV,
                         new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a." + voltageName), i, 4, true));
-                ENERGY_OUTPUT_HATCH_16A[i - GTValues.IV] = registerMetaTileEntity(1255 + i - GTValues.IV,
+                ENERGY_OUTPUT_HATCH_16A[i - GTValues.IV] = registerMetaTileEntity(baseId + 15 + i - GTValues.IV,
                         new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_16a." + voltageName), i, 16,
                                 true));
-                SUBSTATION_ENERGY_INPUT_HATCH[i - GTValues.IV] = registerMetaTileEntity(1260 + i - GTValues.IV,
+                SUBSTATION_ENERGY_INPUT_HATCH[i - GTValues.IV] = registerMetaTileEntity(baseId + 20 + i - GTValues.IV,
                         new MetaTileEntitySubstationEnergyHatch(gregtechId("substation_hatch.input_64a." + voltageName),
                                 i, 64, false));
-                SUBSTATION_ENERGY_OUTPUT_HATCH[i - GTValues.IV] = registerMetaTileEntity(1265 + i - GTValues.IV,
+                SUBSTATION_ENERGY_OUTPUT_HATCH[i - GTValues.IV] = registerMetaTileEntity(baseId + 25 + i - GTValues.IV,
                         new MetaTileEntitySubstationEnergyHatch(
                                 gregtechId("substation_hatch.output_64a." + voltageName), i, 64, true));
             }
@@ -843,13 +867,12 @@ public class MetaTileEntities {
         endPos = GregTechAPI.isHighTier() ? DIODES.length - 1 : Math.min(DIODES.length - 1, GTValues.UV + 2);
         for (int i = 0; i < endPos; i++) {
             String diodeId = "diode." + GTValues.VN[i].toLowerCase();
-            MetaTileEntityDiode diode = new MetaTileEntityDiode(gregtechId(diodeId), i);
+            MetaTileEntityDiode diode = new MetaTileEntityDiode(gregtechId(diodeId), i, 16);
             DIODES[i] = registerMetaTileEntity(1300 + i, diode);
         }
 
         // Battery Buffer, IDs 1315-1360
-        endPos = GregTechAPI.isHighTier() ? BATTERY_BUFFER[0].length - 1 :
-                Math.min(BATTERY_BUFFER[0].length - 1, GTValues.UHV + 1);
+        endPos = GregTechAPI.isHighTier() ? BATTERY_BUFFER[0].length : GTValues.UHV + 1;
         int[] batteryBufferSlots = new int[] { 4, 8, 16 };
         for (int slot = 0; slot < batteryBufferSlots.length; slot++) {
             BATTERY_BUFFER[slot] = new MetaTileEntityBatteryBuffer[endPos];
@@ -863,7 +886,7 @@ public class MetaTileEntities {
         }
 
         // Charger, IDs 1375-1389
-        endPos = GregTechAPI.isHighTier() ? CHARGER.length - 1 : Math.min(CHARGER.length - 1, GTValues.UHV + 1);
+        endPos = GregTechAPI.isHighTier() ? CHARGER.length : GTValues.UHV + 1;
         for (int i = 0; i < endPos; i++) {
             String chargerId = "charger." + GTValues.VN[i].toLowerCase();
             MetaTileEntityCharger charger = new MetaTileEntityCharger(gregtechId(chargerId), i, 4);
@@ -970,6 +993,14 @@ public class MetaTileEntities {
         PUMP[1] = registerMetaTileEntity(1531, new MetaTileEntityPump(gregtechId("pump.mv"), 2));
         PUMP[2] = registerMetaTileEntity(1532, new MetaTileEntityPump(gregtechId("pump.hv"), 3));
         PUMP[3] = registerMetaTileEntity(1533, new MetaTileEntityPump(gregtechId("pump.ev"), 4));
+
+        // Quantum Storage Network 1757 - 1759
+        QUANTUM_STORAGE_CONTROLLER = registerMetaTileEntity(1757,
+                new MetaTileEntityQuantumStorageController(gregtechId("quantum_storage_controller")));
+        QUANTUM_STORAGE_PROXY = registerMetaTileEntity(1758,
+                new MetaTileEntityQuantumProxy(gregtechId("quantum_storage_proxy")));
+        QUANTUM_STORAGE_EXTENDER = registerMetaTileEntity(1759,
+                new MetaTileEntityQuantumExtender(gregtechId("quantum_storage_extender")));
 
         // Super / Quantum Chests, IDs 1560-1574
         for (int i = 0; i < 5; i++) {
@@ -1091,9 +1122,10 @@ public class MetaTileEntities {
         CLEANING_MAINTENANCE_HATCH = registerMetaTileEntity(1401,
                 new MetaTileEntityCleaningMaintenanceHatch(gregtechId("maintenance_hatch_cleanroom_auto")));
 
-        // Muffler Hatches, IDs 1657-1664
+        // Muffler Hatches, IDs 1657-1665
         for (int i = 0; i < MUFFLER_HATCH.length - 1; i++) {
             int tier = i + 1;
+            if (!GregTechAPI.isHighTier() && tier == GTValues.UHV) continue; // requires UHV motor to craft, so skip
             String voltageName = GTValues.VN[tier].toLowerCase();
             MUFFLER_HATCH[tier] = new MetaTileEntityMufflerHatch(gregtechId("muffler_hatch." + voltageName), tier);
 
@@ -1109,11 +1141,20 @@ public class MetaTileEntities {
         CREATIVE_TANK = registerMetaTileEntity(1669, new MetaTileEntityCreativeTank(gregtechId("creative_tank")));
 
         // Energy Converter, IDs 1670-1729
-        endPos = GregTechAPI.isHighTier() ? ENERGY_CONVERTER[0].length - 1 :
-                Math.min(ENERGY_CONVERTER[0].length - 1, GTValues.UHV + 1);
+        endPos = GregTechAPI.isHighTier() ? ENERGY_CONVERTER[0].length : GTValues.UHV + 1;
         int[] amps = { 1, 4, 8, 16 };
         for (int i = 0; i < endPos; i++) {
             for (int j = 0; j < 4; j++) {
+                // Check to make sure this is a valid amount of power to be able to convert.
+                // Tests if both:
+                // - The maximum amount of EU/t of this converter can turn into FE without overflowing
+                // - Max int FE/t can convert to the full amount of EU/t without being short
+                // This is done because these ratios are configured separately.
+                long eu = amps[j] * GTValues.V[i];
+                long euToFe = FeCompat.toFeLong(eu, FeCompat.ratio(false));
+                long feToEu = FeCompat.toEu(Integer.MAX_VALUE, FeCompat.ratio(true));
+                if (euToFe > Integer.MAX_VALUE || feToEu < eu) continue;
+
                 String id = "energy_converter." + GTValues.VN[i].toLowerCase() + "." + amps[j];
                 MetaTileEntityConverter converter = new MetaTileEntityConverter(gregtechId(id), i, amps[j]);
                 ENERGY_CONVERTER[j][i] = registerMetaTileEntity(1670 + j + i * 4, converter);
@@ -1122,7 +1163,7 @@ public class MetaTileEntities {
         // IDs 1730-1744 are taken by 4A <-> 16A Transformers. They are grouped with other transformers for
         // organization.
 
-        // ME Hatches, IDs 1745-1748
+        // ME Hatches, IDs 1745-1748, 1752-1756
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             FLUID_EXPORT_HATCH_ME = registerMetaTileEntity(1745,
                     new MetaTileEntityMEOutputHatch(gregtechId("me_export_fluid_hatch")));
@@ -1132,6 +1173,13 @@ public class MetaTileEntities {
                     new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch")));
             ITEM_IMPORT_BUS_ME = registerMetaTileEntity(1748,
                     new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus")));
+            STOCKING_BUS_ME = registerMetaTileEntity(1752,
+                    new MetaTileEntityMEStockingBus(gregtechId("me_stocking_item_bus")));
+            STOCKING_HATCH_ME = registerMetaTileEntity(1753,
+                    new MetaTileEntityMEStockingHatch(gregtechId("me_stocking_fluid_hatch")));
+            // 1754: Crafting Input Bus
+            // 1755: Crafting Input Buffer
+            // 1756: Crafting Input Slave
         }
 
         LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(1749,
@@ -1142,7 +1190,9 @@ public class MetaTileEntities {
         // Alarm, ID 1751
         ALARM = registerMetaTileEntity(1751, new MetaTileEntityAlarm(gregtechId("alarm")));
 
-        // Multi-Fluid Hatches, IDs 1190, 1191, 1205, 1206, 1780-1799
+        // IDs 1752-1756 are taken by AE2 parts
+
+        // Multi-Fluid Hatches, IDs 1190, 1191, 1205, 1206, 1780-1819
         // EV hatches separate because of old names/IDs
         QUADRUPLE_IMPORT_HATCH[0] = registerMetaTileEntity(1190,
                 new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_4x"), GTValues.EV, 4, false));
@@ -1152,18 +1202,22 @@ public class MetaTileEntities {
                 new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_4x"), GTValues.EV, 4, true));
         NONUPLE_EXPORT_HATCH[0] = registerMetaTileEntity(1206,
                 new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x"), GTValues.EV, 9, true));
-        for (int i = GTValues.IV; i <= GTValues.UHV; i++) {
+        for (int i = GTValues.IV; i <= (GregTechAPI.isHighTier() ? GTValues.OpV : GTValues.UHV); i++) {
             int index = i - GTValues.IV;
+            int startId = i > GTValues.UHV ? 1800 : 1780;
             String tierName = GTValues.VN[i].toLowerCase();
-            QUADRUPLE_IMPORT_HATCH[index + 1] = registerMetaTileEntity(1780 + index,
+            QUADRUPLE_IMPORT_HATCH[index + 1] = registerMetaTileEntity(startId + index,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_4x." + tierName), i, 4, false));
-            NONUPLE_IMPORT_HATCH[index + 1] = registerMetaTileEntity(1785 + index,
+            NONUPLE_IMPORT_HATCH[index + 1] = registerMetaTileEntity(startId + 5 + index,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_9x." + tierName), i, 9, false));
-            QUADRUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(1790 + index,
+            QUADRUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(startId + 10 + index,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_4x." + tierName), i, 4, true));
-            NONUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(1795 + index,
+            NONUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(startId + 15 + index,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x." + tierName), i, 9, true));
         }
+
+        // 1820-1849 are taken for UHV+ 4A/16A/64A Energy/Dynamo Hatches
+        // 1850-1869 are taken for UHV+ Input/Output Buses/Hatches
 
         /*
          * FOR ADDON DEVELOPERS:
@@ -1240,17 +1294,27 @@ public class MetaTileEntities {
         }
     }
 
-    public static <T extends MetaTileEntity> T registerMetaTileEntity(int id, T sampleMetaTileEntity) {
-        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart abilityPart) {
-            MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), sampleMetaTileEntity);
+    /**
+     * Register a MetaTileEntity
+     *
+     * @param id  the numeric ID to use as item metadata
+     * @param mte the MTE to register
+     * @return the MTE
+     * @param <T> the MTE class
+     */
+    public static <T extends MetaTileEntity> @NotNull T registerMetaTileEntity(int id, @NotNull T mte) {
+        if (mte instanceof IMultiblockAbilityPart<?>abilityPart) {
+            for (var ability : abilityPart.getAbilities())
+                MultiblockAbility.registerMultiblockAbility(ability, mte);
         }
-        if (sampleMetaTileEntity instanceof MultiblockControllerBase && Mods.JustEnoughItems.isModLoaded()) {
-            if (((MultiblockControllerBase) sampleMetaTileEntity).shouldShowInJei()) {
-                MultiblockInfoCategory.registerMultiblock((MultiblockControllerBase) sampleMetaTileEntity);
-            }
+
+        if (Mods.JustEnoughItems.isModLoaded() && mte instanceof MultiblockControllerBase controller &&
+                controller.shouldShowInJei()) {
+            MultiblockInfoCategory.registerMultiblock(controller);
         }
-        GregTechAPI.MTE_REGISTRY.register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);
-        return sampleMetaTileEntity;
+
+        mte.getRegistry().register(id, mte.metaTileEntityId, mte);
+        return mte;
     }
 
     @SuppressWarnings("unused")

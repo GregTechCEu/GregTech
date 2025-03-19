@@ -14,7 +14,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
@@ -26,11 +25,10 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -88,7 +86,7 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         guiSyncManager.registerSlotGroup("item_inv", this.storageHandler.getSlots());
 
         int rowSize = this.storageHandler.getSlots();
@@ -106,17 +104,6 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
                         .minElementMargin(0, 0)
                         .minColWidth(18).minRowHeight(18)
                         .matrix(widgets));
-    }
-
-    /**
-     * @deprecated Only exists for compatibility with the crafting table cover and will be removed in the future.
-     *             Do not depend on this method.
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @ApiStatus.Internal
-    @Deprecated
-    public @NotNull IItemHandler getStorageHandler() {
-        return this.storageHandler;
     }
 
     @Override

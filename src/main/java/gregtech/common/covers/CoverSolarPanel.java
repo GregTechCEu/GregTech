@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -50,10 +49,9 @@ public class CoverSolarPanel extends CoverBase implements ITickable {
     public void update() {
         CoverableView coverable = getCoverableView();
         World world = coverable.getWorld();
-        BlockPos blockPos = coverable.getPos();
-        if (GTUtility.canSeeSunClearly(world, blockPos)) {
+        if (GTUtility.canSeeSunClearly(world, coverable.getPos())) {
             IEnergyContainer energyContainer = coverable.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
-                    null);
+                    getAttachedSide());
             if (energyContainer != null) {
                 energyContainer.acceptEnergyFromNetwork(null, EUt, 1);
             }

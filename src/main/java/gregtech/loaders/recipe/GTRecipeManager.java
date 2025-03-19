@@ -1,11 +1,13 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.event.MaterialInfoEvent;
+import gregtech.common.crafting.DyeableRecipes;
 import gregtech.loaders.recipe.handlers.DecompositionRecipeHandler;
 import gregtech.loaders.recipe.handlers.RecipeHandlerList;
 import gregtech.loaders.recipe.handlers.ToolRecipeHandler;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public final class GTRecipeManager {
 
@@ -21,6 +23,7 @@ public final class GTRecipeManager {
         MetaTileEntityLoader.init();
         MetaTileEntityMachineRecipeLoader.init();
         RecipeHandlerList.register();
+        ForgeRegistries.RECIPES.register(new DyeableRecipes());
     }
 
     public static void loadLatest() {

@@ -1,6 +1,8 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
+import gregtech.api.block.ICleanroomFilter;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
@@ -44,7 +46,6 @@ import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveWaterPump;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.core.sound.GTSoundEvents;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -61,6 +62,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -73,7 +75,6 @@ import appeng.core.features.AEFeature;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,6 +82,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -105,6 +107,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     private IEnergyContainer energyContainer;
 
+    private ICleanroomFilter cleanroomFilter;
     private final CleanroomLogic cleanroomLogic;
     private final Collection<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
 
@@ -130,21 +133,15 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
-        Object type = context.get("FilterType");
-        if (type instanceof BlockCleanroomCasing.CasingType) {
-            BlockCleanroomCasing.CasingType casingType = (BlockCleanroomCasing.CasingType) type;
+        this.cleanroomFilter = context.get("FilterType");
+        this.cleanroomType = cleanroomFilter.getCleanroomType();
 
-            if (casingType.equals(BlockCleanroomCasing.CasingType.FILTER_CASING)) {
-                this.cleanroomType = CleanroomType.CLEANROOM;
-            } else if (casingType.equals(BlockCleanroomCasing.CasingType.FILTER_CASING_STERILE)) {
-                this.cleanroomType = CleanroomType.STERILE_CLEANROOM;
-            }
-        }
         // max progress is based on the dimensions of the structure: (x^3)-(x^2)
         // taller cleanrooms take longer than wider ones
         // minimum of 100 is a 5x5x5 cleanroom: 125-25=100 ticks
         this.cleanroomLogic.setMaxProgress(Math.max(100,
                 ((lDist + rDist + 1) * (bDist + fDist + 1) * hDist) - ((lDist + rDist + 1) * (bDist + fDist + 1))));
+        this.cleanroomLogic.setMinEnergyTier(cleanroomFilter.getMinTier());
     }
 
     @Override
@@ -153,7 +150,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         resetTileAbilities();
         this.cleanroomLogic.invalidate();
         this.cleanAmount = MIN_CLEAN_AMOUNT;
-        cleanroomReceivers.forEach(receiver -> receiver.setCleanroom(null));
+        cleanroomReceivers.forEach(receiver -> {
+            if (receiver.getCleanroom() == this) {
+                receiver.unsetCleanroom();
+            }
+        });
         cleanroomReceivers.clear();
     }
 
@@ -390,14 +391,13 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     protected TraceabilityPredicate filterPredicate() {
         return new TraceabilityPredicate(blockWorldState -> {
             IBlockState blockState = blockWorldState.getBlockState();
-            Block block = blockState.getBlock();
-            if (block instanceof BlockCleanroomCasing) {
-                BlockCleanroomCasing.CasingType casingType = ((BlockCleanroomCasing) blockState.getBlock())
-                        .getState(blockState);
-                if (casingType.equals(BlockCleanroomCasing.CasingType.PLASCRETE)) return false;
+            if (GregTechAPI.CLEANROOM_FILTERS.containsKey(blockState)) {
+                ICleanroomFilter cleanroomFilter = GregTechAPI.CLEANROOM_FILTERS.get(blockState);
+                if (cleanroomFilter.getCleanroomType() == null) return false;
 
-                Object currentFilter = blockWorldState.getMatchContext().getOrPut("FilterType", casingType);
-                if (!currentFilter.toString().equals(casingType.getName())) {
+                ICleanroomFilter currentFilter = blockWorldState.getMatchContext().getOrPut("FilterType",
+                        cleanroomFilter);
+                if (!currentFilter.getCleanroomType().equals(cleanroomFilter.getCleanroomType())) {
                     blockWorldState.setError(new PatternStringError("gregtech.multiblock.pattern.error.filters"));
                     return false;
                 }
@@ -405,12 +405,12 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                 return true;
             }
             return false;
-        }, () -> ArrayUtils.addAll(
-                Arrays.stream(BlockCleanroomCasing.CasingType.values())
-                        .filter(type -> !type.equals(BlockCleanroomCasing.CasingType.PLASCRETE))
-                        .map(type -> new BlockInfo(MetaBlocks.CLEANROOM_CASING.getState(type), null))
-                        .toArray(BlockInfo[]::new)))
-                                .addTooltips("gregtech.multiblock.pattern.error.filters");
+        }, () -> GregTechAPI.CLEANROOM_FILTERS.entrySet().stream()
+                .filter(entry -> entry.getValue().getCleanroomType() != null)
+                .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
+                .map(entry -> new BlockInfo(entry.getKey(), null))
+                .toArray(BlockInfo[]::new))
+                        .addTooltips("gregtech.multiblock.pattern.error.filters");
     }
 
     @SideOnly(Side.CLIENT)
@@ -453,10 +453,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                 return false;
 
             // the machine does not need a cleanroom, so do nothing more
-            if (!(metaTileEntity instanceof ICleanroomReceiver)) return true;
+            if (!(metaTileEntity instanceof ICleanroomReceiver cleanroomReceiver)) return true;
 
             // give the machine this cleanroom if it doesn't have this one
-            ICleanroomReceiver cleanroomReceiver = (ICleanroomReceiver) metaTileEntity;
             if (cleanroomReceiver.getCleanroom() != this) {
                 cleanroomReceiver.setCleanroom(this);
                 cleanroomReceivers.add(cleanroomReceiver);
@@ -511,6 +510,15 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                                 cleanState));
                     }
                 })
+                .addCustom(tl -> {
+                    if (!cleanroomLogic.isVoltageHighEnough()) {
+                        ITextComponent energyNeeded = new TextComponentString(
+                                GTValues.VNF[cleanroomFilter.getMinTier()]);
+                        tl.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
+                                "gregtech.multiblock.cleanroom.low_tier", energyNeeded));
+                    }
+                })
+                .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
                 .addWorkingStatusLine()
                 .addProgressLine(getProgressPercent() / 100.0);
     }
@@ -593,7 +601,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @Override
     public List<ITextComponent> getDataInfo() {
         return Collections.singletonList(new TextComponentTranslation(
-                isClean() ? "gregtech.multiblock.cleanroom.clean_state" : "gregtech.multiblock.cleanroom.dirty_state"));
+                isClean() ? "gregtech.multiblock.cleanroom.clean_state" : "gregtech.multiblock.cleanroom.dirty_state",
+                this.cleanAmount));
     }
 
     @Override
@@ -630,7 +639,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @Override
     public int getEnergyTier() {
         if (energyContainer == null) return GTValues.LV;
-        return Math.max(GTValues.LV, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage()));
+        return Math.min(GTValues.MAX,
+                Math.max(GTValues.LV, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
     }
 
     @Override
@@ -639,7 +649,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     public boolean drainEnergy(boolean simulate) {
-        long energyToDrain = isClean() ? (long) Math.min(4, Math.pow(4, getEnergyTier())) :
+        long energyToDrain = isClean() ? 4 :
                 GTValues.VA[getEnergyTier()];
         long resultEnergy = energyContainer.getEnergyStored() - energyToDrain;
         if (resultEnergy >= 0L && resultEnergy <= energyContainer.getEnergyCapacity()) {
@@ -761,10 +771,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                 .where('R', Blocks.IRON_DOOR.getDefaultState().withProperty(BlockDoor.FACING, EnumFacing.NORTH)
                         .withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.UPPER));
 
-        Arrays.stream(BlockCleanroomCasing.CasingType.values())
-                .filter(casingType -> !casingType.equals(BlockCleanroomCasing.CasingType.PLASCRETE))
-                .forEach(casingType -> shapeInfo
-                        .add(builder.where('F', MetaBlocks.CLEANROOM_CASING.getState(casingType)).build()));
+        GregTechAPI.CLEANROOM_FILTERS.entrySet().stream()
+                .filter(entry -> entry.getValue().getCleanroomType() != null)
+                .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
+                .forEach(entry -> shapeInfo.add(builder.where('F', entry.getKey()).build()));
+
         return shapeInfo;
     }
 

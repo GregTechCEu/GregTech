@@ -4,33 +4,42 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IObjectHolder;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.BlockableSlotWidget;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IDataItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.GuiDraw;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -53,18 +62,43 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return ModularUI.defaultBuilder()
-                .label(5, 5, getMetaFullName())
-                .image(46, 18, 84, 60, GuiTextures.PROGRESS_BAR_RESEARCH_STATION_BASE)
-                .widget(new BlockableSlotWidget(heldItems, 0, 79, 39)
-                        .setIsBlocked(this::isSlotBlocked)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.RESEARCH_STATION_OVERLAY))
-                .widget(new BlockableSlotWidget(heldItems, 1, 15, 39)
-                        .setIsBlocked(this::isSlotBlocked)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DATA_ORB_OVERLAY))
-                .bindPlayerInventory(entityPlayer.inventory)
-                .build(getHolder(), entityPlayer);
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        guiSyncManager.registerSlotGroup("item_inv", 2);
+
+        // TODO: Change the position of the name when it's standardized.
+        return GTGuis.createPanel(this, 176, 166)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(GTGuiTextures.PROGRESS_BAR_RESEARCH_STATION_BASE.asWidget()
+                        .left(46).top(18)
+                        .size(84, 60))
+                .child(new ItemSlot()
+                        .slot(SyncHandlers.itemSlot(heldItems, 0)
+                                .slotGroup("item_inv")
+                                .filter(itemStack -> !isSlotBlocked()))
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.RESEARCH_STATION_OVERLAY)
+                        .overlay((context, x, y, width, height, widgetTheme) -> {
+                            if (isSlotBlocked()) {
+                                GuiDraw.drawRect(x, y, width, height, 0x80404040);
+                            }
+                        })
+                        .left(79).top(39))
+                .child(new ItemSlot()
+                        .slot(SyncHandlers.itemSlot(heldItems, 1)
+                                .slotGroup("item_inv")
+                                .filter(itemStack -> !isSlotBlocked()))
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.DATA_ORB_OVERLAY)
+                        .overlay((context, x, y, width, height, widgetTheme) -> {
+                            if (isSlotBlocked()) {
+                                GuiDraw.drawRect(x, y, width, height, 0x80404040);
+                            }
+                        })
+                        .left(15).top(39));
     }
 
     private boolean isSlotBlocked() {
@@ -72,7 +106,7 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         clearInventory(itemBuffer, heldItems);
     }
 
@@ -82,8 +116,8 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public void registerAbilities(List<IObjectHolder> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(this);
     }
 
     @Override
@@ -205,6 +239,18 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
         heldItems.removeNotifiableMetaTileEntity(controllerBase);
+    }
+
+    @Override
+    public boolean canPartShare() {
+        return false;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
+        super.addInformation(stack, world, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.universal.disabled"));
     }
 
     private class ObjectHolderHandler extends NotifiableItemStackHandler {

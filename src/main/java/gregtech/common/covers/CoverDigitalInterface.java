@@ -19,7 +19,8 @@ import gregtech.api.util.Position;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
+import gregtech.common.gui.widget.prospector.widget.WidgetOreList;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -228,7 +229,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
         } else if (getItemCapability() != null) {
             items = new ItemStack[getItemCapability().getSlots()];
             this.mode = MODE.ITEM;
-        } else if (getEnergyCapability() != null) {
+        } else if (getEnergyCapability() != null || getCoverableView() instanceof MetaTileEntityPowerSubstation) {
             this.mode = MODE.ENERGY;
         } else if (getMachineCapability() != null) {
             this.mode = MODE.MACHINE;
@@ -579,22 +580,19 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
             }
         }
         if (this.mode == MODE.ENERGY || (mode == MODE.PROXY && proxyMode[2] > 0)) {
-            IEnergyContainer energyContainer = this.getEnergyCapability();
-            if (energyContainer != null) {
-                // TODO, figure out what to do when values exceed Long.MAX_VALUE, ie with multiple Ultimate batteries
-                if (energyStored != energyContainer.getEnergyStored() ||
-                        energyCapability != energyContainer.getEnergyCapacity()) {
-                    energyStored = energyContainer.getEnergyStored();
-                    energyCapability = energyContainer.getEnergyCapacity();
+            if (getCoverableView() instanceof MetaTileEntityPowerSubstation pss) {
+                if (energyStored != pss.getStoredLong() || energyCapability != pss.getCapacityLong()) {
+                    energyStored = pss.getStoredLong();
+                    energyCapability = pss.getCapacityLong();
                     writeCustomData(GregtechDataCodes.UPDATE_ENERGY, packetBuffer -> {
                         packetBuffer.writeLong(energyStored);
                         packetBuffer.writeLong(energyCapability);
                     });
                 }
-                if (this.getOffsetTimer() % 20 == 0) { // per second
+                if (this.getOffsetTimer() % 20 == 0) {
                     writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, packetBuffer -> {
-                        packetBuffer.writeLong(energyContainer.getInputPerSec());
-                        packetBuffer.writeLong(energyContainer.getOutputPerSec());
+                        packetBuffer.writeLong(pss.getAverageInLastSec() * 20L);
+                        packetBuffer.writeLong(pss.getAverageOutLastSec() * 20L);
                         inputEnergyList.add(energyInputPerDur);
                         outputEnergyList.add(energyOutputPerDur);
                         if (inputEnergyList.size() > 13) {
@@ -602,6 +600,33 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
                             outputEnergyList.remove(0);
                         }
                     });
+                }
+            } else {
+                IEnergyContainer energyContainer = this.getEnergyCapability();
+                if (energyContainer != null) {
+                    // TODO, figure out what to do when values exceed Long.MAX_VALUE, ie with multiple Ultimate
+                    // batteries
+                    if (energyStored != energyContainer.getEnergyStored() ||
+                            energyCapability != energyContainer.getEnergyCapacity()) {
+                        energyStored = energyContainer.getEnergyStored();
+                        energyCapability = energyContainer.getEnergyCapacity();
+                        writeCustomData(GregtechDataCodes.UPDATE_ENERGY, packetBuffer -> {
+                            packetBuffer.writeLong(energyStored);
+                            packetBuffer.writeLong(energyCapability);
+                        });
+                    }
+                    if (this.getOffsetTimer() % 20 == 0) { // per second
+                        writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, packetBuffer -> {
+                            packetBuffer.writeLong(energyContainer.getInputPerSec());
+                            packetBuffer.writeLong(energyContainer.getOutputPerSec());
+                            inputEnergyList.add(energyInputPerDur);
+                            outputEnergyList.add(energyOutputPerDur);
+                            if (inputEnergyList.size() > 13) {
+                                inputEnergyList.remove(0);
+                                outputEnergyList.remove(0);
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -626,16 +651,27 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
                     });
                 }
                 if (this.getOffsetTimer() % 20 == 0) {
-                    IEnergyContainer energyContainer = this.getEnergyCapability();
-                    if (energyContainer != null) {
-                        if (energyStored != energyContainer.getEnergyStored() ||
-                                energyCapability != energyContainer.getEnergyCapacity()) {
-                            energyStored = energyContainer.getEnergyStored();
-                            energyCapability = energyContainer.getEnergyCapacity();
+                    if (getCoverableView() instanceof MetaTileEntityPowerSubstation pss) {
+                        if (energyStored != pss.getStoredLong() || energyCapability != pss.getCapacityLong()) {
+                            energyStored = pss.getStoredLong();
+                            energyCapability = pss.getCapacityLong();
                             writeCustomData(GregtechDataCodes.UPDATE_ENERGY, packetBuffer -> {
                                 packetBuffer.writeLong(energyStored);
                                 packetBuffer.writeLong(energyCapability);
                             });
+                        }
+                    } else {
+                        IEnergyContainer energyContainer = this.getEnergyCapability();
+                        if (energyContainer != null) {
+                            if (energyStored != energyContainer.getEnergyStored() ||
+                                    energyCapability != energyContainer.getEnergyCapacity()) {
+                                energyStored = energyContainer.getEnergyStored();
+                                energyCapability = energyContainer.getEnergyCapacity();
+                                writeCustomData(GregtechDataCodes.UPDATE_ENERGY, packetBuffer -> {
+                                    packetBuffer.writeLong(energyStored);
+                                    packetBuffer.writeLong(energyCapability);
+                                });
+                            }
                         }
                     }
                 }
@@ -861,6 +897,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
         return getFluidCapability() != null ||
                 getItemCapability() != null ||
                 getEnergyCapability() != null ||
+                getCoverableView() instanceof MetaTileEntityPowerSubstation ||
                 getMachineCapability() != null;
     }
 

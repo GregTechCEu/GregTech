@@ -2,17 +2,12 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMufflerHatch;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.particle.VanillaParticleEffects;
@@ -21,22 +16,28 @@ import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import org.jetbrains.annotations.ApiStatus;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements
@@ -49,7 +50,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
 
     public MetaTileEntityMufflerHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
-        this.recoveryChance = Math.max(1, tier * 10);
+        this.recoveryChance = (int) Math.ceil((tier - 1.0f) / 8 * 100);
         this.inventory = new GTItemStackHandler(this, (int) Math.pow(tier + 1, 2));
         this.frontFaceFree = false;
     }
@@ -75,7 +76,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     }
 
     @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         clearInventory(itemBuffer, inventory);
     }
 
@@ -113,17 +114,6 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
         return blockState.getBlock().isAir(blockState, getWorld(), frontPos) || GTUtility.isBlockSnow(blockState);
     }
 
-    /** @deprecated No longer needed. Multiblock controller sets the particle type. */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @SideOnly(Side.CLIENT)
-    public void pollutionParticles() {
-        MultiblockControllerBase controller = getController();
-        if (controller instanceof MultiblockWithDisplayBase displayBase) {
-            VanillaParticleEffects.mufflerEffect(this, displayBase.getMufflerParticle());
-        }
-    }
-
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
@@ -153,31 +143,43 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     }
 
     @Override
-    public void registerAbilities(List<IMufflerHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(this);
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        int rowSize = (int) Math.sqrt(this.inventory.getSlots());
-        return createUITemplate(entityPlayer, rowSize, rowSize == 10 ? 9 : 0)
-                .build(getHolder(), entityPlayer);
+    public boolean usesMui2() {
+        return true;
     }
 
-    private ModularUI.Builder createUITemplate(EntityPlayer player, int rowSize, int xOffset) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + xOffset * 2,
-                18 + 18 * rowSize + 94)
-                .label(10, 5, getMetaFullName());
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        int rowSize = (int) Math.sqrt(this.inventory.getSlots());
+        int xOffset = rowSize == 10 ? 9 : 0;
 
+        guiSyncManager.registerSlotGroup("item_inv", rowSize);
+
+        List<List<IWidget>> widgets = new ArrayList<>();
         for (int y = 0; y < rowSize; y++) {
+            widgets.add(new ArrayList<>());
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
-                builder.widget(new SlotWidget(inventory, index,
-                        (88 - rowSize * 9 + x * 18) + xOffset, 18 + y * 18, true, false)
-                                .setBackgroundTexture(GuiTextures.SLOT));
+                widgets.get(y).add(new ItemSlot().slot(SyncHandlers.itemSlot(this.inventory, index)
+                        .slotGroup("item_inv")
+                        .accessibility(false, true)));
             }
         }
-        return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7 + xOffset, 18 + 18 * rowSize + 12);
+
+        // TODO: Change the position of the name when it's standardized.
+        return GTGuis.createPanel(this, 176 + xOffset * 2, 18 + 18 * rowSize + 94)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(new Grid()
+                        .top(18).height(rowSize * 18)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .alignX(0.5f)
+                        .matrix(widgets));
     }
 
     @Override

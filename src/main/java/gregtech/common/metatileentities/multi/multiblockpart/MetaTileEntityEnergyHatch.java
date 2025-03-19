@@ -1,13 +1,18 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IQuantumController;
+import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.PipelineUtil;
@@ -15,10 +20,13 @@ import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import codechicken.lib.render.CCRenderState;
@@ -27,14 +35,22 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
-                                       implements IMultiblockAbilityPart<IEnergyContainer> {
+                                       implements IMultiblockAbilityPart<IEnergyContainer>,
+                                       IQuantumStorage<IEnergyContainer> {
 
     protected final boolean isExportHatch;
     protected final int amperage;
     protected final IEnergyContainer energyContainer;
+
+    /** not synced, server only. lazily initialized from pos */
+    private WeakReference<IQuantumController> controller = new WeakReference<>(null);
+
+    /** synced, server and client */
+    private BlockPos controllerPos;
 
     public MetaTileEntityEnergyHatch(ResourceLocation metaTileEntityId, int tier, int amperage, boolean isExportHatch) {
         super(metaTileEntityId, tier);
@@ -101,18 +117,13 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void registerAbilities(List<IEnergyContainer> abilityList) {
-        abilityList.add(energyContainer);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(energyContainer);
     }
 
     @Override
     protected boolean openGUIOnRightClick() {
         return false;
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
     }
 
     @Override
@@ -167,7 +178,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     @Override
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         // override here is gross, but keeps things in order despite
-        // IDs being out of order, due to EV 4A hatches being added later
+        // IDs being out of order, due to EV 4A and UEV+ 4A+ hatches being added later
         if (this == MetaTileEntities.ENERGY_INPUT_HATCH[0]) {
             for (MetaTileEntityEnergyHatch hatch : MetaTileEntities.ENERGY_INPUT_HATCH) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
@@ -193,7 +204,11 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
             for (MetaTileEntityEnergyHatch hatch : MetaTileEntities.SUBSTATION_ENERGY_OUTPUT_HATCH) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
             }
-        }
+        } else if (this.getClass() != MetaTileEntityEnergyHatch.class &&
+                this.getClass() != MetaTileEntitySubstationEnergyHatch.class) {
+                    // let subclasses fall through this override
+                    super.getSubItems(creativeTab, subItems);
+                }
     }
 
     @Override
@@ -202,6 +217,139 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
             getController().explodeMultiblock(explosionPower);
         else {
             super.doExplosion(explosionPower);
+        }
+    }
+
+    @Override
+    public void onRemoval() {
+        if (!getWorld().isRemote && isConnected()) {
+            IQuantumController controller = getQuantumController();
+            if (controller != null) controller.rebuildNetwork();
+        }
+    }
+
+    @Override
+    public void onPlacement(@Nullable EntityLivingBase placer) {
+        super.onPlacement(placer);
+        if (getWorld() == null || getWorld().isRemote || isExportHatch)
+            return;
+
+        // add to the network if an adjacent block is part of a network
+        // use whatever we find first, merging networks is not supported
+        tryFindNetwork();
+    }
+
+    @Override
+    public Type getType() {
+        return Type.ENERGY;
+    }
+
+    @Override
+    public ICubeRenderer getBaseTexture() {
+        if (isConnected()) {
+            return Textures.QUANTUM_CASING;
+        }
+        return super.getBaseTexture();
+    }
+
+    @Override
+    public void setConnected(IQuantumController controller) {
+        if (getWorld().isRemote) return;
+        if (isExportHatch) return;
+
+        if (!controller.getPos().equals(controllerPos)) {
+            this.controller = new WeakReference<>(controller);
+            this.controllerPos = controller.getPos();
+            writeCustomData(GregtechDataCodes.UPDATE_CONTROLLER_POS, buf -> buf.writeBlockPos(controllerPos));
+            markDirty();
+        }
+    }
+
+    @Override
+    public void setDisconnected() {
+        if (getWorld().isRemote) return;
+
+        controller.clear();
+        controllerPos = null;
+        writeCustomData(GregtechDataCodes.REMOVE_CONTROLLER, buf -> {});
+        markDirty();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.UPDATE_CONTROLLER_POS) {
+            this.controllerPos = buf.readBlockPos();
+            this.controller.clear();
+            scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.REMOVE_CONTROLLER) {
+            this.controllerPos = null;
+            this.controller.clear();
+            scheduleRenderUpdate();
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(controllerPos != null);
+        if (controllerPos != null) {
+            buf.writeBlockPos(controllerPos);
+        }
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        if (buf.readBoolean()) {
+            controllerPos = buf.readBlockPos();
+            scheduleRenderUpdate();
+        }
+    }
+
+    // use this to make sure controller is properly initialized
+    @Override
+    public final IQuantumController getQuantumController() {
+        if (isConnected()) {
+            if (controller.get() != null) return controller.get();
+            MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), controllerPos);
+            if (mte instanceof IQuantumController quantumController) {
+                controller = new WeakReference<>(quantumController);
+                return quantumController;
+            } else {
+                // controller is no longer there for some reason, need to disconnect
+                setDisconnected();
+                tryFindNetwork();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public BlockPos getControllerPos() {
+        return controllerPos;
+    }
+
+    @Override
+    public IEnergyContainer getTypeValue() {
+        return this.energyContainer;
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        NBTTagCompound tagCompound = super.writeToNBT(data);
+        tagCompound.setBoolean("HasController", controllerPos != null);
+        if (controllerPos != null) {
+            tagCompound.setLong("ControllerPos", controllerPos.toLong());
+        }
+        return tagCompound;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        if (data.getBoolean("HasController")) {
+            this.controllerPos = BlockPos.fromLong(data.getLong("ControllerPos"));
         }
     }
 }

@@ -2,7 +2,7 @@ package gregtech.integration.jei.basic;
 
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.recipes.recipeproperties.TemperatureProperty;
+import gregtech.api.recipes.properties.impl.TemperatureProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;

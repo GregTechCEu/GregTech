@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.low_voltage.26_arc_furnace.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 95
     }
   },
@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 95
           }
         ]

@@ -3,11 +3,6 @@ package gregtech.common.covers;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -29,6 +24,16 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.GuiData;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 
 public class CoverFluidVoiding extends CoverPump {
@@ -39,7 +44,8 @@ public class CoverFluidVoiding extends CoverPump {
                              @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide, 0, Integer.MAX_VALUE);
         this.isWorkingAllowed = false;
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip, Integer.MAX_VALUE);
+        this.fluidFilterContainer = new FluidFilterContainer(this);
+        this.fluidFilterContainer.setMaxTransferSize(Integer.MAX_VALUE);
     }
 
     @Override
@@ -55,39 +61,46 @@ public class CoverFluidVoiding extends CoverPump {
         if (myFluidHandler == null) {
             return;
         }
-        GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
-    }
-
-    @Override
-    protected String getUITitle() {
-        return "cover.fluid.voiding.title";
-    }
-
-    @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
-
-        this.fluidFilter.initUI(20, primaryGroup::addWidget);
-
-        primaryGroup.addWidget(new CycleButtonWidget(10, 92, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
-                "cover.voiding.label.disabled", "cover.voiding.label.enabled")
-                        .setTooltipHoverString("cover.voiding.tooltip"));
-
-        primaryGroup.addWidget(new CycleButtonWidget(10, 112, 116, 18,
-                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                        .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
-
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82 + 16 + 24)
-                .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100 + 16 + 24);
-        return builder.build(this, player);
+        GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE,
+                fluidFilterContainer::test);
     }
 
     @Override
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                             IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.FLUID_VOIDING.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
+    }
+
+    @Override
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
+        return super.buildUI(guiData, guiSyncManager).height(192 - 22);
+    }
+
+    @Override
+    protected ParentWidget<?> createUI(GuiData data, PanelSyncManager syncManager) {
+        var isWorking = new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled);
+
+        return super.createUI(data, syncManager)
+                .child(Flow.row().height(18).widthRel(1f)
+                        .marginBottom(2)
+                        .child(new ToggleButton()
+                                .value(isWorking)
+                                .overlay(IKey.dynamic(() -> IKey.lang(this.isWorkingAllowed ?
+                                        "behaviour.soft_hammer.enabled" :
+                                        "behaviour.soft_hammer.disabled").get())
+                                        .color(Color.WHITE.darker(1)))
+                                .widthRel(0.6f)
+                                .left(0)));
+    }
+
+    @Override
+    protected boolean createPumpModeRow() {
+        return false;
+    }
+
+    @Override
+    protected boolean createThroughputRow() {
+        return false;
     }
 
     @Override
@@ -120,7 +133,7 @@ public class CoverFluidVoiding extends CoverPump {
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
-            if (fluidFilter.testFluidStack(resource)) {
+            if (fluidFilterContainer.test(resource)) {
                 return resource.amount;
             }
             return 0;

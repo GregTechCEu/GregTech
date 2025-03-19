@@ -4,17 +4,22 @@ import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.*;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
+import gregtech.client.renderer.handler.ToolbeltRenderer;
 import gregtech.common.items.tool.*;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -55,6 +60,10 @@ public final class ToolItems {
     public static IGTTool BUZZSAW;
     public static IGTTool SCREWDRIVER_LV;
     public static IGTTool PLUNGER;
+    public static IGTTool WIRECUTTER_LV;
+    public static IGTTool WIRECUTTER_HV;
+    public static IGTTool WIRECUTTER_IV;
+    public static ItemGTToolbelt TOOLBELT;
 
     private ToolItems() {/**/}
 
@@ -63,6 +72,8 @@ public final class ToolItems {
     }
 
     public static void init() {
+        TOOLBELT = (ItemGTToolbelt) register(new ItemGTToolbelt(GTValues.MODID, "toolbelt",
+                null, OpenGUIBehavior.INSTANCE));
         SWORD = register(ItemGTSword.Builder.of(GTValues.MODID, "sword")
                 .toolStats(b -> b.attacking()
                         .attackDamage(3.0F).attackSpeed(-2.4F))
@@ -112,7 +123,7 @@ public final class ToolItems {
                 .sound(GTSoundEvents.SOFT_MALLET_TOOL)
                 .symbol('r')
                 .toolClasses(ToolClasses.SOFT_MALLET)
-                .markerItem(() -> ToolHelper.getAndSetToolData(SOFT_MALLET, Materials.Wood, 47, 1, 4F, 1F)));
+                .markerItem(() -> SOFT_MALLET.get(Materials.Wood)));
         MINING_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "mining_hammer")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
                         .efficiencyMultiplier(0.4F).attackDamage(1.5F).attackSpeed(-3.2F)
@@ -318,7 +329,37 @@ public final class ToolItems {
                 .sound(GTSoundEvents.PLUNGER_TOOL)
                 .oreDict(ToolOreDict.toolPlunger)
                 .toolClasses(ToolClasses.PLUNGER)
-                .markerItem(() -> ToolHelper.getAndSetToolData(PLUNGER, Materials.Rubber, 255, 1, 4F, 0F)));
+                .markerItem(() -> PLUNGER.get(Materials.Rubber)));
+        WIRECUTTER_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "wire_cutter_lv")
+                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(4)
+                        .efficiencyMultiplier(2.0F)
+                        .attackDamage(-1.0F).attackSpeed(-2.4F)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
+                .sound(GTSoundEvents.WIRECUTTER_TOOL, true)
+                .oreDict(ToolOreDict.toolWireCutter)
+                .secondaryOreDicts("craftingToolWireCutter")
+                .toolClasses(ToolClasses.WIRE_CUTTER)
+                .electric(GTValues.LV));
+        WIRECUTTER_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "wire_cutter_hv")
+                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(4)
+                        .efficiencyMultiplier(3.0F)
+                        .attackDamage(-1.0F).attackSpeed(-2.4F)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
+                .sound(GTSoundEvents.WIRECUTTER_TOOL, true)
+                .oreDict(ToolOreDict.toolWireCutter)
+                .secondaryOreDicts("craftingToolWireCutter")
+                .toolClasses(ToolClasses.WIRE_CUTTER)
+                .electric(GTValues.HV));
+        WIRECUTTER_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "wire_cutter_iv")
+                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(4)
+                        .efficiencyMultiplier(4.0F)
+                        .attackDamage(-1.0F).attackSpeed(-2.4F)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
+                .sound(GTSoundEvents.WIRECUTTER_TOOL, true)
+                .oreDict(ToolOreDict.toolWireCutter)
+                .secondaryOreDicts("craftingToolWireCutter")
+                .toolClasses(ToolClasses.WIRE_CUTTER)
+                .electric(GTValues.IV));
     }
 
     public static IGTTool register(@NotNull ToolBuilder<?> builder) {
@@ -336,6 +377,12 @@ public final class ToolItems {
         TOOLS.forEach(tool -> ModelLoader.setCustomModelResourceLocation(tool.get(), 0, tool.getModelLocation()));
     }
 
+    @SideOnly(Side.CLIENT)
+    public static void registerBakedModels(ModelBakeEvent event) {
+        ModelResourceLocation loc = TOOLBELT.getModelLocation();
+        event.getModelRegistry().putObject(loc, new ToolbeltRenderer(event.getModelRegistry().getObject(loc)));
+    }
+
     public static void registerColors() {
         TOOLS.forEach(
                 tool -> Minecraft.getMinecraft().getItemColors().registerItemColorHandler(tool::getColor, tool.get()));
@@ -347,7 +394,9 @@ public final class ToolItems {
             if (tool.getOreDictName() != null) {
                 OreDictUnifier.registerOre(stack, tool.getOreDictName());
             }
-            tool.getSecondaryOreDicts().forEach(oreDict -> OreDictUnifier.registerOre(stack, oreDict));
+            tool.getSecondaryOreDicts().forEach(oreDict -> {
+                OreDictUnifier.registerOre(stack, oreDict);
+            });
         });
     }
 }

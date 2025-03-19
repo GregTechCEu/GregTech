@@ -3,16 +3,15 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import gregtech.api.GTValues;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.capability.impl.LaserContainerHandler;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -31,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static gregtech.api.GTValues.V;
-import static gregtech.api.GTValues.VN;
+import static gregtech.api.GTValues.VNF;
 
 public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
                                       implements IMultiblockAbilityPart<ILaserContainer>, IDataInfoProvider {
@@ -63,17 +62,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
-    @Override
     protected boolean openGUIOnRightClick() {
-        return false;
-    }
-
-    @Override
-    public boolean canPartShare() {
         return false;
     }
 
@@ -83,8 +72,8 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void registerAbilities(List<ILaserContainer> abilityList) {
-        abilityList.add(this.buffer);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(this.buffer);
     }
 
     @Override
@@ -107,14 +96,14 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
         tooltip.add(I18n.format("gregtech.machine.laser_hatch.tooltip2"));
 
         if (isOutput) {
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", V[tier], VN[tier]));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", V[tier], VNF[tier]));
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", amperage));
         } else {
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", V[tier], VN[tier]));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", V[tier], VNF[tier]));
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", amperage));
         }
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", buffer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.universal.disabled"));
+        tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
     @NotNull

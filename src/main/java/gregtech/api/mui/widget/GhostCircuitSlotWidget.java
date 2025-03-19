@@ -8,32 +8,36 @@ import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandler;
 
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.screen.Tooltip;
+import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.ItemSlotSH;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class GhostCircuitSlotWidget extends ItemSlot {
 
     private static final int SYNC_CIRCUIT_INDEX = 10;
+    @Nullable
+    private IPanelHandler selectorPanel;
+    private GhostCircuitSyncHandler syncHandler;
 
     public GhostCircuitSlotWidget() {
+        super();
         tooltipBuilder(this::getCircuitSlotTooltip);
     }
 
@@ -41,7 +45,7 @@ public class GhostCircuitSlotWidget extends ItemSlot {
     public @NotNull Result onMousePressed(int mouseButton) {
         if (!isSelectorPanelOpen()) {
             if (mouseButton == 0 && TooltipHelper.isShiftDown()) {
-                createSelectorPanel();
+                this.getSelectorPanel().openPanel();
             } else {
                 MouseData mouseData = MouseData.create(mouseButton);
                 getSyncHandler().syncToServer(2, mouseData::writeToPacket);
@@ -55,38 +59,34 @@ public class GhostCircuitSlotWidget extends ItemSlot {
         if (isSelectorPanelOpen()) return true;
         MouseData mouseData = MouseData.create(scrollDirection.modifier);
         getSyncHandler().syncToServer(3, mouseData::writeToPacket);
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean isValidSyncHandler(SyncHandler syncHandler) {
+        this.syncHandler = castIfTypeElseNull(syncHandler, GhostCircuitSyncHandler.class);
+        if (this.syncHandler == null) return false;
+        return super.isValidSyncHandler(syncHandler);
     }
 
     @Override
     public ItemSlot slot(ModularSlot slot) {
-        ItemSlotSH sh = new GhostCircuitSyncHandler(slot);
-        isValidSyncHandler(sh);
-        setSyncHandler(sh);
+        this.syncHandler = new GhostCircuitSyncHandler(slot);
+        isValidSyncHandler(this.syncHandler);
+        setSyncHandler(this.syncHandler);
         return this;
     }
 
-    @Override
-    protected List<String> getItemTooltip(ItemStack stack) {
-        // we don't want the item tooltip
-        return Collections.emptyList();
-    }
-
-    protected void getCircuitSlotTooltip(@NotNull Tooltip tooltip) {
+    protected void getCircuitSlotTooltip(@NotNull RichTooltip tooltip) {
         String configString;
-        int value = getSyncHandler().getGhostCircuitHandler().getCircuitValue();
+        int value = this.syncHandler.getCircuitValue();
         if (value == GhostCircuitItemStackHandler.NO_CONFIG) {
-            configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
+            configString = IKey.lang("gregtech.gui.configurator_slot.no_value").get();
         } else {
             configString = String.valueOf(value);
         }
-
+        tooltip.clearText();
         tooltip.addLine(IKey.lang("gregtech.gui.configurator_slot.tooltip", configString));
-    }
-
-    @Override
-    public @NotNull GhostCircuitSyncHandler getSyncHandler() {
-        return (GhostCircuitSyncHandler) super.getSyncHandler();
     }
 
     @Override
@@ -98,42 +98,41 @@ public class GhostCircuitSlotWidget extends ItemSlot {
     }
 
     private boolean isSelectorPanelOpen() {
-        return getPanel().getScreen().isPanelOpen("circuit_selector");
+        return this.getSelectorPanel().isPanelOpen();
     }
 
-    private void createSelectorPanel() {
-        ItemDrawable circuitPreview = new ItemDrawable(getSyncHandler().getSlot().getStack());
+    @NotNull
+    private IPanelHandler getSelectorPanel() {
+        if (this.selectorPanel == null) {
+            this.selectorPanel = IPanelHandler.simple(getPanel(), (mainPanel, player) -> {
+                ItemDrawable circuitPreview = new ItemDrawable(this.syncHandler.getCircuitStack());
 
-        List<List<IWidget>> options = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            options.add(new ArrayList<>());
-            for (int j = 0; j < 9; j++) {
-                int index = i * 9 + j;
-                if (index > 32) break;
-                options.get(i).add(new ButtonWidget<>()
-                        .size(18)
-                        .background(GTGuiTextures.SLOT, new ItemDrawable(
-                                IntCircuitIngredient.getIntegratedCircuit(index)).asIcon())
-                        .disableHoverBackground()
-                        .onMousePressed(mouseButton -> {
-                            getSyncHandler().syncToServer(SYNC_CIRCUIT_INDEX, buf -> buf.writeShort(index));
-                            circuitPreview.setItem(IntCircuitIngredient.getIntegratedCircuit(index));
-                            return true;
-                        }));
-            }
+                return GTGuis.createPopupPanel("circuit_selector", 176, 120)
+                        .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
+                        .child(new Widget<>()
+                                .size(18)
+                                .top(19).alignX(0.5f)
+                                .overlay(circuitPreview.asIcon().margin(1))
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
+                        .child(new Grid()
+                                .left(7).right(7).top(41).height(4 * 18)
+                                .mapTo(9, 33, value -> new ButtonWidget<>()
+                                        .size(18)
+                                        .background(GTGuiTextures.SLOT, new ItemDrawable(
+                                                IntCircuitIngredient.getIntegratedCircuit(value)).asIcon())
+                                        .disableHoverBackground()
+                                        .onMousePressed(mouseButton -> {
+                                            getSyncHandler().syncToServer(SYNC_CIRCUIT_INDEX,
+                                                    buf -> buf.writeShort(value));
+                                            circuitPreview.setItem(IntCircuitIngredient.getIntegratedCircuit(value));
+                                            if (Interactable.hasShiftDown()) this.selectorPanel.closePanel();
+                                            return true;
+                                        }))
+                                .minColWidth(18).minRowHeight(18)
+                                .minElementMargin(0, 0));
+            }, true);
         }
-
-        getPanel().getScreen().openPanel(GTGuis.createPopupPanel("circuit_selector", 176, 120)
-                .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
-                .child(circuitPreview.asIcon().size(16).asWidget()
-                        .size(18)
-                        .top(19).alignX(0.5f)
-                        .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
-                .child(new Grid()
-                        .left(7).right(7).top(41).height(4 * 18)
-                        .matrix(options)
-                        .minColWidth(18).minRowHeight(18)
-                        .minElementMargin(0, 0)));
+        return this.selectorPanel;
     }
 
     private static class GhostCircuitSyncHandler extends ItemSlotSH {
@@ -171,6 +170,14 @@ public class GhostCircuitSlotWidget extends ItemSlot {
                     buf.writeBoolean(false);
                 });
             }
+        }
+
+        public int getCircuitValue() {
+            return getGhostCircuitHandler().getCircuitValue();
+        }
+
+        public ItemStack getCircuitStack() {
+            return getSlot().getStack();
         }
 
         @Override

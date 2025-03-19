@@ -8,7 +8,11 @@ import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pattern.*;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.BlockWorldState;
+import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.BlockInfo;
@@ -26,6 +30,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -52,7 +57,18 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.Stack;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -64,7 +80,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Nullable
     public BlockPattern structurePattern;
 
-    private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
+    private final Map<MultiblockAbility<Object>, AbilityInstances> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
     private boolean structureFormed;
 
@@ -76,8 +92,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public void onPlacement() {
-        super.onPlacement();
+    public void onPlacement(EntityLivingBase placer) {
+        super.onPlacement(placer);
         reinitializeStructurePattern();
     }
 
@@ -206,7 +222,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             holder.setMetaTileEntity(tile);
             holder.getMetaTileEntity().onPlacement();
             holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
-            return new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder);
+            return new BlockInfo(tile.getBlock().getDefaultState(), holder);
         }).toArray(BlockInfo[]::new);
     }
 
@@ -215,11 +231,17 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
-        return tilePredicate((state, tile) -> tile instanceof IMultiblockAbilityPart<?> &&
-                ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()),
-                getCandidates(Arrays.stream(allowedAbilities)
-                        .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
-                        .toArray(MetaTileEntity[]::new)));
+        return tilePredicate((state, tile) -> {
+            if (tile instanceof IMultiblockAbilityPart<?>abilityPart) {
+                for (var ability : abilityPart.getAbilities()) {
+                    if (ArrayUtils.contains(allowedAbilities, ability))
+                        return true;
+                }
+            }
+            return false;
+        }, getCandidates(Arrays.stream(allowedAbilities)
+                .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
+                .toArray(MetaTileEntity[]::new)));
     }
 
     public static TraceabilityPredicate states(IBlockState... allowedStates) {
@@ -317,6 +339,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return BlockPos::hashCode;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void checkStructurePattern() {
         if (structurePattern == null) return;
         PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(),
@@ -333,19 +356,23 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
             this.setFlipped(context.neededFlip());
             parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
-            Map<MultiblockAbility<Object>, List<Object>> abilities = new HashMap<>();
-            for (IMultiblockPart multiblockPart : parts) {
-                if (multiblockPart instanceof IMultiblockAbilityPart) {
-                    @SuppressWarnings("unchecked")
-                    IMultiblockAbilityPart<Object> abilityPart = (IMultiblockAbilityPart<Object>) multiblockPart;
-                    List<Object> abilityInstancesList = abilities.computeIfAbsent(abilityPart.getAbility(),
-                            k -> new ArrayList<>());
-                    abilityPart.registerAbilities(abilityInstancesList);
+            Map<MultiblockAbility<Object>, AbilityInstances> abilities = new HashMap<>();
+            for (IMultiblockPart part : parts) {
+                if (part instanceof IMultiblockAbilityPart abilityPart) {
+                    List<MultiblockAbility> abilityList = abilityPart.getAbilities();
+                    for (MultiblockAbility ability : abilityList) {
+                        if (!checkAbilityPart(ability, ((MetaTileEntity) abilityPart).getPos()))
+                            continue;
+
+                        AbilityInstances instances = abilities.computeIfAbsent(ability,
+                                AbilityInstances::new);
+                        abilityPart.registerAbilities(instances);
+                    }
                 }
             }
-            parts.forEach(part -> part.addToMultiBlock(this));
             this.multiblockParts.addAll(parts);
             this.multiblockAbilities.putAll(abilities);
+            parts.forEach(part -> part.addToMultiBlock(this));
             this.structureFormed = true;
             writeCustomData(STRUCTURE_FORMED, buf -> buf.writeBoolean(true));
             formStructure(context);
@@ -357,6 +384,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 setFlipped(context.neededFlip());
             }
         }
+    }
+
+    /**
+     * Checks if a multiblock ability at a given block pos should be added to the ability instances
+     * 
+     * @return true if the ability should be added to this multiblocks ability instances
+     */
+    protected <T> boolean checkAbilityPart(MultiblockAbility<T> ability, BlockPos pos) {
+        return true;
     }
 
     protected void formStructure(PatternMatchContext context) {}
@@ -378,10 +414,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <T> List<T> getAbilities(MultiblockAbility<T> ability) {
-        List<T> rawList = (List<T>) multiblockAbilities.getOrDefault(ability, Collections.emptyList());
-        return Collections.unmodifiableList(rawList);
+        return Collections.unmodifiableList(multiblockAbilities.getOrDefault(ability, AbilityInstances.EMPTY).cast());
     }
 
     public List<IMultiblockPart> getMultiblockParts() {

@@ -184,7 +184,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                                     TextFormatting.BLUE,
                                     TextFormattingUtil.formatNumbers(
                                             minerLogic.getFluidToProduce() * 20L / FluidDrillLogic.MAX_PROGRESS) +
-                                            " L/t");
+                                            " L/s");
                             tl.add(TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
                                     "gregtech.multiblock.fluid_rig.fluid_amount",

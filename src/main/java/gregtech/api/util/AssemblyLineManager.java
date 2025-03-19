@@ -11,7 +11,7 @@ import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapScanner;
-import gregtech.api.recipes.recipeproperties.ScanProperty;
+import gregtech.api.recipes.properties.impl.ScanProperty;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 
@@ -126,16 +126,9 @@ public final class AssemblyLineManager {
         }
     }
 
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static void createDefaultResearchRecipe(@NotNull String researchId, @NotNull ItemStack researchItem,
-                                                   @NotNull ItemStack dataItem, int duration, int EUt, int CWUt) {
-        createDefaultResearchRecipe(researchId, researchItem, dataItem, true, duration, EUt, CWUt);
-    }
-
     public static void createDefaultResearchRecipe(@NotNull String researchId, @NotNull ItemStack researchItem,
                                                    @NotNull ItemStack dataItem, boolean ignoreNBT, int duration,
-                                                   int EUt, int CWUt) {
+                                                   long EUt, int CWUt) {
         if (!ConfigHolder.machines.enableResearch) return;
 
         NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(dataItem);
