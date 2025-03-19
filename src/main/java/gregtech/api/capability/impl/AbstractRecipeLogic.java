@@ -421,15 +421,21 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         boolean invalidOutputs = false;
         boolean invalidInputs = false;
 
+        // not any recipe was found
+        if (recipeIterator == null || !recipeIterator.hasNext()) {
+            this.invalidInputsForRecipes = true;
+            return;
+        }
+
         // Search for a new recipe if the previous one is no longer valid
-        while (recipeIterator != null && recipeIterator.hasNext()) {
+        while (recipeIterator.hasNext()) {
             Recipe next = recipeIterator.next();
             if (next == null) continue;
 
             if (checkRecipe(next) && prepareRecipe(next)) {
                 // If a new recipe was found, cache found recipe.
                 this.previousRecipe = next;
-                return;
+                break;
             } else {
                 // store if recipe has bad IO, then reset for next recipe checks
                 invalidOutputs = this.isOutputsFull;
