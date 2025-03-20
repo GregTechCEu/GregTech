@@ -26,7 +26,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.BlockStateLoader;
 import net.minecraftforge.client.model.ForgeBlockStateV1;
@@ -106,8 +105,8 @@ public class GregtechBlockRenderer {
         EnumFaceDirection.VertexInformation info = EnumFaceDirection.getFacing(side).getVertexInformation(vIndex);
         Vector3f position = new Vector3f(bounds[info.xIndex], bounds[info.yIndex], bounds[info.zIndex]);
         rotatePart(position, rotation);
-        int angle = rotateVertex(position, side, vIndex, transformation);
-        storeVertexData(vData, angle, vIndex, position, i, sprite, uvs);
+        int rIndex = rotateVertex(position, side, vIndex, transformation);
+        storeVertexData(vData, rIndex, vIndex, position, i, sprite, uvs);
     }
 
     private static int getFaceShadeColor(EnumFacing facing) {

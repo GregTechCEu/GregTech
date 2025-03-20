@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTLog;
-import gregtech.client.model.block.GregtechBlockRenderer;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.UVMirror;
@@ -28,7 +27,6 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EnumFaceDirection;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.BlockPartRotation;
-import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
@@ -752,25 +750,72 @@ public class Textures {
         if (layer == null || !state.getBlock().canRenderInLayer(state, layer)) return;
         if (!state.shouldSideBeRendered(world, pos, face)) return;
 
+        // VertexFormat fmt = buf.getVertexFormat();
+
         float[] positionsDiv16 = getPositionsDiv16(new Vector3f(0, 0, 0), new Vector3f(16, 16, 16));
 
         BlockFaceUV uv = new BlockFaceUV(new float[] { 0, 0, 16, 16 }, 0);
 
         int[] vdata = new int[28];
 
+        // Vector3f normals = new Vector3f();
+        // switch (face) {
+        // case DOWN -> normals.set(0, -1, 0);
+        // case UP -> normals.set(0, 1, 0);
+        // case NORTH -> normals.set(0, 0, 1);
+        // case SOUTH -> normals.set(0, 0, -1);
+        // case WEST -> normals.set(-1, 0, 0);
+        // case EAST -> normals.set(1, 0, 0);
+        // }
+
         // for each vertex
         for (int v = 0; v < 4; v++) {
-            GregtechBlockRenderer.fillVertexData(vdata, v, face, uv, positionsDiv16,
-                    sprite, ModelRotation.X0_Y0, NONE, false);
+            var info = EnumFaceDirection.getFacing(face).getVertexInformation(v);
+            // GregtechBlockRenderer.fillVertexData(vdata, v, face, uv, positionsDiv16,
+            // sprite, ModelRotation.X0_Y0, NONE, false);
+            float x = positionsDiv16[info.xIndex];
+            float y = positionsDiv16[info.yIndex];
+            float z = positionsDiv16[info.zIndex];
+
+            int i = v * 7;
+            vdata[i] = Float.floatToRawIntBits(x);
+            vdata[i + 1] = Float.floatToRawIntBits(y);
+            vdata[i + 2] = Float.floatToRawIntBits(z);
+            vdata[i + 3] = -1;
+            vdata[i + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(uv.getVertexU(v)));
+            vdata[i + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(uv.getVertexV(v)));
+
+            // for (VertexFormatElement element : fmt.getElements()) {
+            // switch (element.getUsage()) {
+            // case POSITION -> buf.pos(x, y, z);
+            // case NORMAL -> buf.normal(normals.x, normals.y, normals.z);
+            // case COLOR -> {
+            // if (buf.isColorDisabled()) buf.nextVertexFormatIndex();
+            // else buf.color(0xFF, 0xFF, 0xFF, 0xFF);
+            // }
+            // case PADDING -> { /* NO-OP */ }
+            // case UV -> {
+            // if (element.getIndex() == 0) {
+            // // UV
+            // buf.tex(uv.getVertexU(v), uv.getVertexV(v));
+            // } else {
+            // // LIGHTING
+            // buf.lightmap(0xFF, 0xFF);
+            // }
+            // }
+            // default -> throw new IllegalStateException("Generic Format!");
+            // }
+            // }
+            // buf.endVertex();
         }
 
         buf.addVertexData(vdata);
 
         buf.putBrightness4(0xFF, 0xFF, 0xFF, 0xFF);
-        buf.putColorMultiplier(0xFF, 0xFF, 0xFF, 4);
-        buf.putColorMultiplier(0xFF, 0xFF, 0xFF, 3);
-        buf.putColorMultiplier(0xFF, 0xFF, 0xFF, 2);
-        buf.putColorMultiplier(0xFF, 0xFF, 0xFF, 1);
+        buf.putColorMultiplier(1, 1, 1, 4);
+        buf.putColorMultiplier(1, 1, 1, 3);
+        buf.putColorMultiplier(1, 1, 1, 2);
+        buf.putColorMultiplier(1, 1, 1, 1);
         buf.putPosition(pos.getX(), pos.getY(), pos.getZ());
     }
 
