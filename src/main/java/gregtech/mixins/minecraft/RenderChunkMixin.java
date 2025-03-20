@@ -1,11 +1,17 @@
 package gregtech.mixins.minecraft;
 
+import gregtech.api.block.IBlockRenderer;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -26,5 +32,18 @@ public class RenderChunkMixin {
             return null;
         }
         return originalRenderer.call(original, tileentity);
+    }
+
+    @WrapOperation(method = "rebuildChunk",
+                   at = @At(value = "INVOKE",
+                            target = "Lnet/minecraft/client/renderer/BlockRendererDispatcher;renderBlock(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/renderer/BufferBuilder;)Z"))
+    public boolean wrapBlockRenderer(BlockRendererDispatcher instance, IBlockState state, BlockPos pos,
+                                     IBlockAccess world, BufferBuilder bufferBuilder, Operation<Boolean> original) {
+        if (state.getBlock() instanceof IBlockRenderer renderer) {
+            // render custom block
+            return renderer.renderBlockSafe(state, world, pos, bufferBuilder);
+        } else {
+            return original.call(instance, state, pos, world, bufferBuilder);
+        }
     }
 }

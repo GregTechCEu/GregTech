@@ -9,18 +9,15 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
-import gregtech.client.model.AOAccessor;
 import gregtech.client.model.ActiveVariantBlockBakedModel;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
@@ -30,14 +27,11 @@ import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -49,16 +43,12 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> implements IBlockRenderer {
@@ -177,204 +167,8 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
     }
 
     @Override
-    public boolean renderBlock(BlockModelRenderer renderer, IBlockAccess world, IBakedModel bakedModel,
-                               IBlockState state,
-                               BlockPos pos, BufferBuilder buffer, boolean checkSides, long rand) {
-        boolean flag = false;
-        float[] afloat = new float[EnumFacing.values().length * 2];
-        BitSet bitset = new BitSet(3);
-
-        AOAccessor aoAccessor = null;
-        Class<?> rClass = renderer.getClass();
-        while (rClass != BlockModelRenderer.class) {
-            rClass = rClass.getSuperclass();
-        }
-        for (Class<?> aClass : rClass.getDeclaredClasses()) {
-            if (!aClass.getSimpleName().equals("AmbientOcclusionFace")) continue;
-
-            try {
-                var con = aClass.getDeclaredConstructor(BlockModelRenderer.class);
-                con.setAccessible(true);
-                aoAccessor = (AOAccessor) con.newInstance(renderer);
-                break;
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        for (EnumFacing enumfacing : EnumFacing.values()) {
-            List<BakedQuad> list = bakedModel.getQuads(state, enumfacing, rand);
-
-            if (!list.isEmpty() && (!checkSides || state.shouldSideBeRendered(world, pos, enumfacing))) {
-                this.renderQuadsSmooth(world, state, pos, buffer, list, afloat, bitset, aoAccessor);
-                flag = true;
-            }
-        }
-
-        List<BakedQuad> list1 = bakedModel.getQuads(state, null, rand);
-
-        if (!list1.isEmpty()) {
-            this.renderQuadsSmooth(world, state, pos, buffer, list1, afloat, bitset, aoAccessor);
-            flag = true;
-        }
-
-        return flag;
-    }
-
-    private void renderQuadsSmooth(IBlockAccess blockAccessIn, IBlockState stateIn, BlockPos posIn,
-                                   BufferBuilder buffer, List<BakedQuad> list, float[] quadBounds, BitSet bitSet,
-                                   AOAccessor aoAccessor) {
-        Vec3d vec3d = stateIn.getOffset(blockAccessIn, posIn);
-        double d0 = (double) posIn.getX() + vec3d.x;
-        double d1 = (double) posIn.getY() + vec3d.y;
-        double d2 = (double) posIn.getZ() + vec3d.z;
-
-        for (int i = 0; i < list.size(); i++) {
-            BakedQuad bakedquad = list.get(i);
-            this.fillQuadBounds(stateIn, bakedquad.getVertexData(), bakedquad.getFace(), quadBounds, bitSet);
-            aoAccessor.gregTech$updateBrightness(blockAccessIn, stateIn, posIn,
-                    bakedquad.getFace(), quadBounds, bitSet);
-            VertexData[] parsed = new VertexData[4];
-            Arrays.setAll(parsed, value -> VertexData.load(bakedquad.getVertexData(), value));
-            buffer.addVertexData(bakedquad.getVertexData());
-            int[] brightness = aoAccessor.gregTech$getBrightness();
-            buffer.putBrightness4(brightness[0], brightness[1], brightness[2], brightness[3]);
-
-            if (i == 2) {
-
-            }
-
-            float[] vertColor = aoAccessor.gregTech$getColorMultiplier();
-            if (bakedquad.shouldApplyDiffuseLighting()) {
-                float diffuse = LightUtil.diffuseLight(bakedquad.getFace());
-                vertColor[0] *= diffuse;
-                vertColor[1] *= diffuse;
-                vertColor[2] *= diffuse;
-                vertColor[3] *= diffuse;
-            }
-
-            BiFunction<Integer, Float, Float> mult = (index, f) -> vertColor[index] * f;
-
-            CoilType coilType = getState(stateIn);
-            if (i == 1) {
-                int k = getColor(coilType);
-
-                float f = (float) (k >> 16 & 255) / 255.0F;
-                float f1 = (float) (k >> 8 & 255) / 255.0F;
-                float f2 = (float) (k & 255) / 255.0F;
-                buffer.putColorMultiplier(mult.apply(0, f), mult.apply(0, f1), mult.apply(0, f2), 4);
-                buffer.putColorMultiplier(mult.apply(1, f), mult.apply(1, f1), mult.apply(1, f2), 3);
-                buffer.putColorMultiplier(mult.apply(2, f), mult.apply(2, f1), mult.apply(2, f2), 2);
-                buffer.putColorMultiplier(mult.apply(3, f), mult.apply(3, f1), mult.apply(3, f2), 1);
-            } else if (i == 2) {
-                int k = 0xFFFFFF;
-                float r = (float) (k >> 16 & 255) / 255.0F;
-                float g = (float) (k >> 8 & 255) / 255.0F;
-                float b = (float) (k & 255) / 255.0F;
-                buffer.putColorMultiplier(mult.apply(0, r), mult.apply(0, g), mult.apply(0, b), 4);
-                buffer.putColorMultiplier(mult.apply(1, r), mult.apply(1, g), mult.apply(1, b), 3);
-                buffer.putColorMultiplier(mult.apply(2, r), mult.apply(2, g), mult.apply(2, b), 2);
-                buffer.putColorMultiplier(mult.apply(3, r), mult.apply(3, g), mult.apply(3, b), 1);
-            } else {
-                buffer.putColorMultiplier(mult.apply(0, 1f), mult.apply(0, 1f), mult.apply(0, 1f), 4);
-                buffer.putColorMultiplier(mult.apply(1, 1f), mult.apply(1, 1f), mult.apply(1, 1f), 3);
-                buffer.putColorMultiplier(mult.apply(2, 1f), mult.apply(2, 1f), mult.apply(2, 1f), 2);
-                buffer.putColorMultiplier(mult.apply(3, 1f), mult.apply(3, 1f), mult.apply(3, 1f), 1);
-            }
-
-            buffer.putPosition(d0, d1, d2);
-        }
-    }
-
-    private static class VertexData {
-
-        float[] pos = new float[3];
-        int[] color = new int[4];
-        float[] uv = new float[2];
-        short[] tex = new short[2];
-
-        static VertexData load(int[] data, int vertex) {
-            var ret = new VertexData();
-            int i = vertex * 7;
-            ret.pos[0] = Float.intBitsToFloat(data[i]);
-            ret.pos[1] = Float.intBitsToFloat(data[i + 1]);
-            ret.pos[2] = Float.intBitsToFloat(data[i + 2]);
-            int k = data[i + 3];
-            if (k != -1) {
-                ret.color[0] = k >> 16 & 0xFF; // r
-                ret.color[1] = k >> 8 & 0xFF; // g
-                ret.color[2] = k & 0xFF; // b
-                ret.color[3] = 0xFF; // a
-            }
-            ret.uv[0] = Float.intBitsToFloat(data[i + 4]);
-            ret.uv[1] = Float.intBitsToFloat(data[i + 5]);
-            return ret;
-        }
-    }
-
-    private void fillQuadBounds(IBlockState stateIn, int[] vertexData, EnumFacing face,
-                                float[] quadBounds, BitSet boundsFlags) {
-        float f = 32.0F;
-        float f1 = 32.0F;
-        float f2 = 32.0F;
-        float f3 = -32.0F;
-        float f4 = -32.0F;
-        float f5 = -32.0F;
-
-        for (int i = 0; i < 4; ++i) {
-            float f6 = Float.intBitsToFloat(vertexData[i * 7]);
-            float f7 = Float.intBitsToFloat(vertexData[i * 7 + 1]);
-            float f8 = Float.intBitsToFloat(vertexData[i * 7 + 2]);
-            f = Math.min(f, f6);
-            f1 = Math.min(f1, f7);
-            f2 = Math.min(f2, f8);
-            f3 = Math.max(f3, f6);
-            f4 = Math.max(f4, f7);
-            f5 = Math.max(f5, f8);
-        }
-
-        if (quadBounds != null) {
-            quadBounds[EnumFacing.WEST.getIndex()] = f;
-            quadBounds[EnumFacing.EAST.getIndex()] = f3;
-            quadBounds[EnumFacing.DOWN.getIndex()] = f1;
-            quadBounds[EnumFacing.UP.getIndex()] = f4;
-            quadBounds[EnumFacing.NORTH.getIndex()] = f2;
-            quadBounds[EnumFacing.SOUTH.getIndex()] = f5;
-            int j = EnumFacing.values().length;
-            quadBounds[EnumFacing.WEST.getIndex() + j] = 1.0F - f;
-            quadBounds[EnumFacing.EAST.getIndex() + j] = 1.0F - f3;
-            quadBounds[EnumFacing.DOWN.getIndex() + j] = 1.0F - f1;
-            quadBounds[EnumFacing.UP.getIndex() + j] = 1.0F - f4;
-            quadBounds[EnumFacing.NORTH.getIndex() + j] = 1.0F - f2;
-            quadBounds[EnumFacing.SOUTH.getIndex() + j] = 1.0F - f5;
-        }
-
-        switch (face) {
-            case DOWN:
-                boundsFlags.set(1, f >= 1.0E-4F || f2 >= 1.0E-4F || f3 <= 0.9999F || f5 <= 0.9999F);
-                boundsFlags.set(0, (f1 < 1.0E-4F || stateIn.isFullCube()) && f1 == f4);
-                break;
-            case UP:
-                boundsFlags.set(1, f >= 1.0E-4F || f2 >= 1.0E-4F || f3 <= 0.9999F || f5 <= 0.9999F);
-                boundsFlags.set(0, (f4 > 0.9999F || stateIn.isFullCube()) && f1 == f4);
-                break;
-            case NORTH:
-                boundsFlags.set(1, f >= 1.0E-4F || f1 >= 1.0E-4F || f3 <= 0.9999F || f4 <= 0.9999F);
-                boundsFlags.set(0, (f2 < 1.0E-4F || stateIn.isFullCube()) && f2 == f5);
-                break;
-            case SOUTH:
-                boundsFlags.set(1, f >= 1.0E-4F || f1 >= 1.0E-4F || f3 <= 0.9999F || f4 <= 0.9999F);
-                boundsFlags.set(0, (f5 > 0.9999F || stateIn.isFullCube()) && f2 == f5);
-                break;
-            case WEST:
-                boundsFlags.set(1, f1 >= 1.0E-4F || f2 >= 1.0E-4F || f4 <= 0.9999F || f5 <= 0.9999F);
-                boundsFlags.set(0, (f < 1.0E-4F || stateIn.isFullCube()) && f == f3);
-                break;
-            case EAST:
-                boundsFlags.set(1, f1 >= 1.0E-4F || f2 >= 1.0E-4F || f4 <= 0.9999F || f5 <= 0.9999F);
-                boundsFlags.set(0, (f3 > 0.9999F || stateIn.isFullCube()) && f == f3);
-        }
+    public void renderBlock(IBlockState state, IBlockAccess world, BlockPos pos, BufferBuilder buffer) {
+        Textures.BRONZE_PLATED_BRICKS.render(state, world, pos, buffer);
     }
 
     public abstract static class CoilType implements IStringSerializable, IHeatingCoilBlockStats, Comparable<CoilType> {

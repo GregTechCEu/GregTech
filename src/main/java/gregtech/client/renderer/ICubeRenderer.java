@@ -1,12 +1,19 @@
 package gregtech.client.renderer;
 
 import gregtech.api.gui.resources.ResourceHelper;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.client.texture.IconRegistrar;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -63,6 +70,23 @@ public interface ICubeRenderer extends IconRegistrar {
     @SideOnly(Side.CLIENT)
     void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
                              Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled);
+
+    @SideOnly(Side.CLIENT)
+    default void render(IBlockState state, IBlockAccess world, BlockPos pos, BufferBuilder bufferBuilder) {
+        for (EnumFacing side : EnumFacing.values()) {
+            renderOrientedState(state, world, pos, bufferBuilder, side, FULL_CUBE, false, false);
+        }
+    }
+
+    AxisAlignedBB FULL_CUBE = new AxisAlignedBB(BlockPos.ORIGIN);
+
+    @SideOnly(Side.CLIENT)
+    default void renderOrientedState(IBlockState state, IBlockAccess world, BlockPos pos, BufferBuilder bufferBuilder,
+                                     EnumFacing face, AxisAlignedBB bounds, boolean isActive,
+                                     boolean isWorkingEnabled) {
+        Textures.renderFace(state, world, pos, bufferBuilder, face, bounds, getParticleSprite(),
+                MinecraftForgeClient.getRenderLayer());
+    }
 
     @SideOnly(Side.CLIENT)
     default void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
