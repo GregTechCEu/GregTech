@@ -4,16 +4,12 @@ import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.texture.IconRegistrar;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -23,6 +19,8 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.vecmath.Vector3f;
 
 public interface ICubeRenderer extends IconRegistrar {
 
@@ -72,20 +70,19 @@ public interface ICubeRenderer extends IconRegistrar {
                              Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled);
 
     @SideOnly(Side.CLIENT)
-    default void render(IBlockState state, IBlockAccess world, BlockPos pos, BufferBuilder bufferBuilder) {
+    default void render(GTRendererState rendererState) {
         for (EnumFacing side : EnumFacing.values()) {
-            renderOrientedState(state, world, pos, bufferBuilder, side, FULL_CUBE, false, false);
+            renderOrientedState(rendererState, side, false, false);
         }
     }
 
-    AxisAlignedBB FULL_CUBE = new AxisAlignedBB(BlockPos.ORIGIN);
+    AxisAlignedBB FULL_CUBE = new AxisAlignedBB(0, 0, 0, 1, 1, 1);
 
     @SideOnly(Side.CLIENT)
-    default void renderOrientedState(IBlockState state, IBlockAccess world, BlockPos pos, BufferBuilder bufferBuilder,
-                                     EnumFacing face, AxisAlignedBB bounds, boolean isActive,
+    default void renderOrientedState(GTRendererState rendererState,
+                                     EnumFacing face, boolean isActive,
                                      boolean isWorkingEnabled) {
-        Textures.renderFace(state, world, pos, bufferBuilder, face, bounds, getParticleSprite(),
-                MinecraftForgeClient.getRenderLayer());
+        Textures.renderFace(rendererState.setTexture(getParticleSprite()), face);
     }
 
     @SideOnly(Side.CLIENT)

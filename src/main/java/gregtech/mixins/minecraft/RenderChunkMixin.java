@@ -3,6 +3,10 @@ package gregtech.mixins.minecraft;
 import gregtech.api.block.IBlockRenderer;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 
+import gregtech.client.renderer.GTRendererState;
+
+import gregtech.client.renderer.ICubeRenderer;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -41,7 +45,10 @@ public class RenderChunkMixin {
                                      IBlockAccess world, BufferBuilder bufferBuilder, Operation<Boolean> original) {
         if (state.getBlock() instanceof IBlockRenderer renderer) {
             // render custom block
-            return renderer.renderBlockSafe(state, world, pos, bufferBuilder);
+            return renderer.renderBlockSafe(GTRendererState.getCurrentState()
+                    .setBuffer(bufferBuilder)
+                    .updateState(state, world, pos)
+                    .setBounds(1, 1, 1));
         } else {
             return original.call(instance, state, pos, world, bufferBuilder);
         }

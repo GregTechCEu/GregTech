@@ -2,21 +2,18 @@ package gregtech.api.block;
 
 import gregtech.api.util.GTLog;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import gregtech.client.renderer.GTRendererState;
 
 public interface IBlockRenderer {
 
-    default boolean renderBlockSafe(IBlockState state, IBlockAccess world, BlockPos pos, BufferBuilder buffer) {
+    default boolean renderBlockSafe(GTRendererState rendererState) {
         try {
-            renderBlock(state, world, pos, buffer);
+            renderBlock(rendererState);
         } catch (Exception e) {
             GTLog.logger.error(e);
         }
         return true;
     }
 
-    void renderBlock(IBlockState state, IBlockAccess world, BlockPos pos, BufferBuilder buffer);
+    void renderBlock(GTRendererState rendererState);
 }

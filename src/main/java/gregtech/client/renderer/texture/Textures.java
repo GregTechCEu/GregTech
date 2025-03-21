@@ -5,6 +5,7 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.CubeRendererState;
+import gregtech.client.renderer.GTRendererState;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.UVMirror;
 import gregtech.client.renderer.texture.cube.AlignedOrientedOverlayRenderer;
@@ -22,19 +23,11 @@ import gregtech.client.renderer.texture.custom.LargeTurbineRenderer;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.texture.IconRegistrar;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.EnumFaceDirection;
-import net.minecraft.client.renderer.block.model.BlockFaceUV;
-import net.minecraft.client.renderer.block.model.BlockPartRotation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -47,7 +40,6 @@ import codechicken.lib.vec.TransformationList;
 import codechicken.lib.vec.uv.IconTransformation;
 import codechicken.lib.vec.uv.UVTransformationList;
 import org.apache.commons.lang3.ArrayUtils;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -741,93 +733,9 @@ public class Textures {
         renderState.render();
     }
 
-    static final BlockPartRotation NONE = new BlockPartRotation(new Vector3f(), EnumFacing.Axis.Y, 0, false);
-
     @SideOnly(Side.CLIENT)
-    public static void renderFace(IBlockState state, IBlockAccess world, BlockPos pos, BufferBuilder buf,
-                                  EnumFacing face, AxisAlignedBB bounds, TextureAtlasSprite sprite,
-                                  BlockRenderLayer layer) {
-        if (layer == null || !state.getBlock().canRenderInLayer(state, layer)) return;
-        if (!state.shouldSideBeRendered(world, pos, face)) return;
-
-        // VertexFormat fmt = buf.getVertexFormat();
-
-        float[] positionsDiv16 = getPositionsDiv16(new Vector3f(0, 0, 0), new Vector3f(16, 16, 16));
-
-        BlockFaceUV uv = new BlockFaceUV(new float[] { 0, 0, 16, 16 }, 0);
-
-        int[] vdata = new int[28];
-
-        // Vector3f normals = new Vector3f();
-        // switch (face) {
-        // case DOWN -> normals.set(0, -1, 0);
-        // case UP -> normals.set(0, 1, 0);
-        // case NORTH -> normals.set(0, 0, 1);
-        // case SOUTH -> normals.set(0, 0, -1);
-        // case WEST -> normals.set(-1, 0, 0);
-        // case EAST -> normals.set(1, 0, 0);
-        // }
-
-        // for each vertex
-        for (int v = 0; v < 4; v++) {
-            var info = EnumFaceDirection.getFacing(face).getVertexInformation(v);
-            // GregtechBlockRenderer.fillVertexData(vdata, v, face, uv, positionsDiv16,
-            // sprite, ModelRotation.X0_Y0, NONE, false);
-            float x = positionsDiv16[info.xIndex];
-            float y = positionsDiv16[info.yIndex];
-            float z = positionsDiv16[info.zIndex];
-
-            int i = v * 7;
-            vdata[i] = Float.floatToRawIntBits(x);
-            vdata[i + 1] = Float.floatToRawIntBits(y);
-            vdata[i + 2] = Float.floatToRawIntBits(z);
-            vdata[i + 3] = -1;
-            vdata[i + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(uv.getVertexU(v)));
-            vdata[i + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(uv.getVertexV(v)));
-
-            // for (VertexFormatElement element : fmt.getElements()) {
-            // switch (element.getUsage()) {
-            // case POSITION -> buf.pos(x, y, z);
-            // case NORMAL -> buf.normal(normals.x, normals.y, normals.z);
-            // case COLOR -> {
-            // if (buf.isColorDisabled()) buf.nextVertexFormatIndex();
-            // else buf.color(0xFF, 0xFF, 0xFF, 0xFF);
-            // }
-            // case PADDING -> { /* NO-OP */ }
-            // case UV -> {
-            // if (element.getIndex() == 0) {
-            // // UV
-            // buf.tex(uv.getVertexU(v), uv.getVertexV(v));
-            // } else {
-            // // LIGHTING
-            // buf.lightmap(0xFF, 0xFF);
-            // }
-            // }
-            // default -> throw new IllegalStateException("Generic Format!");
-            // }
-            // }
-            // buf.endVertex();
-        }
-
-        buf.addVertexData(vdata);
-
-        buf.putBrightness4(0xFF, 0xFF, 0xFF, 0xFF);
-        buf.putColorMultiplier(1, 1, 1, 4);
-        buf.putColorMultiplier(1, 1, 1, 3);
-        buf.putColorMultiplier(1, 1, 1, 2);
-        buf.putColorMultiplier(1, 1, 1, 1);
-        buf.putPosition(pos.getX(), pos.getY(), pos.getZ());
-    }
-
-    private static float[] getPositionsDiv16(Vector3f pos1, Vector3f pos2) {
-        float[] afloat = new float[EnumFacing.VALUES.length];
-        afloat[EnumFaceDirection.Constants.WEST_INDEX] = pos1.x / 16.0F;
-        afloat[EnumFaceDirection.Constants.DOWN_INDEX] = pos1.y / 16.0F;
-        afloat[EnumFaceDirection.Constants.NORTH_INDEX] = pos1.z / 16.0F;
-        afloat[EnumFaceDirection.Constants.EAST_INDEX] = pos2.x / 16.0F;
-        afloat[EnumFaceDirection.Constants.UP_INDEX] = pos2.y / 16.0F;
-        afloat[EnumFaceDirection.Constants.SOUTH_INDEX] = pos2.z / 16.0F;
-        return afloat;
+    public static void renderFace(GTRendererState state, EnumFacing face) {
+        state.quad(face);
     }
 
     // TODO Could maybe be cleaned up?

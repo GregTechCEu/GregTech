@@ -10,6 +10,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.client.model.ActiveVariantBlockBakedModel;
+import gregtech.client.renderer.GTRendererState;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.TooltipHelper;
@@ -17,7 +18,6 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelte
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
@@ -167,8 +167,8 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
     }
 
     @Override
-    public void renderBlock(IBlockState state, IBlockAccess world, BlockPos pos, BufferBuilder buffer) {
-        Textures.BRONZE_PLATED_BRICKS.render(state, world, pos, buffer);
+    public void renderBlock(GTRendererState rendererState) {
+        Textures.BRONZE_PLATED_BRICKS.render(rendererState);
     }
 
     public abstract static class CoilType implements IStringSerializable, IHeatingCoilBlockStats, Comparable<CoilType> {
