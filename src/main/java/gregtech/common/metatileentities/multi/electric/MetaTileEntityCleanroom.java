@@ -46,7 +46,9 @@ import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveWaterPump;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.core.sound.GTSoundEvents;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -60,6 +62,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -87,7 +90,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                                      implements ICleanroomProvider, IWorkable, IDataInfoProvider {
@@ -450,26 +453,36 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                 EnumFacing facing = state.getValue(BlockDoor.FACING);
                 boolean falseOpen = state.getValue(BlockDoor.OPEN);
 
-                int checkX = Math.abs(facing.getXOffset()); // 1 or 0
-                int checkZ = 1 - checkX; // inversion of x
-                if (!falseOpen) {
-                    // if door is closed check other axis
-                    checkX = 1 - checkX;
-                    checkZ = 1 - checkZ;
-                }
-                Predicate<BlockPos> test = pos -> {
+                int checkX = falseOpen ? Math.abs(facing.getXOffset()) : 1 - Math.abs(facing.getXOffset()); // 1 or 0
+                int checkZ = 1 - checkX;; // inversion of x since facing can only face in x or z
+                BiPredicate<BlockPos, EnumFacing.AxisDirection> test = (pos, direction) -> {
                     IBlockState state1 = blockWorldState.getWorld().getBlockState(pos);
-                    return state1.getMaterial() != Material.AIR; // cleanroom glass does not count as full block for
-                                                                 // some reason
+                    // material check rules our air and bridle stuff like redstone
+                    Material mat = state1.getMaterial();
+                    if (!mat.blocksMovement() || mat.isReplaceable() || !mat.isSolid() ||
+                            mat.getPushReaction() == EnumPushReaction.IGNORE ||
+                            mat.getPushReaction() == EnumPushReaction.DESTROY) {
+                        return false;
+                    }
+                    // bounding box check makes sure the block touches the door and has full block height
+                    AxisAlignedBB aabb = state1.getBoundingBox(blockWorldState.getWorld(), pos);
+                    if (aabb == Block.FULL_BLOCK_AABB) return true;
+                    if (aabb.minY > 0.02 || aabb.maxY < 0.98) return false;
+                    if (direction == EnumFacing.AxisDirection.POSITIVE) {
+                        return aabb.maxX * checkX + aabb.maxZ * checkZ > 0.98;
+                    } else {
+                        return aabb.minX * checkX + aabb.minZ * checkZ < 0.02;
+                    }
                 };
                 int x = blockWorldState.getPos().getX();
                 int z = blockWorldState.getPos().getZ();
                 int y = blockWorldState.getPos().getY();
                 BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-                return test.test(pos.setPos(x + checkX, y, z + checkZ)) &&
-                        test.test(pos.setPos(x - checkX, y, z - checkZ)) &&
-                        test.test(pos.setPos(x + checkX, y + 1, z + checkZ)) &&
-                        test.test(pos.setPos(x - checkX, y + 1, z - checkZ));
+                // use negative facing on positive side since we are considering the neighboring block
+                return test.test(pos.setPos(x + checkX, y, z + checkZ), EnumFacing.AxisDirection.NEGATIVE) &&
+                        test.test(pos.setPos(x - checkX, y, z - checkZ), EnumFacing.AxisDirection.POSITIVE) &&
+                        test.test(pos.setPos(x + checkX, y + 1, z + checkZ), EnumFacing.AxisDirection.NEGATIVE) &&
+                        test.test(pos.setPos(x - checkX, y + 1, z - checkZ), EnumFacing.AxisDirection.POSITIVE);
             }
             return false;
         });
