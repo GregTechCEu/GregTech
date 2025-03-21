@@ -1,5 +1,7 @@
 package gregtech.client.model.block;
 
+import gregtech.client.renderer.GTRendererState;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -98,7 +100,7 @@ import java.util.function.Function;
 public class GregtechBlockRenderer {
 
     public static void fillVertexData(int[] vData, int vIndex, EnumFacing side,
-                                      BlockFaceUV uvs, float[] bounds, TextureAtlasSprite sprite,
+                                      GTRendererState.UV uvs, float[] bounds, TextureAtlasSprite sprite,
                                       ITransformation transformation, BlockPartRotation rotation, boolean shade) {
         EnumFacing enumfacing = transformation.rotate(side);
         int i = shade ? getFaceShadeColor(enumfacing) : -1;
@@ -194,7 +196,7 @@ public class GregtechBlockRenderer {
     }
 
     private static void storeVertexData(int[] faceData, int storeIndex, int vertexIndex, Vector3f position,
-                                        int shadeColor, TextureAtlasSprite sprite, BlockFaceUV faceUV) {
+                                        int shadeColor, TextureAtlasSprite sprite, GTRendererState.UV faceUV) {
         int i = storeIndex * 7;
         faceData[i] = Float.floatToRawIntBits(position.x);
         faceData[i + 1] = Float.floatToRawIntBits(position.y);
