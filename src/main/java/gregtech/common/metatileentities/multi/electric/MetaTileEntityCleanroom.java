@@ -47,6 +47,7 @@ import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEn
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.BlockDoor;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -86,6 +87,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                                      implements ICleanroomProvider, IWorkable, IDataInfoProvider {
@@ -378,7 +380,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                 .where('S', selfPredicate())
                 .where('B', states(getCasingState()).or(basePredicate))
                 .where('X', wallPredicate.or(basePredicate)
-                        .or(doorPredicate().setMaxGlobalLimited(8))
+                        .or(improvedDoorPredicate().setMaxGlobalLimited(8))
                         .or(abilities(MultiblockAbility.PASSTHROUGH_HATCH).setMaxGlobalLimited(30)))
                 .where('K', wallPredicate) // the block beneath the controller must only be a casing for structure
                                            // dimension checks
@@ -434,6 +436,43 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     protected static TraceabilityPredicate doorPredicate() {
         return new TraceabilityPredicate(
                 blockWorldState -> blockWorldState.getBlockState().getBlock() instanceof BlockDoor);
+    }
+
+    @NotNull
+    protected static TraceabilityPredicate improvedDoorPredicate() {
+        return new TraceabilityPredicate(blockWorldState -> {
+            IBlockState state = blockWorldState.getBlockState();
+            if (state.getBlock() instanceof BlockDoor) {
+                BlockDoor.EnumDoorHalf half = state.getValue(BlockDoor.HALF);
+                // we only need to check one half
+                // and the open property only returns the correct value on the lower half for some reason
+                if (half == BlockDoor.EnumDoorHalf.UPPER) return true;
+                EnumFacing facing = state.getValue(BlockDoor.FACING);
+                boolean falseOpen = state.getValue(BlockDoor.OPEN);
+
+                int checkX = Math.abs(facing.getXOffset()); // 1 or 0
+                int checkZ = 1 - checkX; // inversion of x
+                if (!falseOpen) {
+                    // if door is closed check other axis
+                    checkX = 1 - checkX;
+                    checkZ = 1 - checkZ;
+                }
+                Predicate<BlockPos> test = pos -> {
+                    IBlockState state1 = blockWorldState.getWorld().getBlockState(pos);
+                    return state1.getMaterial() != Material.AIR; // cleanroom glass does not count as full block for
+                                                                 // some reason
+                };
+                int x = blockWorldState.getPos().getX();
+                int z = blockWorldState.getPos().getZ();
+                int y = blockWorldState.getPos().getY();
+                BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+                return test.test(pos.setPos(x + checkX, y, z + checkZ)) &&
+                        test.test(pos.setPos(x - checkX, y, z - checkZ)) &&
+                        test.test(pos.setPos(x + checkX, y + 1, z + checkZ)) &&
+                        test.test(pos.setPos(x - checkX, y + 1, z - checkZ));
+            }
+            return false;
+        });
     }
 
     @NotNull
