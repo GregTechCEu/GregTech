@@ -8,8 +8,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -19,8 +17,6 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.vecmath.Vector3f;
 
 public interface ICubeRenderer extends IconRegistrar {
 
@@ -75,8 +71,6 @@ public interface ICubeRenderer extends IconRegistrar {
             renderOrientedState(rendererState, side, false, false);
         }
     }
-
-    AxisAlignedBB FULL_CUBE = new AxisAlignedBB(0, 0, 0, 1, 1, 1);
 
     @SideOnly(Side.CLIENT)
     default void renderOrientedState(GTRendererState rendererState,

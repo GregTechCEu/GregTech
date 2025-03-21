@@ -2,10 +2,7 @@ package gregtech.mixins.minecraft;
 
 import gregtech.api.block.IBlockRenderer;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-
 import gregtech.client.renderer.GTRendererState;
-
-import gregtech.client.renderer.ICubeRenderer;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
