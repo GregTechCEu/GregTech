@@ -15,9 +15,11 @@ import java.util.EnumMap;
 
 import javax.vecmath.Vector3f;
 
+import static gregtech.client.renderer.GTRendererState.Axis.*;
+
 public class GTRendererState {
 
-    public static ThreadLocal<GTRendererState> renderState = ThreadLocal.withInitial(GTRendererState::new);
+    private static final ThreadLocal<GTRendererState> renderState = ThreadLocal.withInitial(GTRendererState::new);
 
     public static GTRendererState getCurrentState() {
         return renderState.get();
@@ -53,23 +55,11 @@ public class GTRendererState {
     }
 
     public GTRendererState setBounds(Vector3f size) {
-        return setBounds(
-                0,
-                0,
-                0,
-                size.x,
-                size.y,
-                size.z);
+        return setBounds(size.x, size.y, size.z);
     }
 
     public GTRendererState setBounds(float w, float h, float l) {
-        return setBounds(
-                0,
-                0,
-                0,
-                w,
-                h,
-                l);
+        return setBounds(0, 0, 0, w, h, l);
     }
 
     public GTRendererState setBounds(AxisAlignedBB bounds) {
@@ -82,7 +72,9 @@ public class GTRendererState {
                 (float) bounds.maxZ);
     }
 
-    private GTRendererState setBounds(float... bounds) {
+    public GTRendererState setBounds(float... bounds) {
+        if (bounds == null || bounds.length != 6)
+            throw new IllegalArgumentException("Bounds must be [min x, min y, min z, max x, max y, max z]!");
         this.bounds = bounds;
         return this;
     }
@@ -93,10 +85,9 @@ public class GTRendererState {
         if (!this.state.shouldSideBeRendered(world, pos, side)) return this;
 
         Quad quad = Quad.fillQuad(this.bounds, side, sprite);
-        // if (checkQuad(quad, side)) {
-        // GTLog.logger.warn("invalid quad: {}", quad);
-        // return this;
-        // }
+        // certain quads are rendering the wrong way
+        // S, W, and U quads are correct
+        // N, E, and D quads are not
         buf.addVertexData(quad.toArray());
 
         // todo pipeline
@@ -107,38 +98,6 @@ public class GTRendererState {
         buf.putColorMultiplier(1, 1, 1, 1);
         buf.putPosition(pos.getX(), pos.getY(), pos.getZ());
         return this;
-    }
-
-    private boolean checkQuad(Quad quad, EnumFacing facing) {
-        boolean fail = false;
-        float minU = 0, minV = 0;
-        float maxU = 1, maxV = 1;
-        for (Vertex v : quad.vertices) {
-            switch (facing.getAxis()) {
-                case X -> {
-                    minU = Math.max(minU, v.pos.y);
-                    minV = Math.max(minV, v.pos.z);
-                    maxU = Math.min(maxU, v.pos.y);
-                    maxV = Math.min(maxV, v.pos.z);
-                }
-                case Y -> {
-                    minU = Math.max(minU, v.pos.x);
-                    minV = Math.max(minV, v.pos.z);
-                    maxU = Math.min(maxU, v.pos.x);
-                    maxV = Math.min(maxV, v.pos.z);
-                }
-                case Z -> {
-                    minU = Math.max(minU, v.pos.x);
-                    minV = Math.max(minV, v.pos.y);
-                    maxU = Math.min(maxU, v.pos.x);
-                    maxV = Math.min(maxV, v.pos.y);
-                }
-            }
-            if (minU == maxU || minV == maxV) {
-                fail = true;
-            }
-        }
-        return fail;
     }
 
     private static class UV {
@@ -172,46 +131,113 @@ public class GTRendererState {
         }
     }
 
+    enum Axis {
+
+        x,
+        y,
+        z;
+
+        public final int min;
+        public final int max;
+
+        Axis() {
+            this.min = ordinal();
+            this.max = ordinal() + 3;
+        }
+    }
+
     public static class Quad {
 
         static final EnumMap<EnumFacing, int[][]> INDEX_MAP = new EnumMap<>(EnumFacing.class);
 
         static {
+            fillMap();
+        }
+
+        static void fillMap() {
+            /*
+             * UP pos y
+             * all max y [4]
+             * max x, max z [3, 5]
+             * max x, min z [3, 2]
+             * min x, min z [0, 2]
+             * min x, max z [0, 5]
+             */
             INDEX_MAP.put(EnumFacing.UP, new int[][] {
-                    new int[] { 0, 4, 2 },
-                    new int[] { 0, 4, 5 },
-                    new int[] { 3, 4, 5 },
-                    new int[] { 3, 4, 2 }
+                    new int[] { x.max, y.max, z.max },
+                    new int[] { x.max, y.max, z.min },
+                    new int[] { x.min, y.max, z.min },
+                    new int[] { x.min, y.max, z.max }
             });
+            /*
+             * DOWN neg y
+             * all min y [1]
+             * min x, min z [0, 2]
+             * min x, max z [0, 5]
+             * max x, max z [3, 5]
+             * max x, min z [3, 2]
+             */
             INDEX_MAP.put(EnumFacing.DOWN, new int[][] {
-                    new int[] { 3, 1, 5 },
-                    new int[] { 3, 1, 2 },
-                    new int[] { 0, 1, 2 },
-                    new int[] { 0, 1, 5 }
+                    new int[] { x.max, y.min, z.max },
+                    new int[] { x.max, y.min, z.min },
+                    new int[] { x.min, y.min, z.min },
+                    new int[] { x.min, y.min, z.max }
             });
+            /*
+             * WEST neg x
+             * all min x [0]
+             * max z, min y [5, 1]
+             * max z, max y [5, 4]
+             * min z, max y [2, 4]
+             * min z, min y [2, 1]
+             */
             INDEX_MAP.put(EnumFacing.WEST, new int[][] {
-                    new int[] { 3, 1, 2 },
-                    new int[] { 3, 1, 5 },
-                    new int[] { 3, 4, 5 },
-                    new int[] { 3, 4, 2 }
+                    new int[] { x.min, y.min, z.max },
+                    new int[] { x.min, y.max, z.max },
+                    new int[] { x.min, y.max, z.min },
+                    new int[] { x.min, y.min, z.min }
             });
+            /*
+             * EAST pos x
+             * all max x [3]
+             * min z, max y [2, 4]
+             * min z, min y [2, 1]
+             * max z, min y [5, 1]
+             * max z, max y [5, 4]
+             */
             INDEX_MAP.put(EnumFacing.EAST, new int[][] {
-                    new int[] { 0, 4, 5 },
-                    new int[] { 0, 4, 2 },
-                    new int[] { 0, 1, 2 },
-                    new int[] { 0, 1, 5 }
+                    new int[] { x.max, y.max, z.min },
+                    new int[] { x.max, y.min, z.min },
+                    new int[] { x.max, y.min, z.max },
+                    new int[] { x.max, y.max, z.max }
             });
+            /*
+             * NORTH neg z
+             * all min z [2]
+             * max y, min x [4, 0]
+             * min y, min x [1, 0]
+             * min y, max x [1, 3]
+             * max y, max x [4, 3]
+             */
             INDEX_MAP.put(EnumFacing.NORTH, new int[][] {
-                    new int[] { 0, 1, 5 },
-                    new int[] { 3, 1, 5 },
-                    new int[] { 3, 4, 5 },
-                    new int[] { 0, 4, 5 }
+                    new int[] { x.min, y.max, z.min },
+                    new int[] { x.min, y.min, z.min },
+                    new int[] { x.max, y.min, z.min },
+                    new int[] { x.max, y.max, z.min }
             });
+            /*
+             * SOUTH pos z
+             * all max z [5]
+             * min y, max x [1, 3]
+             * max y, max x [4, 3]
+             * max y, min x [4, 0]
+             * min y, min x [1, 0]
+             */
             INDEX_MAP.put(EnumFacing.SOUTH, new int[][] {
-                    new int[] { 0, 4, 2 },
-                    new int[] { 3, 4, 2 },
-                    new int[] { 3, 1, 2 },
-                    new int[] { 0, 1, 2 }
+                    new int[] { x.max, y.min, z.max },
+                    new int[] { x.max, y.max, z.max },
+                    new int[] { x.min, y.max, z.max },
+                    new int[] { x.min, y.min, z.max }
             });
         }
 
@@ -226,10 +252,14 @@ public class GTRendererState {
 
         public static Quad fillQuad(float[] bounds, EnumFacing side, TextureAtlasSprite sprite) {
             var quad = new Quad();
+            fillMap();
             quad.sprite = sprite;
             for (var vertex : quad.vertices) {
                 int[] info = INDEX_MAP.get(side)[vertex.index];
-                vertex.pos.set(bounds[info[0]], bounds[info[1]], bounds[info[2]]);
+                float x = bounds[info[0]];
+                float y = bounds[info[1]];
+                float z = bounds[info[2]];
+                vertex.pos.set(x, y, z);
                 vertex.uvs.setUV(0, 0, 16, 16);
             }
             return quad;
