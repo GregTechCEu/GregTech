@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.ChunkRenderContainer;
 import net.minecraft.client.renderer.EnumFaceDirection;
 import net.minecraft.client.renderer.RegionRenderCacheBuilder;
-import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.BlockPartRotation;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBakery;

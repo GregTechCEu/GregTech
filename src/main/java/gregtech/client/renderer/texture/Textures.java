@@ -23,11 +23,16 @@ import gregtech.client.renderer.texture.custom.LargeTurbineRenderer;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.texture.IconRegistrar;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.EnumFaceDirection;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -40,6 +45,7 @@ import codechicken.lib.vec.TransformationList;
 import codechicken.lib.vec.uv.IconTransformation;
 import codechicken.lib.vec.uv.UVTransformationList;
 import org.apache.commons.lang3.ArrayUtils;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -734,8 +740,57 @@ public class Textures {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void renderFace(GTRendererState state, EnumFacing face) {
-        state.quad(face);
+    public static void renderFace(GTRendererState state, EnumFacing face, BlockRenderLayer renderLayer) {
+        state.quad(face, renderLayer);
+    }
+
+    // remove this, it was for testing with the previous working impl
+    @SideOnly(Side.CLIENT)
+    public static void renderFace(IBlockState state, IBlockAccess world, BlockPos pos, BufferBuilder buf,
+                                  EnumFacing face, TextureAtlasSprite sprite, BlockRenderLayer layer) {
+        if (layer == null || !state.getBlock().canRenderInLayer(state, layer)) return;
+        if (!state.shouldSideBeRendered(world, pos, face)) return;
+
+        float[] positionsDiv16 = getPositionsDiv16(new Vector3f(0, 0, 0), new Vector3f(16, 16, 16));
+        GTRendererState.UV uv = new GTRendererState.UV(0, 0, 16, 16);
+
+        int[] vdata = new int[28];
+
+        // for each vertex
+        for (int v = 0; v < 4; v++) {
+            var info = EnumFaceDirection.getFacing(face).getVertexInformation(v);
+            float x = positionsDiv16[info.xIndex];
+            float y = positionsDiv16[info.yIndex];
+            float z = positionsDiv16[info.zIndex];
+
+            int i = v * 7;
+            vdata[i] = Float.floatToRawIntBits(x);
+            vdata[i + 1] = Float.floatToRawIntBits(y);
+            vdata[i + 2] = Float.floatToRawIntBits(z);
+            vdata[i + 3] = -1;
+            vdata[i + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(uv.getVertexU(v)));
+            vdata[i + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(uv.getVertexV(v)));
+        }
+
+        buf.addVertexData(vdata);
+
+        buf.putBrightness4(0xFF, 0xFF, 0xFF, 0xFF);
+        buf.putColorMultiplier(1, 1, 1, 4);
+        buf.putColorMultiplier(1, 1, 1, 3);
+        buf.putColorMultiplier(1, 1, 1, 2);
+        buf.putColorMultiplier(1, 1, 1, 1);
+        buf.putPosition(pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    private static float[] getPositionsDiv16(Vector3f pos1, Vector3f pos2) {
+        float[] afloat = new float[EnumFacing.VALUES.length];
+        afloat[EnumFaceDirection.Constants.WEST_INDEX] = pos1.x / 16.0F;
+        afloat[EnumFaceDirection.Constants.DOWN_INDEX] = pos1.y / 16.0F;
+        afloat[EnumFaceDirection.Constants.NORTH_INDEX] = pos1.z / 16.0F;
+        afloat[EnumFaceDirection.Constants.EAST_INDEX] = pos2.x / 16.0F;
+        afloat[EnumFaceDirection.Constants.UP_INDEX] = pos2.y / 16.0F;
+        afloat[EnumFaceDirection.Constants.SOUTH_INDEX] = pos2.z / 16.0F;
+        return afloat;
     }
 
     // TODO Could maybe be cleaned up?

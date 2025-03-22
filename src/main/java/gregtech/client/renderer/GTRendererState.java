@@ -1,11 +1,8 @@
 package gregtech.client.renderer;
 
-import gregtech.client.model.block.GregtechBlockRenderer;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.block.model.BlockPartRotation;
-import net.minecraft.client.renderer.block.model.ModelRotation;
+import net.minecraft.client.renderer.EnumFaceDirection;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.BlockRenderLayer;
@@ -14,8 +11,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.MinecraftForgeClient;
-
-import java.util.EnumMap;
 
 import javax.vecmath.Vector3f;
 
@@ -30,15 +25,15 @@ public class GTRendererState {
     }
 
     // render information
-    private BufferBuilder buf;
+    public BufferBuilder buf;
     private VertexFormat fmt;
-    private TextureAtlasSprite sprite;
-    private float[] bounds;
+    public TextureAtlasSprite sprite;
+    public final float[] bounds = new float[6];
 
     // state information
-    private IBlockState state;
-    private IBlockAccess world;
-    private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+    public IBlockState state;
+    public IBlockAccess world;
+    public final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
     public GTRendererState setBuffer(BufferBuilder buf) {
         this.buf = buf;
@@ -56,6 +51,10 @@ public class GTRendererState {
     public GTRendererState setTexture(TextureAtlasSprite sprite) {
         this.sprite = sprite;
         return this;
+    }
+
+    public GTRendererState fullBlock() {
+        return setBounds(16, 16, 16);
     }
 
     public GTRendererState setBounds(Vector3f size) {
@@ -79,30 +78,32 @@ public class GTRendererState {
     public GTRendererState setBounds(float... bounds) {
         if (bounds == null || bounds.length != 6)
             throw new IllegalArgumentException("Bounds must be [min x, min y, min z, max x, max y, max z]!");
-        this.bounds = bounds;
+        // mc expects the bounds to be in a VERY specific order
+        this.bounds[EnumFaceDirection.Constants.WEST_INDEX] = bounds[0] / 16.0F;
+        this.bounds[EnumFaceDirection.Constants.DOWN_INDEX] = bounds[1] / 16.0F;
+        this.bounds[EnumFaceDirection.Constants.NORTH_INDEX] = bounds[2] / 16.0F;
+        this.bounds[EnumFaceDirection.Constants.EAST_INDEX] = bounds[3] / 16.0F;
+        this.bounds[EnumFaceDirection.Constants.UP_INDEX] = bounds[4] / 16.0F;
+        this.bounds[EnumFaceDirection.Constants.SOUTH_INDEX] = bounds[5] / 16.0F;
         return this;
     }
 
     public GTRendererState quad(EnumFacing side) {
-        BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
+        return quad(side, MinecraftForgeClient.getRenderLayer());
+    }
+
+    public GTRendererState quad(EnumFacing side, BlockRenderLayer renderLayer) {
+        // we currently render on every valid layer
+        // this should be deferred to the Texture
         if (renderLayer == null || !this.state.getBlock().canRenderInLayer(this.state, renderLayer)) return this;
+        if (renderLayer != MinecraftForgeClient.getRenderLayer()) return this;
         if (!this.state.shouldSideBeRendered(world, pos, side)) return this;
 
-//        Quad quad = Quad.fillQuad(this.bounds, side, sprite);
-        // certain quads are rendering the wrong way
-        // S, W, and U quads are correct
-        // N, E, and D quads are not
-//        buf.addVertexData(quad.toArray());
-
-        int[] vdata = new int[28];
-        UV uv = new UV(0, 0, 16, 16);
-        BlockPartRotation rot = new BlockPartRotation(new org.lwjgl.util.vector.Vector3f(0, 0, 0),
-                EnumFacing.Axis.Y, 0, false);
-        for (int i = 0; i < 4; i++) {
-            GregtechBlockRenderer.fillVertexData(vdata, i, side, uv, this.bounds, this.sprite,
-                    ModelRotation.X0_Y0, rot, true);
-        }
-        buf.addVertexData(vdata);
+        Quad quad = Quad.fillQuad(this.bounds, EnumFaceDirection.getFacing(side), sprite, -1);
+        // the buffer probably expects vertex data to be in the int buffer?
+        // that's odd, since all the buffers are just the byte buf
+        // quads are also darker than expected, this might be because AO and world lighting are not handled
+        buf.addVertexData(quad.toArray());
 
         // todo pipeline
         buf.putBrightness4(0xFF, 0xFF, 0xFF, 0xFF);
@@ -114,18 +115,33 @@ public class GTRendererState {
         return this;
     }
 
+    private static int getFaceShadeColor(EnumFacing facing) {
+        float f = getFaceBrightness(facing);
+        int i = (int) (f * 255.0F);
+        return 0xFF000000 | i << 16 | i << 8 | i;
+    }
+
+    private static float getFaceBrightness(EnumFacing facing) {
+        return switch (facing) {
+            case DOWN -> 0.5F;
+            case UP -> 1.0F;
+            case NORTH, SOUTH -> 0.8F;
+            case WEST, EAST -> 0.6F;
+        };
+    }
+
     public final static class UV {
 
         final float[] uvs;
 
-        private UV(float... uvs) {
+        public UV(float... uvs) {
             if (uvs == null || uvs.length != 4)
                 throw new IllegalArgumentException();
 
             this.uvs = uvs;
         }
 
-        private UV() {
+        public UV() {
             this(new float[4]);
         }
 
@@ -162,129 +178,6 @@ public class GTRendererState {
 
     public final static class Quad {
 
-        static final EnumMap<EnumFacing, int[][]> INDEX_MAP = new EnumMap<>(EnumFacing.class);
-
-        static {
-            fillMap();
-        }
-
-        static void fillMap() {
-            // int[][] XZ = {
-            // { x.max, y.max, z.max },
-            // { x.max, y.max, z.min },
-            // { x.min, y.max, z.min },
-            // { x.min, y.max, z.max } };
-            //
-            // int[][] YZ = {
-            // { x.min, y.min, z.max },
-            // { x.min, y.max, z.max },
-            // { x.min, y.max, z.min },
-            // { x.min, y.min, z.min } };
-            //
-            // int[][] XY = {
-            // { x.min, y.max, z.min },
-            // { x.min, y.min, z.min },
-            // { x.max, y.min, z.min },
-            // { x.max, y.max, z.min } };
-            //
-            // INDEX_MAP.put(EnumFacing.UP, XZ);
-            // INDEX_MAP.put(EnumFacing.DOWN, XZ);
-            // INDEX_MAP.put(EnumFacing.WEST, YZ);
-            // INDEX_MAP.put(EnumFacing.EAST, YZ);
-            // INDEX_MAP.put(EnumFacing.NORTH, XY);
-            // INDEX_MAP.put(EnumFacing.SOUTH, XY);
-            /*
-             * UP pos y
-             * all max y [4]
-             * max x, max z [3, 5]
-             * max x, min z [3, 2]
-             * min x, min z [0, 2]
-             * min x, max z [0, 5]
-             * 1 → 2
-             * ↑ ↓
-             * 0 3
-             */
-            INDEX_MAP.put(EnumFacing.UP, new int[][] {
-                    { x.max, y.max, z.max },
-                    { x.max, y.max, z.min },
-                    { x.min, y.max, z.min },
-                    { x.min, y.max, z.max }
-            });
-            /*
-             * DOWN neg y
-             * all min y [1]
-             * min x, min z [0, 2]
-             * min x, max z [0, 5]
-             * max x, max z [3, 5]
-             * max x, min z [3, 2]
-             * 3 → 0
-             * ↑ ↓
-             * 2 ← 1
-             */
-            INDEX_MAP.put(EnumFacing.DOWN, new int[][] {
-                    { x.max, y.min, z.max },
-                    { x.max, y.min, z.min },
-                    { x.min, y.min, z.min },
-                    { x.min, y.min, z.max }
-            });
-            /*
-             * WEST neg x
-             * all min x [0]
-             * max z, min y [5, 1]
-             * max z, max y [5, 4]
-             * min z, max y [2, 4]
-             * min z, min y [2, 1]
-             */
-            INDEX_MAP.put(EnumFacing.WEST, new int[][] {
-                    { x.min, y.min, z.max },
-                    { x.min, y.max, z.max },
-                    { x.min, y.max, z.min },
-                    { x.min, y.min, z.min }
-            });
-            /*
-             * EAST pos x
-             * all max x [3]
-             * min z, max y [2, 4]
-             * min z, min y [2, 1]
-             * max z, min y [5, 1]
-             * max z, max y [5, 4]
-             */
-            INDEX_MAP.put(EnumFacing.EAST, new int[][] {
-                    { x.max, y.max, z.min },
-                    { x.max, y.min, z.min },
-                    { x.max, y.min, z.max },
-                    { x.max, y.max, z.max }
-            });
-            /*
-             * NORTH neg z
-             * all min z [2]
-             * max y, min x [4, 0]
-             * min y, min x [1, 0]
-             * min y, max x [1, 3]
-             * max y, max x [4, 3]
-             */
-            INDEX_MAP.put(EnumFacing.NORTH, new int[][] {
-                    { x.min, y.max, z.min },
-                    { x.min, y.min, z.min },
-                    { x.max, y.min, z.min },
-                    { x.max, y.max, z.min }
-            });
-            /*
-             * SOUTH pos z
-             * all max z [5]
-             * min y, max x [1, 3]
-             * max y, max x [4, 3]
-             * max y, min x [4, 0]
-             * min y, min x [1, 0]
-             */
-            INDEX_MAP.put(EnumFacing.SOUTH, new int[][] {
-                    { x.max, y.min, z.max },
-                    { x.max, y.max, z.max },
-                    { x.min, y.max, z.max },
-                    { x.min, y.min, z.max }
-            });
-        }
-
         final Vertex[] vertices = new Vertex[] {
                 new Vertex(0),
                 new Vertex(1),
@@ -294,18 +187,17 @@ public class GTRendererState {
 
         TextureAtlasSprite sprite;
 
-        public static Quad fillQuad(float[] bounds, EnumFacing side, TextureAtlasSprite sprite) {
+        public static Quad fillQuad(float[] bounds, EnumFaceDirection direction, TextureAtlasSprite sprite, int color) {
             var quad = new Quad();
-            fillMap();
             quad.sprite = sprite;
             for (var vertex : quad.vertices) {
-                int[] info = INDEX_MAP.get(side)[side.getAxisDirection().getOffset() == 1 ?
-                        vertex.index : (vertex.index + 2) % 4];
-                float x = bounds[info[0]];
-                float y = bounds[info[1]];
-                float z = bounds[info[2]];
+                var info = direction.getVertexInformation(vertex.index);
+                float x = bounds[info.xIndex];
+                float y = bounds[info.yIndex];
+                float z = bounds[info.zIndex];
                 vertex.pos.set(x, y, z);
                 vertex.uvs.setUV(0, 0, 16, 16);
+                vertex.colour = color;
             }
             return quad;
         }
@@ -324,15 +216,22 @@ public class GTRendererState {
 
         @Override
         public String toString() {
+            return toString(false);
+        }
+
+        public String toString(boolean newline) {
             var b = new StringBuilder(getClass().getSimpleName());
-            b.append('[').append('\n').append('\t');
+            b.append('[');
+            if (newline) b.append('\n').append('\t');
             for (Vertex vertex : vertices) {
                 b.append(vertex.toString());
-                if (vertex.index != 3)
-                    b.append(", ").append("\n\t");
+                if (vertex.index != 3) {
+                    b.append(", ");
+                    if (newline) b.append("\n\t");
+                }
             }
-            b.append("\n]");
-            return b.toString();
+            if (newline) b.append("\n");
+            return b.append(']').toString();
         }
     }
 
@@ -353,17 +252,14 @@ public class GTRendererState {
             vData[i] = Float.floatToRawIntBits(pos.x);
             vData[i + 1] = Float.floatToRawIntBits(pos.y);
             vData[i + 2] = Float.floatToRawIntBits(pos.z);
-            vData[i + 3] = colour;
+            vData[i + 3] = colour; // does this color actually do anything?
             vData[i + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(uvs.getVertexU(index)));
             vData[i + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(uvs.getVertexV(index)));
         }
 
         @Override
         public String toString() {
-            return "Vertex{" +
-                    "index=" + index +
-                    ", pos=" + pos +
-                    '}';
+            return "Vertex_" + index + "{pos=" + pos + '}';
         }
     }
 }

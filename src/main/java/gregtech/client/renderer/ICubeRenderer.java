@@ -6,6 +6,7 @@ import gregtech.client.texture.IconRegistrar;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -76,7 +77,7 @@ public interface ICubeRenderer extends IconRegistrar {
     default void renderOrientedState(GTRendererState rendererState,
                                      EnumFacing face, boolean isActive,
                                      boolean isWorkingEnabled) {
-        Textures.renderFace(rendererState.setTexture(getParticleSprite()), face);
+        Textures.renderFace(rendererState.setTexture(getParticleSprite()), face, BlockRenderLayer.SOLID);
     }
 
     @SideOnly(Side.CLIENT)

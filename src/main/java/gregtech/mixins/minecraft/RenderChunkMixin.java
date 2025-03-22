@@ -45,7 +45,7 @@ public class RenderChunkMixin {
             return renderer.renderBlockSafe(GTRendererState.getCurrentState()
                     .setBuffer(bufferBuilder)
                     .updateState(state, world, pos)
-                    .setBounds(1, 1, 1));
+                    .fullBlock());
         } else {
             return original.call(instance, state, pos, world, bufferBuilder);
         }
