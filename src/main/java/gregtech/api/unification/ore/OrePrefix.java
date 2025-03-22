@@ -1,5 +1,6 @@
 package gregtech.api.unification.ore;
 
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -12,6 +13,7 @@ import gregtech.api.util.function.TriConsumer;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 
 import com.google.common.base.Preconditions;
 import crafttweaker.annotations.ZenRegister;
@@ -701,6 +703,27 @@ public class OrePrefix {
 
     public boolean isMarkerPrefix() {
         return isMarkerPrefix;
+    }
+
+    /**
+     * Gets the item form of this ore prefix using a {@link Material}
+     * 
+     * @param material the Material to use
+     * @return an ItemStack of the Material using this ore prefix
+     */
+    public ItemStack getItemForm(Material material) {
+        return OreDictUnifier.get(this, material);
+    }
+
+    /**
+     * Gets the item form of this ore prefix using a {@link Material}
+     * 
+     * @param material the Material to use
+     * @param count    the amount the ItemStack will have
+     * @return an ItemStack of the Material using this ore prefix
+     */
+    public ItemStack getItemForm(Material material, int count) {
+        return OreDictUnifier.get(this, material, count);
     }
 
     @Override
