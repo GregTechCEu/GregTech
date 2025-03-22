@@ -711,7 +711,7 @@ public class OrePrefix {
      * @param material the Material to use
      * @return an ItemStack of the Material using this ore prefix
      */
-    public ItemStack getItemForm(@NotNull Material material) {
+    public @NotNull ItemStack getItemForm(@NotNull Material material) {
         return OreDictUnifier.get(this, material);
     }
 
@@ -722,7 +722,7 @@ public class OrePrefix {
      * @param count    the amount the ItemStack will have
      * @return an ItemStack of the Material using this ore prefix
      */
-    public ItemStack getItemForm(@NotNull Material material, int count) {
+    public @NotNull ItemStack getItemForm(@NotNull Material material, int count) {
         return OreDictUnifier.get(this, material, count);
     }
 
