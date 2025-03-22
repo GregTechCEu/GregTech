@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.WorldType;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -41,11 +42,26 @@ public class RenderChunkMixin {
     public boolean wrapBlockRenderer(BlockRendererDispatcher instance, IBlockState state, BlockPos pos,
                                      IBlockAccess world, BufferBuilder bufferBuilder, Operation<Boolean> original) {
         if (state.getBlock() instanceof IBlockRenderer renderer) {
-            // render custom block
-            return renderer.renderBlockSafe(GTRendererState.getCurrentState()
-                    .setBuffer(bufferBuilder)
-                    .updateState(state, world, pos)
-                    .fullBlock());
+            if (world.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
+                state = state.getActualState(world, pos);
+            }
+
+            switch (state.getRenderType()) {
+                case MODEL -> {
+                    state = state.getBlock().getExtendedState(state, world, pos);
+                    // render custom block
+                    return renderer.renderBlockSafe(GTRendererState.getCurrentState()
+                            .setBuffer(bufferBuilder)
+                            .updateState(state, world, pos)
+                            .fullBlock());
+                }
+                case LIQUID -> {
+                    return instance.fluidRenderer.renderFluid(world, state, pos, bufferBuilder);
+                }
+                default -> {
+                    return false;
+                }
+            }
         } else {
             return original.call(instance, state, pos, world, bufferBuilder);
         }
