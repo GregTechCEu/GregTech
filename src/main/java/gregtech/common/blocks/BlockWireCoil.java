@@ -168,7 +168,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
 
     @Override
     public void renderBlock(GTRendererState rendererState) {
-        Textures.BRONZE_PLATED_BRICKS.render(rendererState);
+        Textures.WIRE_COIL.render(rendererState);
     }
 
     public abstract static class CoilType implements IStringSerializable, IHeatingCoilBlockStats, Comparable<CoilType> {

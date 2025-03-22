@@ -1,8 +1,10 @@
 package gregtech.client.renderer;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EnumFaceDirection;
+import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.BlockRenderLayer;
@@ -11,10 +13,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
+import net.minecraftforge.client.model.pipeline.LightUtil;
+import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
+import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
+import net.minecraftforge.client.model.pipeline.VertexLighterSmoothAo;
 
 import javax.vecmath.Vector3f;
-
-import static gregtech.client.renderer.GTRendererState.Axis.*;
 
 public class GTRendererState {
 
@@ -26,6 +31,9 @@ public class GTRendererState {
 
     // render information
     public BufferBuilder buf;
+    private VertexBufferConsumer consumer;
+    private VertexLighterSmoothAo smoothAo;
+    private VertexLighterFlat flat;
     private VertexFormat fmt;
     public TextureAtlasSprite sprite;
     public final float[] bounds = new float[6];
@@ -36,8 +44,15 @@ public class GTRendererState {
     public final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
     public GTRendererState setBuffer(BufferBuilder buf) {
+        this.consumer = new VertexBufferConsumer(buf);
         this.buf = buf;
         this.fmt = buf.getVertexFormat();
+        return this;
+    }
+
+    public GTRendererState updateLighting(BlockColors colors) {
+        this.flat = new VertexLighterFlat(colors);
+        this.smoothAo = new VertexLighterSmoothAo(colors);
         return this;
     }
 
@@ -103,16 +118,48 @@ public class GTRendererState {
         // the buffer probably expects vertex data to be in the int buffer?
         // that's odd, since all the buffers are just the byte buf
         // quads are also darker than expected, this might be because AO and world lighting are not handled
-        buf.addVertexData(quad.toArray());
+        // buf.addVertexData(quad.toArray());
 
-        // todo pipeline
-        buf.putBrightness4(0xFF, 0xFF, 0xFF, 0xFF);
-        buf.putColorMultiplier(1, 1, 1, 4);
-        buf.putColorMultiplier(1, 1, 1, 3);
-        buf.putColorMultiplier(1, 1, 1, 2);
-        buf.putColorMultiplier(1, 1, 1, 1);
-        buf.putPosition(pos.getX(), pos.getY(), pos.getZ());
+        VertexLighterFlat lighter;
+        if (Minecraft.isAmbientOcclusionEnabled() && this.state.getLightValue(this.world, this.pos) == 0) {
+            lighter = this.smoothAo;
+        } else {
+            lighter = this.flat;
+        }
+
+        this.consumer.setOffset(pos);
+        lighter.setParent(this.consumer);
+        lighter.setWorld(this.world);
+        lighter.setState(this.state);
+        lighter.setBlockPos(this.pos);
+        lighter.updateBlockInfo();
+        // todo pipeline?
+        putBakedQuad(lighter, quad, side);
+
         return this;
+    }
+
+    public void putBakedQuad(IVertexConsumer consumer, Quad quad, EnumFacing side) {
+        consumer.setTexture(quad.sprite);
+        consumer.setQuadOrientation(side);
+        float[] data = new float[4];
+
+        VertexFormat formatFrom = consumer.getVertexFormat();
+        VertexFormat formatTo = this.fmt;
+
+        int countFrom = formatFrom.getElementCount();
+        int countTo = formatTo.getElementCount();
+        int[] eMap = LightUtil.mapFormats(formatFrom, formatTo);
+        for (int v = 0; v < 4; v++) {
+            for (int e = 0; e < countFrom; e++) {
+                if (eMap[e] != countTo) {
+                    LightUtil.unpack(quad.toArray(), data, formatTo, v, eMap[e]);
+                    consumer.put(e, data);
+                } else {
+                    consumer.put(e);
+                }
+            }
+        }
     }
 
     private static int getFaceShadeColor(EnumFacing facing) {
@@ -158,21 +205,6 @@ public class GTRendererState {
 
         public float getVertexV(int vIndex) {
             return vIndex != 0 && vIndex != 3 ? this.uvs[3] : this.uvs[1];
-        }
-    }
-
-    public enum Axis {
-
-        x,
-        y,
-        z;
-
-        public final int min;
-        public final int max;
-
-        Axis() {
-            this.min = ordinal();
-            this.max = ordinal() + 3;
         }
     }
 

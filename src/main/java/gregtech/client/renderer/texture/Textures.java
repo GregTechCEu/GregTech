@@ -15,6 +15,7 @@ import gregtech.client.renderer.texture.cube.SidedCubeRenderer;
 import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.client.renderer.texture.cube.WireCoilRenderer;
 import gregtech.client.renderer.texture.custom.ClipboardRenderer;
 import gregtech.client.renderer.texture.custom.CrateRenderer;
 import gregtech.client.renderer.texture.custom.DrumRenderer;
@@ -124,6 +125,8 @@ public class Textures {
 
     public static final SimpleOverlayRenderer QUANTUM_INDICATOR_POWERED = new SimpleOverlayRenderer(
             "casings/quantum/quantum_indicator_powered");
+
+    public static final WireCoilRenderer WIRE_COIL = new WireCoilRenderer("casings/coils/machine_coil_generic");
 
     // Simple Sided Cube Renderers
     public static final SimpleSidedCubeRenderer STEAM_CASING_BRONZE = new SimpleSidedCubeRenderer(

@@ -15,6 +15,7 @@ import gregtech.api.util.Mods;
 import gregtech.api.util.input.KeyBind;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
+import gregtech.client.renderer.GTRendererState;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.pipe.CableRenderer;
@@ -127,6 +128,7 @@ public class ClientProxy extends CommonProxy {
         MetaBlocks.registerColors();
         MetaItems.registerColors();
         ToolItems.registerColors();
+        GTRendererState.getCurrentState().updateLighting(Minecraft.getMinecraft().getBlockColors());
     }
 
     @SubscribeEvent
