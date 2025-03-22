@@ -287,7 +287,7 @@ public class Material implements Comparable<Material> {
      * @param prefix the ore prefix to use
      * @return an item stack of the ore prefix using this material
      */
-    public ItemStack getItemForm(OrePrefix prefix) {
+    public ItemStack getItemForm(@NotNull OrePrefix prefix) {
         return OreDictUnifier.get(prefix, this);
     }
 
@@ -298,7 +298,7 @@ public class Material implements Comparable<Material> {
      * @param count  the amount the ItemStack will have
      * @return an item stack of the ore prefix using this material
      */
-    public ItemStack getItemForm(OrePrefix prefix, int count) {
+    public ItemStack getItemForm(@NotNull OrePrefix prefix, int count) {
         return OreDictUnifier.get(prefix, this, count);
     }
 
