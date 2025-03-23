@@ -1,7 +1,7 @@
 package gregtech.client.renderer;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
+import gregtech.client.renderer.texture.RenderContext;
+
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EnumFaceDirection;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -10,8 +10,6 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.LightUtil;
@@ -30,22 +28,19 @@ public class GTRendererState {
     }
 
     // render information
-    public BufferBuilder buf;
     private VertexBufferConsumer consumer;
     private VertexLighterSmoothAo smoothAo;
     private VertexLighterFlat flat;
     private VertexFormat fmt;
     public TextureAtlasSprite sprite;
+    private boolean shade;
     public final float[] bounds = new float[6];
 
     // state information
-    public IBlockState state;
-    public IBlockAccess world;
-    public final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+    RenderContext context;
 
     public GTRendererState setBuffer(BufferBuilder buf) {
         this.consumer = new VertexBufferConsumer(buf);
-        this.buf = buf;
         this.fmt = buf.getVertexFormat();
         return this;
     }
@@ -56,15 +51,18 @@ public class GTRendererState {
         return this;
     }
 
-    public GTRendererState updateState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        this.state = state;
-        this.world = world;
-        this.pos.setPos(pos);
+    public GTRendererState updateState(RenderContext context) {
+        this.context = context;
         return this;
     }
 
     public GTRendererState setTexture(TextureAtlasSprite sprite) {
         this.sprite = sprite;
+        return this;
+    }
+
+    public GTRendererState setShading(boolean shade) {
+        this.shade = shade;
         return this;
     }
 
@@ -108,43 +106,32 @@ public class GTRendererState {
     }
 
     public GTRendererState quad(EnumFacing side, BlockRenderLayer renderLayer) {
-        // we currently render on every valid layer
-        // this should be deferred to the Texture
-        if (renderLayer == null || !this.state.getBlock().canRenderInLayer(this.state, renderLayer)) return this;
-        if (renderLayer != MinecraftForgeClient.getRenderLayer()) return this;
-        if (!this.state.shouldSideBeRendered(world, pos, side)) return this;
+        if (!this.context.canRender(side, renderLayer)) return this;
 
-        Quad quad = Quad.fillQuad(this.bounds, EnumFaceDirection.getFacing(side), sprite, -1);
-        // the buffer probably expects vertex data to be in the int buffer?
-        // that's odd, since all the buffers are just the byte buf
-        // quads are also darker than expected, this might be because AO and world lighting are not handled
-        // buf.addVertexData(quad.toArray());
+        int k = this.shade ? getFaceShadeColor(side) : -1;
+        Quad quad = Quad.fillQuad(this.bounds, EnumFaceDirection.getFacing(side), sprite, k);
 
         VertexLighterFlat lighter;
-        if (Minecraft.isAmbientOcclusionEnabled() && this.state.getLightValue(this.world, this.pos) == 0) {
+        if (this.context.useAo()) {
             lighter = this.smoothAo;
         } else {
             lighter = this.flat;
         }
 
-        this.consumer.setOffset(pos);
-        lighter.setParent(this.consumer);
-        lighter.setWorld(this.world);
-        lighter.setState(this.state);
-        lighter.setBlockPos(this.pos);
-        lighter.updateBlockInfo();
+        this.context.updateLighter(lighter, this.consumer);
+
         // todo pipeline?
         putBakedQuad(lighter, quad, side);
 
         return this;
     }
 
-    public void putBakedQuad(IVertexConsumer consumer, Quad quad, EnumFacing side) {
-        consumer.setTexture(quad.sprite);
-        consumer.setQuadOrientation(side);
+    public void putBakedQuad(IVertexConsumer lighter, Quad quad, EnumFacing side) {
+        lighter.setTexture(quad.sprite);
+        lighter.setQuadOrientation(side);
         float[] data = new float[4];
 
-        VertexFormat formatFrom = consumer.getVertexFormat();
+        VertexFormat formatFrom = lighter.getVertexFormat();
         VertexFormat formatTo = this.fmt;
 
         int countFrom = formatFrom.getElementCount();
@@ -154,9 +141,9 @@ public class GTRendererState {
             for (int e = 0; e < countFrom; e++) {
                 if (eMap[e] != countTo) {
                     LightUtil.unpack(quad.toArray(), data, formatTo, v, eMap[e]);
-                    consumer.put(e, data);
+                    lighter.put(e, data);
                 } else {
-                    consumer.put(e);
+                    lighter.put(e);
                 }
             }
         }

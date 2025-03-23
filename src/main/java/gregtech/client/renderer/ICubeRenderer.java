@@ -1,6 +1,7 @@
 package gregtech.client.renderer;
 
 import gregtech.api.gui.resources.ResourceHelper;
+import gregtech.client.renderer.texture.RenderContext;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.texture.IconRegistrar;
 
@@ -9,6 +10,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -67,14 +69,14 @@ public interface ICubeRenderer extends IconRegistrar {
                              Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled);
 
     @SideOnly(Side.CLIENT)
-    default void render(GTRendererState rendererState) {
+    default void render(GTRendererState rendererState, RenderContext context) {
         for (EnumFacing side : EnumFacing.values()) {
-            renderOrientedState(rendererState, side, false, false);
+            renderOrientedState(rendererState, context, side, false, false);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    default void renderOrientedState(GTRendererState rendererState,
+    default void renderOrientedState(GTRendererState rendererState, RenderContext context,
                                      EnumFacing face, boolean isActive,
                                      boolean isWorkingEnabled) {
         Textures.renderFace(rendererState.setTexture(getParticleSprite()), face, BlockRenderLayer.SOLID);
@@ -93,5 +95,17 @@ public interface ICubeRenderer extends IconRegistrar {
             return textureMap.registerSprite(new ResourceLocation(modid, name));
         }
         return null;
+    }
+
+    @NotNull
+    @SideOnly(Side.CLIENT)
+    static TextureAtlasSprite getResourceSafe(@NotNull TextureMap textureMap, @NotNull String modid,
+                                              @NotNull String name) {
+        TextureAtlasSprite sprite = getResource(textureMap, modid, name);
+        if (sprite == null) {
+            FMLClientHandler.instance().trackMissingTexture(new ResourceLocation(modid, name));
+            sprite = textureMap.getMissingSprite();
+        }
+        return sprite;
     }
 }

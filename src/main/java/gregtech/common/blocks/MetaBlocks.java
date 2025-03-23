@@ -644,8 +644,6 @@ public class MetaBlocks {
         blockColors.registerBlockColorHandler((s, w, p, i) -> ConfigHolder.client.defaultPaintingColor,
                 HERMETIC_CASING);
         itemColors.registerItemColorHandler((s, i) -> ConfigHolder.client.defaultPaintingColor, HERMETIC_CASING);
-
-        WIRE_COIL.onColorRegister(blockColors, itemColors);
     }
 
     public static void registerWalkingSpeedBonus() {

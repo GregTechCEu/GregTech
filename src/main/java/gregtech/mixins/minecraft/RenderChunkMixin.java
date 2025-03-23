@@ -3,6 +3,7 @@ package gregtech.mixins.minecraft;
 import gregtech.api.block.IBlockRenderer;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.client.renderer.GTRendererState;
+import gregtech.client.renderer.texture.RenderContext;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -19,6 +20,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+
+import static com.creativemd.littletiles.common.util.grid.LittleGridContext.context;
 
 @Mixin(RenderChunk.class)
 public class RenderChunkMixin {
@@ -49,11 +52,13 @@ public class RenderChunkMixin {
             switch (state.getRenderType()) {
                 case MODEL -> {
                     state = state.getBlock().getExtendedState(state, world, pos);
+                    RenderContext context = RenderContext.getContext();
+                    context.state = state;
+                    context.pos = pos;
+                    context.world = world;
                     // render custom block
                     return renderer.renderBlockSafe(GTRendererState.getCurrentState()
-                            .setBuffer(bufferBuilder)
-                            .updateState(state, world, pos)
-                            .fullBlock());
+                            .updateState(context).setBuffer(bufferBuilder).fullBlock(), context);
                 }
                 case LIQUID -> {
                     return instance.fluidRenderer.renderFluid(world, state, pos, bufferBuilder);
