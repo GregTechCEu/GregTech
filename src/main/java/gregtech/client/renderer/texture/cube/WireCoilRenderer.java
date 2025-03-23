@@ -6,11 +6,9 @@ import gregtech.client.renderer.GTRendererState;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.RenderContext;
 import gregtech.client.utils.BloomEffectUtil;
-import gregtech.common.blocks.BlockWireCoil;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
@@ -49,20 +47,13 @@ public class WireCoilRenderer extends SimpleCubeRenderer {
     @Override
     public void renderOrientedState(GTRendererState rendererState, RenderContext context,
                                     EnumFacing face, boolean isActive, boolean isWorkingEnabled) {
-        BlockRenderLayer layer = isGeneric(context) ? BlockRenderLayer.CUTOUT : BlockRenderLayer.SOLID;
-
         rendererState.setTexture(this.base);
-        rendererState.quad(face, layer);
+        rendererState.quad(face, context.getRenderLayer());
         rendererState.setTexture(this.sprite);
-        rendererState.quad(face, layer);
+        rendererState.quad(face, context.getRenderLayer());
         if (isActive) {
             rendererState.setTexture(this.emissive);
             rendererState.quad(face, BloomEffectUtil.getEffectiveBloomLayer());
         }
-    }
-
-    private static boolean isGeneric(RenderContext context) {
-        if (!(context.state.getBlock() instanceof BlockWireCoil wireCoil)) return false;
-        return wireCoil.getState(context.state).generic;
     }
 }

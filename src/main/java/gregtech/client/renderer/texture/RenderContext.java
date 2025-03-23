@@ -52,4 +52,8 @@ public class RenderContext {
     public boolean useAo() {
         return Minecraft.isAmbientOcclusionEnabled() && this.state.getLightValue(this.world, this.pos) == 0;
     }
+
+    public BlockRenderLayer getRenderLayer() {
+        return state.getBlock().getRenderLayer();
+    }
 }

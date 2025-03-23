@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.block.IBlockRenderer;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.VariantActiveBlock;
-import gregtech.api.block.VariantItemBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -13,10 +12,10 @@ import gregtech.client.model.ActiveVariantBlockBakedModel;
 import gregtech.client.renderer.GTRendererState;
 import gregtech.client.renderer.texture.RenderContext;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -25,7 +24,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -34,7 +32,6 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.cleanroommc.modularui.utils.Color;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.jetbrains.annotations.NotNull;
@@ -60,21 +57,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
         setDefaultState(getState(CoilType.CUPRONICKEL));
     }
 
-    @NotNull
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.SOLID;
-    }
-
-    @Override
-    public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
-        CoilType type = getState(state);
-        if (!type.generic ? layer == BlockRenderLayer.SOLID : layer == BlockRenderLayer.CUTOUT) {
-            return true;
-        }
-        return layer == BloomEffectUtil.getEffectiveBloomLayer(isBloomEnabled(type));
-    }
-
     @Override
     protected @NotNull Collection<CoilType> computeVariants() {
         return getCoilTypes();
@@ -86,10 +68,10 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
                                @NotNull ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
 
-        // noinspection rawtypes, unchecked
-        VariantItemBlock itemBlock = (VariantItemBlock<CoilType, BlockWireCoil>) itemStack.getItem();
-        IBlockState stackState = itemBlock.getBlockState(itemStack);
-        CoilType coilType = getState(stackState);
+        if (!(Block.getBlockFromItem(itemStack.getItem()) instanceof BlockWireCoil wireCoil))
+            return;
+
+        CoilType coilType = wireCoil.getState(itemStack);
 
         lines.add(I18n.format("tile.wire_coil.tooltip_heat", coilType.getCoilTemperature()));
 
@@ -168,8 +150,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
         public static CoilType TRINIUM;
         public static CoilType TRITANIUM;
 
-        public boolean generic = true;
-
         private CoilType() {
             COIL_TYPES.add(this);
         }
@@ -189,7 +169,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
         static {
             CUPRONICKEL = coilType(Materials.Cupronickel)
                     .tier(GTValues.LV)
-                    .generic(false)
                     .coilTemp(1800)
                     .multiSmelter(1, 1)
                     .build();
@@ -249,11 +228,9 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
         private int level;
         private int energyDiscount;
         private int tier;
-        private int color = Color.WHITE.main;
         private final Material material;
-        private ModelResourceLocation inactive;
-        private ModelResourceLocation active;
-        private boolean generic = true;
+        private final ModelResourceLocation inactive = model(false);
+        private final ModelResourceLocation active = model(true);
 
         private Builder(String name, Material material) {
             this.material = material;
@@ -270,22 +247,8 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
             return this;
         }
 
-        public Builder color(int color) {
-            this.color = color;
-            return this;
-        }
-
-        public Builder generic(boolean generic) {
-            this.generic = generic;
-            this.inactive = model(false, name);
-            this.active = model(true, name);
-            return this;
-        }
-
-        private ModelResourceLocation model(boolean active, String variant) {
-            String v = this.generic ? String.format("%s", active) :
-                    String.format("active=%s,variant=%s", active, variant);
-            return new ModelResourceLocation(GTUtility.gregtechId("wire_coil"), v);
+        private ModelResourceLocation model(boolean active) {
+            return new ModelResourceLocation(GTUtility.gregtechId("wire_coil"), active ? "active" : "normal");
         }
 
         public Builder multiSmelter(int level, int energyDiscount) {
@@ -295,17 +258,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
         }
 
         public CoilType build() {
-            if (inactive == null) {
-                inactive = new ModelResourceLocation(GTUtility.gregtechId("wire_coil"), "normal");
-            }
-            if (active == null) {
-                active = new ModelResourceLocation(GTUtility.gregtechId("wire_coil"), "active");
-            }
             return new CoilType() {
-
-                {
-                    this.generic = Builder.this.generic;
-                }
 
                 @Override
                 public @NotNull String getName() {
@@ -339,7 +292,9 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> im
 
                 @Override
                 public int getCoilColor() {
-                    return color;
+                    var m = getMaterial();
+                    if (m == null) return 0xFFFFFF;
+                    return m.getMaterialRGB();
                 }
 
                 @Override
