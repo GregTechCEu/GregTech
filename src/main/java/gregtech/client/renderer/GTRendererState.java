@@ -17,6 +17,11 @@ import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.client.model.pipeline.VertexLighterSmoothAo;
 
+import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
+import it.unimi.dsi.fastutil.objects.ReferenceSet;
+
+import java.util.EnumMap;
+
 import javax.vecmath.Vector3f;
 
 public class GTRendererState {
@@ -35,6 +40,14 @@ public class GTRendererState {
     public TextureAtlasSprite sprite;
     private boolean shade;
     public final float[] bounds = new float[6];
+    private final EnumMap<BlockRenderLayer, ReferenceSet<RenderOperation>> operations = new EnumMap<>(
+            BlockRenderLayer.class);
+
+    {
+        for (BlockRenderLayer value : BlockRenderLayer.values()) {
+            operations.put(value, new ReferenceArraySet<>());
+        }
+    }
 
     // state information
     RenderContext context;
@@ -102,11 +115,7 @@ public class GTRendererState {
     }
 
     public GTRendererState quad(EnumFacing side) {
-        return quad(side, MinecraftForgeClient.getRenderLayer());
-    }
-
-    public GTRendererState quad(EnumFacing side, BlockRenderLayer renderLayer) {
-        if (!this.context.canRender(side, renderLayer)) return this;
+        if (!this.context.canRender(side)) return this;
 
         int k = this.shade ? getFaceShadeColor(side) : -1;
         Quad quad = Quad.fillQuad(this.bounds, EnumFaceDirection.getFacing(side), sprite, k);
@@ -124,6 +133,17 @@ public class GTRendererState {
         putBakedQuad(lighter, quad, side);
 
         return this;
+    }
+
+    public GTRendererState pushQuad(EnumFacing side, BlockRenderLayer renderLayer, TextureAtlasSprite sprite) {
+        operations.get(renderLayer).add(state -> state.setTexture(sprite).quad(side));
+        return this;
+    }
+
+    public void render(BlockRenderLayer layer) {
+        for (RenderOperation op : operations.get(layer)) {
+            op.operate(this);
+        }
     }
 
     public void putBakedQuad(IVertexConsumer lighter, Quad quad, EnumFacing side) {
@@ -193,6 +213,11 @@ public class GTRendererState {
         public float getVertexV(int vIndex) {
             return vIndex != 0 && vIndex != 3 ? this.uvs[3] : this.uvs[1];
         }
+    }
+
+    public interface RenderOperation {
+
+        void operate(GTRendererState state);
     }
 
     public final static class Quad {

@@ -47,13 +47,14 @@ public class WireCoilRenderer extends SimpleCubeRenderer {
     @Override
     public void renderOrientedState(GTRendererState rendererState, RenderContext context,
                                     EnumFacing face, boolean isActive, boolean isWorkingEnabled) {
-        rendererState.setTexture(this.base);
-        rendererState.quad(face, context.getRenderLayer());
-        rendererState.setTexture(this.sprite);
-        rendererState.quad(face, context.getRenderLayer());
+        // todo should this instead be done in BlockWireCoil?
+        // rendererState.setTexture(this.base);
+        rendererState.pushQuad(face, context.getRenderLayer(), this.base);
+        // rendererState.setTexture(this.sprite);
+        rendererState.pushQuad(face, context.getRenderLayer(), this.sprite);
         if (isActive) {
-            rendererState.setTexture(this.emissive);
-            rendererState.quad(face, BloomEffectUtil.getEffectiveBloomLayer());
+            // rendererState.setTexture(this.emissive);
+            rendererState.pushQuad(face, BloomEffectUtil.getEffectiveBloomLayer(), this.emissive);
         }
     }
 }

@@ -7,7 +7,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -23,8 +22,12 @@ public class RenderContext {
     public BlockPos pos;
     public Matrix4f translation;
 
-    public static RenderContext getContext() {
-        return contextThreadLocal.get();
+    public static RenderContext getContext(IBlockState state, IBlockAccess world, BlockPos pos) {
+        RenderContext context = contextThreadLocal.get();
+        context.state = state;
+        context.world = world;
+        context.pos = pos;
+        return context;
     }
 
     @Nullable
@@ -35,8 +38,8 @@ public class RenderContext {
         return null;
     }
 
-    public boolean canRender(EnumFacing side, BlockRenderLayer renderLayer) {
-        if (renderLayer == null || renderLayer != MinecraftForgeClient.getRenderLayer()) return false;
+    public boolean canRender(EnumFacing side) {
+//        if (renderLayer == null || renderLayer != MinecraftForgeClient.getRenderLayer()) return false;
         return this.state.shouldSideBeRendered(world, pos, side);
     }
 

@@ -77,10 +77,7 @@ public interface ICubeRenderer extends IconRegistrar {
 
     @SideOnly(Side.CLIENT)
     default void renderOrientedState(GTRendererState rendererState, RenderContext context,
-                                     EnumFacing face, boolean isActive,
-                                     boolean isWorkingEnabled) {
-        Textures.renderFace(rendererState.setTexture(getParticleSprite()), face, BlockRenderLayer.SOLID);
-    }
+                                     EnumFacing face, boolean isActive, boolean isWorkingEnabled) {}
 
     @SideOnly(Side.CLIENT)
     default void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,

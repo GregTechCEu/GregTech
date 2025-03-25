@@ -736,11 +736,6 @@ public class Textures {
         renderState.render();
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void renderFace(GTRendererState state, EnumFacing face, BlockRenderLayer renderLayer) {
-        state.quad(face, renderLayer);
-    }
-
     // TODO Could maybe be cleaned up?
     public static ICubeRenderer getInactiveTexture(ICubeRenderer renderer) {
         if (renderer == BRONZE_FIREBOX_ACTIVE) return BRONZE_FIREBOX;
