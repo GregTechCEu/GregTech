@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -45,12 +46,14 @@ import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,32 +97,50 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
         return new MultiblockUIFactory(this)
                 .setSize(176, 166)
                 .disableDisplay()
-                .addScreenChildren((parent, syncManager) -> parent
-                        .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                        .child(Flow.row()
-                                .top(20)
-                                .alignX(0.5f)
-                                // .pos(52, 20)
-                                .crossAxisAlignment(Alignment.CrossAxis.CENTER)
-                                .coverChildren()
-                                .child(new Grid()
-                                        .coverChildren()
-                                        .mapTo(1, 3, value -> new ItemSlot()
-                                                .slot(importItems, value))
-                                        .marginRight(6))
-                                .child(new com.cleanroommc.modularui.widgets.ProgressWidget()
-                                        // .pos(77, 39)
-                                        .size(20, 15)
-                                        .marginRight(6)
-                                        // .texture() todo primitive progress texture
-                                        .value(new DoubleSyncValue(recipeMapWorkable::getProgressPercent)))
-                                .child(new Grid()
-                                        .coverChildren()
-                                        // .pos(104, 38)
-                                        .mapTo(3, 3, value -> new ItemSlot()
-                                                .slot(new ModularSlot(exportItems, value)
-                                                        // todo brick overlay
-                                                        .accessibility(false, true))))));
+                .disableButtons()
+                .addScreenChildren((parent, syncManager) -> {
+                    UITexture[] importOverlays = {
+                            GTGuiTextures.PRIMITIVE_INGOT_OVERLAY,
+                            GTGuiTextures.PRIMITIVE_DUST_OVERLAY,
+                            GTGuiTextures.PRIMITIVE_FURNACE_OVERLAY
+                    };
+
+                    UITexture[] exportOverlays = {
+                            GTGuiTextures.PRIMITIVE_INGOT_OVERLAY,
+                            GTGuiTextures.PRIMITIVE_DUST_OVERLAY,
+                            GTGuiTextures.PRIMITIVE_DUST_OVERLAY
+                    };
+
+                    SlotGroup importGroup = new SlotGroup("import", 1, true);
+
+                    parent.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                            .child(Flow.row()
+                                    .top(20)
+                                    .alignX(0.5f)
+                                    // .pos(52, 20)
+                                    .crossAxisAlignment(Alignment.CrossAxis.CENTER)
+                                    .coverChildren()
+                                    .child(new Grid()
+                                            .coverChildren()
+                                            .mapTo(1, 3, value -> new ItemSlot()
+                                                    .background(GTGuiTextures.SLOT_PRIMITIVE, importOverlays[value])
+                                                    .slot(new ModularSlot(importItems, value)
+                                                            .slotGroup(importGroup)))
+                                            .marginRight(6))
+                                    .child(new com.cleanroommc.modularui.widgets.ProgressWidget()
+                                            // .pos(77, 39)
+                                            .size(20, 15)
+                                            .marginRight(6)
+                                            .texture(GTGuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, 20)
+                                            .value(new DoubleSyncValue(recipeMapWorkable::getProgressPercent)))
+                                    .child(new Grid()
+                                            .coverChildren()
+                                            // .pos(104, 38)
+                                            .mapTo(3, 3, value -> new ItemSlot()
+                                                    .background(GTGuiTextures.SLOT_PRIMITIVE, exportOverlays[value])
+                                                    .slot(new ModularSlot(exportItems, value)
+                                                            .accessibility(false, true)))));
+                });
     }
 
     @Override

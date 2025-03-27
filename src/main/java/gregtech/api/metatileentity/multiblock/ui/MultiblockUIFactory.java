@@ -47,6 +47,8 @@ public class MultiblockUIFactory {
     private ScreenFunction screenFunction;
     private static final Consumer<MultiblockUIBuilder> NO_OP = b -> {};
     private boolean disableDisplay = false;
+    private boolean disableIndicator = false;
+    private boolean disableButtons = false;
 
     static {
         // register operations
@@ -85,13 +87,20 @@ public class MultiblockUIFactory {
             this.screenFunction.addWidgets(panel, panelSyncManager);
         }
 
+        var playerInv = SlotGroupWidget.playerInventory(0);
+        if (disableButtons) {
+            playerInv.alignX(0.5f);
+        } else {
+            playerInv.left(4);
+        }
+
         return panel.child(Flow.row()
                 .bottom(7)
-                .height(77)
-                .margin(4, 0)
-                .child(SlotGroupWidget.playerInventory(0)
-                        .left(2))
-                .child(createButtons(panel, panelSyncManager, guiData)));
+                .coverChildrenHeight()
+                .left(4).right(4)
+                .crossAxisAlignment(Alignment.CrossAxis.CENTER)
+                .child(playerInv)
+                .childIf(!disableButtons, createButtons(panel, panelSyncManager, guiData)));
     }
 
     private Widget<?> createIndicator(PanelSyncManager syncManager) {
@@ -212,9 +221,19 @@ public class MultiblockUIFactory {
 
     public MultiblockUIFactory disableDisplay() {
         disableDisplayText();
+        this.disableDisplay = true;
+        return disableIndicator();
+    }
+
+    public MultiblockUIFactory disableIndicator() {
         disableWarningText();
         disableErrorText();
-        this.disableDisplay = true;
+        this.disableIndicator = true;
+        return this;
+    }
+
+    public MultiblockUIFactory disableButtons() {
+        this.disableButtons = true;
         return this;
     }
 
@@ -308,7 +327,7 @@ public class MultiblockUIFactory {
             this.screenFunction.addWidgets(parent, syncManager);
         }
 
-        return parent.child(createIndicator(syncManager))
+        return parent.childIf(!disableIndicator, createIndicator(syncManager))
                 .background(getDisplayBackground())
                 .size(190, screenHeight)
                 .pos(4, 4);
@@ -331,7 +350,6 @@ public class MultiblockUIFactory {
         var powerButton = createPowerButton(mainPanel, panelSyncManager);
 
         return Flow.column()
-                .alignX(1f)
                 .right(4)
                 .size(18, 77)
                 .child(createDistinctButton(mainPanel, panelSyncManager))
@@ -404,7 +422,7 @@ public class MultiblockUIFactory {
                 .disableHoverBackground()
                 .background(GTGuiTextures.BUTTON_POWER_DETAIL.asIcon().size(18, 6).marginTop(24), GTGuiTextures.BUTTON)
                 .value(new BooleanSyncValue(controllable::isWorkingEnabled, controllable::setWorkingEnabled))
-                .marginTop(5);
+                .marginTop(4);
     }
 
     public static final class Screen {
