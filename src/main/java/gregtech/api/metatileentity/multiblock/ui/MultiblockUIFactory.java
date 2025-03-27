@@ -68,41 +68,6 @@ public class MultiblockUIFactory {
         configureDisplayText(builder -> builder.title(mte.getMetaFullName()).structureFormed(mte.isStructureFormed()));
     }
 
-    /**
-     * Constructs the multiblock ui panel<br />
-     * <i>It is not recommended to override this method</i>
-     */
-    public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        var panel = GTGuis.createPanel(mte, width, height)
-                .childIf(!disableDisplay, createScreen(panelSyncManager));
-
-        // TODO createExtras() hook for overrides?
-        if (mte instanceof ProgressBarMultiblock progressBarMultiblock &&
-                progressBarMultiblock.getProgressBarCount() > 0) {
-            panel.height(height + (Bars.HEIGHT * 2) - 2);
-            panel.child(createBars(progressBarMultiblock, panelSyncManager));
-        }
-
-        if (disableDisplay && screenFunction != null) {
-            this.screenFunction.addWidgets(panel, panelSyncManager);
-        }
-
-        var playerInv = SlotGroupWidget.playerInventory(0);
-        if (disableButtons) {
-            playerInv.alignX(0.5f);
-        } else {
-            playerInv.left(4);
-        }
-
-        return panel.child(Flow.row()
-                .bottom(7)
-                .coverChildrenHeight()
-                .left(4).right(4)
-                .crossAxisAlignment(Alignment.CrossAxis.CENTER)
-                .child(playerInv)
-                .childIf(!disableButtons, createButtons(panel, panelSyncManager, guiData)));
-    }
-
     private Widget<?> createIndicator(PanelSyncManager syncManager) {
         if (warningText == NO_OP && errorText == NO_OP) {
             return new Widget<>()
@@ -259,6 +224,46 @@ public class MultiblockUIFactory {
         return this;
     }
 
+    public MultiblockUIFactory addScreenChildren(ScreenFunction function) {
+        this.screenFunction = function;
+        return this;
+    }
+
+    /**
+     * Constructs the multiblock ui panel<br />
+     * <i>It is not recommended to override this method</i>
+     */
+    public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+        var panel = GTGuis.createPanel(mte, width, height)
+                .childIf(!disableDisplay, createScreen(panelSyncManager));
+
+        // TODO createExtras() hook for overrides?
+        if (mte instanceof ProgressBarMultiblock progressBarMultiblock &&
+                progressBarMultiblock.getProgressBarCount() > 0) {
+            panel.height(height + (Bars.HEIGHT * 2) - 2);
+            panel.child(createBars(progressBarMultiblock, panelSyncManager));
+        }
+
+        if (disableDisplay && screenFunction != null) {
+            this.screenFunction.addWidgets(panel, panelSyncManager);
+        }
+
+        var playerInv = SlotGroupWidget.playerInventory(0);
+        if (disableButtons) {
+            playerInv.alignX(0.5f);
+        } else {
+            playerInv.left(4);
+        }
+
+        return panel.child(Flow.row()
+                .bottom(7)
+                .coverChildrenHeight()
+                .left(4).right(4)
+                .crossAxisAlignment(Alignment.CrossAxis.CENTER)
+                .child(playerInv)
+                .childIf(!disableButtons, createButtons(panel, panelSyncManager, guiData)));
+    }
+
     /**
      * @param progressMulti    the multiblock with progress bars
      * @param panelSyncManager the sync manager for synchronizing widgets
@@ -302,11 +307,6 @@ public class MultiblockUIFactory {
         return column;
     }
 
-    public MultiblockUIFactory addScreenChildren(ScreenFunction function) {
-        this.screenFunction = function;
-        return this;
-    }
-
     protected Widget<?> createScreen(PanelSyncManager syncManager) {
         var parent = new ParentWidget<>();
 
@@ -333,7 +333,6 @@ public class MultiblockUIFactory {
                 .pos(4, 4);
     }
 
-    // todo this should be part of the theme instead
     private UITexture getDisplayBackground() {
         return mte.getUITheme().getDisplayBackground();
     }
