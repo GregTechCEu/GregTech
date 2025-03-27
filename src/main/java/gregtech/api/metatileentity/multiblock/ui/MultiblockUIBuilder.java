@@ -201,8 +201,7 @@ public class MultiblockUIBuilder {
         if (!isStructureFormed) return this;
         maxVoltage = getSyncer().syncLong(maxVoltage);
         recipeEUt = getSyncer().syncLong(recipeEUt);
-        // todo this recipe eut should always be positive
-        if (maxVoltage != 0 && maxVoltage >= Math.abs(recipeEUt)) {
+        if (maxVoltage != 0 && maxVoltage >= recipeEUt) {
             String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
             // wrap in text component to keep it from being formatted
             var voltageName = KeyUtil.voltage(GTValues.VOCNF, maxVoltage);

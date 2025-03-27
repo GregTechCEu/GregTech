@@ -23,20 +23,28 @@ public class GTGuiTextures {
     /** Keys used for GT assets registered for use in Themes */
     public static class IDs {
 
-        public static final String STANDARD_BACKGROUND = "gregtech_standard_bg";
-        public static final String COVER_BACKGROUND = "gregtech_cover_bg";
-        public static final String BRONZE_BACKGROUND = "gregtech_bronze_bg";
-        public static final String STEEL_BACKGROUND = "gregtech_steel_bg";
-        public static final String PRIMITIVE_BACKGROUND = "gregtech_primitive_bg";
+        public static final String STANDARD_BACKGROUND = id("standard_bg");
+        public static final String COVER_BACKGROUND = id("cover_bg");
+        public static final String BRONZE_BACKGROUND = id("bronze_bg");
+        public static final String STEEL_BACKGROUND = id("steel_bg");
+        public static final String PRIMITIVE_BACKGROUND = id("primitive_bg");
 
-        public static final String STANDARD_SLOT = "gregtech_standard_slot";
-        public static final String BRONZE_SLOT = "gregtech_bronze_slot";
-        public static final String STEEL_SLOT = "gregtech_steel_slot";
-        public static final String PRIMITIVE_SLOT = "gregtech_primitive_slot";
+        public static final String STANDARD_SLOT = id("standard_slot");
+        public static final String BRONZE_SLOT = id("bronze_slot");
+        public static final String STEEL_SLOT = id("steel_slot");
+        public static final String PRIMITIVE_SLOT = id("primitive_slot");
 
-        public static final String STANDARD_FLUID_SLOT = "gregtech_standard_fluid_slot";
+        public static final String STANDARD_FLUID_SLOT = id("standard_fluid_slot");
 
-        public static final String STANDARD_BUTTON = "gregtech_standard_button";
+        public static final String STANDARD_BUTTON = id("standard_button");
+
+        public static final String DISPLAY = id("display");
+        public static final String DISPLAY_BRONZE = id("display_bronze");
+        public static final String DISPLAY_STEEL = id("display_steel");
+
+        private static String id(String path) {
+            return "gregtech:" + path;
+        }
     }
 
     // ICONS
@@ -105,6 +113,7 @@ public class GTGuiTextures {
     // DISPLAYS
     public static final UITexture DISPLAY = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/base/display.png")
+            .name(IDs.DISPLAY)
             .imageSize(143, 75)
             .adaptable(2)
             .canApplyTheme()
@@ -112,12 +121,14 @@ public class GTGuiTextures {
 
     public static final UITexture DISPLAY_BRONZE = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/base/display_bronze.png")
+            .name(IDs.DISPLAY_BRONZE)
             .imageSize(143, 75)
             .adaptable(2)
             .build();
 
     public static final UITexture DISPLAY_STEEL = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/base/display_steel.png")
+            .name(IDs.DISPLAY_STEEL)
             .imageSize(143, 75)
             .adaptable(2)
             .build();
