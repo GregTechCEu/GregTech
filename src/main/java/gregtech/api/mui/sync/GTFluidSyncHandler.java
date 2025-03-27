@@ -97,7 +97,7 @@ public class GTFluidSyncHandler extends SyncHandler {
             fluidTank.setFluid(fluid);
         } else {
             tank.drain(Integer.MAX_VALUE, true);
-            tank.fill(fluid, true);
+            if (fluid != null) tank.fill(fluid, true);
         }
         if (!isPhantom() || fluid == null) return;
         if (this.phantomFluid == null || this.phantomFluid.getFluid() != fluid.getFluid()) {
