@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -113,6 +114,12 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         if (isMetal)
             return Textures.SOLID_STEEL_CASING;
         return Textures.WOOD_WALL;
+    }
+
+    @Override
+    public GTGuiTheme getUITheme() {
+        if (isMetal) return GTGuiTheme.STEEL;
+        else return GTGuiTheme.PRIMITIVE;
     }
 
     @Override

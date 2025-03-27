@@ -128,7 +128,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         int y = 1;
 
         if (!this.syncHandler.drawAlwaysFull()) {
-            float newHeight = height * ((float) content.amount / this.syncHandler.getCapacity());
+            float amt = content == null ? 0f : content.amount;
+            float newHeight = height * (amt / this.syncHandler.getCapacity());
             y += (int) (height - newHeight);
             height = newHeight;
         }

@@ -6,7 +6,6 @@ import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTLambdaUtils;
 import gregtech.api.util.GTLog;
@@ -47,6 +46,7 @@ public class MultiblockUIFactory {
     private int screenHeight = 109;
     private ScreenFunction screenFunction;
     private static final Consumer<MultiblockUIBuilder> NO_OP = b -> {};
+    private boolean disableDisplay = false;
 
     static {
         // register operations
@@ -72,13 +72,17 @@ public class MultiblockUIFactory {
      */
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         var panel = GTGuis.createPanel(mte, width, height)
-                .child(createScreen(panelSyncManager));
+                .childIf(!disableDisplay, createScreen(panelSyncManager));
 
         // TODO createExtras() hook for overrides?
         if (mte instanceof ProgressBarMultiblock progressBarMultiblock &&
                 progressBarMultiblock.getProgressBarCount() > 0) {
             panel.height(height + (Bars.HEIGHT * 2) - 2);
             panel.child(createBars(progressBarMultiblock, panelSyncManager));
+        }
+
+        if (disableDisplay && screenFunction != null) {
+            this.screenFunction.addWidgets(panel, panelSyncManager);
         }
 
         return panel.child(Flow.row()
@@ -95,7 +99,7 @@ public class MultiblockUIFactory {
             return new Widget<>()
                     .size(18)
                     .pos(174 - 5, screenHeight - 18 - 3)
-                    .overlay(GTGuiTextures.getLogo(mte.getUITheme()));
+                    .overlay(GTGuiTextures.GREGTECH_LOGO_DARK);
         }
 
         MultiblockUIBuilder error = builder();
@@ -114,7 +118,7 @@ public class MultiblockUIFactory {
             } else if (!warning.isEmpty()) {
                 return GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
             } else {
-                return GTGuiTextures.getLogo(mte.getUITheme());
+                return GTGuiTextures.GREGTECH_LOGO_DARK;
             }
         });
 
@@ -203,6 +207,14 @@ public class MultiblockUIFactory {
 
     public MultiblockUIFactory disableDisplayText() {
         this.displayText = NO_OP;
+        return this;
+    }
+
+    public MultiblockUIFactory disableDisplay() {
+        disableDisplayText();
+        disableWarningText();
+        disableErrorText();
+        this.disableDisplay = true;
         return this;
     }
 
@@ -304,14 +316,7 @@ public class MultiblockUIFactory {
 
     // todo this should be part of the theme instead
     private UITexture getDisplayBackground() {
-        var theme = mte.getUITheme();
-        if (theme == GTGuiTheme.BRONZE) {
-            return GTGuiTextures.DISPLAY_BRONZE;
-        } else if (theme == GTGuiTheme.STEEL) {
-            return GTGuiTextures.DISPLAY_STEEL;
-        } else {
-            return GTGuiTextures.DISPLAY;
-        }
+        return mte.getUITheme().getDisplayBackground();
     }
 
     @NotNull
