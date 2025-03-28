@@ -149,7 +149,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                             .width(18)
                             .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY)
                             // todo lang
-                            .addTooltipLine("Configure Boiler Throttle")
+                            .addTooltipLine(IKey.lang("gregtech.multiblock.large_boiler.throttle_button.tooltip"))
                             .background(GTGuiTextures.BUTTON)
                             .onMousePressed(i -> {
                                 if (throttle.isPanelOpen()) {

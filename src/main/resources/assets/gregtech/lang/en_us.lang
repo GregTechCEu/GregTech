@@ -5887,6 +5887,7 @@ gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 add
 
 gregtech.multiblock.large_boiler.efficiency=Efficiency: %s
 gregtech.multiblock.large_boiler.steam_output=Steam Output: %s
+gregtech.multiblock.large_boiler.throttle_button.tooltip=Configure Boiler Throttle
 gregtech.multiblock.large_boiler.throttle=Throttle: %s
 gregtech.multiblock.large_boiler.throttle.title=Boiler Throttle
 gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
