@@ -971,7 +971,8 @@ public class MultiblockUIBuilder {
         public void readOnClient(int id, PacketBuffer buf) {
             if (id == 0) {
                 getSyncer().readBuffer(buf);
-                markDirty();
+                onRebuild();
+                runAction();
             }
         }
 
