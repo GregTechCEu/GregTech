@@ -7,11 +7,7 @@ import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.IndicatorImageWidget;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -58,7 +54,6 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -357,78 +352,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
 
     public long getHeat() {
         return heat;
-    }
-
-    @Override
-    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        // Background
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 198, 236);
-
-        // Display
-        builder.image(4, 4, 190, 138, GuiTextures.DISPLAY);
-
-        // Energy Bar
-        builder.widget(new gregtech.api.gui.widgets.ProgressWidget(
-                () -> energyContainer.getEnergyCapacity() > 0 ?
-                        1.0 * energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() : 0,
-                4, 144, 94, 7,
-                GuiTextures.PROGRESS_BAR_FUSION_ENERGY, gregtech.api.gui.widgets.ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(this::addEnergyBarHoverText));
-
-        // Heat Bar
-        builder.widget(new gregtech.api.gui.widgets.ProgressWidget(
-                () -> energyContainer.getEnergyCapacity() > 0 ? 1.0 * heat / energyContainer.getEnergyCapacity() : 0,
-                100, 144, 94, 7,
-                GuiTextures.PROGRESS_BAR_FUSION_HEAT, gregtech.api.gui.widgets.ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(this::addHeatBarHoverText));
-
-        // Indicator Widget
-        builder.widget(new IndicatorImageWidget(174, 122, 17, 17, getLogo())
-                .setWarningStatus(getWarningLogo(), this::addWarningText)
-                .setErrorStatus(getErrorLogo(), this::addErrorText));
-
-        // Title
-        if (tier == GTValues.LuV) {
-            // MK1
-            builder.widget(new ImageWidget(66, 9, 67, 12, GuiTextures.FUSION_REACTOR_MK1_TITLE).setIgnoreColor(true));
-        } else if (tier == GTValues.ZPM) {
-            // MK2
-            builder.widget(new ImageWidget(65, 9, 69, 12, GuiTextures.FUSION_REACTOR_MK2_TITLE).setIgnoreColor(true));
-        } else {
-            // MK3
-            builder.widget(new ImageWidget(64, 9, 71, 12, GuiTextures.FUSION_REACTOR_MK3_TITLE).setIgnoreColor(true));
-        }
-
-        // Fusion Diagram + Progress Bar
-        builder.widget(new ImageWidget(55, 24, 89, 101, GuiTextures.FUSION_REACTOR_DIAGRAM).setIgnoreColor(true));
-        builder.widget(FusionProgressSupplier.Type.BOTTOM_LEFT.getWidget(this));
-        builder.widget(FusionProgressSupplier.Type.TOP_LEFT.getWidget(this));
-        builder.widget(FusionProgressSupplier.Type.TOP_RIGHT.getWidget(this));
-        builder.widget(FusionProgressSupplier.Type.BOTTOM_RIGHT.getWidget(this));
-
-        // Fusion Legend
-        builder.widget(new ImageWidget(7, 98, 108, 41, GuiTextures.FUSION_REACTOR_LEGEND).setIgnoreColor(true));
-
-        // Power Button + Detail
-        builder.widget(new ImageCycleButtonWidget(173, 211, 18, 18, GuiTextures.BUTTON_POWER,
-                recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::setWorkingEnabled));
-        builder.widget(new ImageWidget(173, 229, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
-
-        // Voiding Mode Button
-        builder.widget(new ImageCycleButtonWidget(173, 189, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
-                4, this::getVoidingMode, this::setVoidingMode)
-                        .setTooltipHoverString(this::getVoidingModeTooltip));
-
-        // Distinct Buses Unavailable Image
-        builder.widget(new ImageWidget(173, 171, 18, 18, GuiTextures.BUTTON_NO_DISTINCT_BUSES)
-                .setTooltip("gregtech.multiblock.universal.distinct_not_supported"));
-
-        // Flex Unavailable Image
-        builder.widget(getFlexButton(173, 153, 18, 18));
-
-        // Player Inventory
-        builder.bindPlayerInventory(entityPlayer.inventory, 153);
-        return builder;
     }
 
     @Override
