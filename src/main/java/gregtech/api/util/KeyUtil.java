@@ -106,28 +106,6 @@ public class KeyUtil {
         return string(formatting, () -> TextFormattingUtil.formatNumbers(supplier.getAsLong()) + suffix);
     }
 
-    /**
-     * Calls {@link GTUtility#getFloorTierByVoltage(long)} to get the voltage tier
-     * 
-     * @param array   Array of voltage names
-     * @param voltage The max voltage
-     * @return the voltage name for the given voltage tier
-     */
-    public static IKey voltage(String[] array, long voltage) {
-        return string(array[GTUtility.getFloorTierByVoltage(voltage)]);
-    }
-
-    /**
-     * Calls {@link GTUtility#getFloorTierByVoltage(long)} to get the voltage tier
-     *
-     * @param array   Array of voltage names
-     * @param voltage The max voltage
-     * @return the voltage name for the given voltage tier
-     */
-    public static IKey overclock(String[] array, long voltage) {
-        return string(array[GTUtility.getOCTierByVoltage(voltage)]);
-    }
-
     public static IDrawable setHover(IKey body, IDrawable... hover) {
         if (ArrayUtils.isEmpty(hover)) return body;
         return body.asTextIcon()

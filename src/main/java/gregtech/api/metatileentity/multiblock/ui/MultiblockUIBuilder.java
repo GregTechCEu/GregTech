@@ -142,11 +142,12 @@ public class MultiblockUIBuilder {
 
         long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
         maxVoltage = getSyncer().syncLong(maxVoltage);
+        int tier = GTUtility.getFloorTierByVoltage(maxVoltage);
 
         IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
                 "gregtech.multiblock.max_energy_per_tick",
                 KeyUtil.number(maxVoltage),
-                KeyUtil.voltage(GTValues.VOCNF, maxVoltage));
+                KeyUtil.string(GTValues.VOCNF[tier]));
 
         var hoverText = KeyUtil.lang(TextFormatting.GRAY,
                 "gregtech.multiblock.max_energy_per_tick_hover");
@@ -184,7 +185,8 @@ public class MultiblockUIBuilder {
         if (energyUsage > 0) {
             String energyFormatted = TextFormattingUtil.formatNumbers(energyUsage);
             // wrap in text component to keep it from being formatted
-            var voltageName = KeyUtil.overclock(GTValues.VOCNF, energyUsage);
+            int tier = GTUtility.getOCTierByVoltage(energyUsage);
+            var voltageName = KeyUtil.string(GTValues.VOCNF[tier]);
 
             addKey(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.energy_consumption", energyFormatted, voltageName));
@@ -204,7 +206,8 @@ public class MultiblockUIBuilder {
         if (maxVoltage != 0 && maxVoltage >= recipeEUt) {
             String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
             // wrap in text component to keep it from being formatted
-            var voltageName = KeyUtil.voltage(GTValues.VOCNF, maxVoltage);
+            int tier = GTUtility.getFloorTierByVoltage(maxVoltage);
+            var voltageName = KeyUtil.string(GTValues.VOCNF[tier]);
 
             addKey(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.max_energy_per_tick", energyFormatted, voltageName));
@@ -226,7 +229,8 @@ public class MultiblockUIBuilder {
         if (maxVoltage != 0 && amperage != 0) {
             String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
             // wrap in text component to keep it from being formatted
-            var voltageName = KeyUtil.voltage(GTValues.VOCNF, maxVoltage);
+            int tier = GTUtility.getFloorTierByVoltage(maxVoltage);
+            var voltageName = KeyUtil.string(GTValues.VOCNF[tier]);
 
             addKey(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.max_energy_per_tick_amps",
