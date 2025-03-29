@@ -13,6 +13,7 @@ import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.metatileentity.multiblock.ui.UISyncer;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -137,6 +138,15 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                         "gregtech.multiblock.large_boiler.explosion_tooltip"));
             }
         });
+    }
+
+    @Override
+    public GTGuiTheme getUITheme() {
+        return switch (this.boilerType) {
+            case BRONZE -> GTGuiTheme.BRONZE;
+            case STEEL -> GTGuiTheme.STEEL;
+            default -> super.getUITheme();
+        };
     }
 
     @Override

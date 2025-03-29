@@ -37,6 +37,10 @@ public class GTGuiTextures {
         public static final String STANDARD_FLUID_SLOT = id("standard_fluid_slot");
 
         public static final String STANDARD_BUTTON = id("standard_button");
+        public static final String BRONZE_BUTTON = id("bronze_button");
+        public static final String STEEL_BUTTON = id("steel_button");
+        public static final String BRONZE_BUTTON_SELECTED = id("bronze_button_sel");
+        public static final String STEEL_BUTTON_SELECTED = id("steel_button_sel");
 
         public static final String DISPLAY = id("display");
         public static final String DISPLAY_BRONZE = id("display_bronze");
@@ -396,6 +400,42 @@ public class GTGuiTextures {
             .canApplyTheme()
             .build();
 
+    public static final UITexture BUTTON_BRONZE = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/widget/buttons.png")
+            .imageSize(54, 36)
+            .uv(18, 0, 18, 18)
+            .adaptable(2)
+            .name(IDs.BRONZE_BUTTON)
+            .canApplyTheme()
+            .build();
+
+    public static final UITexture BUTTON_BRONZE_SELECTED = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/widget/buttons.png")
+            .imageSize(54, 36)
+            .uv(18, 18, 18, 18)
+            .adaptable(2)
+            .name(IDs.BRONZE_BUTTON_SELECTED)
+            .canApplyTheme()
+            .build();
+
+    public static final UITexture BUTTON_STEEL = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/widget/buttons.png")
+            .imageSize(54, 36)
+            .uv(36, 0, 18, 18)
+            .adaptable(2)
+            .name(IDs.STEEL_BUTTON)
+            .canApplyTheme()
+            .build();
+
+    public static final UITexture BUTTON_STEEL_SELECTED = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/widget/buttons.png")
+            .imageSize(54, 36)
+            .uv(36, 18, 18, 18)
+            .adaptable(2)
+            .name(IDs.STEEL_BUTTON_SELECTED)
+            .canApplyTheme()
+            .build();
+
     public static final UITexture MC_BUTTON = new UITexture.Builder()
             .location("modularui", "gui/widgets/mc_button.png") // todo
             .imageSize(16, 32)
@@ -449,8 +489,8 @@ public class GTGuiTextures {
      */
     public static final UITexture[] BUTTON_DISTINCT_BUSES = slice("textures/gui/widget/button_distinct_buses.png",
             18, 36, 18, 18, true);
-    public static final UITexture BUTTON_NO_DISTINCT_BUSES = fullImage(
-            "textures/gui/widget/button_no_distinct_buses.png", true);
+    // public static final UITexture BUTTON_NO_DISTINCT_BUSES = fullImage(
+    // "textures/gui/widget/button_no_distinct_buses.png", true);
     public static final UITexture BUTTON_NO_FLEX = fullImage("textures/gui/widget/button_no_flex.png", true);
     public static final UITexture BUTTON_MULTI_MAP = fullImage("textures/gui/widget/button_multi_map.png", true);
     public static final UITexture BUTTON_MINER_MODES = fullImage("textures/gui/widget/button_miner_modes.png", true);
