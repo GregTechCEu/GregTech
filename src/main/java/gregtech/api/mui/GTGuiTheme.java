@@ -50,6 +50,7 @@ public class GTGuiTheme {
             .panel(GTGuiTextures.IDs.BRONZE_BACKGROUND)
             .itemSlot(GTGuiTextures.IDs.BRONZE_SLOT)
             .displayBackground(GTGuiTextures.IDs.DISPLAY_BRONZE)
+            .button(GTGuiTextures.IDs.BRONZE_BUTTON)
             .simpleToggleButton(GTGuiTextures.IDs.BRONZE_BUTTON, GTGuiTextures.IDs.BRONZE_BUTTON_SELECTED,
                     ConfigHolder.client.defaultUIColor)
             .build();
@@ -59,6 +60,7 @@ public class GTGuiTheme {
             .textColor(Color.WHITE.darker(1))
             .itemSlot(GTGuiTextures.IDs.STEEL_SLOT)
             .displayBackground(GTGuiTextures.IDs.DISPLAY_STEEL)
+            .button(GTGuiTextures.IDs.STEEL_BUTTON)
             .simpleToggleButton(GTGuiTextures.IDs.STEEL_BUTTON, GTGuiTextures.IDs.STEEL_BUTTON_SELECTED,
                     ConfigHolder.client.defaultUIColor)
             .build();

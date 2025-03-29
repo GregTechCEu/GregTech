@@ -156,11 +156,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                     var throttle = syncManager.panel("throttle_panel", this::makeThrottlePanel, true);
 
                     return new ButtonWidget<>()
-                            .width(18)
+                            .size(18)
                             .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY)
-                            // todo lang
                             .addTooltipLine(IKey.lang("gregtech.multiblock.large_boiler.throttle_button.tooltip"))
-                            .background(GTGuiTextures.BUTTON)
                             .onMousePressed(i -> {
                                 if (throttle.isPanelOpen()) {
                                     throttle.closePanel();
