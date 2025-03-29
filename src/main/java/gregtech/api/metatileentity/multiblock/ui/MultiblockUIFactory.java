@@ -10,6 +10,7 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTLambdaUtils;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.KeyUtil;
+import gregtech.common.ConfigHolder;
 import gregtech.common.mui.widget.ScrollableTextWidget;
 
 import net.minecraft.util.text.TextFormatting;
@@ -28,6 +29,7 @@ import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
@@ -344,7 +346,8 @@ public class MultiblockUIFactory {
                                  PosGuiData guiData) {
         IWidget flexButton = this.flexButton.apply(guiData, panelSyncManager);
         if (flexButton == null) {
-            flexButton = GTGuiTextures.BUTTON_NO_FLEX.asWidget()
+            flexButton = new ButtonWidget<>()
+                    .overlay(GTGuiTextures.OVERLAY_NO_FLEX)
                     .size(18)
                     .addTooltipLine(IKey.lang("gregtech.multiblock.universal.no_flex_button"));
         }
@@ -367,7 +370,7 @@ public class MultiblockUIFactory {
                     .disableHoverOverlay()
                     .disableHoverBackground()
                     .value(new BoolValue.Dynamic(() -> false, b -> {}))
-                    .overlay(GTGuiTextures.BUTTON_DISTINCT_BUSES[0])
+                    .overlay(GTGuiTextures.OVERLAY_DISTINCT_BUSES[0])
                     .addTooltipLine(IKey.lang("gregtech.multiblock.universal.distinct_not_supported"));
         }
 
@@ -375,31 +378,30 @@ public class MultiblockUIFactory {
                 .size(18, 18)
                 .value(new BooleanSyncValue(distinct::isDistinct, distinct::setDistinct))
                 .disableHoverBackground()
-                .overlay(true, GTGuiTextures.BUTTON_DISTINCT_BUSES[1])
-                .overlay(false, GTGuiTextures.BUTTON_DISTINCT_BUSES[0])
+                .overlay(true, GTGuiTextures.OVERLAY_DISTINCT_BUSES[1])
+                .overlay(false, GTGuiTextures.OVERLAY_DISTINCT_BUSES[0])
                 .addTooltip(true, IKey.lang("gregtech.multiblock.universal.distinct_enabled"))
                 .addTooltip(false, IKey.lang("gregtech.multiblock.universal.distinct_disabled"));
     }
 
     protected IWidget createVoidingButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
         if (!mte.shouldShowVoidingModeButton()) {
-            return GTGuiTextures.BUTTON_VOID_NONE.asWidget()
-                    .size(18, 18)
+            return new ButtonWidget<>()
+                    .size(18)
+                    .overlay(GTGuiTextures.OVERLAY_VOID_NONE)
                     .addTooltipLine(IKey.lang("gregtech.gui.multiblock_voiding_not_supported"));
         }
 
         IntSyncValue voidingValue = new IntSyncValue(mte::getVoidingMode, mte::setVoidingMode);
 
         return new CycleButtonWidget()
-                .size(18, 18)
+                .size(18)
+                .value(voidingValue)
+                .length(4)
                 .stateOverlay(0, GTGuiTextures.MULTIBLOCK_VOID[0])
                 .stateOverlay(1, GTGuiTextures.MULTIBLOCK_VOID[1])
                 .stateOverlay(2, GTGuiTextures.MULTIBLOCK_VOID[2])
                 .stateOverlay(3, GTGuiTextures.MULTIBLOCK_VOID[3])
-                .background(GTGuiTextures.BUTTON)
-                .value(voidingValue)
-                .length(4)
-                .tooltipAutoUpdate(true)
                 .tooltipBuilder(t -> t.addLine(IKey.lang(mte.getVoidingModeTooltip(voidingValue.getIntValue()))));
     }
 
@@ -411,7 +413,9 @@ public class MultiblockUIFactory {
             // todo in the future, refactor so that this multis are instanceof IControllable.
             controllable = mte.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
             if (controllable == null) return null;
-            GTLog.logger.warn("MTE [{}] does not extend IControllable when it should!", mte.getClass().getSimpleName());
+            if (ConfigHolder.misc.debug)
+                GTLog.logger.warn("MTE [{}] does not extend IControllable when it should!",
+                        mte.getClass().getSimpleName());
         } else {
             controllable = (IControllable) mte;
         }
