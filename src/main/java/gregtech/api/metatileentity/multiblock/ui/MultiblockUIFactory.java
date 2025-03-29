@@ -22,6 +22,7 @@ import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -30,6 +31,7 @@ import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -360,23 +362,23 @@ public class MultiblockUIFactory {
     protected IWidget createDistinctButton(@NotNull ModularPanel mainPanel,
                                            @NotNull PanelSyncManager panelSyncManager) {
         if (!(mte instanceof IDistinctBusController distinct) || !distinct.canBeDistinct()) {
-            return GTGuiTextures.BUTTON_NO_DISTINCT_BUSES.asWidget()
-                    .size(18, 18)
+            return new ToggleButton()
+                    .size(18)
+                    .disableHoverOverlay()
+                    .disableHoverBackground()
+                    .value(new BoolValue.Dynamic(() -> false, b -> {}))
+                    .overlay(GTGuiTextures.BUTTON_DISTINCT_BUSES[0])
                     .addTooltipLine(IKey.lang("gregtech.multiblock.universal.distinct_not_supported"));
         }
 
-        BooleanSyncValue distinctValue = new BooleanSyncValue(distinct::isDistinct, distinct::setDistinct);
-
-        return new CycleButtonWidget()
+        return new ToggleButton()
                 .size(18, 18)
-                .value(distinctValue)
-                .stateBackground(true, GTGuiTextures.BUTTON_DISTINCT_BUSES[1])
-                .stateBackground(false, GTGuiTextures.BUTTON_DISTINCT_BUSES[0])
-                .background(GTGuiTextures.BUTTON)
-                .tooltipAutoUpdate(true)
-                .tooltipBuilder(t -> t.addLine(distinctValue.getBoolValue() ?
-                        IKey.lang("gregtech.multiblock.universal.distinct_enabled") :
-                        IKey.lang("gregtech.multiblock.universal.distinct_disabled")));
+                .value(new BooleanSyncValue(distinct::isDistinct, distinct::setDistinct))
+                .disableHoverBackground()
+                .overlay(true, GTGuiTextures.BUTTON_DISTINCT_BUSES[1])
+                .overlay(false, GTGuiTextures.BUTTON_DISTINCT_BUSES[0])
+                .addTooltip(true, IKey.lang("gregtech.multiblock.universal.distinct_enabled"))
+                .addTooltip(false, IKey.lang("gregtech.multiblock.universal.distinct_disabled"));
     }
 
     protected IWidget createVoidingButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
@@ -414,12 +416,13 @@ public class MultiblockUIFactory {
             controllable = (IControllable) mte;
         }
 
-        return new CycleButtonWidget()
+        var detail = GTGuiTextures.BUTTON_POWER_DETAIL.asIcon().size(18, 6).marginTop(24);
+
+        return new ToggleButton()
                 .size(18)
-                .stateOverlay(true, GTGuiTextures.BUTTON_POWER[1])
-                .stateOverlay(false, GTGuiTextures.BUTTON_POWER[0])
                 .disableHoverBackground()
-                .background(GTGuiTextures.BUTTON_POWER_DETAIL.asIcon().size(18, 6).marginTop(24), GTGuiTextures.BUTTON)
+                .overlay(true, detail, GTGuiTextures.BUTTON_POWER[1])
+                .overlay(false, detail, GTGuiTextures.BUTTON_POWER[0])
                 .value(new BooleanSyncValue(controllable::isWorkingEnabled, controllable::setWorkingEnabled))
                 .marginTop(4);
     }
