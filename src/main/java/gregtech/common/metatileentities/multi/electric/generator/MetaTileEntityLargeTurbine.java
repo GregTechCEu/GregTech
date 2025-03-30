@@ -165,7 +165,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
             if (!isStructureFormed() || syncer.syncBoolean(() -> getRotorHolder() == null))
                 return;
 
-            if (!isRotorFaceFree()) {
+            if (syncer.syncBoolean(!isRotorFaceFree())) {
                 keyList.add(KeyUtil.lang(TextFormatting.RED,
                         "gregtech.multiblock.turbine.obstructed"));
                 keyList.add(KeyUtil.lang(TextFormatting.GRAY,
