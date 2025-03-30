@@ -45,8 +45,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     private boolean disableBackground = false;
 
     public GTFluidSlot() {
-        tooltip().setAutoUpdate(true);
-        // .setHasTitleMargin(true);
+        tooltip().setAutoUpdate(true).titleMargin();
         tooltipBuilder(tooltip -> {
             if (!isSynced()) return;
             var fluid = this.syncHandler.getFluid();

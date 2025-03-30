@@ -23,7 +23,6 @@ import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -365,11 +364,8 @@ public class MultiblockUIFactory {
     protected IWidget createDistinctButton(@NotNull ModularPanel mainPanel,
                                            @NotNull PanelSyncManager panelSyncManager) {
         if (!(mte instanceof IDistinctBusController distinct) || !distinct.canBeDistinct()) {
-            return new ToggleButton()
+            return new ButtonWidget<>()
                     .size(18)
-                    .disableHoverOverlay()
-                    .disableHoverBackground()
-                    .value(new BoolValue.Dynamic(() -> false, b -> {}))
                     .overlay(GTGuiTextures.OVERLAY_DISTINCT_BUSES[0])
                     .addTooltipLine(IKey.lang("gregtech.multiblock.universal.distinct_not_supported"));
         }

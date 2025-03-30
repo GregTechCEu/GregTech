@@ -273,8 +273,11 @@ public class GTGuiTextures {
             "textures/gui/primitive/overlay_primitive_dust.png");
     public static final UITexture PRIMITIVE_INGOT_OVERLAY = fullImage(
             "textures/gui/primitive/overlay_primitive_ingot.png");
-    public static final UITexture PRIMITIVE_LARGE_FLUID_TANK = fullImage(
-            "textures/gui/primitive/primitive_large_fluid_tank.png");
+    public static final UITexture PRIMITIVE_LARGE_FLUID_TANK = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/primitive/primitive_large_fluid_tank.png")
+            .fullImage()
+            .adaptable(2)
+            .build();
     public static final UITexture PRIMITIVE_LARGE_FLUID_TANK_OVERLAY = fullImage(
             "textures/gui/primitive/primitive_large_fluid_tank_overlay.png");
     public static final UITexture PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR = fullImage(

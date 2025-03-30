@@ -10,7 +10,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
-import gregtech.api.mui.GTGuis;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.client.renderer.ICubeRenderer;
@@ -39,9 +38,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.factory.PosGuiData;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widgets.TextWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -142,26 +139,24 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
     @Override
     protected MultiblockUIFactory createUIFactory() {
-        return new MultiblockUIFactory(this) {
-
-            @Override
-            public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-                var panel = GTGuis.createPanel(MetaTileEntityMultiblockTank.this, 176, 166);
-
-                panel.child(new TextWidget(IKey.lang(getMetaFullName()))
-                        .pos(5, 5));
-                panel.child(new GTFluidSlot()
-                        .pos(52, 18)
-                        .size(72, 61)
-                        .background(GTGuiTextures.SLOT)
-                        .syncHandler(GTFluidSlot.sync(importFluids.getTankAt(0))
-                                .showAmountOnSlot(false)
-                                .drawAlwaysFull(false)));
-                panel.bindPlayerInventory();
-
-                return panel;
-            }
-        };
+        return new MultiblockUIFactory(this)
+                .setSize(176, 166)
+                .disableDisplay()
+                .disableButtons()
+                .addScreenChildren((parent, syncManager) -> {
+                    parent.child(new TextWidget(IKey.lang(getMetaFullName()))
+                            .pos(5, 5));
+                    parent.child(new GTFluidSlot()
+                            .pos(52, 18)
+                            .size(72, 61)
+                            // todo this looks ugly
+                            .overlay(GTGuiTextures.PRIMITIVE_LARGE_FLUID_TANK_OVERLAY.asIcon()
+                                    .alignment(Alignment.CenterLeft)
+                                    .size(30, 58))
+                            .syncHandler(GTFluidSlot.sync(importFluids.getTankAt(0))
+                                    .showAmountOnSlot(false)
+                                    .drawAlwaysFull(false)));
+                });
     }
 
     @Override
