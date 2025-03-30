@@ -157,7 +157,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
                     return new ButtonWidget<>()
                             .size(18)
-                            .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY)
+                            .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
                             .addTooltipLine(IKey.lang("gregtech.multiblock.large_boiler.throttle_button.tooltip"))
                             .onMousePressed(i -> {
                                 if (throttle.isPanelOpen()) {
