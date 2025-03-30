@@ -536,7 +536,7 @@ public class MultiblockUIBuilder {
         if (getSyncer().syncBoolean(cachedRecipe == null)) return this;
         if (getSyncer().syncBoolean(arl.getRecipeMap() == null)) return this;
 
-        int p = arl.getParallelRecipesPerformed();
+        int p = getSyncer().syncInt(arl.getParallelRecipesPerformed());
         if (p == 0) p = 1;
 
         long eut = getSyncer().syncLong(() -> cachedRecipe.getEUt());
