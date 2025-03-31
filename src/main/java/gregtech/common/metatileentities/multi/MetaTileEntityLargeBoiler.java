@@ -52,7 +52,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SliderWidget;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -205,7 +205,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 d -> setThrottlePercentage((int) (d * 100)));
 
         return GTGuis.createPopupPanel("boiler_throttle", 116, 53)
-                .child(new Row()
+                .child(Flow.row()
                         .pos(4, 4)
                         .height(16)
                         .coverChildrenWidth()
@@ -216,7 +216,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                         .child(IKey.lang("gregtech.multiblock.large_boiler.throttle.title")
                                 .asWidget()
                                 .heightRel(1.0f)))
-                .child(new Row()
+                .child(Flow.row()
                         .top(20)
                         .margin(4, 0)
                         .coverChildrenHeight()
@@ -234,7 +234,16 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                 .height(20)
                                 // TODO proper color
                                 .setTextColor(Color.WHITE.darker(1))
-                                .setNumbers(0, 100)
+                                .setValidator(s -> {
+                                    try {
+                                        long l = Long.parseLong(s);
+                                        if (l < 0) l = 0;
+                                        else if (l > 100) l = 100;
+                                        return String.valueOf(l);
+                                    } catch (NumberFormatException ignored) {
+                                        return throttleValue.getStringValue();
+                                    }
+                                })
                                 // TODO show % sign
                                 .value(throttleValue)
                                 .background(GTGuiTextures.DISPLAY)));
