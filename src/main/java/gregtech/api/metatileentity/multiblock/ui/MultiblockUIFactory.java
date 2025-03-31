@@ -17,18 +17,19 @@ import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.value.IBoolValue;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
@@ -42,13 +43,15 @@ import java.util.function.Consumer;
 
 public class MultiblockUIFactory {
 
+    private static final Consumer<MultiblockUIBuilder> NO_OP = b -> {};
+    private static final IBoolValue<Boolean> ALWAYS_ON = new BoolValue.Dynamic(() -> true, b -> {});
+
     private final MultiblockWithDisplayBase mte;
     protected Consumer<MultiblockUIBuilder> displayText, warningText, errorText;
     protected BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton = (guiData, syncManager) -> null;
     private int width = 198, height = 202;
     private int screenHeight = 109;
     private ScreenFunction screenFunction;
-    private static final Consumer<MultiblockUIBuilder> NO_OP = b -> {};
     private boolean disableDisplay = false;
     private boolean disableIndicator = false;
     private boolean disableButtons = false;
@@ -279,7 +282,7 @@ public class MultiblockUIFactory {
 
         Flow column = Flow.column()
                 .margin(4, 0)
-                .top(114)
+                .top(5 + screenHeight)
                 .widthRel(1f)
                 .height(Bars.HEIGHT * 2);
 
@@ -345,7 +348,8 @@ public class MultiblockUIFactory {
                                  PosGuiData guiData) {
         IWidget flexButton = this.flexButton.apply(guiData, panelSyncManager);
         if (flexButton == null) {
-            flexButton = new ButtonWidget<>()
+            flexButton = new ToggleButton()
+                    .value(ALWAYS_ON)
                     .overlay(GTGuiTextures.OVERLAY_NO_FLEX)
                     .size(18)
                     .addTooltipLine(IKey.lang("gregtech.multiblock.universal.no_flex_button"));
@@ -354,7 +358,7 @@ public class MultiblockUIFactory {
 
         return Flow.column()
                 .right(4)
-                .size(18, 77)
+                .coverChildren()
                 .child(createDistinctButton(mainPanel, panelSyncManager))
                 .child(createVoidingButton(mainPanel, panelSyncManager))
                 .child(flexButton)
@@ -364,14 +368,15 @@ public class MultiblockUIFactory {
     protected IWidget createDistinctButton(@NotNull ModularPanel mainPanel,
                                            @NotNull PanelSyncManager panelSyncManager) {
         if (!(mte instanceof IDistinctBusController distinct) || !distinct.canBeDistinct()) {
-            return new ButtonWidget<>()
+            return new ToggleButton()
+                    .value(ALWAYS_ON)
                     .size(18)
                     .overlay(GTGuiTextures.OVERLAY_DISTINCT_BUSES[0])
                     .addTooltipLine(IKey.lang("gregtech.multiblock.universal.distinct_not_supported"));
         }
 
         return new ToggleButton()
-                .size(18, 18)
+                .size(18)
                 .value(new BooleanSyncValue(distinct::isDistinct, distinct::setDistinct))
                 .disableHoverBackground()
                 .overlay(true, GTGuiTextures.OVERLAY_DISTINCT_BUSES[1])
@@ -382,7 +387,8 @@ public class MultiblockUIFactory {
 
     protected IWidget createVoidingButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
         if (!mte.shouldShowVoidingModeButton()) {
-            return new ButtonWidget<>()
+            return new ToggleButton()
+                    .value(ALWAYS_ON)
                     .size(18)
                     .overlay(GTGuiTextures.OVERLAY_VOID_NONE)
                     .addTooltipLine(IKey.lang("gregtech.gui.multiblock_voiding_not_supported"));

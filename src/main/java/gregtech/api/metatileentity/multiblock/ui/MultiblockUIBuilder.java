@@ -515,8 +515,6 @@ public class MultiblockUIBuilder {
         return addRecipeOutputLine(arl, DEFAULT_MAX_RECIPE_LINES);
     }
 
-    private Recipe cachedRecipe = null;
-
     /**
      * Adds the current outputs of a recipe from recipe logic. Items then fluids.
      *
@@ -524,22 +522,18 @@ public class MultiblockUIBuilder {
      * @param maxLines the maximum number of lines to print until truncating with {@code ...}
      */
     public MultiblockUIBuilder addRecipeOutputLine(AbstractRecipeLogic arl, int maxLines) {
+        // todo recipe is null on first load, fix
         Recipe recipe = arl.getPreviousRecipe();
-        if (cachedRecipe == null && recipe != null) {
-            cachedRecipe = recipe;
-        } else if (cachedRecipe == null) {
-            // find new recipe
-        } else if (arl.getMaxProgress() == 0) {
-            cachedRecipe = null;
-        }
 
-        if (getSyncer().syncBoolean(cachedRecipe == null)) return this;
-        if (getSyncer().syncBoolean(arl.getRecipeMap() == null)) return this;
+        if (getSyncer().syncBoolean(recipe == null)) return this;
+        RecipeMap<?> map = arl.getRecipeMap();
+        if (getSyncer().syncBoolean(map == null)) return this;
 
         int p = getSyncer().syncInt(arl.getParallelRecipesPerformed());
         if (p == 0) p = 1;
 
-        long eut = getSyncer().syncLong(() -> cachedRecipe.getEUt());
+        // noinspection DataFlowIssue
+        long eut = getSyncer().syncLong(() -> recipe.getEUt());
         long maxVoltage = getSyncer().syncLong(arl.getMaximumOverclockVoltage());
         int maxProgress = arl.getMaxProgress();
 
@@ -549,10 +543,11 @@ public class MultiblockUIBuilder {
         List<ChancedFluidOutput> chancedFluidOutputs = new ArrayList<>();
 
         if (isServer()) {
-            itemOutputs.addAll(cachedRecipe.getOutputs());
-            chancedItemOutputs.addAll(cachedRecipe.getChancedOutputs().getChancedEntries());
-            fluidOutputs.addAll(cachedRecipe.getFluidOutputs());
-            chancedFluidOutputs.addAll(cachedRecipe.getChancedFluidOutputs().getChancedEntries());
+            // noinspection DataFlowIssue
+            itemOutputs.addAll(recipe.getOutputs());
+            chancedItemOutputs.addAll(recipe.getChancedOutputs().getChancedEntries());
+            fluidOutputs.addAll(recipe.getFluidOutputs());
+            chancedFluidOutputs.addAll(recipe.getChancedFluidOutputs().getChancedEntries());
         }
 
         itemOutputs = getSyncer().syncCollection(itemOutputs, ByteBufAdapters.ITEM_STACK);
@@ -562,7 +557,8 @@ public class MultiblockUIBuilder {
 
         addKey(KeyUtil.string(TextFormatting.GRAY, "Producing: "), Operation.NEW_LINE);
 
-        var chanceFunction = arl.getRecipeMap().getChanceFunction();
+        // noinspection DataFlowIssue
+        var chanceFunction = map.getChanceFunction();
         int recipeTier = GTUtility.getTierByVoltage(eut);
         int machineTier = GTUtility.getOCTierByVoltage(maxVoltage);
 

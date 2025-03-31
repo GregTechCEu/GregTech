@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
+import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
@@ -28,8 +29,6 @@ import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.RelativeDirection;
-import gregtech.api.util.TextComponentUtil;
-import gregtech.api.util.TextFormattingUtil;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.IRenderSetup;
@@ -61,14 +60,16 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.LongSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.google.common.collect.Lists;
@@ -87,7 +88,7 @@ import static gregtech.api.recipes.logic.OverclockingLogic.PERFECT_HALF_VOLTAGE_
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
-                                         implements IFastRenderMetaTileEntity, IBloomEffect {
+                                         implements IFastRenderMetaTileEntity, IBloomEffect, ProgressBarMultiblock {
 
     protected static final int NO_COLOR = 0;
 
@@ -377,12 +378,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                     var status = MultiblockUIFactory.builder("status", syncManager);
                     status.setAction(b -> b.structureFormed(true)
                             .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                            .addWorkingStatusLine()
-                            .addCustom((keyManager, uiSyncer) -> {
-                                long stored = uiSyncer.syncLong(energyContainer.getEnergyStored());
-                                long cap = uiSyncer.syncLong(energyContainer.getEnergyCapacity());
-                                keyManager.add(KeyUtil.string(TextFormatting.WHITE, "%,d / %,d EU", stored, cap));
-                            }));
+                            .addWorkingStatusLine());
                     parent.child(new Column()
                             .padding(4)
                             .expanded()
@@ -406,26 +402,50 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                 });
     }
 
-    private void addEnergyBarHoverText(List<ITextComponent> hoverList) {
-        ITextComponent energyInfo = TextComponentUtil.stringWithColor(
-                TextFormatting.AQUA,
-                TextFormattingUtil.formatNumbers(energyContainer.getEnergyStored()) + " / " +
-                        TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()) + " EU");
-        hoverList.add(TextComponentUtil.translationWithColor(
-                TextFormatting.GRAY,
-                "gregtech.multiblock.energy_stored",
-                energyInfo));
+    @Override
+    public int getProgressBarCount() {
+        return 2;
     }
 
-    private void addHeatBarHoverText(List<ITextComponent> hoverList) {
-        ITextComponent heatInfo = TextComponentUtil.stringWithColor(
-                TextFormatting.RED,
-                TextFormattingUtil.formatNumbers(heat) + " / " +
-                        TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()));
-        hoverList.add(TextComponentUtil.translationWithColor(
-                TextFormatting.GRAY,
-                "gregtech.multiblock.fusion_reactor.heat",
-                heatInfo));
+    @Override
+    public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
+        LongSyncValue heat = new LongSyncValue(this::getHeat);
+        panelSyncManager.syncValue("heat", heat);
+        LongSyncValue capacity = new LongSyncValue(energyContainer::getEnergyCapacity);
+        panelSyncManager.syncValue("capacity", capacity);
+        LongSyncValue stored = new LongSyncValue(energyContainer::getEnergyStored);
+        panelSyncManager.syncValue("stored", stored);
+        return switch (index) {
+            case 0 -> new ProgressWidget()
+                    .texture(GTGuiTextures.PROGRESS_BAR_FUSION_ENERGY, -1)
+                    .tooltipAutoUpdate(true)
+                    .tooltipBuilder(tooltip -> {
+                        IKey energyInfo = KeyUtil.string(TextFormatting.AQUA,
+                                "%,d / %,d EU",
+                                stored.getLongValue(), capacity.getLongValue());
+                        // todo this isn't formatting correctly for some reason?
+                        // values are also wrong for heat and energy
+                        tooltip.add(KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.energy_stored",
+                                energyInfo));
+                    })
+                    .value(new DoubleSyncValue(() -> capacity.getLongValue() > 0 ?
+                            1.0 * stored.getLongValue() / capacity.getLongValue() : 0));
+            case 1 -> new ProgressWidget()
+                    .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT, -1)
+                    .tooltipAutoUpdate(true)
+                    .tooltipBuilder(tooltip -> {
+                        IKey heatInfo = KeyUtil.string(TextFormatting.AQUA,
+                                "%,d / %,d EU",
+                                heat.getLongValue(), capacity.getLongValue());
+                        tooltip.add(KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.fusion_reactor.heat",
+                                heatInfo));
+                    })
+                    .value(new DoubleSyncValue(() -> capacity.getLongValue() > 0 ?
+                            1.0 * heat.getLongValue() / capacity.getLongValue() : 0));
+            default -> throw new IllegalStateException();
+        };
     }
 
     private static class FusionProgressSupplier {
