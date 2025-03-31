@@ -62,9 +62,10 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                 .addCustom((richText, syncer) -> {
                     if (!isStructureFormed()) return;
 
-                    if (heatingCoilDiscount > 1) {
+                    int discount = syncer.syncInt(heatingCoilDiscount);
+                    if (discount > 1) {
                         IKey coilDiscount = KeyUtil.number(TextFormatting.AQUA,
-                                (long) (100.0 / heatingCoilDiscount), "%");
+                                (long) (100.0 / discount), "%");
 
                         IKey base = KeyUtil.lang(TextFormatting.GRAY,
                                 "gregtech.multiblock.multi_furnace.heating_coil_discount",
@@ -76,9 +77,9 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                         richText.add(KeyUtil.setHover(base, hoverText));
                     }
 
-                    if (recipeMapWorkable.getParallelLimit() > 0) {
-                        IKey parallels = KeyUtil.number(TextFormatting.DARK_PURPLE,
-                                recipeMapWorkable.getParallelLimit());
+                    int pLimit = syncer.syncInt(recipeMapWorkable.getParallelLimit());
+                    if (pLimit > 0) {
+                        IKey parallels = KeyUtil.number(TextFormatting.DARK_PURPLE, pLimit);
 
                         IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
                                 "gregtech.multiblock.parallel",

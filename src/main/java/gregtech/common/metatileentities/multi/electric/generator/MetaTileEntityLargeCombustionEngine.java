@@ -277,7 +277,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                                     t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.no_lubricant"));
                                 } else {
                                     t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.lubricant_amount",
-                                            lubricantValue.getValue(0), lubricantValue.getValue(0)));
+                                            lubricantValue.getValue(0), lubricantValue.getValue(1)));
                                 }
                             } else {
                                 t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
@@ -303,7 +303,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                                     } else if (isExtreme) {
                                         t.addLine(IKey.lang(
                                                 "gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount",
-                                                oxygenValue.getValue(0), oxygenValue.getValue(0)));
+                                                oxygenValue.getValue(0), oxygenValue.getValue(1)));
                                     } else {
                                         t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.oxygen_amount",
                                                 oxygenValue.getValue(0), oxygenValue.getValue(1)));
