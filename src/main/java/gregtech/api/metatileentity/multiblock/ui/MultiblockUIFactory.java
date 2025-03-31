@@ -226,7 +226,9 @@ public class MultiblockUIFactory {
     }
 
     public MultiblockUIFactory setScreenHeight(int height) {
-        this.screenHeight = height;
+        int diff = height - this.screenHeight;
+        this.height += diff;
+        this.screenHeight += diff;
         return this;
     }
 
@@ -246,7 +248,7 @@ public class MultiblockUIFactory {
         // TODO createExtras() hook for overrides?
         if (mte instanceof ProgressBarMultiblock progressBarMultiblock &&
                 progressBarMultiblock.getProgressBarCount() > 0) {
-            panel.height(height + (Bars.HEIGHT * 2) - 2);
+            panel.height(height + (Bars.HEIGHT * progressBarMultiblock.getProgressBarRows()) - 2);
             panel.child(createBars(progressBarMultiblock, panelSyncManager));
         }
 
@@ -284,7 +286,7 @@ public class MultiblockUIFactory {
                 .margin(4, 0)
                 .top(5 + screenHeight)
                 .widthRel(1f)
-                .height(Bars.HEIGHT * 2);
+                .height(Bars.HEIGHT * rows  );
 
         for (int r = 0; r < rows; r++) {
 
