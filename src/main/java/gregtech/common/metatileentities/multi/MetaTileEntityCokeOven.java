@@ -6,6 +6,9 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
@@ -16,6 +19,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,6 +36,12 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
 
 public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockController {
@@ -87,6 +97,41 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
     @Override
     public boolean hasMaintenanceMechanics() {
         return false;
+    }
+
+    @Override
+    protected MultiblockUIFactory createUIFactory() {
+        return new MultiblockUIFactory(this)
+                .disableButtons()
+                .disableDisplay()
+                .setSize(176, 166)
+                .addScreenChildren((parent, syncManager) -> parent
+                        .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                        .child(new ItemSlot().slot(importItems, 0)
+                                .pos(52, 30))
+                        .child(new ProgressWidget()
+                                .texture(GTGuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, -1)
+                                .size(20, 15)
+                                .pos(76, 32)
+                                .value(new DoubleSyncValue(recipeMapWorkable::getProgressPercent)))
+                        .child(new ItemSlot()
+                                .slot(new ModularSlot(exportItems, 0)
+                                        .accessibility(false, true))
+                                .pos(103, 30))
+                        .child(new GTFluidSlot()
+                                .overlay(GTGuiTextures.PRIMITIVE_LARGE_FLUID_TANK_OVERLAY.asIcon()
+                                        .alignment(Alignment.CenterLeft)
+                                        .marginLeft(1))
+                                .syncHandler(GTFluidSlot.sync(exportFluids.getTankAt(0))
+                                        .drawAlwaysFull(false)
+                                        .accessibility(true, false))
+                                .pos(134, 13)
+                                .size(20, 58)));
+    }
+
+    @Override
+    public GTGuiTheme getUITheme() {
+        return GTGuiTheme.PRIMITIVE;
     }
 
     @Override
