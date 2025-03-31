@@ -537,6 +537,8 @@ public class MultiblockUIBuilder {
         long maxVoltage = getSyncer().syncLong(arl.getMaximumOverclockVoltage());
         int maxProgress = arl.getMaxProgress();
 
+        if (getSyncer().syncBoolean(maxProgress == 0)) return this;
+
         List<ItemStack> itemOutputs = new ArrayList<>();
         List<ChancedItemOutput> chancedItemOutputs = new ArrayList<>();
         List<FluidStack> fluidOutputs = new ArrayList<>();
@@ -573,7 +575,7 @@ public class MultiblockUIBuilder {
         for (var chancedItemOutput : chancedItemOutputs) {
             int chance = chanceFunction.getBoostedChance(chancedItemOutput, recipeTier, machineTier);
             int count = chancedItemOutput.getIngredient().getCount() * p;
-            addChancedItemOutputLine(chancedItemOutput.getIngredient(), count, chance, maxProgress);
+            addChancedItemOutputLine(chancedItemOutput, count, chance, maxProgress);
         }
 
         // fluids
@@ -587,7 +589,7 @@ public class MultiblockUIBuilder {
         for (var chancedFluidOutput : chancedFluidOutputs) {
             int chance = chanceFunction.getBoostedChance(chancedFluidOutput, recipeTier, machineTier);
             int count = chancedFluidOutput.getIngredient().amount * p;
-            addChancedFluidOutputLine(chancedFluidOutput.getIngredient(), count, chance, maxProgress);
+            addChancedFluidOutputLine(chancedFluidOutput, count, chance, maxProgress);
         }
         return this;
     }
@@ -627,7 +629,6 @@ public class MultiblockUIBuilder {
                 .asIcon()
                 .asHoverable()
                 .addTooltipLine(formatRecipeData(name, amount, rate)), Operation.ADD);
-        // addKey(IKey.SPACE, Operation.ADD);
     }
 
     /**
@@ -635,13 +636,13 @@ public class MultiblockUIBuilder {
      *
      * @param recipeLength max duration of the recipe
      */
-    private void addChancedItemOutputLine(@NotNull ItemStack stack,
-                                          int chance, int count, int recipeLength) {
-        IKey name = KeyUtil.string(TextFormatting.AQUA, stack.getDisplayName());
+    private void addChancedItemOutputLine(@NotNull ChancedItemOutput output,
+                                          int count, int chance, int recipeLength) {
+        IKey name = KeyUtil.string(TextFormatting.AQUA, output.getIngredient().getDisplayName());
         IKey amount = KeyUtil.number(TextFormatting.GOLD, count);
         IKey rate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(getSyncer().syncInt(recipeLength), count));
 
-        addKey(new GTObjectDrawable(stack, count)
+        addKey(new GTObjectDrawable(output, count)
                 .setBoostFunction(entry -> chance)
                 .asIcon()
                 .asHoverable()
@@ -653,19 +654,18 @@ public class MultiblockUIBuilder {
      *
      * @param recipeLength max duration of the recipe
      */
-    private void addChancedFluidOutputLine(@NotNull FluidStack stack,
+    private void addChancedFluidOutputLine(ChancedFluidOutput output,
                                            int count, int chance, int recipeLength) {
-        IKey name = KeyUtil.fluid(TextFormatting.AQUA, stack);
+        IKey name = KeyUtil.fluid(TextFormatting.AQUA, output.getIngredient());
         IKey amount = KeyUtil.number(TextFormatting.GOLD, count);
         IKey rate = KeyUtil.string(TextFormatting.WHITE,
                 formatRecipeRate(getSyncer().syncInt(recipeLength), count));
 
-        addKey(new GTObjectDrawable(stack, count)
+        addKey(new GTObjectDrawable(output, count)
                 .setBoostFunction(entry -> chance)
                 .asIcon()
                 .asHoverable()
                 .addTooltipLine(formatRecipeData(name, amount, rate)), Operation.ADD);
-        // addKey(IKey.SPACE, Operation.ADD);
     }
 
     private static String formatRecipeRate(int recipeLength, long amount) {
