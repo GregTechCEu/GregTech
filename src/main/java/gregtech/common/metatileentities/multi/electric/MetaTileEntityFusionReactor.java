@@ -416,22 +416,19 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         panelSyncManager.syncValue("stored", stored);
         return switch (index) {
             case 0 -> new ProgressWidget()
-                    .texture(GTGuiTextures.PROGRESS_BAR_FUSION_ENERGY, -1)
+                    .texture(GTGuiTextures.PROGRESS_BAR_FUSION_ENERGY, MultiblockUIFactory.Bars.HALF_WIDTH)
                     .tooltipAutoUpdate(true)
                     .tooltipBuilder(tooltip -> {
-                        IKey energyInfo = KeyUtil.string(TextFormatting.AQUA,
-                                "%,d / %,d EU",
-                                stored.getLongValue(), capacity.getLongValue());
-                        // todo this isn't formatting correctly for some reason?
                         // values are also wrong for heat and energy
+                        // yet correct for the double sync value
                         tooltip.add(KeyUtil.lang(TextFormatting.GRAY,
                                 "gregtech.multiblock.energy_stored",
-                                energyInfo));
+                                stored.getLongValue(), capacity.getLongValue()));
                     })
-                    .value(new DoubleSyncValue(() -> capacity.getLongValue() > 0 ?
-                            1.0 * stored.getLongValue() / capacity.getLongValue() : 0));
+                    .progress(() -> capacity.getLongValue() > 0 ?
+                            1.0 * stored.getLongValue() / capacity.getLongValue() : 0);
             case 1 -> new ProgressWidget()
-                    .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT, -1)
+                    .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT, MultiblockUIFactory.Bars.HALF_WIDTH)
                     .tooltipAutoUpdate(true)
                     .tooltipBuilder(tooltip -> {
                         IKey heatInfo = KeyUtil.string(TextFormatting.AQUA,
@@ -441,8 +438,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                                 "gregtech.multiblock.fusion_reactor.heat",
                                 heatInfo));
                     })
-                    .value(new DoubleSyncValue(() -> capacity.getLongValue() > 0 ?
-                            1.0 * heat.getLongValue() / capacity.getLongValue() : 0));
+                    .progress(() -> capacity.getLongValue() > 0 ?
+                            1.0 * heat.getLongValue() / capacity.getLongValue() : 0);
             default -> throw new IllegalStateException();
         };
     }
