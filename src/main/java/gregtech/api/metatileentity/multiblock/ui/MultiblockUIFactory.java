@@ -286,7 +286,7 @@ public class MultiblockUIFactory {
                 .margin(4, 0)
                 .top(5 + screenHeight)
                 .widthRel(1f)
-                .height(Bars.HEIGHT * rows  );
+                .height(Bars.HEIGHT * rows);
 
         for (int r = 0; r < rows; r++) {
 
