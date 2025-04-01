@@ -64,6 +64,7 @@ public class MultiblockUIFactory {
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
         configureErrorText(builder -> {
+            builder.structureFormed(mte.isStructureFormed());
             if (mte.hasMufflerMechanics())
                 builder.addMufflerObstructedLine(!mte.isMufflerFaceFree());
         });
