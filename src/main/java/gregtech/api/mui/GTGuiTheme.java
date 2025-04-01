@@ -51,6 +51,7 @@ public class GTGuiTheme {
             .itemSlot(GTGuiTextures.IDs.BRONZE_SLOT)
             .displayBackground(GTGuiTextures.IDs.DISPLAY_BRONZE)
             .button(GTGuiTextures.IDs.BRONZE_BUTTON)
+            .color(0xFF7706)
             .simpleToggleButton(GTGuiTextures.IDs.BRONZE_BUTTON, GTGuiTextures.IDs.BRONZE_BUTTON_SELECTED,
                     ConfigHolder.client.defaultUIColor)
             .build();
@@ -61,6 +62,7 @@ public class GTGuiTheme {
             .itemSlot(GTGuiTextures.IDs.STEEL_SLOT)
             .displayBackground(GTGuiTextures.IDs.DISPLAY_STEEL)
             .button(GTGuiTextures.IDs.STEEL_BUTTON)
+            .color(0x57576a)
             .simpleToggleButton(GTGuiTextures.IDs.STEEL_BUTTON, GTGuiTextures.IDs.STEEL_BUTTON_SELECTED,
                     ConfigHolder.client.defaultUIColor)
             .build();
@@ -68,6 +70,7 @@ public class GTGuiTheme {
     public static final GTGuiTheme PRIMITIVE = templateBuilder("gregtech_primitive")
             .panel(GTGuiTextures.IDs.PRIMITIVE_BACKGROUND)
             .textColor(Color.WHITE.darker(1))
+            .color(0x826B51)
             .itemSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
             .build();
 
