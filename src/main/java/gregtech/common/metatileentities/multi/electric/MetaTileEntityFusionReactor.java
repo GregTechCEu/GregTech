@@ -408,38 +408,42 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
 
     @Override
     public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
-        LongSyncValue heat = new LongSyncValue(this::getHeat);
-        panelSyncManager.syncValue("heat", heat);
-        LongSyncValue capacity = new LongSyncValue(energyContainer::getEnergyCapacity);
-        panelSyncManager.syncValue("capacity", capacity);
-        LongSyncValue stored = new LongSyncValue(energyContainer::getEnergyStored);
-        panelSyncManager.syncValue("stored", stored);
         return switch (index) {
-            case 0 -> new ProgressWidget()
-                    .texture(GTGuiTextures.PROGRESS_BAR_FUSION_ENERGY, MultiblockUIFactory.Bars.HALF_WIDTH)
-                    .tooltipAutoUpdate(true)
-                    .tooltipBuilder(tooltip -> {
-                        // values are also wrong for heat and energy
-                        // yet correct for the double sync value
-                        tooltip.add(KeyUtil.lang(TextFormatting.GRAY,
-                                "gregtech.multiblock.energy_stored",
-                                stored.getLongValue(), capacity.getLongValue()));
-                    })
-                    .progress(() -> capacity.getLongValue() > 0 ?
-                            1.0 * stored.getLongValue() / capacity.getLongValue() : 0);
-            case 1 -> new ProgressWidget()
-                    .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT, MultiblockUIFactory.Bars.HALF_WIDTH)
-                    .tooltipAutoUpdate(true)
-                    .tooltipBuilder(tooltip -> {
-                        IKey heatInfo = KeyUtil.string(TextFormatting.AQUA,
-                                "%,d / %,d EU",
-                                heat.getLongValue(), capacity.getLongValue());
-                        tooltip.add(KeyUtil.lang(TextFormatting.GRAY,
-                                "gregtech.multiblock.fusion_reactor.heat",
-                                heatInfo));
-                    })
-                    .progress(() -> capacity.getLongValue() > 0 ?
-                            1.0 * heat.getLongValue() / capacity.getLongValue() : 0);
+            case 0 -> {
+                LongSyncValue capacity = new LongSyncValue(energyContainer::getEnergyCapacity);
+                panelSyncManager.syncValue("capacity", index, capacity);
+                LongSyncValue stored = new LongSyncValue(energyContainer::getEnergyStored);
+                panelSyncManager.syncValue("stored", index, stored);
+                yield new ProgressWidget()
+                        .texture(GTGuiTextures.PROGRESS_BAR_FUSION_ENERGY, MultiblockUIFactory.Bars.HALF_WIDTH)
+                        .tooltipAutoUpdate(true)
+                        .tooltipBuilder(tooltip -> {
+                            tooltip.add(KeyUtil.lang(TextFormatting.GRAY,
+                                    "gregtech.multiblock.energy_stored",
+                                    stored.getLongValue(), capacity.getLongValue()));
+                        })
+                        .progress(() -> capacity.getLongValue() > 0 ?
+                                1.0 * stored.getLongValue() / capacity.getLongValue() : 0);
+            }
+            case 1 -> {
+                LongSyncValue capacity = new LongSyncValue(energyContainer::getEnergyCapacity);
+                panelSyncManager.syncValue("capacity", index, capacity);
+                LongSyncValue heat = new LongSyncValue(this::getHeat);
+                panelSyncManager.syncValue("heat", index, heat);
+                yield new ProgressWidget()
+                        .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT, MultiblockUIFactory.Bars.HALF_WIDTH)
+                        .tooltipAutoUpdate(true)
+                        .tooltipBuilder(tooltip -> {
+                            IKey heatInfo = KeyUtil.string(TextFormatting.AQUA,
+                                    "%,d / %,d EU",
+                                    heat.getLongValue(), capacity.getLongValue());
+                            tooltip.add(KeyUtil.lang(TextFormatting.GRAY,
+                                    "gregtech.multiblock.fusion_reactor.heat",
+                                    heatInfo));
+                        })
+                        .progress(() -> capacity.getLongValue() > 0 ?
+                                1.0 * heat.getLongValue() / capacity.getLongValue() : 0);
+            }
             default -> throw new IllegalStateException();
         };
     }
