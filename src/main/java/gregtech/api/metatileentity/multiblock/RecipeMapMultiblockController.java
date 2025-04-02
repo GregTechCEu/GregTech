@@ -3,7 +3,7 @@ package gregtech.api.metatileentity.multiblock;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -46,9 +46,9 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected MultiblockRecipeLogic recipeMapWorkable;
     protected IItemHandlerModifiable inputInventory;
     protected IItemHandlerModifiable outputInventory;
-    protected IMultipleTankHandler inputFluidInventory;
-    protected IMultipleTankHandler outputFluidInventory;
-    protected IMultipleTankHandler extendedFluidInputs;
+    protected MultipleTankHandler inputFluidInventory;
+    protected MultipleTankHandler outputFluidInventory;
+    protected MultipleTankHandler extendedFluidInputs;
     protected IEnergyContainer energyContainer;
 
     private boolean isDistinct = false;
@@ -75,14 +75,14 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         return outputInventory;
     }
 
-    public IMultipleTankHandler getInputFluidInventory() {
+    public MultipleTankHandler getInputFluidInventory() {
         // if distinct, return the normal input fluid inventory,
         // as recipe logic handles gathering extra fluids
         // if not distinct, return all the fluids instead
         return isDistinct() ? inputFluidInventory : extendedFluidInputs;
     }
 
-    public IMultipleTankHandler getOutputFluidInventory() {
+    public MultipleTankHandler getOutputFluidInventory() {
         return outputFluidInventory;
     }
 
@@ -147,7 +147,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.energyContainer = new EnergyContainerList(Lists.newArrayList());
     }
 
-    protected IMultipleTankHandler extendedImportFluidList(IMultipleTankHandler fluids) {
+    protected MultipleTankHandler extendedImportFluidList(MultipleTankHandler fluids) {
         List<IFluidTank> tanks = new ArrayList<>(fluids.getFluidTanks());
         // iterate import items to look for and tanks that we might have missed
         // honestly this might not be worth checking because
@@ -155,7 +155,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         for (var handler : getAbilities(MultiblockAbility.IMPORT_ITEMS)) {
             if (handler instanceof IFluidTank tank) {
                 if (!tanks.contains(tank)) tanks.add(tank);
-            } else if (handler instanceof IMultipleTankHandler multipleTankHandler) {
+            } else if (handler instanceof MultipleTankHandler multipleTankHandler) {
                 for (var tank : multipleTankHandler.getFluidTanks()) {
                     if (!tanks.contains(tank)) tanks.add(tank);
                 }

@@ -4,9 +4,9 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.DualHandler;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -466,7 +466,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     private class QuantumControllerHandler extends DualHandler {
 
         private static final IItemHandlerModifiable EMPTY_ITEM = new ItemStackHandler(0);
-        private static final IMultipleTankHandler EMPTY_TANK = new FluidTankList(false);
+        private static final MultipleTankHandler EMPTY_TANK = new FluidTankList(false);
         private boolean dirty = true;
 
         public QuantumControllerHandler() {
@@ -507,7 +507,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         public boolean hasFluidTanks() {
             if (dirty) rebuildCache();
-            return getTanks() > 0;
+            return size() > 0;
         }
     }
 }
