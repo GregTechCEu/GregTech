@@ -8,6 +8,7 @@ import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
@@ -30,6 +31,7 @@ import gregtech.api.unification.material.properties.RotorProperty;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.material.properties.WoodProperty;
 import gregtech.api.unification.material.registry.MaterialRegistry;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
@@ -38,6 +40,7 @@ import gregtech.api.util.Mods;
 import gregtech.api.util.SmallDigits;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -281,6 +284,27 @@ public class Material implements Comparable<Material> {
      */
     public FluidStack getFluid(@NotNull FluidStorageKey key, int amount) {
         return new FluidStack(getFluid(key), amount);
+    }
+
+    /**
+     * Gets the item form of this material in the form of an {@link OrePrefix}
+     * 
+     * @param prefix the ore prefix to use
+     * @return an item stack of the ore prefix using this material
+     */
+    public @NotNull ItemStack getItemForm(@NotNull OrePrefix prefix) {
+        return OreDictUnifier.get(prefix, this);
+    }
+
+    /**
+     * Gets the item form of this material in the form of an {@link OrePrefix}
+     * 
+     * @param prefix the ore prefix to use
+     * @param count  the amount the ItemStack will have
+     * @return an item stack of the ore prefix using this material
+     */
+    public @NotNull ItemStack getItemForm(@NotNull OrePrefix prefix, int count) {
+        return OreDictUnifier.get(prefix, this, count);
     }
 
     public int getBlockHarvestLevel() {
