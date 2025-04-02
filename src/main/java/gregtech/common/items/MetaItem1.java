@@ -616,6 +616,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_ENERGY_DETECTOR_ADVANCED = addItem(318, "cover.energy.detector.advanced");
         COVER_SCREEN = addItem(307, "cover.screen");
         // FREE ID 308
+        COVER_ENDER_ITEM_LINK = addItem(308, "cover.ender_item_link");
         COVER_SHUTTER = addItem(309, "cover.shutter");
         COVER_INFINITE_WATER = addItem(310, "cover.infinite_water").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.cover.infinite_water.tooltip.1"));
