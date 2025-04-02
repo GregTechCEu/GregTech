@@ -49,6 +49,7 @@ public class GTGuiTheme {
     public static final GTGuiTheme BRONZE = templateBuilder("gregtech_bronze")
             .panel(GTGuiTextures.IDs.BRONZE_BACKGROUND)
             .itemSlot(GTGuiTextures.IDs.BRONZE_SLOT)
+            .fluidSlot(GTGuiTextures.IDs.BRONZE_SLOT)
             .displayBackground(GTGuiTextures.IDs.DISPLAY_BRONZE)
             .button(GTGuiTextures.IDs.BRONZE_BUTTON)
             .color(0xFF7706)
@@ -60,6 +61,7 @@ public class GTGuiTheme {
             .panel(GTGuiTextures.IDs.STEEL_BACKGROUND)
             .textColor(Color.WHITE.darker(1))
             .itemSlot(GTGuiTextures.IDs.STEEL_SLOT)
+            .fluidSlot(GTGuiTextures.IDs.STEEL_SLOT)
             .displayBackground(GTGuiTextures.IDs.DISPLAY_STEEL)
             .button(GTGuiTextures.IDs.STEEL_BUTTON)
             .color(0x57576a)
@@ -72,6 +74,7 @@ public class GTGuiTheme {
             .textColor(Color.WHITE.darker(1))
             .color(0x826B51)
             .itemSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
+            .fluidSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
             .build();
 
     protected final String themeId;
