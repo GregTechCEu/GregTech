@@ -1,6 +1,6 @@
 package gregtech.mixins.ctm;
 
-import gregtech.asm.hooks.CTMModHooks;
+import gregtech.client.utils.CTMHooks;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -23,6 +23,6 @@ public class CTMRenderInLayerMixin {
                            remap = false)
     private static Boolean checkRenderInLayer(Boolean originalResult, @NotNull IBlockState state,
                                               @NotNull BlockRenderLayer layer, @Local(ordinal = 0) IBakedModel model) {
-        return CTMModHooks.canRenderInLayer(((AbstractCTMBakedModel) model).getModel(), state, layer);
+        return CTMHooks.canRenderInLayer(((AbstractCTMBakedModel) model).getModel(), state, layer);
     }
 }

@@ -1,7 +1,7 @@
 package gregtech.mixins.minecraft;
 
 import gregtech.api.util.Mods;
-import gregtech.asm.hooks.BlockHooks;
+import gregtech.client.utils.BlockHooks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
