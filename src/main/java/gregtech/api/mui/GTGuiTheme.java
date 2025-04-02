@@ -21,60 +21,85 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static gregtech.api.mui.GTGuiTextures.*;
+
 public class GTGuiTheme {
+
+    public static class Colors {
+
+        public static final int BRONZE = 0xFF7706;
+        public static final int STEEL = 0x57576A;
+        public static final int PRIMITIVE = 0x826B51;
+    }
+
+    public static class Names {
+
+        public static final String STANDARD = gregtech("standard");
+        public static final String COVER = gregtech("cover");
+        public static final String BRONZE = gregtech("bronze");
+        public static final String STEEL = gregtech("steel");
+        public static final String PRIMITIVE = gregtech("primitive");
+
+        private static String gregtech(String s) {
+            return "gregtech:" + s;
+        }
+    }
 
     private static final List<GTGuiTheme> THEMES = new ArrayList<>();
 
-    public static final GTGuiTheme STANDARD = templateBuilder("gregtech_standard")
-            .panel(GTGuiTextures.IDs.STANDARD_BACKGROUND)
-            .itemSlot(GTGuiTextures.IDs.STANDARD_SLOT)
-            .fluidSlot(GTGuiTextures.IDs.STANDARD_FLUID_SLOT)
+    public static final GTGuiTheme STANDARD = templateBuilder(Names.STANDARD)
+            .panel(IDs.STANDARD_BACKGROUND)
+            .itemSlot(IDs.STANDARD_SLOT)
+            .fluidSlot(IDs.STANDARD_FLUID_SLOT)
             .color(ConfigHolder.client.defaultUIColor)
-            .button(GTGuiTextures.IDs.STANDARD_BUTTON)
-            .simpleToggleButton(GTGuiTextures.IDs.STANDARD_BUTTON,
-                    GTGuiTextures.IDs.STANDARD_SLOT,
+            .button(IDs.STANDARD_BUTTON)
+            .simpleToggleButton(IDs.STANDARD_BUTTON,
+                    IDs.STANDARD_SLOT,
                     ConfigHolder.client.defaultUIColor)
             .build();
 
-    public static final GTGuiTheme COVER = templateBuilder("gregtech_cover")
-            .panel(GTGuiTextures.IDs.COVER_BACKGROUND)
-            .itemSlot(GTGuiTextures.IDs.STANDARD_SLOT)
-            .fluidSlot(GTGuiTextures.IDs.STANDARD_FLUID_SLOT)
+    public static final GTGuiTheme COVER = templateBuilder(Names.COVER)
+            .panel(IDs.COVER_BACKGROUND)
+            .itemSlot(IDs.STANDARD_SLOT)
+            .fluidSlot(IDs.STANDARD_FLUID_SLOT)
             .color(ConfigHolder.client.defaultUIColor)
             .textColor(CoverWithUI.UI_TEXT_COLOR)
             .build();
 
     // TODO Multiblock theme for display texture, logo changes
 
-    public static final GTGuiTheme BRONZE = templateBuilder("gregtech_bronze")
-            .panel(GTGuiTextures.IDs.BRONZE_BACKGROUND)
-            .itemSlot(GTGuiTextures.IDs.BRONZE_SLOT)
-            .fluidSlot(GTGuiTextures.IDs.BRONZE_SLOT)
-            .displayBackground(GTGuiTextures.IDs.DISPLAY_BRONZE)
-            .button(GTGuiTextures.IDs.BRONZE_BUTTON)
-            .color(0xFF7706)
-            .simpleToggleButton(GTGuiTextures.IDs.BRONZE_BUTTON, GTGuiTextures.IDs.BRONZE_BUTTON_SELECTED,
+    public static final GTGuiTheme BRONZE = templateBuilder(Names.BRONZE)
+            .parent(Names.STANDARD)
+            .panel(IDs.BRONZE_BACKGROUND)
+            // .itemSlot(GTGuiTextures.IDs.BRONZE_SLOT)
+            // .fluidSlot(GTGuiTextures.IDs.BRONZE_SLOT)
+            .displayBackground(IDs.DISPLAY_BRONZE)
+            .button(IDs.BRONZE_BUTTON)
+            .color(Colors.BRONZE)
+            .simpleToggleButton(IDs.BRONZE_BUTTON, IDs.BRONZE_BUTTON_SELECTED,
                     ConfigHolder.client.defaultUIColor)
             .build();
 
-    public static final GTGuiTheme STEEL = templateBuilder("gregtech_steel")
-            .panel(GTGuiTextures.IDs.STEEL_BACKGROUND)
+    public static final GTGuiTheme STEEL = templateBuilder(Names.STEEL)
+            .parent(Names.STANDARD)
+            .panel(IDs.STEEL_BACKGROUND)
             .textColor(Color.WHITE.darker(1))
-            .itemSlot(GTGuiTextures.IDs.STEEL_SLOT)
-            .fluidSlot(GTGuiTextures.IDs.STEEL_SLOT)
-            .displayBackground(GTGuiTextures.IDs.DISPLAY_STEEL)
-            .button(GTGuiTextures.IDs.STEEL_BUTTON)
-            .color(0x57576a)
-            .simpleToggleButton(GTGuiTextures.IDs.STEEL_BUTTON, GTGuiTextures.IDs.STEEL_BUTTON_SELECTED,
+            // .itemSlot(GTGuiTextures.IDs.STEEL_SLOT)
+            // .fluidSlot(GTGuiTextures.IDs.STEEL_SLOT)
+            .displayBackground(IDs.DISPLAY_STEEL)
+            .button(IDs.STEEL_BUTTON)
+            .simpleToggleButton(IDs.STEEL_BUTTON, IDs.STEEL_BUTTON_SELECTED,
                     ConfigHolder.client.defaultUIColor)
+            .color(Colors.STEEL)
             .build();
 
-    public static final GTGuiTheme PRIMITIVE = templateBuilder("gregtech_primitive")
-            .panel(GTGuiTextures.IDs.PRIMITIVE_BACKGROUND)
+    public static final GTGuiTheme PRIMITIVE = templateBuilder(Names.PRIMITIVE)
+            .parent(Names.STANDARD)
+            .panel(IDs.PRIMITIVE_BACKGROUND)
             .textColor(Color.WHITE.darker(1))
-            .color(0x826B51)
-            .itemSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
-            .fluidSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
+            .color(Colors.PRIMITIVE)
+            // .itemSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
+            // .fluidSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
             .build();
 
     protected final String themeId;
@@ -83,7 +108,7 @@ public class GTGuiTheme {
     protected final JsonBuilder jsonBuilder;
 
     private Supplier<UITexture> logo;
-    private String displayBackground = GTGuiTextures.IDs.DISPLAY;
+    private String displayBackground = IDs.DISPLAY;
 
     protected GTGuiTheme(String themeId) {
         this.themeId = themeId;

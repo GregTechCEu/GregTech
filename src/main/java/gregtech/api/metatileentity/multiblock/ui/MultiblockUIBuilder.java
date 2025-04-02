@@ -535,9 +535,9 @@ public class MultiblockUIBuilder {
         // noinspection DataFlowIssue
         long eut = getSyncer().syncLong(() -> recipe.getEUt());
         long maxVoltage = getSyncer().syncLong(arl.getMaximumOverclockVoltage());
-        int maxProgress = arl.getMaxProgress();
+        int maxProgress = getSyncer().syncInt(arl.getMaxProgress());
 
-        if (getSyncer().syncBoolean(maxProgress == 0)) return this;
+        if (maxProgress == 0) return this;
 
         List<ItemStack> itemOutputs = new ArrayList<>();
         List<ChancedItemOutput> chancedItemOutputs = new ArrayList<>();
@@ -545,6 +545,7 @@ public class MultiblockUIBuilder {
         List<ChancedFluidOutput> chancedFluidOutputs = new ArrayList<>();
 
         if (isServer()) {
+            // recipe searching has to be done server only
             // noinspection DataFlowIssue
             itemOutputs.addAll(recipe.getOutputs());
             chancedItemOutputs.addAll(recipe.getChancedOutputs().getChancedEntries());
@@ -559,8 +560,6 @@ public class MultiblockUIBuilder {
 
         addKey(KeyUtil.string(TextFormatting.GRAY, "Producing: "), Operation.NEW_LINE);
 
-        // noinspection DataFlowIssue
-        var chanceFunction = map.getChanceFunction();
         int recipeTier = GTUtility.getTierByVoltage(eut);
         int machineTier = GTUtility.getOCTierByVoltage(maxVoltage);
 
@@ -573,7 +572,8 @@ public class MultiblockUIBuilder {
         }
 
         for (var chancedItemOutput : chancedItemOutputs) {
-            int chance = chanceFunction.getBoostedChance(chancedItemOutput, recipeTier, machineTier);
+            //noinspection DataFlowIssue
+            int chance = getSyncer().syncInt(() -> map.chanceFunction.getBoostedChance(chancedItemOutput, recipeTier, machineTier));
             int count = chancedItemOutput.getIngredient().getCount() * p;
             addChancedItemOutputLine(chancedItemOutput, count, chance, maxProgress);
         }
@@ -587,7 +587,8 @@ public class MultiblockUIBuilder {
         }
 
         for (var chancedFluidOutput : chancedFluidOutputs) {
-            int chance = chanceFunction.getBoostedChance(chancedFluidOutput, recipeTier, machineTier);
+            //noinspection DataFlowIssue
+            int chance = getSyncer().syncInt(() -> map.chanceFunction.getBoostedChance(chancedFluidOutput, recipeTier, machineTier));
             int count = chancedFluidOutput.getIngredient().amount * p;
             addChancedFluidOutputLine(chancedFluidOutput, count, chance, maxProgress);
         }
@@ -932,6 +933,7 @@ public class MultiblockUIBuilder {
 
         public void readBuffer(ByteBuf buf) {
             clear();
+            internal.clear();
             internal.writeBytes(buf);
         }
 
