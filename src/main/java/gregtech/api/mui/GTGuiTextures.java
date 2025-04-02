@@ -470,9 +470,9 @@ public class GTGuiTextures {
      * 1 = ON <br />
      */
     public static final UITexture[] BUTTON_POWER = slice("textures/gui/widget/button_power.png",
-            18, 36, 18, 18, true);
+            18, 36, 18, 18, false);
 
-    public static final UITexture BUTTON_POWER_DETAIL = fullImage("textures/gui/widget/button_power_detail.png", true);
+    public static final UITexture BUTTON_POWER_DETAIL = fullImage("textures/gui/widget/button_power_detail.png");
 
     /**
      * 0 = DISABLED <br />
@@ -481,18 +481,18 @@ public class GTGuiTextures {
      * 3 = VOID BOTH <br />
      **/
     public static final UITexture[] MULTIBLOCK_VOID = slice("textures/gui/widget/button_void_multiblock.png",
-            18, 72, 18, 18, true);
+            18, 72, 18, 18, false);
 
-    public static final UITexture OVERLAY_VOID_NONE = fullImage("textures/gui/widget/button_void_none.png", true);
+    public static final UITexture OVERLAY_VOID_NONE = fullImage("textures/gui/widget/button_void_none.png");
 
     /**
      * 0 = DISABLED <br />
      * 1 = ENABLED <br />
      */
     public static final UITexture[] OVERLAY_DISTINCT_BUSES = slice("textures/gui/widget/button_distinct_buses.png",
-            18, 36, 18, 18, true);
+            18, 36, 18, 18, false);
 
-    public static final UITexture OVERLAY_NO_FLEX = fullImage("textures/gui/widget/button_no_flex.png", true);
+    public static final UITexture OVERLAY_NO_FLEX = fullImage("textures/gui/widget/button_no_flex.png", false);
     public static final UITexture BUTTON_MULTI_MAP = fullImage("textures/gui/widget/button_multi_map.png", true);
     public static final UITexture BUTTON_MINER_MODES = fullImage("textures/gui/widget/button_miner_modes.png", true);
     public static final UITexture BUTTON_THROTTLE_MINUS = fullImage("textures/gui/widget/button_throttle_minus.png",
