@@ -12,6 +12,7 @@ import com.cleanroommc.modularui.drawable.Icon;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
@@ -60,10 +61,14 @@ public class GTObjectDrawable implements IDrawable, JeiIngredientProvider {
     private void drawObject(Object object, GuiContext context, int x, int y, int width, int height,
                             WidgetTheme widgetTheme) {
         if (object instanceof ItemStack stack) {
-            GTGuiTextures.SLOT.draw(context, x, y, width, height, widgetTheme);
+            IDrawable slot = ((ModularGuiContext) context).getTheme().getItemSlotTheme().getBackground();
+            if (slot == null) slot = GTGuiTextures.SLOT;
+            slot.draw(context, x, y, width, height, widgetTheme);
             GuiDraw.drawItem(stack, x + 1, y + 1, width - 2, height - 2);
         } else if (object instanceof FluidStack stack) {
-            GTGuiTextures.FLUID_SLOT.draw(context, x, y, width, height, widgetTheme);
+            IDrawable slot = ((ModularGuiContext) context).getTheme().getFluidSlotTheme().getBackground();
+            if (slot == null) slot = GTGuiTextures.FLUID_SLOT;
+            slot.draw(context, x, y, width, height, widgetTheme);
             GuiDraw.drawFluidTexture(stack, x + 1, y + 1, width - 2, height - 2, 0);
         } else if (object instanceof BoostableChanceEntry<?>entry) {
             drawObject(entry.getIngredient(), context, x, y, width, height, widgetTheme);
