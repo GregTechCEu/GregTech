@@ -408,7 +408,6 @@ public class GTGuiTextures {
             .uv(18, 0, 18, 18)
             .adaptable(2)
             .name(IDs.BRONZE_BUTTON)
-            .canApplyTheme()
             .build();
 
     public static final UITexture BUTTON_BRONZE_SELECTED = new UITexture.Builder()
@@ -417,7 +416,6 @@ public class GTGuiTextures {
             .uv(18, 18, 18, 18)
             .adaptable(2)
             .name(IDs.BRONZE_BUTTON_SELECTED)
-            .canApplyTheme()
             .build();
 
     public static final UITexture BUTTON_STEEL = new UITexture.Builder()
@@ -426,7 +424,6 @@ public class GTGuiTextures {
             .uv(36, 0, 18, 18)
             .adaptable(2)
             .name(IDs.STEEL_BUTTON)
-            .canApplyTheme()
             .build();
 
     public static final UITexture BUTTON_STEEL_SELECTED = new UITexture.Builder()
@@ -435,7 +432,6 @@ public class GTGuiTextures {
             .uv(36, 18, 18, 18)
             .adaptable(2)
             .name(IDs.STEEL_BUTTON_SELECTED)
-            .canApplyTheme()
             .build();
 
     public static final UITexture MC_BUTTON = new UITexture.Builder()
