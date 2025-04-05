@@ -58,6 +58,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -507,6 +508,40 @@ public class GTUtility {
     }
 
     /**
+     * Copies the FluidStack with new stack size.
+     *
+     * @param stack item stack for copying
+     * @return a copy of FluidStack, or {@code null} if the stack is empty
+     */
+    @Nullable
+    public static FluidStack copy(int newCount, @Nullable FluidStack stack) {
+        if (isEmpty(stack)) return null;
+        FluidStack copy = stack.copy();
+        copy.amount = newCount;
+        return copy;
+    }
+
+    /**
+     * Copies the FluidStack.
+     *
+     * @param stack fluid stack for copying
+     * @return a copy of FluidStack, or {@code null} if the stack is empty
+     */
+    @Nullable
+    public static FluidStack copy(@Nullable FluidStack stack) {
+        if (isEmpty(stack)) return null;
+        return stack.copy();
+    }
+
+    /**
+     * @param stack fluid stack to check if empty
+     * @return true if the stack is null or amount is <= 0
+     */
+    public static boolean isEmpty(FluidStack stack) {
+        return stack == null || stack.amount <= 0;
+    }
+
+    /**
      * Copies first non-empty ItemStack from stacks.
      *
      * @param stacks list of candidates for copying
@@ -876,6 +911,8 @@ public class GTUtility {
     }
 
     @Contract("null -> null")
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public static TextComponentTranslation getFluidTranslation(@Nullable FluidStack stack) {
         if (stack == null) return null;
         if (stack.getFluid() instanceof GTFluid.GTMaterialFluid materialFluid) {
@@ -886,6 +923,8 @@ public class GTUtility {
     }
 
     @Contract("null -> null")
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public static TextComponentTranslation getFluidTranslation(@Nullable Fluid fluid) {
         if (fluid == null) return null;
         if (fluid instanceof GTFluid.GTMaterialFluid materialFluid) {
@@ -894,6 +933,7 @@ public class GTUtility {
         return new TextComponentTranslation(fluid.getUnlocalizedName());
     }
 
+    @Deprecated
     public static @NotNull Pair<DoubleSupplier, DoubleSupplier> createPairedSupplier(int ticksPerCycle, int width,
                                                                                      double splitPoint) {
         AtomicDouble tracker = new AtomicDouble(0.0);
