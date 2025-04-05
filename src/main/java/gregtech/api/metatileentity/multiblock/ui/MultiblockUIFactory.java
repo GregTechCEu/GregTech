@@ -20,10 +20,12 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.value.IBoolValue;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -252,7 +254,7 @@ public class MultiblockUIFactory {
         // TODO createExtras() hook for overrides?
         if (mte instanceof ProgressBarMultiblock progressBarMultiblock &&
                 progressBarMultiblock.getProgressBarCount() > 0) {
-            panel.height(height + (Bars.HEIGHT * progressBarMultiblock.getProgressBarRows()) - 2);
+            panel.height(height + (Bars.HEIGHT * calculateRows(progressBarMultiblock.getProgressBarCount())) - 2);
             panel.child(createBars(progressBarMultiblock, panelSyncManager));
         }
 
@@ -308,9 +310,7 @@ public class MultiblockUIFactory {
     protected Flow createBars(@NotNull ProgressBarMultiblock progressMulti,
                               @NotNull PanelSyncManager panelSyncManager) {
         final int count = progressMulti.getProgressBarCount();
-//        final int calculatedRows = calculateRows(count);
-        final int calculatedRows = progressMulti.getProgressBarRows();
-        final int calculatedCols = progressMulti.getProgressBarCols();
+        final int calculatedRows = calculateRows(count);
 
         Flow column = Flow.column()
                 .margin(4, 0)
@@ -318,12 +318,12 @@ public class MultiblockUIFactory {
                 .widthRel(1f)
                 .height(Bars.HEIGHT * calculatedRows);
 
-        List<UnaryOperator<TemplateBarBuilder>> map = new ArrayList<>(progressMulti.getProgressBarCount());
-        progressMulti.registerBars(map, panelSyncManager);
+        List<UnaryOperator<TemplateBarBuilder>> barBuilders = new ArrayList<>(progressMulti.getProgressBarCount());
+        progressMulti.registerBars(barBuilders, panelSyncManager);
 
         for (int r = 0; r < calculatedRows; r++) {
 
-//            final int cols = calculateCols(count, r);
+            final int calculatedCols = calculateCols(count, r);
 
             Flow row = Flow.row()
                     .widthRel(1f)
@@ -331,8 +331,8 @@ public class MultiblockUIFactory {
                     .height(Bars.HEIGHT);
 
             // the numbers for the given row of bars
-            int from = r * calculatedCols;
-            int to = Math.min(from + calculatedCols, count);
+            int from = r * (count - calculatedCols);
+            int to = from + calculatedCols;
 
             // calculate bar width
             int barCount = Math.max(1, to - from);
@@ -340,13 +340,14 @@ public class MultiblockUIFactory {
 
             for (int i = from; i < to; i++) {
                 ProgressWidget widget;
-                if (i < map.size()) {
-                    widget = map.get(i)
+                if (i < barBuilders.size()) {
+                    widget = barBuilders.get(i)
                             .apply(new TemplateBarBuilder())
                             .build();
                 } else {
-                    // error widget?
-                    widget = new ProgressWidget();
+                    widget = new ProgressWidget()
+                            .addTooltipLine("Error! no bar for index: " + i)
+                            .background(new Rectangle().setColor(Color.RED.main));
                 }
 
                 row.child(widget.size(barWidth, Bars.HEIGHT)
