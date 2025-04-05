@@ -42,6 +42,7 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
                                         @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
         standardOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(), getOverclockingVoltageFactor());
+
     }
 
     @Override
@@ -54,4 +55,17 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     public boolean isAllowOverclocking() {
         return false;
     }
+
+    // generators always run recipes
+    @Override
+    protected void updateRecipeProgress() {
+        if (canRecipeProgress && drawEnergy(recipeEUt, true)) {
+            drawEnergy(recipeEUt, false);
+            // as recipe starts with progress on 1 this has to be > only not => to compensate for it
+            if (++progressTime > maxProgressTime) {
+                completeRecipe();
+            }
+        }
+    }
+
 }
