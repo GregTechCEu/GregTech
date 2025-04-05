@@ -9,7 +9,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.FixedIntArraySyncValue;
 import gregtech.api.pattern.BlockPattern;
@@ -35,11 +35,11 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.widgets.ProgressWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                                         implements ITieredMetaTileEntity, ProgressBarMultiblock {
@@ -270,117 +270,105 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     }
 
     @Override
-    public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
-        return switch (index) {
-            case 0 -> {
-                FixedIntArraySyncValue fuelValue = new FixedIntArraySyncValue(this::getFuelAmount, null);
-                StringSyncValue fuelNameValue = new StringSyncValue(() -> {
-                    FluidStack stack = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getInputFluidStack();
-                    if (stack == null) {
-                        return null;
-                    }
-                    Fluid fluid = stack.getFluid();
-                    if (fluid == null) {
-                        return null;
-                    }
-                    return fluid.getName();
-                });
-                panelSyncManager.syncValue("fuel_amount", fuelValue);
-                panelSyncManager.syncValue("fuel_name", fuelNameValue);
-
-                yield new ProgressWidget()
-                        .progress(() -> fuelValue.getValue(1) == 0 ? 0 :
-                                1.0 * fuelValue.getValue(0) / fuelValue.getValue(1))
-                        .texture(GTGuiTextures.PROGRESS_BAR_LCE_FUEL, MultiblockUIFactory.Bars.THIRD_WIDTH)
-                        .tooltipAutoUpdate(true)
-                        .tooltipBuilder(t -> createFuelTooltip(t, fuelValue, fuelNameValue));
+    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
+        FixedIntArraySyncValue fuelValue = new FixedIntArraySyncValue(this::getFuelAmount, null);
+        StringSyncValue fuelNameValue = new StringSyncValue(() -> {
+            FluidStack stack = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getInputFluidStack();
+            if (stack == null) {
+                return null;
             }
-            case 1 -> {
-                IntSyncValue rotorSpeedValue = new IntSyncValue(() -> {
-                    IRotorHolder rotorHolder = getRotorHolder();
-                    if (rotorHolder == null) {
-                        return 0;
+            Fluid fluid = stack.getFluid();
+            if (fluid == null) {
+                return null;
+            }
+            return fluid.getName();
+        });
+        syncManager.syncValue("fuel_amount", fuelValue);
+        syncManager.syncValue("fuel_name", fuelNameValue);
+
+        IntSyncValue rotorSpeedValue = new IntSyncValue(() -> {
+            IRotorHolder rotorHolder = getRotorHolder();
+            if (rotorHolder == null) {
+                return 0;
+            }
+            return rotorHolder.getRotorSpeed();
+        });
+
+        IntSyncValue rotorMaxSpeedValue = new IntSyncValue(() -> {
+            IRotorHolder rotorHolder = getRotorHolder();
+            if (rotorHolder == null) {
+                return 0;
+            }
+            return rotorHolder.getMaxRotorHolderSpeed();
+        });
+
+        syncManager.syncValue("rotor_speed", rotorSpeedValue);
+        syncManager.syncValue("rotor_max_speed", rotorMaxSpeedValue);
+        IntSyncValue durabilityValue = new IntSyncValue(() -> {
+            IRotorHolder rotorHolder = getRotorHolder();
+            if (rotorHolder == null) {
+                return 0;
+            }
+            return rotorHolder.getRotorDurabilityPercent();
+        });
+        IntSyncValue efficiencyValue = new IntSyncValue(() -> {
+            IRotorHolder rotorHolder = getRotorHolder();
+            if (rotorHolder == null) {
+                return 0;
+            }
+            return rotorHolder.getRotorEfficiency();
+        });
+
+        syncManager.syncValue("rotor_durability", durabilityValue);
+        syncManager.syncValue("rotor_efficiency", efficiencyValue);
+
+        bars.add(barTest -> barTest
+                .progress(() -> fuelValue.getValue(1) == 0 ? 0 :
+                        1.0 * fuelValue.getValue(0) / fuelValue.getValue(1))
+                .texture(GTGuiTextures.PROGRESS_BAR_LCE_FUEL)
+                .tooltipBuilder(t -> createFuelTooltip(t, fuelValue, fuelNameValue)));
+
+        bars.add(barTest -> barTest
+                .progress(() -> rotorMaxSpeedValue.getIntValue() == 0 ? 0 :
+                        1.0 * rotorSpeedValue.getIntValue() / rotorMaxSpeedValue.getIntValue())
+                .texture(GTGuiTextures.PROGRESS_BAR_TURBINE_ROTOR_SPEED)
+                .tooltipBuilder(t -> {
+                    if (isStructureFormed()) {
+                        int speed = rotorSpeedValue.getIntValue();
+                        int maxSpeed = rotorMaxSpeedValue.getIntValue();
+
+                        t.addLine(KeyUtil.lang("gregtech.multiblock.turbine.rotor_speed",
+                                getSpeedFormat(maxSpeed, speed), speed, maxSpeed));
+                    } else {
+                        t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
                     }
-                    return rotorHolder.getRotorSpeed();
-                });
+                }));
 
-                IntSyncValue rotorMaxSpeedValue = new IntSyncValue(() -> {
-                    IRotorHolder rotorHolder = getRotorHolder();
-                    if (rotorHolder == null) {
-                        return 0;
-                    }
-                    return rotorHolder.getMaxRotorHolderSpeed();
-                });
-
-                panelSyncManager.syncValue("rotor_speed", rotorSpeedValue);
-                panelSyncManager.syncValue("rotor_max_speed", rotorMaxSpeedValue);
-
-                yield new ProgressWidget()
-                        .progress(() -> rotorMaxSpeedValue.getIntValue() == 0 ? 0 :
-                                1.0 * rotorSpeedValue.getIntValue() / rotorMaxSpeedValue.getIntValue())
-                        .texture(GTGuiTextures.PROGRESS_BAR_TURBINE_ROTOR_SPEED, MultiblockUIFactory.Bars.THIRD_WIDTH)
-                        .tooltipAutoUpdate(true)
-                        .tooltipBuilder(t -> {
-                            if (isStructureFormed()) {
-                                int speed = rotorSpeedValue.getIntValue();
-                                int maxSpeed = rotorMaxSpeedValue.getIntValue();
-
-                                t.addLine(KeyUtil.lang("gregtech.multiblock.turbine.rotor_speed",
-                                        getSpeedFormat(maxSpeed, speed), speed, maxSpeed));
+        bars.add(barTest -> barTest
+                .progress(() -> durabilityValue.getIntValue() / 100.0)
+                .texture(GTGuiTextures.PROGRESS_BAR_TURBINE_ROTOR_DURABILITY)
+                .tooltipBuilder(t -> {
+                    if (isStructureFormed()) {
+                        if (efficiencyValue.getIntValue() <= 0) {
+                            t.addLine(IKey.lang("gregtech.multiblock.turbine.no_rotor"));
+                        } else {
+                            int durability = durabilityValue.getIntValue();
+                            // TODO working dynamic color substitutions into IKey.lang
+                            if (durability > 40) {
+                                t.addLine(IKey.lang("gregtech.multiblock.turbine.rotor_durability.high",
+                                        durability));
+                            } else if (durability > MIN_DURABILITY_TO_WARN) {
+                                t.addLine(IKey.lang("gregtech.multiblock.turbine.rotor_durability.medium",
+                                        durability));
                             } else {
-                                t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                                t.addLine(IKey.lang("gregtech.multiblock.turbine.rotor_durability.low",
+                                        durability));
                             }
-                        });
-            }
-            case 2 -> {
-                IntSyncValue durabilityValue = new IntSyncValue(() -> {
-                    IRotorHolder rotorHolder = getRotorHolder();
-                    if (rotorHolder == null) {
-                        return 0;
+                        }
+                    } else {
+                        t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
                     }
-                    return rotorHolder.getRotorDurabilityPercent();
-                });
-                IntSyncValue efficiencyValue = new IntSyncValue(() -> {
-                    IRotorHolder rotorHolder = getRotorHolder();
-                    if (rotorHolder == null) {
-                        return 0;
-                    }
-                    return rotorHolder.getRotorEfficiency();
-                });
-
-                panelSyncManager.syncValue("rotor_durability", durabilityValue);
-                panelSyncManager.syncValue("rotor_efficiency", efficiencyValue);
-
-                yield new ProgressWidget()
-                        .progress(() -> durabilityValue.getIntValue() / 100.0)
-                        .texture(GTGuiTextures.PROGRESS_BAR_TURBINE_ROTOR_DURABILITY,
-                                MultiblockUIFactory.Bars.THIRD_WIDTH)
-                        .tooltipAutoUpdate(true)
-                        .tooltipBuilder(t -> {
-                            if (isStructureFormed()) {
-                                if (efficiencyValue.getIntValue() <= 0) {
-                                    t.addLine(IKey.lang("gregtech.multiblock.turbine.no_rotor"));
-                                } else {
-                                    int durability = durabilityValue.getIntValue();
-                                    // TODO working dynamic color substitutions into IKey.lang
-                                    if (durability > 40) {
-                                        t.addLine(IKey.lang("gregtech.multiblock.turbine.rotor_durability.high",
-                                                durability));
-                                    } else if (durability > MIN_DURABILITY_TO_WARN) {
-                                        t.addLine(IKey.lang("gregtech.multiblock.turbine.rotor_durability.medium",
-                                                durability));
-                                    } else {
-                                        t.addLine(IKey.lang("gregtech.multiblock.turbine.rotor_durability.low",
-                                                durability));
-                                    }
-                                }
-                            } else {
-                                t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
-                            }
-                        });
-            }
-            default -> throw new IllegalStateException("Invalid index received " + index);
-        };
+                }));
     }
 
     private @NotNull TextFormatting getSpeedFormat(int maxSpeed, int speed) {

@@ -13,7 +13,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -51,13 +51,13 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                                       implements ITieredMetaTileEntity, IWorkable, ProgressBarMultiblock {
@@ -375,15 +375,14 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
     }
 
     @Override
-    public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
+    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
         IntSyncValue operationsValue = new IntSyncValue(() -> BedrockFluidVeinHandler.getOperationsRemaining(getWorld(),
                 minerLogic.getChunkX(), minerLogic.getChunkZ()));
-        panelSyncManager.syncValue("operations_remaining", operationsValue);
+        syncManager.syncValue("operations_remaining", operationsValue);
 
-        return new ProgressWidget()
+        bars.add(bar -> bar
                 .progress(() -> operationsValue.getIntValue() * 1.0 / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS)
-                .texture(GTGuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION, MultiblockUIFactory.Bars.FULL_WIDTH)
-                .tooltipAutoUpdate(true)
+                .texture(GTGuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION)
                 .tooltipBuilder(t -> {
                     if (isStructureFormed()) {
                         if (operationsValue.getIntValue() == 0) {
@@ -407,6 +406,6 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                     } else {
                         t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
                     }
-                });
+                }));
     }
 }

@@ -1,15 +1,19 @@
 package gregtech.api.metatileentity.multiblock;
 
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.ProgressWidget;
-import org.jetbrains.annotations.NotNull;
+
+import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
+
+import java.util.List;
+import java.util.function.UnaryOperator;
 
 public interface ProgressBarMultiblock {
 
     int getProgressBarCount();
 
-    @NotNull
-    ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index);
+    // the bar only needs three things
+    // progress, texture, and tooltip
+    void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager);
 
     /**
      * @return the amount of columns in the progress bar grid

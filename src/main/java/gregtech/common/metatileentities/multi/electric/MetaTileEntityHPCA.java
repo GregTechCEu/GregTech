@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.KeyManager;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
 import gregtech.api.metatileentity.multiblock.ui.UISyncer;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
@@ -72,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -533,56 +535,46 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager,
-                                                     int index) {
-        return switch (index) {
-            case 0 -> {
-                IntSyncValue currentCWUtValue = new IntSyncValue(() -> hpcaHandler.cachedCWUt);
-                IntSyncValue maxCWUtValue = new IntSyncValue(hpcaHandler::getMaxCWUt);
-                panelSyncManager.syncValue("current_cwut", currentCWUtValue);
-                panelSyncManager.syncValue("max_cwut", maxCWUtValue);
+    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
+        IntSyncValue currentCWUtValue = new IntSyncValue(() -> hpcaHandler.cachedCWUt);
+        IntSyncValue maxCWUtValue = new IntSyncValue(hpcaHandler::getMaxCWUt);
+        syncManager.syncValue("current_cwut", currentCWUtValue);
+        syncManager.syncValue("max_cwut", maxCWUtValue);
+        DoubleSyncValue temperatureValue = new DoubleSyncValue(() -> temperature);
+        syncManager.syncValue("temperature", temperatureValue);
 
-                yield new ProgressWidget()
-                        .progress(() -> 1.0 * currentCWUtValue.getIntValue() / maxCWUtValue.getIntValue())
-                        .texture(GTGuiTextures.PROGRESS_BAR_HPCA_COMPUTATION, MultiblockUIFactory.Bars.HALF_WIDTH)
-                        .tooltipAutoUpdate(true)
-                        .tooltipBuilder(t -> {
-                            if (isStructureFormed()) {
-                                t.addLine(IKey.lang("gregtech.multiblock.hpca.computation",
-                                        currentCWUtValue.getIntValue(), maxCWUtValue.getIntValue()));
-                            } else {
-                                t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
-                            }
-                        });
-            }
-            case 1 -> {
-                DoubleSyncValue temperatureValue = new DoubleSyncValue(() -> temperature);
-                panelSyncManager.syncValue("temperature", temperatureValue);
+        bars.add(barTest -> barTest
+                .progress(() -> 1.0 * currentCWUtValue.getIntValue() / maxCWUtValue.getIntValue())
+                .texture(GTGuiTextures.PROGRESS_BAR_HPCA_COMPUTATION)
+                .tooltipBuilder(t -> {
+                    if (isStructureFormed()) {
+                        t.addLine(IKey.lang("gregtech.multiblock.hpca.computation",
+                                currentCWUtValue.getIntValue(), maxCWUtValue.getIntValue()));
+                    } else {
+                        t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                    }
+                }));
 
-                yield new ProgressWidget()
-                        .progress(() -> Math.min(1.0, temperatureValue.getDoubleValue() / DAMAGE_TEMPERATURE))
-                        .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT, MultiblockUIFactory.Bars.HALF_WIDTH)
-                        .tooltipAutoUpdate(true)
-                        .tooltipBuilder(t -> {
-                            if (isStructureFormed()) {
-                                double temp = temperatureValue.getDoubleValue();
-                                int degrees = (int) Math.round(temp / 10.0);
+        bars.add(barTest -> barTest
+                .progress(() -> Math.min(1.0, temperatureValue.getDoubleValue() / DAMAGE_TEMPERATURE))
+                .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT)
+                .tooltipBuilder(t -> {
+                    if (isStructureFormed()) {
+                        double temp = temperatureValue.getDoubleValue();
+                        int degrees = (int) Math.round(temp / 10.0);
 
-                                // TODO working dynamic color substitutions into IKey.lang
-                                if (temp < 500) {
-                                    t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature.low", degrees));
-                                } else if (temp < 750) {
-                                    t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature.medium", degrees));
-                                } else {
-                                    t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature.high", degrees));
-                                }
-                            } else {
-                                t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
-                            }
-                        });
-            }
-            default -> throw new IllegalStateException("Invalid index received " + index);
-        };
+                        // TODO working dynamic color substitutions into IKey.lang
+                        if (temp < 500) {
+                            t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature.low", degrees));
+                        } else if (temp < 750) {
+                            t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature.medium", degrees));
+                        } else {
+                            t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature.high", degrees));
+                        }
+                    } else {
+                        t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                    }
+                }));
     }
 
     // Handles the logic of this structure's specific HPCA component grid
