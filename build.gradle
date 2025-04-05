@@ -23,7 +23,6 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.internal.logging.text.StyledTextOutputFactory
 import org.jetbrains.gradle.ext.Gradle
 
-import javax.inject.Inject
 
 import static org.gradle.internal.logging.text.StyledTextOutput.Style
 
@@ -37,7 +36,6 @@ plugins {
     id 'com.gtnewhorizons.retrofuturagradle' version '1.4.0'
     id 'net.darkhax.curseforgegradle' version '1.1.24' apply false
     id 'com.modrinth.minotaur' version '2.8.7' apply false
-    id 'com.diffplug.spotless' version '6.13.0' apply false
     id 'com.palantir.git-version' version '3.0.0' apply false
     id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
     id 'org.jetbrains.kotlin.jvm' version '1.8.0' apply false
@@ -98,7 +96,6 @@ propertyDefaultIfUnset("generateDefaultChangelog", false)
 propertyDefaultIfUnset("customMavenPublishUrl", "")
 propertyDefaultIfUnset("mavenArtifactGroup", getDefaultArtifactGroup())
 propertyDefaultIfUnset("enableModernJavaSyntax", false)
-propertyDefaultIfUnset("enableSpotless", false)
 propertyDefaultIfUnset("enableJUnit", false)
 propertyDefaultIfUnsetWithEnvVar("deploymentDebug", false, "DEPLOYMENT_DEBUG")
 
@@ -205,61 +202,6 @@ pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
     tasks.configureEach { task ->
         if (task.name in disabledKotlinTaskList) {
             task.enabled = false
-        }
-    }
-}
-
-// Spotless
-//noinspection GroovyAssignabilityCheck
-project.extensions.add(com.diffplug.blowdryer.Blowdryer, 'Blowdryer', com.diffplug.blowdryer.Blowdryer) // make Blowdryer available in plugin application
-if (enableSpotless.toBoolean()) {
-    apply plugin: 'com.diffplug.spotless'
-
-    // Spotless auto-formatter
-    // See https://github.com/diffplug/spotless/tree/main/plugin-gradle
-    // Can be locally toggled via spotless:off/spotless:on comments
-    spotless {
-        encoding 'UTF-8'
-
-        format 'misc', {
-            target '.gitignore'
-
-            trimTrailingWhitespace()
-            indentWithSpaces(4)
-            endWithNewline()
-        }
-        java {
-            target 'src/main/java/**/*.java', 'src/test/java/**/*.java' // exclude api as they are not our files
-
-            def orderFile = project.file('spotless.importorder')
-            if (!orderFile.exists()) {
-                orderFile = Blowdryer.file('spotless.importorder')
-            }
-            def formatFile = project.file('spotless.eclipseformat.xml')
-            if (!formatFile.exists()) {
-                formatFile = Blowdryer.file('spotless.eclipseformat.xml')
-            }
-
-            toggleOffOn()
-            importOrderFile(orderFile)
-            //removeUnusedImports()
-            endWithNewline()
-            //noinspection GroovyAssignabilityCheck
-            eclipse('4.19.0').configFile(formatFile)
-        }
-        kotlin {
-            target 'src/*/kotlin/**/*.kt'
-
-            toggleOffOn()
-            ktfmt('0.39')
-
-            trimTrailingWhitespace()
-            indentWithSpaces(4)
-            endWithNewline()
-        }
-        scala {
-            target 'src/*/scala/**/*.scala'
-            scalafmt('3.7.1')
         }
     }
 }
@@ -646,8 +588,7 @@ processResources {
     inputs.property 'mcversion', minecraftVersion
     // Blowdryer puts these files into the resource directory, so
     // exclude them from builds (doesn't hurt to exclude even if not present)
-    exclude('spotless.importorder')
-    exclude('spotless.eclipseformat.xml')
+
 
     // replace stuff in mcmod.info, nothing else
     filesMatching('mcmod.info') { fcd ->
@@ -1107,18 +1048,11 @@ idea {
                 '5. Run Obfuscated Server'(Gradle) {
                     taskNames = ['runObfServer']
                 }
-                if (enableSpotless.toBoolean()) {
-                    '6. Apply Spotless'(Gradle) {
-                        taskNames = ["spotlessApply"]
-                    }
-                    '7. Build Jars'(Gradle) {
-                        taskNames = ['build']
-                    }
-                } else {
+
                     '6. Build Jars'(Gradle) {
                         taskNames = ['build']
                     }
-                }
+
                 'Update Buildscript'(Gradle) {
                     taskNames = ['updateBuildScript']
                 }

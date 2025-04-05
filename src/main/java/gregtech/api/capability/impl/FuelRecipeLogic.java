@@ -42,7 +42,6 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
                                         @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
         standardOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(), getOverclockingVoltageFactor());
-
     }
 
     @Override
@@ -67,5 +66,4 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
             }
         }
     }
-
 }
