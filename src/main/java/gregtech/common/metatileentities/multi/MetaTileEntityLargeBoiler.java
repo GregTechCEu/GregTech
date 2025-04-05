@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.KeyManager;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
 import gregtech.api.metatileentity.multiblock.ui.UISyncer;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
@@ -50,7 +51,6 @@ import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
@@ -59,6 +59,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements ProgressBarMultiblock {
 
@@ -397,29 +398,28 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
+    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
         IntSyncValue waterFilledValue = new IntSyncValue(this::getWaterFilled);
         IntSyncValue waterCapacityValue = new IntSyncValue(this::getWaterCapacity);
-        panelSyncManager.syncValue("water_filled", waterFilledValue);
-        panelSyncManager.syncValue("water_capacity", waterCapacityValue);
+        syncManager.syncValue("water_filled", waterFilledValue);
+        syncManager.syncValue("water_capacity", waterCapacityValue);
 
-        return new ProgressWidget()
+        bars.add(barTest -> barTest
                 .progress(() -> waterCapacityValue.getIntValue() == 0 ? 0 :
                         waterFilledValue.getIntValue() * 1.0 / waterCapacityValue.getIntValue())
-                .texture(GTGuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION, MultiblockUIFactory.Bars.FULL_WIDTH)
-                .tooltipAutoUpdate(true)
-                .tooltipBuilder(t -> {
+                .texture(GTGuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION)
+                .tooltipBuilder(tooltip -> {
                     if (isStructureFormed()) {
                         if (waterFilledValue.getIntValue() == 0) {
-                            t.addLine(IKey.lang("gregtech.multiblock.large_boiler.no_water"));
+                            tooltip.addLine(IKey.lang("gregtech.multiblock.large_boiler.no_water"));
                         } else {
-                            t.addLine(IKey.lang("gregtech.multiblock.large_boiler.water_bar_hover",
+                            tooltip.addLine(IKey.lang("gregtech.multiblock.large_boiler.water_bar_hover",
                                     waterFilledValue.getIntValue(), waterCapacityValue.getIntValue()));
                         }
                     } else {
-                        t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                        tooltip.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
                     }
-                });
+                }));
     }
 
     /**

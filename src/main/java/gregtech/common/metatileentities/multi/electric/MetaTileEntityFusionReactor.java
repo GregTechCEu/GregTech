@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
@@ -82,6 +83,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.DoubleSupplier;
+import java.util.function.UnaryOperator;
 
 import static gregtech.api.recipes.logic.OverclockingLogic.PERFECT_HALF_DURATION_FACTOR;
 import static gregtech.api.recipes.logic.OverclockingLogic.PERFECT_HALF_VOLTAGE_FACTOR;
@@ -407,45 +409,35 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     }
 
     @Override
-    public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
-        return switch (index) {
-            case 0 -> {
-                LongSyncValue capacity = new LongSyncValue(energyContainer::getEnergyCapacity);
-                panelSyncManager.syncValue("capacity", index, capacity);
-                LongSyncValue stored = new LongSyncValue(energyContainer::getEnergyStored);
-                panelSyncManager.syncValue("stored", index, stored);
-                yield new ProgressWidget()
-                        .texture(GTGuiTextures.PROGRESS_BAR_FUSION_ENERGY, MultiblockUIFactory.Bars.HALF_WIDTH)
-                        .tooltipAutoUpdate(true)
-                        .tooltipBuilder(tooltip -> {
-                            tooltip.add(KeyUtil.lang(TextFormatting.GRAY,
-                                    "gregtech.multiblock.energy_stored",
-                                    stored.getLongValue(), capacity.getLongValue()));
-                        })
-                        .progress(() -> capacity.getLongValue() > 0 ?
-                                1.0 * stored.getLongValue() / capacity.getLongValue() : 0);
-            }
-            case 1 -> {
-                LongSyncValue capacity = new LongSyncValue(energyContainer::getEnergyCapacity);
-                panelSyncManager.syncValue("capacity", index, capacity);
-                LongSyncValue heat = new LongSyncValue(this::getHeat);
-                panelSyncManager.syncValue("heat", index, heat);
-                yield new ProgressWidget()
-                        .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT, MultiblockUIFactory.Bars.HALF_WIDTH)
-                        .tooltipAutoUpdate(true)
-                        .tooltipBuilder(tooltip -> {
-                            IKey heatInfo = KeyUtil.string(TextFormatting.AQUA,
-                                    "%,d / %,d EU",
-                                    heat.getLongValue(), capacity.getLongValue());
-                            tooltip.add(KeyUtil.lang(TextFormatting.GRAY,
-                                    "gregtech.multiblock.fusion_reactor.heat",
-                                    heatInfo));
-                        })
-                        .progress(() -> capacity.getLongValue() > 0 ?
-                                1.0 * heat.getLongValue() / capacity.getLongValue() : 0);
-            }
-            default -> throw new IllegalStateException();
-        };
+    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
+        LongSyncValue capacity = new LongSyncValue(energyContainer::getEnergyCapacity);
+        syncManager.syncValue("capacity", capacity);
+        LongSyncValue stored = new LongSyncValue(energyContainer::getEnergyStored);
+        syncManager.syncValue("stored", stored);
+        LongSyncValue heat = new LongSyncValue(this::getHeat);
+        syncManager.syncValue("heat", heat);
+
+        bars.add(barTest -> barTest
+                .progress(() -> capacity.getLongValue() > 0 ?
+                        1.0 * stored.getLongValue() / capacity.getLongValue() : 0)
+                .texture(GTGuiTextures.PROGRESS_BAR_FUSION_ENERGY)
+                .tooltipBuilder(tooltip -> tooltip
+                        .add(KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.energy_stored",
+                                stored.getLongValue(), capacity.getLongValue()))));
+
+        bars.add(barTest -> barTest
+                .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT)
+                .tooltipBuilder(tooltip -> {
+                    IKey heatInfo = KeyUtil.string(TextFormatting.AQUA,
+                            "%,d / %,d EU",
+                            heat.getLongValue(), capacity.getLongValue());
+                    tooltip.add(KeyUtil.lang(TextFormatting.GRAY,
+                            "gregtech.multiblock.fusion_reactor.heat",
+                            heatInfo));
+                })
+                .progress(() -> capacity.getLongValue() > 0 ?
+                        1.0 * heat.getLongValue() / capacity.getLongValue() : 0));
     }
 
     private static class FusionProgressSupplier {

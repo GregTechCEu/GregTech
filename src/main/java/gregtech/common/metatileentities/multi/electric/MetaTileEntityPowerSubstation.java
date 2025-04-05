@@ -14,8 +14,8 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
+import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.BigIntegerSyncValue;
 import gregtech.api.pattern.BlockPattern;
@@ -55,7 +55,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.ProgressWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -68,6 +67,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -578,19 +578,18 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    public @NotNull ProgressWidget createProgressBar(@NotNull PanelSyncManager panelSyncManager, int index) {
+    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
         BigIntegerSyncValue energyStoredValue = new BigIntegerSyncValue(
                 () -> energyBank == null ? BigInteger.ZERO : energyBank.getStored(), null);
         BigIntegerSyncValue energyCapacityValue = new BigIntegerSyncValue(
                 () -> energyBank == null ? BigInteger.ZERO : energyBank.getCapacity(), null);
-        panelSyncManager.syncValue("energy_stored", energyStoredValue);
-        panelSyncManager.syncValue("energy_capacity", energyCapacityValue);
+        syncManager.syncValue("energy_stored", energyStoredValue);
+        syncManager.syncValue("energy_capacity", energyCapacityValue);
 
-        return new ProgressWidget()
+        bars.add(b -> b
                 .progress(
                         () -> energyStoredValue.getValue().doubleValue() / energyCapacityValue.getValue().doubleValue())
-                .texture(GTGuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW, MultiblockUIFactory.Bars.FULL_WIDTH)
-                .tooltipAutoUpdate(true)
+                .texture(GTGuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW)
                 .tooltipBuilder(t -> {
                     if (isStructureFormed()) {
                         t.addLine(IKey.lang("gregtech.multiblock.energy_stored", energyStoredValue.getValue(),
@@ -598,7 +597,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                     } else {
                         t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
                     }
-                });
+                }));
     }
 
     public static class PowerStationEnergyBank {

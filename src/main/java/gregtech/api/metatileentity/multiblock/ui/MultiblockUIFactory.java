@@ -38,8 +38,11 @@ import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 public class MultiblockUIFactory {
 
@@ -244,7 +247,7 @@ public class MultiblockUIFactory {
      */
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         var panel = GTGuis.createPanel(mte, width, height)
-                .childIf(!disableDisplay, createScreen(panelSyncManager));
+                .childIf(!disableDisplay, () -> createScreen(panelSyncManager));
 
         // TODO createExtras() hook for overrides?
         if (mte instanceof ProgressBarMultiblock progressBarMultiblock &&
@@ -270,7 +273,31 @@ public class MultiblockUIFactory {
                 .left(4).right(4)
                 .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                 .child(playerInv)
-                .childIf(!disableButtons, createButtons(panel, panelSyncManager, guiData)));
+                .childIf(!disableButtons, () -> createButtons(panel, panelSyncManager, guiData)));
+    }
+
+    private static int calculateRows(int count) {
+        if (count <= 3) {
+            return 1;
+        }
+
+        if (count <= 8) {
+            return 2;
+        }
+
+        throw new UnsupportedOperationException("Cannot compute progress bar rows for count " + count);
+    }
+
+    private static int calculateCols(int count, int row) {
+        return switch (count) {
+            case 0, 1, 2, 3 -> count;
+            case 4 -> 2;
+            case 5 -> row == 0 ? 3 : 2;
+            case 6 -> 3;
+            case 7 -> row == 0 ? 4 : 3;
+            case 8 -> 4;
+            default -> throw new UnsupportedOperationException("Cannot compute progress bar cols for count " + count);
+        };
     }
 
     /**
@@ -280,16 +307,23 @@ public class MultiblockUIFactory {
     @Nullable
     protected Flow createBars(@NotNull ProgressBarMultiblock progressMulti,
                               @NotNull PanelSyncManager panelSyncManager) {
-        final int rows = progressMulti.getProgressBarRows();
-        final int cols = progressMulti.getProgressBarCols();
+        final int count = progressMulti.getProgressBarCount();
+//        final int calculatedRows = calculateRows(count);
+        final int calculatedRows = progressMulti.getProgressBarRows();
+        final int calculatedCols = progressMulti.getProgressBarCols();
 
         Flow column = Flow.column()
                 .margin(4, 0)
                 .top(5 + screenHeight)
                 .widthRel(1f)
-                .height(Bars.HEIGHT * rows);
+                .height(Bars.HEIGHT * calculatedRows);
 
-        for (int r = 0; r < rows; r++) {
+        List<UnaryOperator<TemplateBarBuilder>> map = new ArrayList<>(progressMulti.getProgressBarCount());
+        progressMulti.registerBars(map, panelSyncManager);
+
+        for (int r = 0; r < calculatedRows; r++) {
+
+//            final int cols = calculateCols(count, r);
 
             Flow row = Flow.row()
                     .widthRel(1f)
@@ -297,17 +331,25 @@ public class MultiblockUIFactory {
                     .height(Bars.HEIGHT);
 
             // the numbers for the given row of bars
-            int from = r * cols;
-            int to = Math.min(from + cols, progressMulti.getProgressBarCount());
+            int from = r * calculatedCols;
+            int to = Math.min(from + calculatedCols, count);
 
             // calculate bar width
             int barCount = Math.max(1, to - from);
             int barWidth = (Bars.FULL_WIDTH / barCount) - (barCount - 1);
 
             for (int i = from; i < to; i++) {
-                row.child(progressMulti.createProgressBar(panelSyncManager, i)
-                        .height(Bars.HEIGHT)
-                        .width(barWidth)
+                ProgressWidget widget;
+                if (i < map.size()) {
+                    widget = map.get(i)
+                            .apply(new TemplateBarBuilder())
+                            .build();
+                } else {
+                    // error widget?
+                    widget = new ProgressWidget();
+                }
+
+                row.child(widget.size(barWidth, Bars.HEIGHT)
                         .direction(ProgressWidget.Direction.RIGHT));
             }
 
@@ -336,7 +378,7 @@ public class MultiblockUIFactory {
             this.screenFunction.addWidgets(parent, syncManager);
         }
 
-        return parent.childIf(!disableIndicator, createIndicator(syncManager))
+        return parent.childIf(!disableIndicator, () -> createIndicator(syncManager))
                 .background(getDisplayBackground())
                 .size(190, screenHeight)
                 .pos(4, 4);

@@ -14,7 +14,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.FixedIntArraySyncValue;
 import gregtech.api.pattern.BlockPattern;
@@ -47,11 +47,11 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.widgets.ProgressWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockController implements ProgressBarMultiblock {
 
@@ -237,91 +237,79 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
-    public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
-        return switch (index) {
-            case 0 -> {
-                FixedIntArraySyncValue fuelValue = new FixedIntArraySyncValue(this::getFuelAmount, null);
-                StringSyncValue fuelNameValue = new StringSyncValue(() -> {
-                    FluidStack stack = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getInputFluidStack();
-                    if (stack == null) {
-                        return null;
+    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
+        FixedIntArraySyncValue fuelValue = new FixedIntArraySyncValue(this::getFuelAmount, null);
+        syncManager.syncValue("fuel_amount", fuelValue);
+        StringSyncValue fuelNameValue = new StringSyncValue(() -> {
+            FluidStack stack = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getInputFluidStack();
+            if (stack == null) {
+                return null;
+            }
+            Fluid fluid = stack.getFluid();
+            if (fluid == null) {
+                return null;
+            }
+            return fluid.getName();
+        });
+        syncManager.syncValue("fuel_name", fuelNameValue);
+        FixedIntArraySyncValue lubricantValue = new FixedIntArraySyncValue(this::getLubricantAmount, null);
+        syncManager.syncValue("lubricant_amount", lubricantValue);
+        FixedIntArraySyncValue oxygenValue = new FixedIntArraySyncValue(this::getOxygenAmount, null);
+        syncManager.syncValue("oxygen_amount", oxygenValue);
+        BooleanSyncValue boostValue = new BooleanSyncValue(this::isBoostAllowed);
+        syncManager.syncValue("boost_allowed", boostValue);
+
+        bars.add(barTest -> barTest
+                .progress(() -> fuelValue.getValue(1) == 0 ? 0 :
+                        1.0 * fuelValue.getValue(0) / fuelValue.getValue(1))
+                .texture(GTGuiTextures.PROGRESS_BAR_LCE_FUEL)
+                .tooltipBuilder(t -> createFuelTooltip(t, fuelValue, fuelNameValue)));
+
+        bars.add(barTest -> barTest
+                .progress(() -> lubricantValue.getValue(1) == 0 ? 0 :
+                        1.0 * lubricantValue.getValue(0) / lubricantValue.getValue(1))
+                .texture(GTGuiTextures.PROGRESS_BAR_LCE_LUBRICANT)
+                .tooltipBuilder(t -> {
+                    if (isStructureFormed()) {
+                        if (lubricantValue.getValue(0) == 0) {
+                            t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.no_lubricant"));
+                        } else {
+                            t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.lubricant_amount",
+                                    lubricantValue.getValue(0), lubricantValue.getValue(1)));
+                        }
+                    } else {
+                        t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
                     }
-                    Fluid fluid = stack.getFluid();
-                    if (fluid == null) {
-                        return null;
+                }));
+
+        bars.add(barTest -> barTest
+                .progress(() -> oxygenValue.getValue(1) == 0 ? 0 :
+                        1.0 * oxygenValue.getValue(0) / oxygenValue.getValue(1))
+                .texture(GTGuiTextures.PROGRESS_BAR_LCE_OXYGEN)
+                .tooltipBuilder(t -> {
+                    if (isStructureFormed()) {
+                        if (boostValue.getBoolValue()) {
+                            if (oxygenValue.getValue(0) == 0) {
+                                t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.oxygen_none"));
+                            } else if (isExtreme) {
+                                t.addLine(IKey.lang(
+                                        "gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount",
+                                        oxygenValue.getValue(0), oxygenValue.getValue(1)));
+                            } else {
+                                t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.oxygen_amount",
+                                        oxygenValue.getValue(0), oxygenValue.getValue(1)));
+                            }
+                        } else if (isExtreme) {
+                            t.addLine(IKey.lang(
+                                    "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boost_disallowed"));
+                        } else {
+                            t.addLine(IKey.lang(
+                                    "gregtech.multiblock.large_combustion_engine.oxygen_boost_disallowed"));
+                        }
+                    } else {
+                        t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
                     }
-                    return fluid.getName();
-                });
-                panelSyncManager.syncValue("fuel_amount", fuelValue);
-                panelSyncManager.syncValue("fuel_name", fuelNameValue);
-
-                yield new ProgressWidget()
-                        .progress(() -> fuelValue.getValue(1) == 0 ? 0 :
-                                1.0 * fuelValue.getValue(0) / fuelValue.getValue(1))
-                        .texture(GTGuiTextures.PROGRESS_BAR_LCE_FUEL, MultiblockUIFactory.Bars.THIRD_WIDTH)
-                        .tooltipAutoUpdate(true)
-                        .tooltipBuilder(t -> createFuelTooltip(t, fuelValue, fuelNameValue));
-            }
-            case 1 -> {
-                FixedIntArraySyncValue lubricantValue = new FixedIntArraySyncValue(this::getLubricantAmount, null);
-                panelSyncManager.syncValue("lubricant_amount", lubricantValue);
-
-                yield new ProgressWidget()
-                        .progress(() -> lubricantValue.getValue(1) == 0 ? 0 :
-                                1.0 * lubricantValue.getValue(0) / lubricantValue.getValue(1))
-                        .texture(GTGuiTextures.PROGRESS_BAR_LCE_LUBRICANT, MultiblockUIFactory.Bars.THIRD_WIDTH)
-                        .tooltipAutoUpdate(true)
-                        .tooltipBuilder(t -> {
-                            if (isStructureFormed()) {
-                                if (lubricantValue.getValue(0) == 0) {
-                                    t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.no_lubricant"));
-                                } else {
-                                    t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.lubricant_amount",
-                                            lubricantValue.getValue(0), lubricantValue.getValue(1)));
-                                }
-                            } else {
-                                t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
-                            }
-                        });
-            }
-            case 2 -> {
-                FixedIntArraySyncValue oxygenValue = new FixedIntArraySyncValue(this::getOxygenAmount, null);
-                BooleanSyncValue boostValue = new BooleanSyncValue(this::isBoostAllowed);
-                panelSyncManager.syncValue("oxygen_amount", oxygenValue);
-                panelSyncManager.syncValue("boost_allowed", boostValue);
-
-                yield new ProgressWidget()
-                        .progress(() -> oxygenValue.getValue(1) == 0 ? 0 :
-                                1.0 * oxygenValue.getValue(0) / oxygenValue.getValue(1))
-                        .texture(GTGuiTextures.PROGRESS_BAR_LCE_OXYGEN, MultiblockUIFactory.Bars.THIRD_WIDTH)
-                        .tooltipAutoUpdate(true)
-                        .tooltipBuilder(t -> {
-                            if (isStructureFormed()) {
-                                if (boostValue.getBoolValue()) {
-                                    if (oxygenValue.getValue(0) == 0) {
-                                        t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.oxygen_none"));
-                                    } else if (isExtreme) {
-                                        t.addLine(IKey.lang(
-                                                "gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount",
-                                                oxygenValue.getValue(0), oxygenValue.getValue(1)));
-                                    } else {
-                                        t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.oxygen_amount",
-                                                oxygenValue.getValue(0), oxygenValue.getValue(1)));
-                                    }
-                                } else if (isExtreme) {
-                                    t.addLine(IKey.lang(
-                                            "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boost_disallowed"));
-                                } else {
-                                    t.addLine(IKey.lang(
-                                            "gregtech.multiblock.large_combustion_engine.oxygen_boost_disallowed"));
-                                }
-                            } else {
-                                t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
-                            }
-                        });
-            }
-            default -> throw new IllegalStateException("Invalid index received " + index);
-        };
+                }));
     }
 
     /**
