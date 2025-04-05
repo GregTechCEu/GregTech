@@ -1,6 +1,7 @@
 package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
+import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
@@ -46,6 +47,7 @@ import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -63,7 +65,7 @@ import java.util.Map;
  * @see Recipe
  */
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "unused" })
 public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected RecipeMap<R> recipeMap;
@@ -220,64 +222,128 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R unconsumableInput(GTRecipeInput recipeInput) {
+        return inputs(recipeInput.setNonConsumable());
+    }
+
     public R input(String oredict) {
         return input(new GTRecipeOreInput(oredict));
+    }
+
+    public R unconsumableInput(String oredict) {
+        return inputs(new GTRecipeOreInput(oredict).setNonConsumable());
     }
 
     public R input(String oredict, int count) {
         return input(new GTRecipeOreInput(oredict, count));
     }
 
+    public R unconsumableInput(String oredict, int count) {
+        return inputs(new GTRecipeOreInput(oredict, count).setNonConsumable());
+    }
+
     public R input(OrePrefix orePrefix, Material material) {
         return input(new GTRecipeOreInput(orePrefix, material));
+    }
+
+    public R unconsumableInput(OrePrefix orePrefix, Material material) {
+        return input(new GTRecipeOreInput(orePrefix, material).setNonConsumable());
     }
 
     public R input(OrePrefix orePrefix, Material material, int count) {
         return input(new GTRecipeOreInput(orePrefix, material, count));
     }
 
+    public R unconsumableInput(OrePrefix orePrefix, Material material, int count) {
+        return input(new GTRecipeOreInput(orePrefix, material, count).setNonConsumable());
+    }
+
     public R input(Item item) {
         return input(new GTRecipeItemInput(new ItemStack(item)));
+    }
+
+    public R unconsumableInput(Item item) {
+        return input(new GTRecipeItemInput(new ItemStack(item)).setNonConsumable());
     }
 
     public R input(Item item, int count) {
         return input(new GTRecipeItemInput(new ItemStack(item), count));
     }
 
+    public R unconsumableInput(Item item, int count) {
+        return input(new GTRecipeItemInput(new ItemStack(item), count).setNonConsumable());
+    }
+
     public R input(Item item, int count, int meta) {
         return input(new GTRecipeItemInput(new ItemStack(item, count, meta)));
+    }
+
+    public R unconsumableInput(Item item, int count, int meta) {
+        return input(new GTRecipeItemInput(new ItemStack(item, count, meta)).setNonConsumable());
     }
 
     public R input(Item item, int count, @SuppressWarnings("unused") boolean wild) {
         return input(new GTRecipeItemInput(new ItemStack(item, count, GTValues.W)));
     }
 
+    public R unconsumableInputMetaWildcard(Item item, int count) {
+        return input(new GTRecipeItemInput(new ItemStack(item, count, GTValues.W)).setNonConsumable());
+    }
+
     public R input(Block block) {
         return input(block, 1);
+    }
+
+    public R unconsumableInput(Block block) {
+        return input(new GTRecipeItemInput(new ItemStack(block, 1)).setNonConsumable());
     }
 
     public R input(Block block, int count) {
         return input(new GTRecipeItemInput(new ItemStack(block, count)));
     }
 
+    public R unconsumableInput(Block block, int count) {
+        return input(new GTRecipeItemInput(new ItemStack(block, count)).setNonConsumable());
+    }
+
     public R input(Block block, int count, @SuppressWarnings("unused") boolean wild) {
         return input(new GTRecipeItemInput(new ItemStack(block, count, GTValues.W)));
+    }
+
+    public R unconsumableInputMetaWildcard(Block block, int count) {
+        return input(new GTRecipeItemInput(new ItemStack(block, count, GTValues.W)).setNonConsumable());
     }
 
     public R input(MetaItem<?>.MetaValueItem item, int count) {
         return input(new GTRecipeItemInput(item.getStackForm(count)));
     }
 
+    public R unconsumableInput(MetaItem<?>.MetaValueItem item, int count) {
+        return input(new GTRecipeItemInput(item.getStackForm(count)).setNonConsumable());
+    }
+
     public R input(MetaItem<?>.MetaValueItem item) {
         return input(new GTRecipeItemInput(item.getStackForm()));
+    }
+
+    public R unconsumableInput(MetaItem<?>.MetaValueItem item) {
+        return input(new GTRecipeItemInput(item.getStackForm()).setNonConsumable());
     }
 
     public R input(MetaTileEntity mte) {
         return input(new GTRecipeItemInput(mte.getStackForm()));
     }
 
+    public R unconsumableInput(MetaTileEntity mte) {
+        return input(new GTRecipeItemInput(mte.getStackForm()).setNonConsumable());
+    }
+
     public R input(MetaTileEntity mte, int amount) {
         return input(new GTRecipeItemInput(mte.getStackForm(amount)));
+    }
+
+    public R unconsumableInput(MetaTileEntity mte, int amount) {
+        return input(new GTRecipeItemInput(mte.getStackForm(amount)).setNonConsumable());
     }
 
     public R inputNBT(GTRecipeInput input, NBTMatcher matcher, NBTCondition condition) {
@@ -381,6 +447,18 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R unconsumableInputs(ItemStack stack) {
+        if (stack == null) {
+            GTLog.logger.error("Input stack cannot be null");
+            return (R) this;
+        } else if (stack.isEmpty()) {
+            GTLog.logger.error("Input stack cannot be empty");
+            return (R) this;
+        } else {
+            return unconsumableInput(new GTRecipeItemInput(stack).setNonConsumable());
+        }
+    }
+
     public R inputs(ItemStack... inputs) {
         for (ItemStack input : inputs) {
             if (input == null || input.isEmpty()) {
@@ -392,6 +470,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             this.inputs.add(new GTRecipeItemInput(input));
         }
         return (R) this;
+    }
+
+    public R unconsumableInputs(ItemStack... inputs) {
+        return unconsumableInputStacks(Arrays.asList(inputs));
     }
 
     public R inputStacks(Collection<ItemStack> inputs) {
@@ -406,6 +488,23 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R unconsumableInputStacks(Collection<ItemStack> inputs) {
+        List<GTRecipeInput> newInputs = new ObjectArrayList<>(inputs.size());
+        for (ItemStack stack : inputs) {
+            if (stack == null) {
+                GTLog.logger.error("An item stack in the collection was null", new IllegalStateException());
+                return (R) this;
+            } else if (stack.isEmpty()) {
+                GTLog.logger.error("An item stack in the collection was empty", new IllegalStateException());
+                return (R) this;
+            } else {
+                newInputs.add(new GTRecipeItemInput(stack).setNonConsumable());
+            }
+        }
+        this.inputs.addAll(newInputs);
+        return (R) this;
+    }
+
     public R inputs(GTRecipeInput input) {
         if (input.getAmount() < 0) {
             GTLog.logger.error("Input count cannot be less than 0. Actual: {}.", input.getAmount(), new Throwable());
@@ -413,6 +512,15 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         } else {
             this.inputs.add(input);
         }
+        return (R) this;
+    }
+
+    public R unconsumableInputs(GTRecipeInput input) {
+        if (input.getAmount() < 1) {
+            GTLog.logger.error("Input amount cannot be less than 1: {}", input, new IllegalArgumentException());
+            return (R) this;
+        }
+        inputs.add(input.setNonConsumable());
         return (R) this;
     }
 
@@ -429,6 +537,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R unconsumableInputs(GTRecipeInput... inputs) {
+        return unconsumableInputIngredients(Arrays.asList(inputs));
+    }
+
     public R inputIngredients(Collection<GTRecipeInput> inputs) {
         for (GTRecipeInput input : inputs) {
             if (input.getAmount() < 0) {
@@ -441,39 +553,88 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R unconsumableInputIngredients(Collection<GTRecipeInput> inputs) {
+        List<GTRecipeInput> newInputs = new ObjectArrayList<>(inputs.size());
+        for (GTRecipeInput recipeInput : inputs) {
+            if (recipeInput == null) {
+                GTLog.logger.error("An item stack in the collection was null", new IllegalStateException());
+                return (R) this;
+            } else if (recipeInput.getAmount() < 1) {
+                GTLog.logger.error("An item stack in the collection was empty", new IllegalStateException());
+                return (R) this;
+            } else {
+                newInputs.add(recipeInput);
+            }
+        }
+        this.inputs.addAll(newInputs);
+        return (R) this;
+    }
+
     public R clearInputs() {
         this.inputs.clear();
         return (R) this;
     }
 
+    /**
+     * @deprecated Use {@link #unconsumableInputs(GTRecipeInput)}
+     */
+    @Deprecated
     public R notConsumable(GTRecipeInput gtRecipeIngredient) {
         return input(gtRecipeIngredient.setNonConsumable());
     }
 
+    /**
+     * @deprecated Use {@link #unconsumableInputs(ItemStack)}
+     */
+    @Deprecated
     public R notConsumable(ItemStack itemStack) {
         return input(new GTRecipeItemInput(itemStack).setNonConsumable());
     }
 
+    /**
+     * @deprecated Use {@link #unconsumableInput(OrePrefix, Material, int)}
+     */
+    @Deprecated
     public R notConsumable(OrePrefix prefix, Material material, int amount) {
         return input(new GTRecipeOreInput(prefix, material, amount).setNonConsumable());
     }
 
+    /**
+     * @deprecated Use {@link #unconsumableInput(OrePrefix, Material)}
+     */
+    @Deprecated
     public R notConsumable(OrePrefix prefix, Material material) {
         return notConsumable(prefix, material, 1);
     }
 
+    /**
+     * @deprecated Use {@link #unconsumableInput(MetaItem.MetaValueItem)}
+     */
+    @Deprecated
     public R notConsumable(MetaItem<?>.MetaValueItem item) {
         return input(new GTRecipeItemInput(item.getStackForm(), 1).setNonConsumable());
     }
 
+    /**
+     * @deprecated use {@link #unconsumableFluidInput(Fluid, int)}
+     */
+    @Deprecated
     public R notConsumable(Fluid fluid, int amount) {
         return fluidInputs(new GTRecipeFluidInput(fluid, amount).setNonConsumable());
     }
 
+    /**
+     * @deprecated use {@link #unconsumableFluidInput(Fluid)}
+     */
+    @Deprecated
     public R notConsumable(Fluid fluid) {
         return fluidInputs(new GTRecipeFluidInput(fluid, 1).setNonConsumable());
     }
 
+    /**
+     * @deprecated use {@link #unconsumableFluidInputs(FluidStack)}
+     */
+    @Deprecated
     public R notConsumable(FluidStack fluidStack) {
         return fluidInputs(new GTRecipeFluidInput(fluidStack).setNonConsumable());
     }
@@ -555,14 +716,43 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R fluidInput(Fluid fluid) {
+        return fluidInputs(new GTRecipeFluidInput(fluid, 1));
+    }
+
+    public R unconsumableFluidInput(Fluid fluid) {
+        return unconsumableFluidInputs(new GTRecipeFluidInput(fluid, 1).setNonConsumable());
+    }
+
+    public R fluidInput(Fluid fluid, int amount) {
+        return fluidInputs(new GTRecipeFluidInput(fluid, amount));
+    }
+
+    public R unconsumableFluidInput(Fluid fluid, int amount) {
+        return unconsumableFluidInputs(new GTRecipeFluidInput(fluid, amount).setNonConsumable());
+    }
+
     public R fluidInputs(Collection<GTRecipeInput> fluidIngredients) {
         this.fluidInputs.addAll(fluidIngredients);
         return (R) this;
     }
 
+    public R unconsumableFluidInputs(Collection<GTRecipeInput> fluidIngredients) {
+        for (GTRecipeInput recipeInput : fluidIngredients) {
+            if (recipeInput != null) {
+                recipeInput.setNonConsumable();
+            }
+        }
+        return fluidInputs(fluidIngredients);
+    }
+
     public R fluidInputs(GTRecipeInput fluidIngredient) {
         this.fluidInputs.add(fluidIngredient);
         return (R) this;
+    }
+
+    public R unconsumableFluidInputs(GTRecipeInput fluidIngredient) {
+        return fluidInputs(fluidIngredient.setNonConsumable());
     }
 
     public R fluidInputs(FluidStack input) {
@@ -574,6 +764,34 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             GTLog.logger.error("FluidStack cannot be null.");
         }
         return (R) this;
+    }
+
+    public R unconsumableFluidInputs(FluidStack input) {
+        if (input == null) {
+            GTLog.logger.error("FluidStack cannot be null.");
+            return (R) this;
+        } else if (input.amount <= 0) {
+            GTLog.logger.error("Fluid Input count cannot be less than 1. Actual: {}.", input.amount);
+            return (R) this;
+        } else {
+            return unconsumableFluidInputs(new GTRecipeFluidInput(input));
+        }
+    }
+
+    public R fluidInputs(Material material, int amount) {
+        return fluidInputs(material.getFluid(amount));
+    }
+
+    public R unconsumableFluidInputs(Material material, int amount) {
+        return unconsumableFluidInputs(material.getFluid(amount));
+    }
+
+    public R fluidInputs(Material material, FluidStorageKey storageKey, int amount) {
+        return fluidInputs(material.getFluid(storageKey, amount));
+    }
+
+    public R unconsumableFluidInputs(Material material, FluidStorageKey storageKey, int amount) {
+        return unconsumableFluidInputs(material.getFluid(storageKey, amount));
     }
 
     public R fluidInputs(FluidStack... fluidStacks) {
@@ -589,6 +807,23 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             }
         }
         this.fluidInputs.addAll(fluidIngredients);
+        return (R) this;
+    }
+
+    public R unconsumableFluidInputs(FluidStack... fluidStacks) {
+        List<GTRecipeInput> fluidInputs = new ObjectArrayList<>(fluidStacks.length);
+        for (FluidStack fluidStack : fluidStacks) {
+            if (fluidStack == null) {
+                GTLog.logger.error("FluidStack cannot be null.");
+                return (R) this;
+            } else if (fluidStack.amount <= 0) {
+                GTLog.logger.error("Fluid Input count cannot be less than 1. Actual: {}.", fluidStack.amount);
+                return (R) this;
+            } else {
+                fluidInputs.add(new GTRecipeFluidInput(fluidStack).setNonConsumable());
+            }
+        }
+        this.fluidInputs.addAll(fluidInputs);
         return (R) this;
     }
 
