@@ -26,6 +26,7 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IGhostSlotConfigurable;
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
@@ -77,11 +78,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiablePart
         implements IMultiblockAbilityPart<DualHandler>, IControllable, IGhostSlotConfigurable {
-
+    DualHandler dualHandler;
     //item
     @Nullable
     protected GhostCircuitItemStackHandler circuitInventory;
@@ -144,6 +146,11 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
         this.importFluids = createImportFluidHandler();
         this.exportFluids = createExportFluidHandler();
         this.fluidInventory = new FluidHandlerProxy(importFluids, exportFluids);
+        if(isExportHatch)
+            dualHandler = new DualHandler(getExportItems(), getExportFluids(),isExportHatch);
+        else
+             dualHandler = new DualHandler(getImportItems(), getImportFluids(),isExportHatch);
+
     }
 
     @Override
@@ -331,12 +338,12 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
 
     @Override
     public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
-        if (this.hasGhostCircuitInventory() && this.actualImportItems != null) {
-            abilityInstances.add(isExportHatch ? this.exportItems : this.actualImportItems);
-        } else {
-            abilityInstances.add(isExportHatch ? this.exportItems : this.importItems);
-        }
-        abilityInstances.addAll(fluidTankList.getFluidTanks());
+//        if (this.hasGhostCircuitInventory() && this.actualImportItems != null) {
+//            abilityInstances.add(isExportHatch ? this.exportItems : this.actualImportItems);
+//        } else {
+//            abilityInstances.add(isExportHatch ? this.exportItems : this.importItems);
+//        }
+        abilityInstances.addAll(Collections.singleton(this.dualHandler));
     }
 
     @Override
