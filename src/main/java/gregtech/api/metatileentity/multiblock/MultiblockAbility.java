@@ -86,6 +86,12 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<IObjectHolder> OBJECT_HOLDER = ability(
             "object_holder", IObjectHolder.class);
 
+    //GTQT
+    public static final MultiblockAbility<DualHandler> DUAL_EXPORT = ability(
+            "dual_export", DualHandler.class);
+    public static final MultiblockAbility<DualHandler> DUAL_IMPORT = ability(
+            "dual_import", DualHandler.class);
+
     public static void registerMultiblockAbility(MultiblockAbility<?> ability, MetaTileEntity part) {
         if (!REGISTRY.containsKey(ability)) {
             REGISTRY.put(ability, new ArrayList<>());

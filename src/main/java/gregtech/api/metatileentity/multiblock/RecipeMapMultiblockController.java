@@ -27,12 +27,14 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
+import gtqt.api.util.GTQTUtility;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider,
-                                                    ICleanroomReceiver, IDistinctBusController {
+                                                                                                 ICleanroomReceiver,
+                                                                                                 IDistinctBusController {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
@@ -91,8 +94,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     /**
-     * Performs extra checks for validity of given recipe before multiblock
-     * will start it's processing.
+     * Performs extra checks for validity of given recipe before multiblock will start it's processing.
      */
     public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
         return true;
@@ -124,9 +126,15 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     protected void initializeAbilities() {
-        this.inputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.IMPORT_ITEMS));
-        this.inputFluidInventory = new FluidTankList(allowSameFluidFillForOutputs(),
-                getAbilities(MultiblockAbility.IMPORT_FLUIDS));
+        List<IItemHandler> inputItems = new ArrayList<>(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+        inputItems.addAll(getAbilities(MultiblockAbility.DUAL_IMPORT));
+        this.inputInventory = new ItemHandlerList(inputItems);
+
+        List<IMultipleTankHandler> inputFluids = new ArrayList<>(getAbilities(MultiblockAbility.DUAL_IMPORT));
+        inputFluids.add(
+                new FluidTankList(allowSameFluidFillForOutputs(), getAbilities(MultiblockAbility.IMPORT_FLUIDS)));
+        this.inputFluidInventory = GTQTUtility.mergeTankHandlers(inputFluids, allowSameFluidFillForOutputs());
+
         this.extendedFluidInputs = extendedImportFluidList(this.inputFluidInventory);
         this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.EXPORT_ITEMS));
         this.outputFluidInventory = new FluidTankList(allowSameFluidFillForOutputs(),
@@ -136,6 +144,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
         inputEnergy.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
         this.energyContainer = new EnergyContainerList(inputEnergy);
+
     }
 
     private void resetTileAbilities() {
@@ -159,6 +168,11 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 for (var tank : multipleTankHandler.getFluidTanks()) {
                     if (!tanks.contains(tank)) tanks.add(tank);
                 }
+            }
+        }
+        for (var handler : getAbilities(MultiblockAbility.DUAL_IMPORT)) {
+            for (var tank : handler.getFluidTanks()) {
+                if (!tanks.contains(tank)) tanks.add(tank);
             }
         }
 
@@ -227,6 +241,16 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setPreviewCount(1));
             }
         }
+        if (checkItemIn && checkFluidIn) {
+            if (recipeMap.getMaxInputs() > 0 && recipeMap.getMaxFluidInputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.DUAL_IMPORT).setPreviewCount(1));
+            }
+        }
+        if (checkItemOut && checkFluidOut) {
+            if (recipeMap.getMaxOutputs() > 0 && recipeMap.getMaxFluidOutputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.DUAL_EXPORT).setPreviewCount(1));
+            }
+        }
         return predicate;
     }
 
@@ -281,6 +305,8 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         if (this.isDistinct) {
             this.notifiedItemInputList
                     .addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+            this.notifiedItemInputList
+                    .addAll(this.getAbilities(MultiblockAbility.DUAL_IMPORT));
         } else {
             this.notifiedItemInputList.add(this.inputInventory);
         }
@@ -301,7 +327,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                             .setStyle(new Style().setColor(TextFormatting.GREEN)),
                     new TextComponentTranslation(
                             TextFormattingUtil.formatNumbers(recipeMapWorkable.getMaxProgress() / 20))
-                                    .setStyle(new Style().setColor(TextFormatting.YELLOW))));
+                            .setStyle(new Style().setColor(TextFormatting.YELLOW))));
         }
 
         list.add(new TextComponentTranslation("behavior.tricorder.energy_container_storage",
@@ -316,7 +342,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                             .setStyle(new Style().setColor(TextFormatting.RED)),
                     new TextComponentTranslation(
                             TextFormattingUtil.formatNumbers(recipeMapWorkable.getRecipeEUt() == 0 ? 0 : 1))
-                                    .setStyle(new Style().setColor(TextFormatting.RED))));
+                            .setStyle(new Style().setColor(TextFormatting.RED))));
         }
 
         list.add(new TextComponentTranslation("behavior.tricorder.multiblock_energy_input",

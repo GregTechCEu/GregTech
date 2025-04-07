@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.cover.CoverDefinition;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
@@ -50,6 +51,8 @@ import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
 import gregtech.modules.GregTechModules;
+
+import gtqt.common.GTQTCommonProxy;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -218,6 +221,14 @@ public class CommonProxy {
         FLUID_BLOCKS.forEach(event.getRegistry()::register);
     }
 
+    @SubscribeEvent
+    public static void registerRecipeHandlers(RegistryEvent.Register<IRecipe> event) {
+        GTQTCommonProxy.registerRecipeHandlers(event);
+    }
+    @SubscribeEvent
+    public static void registerCoverBehavior(GregTechAPI.RegisterEvent<CoverDefinition> event) {
+        GTQTCommonProxy.registerCoverBehavior(event);
+    }
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
         GTLog.logger.info("Registering Items...");
@@ -402,10 +413,13 @@ public class CommonProxy {
         return itemBlock;
     }
 
-    public void onPreLoad() {}
+    public void onPreLoad() {
+        GTQTCommonProxy.preInit();
+    }
 
     public void onLoad() {
         GTDataFixers.init();
+        GTQTCommonProxy.init();
     }
 
     public void onPostLoad() {

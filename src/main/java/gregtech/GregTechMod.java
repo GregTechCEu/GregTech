@@ -8,6 +8,8 @@ import gregtech.client.utils.BloomEffectUtil;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
 
+import gtqt.common.GTQTCommonProxy;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
