@@ -178,7 +178,11 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     }
                     flattenedHandlers.add(ih);
                 }
-
+                for (var i:invalidatedInputList)
+                {
+                    if(i instanceof DualHandler)
+                        invalidatedInputList.remove(i);
+                }
                 if (!invalidatedInputList.containsAll(flattenedHandlers)) {
                     canWork = true;
                 }
@@ -260,6 +264,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     return;
                 }
             }
+
             if (currentRecipe == null) {
                 // no valid recipe found, invalidate this bus
                 invalidatedInputList.add(bus);
@@ -271,8 +276,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     public void invalidateInputs() {
         MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
         RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
-        if (distinctController.canBeDistinct() && distinctController.isDistinct() &&
-                getInputInventory().getSlots() > 0) {
+        if (distinctController.canBeDistinct() && distinctController.isDistinct() && !(getInputInventory() instanceof DualHandler) &&
+                getInputInventory().getSlots() > 0)  {
             invalidatedInputList.add(currentDistinctInputBus);
         } else {
             super.invalidateInputs();

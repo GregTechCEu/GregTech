@@ -403,6 +403,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
                 this.notifiedFluidInputList.add((IFluidHandler) input);
             }
         }
+
     }
 
     public void addNotifiedOutput(Object output) {
