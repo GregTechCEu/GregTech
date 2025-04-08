@@ -131,81 +131,66 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * @return this
      */
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull ItemStack researchStack) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(researchStack));
+        return scannerResearch(b -> b.researchStack(researchStack));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull MetaItem<?>.MetaValueItem metaItem) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(metaItem));
+        return scannerResearch(b -> b.researchStack(metaItem));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull MetaItem<?>.MetaValueItem metaItem, int amount) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(metaItem, amount));
+        return scannerResearch(b -> b.researchStack(metaItem, amount));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull MetaItem<?>.MetaValueItem metaItem, int amount,
                                                      boolean ignoreNBT) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(metaItem, amount, ignoreNBT));
+        return scannerResearch(b -> b.researchStack(metaItem, amount, ignoreNBT));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull MetaTileEntity mte) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(mte));
+        return scannerResearch(b -> b.researchStack(mte));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull MetaTileEntity mte, int amount) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(mte, amount));
+        return scannerResearch(b -> b.researchStack(mte, amount));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull MetaTileEntity mte, int amount, boolean ignoreNBT) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(mte, amount, ignoreNBT));
+        return scannerResearch(b -> b.researchStack(mte, amount, ignoreNBT));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull OrePrefix prefix, @NotNull Material material) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(prefix, material));
+        return scannerResearch(b -> b.researchStack(prefix, material));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull OrePrefix prefix, @NotNull Material material,
                                                      int amount) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(prefix, material, amount));
+        return scannerResearch(b -> b.researchStack(prefix, material, amount));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull OrePrefix prefix, @NotNull Material material, int amount,
                                                      boolean ignoreNBT) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(prefix, material, amount, ignoreNBT));
+        return scannerResearch(b -> b.researchStack(prefix, material, amount, ignoreNBT));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull Block block) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(block));
+        return scannerResearch(b -> b.researchStack(block));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull Block block, int amount) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(block, amount));
+        return scannerResearch(b -> b.researchStack(block, amount));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull Block block, int amount, int meta) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(block, amount, meta));
+        return scannerResearch(b -> b.researchStack(block, amount, meta));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull Block block, int amount, boolean ignoreNBT) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(block, amount, ignoreNBT));
+        return scannerResearch(b -> b.researchStack(block, amount, ignoreNBT));
     }
 
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull Block block, int amount, int meta, boolean ignoreNBT) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder()
-                .researchStack(block, amount, meta, ignoreNBT));
+        return scannerResearch(b -> b.researchStack(block, amount, meta, ignoreNBT));
     }
 
     /**
