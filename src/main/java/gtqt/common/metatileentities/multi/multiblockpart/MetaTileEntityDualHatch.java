@@ -81,7 +81,6 @@ import java.util.List;
 
 public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiablePart
         implements IMultiblockAbilityPart<DualHandler>, IControllable, IGhostSlotConfigurable {
-    DualHandler dualHandler;
     //item
     @Nullable
     protected GhostCircuitItemStackHandler circuitInventory;
@@ -489,8 +488,10 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
             if (autoCollapse) {
                 if (isExportHatch) {
                     addNotifiedOutput(this.getExportItems());
+                    addNotifiedOutput(this.getExportFluids());
                 } else {
                     addNotifiedInput(super.getImportItems());
+                    addNotifiedInput(this.getImportFluids());
                 }
             }
             writeCustomData(GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS,
