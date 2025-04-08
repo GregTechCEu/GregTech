@@ -6,6 +6,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
 import gregtech.worldgen.impl.WorldGenRubberTree;
+import gregtech.worldgen.impl.WorldGenRubberTreeBig;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -31,31 +32,16 @@ import java.util.Set;
 import static net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.*;
 
 @GregTechModule(
-                moduleID = GregTechModules.MODULE_WORLDGEN,
-                containerID = GTValues.MODID,
-                name = "GregTech Worldgen",
-                description = "GregTech Worldgen Module.")
+        moduleID = GregTechModules.MODULE_WORLDGEN,
+        containerID = GTValues.MODID,
+        name = "GregTech Worldgen",
+        description = "GregTech Worldgen Module.")
 public class WorldgenModule extends BaseGregTechModule {
 
     public static final Logger LOGGER = LogManager.getLogger("GregTech Worldgen");
 
     private static final Set<OreGenEvent.GenerateMinable.EventType> VANILLA_ORE_GEN_EVENT_TYPES = EnumSet.of(
             COAL, DIAMOND, GOLD, IRON, LAPIS, REDSTONE, QUARTZ, EMERALD);
-
-    @Override
-    public @NotNull Logger getLogger() {
-        return LOGGER;
-    }
-
-    @Override
-    public @NotNull List<Class<?>> getTerrainGenBusSubscribers() {
-        return Collections.singletonList(WorldgenModule.class);
-    }
-
-    @Override
-    public @NotNull List<Class<?>> getOreGenBusSubscribers() {
-        return Collections.singletonList(WorldgenModule.class);
-    }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onGenerateMineable(@NotNull OreGenEvent.GenerateMinable event) {
@@ -113,16 +99,39 @@ public class WorldgenModule extends BaseGregTechModule {
                 int y = world.getHeight(x, z);
                 pos.setPos(x, y, z);
 
-                WorldGenRubberTree.INSTANCE.setDecorationDefaults();
-                if (WorldGenRubberTree.INSTANCE.generate(world, random, pos)) {
-                    WorldGenRubberTree.INSTANCE.generateSaplings(world, random, pos);
-                    generated = true;
+                if (random.nextBoolean()) {
+                    WorldGenRubberTree.INSTANCE.setDecorationDefaults();
+                    if (WorldGenRubberTree.INSTANCE.generate(world, random, pos)) {
+                        WorldGenRubberTree.INSTANCE.generateSaplings(world, random, pos);
+                        generated = true;
+                    }
+                } else {
+                    WorldGenRubberTreeBig.INSTANCE.setDecorationDefaults();
+                    if (WorldGenRubberTreeBig.INSTANCE.generate(world, random, pos)) {
+                        WorldGenRubberTreeBig.INSTANCE.generateSaplings(world, random, pos);
+                        generated = true;
+                    }
                 }
-            }
 
+            }
             return generated;
         }
 
         return false;
+    }
+
+    @Override
+    public @NotNull Logger getLogger() {
+        return LOGGER;
+    }
+
+    @Override
+    public @NotNull List<Class<?>> getTerrainGenBusSubscribers() {
+        return Collections.singletonList(WorldgenModule.class);
+    }
+
+    @Override
+    public @NotNull List<Class<?>> getOreGenBusSubscribers() {
+        return Collections.singletonList(WorldgenModule.class);
     }
 }

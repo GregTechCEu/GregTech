@@ -154,7 +154,7 @@ public class ConfigHolder {
                 "Other mods can override this to true, regardless of the config file.",
                 "Default: false" })
         @Config.RequiresMcRestart
-        public boolean highTierContent = false;
+        public boolean highTierContent = true;
 
         @Config.Comment({ "Whether tick acceleration effects are allowed to affect GT machines.",
                 "This does NOT apply to the World Accelerator, but to external effects like Time in a Bottle.",

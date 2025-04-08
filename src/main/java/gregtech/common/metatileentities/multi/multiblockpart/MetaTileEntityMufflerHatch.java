@@ -1,5 +1,11 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+
+import com.cleanroommc.modularui.widgets.layout.Flow;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
@@ -7,6 +13,7 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -47,6 +54,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     private final GTItemStackHandler inventory;
 
     private boolean frontFaceFree;
+    private boolean outputItem;
 
     public MetaTileEntityMufflerHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
@@ -97,6 +105,11 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
      */
     public boolean isFrontFaceFree() {
         return frontFaceFree;
+    }
+
+    @Override
+    public boolean outputItem() {
+        return outputItem;
     }
 
     private boolean checkFrontFaceFree() {
@@ -169,9 +182,13 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
                         .accessibility(false, true)));
             }
         }
+        BooleanSyncValue outputStateValue = new BooleanSyncValue(() -> outputItem, val -> outputItem = val);
+        guiSyncManager.syncValue("output_state", outputStateValue);
 
+        int backgroundWidth=176 + xOffset * 2 +18 +5;
+        int backgroundHeight=18 + 18 * rowSize + 94;
         // TODO: Change the position of the name when it's standardized.
-        return GTGuis.createPanel(this, 176 + xOffset * 2, 18 + 18 * rowSize + 94)
+        return GTGuis.createPanel(this, backgroundWidth, backgroundHeight)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
                 .child(new Grid()
@@ -179,13 +196,30 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
                         .minElementMargin(0, 0)
                         .minColWidth(18).minRowHeight(18)
                         .alignX(0.5f)
-                        .matrix(widgets));
+                        .matrix(widgets))
+
+                .child(Flow.column()
+                        .pos(backgroundWidth - 7 - 18, backgroundHeight - 18 * 4 - 7 - 5)
+                        .width(18).height(18 * 4 + 5)
+                        .child(GTGuiTextures.getLogo(getUITheme()).asWidget().size(17).top(18 * 3 + 5))
+
+                        .child(new ToggleButton()
+                        .top(0)
+                        .value(new BoolValue.Dynamic(outputStateValue::getBoolValue,
+                                outputStateValue::setBoolValue))
+                        .overlay(GTGuiTextures.OUT_SLOT_OVERLAY)
+                        .tooltipBuilder(t -> t.setAutoUpdate(true)
+                                .addLine(outputStateValue.getBoolValue() ?
+                                        IKey.lang("gregtech.gui.output_item.tooltip.enabled") :
+                                        IKey.lang("gregtech.gui.output_item.tooltip.disabled"))))
+                );
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("RecoveryInventory", inventory.serializeNBT());
+        data.setBoolean("outputItem", outputItem);
         return data;
     }
 
@@ -193,5 +227,6 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.inventory.deserializeNBT(data.getCompoundTag("RecoveryInventory"));
+        outputItem= data.getBoolean("outputItem");
     }
 }

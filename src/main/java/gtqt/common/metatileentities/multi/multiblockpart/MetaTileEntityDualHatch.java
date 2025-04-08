@@ -105,7 +105,7 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
         super(metaTileEntityId, tier, isExportHatch);
         this.workingEnabled = true;
 
-        this.numSlots = getSlotByTier();
+        this.numSlots = getTier();
         // Quadruple: 1/4th the capacity of a fluid hatch of this tier
         // Nonuple: 1/8th the capacity of a fluid hatch of this tier
         this.tankSize = BASE_TANK_SIZE * (1 << tier) / (numSlots == 4 ? 4 : 8);
@@ -119,10 +119,7 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
     }
     public int getSlotByTier()
     {
-        if(getTier()<=2)return 4;
-        if(getTier()<=4)return 9;
-        if(getTier()<=6)return 16;
-        return 25;
+        return getTier()*getTier();
     }
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
@@ -202,15 +199,6 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                 if (!isAttachedToMultiBlock() || (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) :
                         this.getNotifiedItemInputList().contains(inventory))) {
                     collapseInventorySlotContents(inventory);
-                }
-            }
-        }
-        if (!getWorld().isRemote) {
-            if (workingEnabled) {
-                if (isExportHatch) {
-                    pushFluidsIntoNearbyHandlers(getFrontFacing());
-                } else {
-                    pullFluidsFromNearbyHandlers(getFrontFacing());
                 }
             }
         }
@@ -338,11 +326,6 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
 
     @Override
     public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
-//        if (this.hasGhostCircuitInventory() && this.actualImportItems != null) {
-//            abilityInstances.add(isExportHatch ? this.exportItems : this.actualImportItems);
-//        } else {
-//            abilityInstances.add(isExportHatch ? this.exportItems : this.importItems);
-//        }
         abilityInstances.addAll(Collections.singleton(this.dualHandler));
     }
 
@@ -353,12 +336,12 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
-        int rowSize = (int) Math.sqrt(getInventorySize());
+        int rowSize = getTier();
         guiSyncManager.registerSlotGroup("item_inv", rowSize);
 
         int backgroundWidth = Math.max(
                 9 * 18 + 18 + 14 + 5,   // Player Inv width
-                rowSize * 18 + 14); // Bus Inv width
+                (rowSize+1) * 18 + 14); // Bus Inv width
         int backgroundHeight = 18 + 18 * rowSize + 94;
 
         List<List<IWidget>> widgets = new ArrayList<>();
@@ -378,7 +361,13 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                                             }
                                         })
                                         .accessibility(!isExportHatch, true)));
+
+
             }
+            widgets.get(i).add(new GTFluidSlot()
+                    .syncHandler(GTFluidSlot.sync(fluidTankList.getTankAt(i))
+                            .accessibility(true, !isExportHatch))
+            );
         }
 
         BooleanSyncValue workingStateValue = new BooleanSyncValue(() -> workingEnabled, val -> workingEnabled = val);
@@ -388,12 +377,6 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
 
         boolean hasGhostCircuit = hasGhostCircuitInventory() && this.circuitInventory != null;
 
-        List<GTFluidSlot> fluidSlots = new ArrayList<>();
-        for (int i = 0; i < numSlots; i++) {
-            fluidSlots.add(new GTFluidSlot());
-        }
-
-
         return GTGuis.createPanel(this, backgroundWidth, backgroundHeight)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
@@ -401,17 +384,8 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                         .top(18).height(rowSize * 18)
                         .minElementMargin(0, 0)
                         .minColWidth(18).minRowHeight(18)
-                        .leftRel(0.25f)  // 靠左对齐
+                        .leftRel(0.5f)
                         .matrix(widgets))
-
-                .child(new Grid()
-                        .margin(0)
-                        .leftRel(0.75f)  // 靠右对齐
-                        .top(18)         // 与物品槽在同一水平线上
-                        .mapTo(rowSize, fluidSlots,
-                                (i, slot) -> slot.syncHandler(GTFluidSlot.sync(fluidTankList.getTankAt(i))
-                                        .accessibility(true, !isExportHatch)))
-                        .coverChildren())
 
                 .child(Flow.column()
                         .pos(backgroundWidth - 7 - 18, backgroundHeight - 18 * 4 - 7 - 5)
@@ -546,11 +520,11 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
             tooltip.add(I18n.format("gregtech.machine.item_bus.export.tooltip"));
         else
             tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
-        tooltip.add(I18n.format("gregtech.universal.enabled"));
         tooltip.add(I18n.format(isExportHatch ? "gregtech.machine.fluid_hatch.export.tooltip" :
                 "gregtech.machine.fluid_hatch.import.tooltip"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", numSlots, tankSize));
+        tooltip.add(I18n.format("gregtech.universal.enabled"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 

@@ -1,6 +1,7 @@
 package gtqt.common.metatileentities;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityDualHatch;
@@ -16,7 +17,9 @@ public class GTQTMetaTileEntities {
     //任务：GTQT内不方便写的内容转移到这里来写
     //例如 高等级的能源仓 激光仓等等
     public static void initialization() {
-        for(int i=0;i<GTValues.V.length-1;i++)
+        int endPos = GregTechAPI.isHighTier() ? GTValues.V.length - 1 : GTValues.UHV + 1;
+
+        for(int i=0;i<endPos;i++)
         {
             String voltageName = GTValues.VN[i].toLowerCase();
             DUAL_IMPORT_HATCH[i] = new MetaTileEntityDualHatch(gregtechId("dual_hatch.import." + voltageName), i, false);
