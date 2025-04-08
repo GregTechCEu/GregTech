@@ -116,7 +116,14 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         }
         return new FluidTankList(getInputTank().allowSameFluidFill(), tanks);
     }
-
+    protected IMultipleTankHandler getDistinctInputTank(IItemHandler items) {
+        var tanks = new ArrayList<>(getInputTank().getFluidTanks());
+        tanks.clear();
+        if (items instanceof IMultipleTankHandler tankHandler) {
+            tanks.addAll(tankHandler.getFluidTanks());
+        }
+        return new FluidTankList(getInputTank().allowSameFluidFill(), tanks);
+    }
     @Override
     protected IMultipleTankHandler getOutputTank() {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
@@ -240,7 +247,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 continue;
             }
             // Look for a new recipe after a cache miss
-            currentRecipe = findRecipe(maxVoltage, bus, getInputTank(bus));
+            if(hasDualInput())
+                currentRecipe = findRecipe(maxVoltage, bus, getDistinctInputTank(bus));
+            else
+                currentRecipe = findRecipe(maxVoltage, bus, getInputTank(bus));
             // Cache the current recipe, if one is found
             if (currentRecipe != null && checkRecipe(currentRecipe)) {
                 this.previousRecipe = currentRecipe;
@@ -268,32 +278,68 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             super.invalidateInputs();
         }
     }
-
+    private boolean hasDualInput(){
+        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
+        //有总成 进行流体隔离模式
+        if(!controller.getAbilities(MultiblockAbility.DUAL_IMPORT).isEmpty())
+            return true;
+        return false;
+    }
     protected boolean checkPreviousRecipeDistinct(IItemHandlerModifiable previousBus) {
+        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
+        //有总成 进行流体隔离模式
+        if(hasDualInput())
+        {
+            return previousRecipe != null && previousRecipe.matches(false, previousBus, getDistinctInputTank(previousBus));
+        }
         return previousRecipe != null && previousRecipe.matches(false, previousBus, getInputTank(previousBus));
     }
 
     protected boolean prepareRecipeDistinct(Recipe recipe) {
         recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(),
                 metaTileEntity.getFluidOutputLimit());
+        if(hasDualInput())
+        {
 
-        recipe = findParallelRecipe(
-                recipe,
-                currentDistinctInputBus,
-                getInputTank(currentDistinctInputBus),
-                getOutputInventory(),
-                getOutputTank(),
-                getMaxParallelVoltage(),
-                getParallelLimit());
+            recipe = findParallelRecipe(
+                    recipe,
+                    currentDistinctInputBus,
+                    getDistinctInputTank(currentDistinctInputBus),
+                    getOutputInventory(),
+                    getOutputTank(),
+                    getMaxParallelVoltage(),
+                    getParallelLimit());
 
-        if (recipe != null) {
-            recipe = setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus,
-                    getInputTank(currentDistinctInputBus));
             if (recipe != null) {
-                setupRecipe(recipe);
-                return true;
+                recipe = setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus,
+                        getDistinctInputTank(currentDistinctInputBus));
+                if (recipe != null) {
+                    setupRecipe(recipe);
+                    return true;
+                }
             }
         }
+        else
+        {
+            recipe = findParallelRecipe(
+                    recipe,
+                    currentDistinctInputBus,
+                    getInputTank(currentDistinctInputBus),
+                    getOutputInventory(),
+                    getOutputTank(),
+                    getMaxParallelVoltage(),
+                    getParallelLimit());
+
+            if (recipe != null) {
+                recipe = setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus,
+                        getInputTank(currentDistinctInputBus));
+                if (recipe != null) {
+                    setupRecipe(recipe);
+                    return true;
+                }
+            }
+        }
+
 
         return false;
     }
