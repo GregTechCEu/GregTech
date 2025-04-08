@@ -1,15 +1,13 @@
 package gregtech.api.pattern.pattern;
 
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
-import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
-import gregtech.api.util.function.QuadFunction;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
@@ -21,24 +19,27 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectSortedMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectSortedMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.lwjgl.util.vector.Matrix4f;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 public class ExpandablePattern implements IBlockPattern {
 
-    protected final QuadFunction<World, GreggyBlockPos, EnumFacing, EnumFacing, int[]> boundsFunction;
+    protected final Supplier<int[]> boundSupplier;
     protected final BiFunction<GreggyBlockPos, int[], TraceabilityPredicate> predicateFunction;
-    protected final OriginOffset offset = new OriginOffset();
+    protected final GreggyBlockPos offset = new GreggyBlockPos();
 
     /**
      * In the form of [ aisleDir, stringDir, charDir ]
      */
-    protected final RelativeDirection[] directions;
+    protected final EnumFacing[] directions;
     protected final BlockWorldState worldState;
     protected final Object2IntMap<TraceabilityPredicate.SimplePredicate> globalCount = new Object2IntOpenHashMap<>();
     protected final PatternState state = new PatternState();
@@ -47,26 +48,25 @@ public class ExpandablePattern implements IBlockPattern {
     /**
      * New expandable pattern normally you would use {@link FactoryExpandablePattern} instead.
      * 
-     * @param boundsFunction    A function to supply bounds, order in the way .values() are ordered in
+     * @param boundSupplier     Supplier for bounds, order in the way .values() are ordered in
      *                          RelativeDirection.
      * @param predicateFunction Given a pos and bounds(the one you just passed in, not mutated), return a predicate. The
      *                          pos is offset as explained in the builder method.
      * @param directions        The structure directions, explained in the builder method.
      */
-    public ExpandablePattern(@NotNull QuadFunction<World, GreggyBlockPos, EnumFacing, EnumFacing, int[]> boundsFunction,
+    public ExpandablePattern(@NotNull Supplier<int[]> boundSupplier,
                              @NotNull BiFunction<GreggyBlockPos, int[], TraceabilityPredicate> predicateFunction,
                              @NotNull RelativeDirection[] directions) {
-        this.boundsFunction = boundsFunction;
+        this.boundSupplier = boundSupplier;
         this.predicateFunction = predicateFunction;
-        this.directions = directions;
+        this.directions = Arrays.stream(directions).map(i -> DEFAULT_FACINGS[i.ordinal()]).toArray(EnumFacing[]::new);
 
         this.worldState = new BlockWorldState();
     }
 
-    @NotNull
+    @Nullable
     @Override
-    public PatternState checkPatternFastAt(World world, BlockPos centerPos, EnumFacing frontFacing,
-                                           EnumFacing upwardsFacing, boolean allowsFlip) {
+    public PatternState cachedPattern(World world) {
         if (!cache.isEmpty()) {
             boolean pass = true;
             GreggyBlockPos gregPos = new GreggyBlockPos();
@@ -91,7 +91,7 @@ public class ExpandablePattern implements IBlockPattern {
             }
             if (pass) {
                 if (state.hasError()) {
-                    state.setState(PatternState.EnumCheckState.INVALID_CACHED);
+                    state.setState(PatternState.EnumCheckState.INVALID);
                 } else {
                     state.setState(PatternState.EnumCheckState.VALID_CACHED);
                 }
@@ -100,24 +100,14 @@ public class ExpandablePattern implements IBlockPattern {
             }
         }
 
-        // doesn't support flipping yet so its always false
-        state.setFlipped(false);
-        boolean valid = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
-        if (valid) {
-            state.setState(PatternState.EnumCheckState.VALID_UNCACHED);
-            return state;
-        }
-
-        clearCache(); // we don't want a random cache of a partially formed multi
-        state.setState(PatternState.EnumCheckState.INVALID_UNCACHED);
-        return state;
+        clearCache();
+        state.setError(null);
+        return null;
     }
 
     @Override
-    public boolean checkPatternAt(World world, BlockPos centerPos, EnumFacing frontFacing, EnumFacing upwardsFacing,
-                                  boolean isFlipped) {
-        int[] bounds = boundsFunction.apply(world, new GreggyBlockPos(centerPos), frontFacing, upwardsFacing);
-        if (bounds == null) return false;
+    public boolean checkPatternAt(World world, Matrix4f transform) {
+        int[] bounds = boundSupplier.get();
 
         globalCount.clear();
 
@@ -126,21 +116,13 @@ public class ExpandablePattern implements IBlockPattern {
         // where the iteration ends, in octant 1
         GreggyBlockPos positiveCorner = new GreggyBlockPos();
 
-        // [ absolute aisle, absolute string, absolute dir ]
-        EnumFacing[] absolutes = new EnumFacing[3];
-
         for (int i = 0; i < 3; i++) {
-            RelativeDirection selected = directions[i];
-
-            absolutes[i] = selected.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
-
-            negativeCorner.set(i, -bounds[selected.oppositeOrdinal()]);
-            positiveCorner.set(i, bounds[selected.ordinal()]);
+            negativeCorner.set(i, -bounds[directions[i].ordinal() ^ 1]);
+            positiveCorner.set(i, bounds[directions[i].ordinal()]);
         }
 
         worldState.setWorld(world);
-        // this translates from the relative coordinates to world coordinates
-        GreggyBlockPos translation = new GreggyBlockPos(centerPos);
+        GreggyBlockPos transformed = new GreggyBlockPos();
 
         // SOUTH, UP, EAST means point is +z, line is +y, plane is +x. this basically means the x val of the iter is
         // aisle count, y is str count, and z is char count.
@@ -153,19 +135,21 @@ public class ExpandablePattern implements IBlockPattern {
             // cache the pos here so that the offsets don't mess it up
             int[] arr = pos.getAll();
             // this basically reshuffles the coordinates into absolute form from relative form
-            pos.zero().offset(absolutes[0], arr[0]).offset(absolutes[1], arr[1]).offset(absolutes[2], arr[2]);
-            // translate from the origin to the center
-            worldState.setPos(pos.add(translation));
+            pos.zero().offset(directions[0], arr[0]).offset(directions[1], arr[1]).offset(directions[2], arr[2]);
+
+            GTUtility.apply(transform, transformed.from(pos));
+            worldState.setPos(transformed);
 
             if (predicate != TraceabilityPredicate.ANY) {
                 TileEntity te = worldState.getTileEntity();
-                cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(),
+                cache.put(transformed.toLong(), new BlockInfo(worldState.getBlockState(),
                         !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null));
             }
 
             PatternError result = predicate.test(worldState, globalCount, null);
             if (result != null) {
                 state.setError(result);
+                clearCache();
                 return false;
             }
         }
@@ -173,6 +157,7 @@ public class ExpandablePattern implements IBlockPattern {
         for (Object2IntMap.Entry<TraceabilityPredicate.SimplePredicate> entry : globalCount.object2IntEntrySet()) {
             if (entry.getIntValue() < entry.getKey().minGlobalCount) {
                 state.setError(new TraceabilityPredicate.SinglePredicateError(entry.getKey(), 1));
+                clearCache();
                 return false;
             }
         }
@@ -180,42 +165,30 @@ public class ExpandablePattern implements IBlockPattern {
     }
 
     @Override
-    public Long2ObjectSortedMap<TraceabilityPredicate> getDefaultShape(MultiblockControllerBase src,
+    public Long2ObjectSortedMap<TraceabilityPredicate> getDefaultShape(Matrix4f transform,
                                                                        @NotNull Map<String, String> keyMap) {
-        EnumFacing front = src.getFrontFacing();
-        EnumFacing up = src.getUpwardsFacing();
-
-        int[] bounds = boundsFunction.apply(src.getWorld(), new GreggyBlockPos(src.getPos()), front, up);
-        if (bounds == null) return Long2ObjectSortedMaps.emptyMap();
-
+        int[] bounds = boundSupplier.get();
         Long2ObjectSortedMap<TraceabilityPredicate> predicates = new Long2ObjectRBTreeMap<>();
 
         GreggyBlockPos negativeCorner = new GreggyBlockPos();
         GreggyBlockPos positiveCorner = new GreggyBlockPos();
 
-        EnumFacing[] absolutes = new EnumFacing[3];
-
         for (int i = 0; i < 3; i++) {
-            RelativeDirection selected = directions[i];
-
-            absolutes[i] = selected.getRelativeFacing(front, up, false);
-
-            negativeCorner.set(i, -bounds[selected.oppositeOrdinal()]);
-            positiveCorner.set(i, bounds[selected.ordinal()]);
+            negativeCorner.set(i, -bounds[directions[i].ordinal() ^ 1]);
+            positiveCorner.set(i, bounds[directions[i].ordinal()]);
         }
 
-        GreggyBlockPos translation = new GreggyBlockPos(src.getPos());
+        GreggyBlockPos translation = new GreggyBlockPos();
 
         for (GreggyBlockPos pos : GreggyBlockPos.allInBox(negativeCorner, positiveCorner, EnumFacing.SOUTH,
                 EnumFacing.UP, EnumFacing.EAST)) {
             TraceabilityPredicate predicate = predicateFunction.apply(pos, bounds);
 
             int[] arr = pos.getAll();
-            pos.zero().offset(absolutes[0], arr[0]).offset(absolutes[1], arr[1]).offset(absolutes[2], arr[2])
-                    .add(translation);
+            pos.zero().offset(directions[0], arr[0]).offset(directions[1], arr[1]).offset(directions[2], arr[2]);
 
             if (predicate != TraceabilityPredicate.ANY && predicate != TraceabilityPredicate.AIR) {
-                predicates.put(pos.toLong(), predicate);
+                predicates.put(GTUtility.apply(transform, translation.from(pos)).toLong(), predicate);
             }
         }
 
@@ -238,7 +211,7 @@ public class ExpandablePattern implements IBlockPattern {
     }
 
     @Override
-    public OriginOffset getOffset() {
-        return offset;
+    public void moveOffset(RelativeDirection dir, int amount) {
+        offset.offset(DEFAULT_FACINGS[dir.ordinal()], amount);
     }
 }

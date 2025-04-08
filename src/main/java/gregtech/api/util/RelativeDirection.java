@@ -35,14 +35,7 @@ public enum RelativeDirection {
      * Gets the opposite RelativeDirection to this. UP <-> DOWN, LEFT <-> RIGHT, FRONT <-> BACK.
      */
     public RelativeDirection getOpposite() {
-        return VALUES[oppositeOrdinal()];
-    }
-
-    /**
-     * Gets the ordinal of the RelativeDirection opposite to this. UP <-> DOWN, LEFT <-> RIGHT, FRONT <-> BACK.
-     */
-    public int oppositeOrdinal() {
-        return ordinal() ^ 1;
+        return VALUES[ordinal() ^ 1];
     }
 
     public EnumFacing getRelativeFacing(EnumFacing frontFacing, EnumFacing upFacing) {
@@ -80,18 +73,10 @@ public enum RelativeDirection {
      */
     public static EnumFacing simulateAxisRotation(EnumFacing newFrontFacing, EnumFacing oldFrontFacing,
                                                   EnumFacing upwardsFacing) {
-        // 180 degree flip
-        if (newFrontFacing.getAxis() == oldFrontFacing.getAxis()) return upwardsFacing;
-
         EnumFacing cross = GTUtility.cross(newFrontFacing, oldFrontFacing);
-
+        if (cross == null) return upwardsFacing;
         if (cross.getAxis() == upwardsFacing.getAxis()) return upwardsFacing;
-
-        // clockwise rotation
-        if (oldFrontFacing.rotateAround(cross.getAxis()) == newFrontFacing) {
-            return oldFrontFacing.getOpposite();
-        }
-
+        if (upwardsFacing == newFrontFacing) return oldFrontFacing.getOpposite();
         return oldFrontFacing;
     }
 

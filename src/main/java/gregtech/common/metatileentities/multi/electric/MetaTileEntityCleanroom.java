@@ -76,6 +76,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.util.vector.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -101,7 +102,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     public static final int MAX_RADIUS = 7;
     public static final int MAX_DEPTH = 14;
     private static final GreggyBlockPos offset = new GreggyBlockPos(1, 1, 1);
-    private final int[] bounds = { 0, MIN_DEPTH, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS };
+    private final int[] bounds = { MIN_DEPTH, 0, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS };
     private CleanroomType cleanroomType = null;
     private int cleanAmount;
 
@@ -112,11 +113,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     private final CleanroomLogic cleanroomLogic;
     private final Collection<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
     private AABBHighlightRenderer.AABBRender aabb;
-
-    /**
-     * Reverse map from enum facing -> relative direction, refreshed on every setFrontFacing(...) call
-     */
-    private final Map<EnumFacing, RelativeDirection> facingMap = new EnumMap<>(EnumFacing.class);
 
     public MetaTileEntityCleanroom(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -232,7 +228,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                 .or(states(getGlassState()));
 
         return FactoryExpandablePattern.start(RelativeDirection.UP, RelativeDirection.RIGHT, RelativeDirection.FRONT)
-                .boundsFunction((w, c, f, u) -> bounds)
+                .boundsFunction(() -> bounds)
                 .predicateFunction((c, b) -> {
                     // controller always at origin
                     if (c.origin()) return selfPredicate();
@@ -240,15 +236,15 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                     int intersects = 0;
 
                     // aisle dir is up, so its bounds[0] and bounds[1]
-                    boolean topAisle = c.x() == b[0];
-                    boolean botAisle = c.x() == -b[1];
+                    boolean topAisle = c.x() == 0;
+                    boolean botAisle = c.x() == -b[0];
 
                     if (topAisle || botAisle) intersects++;
                     // negative signs for the LEFT and BACK ordinals
                     // string dir is right, so its bounds[2] and bounds[3]
-                    if (c.y() == -b[2] || c.y() == b[3]) intersects++;
+                    if (c.y() == -b[4] || c.y() == b[5]) intersects++;
                     // char dir is front, so its bounds[4] and bounds[5]
-                    if (c.z() == b[4] || c.z() == -b[5]) intersects++;
+                    if (c.z() == b[2] || c.z() == -b[3]) intersects++;
 
                     // GTLog.logger.info(intersects + " intersects at " + c);
 
@@ -313,30 +309,20 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     protected TraceabilityPredicate innerPredicate() {
         return new TraceabilityPredicate(worldState -> {
             // all non-MetaTileEntities are allowed inside by default
-            TileEntity tileEntity = worldState.getTileEntity();
-            if (!(tileEntity instanceof IGregTechTileEntity)) return null;
+            TileEntity te = worldState.getTileEntity();
+            if (!(te instanceof IGregTechTileEntity)) return null;
 
-            MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
+            MetaTileEntity mte = ((IGregTechTileEntity) te).getMetaTileEntity();
 
-            // always ban other cleanrooms, can cause problems otherwise
-            if (metaTileEntity instanceof ICleanroomProvider) return null;
-
-            return isMachineBanned(metaTileEntity) ? PatternError.PLACEHOLDER : null;
+            return isMachineBanned(mte) || mte instanceof ICleanroomProvider ? PatternError.PLACEHOLDER : null;
         });
     }
 
     @Override
-    public void setFrontFacing(EnumFacing facing) {
-        super.setFrontFacing(facing);
-        updateFacingMap();
-    }
-
-    protected void updateFacingMap() {
-        // cache relative front, back, left, right
-        for (int i = 2; i < 6; i++) {
-            EnumFacing abs = RelativeDirection.VALUES[i].getRelativeFacing(frontFacing, upwardsFacing, false);
-            facingMap.put(abs, RelativeDirection.VALUES[i]);
-        }
+    protected boolean checkUncachedPattern(IBlockPattern pattern) {
+        transform.setIdentity();
+        defaultTranslate();
+        return pattern.checkPatternAt(getWorld(), transform);
     }
 
     @Override
@@ -402,7 +388,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                     tl.add(getWithButton(EnumFacing.EAST));
                     tl.add(getWithButton(EnumFacing.DOWN));
 
-                    tl.add(withButton(new TextComponentTranslation("gregtech.multiblock.render." + renderingAABB),
+                    tl.add(withButton(new TextComponentTranslation("gregtech.multiblock.render." + !renderingAABB),
                             "render:" + renderingAABB));
                 })
                 .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
@@ -411,14 +397,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     protected ITextComponent getWithButton(EnumFacing facing) {
-        RelativeDirection relative = facing == EnumFacing.DOWN ? RelativeDirection.DOWN : facingMap.get(facing);
-        if (relative == null)
-            return new TextComponentString("null value at facingMap.get(EnumFacing." + facing.getName() + ")");
-
-        String name = relative.name();
+        String name = facing.name();
 
         ITextComponent button = new TextComponentTranslation("gregtech.direction." + facing.getName().toLowerCase(
-                Locale.ROOT)).appendText(": " + bounds[relative.ordinal()]);
+                Locale.ROOT)).appendText(": " + bounds[facing.ordinal()]);
         button.appendText(" ");
         button.appendSibling(withButton(new TextComponentString("[-]"), name + ":-"));
         button.appendText(" ");
@@ -439,11 +421,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         }
 
         switch (data[0]) {
-            case "LEFT" -> bounds[2] = MathHelper.clamp(bounds[2] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
-            case "RIGHT" -> bounds[3] = MathHelper.clamp(bounds[3] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
-            case "FRONT" -> bounds[4] = MathHelper.clamp(bounds[4] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
-            case "BACK" -> bounds[5] = MathHelper.clamp(bounds[5] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
-            case "DOWN" -> bounds[1] = MathHelper.clamp(bounds[1] + getFactor(data[1]), MIN_DEPTH, MAX_DEPTH);
+            case "DOWN" -> bounds[0] = MathHelper.clamp(bounds[0] + getFactor(data[1]), MIN_DEPTH, MAX_DEPTH);
+            case "NORTH" -> bounds[2] = MathHelper.clamp(bounds[2] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
+            case "SOUTH" -> bounds[3] = MathHelper.clamp(bounds[3] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
+            case "WEST" -> bounds[4] = MathHelper.clamp(bounds[4] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
+            case "EAST" -> bounds[5] = MathHelper.clamp(bounds[5] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
             default -> {
                 return;
             }
@@ -691,7 +673,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
             bounds[4] = data.getInteger("fDist");
             bounds[5] = data.getInteger("bDist");
         }
-        updateFacingMap();
     }
 
     @Override

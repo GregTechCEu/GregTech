@@ -14,6 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.github.bsideup.jabel.Desugar;
+import org.lwjgl.Sys;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
@@ -79,5 +80,10 @@ public class AABBHighlightRenderer {
     }
 
     @Desugar
-    public record AABBRender(GreggyBlockPos from, GreggyBlockPos to, float r, float g, float b, long end) {};
+    public record AABBRender(GreggyBlockPos from, GreggyBlockPos to, float r, float g, float b, long end) {
+        @Override
+        public int hashCode() {
+            return System.identityHashCode(this);
+        }
+    }
 }

@@ -64,9 +64,9 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.util.vector.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,6 +105,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     protected EnumFacing upwardsFacing = EnumFacing.UP;
     protected final Object2ObjectMap<String, IBlockPattern> structures = new Object2ObjectOpenHashMap<>();
+    protected final Matrix4f transform = new Matrix4f();
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -175,21 +176,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public boolean isFlipped() {
-        return getSubstructure().getPatternState().isFlipped();
-    }
-
-    /** <strong>Should not be called outside of structure formation logic!</strong> */
-    @ApiStatus.Internal
-    protected void setFlipped(boolean flipped, String name) {
-        PatternState structure = getSubstructure(name).getPatternState();
-
-        boolean flip = structure.isActualFlipped();
-        if (flip != flipped) {
-            structure.setActualFlipped(flipped);
-            notifyBlockUpdate();
-            markDirty();
-            writeCustomData(UPDATE_FLIP, buf -> buf.writeString(name).writeBoolean(flipped));
-        }
+        return (boolean) getSubstructure().getPatternState().storage.getOrDefault("flip", false);
     }
 
     @SideOnly(Side.CLIENT)
@@ -209,7 +196,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     /**
      * Override this method to change the Controller overlay
-     *
+     * n
+     * 
      * @return The overlay to render on the Multiblock Controller
      */
     @SideOnly(Side.CLIENT)
@@ -452,16 +440,20 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void checkStructurePattern(String name) {
         IBlockPattern pattern = getSubstructure(name);
-        if (!pattern.getPatternState().shouldUpdate() || getWorld() == null) return;
+        if (!pattern.getPatternState().shouldUpdate || getWorld() == null) return;
 
         long time = System.nanoTime();
-        PatternState result = pattern.checkPatternFastAt(getWorld(), getPos(),
-                getFrontFacing(), getUpwardsFacing(), allowsFlip());
+        PatternState result = pattern.cachedPattern(getWorld());
+        if (result == null) {
+            pattern.getPatternState().setState(checkUncachedPattern(pattern) ?
+                    PatternState.EnumCheckState.VALID_UNCACHED : PatternState.EnumCheckState.INVALID);
+            result = pattern.getPatternState();
+        }
         GTLog.logger.info(
                 "structure check for " + getClass().getSimpleName() + " took " + (System.nanoTime() - time) + " nanos");
 
         if (result.getState().isValid()) {
-            if (result.isFormed()) {
+            if (result.formed) {
                 // fast rebuild parts
                 if (result.getState() == PatternState.EnumCheckState.VALID_UNCACHED) {
                     forEachMultiblockPart(name, part -> {
@@ -532,10 +524,33 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
             formStructure(name);
         } else {
-            if (result.isFormed()) {
+            if (result.formed) {
                 invalidateStructure(name);
             }
         }
+    }
+
+    /**
+     * Checks to see if an invalid pattern is valid, though calling
+     * {@link IBlockPattern#checkPatternAt(World, Matrix4f)}
+     * with different matricies.
+     */
+    protected boolean checkUncachedPattern(IBlockPattern pattern) {
+        transform.setIdentity();
+
+        defaultTranslate();
+        defaultRotate();
+        if (pattern.checkPatternAt(getWorld(), transform)) {
+            pattern.getPatternState().storage.put("flip", false);
+            return true;
+        }
+
+        transform.setIdentity();
+        defaultTranslate();
+        defaultReflect();
+        defaultRotate();
+        pattern.getPatternState().storage.put("flip", true);
+        return pattern.checkPatternAt(getWorld(), transform);
     }
 
     /**
@@ -584,8 +599,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     protected void formStructure(String name) {
-        getSubstructure(name).getPatternState().setFormed(true);
-        setFlipped(getSubstructure(name).getPatternState().isFlipped(), name);
+        getSubstructure(name).getPatternState().formed = true;
         writeCustomData(STRUCTURE_FORMED, buf -> buf.writeString(name).writeBoolean(true));
     }
 
@@ -598,7 +612,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public void invalidateStructure(String name) {
-        if (!getSubstructure(name).getPatternState().isFormed()) return;
+        if (!getSubstructure(name).getPatternState().formed) return;
         List<Object> dummyList = new ArrayList<>();
 
         multiblockParts.removeIf(part -> {
@@ -616,7 +630,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             return false;
         });
 
-        getSubstructure(name).getPatternState().setFormed(false);
+        getSubstructure(name).getPatternState().formed = false;
         writeCustomData(STRUCTURE_FORMED, buf -> buf.writeString(name).writeBoolean(false));
     }
 
@@ -714,7 +728,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             scheduleRenderUpdate();
         } else if (dataId == STRUCTURE_FORMED) {
             String name = buf.readString(Short.MAX_VALUE);
-            getSubstructure(name).getPatternState().setFormed(buf.readBoolean());
+            getSubstructure(name).getPatternState().formed = buf.readBoolean();
 
             if (!isStructureFormed()) {
                 GregTechAPI.soundManager.stopTileSound(getPos());
@@ -735,7 +749,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public boolean isStructureFormed(String name) {
         return getWorld() != null && getSubstructure(name) != null &&
-                getSubstructure(name).getPatternState().isFormed();
+                getSubstructure(name).getPatternState().formed;
     }
 
     @Override
@@ -846,7 +860,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
         IBlockPattern structure = getSubstructure(trySubstructure(substructure));
 
-        Long2ObjectMap<TraceabilityPredicate> predicates = structure.getDefaultShape(this, map);
+        transform.setIdentity();
+        defaultTranslate();
+        if ("true".equals(map.get("flip"))) defaultReflect();
+        defaultRotate();
+
+        Long2ObjectMap<TraceabilityPredicate> predicates = structure.getDefaultShape(transform, map);
         if (predicates == null) return;
 
         autoBuild(player, map, predicates);
@@ -1010,5 +1029,44 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      */
     public boolean isMultiblockPartWeatherResistant(@NotNull IMultiblockPart part) {
         return false;
+    }
+
+    public void defaultTranslate() {
+        GTUtility.translate(getPos().getX(), getPos().getY(), getPos().getZ(), transform, transform);
+    }
+
+    public void defaultRotate() {
+        EnumFacing start;
+        EnumFacing goal;
+        if (frontFacing == EnumFacing.UP) {
+            start = EnumFacing.SOUTH;
+            goal = upwardsFacing;
+        } else if (frontFacing == EnumFacing.DOWN) {
+            start = EnumFacing.NORTH;
+            goal = upwardsFacing;
+        } else {
+            start = EnumFacing.NORTH;
+            goal = frontFacing;
+        }
+
+        while (start != goal) {
+            start = start.rotateYCCW();
+            GTUtility.rotate((float) Math.PI / 2, 0, 1, 0, transform, transform);
+        }
+
+        if (frontFacing == EnumFacing.UP) GTUtility.rotate((float) Math.PI / 2, 1, 0, 0, transform, transform);
+        else if (frontFacing == EnumFacing.DOWN) GTUtility.rotate((float) Math.PI / 2, -1, 0, 0, transform, transform);
+        else {
+            EnumFacing up = EnumFacing.UP;
+            while (up != upwardsFacing) {
+                up = up.rotateAround(frontFacing.getAxis());
+                GTUtility.rotate((float) Math.PI / 2, 0, 0, 1, transform, transform);
+            }
+        }
+    }
+
+    public void defaultReflect() {
+        EnumFacing side = GTUtility.cross(frontFacing, upwardsFacing);
+        GTUtility.reflect(side.getXOffset(), side.getYOffset(), side.getZOffset(), 0, 0, 0, transform, transform);
     }
 }

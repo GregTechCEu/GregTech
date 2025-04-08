@@ -3,16 +3,13 @@ package gregtech.api.pattern.pattern;
 import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.RelativeDirection;
-import gregtech.api.util.function.QuadFunction;
-
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 public class FactoryExpandablePattern {
 
-    protected QuadFunction<World, GreggyBlockPos, EnumFacing, EnumFacing, int[]> boundsFunction;
+    protected Supplier<int[]> boundsSupplier;
     protected BiFunction<GreggyBlockPos, int[], TraceabilityPredicate> predicateFunction;
     protected final RelativeDirection[] directions = new RelativeDirection[3];
 
@@ -44,10 +41,11 @@ public class FactoryExpandablePattern {
      * This supplies the bounds function. The inputs are: World, controller pos, front facing, up facing. The returned
      * array
      * is an int array of length 6, with how much to extend the multiblock in each direction. The order of the
-     * directions is the same as the ordinal of the RelativeDirection enum.
+     * directions is the same as the ordinal of the EnumFacing enum. Remember that the canonical multiblock has front
+     * facing NORTH and up facing UP.
      */
-    public FactoryExpandablePattern boundsFunction(QuadFunction<World, GreggyBlockPos, EnumFacing, EnumFacing, int[]> function) {
-        this.boundsFunction = function;
+    public FactoryExpandablePattern boundsFunction(Supplier<int[]> supplier) {
+        this.boundsSupplier = supplier;
         return this;
     }
 
@@ -68,11 +66,11 @@ public class FactoryExpandablePattern {
     }
 
     public ExpandablePattern build() {
-        if (boundsFunction == null)
+        if (boundsSupplier == null)
             throw new IllegalStateException("Bound function is null! Use .boundsFunction(...) on the builder!");
         if (predicateFunction == null)
             throw new IllegalStateException("Predicate function is null! Use .predicateFunction(...) on the builder!");
 
-        return new ExpandablePattern(boundsFunction, predicateFunction, directions);
+        return new ExpandablePattern(boundsSupplier, predicateFunction, directions);
     }
 }

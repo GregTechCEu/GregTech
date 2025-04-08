@@ -66,6 +66,7 @@ import mezz.jei.gui.recipes.RecipeLayout;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Matrix4f;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -77,6 +78,7 @@ import javax.vecmath.Vector3f;
 public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
     public static final BlockPos SOURCE = new BlockPos(0, 128, 0);
+    public static final Matrix4f TRANSFORM;
     private static final int MAX_PARTS = 18;
     private static final int PARTS_HEIGHT = 36;
     private static final int SLOT_SIZE = 18;
@@ -113,6 +115,11 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private BlockPos selected;
     private final List<TraceabilityPredicate.SimplePredicate> predicates;
     private TraceabilityPredicate father;
+
+    static {
+        Matrix4f mat = new Matrix4f();
+        TRANSFORM = GTUtility.translate(SOURCE.getX(), SOURCE.getY(), SOURCE.getZ(), mat, mat);
+    }
 
     @SuppressWarnings("NewExpressionSideOnly")
     public MultiblockInfoRecipeWrapper(@NotNull MultiblockControllerBase controller) {
@@ -492,7 +499,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         for (String structure : structures) {
             Long2ObjectMap<TraceabilityPredicate> predicates = ((MultiblockControllerBase) holder.getMetaTileEntity())
                     .getSubstructure(structure)
-                    .getDefaultShape((MultiblockControllerBase) holder.getMetaTileEntity(), map);
+                    .getDefaultShape(TRANSFORM, map);
             copy.putAll(predicates);
             ((MultiblockControllerBase) holder.getMetaTileEntity()).autoBuild(new GregFakePlayer(world), map,
                     predicates);

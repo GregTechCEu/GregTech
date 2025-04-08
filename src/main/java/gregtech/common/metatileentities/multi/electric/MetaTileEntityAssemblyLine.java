@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.electric;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDataAccessHatch;
+import gregtech.api.gui.Widget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -11,6 +12,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -30,14 +32,20 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
 import gregtech.core.sound.GTSoundEvents;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
@@ -50,10 +58,14 @@ import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.util.vector.Matrix4f;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.function.ToIntFunction;
 
+import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
@@ -66,6 +78,21 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     private GTLaserBeamParticle[][] beamParticles;
     private int beamCount;
     private int beamTime;
+    // todo remove
+    private final Matrix4f temp = new Matrix4f();
+    private static final Field[][] fields = new Field[4][4];
+
+    static {
+        try {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    fields[i][j] = Matrix4f.class.getDeclaredField("m" + i + j);
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
@@ -73,7 +100,9 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityAssemblyLine(metaTileEntityId);
+        MetaTileEntityAssemblyLine mte = new MetaTileEntityAssemblyLine(metaTileEntityId);
+        mte.temp.load(temp);
+        return mte;
     }
 
     @NotNull
@@ -212,6 +241,62 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
+    protected void addDisplayText(List<ITextComponent> textList) {
+        super.addDisplayText(textList);
+        try {
+            for (int i = 0; i < 4; i++) {
+                ITextComponent comp = new TextComponentString("");
+                for (int j = 0; j < 4; j++) {
+                    comp.appendSibling(withButton(
+                            new TextComponentString(String.valueOf(MathHelper.floor(fields[j][i].getFloat(temp)))), "" + j + i));
+                    comp.appendText(" ");
+                }
+                textList.add(comp);
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
+        Field f = fields[componentData.charAt(0) - '0'][componentData.charAt(1) - '0'];
+        int delta = clickData.isShiftClick ? -1 : 1;
+        writeCustomData(1239234, buf -> buf.writeVarInt(componentData.charAt(0) - '0').writeVarInt(componentData.charAt(1) - '0').writeVarInt(delta));
+        try {
+            f.setFloat(temp, f.getFloat(temp) + delta);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected boolean checkUncachedPattern(IBlockPattern pattern) {
+        transform.setIdentity();
+
+        defaultTranslate();
+        Matrix4f.mul(transform, temp, transform);
+        defaultRotate();
+        return pattern.checkPatternAt(getWorld(), transform);
+    }
+
+    public void autoBuild(EntityPlayer player, Map<String, String> map, String substructure) {
+        if (getWorld().isRemote) throw new IllegalArgumentException("client side call wuh");
+
+        IBlockPattern structure = getSubstructure(trySubstructure(substructure));
+
+        transform.setIdentity();
+        defaultTranslate();
+        Matrix4f.mul(transform, temp, transform);
+        defaultRotate();
+
+        Long2ObjectMap<TraceabilityPredicate> predicates = structure.getDefaultShape(transform, map);
+        if (predicates == null) return;
+
+        autoBuild(player, map, predicates);
+    }
+
+    @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         writeParticles(buf);
@@ -225,6 +310,14 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
+        if (dataId == 1239234) {
+            Field f = fields[buf.readVarInt()][buf.readVarInt()];
+            try {
+                f.setFloat(temp, f.getFloat(temp) + buf.readVarInt());
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        }
         if (dataId == GregtechDataCodes.UPDATE_PARTICLE) {
             readParticles(buf);
         } else {

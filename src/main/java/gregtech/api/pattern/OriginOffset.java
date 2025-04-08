@@ -25,9 +25,9 @@ public class OriginOffset {
         return offset[dir.ordinal() / 2] * ((dir.ordinal() % 2 == 0) ? 1 : -1);
     }
 
-    public void apply(GreggyBlockPos pos, EnumFacing frontFacing, EnumFacing upFacing, boolean flip) {
+    public void apply(GreggyBlockPos pos, EnumFacing frontFacing, EnumFacing upFacing) {
         for (int i = 0; i < 3; i++) {
-            pos.offset(RelativeDirection.VALUES[2 * i].getRelativeFacing(frontFacing, upFacing, flip), offset[i]);
+            pos.offset(RelativeDirection.VALUES[2 * i].getRelativeFacing(frontFacing, upFacing), offset[i]);
         }
     }
 }

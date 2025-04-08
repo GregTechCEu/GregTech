@@ -23,10 +23,10 @@ public class BasicAisleStrategy extends AisleStrategy {
     protected final int[] result = new int[2];
 
     @Override
-    public boolean check(boolean flip) {
+    public boolean check() {
         int offset = 0;
         for (int[] multiAisle : multiAisles) {
-            int result = checkMultiAisle(multiAisle, offset, flip);
+            int result = checkMultiAisle(multiAisle, offset);
             if (result == -1) return false;
             offset += result;
         }
@@ -37,12 +37,12 @@ public class BasicAisleStrategy extends AisleStrategy {
         return multiAisles.get(index)[4];
     }
 
-    protected int checkMultiAisle(int[] multi, int offset, boolean flip) {
+    protected int checkMultiAisle(int[] multi, int offset) {
         int aisleOffset = 0;
         int temp = 0;
         for (int i = 1; i <= multi[1]; i++) {
             for (int j = multi[2]; j < multi[3]; j++) {
-                int result = checkRepeatAisle(j, offset + temp, flip);
+                int result = checkRepeatAisle(j, offset + temp);
                 if (result == -1) {
                     if (i <= multi[0]) return -1;
                     multi[4] = i - 1;
@@ -57,10 +57,10 @@ public class BasicAisleStrategy extends AisleStrategy {
         return aisleOffset;
     }
 
-    protected int checkRepeatAisle(int index, int offset, boolean flip) {
+    protected int checkRepeatAisle(int index, int offset) {
         PatternAisle aisle = aisles.get(index);
         for (int i = 1; i <= aisle.maxRepeats; i++) {
-            boolean result = checkAisle(index, offset + i - 1, flip);
+            boolean result = checkAisle(index, offset + i - 1);
             if (!result) {
                 if (i <= aisle.minRepeats) return -1;
 

@@ -104,6 +104,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     @Override
     protected void formStructure(String name) {
         super.formStructure(name);
+        // todo validate layer stuff
         if (this.handler == null) return;
         handler.determineLayerCount((BlockPattern) getSubstructure());
         handler.determineOrderedFluidOutputs();

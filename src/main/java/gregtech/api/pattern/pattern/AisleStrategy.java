@@ -1,14 +1,13 @@
 package gregtech.api.pattern.pattern;
 
-import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.util.vector.Matrix4f;
 
 import java.util.List;
 import java.util.Map;
@@ -22,22 +21,20 @@ public abstract class AisleStrategy {
     protected final RelativeDirection[] directions = new RelativeDirection[3];
 
     protected BlockPattern pattern;
-    protected GreggyBlockPos pos;
-    protected EnumFacing front, up;
+    protected Matrix4f transform;
 
     /**
      * Checks the aisles
-     * 
-     * @param flip Whether this is a flipped pattern check.
+     *
      * @return Whether the pattern is formed after this.
      */
-    public abstract boolean check(boolean flip);
+    public abstract boolean check();
 
     /**
      * Gets the order in which aisles should be displayed, or built in case of autobuild.
      * 
      * @param map The map, the same one that is passed through
-     *            {@link gregtech.api.metatileentity.multiblock.MultiblockControllerBase#autoBuild(EntityPlayer, Map)}
+     *            {@link gregtech.api.metatileentity.multiblock.MultiblockControllerBase#autoBuild(EntityPlayer, Map, String)}
      * @return Array where the i-th element specifies that at offset i there would be aisle a_i
      */
     public abstract int @NotNull [] getDefaultAisles(@Nullable Map<String, String> map);
@@ -45,10 +42,8 @@ public abstract class AisleStrategy {
     /**
      * Called at the start of a structure check.
      */
-    protected void start(GreggyBlockPos pos, EnumFacing front, EnumFacing up) {
-        this.pos = pos;
-        this.front = front;
-        this.up = up;
+    protected void start(Matrix4f transform) {
+        this.transform = transform;
     }
 
     /**
@@ -59,9 +54,9 @@ public abstract class AisleStrategy {
         System.arraycopy(directions, 0, this.directions, 0, 3);
     }
 
-    protected boolean checkAisle(int index, int offset, boolean flip) {
+    protected boolean checkAisle(int index, int offset) {
         // todo remove
-        GTLog.logger.info("Checked aisle {} with offset {} and flip {}", index, offset, flip);
-        return pattern.checkAisle(pos, front, up, index, offset, flip);
+        GTLog.logger.info("Checked aisle {} with offset {}", index, offset);
+        return pattern.checkAisle(transform, index, offset);
     }
 }

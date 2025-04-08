@@ -82,11 +82,9 @@ public class MultiblockPreviewRenderer {
 
     public static void renderMultiBlockPreview(MultiblockControllerBase src, EntityPlayer player,
                                                long durTimeMillis) {
-        if (!src.getPos().equals(mbpPos)) {
-            layer = 0;
-        } else {
-            if (mbpEndTime - System.currentTimeMillis() < 200) return;
-            layer++;
+        if (mbpPos != null) {
+            resetMultiblockRender();
+            return;
         }
         resetMultiblockRender();
         mbpPos = src.getPos();

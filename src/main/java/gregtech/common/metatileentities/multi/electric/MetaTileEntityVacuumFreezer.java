@@ -33,6 +33,8 @@ import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 // todo fix this stupid multiblock back to its original form
 public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
 
+    protected int offset = 5;
+
     public MetaTileEntityVacuumFreezer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.VACUUM_RECIPES);
     }
@@ -68,8 +70,7 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
 
-        ITextComponent button = new TextComponentString("Second structure offset: " +
-                getSubstructure("SECOND").getOffset().get(RelativeDirection.FRONT));
+        ITextComponent button = new TextComponentString("Second structure offset: " + offset);
         button.appendText(" ");
         button.appendSibling(withButton(new TextComponentString("[-]"), "sub"));
         button.appendText(" ");
@@ -84,7 +85,8 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
     protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
         super.handleDisplayClick(componentData, clickData);
         int mod = componentData.equals("add") ? 1 : -1;
-        getSubstructure("SECOND").getOffset().move(RelativeDirection.FRONT, mod);
+        offset += mod;
+        getSubstructure("SECOND").moveOffset(RelativeDirection.FRONT, mod);
         getSubstructure("SECOND").clearCache();
     }
 

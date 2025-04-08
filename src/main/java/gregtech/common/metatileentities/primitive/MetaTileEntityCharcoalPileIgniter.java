@@ -94,16 +94,11 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         WALL_BLOCKS.add(Blocks.SAND);
     }
 
-    private final int[] bounds = new int[] { 0, MIN_DEPTH, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS };
+    private final int[] bounds = new int[] { MIN_DEPTH, 0, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS };
 
     private boolean isActive;
     private int progressTime = 0;
     private int maxProgress = 0;
-
-    /**
-     * Reverse map from enum facing -> relative direction, refreshed on every setFrontFacing(...) call
-     */
-    private final Map<EnumFacing, RelativeDirection> facingMap = new EnumMap<>(EnumFacing.class);
 
     public MetaTileEntityCharcoalPileIgniter(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -154,22 +149,22 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
         // basically cleanroom code
         return FactoryExpandablePattern.start(RelativeDirection.UP, RelativeDirection.RIGHT, RelativeDirection.FRONT)
-                .boundsFunction((w, c, f, u) -> bounds)
+                .boundsFunction(() -> bounds)
                 .predicateFunction((c, b) -> {
                     if (c.origin()) return selfPredicate();
 
                     int intersects = 0;
 
                     // aisle dir is up, so its bounds[0] and bounds[1]
-                    boolean topAisle = c.x() == b[0];
-                    boolean botAisle = c.x() == -b[1];
+                    boolean topAisle = c.x() == 0;
+                    boolean botAisle = c.x() == -b[0];
 
                     if (topAisle || botAisle) intersects++;
                     // negative signs for the LEFT and BACK ordinals
                     // string dir is right, so its bounds[2] and bounds[3]
-                    if (c.y() == -b[2] || c.y() == b[3]) intersects++;
+                    if (c.y() == -b[4] || c.y() == b[5]) intersects++;
                     // char dir is front, so its bounds[4] and bounds[5]
-                    if (c.z() == b[4] || c.z() == -b[5]) intersects++;
+                    if (c.z() == b[2] || c.z() == -b[3]) intersects++;
 
                     if (intersects >= 2) return any();
 
@@ -248,41 +243,26 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         logPositions.clear();
     }
 
-    protected void updateFacingMap() {
-        // cache relative front, back, left, right
-        for (int i = 2; i < 6; i++) {
-            EnumFacing abs = RelativeDirection.VALUES[i].getRelativeFacing(frontFacing, upwardsFacing, false);
-            facingMap.put(abs, RelativeDirection.VALUES[i]);
-        }
-    }
-
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                       CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
             if (getWorld().isRemote) return true;
 
-            RelativeDirection dir = facingMap.getOrDefault(facing, RelativeDirection.DOWN);
-            bounds[dir.ordinal()] += 1;
-            if (bounds[dir.ordinal()] > (dir == RelativeDirection.DOWN ? MAX_DEPTH : MAX_RADIUS)) {
-                bounds[dir.ordinal()] = (dir == RelativeDirection.DOWN ? MIN_DEPTH : MIN_RADIUS);
+            bounds[facing.ordinal()] += 1;
+            if (bounds[facing.ordinal()] > (facing == EnumFacing.DOWN ? MAX_DEPTH : MAX_RADIUS)) {
+                bounds[facing.ordinal()] = (facing == EnumFacing.DOWN ? MIN_DEPTH : MIN_RADIUS);
             }
 
             playerIn.sendMessage(
                     new TextComponentTranslation("gregtech.direction." + facing.name().toLowerCase(Locale.ROOT))
                             .appendText(" ")
                             .appendSibling(new TextComponentTranslation("gregtech.machine.miner.radius",
-                                    bounds[dir.ordinal()])));
+                                    bounds[facing.ordinal()])));
             getSubstructure().clearCache();
             return true;
         }
         return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
-    }
-
-    @Override
-    public void setFrontFacing(EnumFacing facing) {
-        super.setFrontFacing(facing);
-        updateFacingMap();
     }
 
     @SideOnly(Side.CLIENT)
@@ -327,7 +307,6 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         this.maxProgress = data.getInteger("maxProgress");
         this.isActive = data.getBoolean("isActive");
         if (data.hasKey("bounds")) System.arraycopy(data.getIntArray("bounds"), 0, bounds, 0, 6);
-        updateFacingMap();
     }
 
     @Override
