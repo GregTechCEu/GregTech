@@ -140,6 +140,11 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
         tooltip.add(TooltipHelper.RAINBOW_SLOW + I18n.format("gregtech.machine.perfect_oc"));
     }
 
+    @Override
+    public boolean canBeDistinct() {
+        return true;
+    }
+
     @SideOnly(Side.CLIENT)
     @NotNull
     @Override

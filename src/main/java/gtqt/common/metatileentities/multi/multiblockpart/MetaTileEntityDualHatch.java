@@ -20,13 +20,11 @@ import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.DualHandler;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IGhostSlotConfigurable;
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
@@ -143,11 +141,6 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
         this.importFluids = createImportFluidHandler();
         this.exportFluids = createExportFluidHandler();
         this.fluidInventory = new FluidHandlerProxy(importFluids, exportFluids);
-        if(isExportHatch)
-            dualHandler = new DualHandler(getExportItems(), getExportFluids(),isExportHatch);
-        else
-             dualHandler = new DualHandler(getImportItems(), getImportFluids(),isExportHatch);
-
     }
 
     @Override
@@ -326,7 +319,12 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
 
     @Override
     public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
-        abilityInstances.addAll(Collections.singleton(this.dualHandler));
+        if (this.hasGhostCircuitInventory() && this.actualImportItems != null) {
+            abilityInstances.add(new DualHandler(isExportHatch ? this.exportItems : this.actualImportItems, isExportHatch ?exportFluids:importFluids,true));
+
+        } else {
+            abilityInstances.add(new DualHandler(isExportHatch ? this.exportItems : this.importItems, isExportHatch ?exportFluids:importFluids,false));
+        }
     }
 
     @Override
@@ -524,7 +522,6 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                 "gregtech.machine.fluid_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", numSlots, tankSize));
-        tooltip.add(I18n.format("gregtech.universal.enabled"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 

@@ -51,7 +51,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected IItemHandlerModifiable outputInventory;
     protected IMultipleTankHandler inputFluidInventory;
     protected IMultipleTankHandler outputFluidInventory;
-    protected IMultipleTankHandler extendedFluidInputs;
     protected IEnergyContainer energyContainer;
 
     private boolean isDistinct = false;
@@ -79,10 +78,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     public IMultipleTankHandler getInputFluidInventory() {
-        // if distinct, return the normal input fluid inventory,
-        // as recipe logic handles gathering extra fluids
-        // if not distinct, return all the fluids instead
-        return isDistinct() ? inputFluidInventory : extendedFluidInputs;
+        return inputFluidInventory;
     }
 
     public IMultipleTankHandler getOutputFluidInventory() {
@@ -134,7 +130,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         inputFluids.add(
                 new FluidTankList(allowSameFluidFillForOutputs(), getAbilities(MultiblockAbility.IMPORT_FLUIDS)));
         this.inputFluidInventory = GTQTUtility.mergeTankHandlers(inputFluids, allowSameFluidFillForOutputs());
-        this.extendedFluidInputs = extendedImportFluidList(this.inputFluidInventory);
 
         List<IItemHandler> outputItems = new ArrayList<>(this.getAbilities(MultiblockAbility.EXPORT_ITEMS));
         outputItems.addAll(getAbilities(MultiblockAbility.DUAL_EXPORT));
@@ -153,7 +148,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     private void resetTileAbilities() {
         this.inputInventory = new GTItemStackHandler(this, 0);
         this.inputFluidInventory = new FluidTankList(true);
-        this.extendedFluidInputs = new FluidTankList(true);
         this.outputInventory = new GTItemStackHandler(this, 0);
         this.outputFluidInventory = new FluidTankList(true);
         this.energyContainer = new EnergyContainerList(Lists.newArrayList());
@@ -182,7 +176,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         return new FluidTankList(allowSameFluidFillForOutputs(), tanks);
     }
 
-    protected boolean allowSameFluidFillForOutputs() {
+    public boolean allowSameFluidFillForOutputs() {
         return true;
     }
 
