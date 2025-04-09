@@ -778,6 +778,7 @@ public class MultiblockUIBuilder {
     }
 
     private void addKey(IKey key, IDrawable... hover) {
+        if (isServer()) return;
         addKey(KeyUtil.setHover(key, hover));
     }
 
