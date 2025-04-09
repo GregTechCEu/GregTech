@@ -1,5 +1,7 @@
 package gregtech.api.mui.drawable;
 
+import com.cleanroommc.modularui.theme.WidgetSlotTheme;
+
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
 
@@ -48,9 +50,10 @@ public class GTObjectDrawable implements IDrawable, JeiIngredientProvider {
 
     @Override
     public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
+        if (!(context instanceof ModularGuiContext modularGuiContext)) return;
         renderer.setAlignment(Alignment.BottomRight, width - 1, height - 1);
-        drawObject(object, context, x, y, width, height, widgetTheme);
-        if (amount > 1) {
+        drawObject(object, modularGuiContext, x, y, width, height);
+        if (amount > 0) {
             renderer.setPos(x + 1, y + 1);
             String amount = NumberFormat.formatWithMaxDigits(this.amount, 3);
             if (object instanceof FluidStack) amount += "L";
@@ -58,22 +61,23 @@ public class GTObjectDrawable implements IDrawable, JeiIngredientProvider {
         }
     }
 
-    private void drawObject(Object object, GuiContext context, int x, int y, int width, int height,
-                            WidgetTheme widgetTheme) {
+    private void drawObject(Object object, ModularGuiContext context, int x, int y, int width, int height) {
         if (object instanceof ItemStack stack) {
-            IDrawable slot = ((ModularGuiContext) context).getTheme().getItemSlotTheme().getBackground();
-            if (slot == null) slot = GTGuiTextures.SLOT;
-            slot.draw(context, x, y, width, height, widgetTheme);
+            WidgetSlotTheme theme = context.getTheme().getItemSlotTheme();
+            IDrawable background = theme.getBackground();
+            if (background == null) background = GTGuiTextures.SLOT;
+            background.draw(context, x, y, width, height, theme);
             GuiDraw.drawItem(stack, x + 1, y + 1, width - 2, height - 2);
         } else if (object instanceof FluidStack stack) {
-            IDrawable slot = ((ModularGuiContext) context).getTheme().getFluidSlotTheme().getBackground();
+            WidgetSlotTheme theme = context.getTheme().getFluidSlotTheme();
+            IDrawable slot = theme.getBackground();
             if (slot == null) slot = GTGuiTextures.FLUID_SLOT;
-            slot.draw(context, x, y, width, height, widgetTheme);
+            slot.draw(context, x, y, width, height, theme);
             GuiDraw.drawFluidTexture(stack, x + 1, y + 1, width - 2, height - 2, 0);
         } else if (object instanceof BoostableChanceEntry<?>entry) {
-            drawObject(entry.getIngredient(), context, x, y, width, height, widgetTheme);
+            drawObject(entry.getIngredient(), context, x, y, width, height);
             String chance = "~" + this.boostFunction.apply(entry) / 100 + "%";
-            if (amount > 1) y -= 4;
+            if (amount > 0) y -= 4;
             renderer.setPos(x + 1, y + 1);
             renderer.draw(chance);
         }

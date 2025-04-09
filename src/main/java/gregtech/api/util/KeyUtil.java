@@ -1,10 +1,12 @@
 package gregtech.api.util;
 
+import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluid;
 
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -108,6 +110,7 @@ public class KeyUtil {
 
     public static IDrawable setHover(IKey body, IDrawable... hover) {
         if (ArrayUtils.isEmpty(hover)) return body;
+        if (!GTValues.isClientSide()) return IDrawable.NONE;
         return body.asTextIcon()
                 .asHoverable()
                 .addTooltipDrawableLines(Arrays.asList(hover));
