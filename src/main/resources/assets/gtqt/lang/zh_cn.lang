@@ -33,3 +33,8 @@ gregtech.machine.dual_hatch.export.max.name=§c§lMAX§r输出总成
 #gui
 gregtech.gui.output_item.tooltip.enabled=排出灰烬（是）
 gregtech.gui.output_item.tooltip.disabled=排出灰烬（否）
+
+gregtech.gui.dual_auto_input.tooltip.enabled=物品/流体自动输入已启用
+gregtech.gui.dual_auto_input.tooltip.disabled=物品/流体自动输入已禁用
+gregtech.gui.dual_auto_output.tooltip.enabled=物品/流体自动输出已启用
+gregtech.gui.dual_auto_output.tooltip.disabled=物品/流体自动输出已禁用

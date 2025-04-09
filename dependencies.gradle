@@ -44,7 +44,6 @@ dependencies {
     api("com.cleanroommc:groovyscript:1.2.0-hotfix1") { transitive = false }
     api("curse.maven:inventory-bogosorter-632327:4951607-deobf-4951608-sources-4951609")
     api("CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.700")
-    api("appeng:ae2-uel:v0.56.4") { transitive = false }
     api rfg.deobf("curse.maven:ctm-267602:2915363") // CTM 1.0.2.31
 
     // Non-published dependencies
@@ -59,6 +58,8 @@ dependencies {
     compileOnly rfg.deobf("curse.maven:chisel-235279:2915375") // Chisel 1.0.2.45
     compileOnly rfg.deobf("curse.maven:littletiles-257818:4750222") // LittleTiles 1.5.82-1.12.2
     compileOnly rfg.deobf("curse.maven:creativecore-257814:4722163") // Creative Core 1.10.71
+    implementation rfg.deobf("curse.maven:ae2-fluid-crafting-rework-623955:5751930") // AE2FC 2.6.6
+    implementation rfg.deobf("curse.maven:ae2-extended-life-570458:6302098") // AE2FC 2.6.6
 
     // Mods with Soft compat but which have no need to be in code, such as isModLoaded() checks and getModItem() recipes.
     // Uncomment any of these to test them in-game.

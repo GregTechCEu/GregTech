@@ -1,5 +1,6 @@
 package gregtech.api.capability.impl;
 
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.DualHandler;
 import gregtech.api.capability.IEnergyContainer;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,10 +37,11 @@ import static gregtech.api.recipes.logic.OverclockingLogic.subTickParallelOC;
 
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
+    protected final Set<IItemHandlerModifiable> invalidatedInputList = new HashSet<>();
     // Used for distinct mode
     protected int lastRecipeIndex = 0;
     protected IItemHandlerModifiable currentDistinctInputBus;
-    protected List<IItemHandlerModifiable> invalidatedInputList = new ArrayList<>();
+    private boolean hasDualInputCache;
 
     public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity, tileEntity.recipeMap);
@@ -151,7 +154,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             return true;
         }
 
-        boolean canWork = false;
+        boolean canWork;
 
         // 处理流体输入通知
         if (!metaTileEntity.getNotifiedFluidInputList().isEmpty()) {
@@ -262,21 +265,107 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         long maxVoltage = getMaxVoltage();
         List<IItemHandlerModifiable> importInventory = getInputBuses();
 
-        // 尝试通过缓存快速匹配配方
+        // 优先尝试缓存命中
         if (attemptCacheHit(importInventory)) {
             return;
         }
 
-        // 遍历所有输入总线寻找有效配方
+        // 更新双输入缓存状态
+        updateHasDualInputCache();
+
+        // 遍历总线寻找配方，优先检查上次成功总线
         findRecipeInBuses(importInventory, maxVoltage);
+    }
+
+    // 其他方法保持不变，以下为修改后的方法
+
+    private void updateHasDualInputCache() {
+        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
+        hasDualInputCache = !controller.getAbilities(MultiblockAbility.DUAL_IMPORT).isEmpty();
+    }
+
+    private boolean hasDualInput() {
+        return hasDualInputCache;
+    }
+
+    private void findRecipeInBuses(List<IItemHandlerModifiable> importInventory, long maxVoltage) {
+        // 优先检查上次成功的总线
+        if (lastRecipeIndex >= 0 && lastRecipeIndex < importInventory.size()) {
+            IItemHandlerModifiable bus = importInventory.get(lastRecipeIndex);
+            if (!isBusInvalid(bus)) {
+                Recipe recipe = findRecipeForBus(bus, maxVoltage);
+                if (handleFoundRecipe(recipe, bus, lastRecipeIndex)) {
+                    return;
+                }
+            }
+        }
+
+        // 遍历剩余总线
+        for (int i = 0; i < importInventory.size(); i++) {
+            if (i == lastRecipeIndex) continue; // 跳过已检查的总线
+
+            IItemHandlerModifiable bus = importInventory.get(i);
+            if (isBusInvalid(bus)) continue;
+
+            Recipe recipe = findRecipeForBus(bus, maxVoltage);
+            if (handleFoundRecipe(recipe, bus, i)) return;
+        }
+    }
+
+    private boolean checkPreviousRecipeDistinct(IItemHandlerModifiable previousBus) {
+        boolean dualInput = hasDualInput();
+        IMultipleTankHandler tank = dualInput ? getDistinctInputTank(previousBus) : getInputTank(previousBus);
+        return previousRecipe != null && previousRecipe.matches(false, previousBus, tank);
+    }
+
+    protected boolean checkLatestRecipeDistinct(IItemHandlerModifiable previousBus) {
+        boolean dualInput = hasDualInput();
+        IMultipleTankHandler tank = dualInput ? getDistinctInputTank(previousBus) : getInputTank(previousBus);
+
+        // 逆序遍历最新配方（跳过最后一个）
+        for (int i = latestRecipes.size() - 2; i >= 0; i--) { // 从倒数第二个开始
+            Recipe recipe = latestRecipes.get(i);
+            if (recipe != null && recipe.matches(false, previousBus, tank)) {
+                return checkRecipe(recipe) && prepareRecipeDistinct(recipe);
+            }
+        }
+        return false;
+    }
+
+    protected boolean prepareRecipeDistinct(Recipe recipe) {
+        recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(),
+                metaTileEntity.getFluidOutputLimit());
+        boolean dualInput = hasDualInput();
+        IMultipleTankHandler inputTank =
+                dualInput ? getDistinctInputTank(currentDistinctInputBus) : getInputTank(currentDistinctInputBus);
+
+        recipe = findParallelRecipe(
+                recipe,
+                currentDistinctInputBus,
+                inputTank,
+                getOutputInventory(),
+                getOutputTank(),
+                getMaxParallelVoltage(),
+                getParallelLimit());
+
+        if (recipe != null) {
+            recipe = setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus, inputTank);
+            if (recipe != null) {
+                setupRecipe(recipe);
+                return true;
+            }
+        }
+        return false;
     }
 
     // 提取方法：尝试缓存命中
     private boolean attemptCacheHit(List<IItemHandlerModifiable> importInventory) {
-        if (canUseCachedRecipe(importInventory)) {
-            return prepareRecipeDistinct(previousRecipe);
-        }
-        return false;
+        //原先的方法
+        if (canUseCachedRecipe(importInventory) && prepareRecipeDistinct(previousRecipe))
+            return true;
+
+        //临近搜索系统
+        return canUseLatestRecipe(importInventory);
     }
 
     // 提取方法：检查缓存有效性
@@ -287,16 +376,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 && checkRecipe(previousRecipe);
     }
 
-    // 提取方法：在总线集合中寻找配方
-    private void findRecipeInBuses(List<IItemHandlerModifiable> importInventory, long maxVoltage) {
-        for (int i = 0; i < importInventory.size(); i++) {
-            IItemHandlerModifiable bus = importInventory.get(i);
-
-            if (isBusInvalid(bus)) continue;
-
-            Recipe recipe = findRecipeForBus(bus, maxVoltage);
-            if (handleFoundRecipe(recipe, bus, i)) return;
-        }
+    private boolean canUseLatestRecipe(List<IItemHandlerModifiable> importInventory) {
+        return previousRecipe != null
+                && lastRecipeIndex < importInventory.size()
+                && checkLatestRecipeDistinct(importInventory.get(lastRecipeIndex));
     }
 
     // 提取方法：检查总线有效性
@@ -325,6 +408,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     // 提取方法：更新配方缓存
     private void updateRecipeCache(Recipe recipe, IItemHandlerModifiable bus, int index) {
         previousRecipe = recipe;
+        addToPreviousRecipes(recipe);
         currentDistinctInputBus = bus;
         lastRecipeIndex = index;
     }
@@ -345,66 +429,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         } else {
             super.invalidateInputs();
         }
-    }
-
-    private boolean hasDualInput() {
-        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-        //有总成 进行流体隔离模式
-        return !controller.getAbilities(MultiblockAbility.DUAL_IMPORT).isEmpty();
-    }
-
-    protected boolean checkPreviousRecipeDistinct(IItemHandlerModifiable previousBus) {
-        //有总成 进行流体隔离模式
-        if (hasDualInput()) {
-            return previousRecipe != null &&
-                    previousRecipe.matches(false, previousBus, getDistinctInputTank(previousBus));
-        }
-        return previousRecipe != null && previousRecipe.matches(false, previousBus, getInputTank(previousBus));
-    }
-
-    protected boolean prepareRecipeDistinct(Recipe recipe) {
-        recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(),
-                metaTileEntity.getFluidOutputLimit());
-        if (hasDualInput()) {
-
-            recipe = findParallelRecipe(
-                    recipe,
-                    currentDistinctInputBus,
-                    getDistinctInputTank(currentDistinctInputBus),
-                    getOutputInventory(),
-                    getOutputTank(),
-                    getMaxParallelVoltage(),
-                    getParallelLimit());
-
-            if (recipe != null) {
-                recipe = setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus,
-                        getDistinctInputTank(currentDistinctInputBus));
-                if (recipe != null) {
-                    setupRecipe(recipe);
-                    return true;
-                }
-            }
-        } else {
-            recipe = findParallelRecipe(
-                    recipe,
-                    currentDistinctInputBus,
-                    getInputTank(currentDistinctInputBus),
-                    getOutputInventory(),
-                    getOutputTank(),
-                    getMaxParallelVoltage(),
-                    getParallelLimit());
-
-            if (recipe != null) {
-                recipe = setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus,
-                        getInputTank(currentDistinctInputBus));
-                if (recipe != null) {
-                    setupRecipe(recipe);
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     @Override

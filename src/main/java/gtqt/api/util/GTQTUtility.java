@@ -4,6 +4,7 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,4 +17,12 @@ public class GTQTUtility {
         }
         return new FluidTankList(allowSameFluidFillForOutputs, mergedTanks);
     }
+    public static boolean isInventoryEmpty(IItemHandler inventory) {
+        for (int slot = 0; slot < inventory.getSlots(); slot++) {
+            if (!inventory.getStackInSlot(slot).isEmpty()) return false;
+        }
+
+        return true;
+    }
+
 }

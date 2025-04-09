@@ -76,7 +76,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiablePart
@@ -181,6 +180,13 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                     pushItemsIntoNearbyHandlers(getFrontFacing());
                 } else {
                     pullItemsFromNearbyHandlers(getFrontFacing());
+                }
+            }
+            if (workingEnabled) {
+                if (isExportHatch) {
+                    pushFluidsIntoNearbyHandlers(getFrontFacing());
+                } else {
+                    pullFluidsFromNearbyHandlers(getFrontFacing());
                 }
             }
             // Only attempt to auto collapse the inventory contents once the bus has been notified
@@ -396,11 +402,11 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                                 .tooltipBuilder(t -> t.setAutoUpdate(true)
                                         .addLine(isExportHatch ?
                                                 (workingStateValue.getBoolValue() ?
-                                                        IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
-                                                        IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")) :
+                                                        IKey.lang("gregtech.gui.dual_auto_output.tooltip.enabled") :
+                                                        IKey.lang("gregtech.gui.dual_auto_output.tooltip.disabled")) :
                                                 (workingStateValue.getBoolValue() ?
-                                                        IKey.lang("gregtech.gui.item_auto_input.tooltip.enabled") :
-                                                        IKey.lang("gregtech.gui.item_auto_input.tooltip.disabled")))))
+                                                        IKey.lang("gregtech.gui.dual_auto_input.tooltip.enabled") :
+                                                        IKey.lang("gregtech.gui.dual_auto_input.tooltip.disabled")))))
                         .child(new ToggleButton()
                                 .top(18)
                                 .value(new BoolValue.Dynamic(collapseStateValue::getBoolValue,

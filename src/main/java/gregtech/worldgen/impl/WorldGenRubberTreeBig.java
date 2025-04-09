@@ -4,6 +4,8 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockRubberLog;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDirt;
+import net.minecraft.block.BlockGrass;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -19,14 +21,18 @@ import java.util.Random;
 public class WorldGenRubberTreeBig extends WorldGenAbstractTree {
 
     public static final WorldGenRubberTreeBig INSTANCE = new WorldGenRubberTreeBig(false);
-    public static final WorldGenRubberTreeBig INSTANCE_NOTIFY = new WorldGenRubberTreeBig(true);
 
     protected WorldGenRubberTreeBig(boolean notify) {
         super(notify);
     }
-    BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
     @Override
     public boolean generate(@NotNull World world, @NotNull Random rand, @NotNull BlockPos pos) {
+
+        IBlockState state = world.getBlockState(pos.add(0,-1,0));
+        if (!(state.getMaterial().isSolid() && (state.getBlock() instanceof BlockGrass || state.getBlock() instanceof BlockDirt))) {
+            return false; // 返回基座上方位置
+        }
+
         // 调整树干高度为更接近云杉的7-9格
         int trunkHeight = rand.nextInt(6) + 12; // 12-18 logs
 

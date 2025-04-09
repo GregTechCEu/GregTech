@@ -4,6 +4,8 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockRubberLog;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDirt;
+import net.minecraft.block.BlockGrass;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -25,6 +27,12 @@ public class WorldGenRubberTree extends WorldGenAbstractTree {
 
     @Override
     public boolean generate(@NotNull World world, @NotNull Random rand, @NotNull BlockPos pos) {
+
+        IBlockState state = world.getBlockState(pos.add(0,-1,0));
+        if (!(state.getMaterial().isSolid() && (state.getBlock() instanceof BlockGrass || state.getBlock() instanceof BlockDirt))) {
+            return false; // 返回基座上方位置
+        }
+
         int trunkHeight = rand.nextInt(3) + 5; // 5-7 logs
 
         final int maxWorldHeight = world.getHeight();
