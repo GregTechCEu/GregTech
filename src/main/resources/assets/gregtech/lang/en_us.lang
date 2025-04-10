@@ -4963,7 +4963,7 @@ gregtech.machine.research_station.tooltip.2=Used to scan onto §fData Orbs§7 an
 gregtech.machine.research_station.tooltip.3=Requires §fComputation§7 to work.
 gregtech.machine.research_station.tooltip.4=Providing more Computation allows the recipe to run faster.
 gregtech.multiblock.research_station.description=The Research Station is a multiblock structure used for researching much more complex Assembly Line Research Data. Any Research requiring a Data Orb or Data Module must be scanned in the Research Station. Requires Compute Work Units (CWU/t) to research recipes, which is supplied by High Performance Computing Arrays (HPCAs).
-gregtech.machine.research_station.researching=Researching.
+gregtech.machine.research_station.researching=Researching:
 
 gregtech.machine.network_switch.name=Network Switch
 gregtech.machine.network_switch.tooltip.1=Ethernet Hub

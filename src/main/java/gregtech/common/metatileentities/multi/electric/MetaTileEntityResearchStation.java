@@ -42,6 +42,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.utils.serialization.ByteBufAdapters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -229,17 +230,12 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     @Override
     protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .setWorkingStatusKeys(
-                        "gregtech.multiblock.idling",
-                        "gregtech.multiblock.work_paused",
-                        "gregtech.machine.research_station.researching")
                 .addEnergyUsageLine(this.getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                 .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
                 .addParallelsLine(recipeMapWorkable.getParallelLimit())
                 .addWorkingStatusLine()
                 .addCustom((manager, syncer) -> {
-                    manager.add(KeyUtil.string(TextFormatting.GRAY, "Researching: "), Operation.ADD);
                     Recipe previousRecipe = getRecipeMapWorkable().getPreviousRecipe();
                     if (syncer.syncBoolean(previousRecipe == null)) return;
                     ItemStack stack = ItemStack.EMPTY;
@@ -249,7 +245,13 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                     stack = syncer.syncObject(stack, ByteBufAdapters.ITEM_STACK);
                     String id = AssemblyLineManager.readResearchId(stack);
                     if (id == null) return;
-                    manager.add(KeyUtil.string(id));
+                    id = id.substring(id.indexOf('x') + 1);
+                    id = id.substring(0, id.lastIndexOf('@'));
+                    id += ".name";
+                    manager.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.research_station.researching"),
+                            Operation.ADD);
+                    manager.add(IKey.SPACE, Operation.ADD);
+                    manager.add(KeyUtil.lang(TextFormatting.AQUA, id));
                 })
                 .addProgressLine(recipeMapWorkable.getProgress(), recipeMapWorkable.getMaxProgress());
     }
