@@ -54,7 +54,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
@@ -366,32 +365,37 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     protected MultiblockUIFactory createUIFactory() {
         return super.createUIFactory()
-                .addScreenChildren((parent, syncManager) -> parent.child(new ParentWidget<>()
-                        .leftRel(0.5f)
-                        .bottom(5)
-                        .size(16 * 3 + 2)
-                        .child(new ProgressWidget()
-                                .sizeRel(1f)
-                                .value(new DoubleSyncValue(progressSupplier))
-                                .texture(GTGuiTextures.HPCA_COMPONENT_OUTLINE, 47)
-                                .direction(ProgressWidget.Direction.LEFT)
-                                .tooltipAutoUpdate(true))
-                        .child(new Grid()
-                                .sizeRel(1f)
-                                .padding(1)
-                                .mapTo(3, 9, value -> new Widget<>()
-                                        .overlay(new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
-                                                .asIcon().size(14).marginLeft(2).marginTop(2))
-                                        .tooltipAutoUpdate(true)
-                                        .tooltipBuilder(tooltip -> {
-                                            if (isStructureFormed()) {
-                                                tooltip.addLine(hpcaHandler.getComponentKey(value));
-                                                tooltip.spaceLine(2);
-                                            }
-                                            hpcaHandler.addInfo(tooltip);
-                                        })
-                                        .size(16)
-                                        .padding(1)))));
+                .addScreenChildren((parent, syncManager) -> {
+                    MultiblockUIBuilder builder = MultiblockUIFactory.builder("hpca_tooltip", syncManager);
+                    builder.setAction(b -> b.addCustom(hpcaHandler::addInfo));
+
+                    parent.child(new ParentWidget<>()
+                            .leftRel(0.5f)
+                            .bottom(5)
+                            .size(16 * 3 + 2)
+                            .child(new ProgressWidget()
+                                    .sizeRel(1f)
+                                    .value(new DoubleSyncValue(progressSupplier))
+                                    .texture(GTGuiTextures.HPCA_COMPONENT_OUTLINE, 47)
+                                    .direction(ProgressWidget.Direction.LEFT)
+                                    .tooltipAutoUpdate(true))
+                            .child(new Grid()
+                                    .sizeRel(1f)
+                                    .padding(1)
+                                    .mapTo(3, 9, value -> new Widget<>()
+                                            .overlay(new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
+                                                    .asIcon().size(14).marginLeft(2).marginTop(2))
+                                            .tooltipAutoUpdate(true)
+                                            .tooltipBuilder(tooltip -> {
+                                                if (isStructureFormed()) {
+                                                    tooltip.addLine(hpcaHandler.getComponentKey(value));
+                                                    tooltip.spaceLine(2);
+                                                }
+                                                builder.build(tooltip);
+                                            })
+                                            .size(16)
+                                            .padding(1))));
+                });
     }
 
     @Override
@@ -846,44 +850,45 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             return maxCoolant;
         }
 
-        public void addInfo(IRichTextBuilder<?> textList) {
+        public void addInfo(KeyManager manager, UISyncer syncer) {
             // Max Computation
-            IKey data = KeyUtil.number(TextFormatting.AQUA, getMaxCWUt());
-            textList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+            IKey data = KeyUtil.number(TextFormatting.AQUA, syncer.syncInt(getMaxCWUt()));
+            manager.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.hpca.info_max_computation", data));
 
+            int coolingAmt = syncer.syncInt(getMaxCoolingAmount());
+            int coolingDemand = syncer.syncInt(getMaxCoolingDemand());
+
             // Cooling
-            TextFormatting coolingColor = getMaxCoolingAmount() < getMaxCoolingDemand() ? TextFormatting.RED :
+            TextFormatting coolingColor = coolingAmt < coolingDemand ? TextFormatting.RED :
                     TextFormatting.GREEN;
-            data = KeyUtil.number(coolingColor, getMaxCoolingDemand());
-            textList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+            data = KeyUtil.number(coolingColor, coolingDemand);
+            manager.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.hpca.info_max_cooling_demand", data));
 
-            data = KeyUtil.number(coolingColor, getMaxCoolingAmount());
-            textList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+            data = KeyUtil.number(coolingColor, coolingAmt);
+            manager.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.hpca.info_max_cooling_available", data));
 
             // Coolant Required
-            if (getMaxCoolantDemand() > 0) {
-                data = KeyUtil.number(
-                        TextFormatting.YELLOW,
-                        getMaxCoolantDemand(), "L ");
+            if (coolingDemand > 0) {
+                data = KeyUtil.number(TextFormatting.YELLOW, coolingDemand, "L ");
                 IKey coolantName = KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.hpca.info_coolant_name");
-                // data.appendSibling(coolantName);
                 data = IKey.comp(data, coolantName);
             } else {
                 data = KeyUtil.string(TextFormatting.GREEN, "0");
             }
-            textList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+
+            manager.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.hpca.info_max_coolant_required", data));
 
             // Bridging
-            if (numBridges > 0) {
-                textList.addLine(KeyUtil.lang(TextFormatting.GREEN,
+            if (syncer.syncInt(numBridges) > 0) {
+                manager.add(KeyUtil.lang(TextFormatting.GREEN,
                         "gregtech.multiblock.hpca.info_bridging_enabled"));
             } else {
-                textList.addLine(KeyUtil.lang(TextFormatting.RED,
+                manager.add(KeyUtil.lang(TextFormatting.RED,
                         "gregtech.multiblock.hpca.info_bridging_disabled"));
             }
         }
