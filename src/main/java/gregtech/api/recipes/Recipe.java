@@ -196,10 +196,15 @@ public class Recipe {
             }
         }
 
-        if (inputs.getSlots() > 0) {
-            items = matchesItems(GTUtility.itemHandlerToList(inputs));
-            if (!items.getKey()) {
-                return false;
+        if (inputs != null && inputs.getSlots() > 0) {
+            List<ItemStack> itemList = GTUtility.itemHandlerToList(inputs);
+            if (itemList != null) {
+                items = matchesItems(itemList);
+                if (!items.getKey()) {
+                    return false;
+                }
+            } else {
+                return false; // 或者根据业务逻辑处理
             }
         }
 

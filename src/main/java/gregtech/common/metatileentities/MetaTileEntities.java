@@ -225,7 +225,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_16A = new MetaTileEntityEnergyHatch[10]; // IV+
     public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_INPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[10]; // IV+
     public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_OUTPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[10]; // IV+
-    public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[10]; // HV, EV, IV, LuV, ZPM, UV, UHV, UEV, UIV, UXV
+    public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[12]; // HV, EV, IV, LuV, ZPM, UV, UHV, UEV, UIV, UXV, OPV,MAX
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UHV + 1]; // LV-UHV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
     public static MetaTileEntityQuantumStorageController QUANTUM_STORAGE_CONTROLLER;
@@ -1153,20 +1153,18 @@ public class MetaTileEntities {
         }
 
         // Misc, IDs 1646-1999
-        WORKBENCH = registerMetaTileEntity(1646, new MetaTileEntityWorkbench(gregtechId("workbench")));
-        PRIMITIVE_WATER_PUMP = registerMetaTileEntity(1647,
+        WORKBENCH = registerMetaTileEntity(1650, new MetaTileEntityWorkbench(gregtechId("workbench")));
+        PRIMITIVE_WATER_PUMP = registerMetaTileEntity(1651,
                 new MetaTileEntityPrimitiveWaterPump(gregtechId("primitive_water_pump")));
-        PUMP_OUTPUT_HATCH = registerMetaTileEntity(1648, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
+        PUMP_OUTPUT_HATCH = registerMetaTileEntity(1652, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
 
-        CREATIVE_ENERGY = registerMetaTileEntity(1649, new MetaTileEntityCreativeEnergy());
+        CREATIVE_ENERGY = registerMetaTileEntity(1653, new MetaTileEntityCreativeEnergy());
         // Steam Hatches/Buses
-        STEAM_EXPORT_BUS = registerMetaTileEntity(1650,
+        STEAM_EXPORT_BUS = registerMetaTileEntity(1654,
                 new MetaTileEntitySteamItemBus(gregtechId("steam_export_bus"), true));
-        STEAM_IMPORT_BUS = registerMetaTileEntity(1651,
+        STEAM_IMPORT_BUS = registerMetaTileEntity(1655,
                 new MetaTileEntitySteamItemBus(gregtechId("steam_import_bus"), false));
-        STEAM_HATCH = registerMetaTileEntity(1652, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
-
-
+        STEAM_HATCH = registerMetaTileEntity(1656, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
 
         // Muffler Hatches, IDs 1657-1665
         for (int i = 0; i < MUFFLER_HATCH.length - 1; i++) {
