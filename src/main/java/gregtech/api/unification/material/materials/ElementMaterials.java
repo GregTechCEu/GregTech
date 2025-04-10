@@ -209,6 +209,7 @@ public class ElementMaterials {
                 .ingot().fluid()
                 .color(0x578062)
                 .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR)
+                .fluidPipeProperties(9600, 300, true, true, false, false)
                 .element(Elements.Ds)
                 .build();
 
@@ -390,6 +391,7 @@ public class ElementMaterials {
                         .enchantability(14).build())
                 .rotorStats(7.0f, 2.5f, 256)
                 .cableProperties(V[MV], 2, 3)
+                .fluidPipeProperties(800, 24, true)
                 .build();
 
         Krypton = new Material.Builder(52, gregtechId("krypton"))

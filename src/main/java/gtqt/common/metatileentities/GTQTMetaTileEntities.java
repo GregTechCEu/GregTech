@@ -23,9 +23,9 @@ public class GTQTMetaTileEntities {
 
         for(int i=0;i<endPos;i++)
         {
-            String voltageName = GTValues.VN[i].toLowerCase();
-            DUAL_IMPORT_HATCH[i] = new MetaTileEntityDualHatch(gregtechId("dual_hatch.import." + voltageName), i, false);
-            DUAL_EXPORT_HATCH[i] = new MetaTileEntityDualHatch(gregtechId("dual_hatch.export." + voltageName), i, true);
+            String voltageName = GTValues.VN[i+1].toLowerCase();
+            DUAL_IMPORT_HATCH[i] = new MetaTileEntityDualHatch(gregtechId("dual_hatch.import." + voltageName), i+1, false);
+            DUAL_EXPORT_HATCH[i] = new MetaTileEntityDualHatch(gregtechId("dual_hatch.export." + voltageName), i+1, true);
             //BUDGET_IMPORT_HATCH[i] = new MetaTileEntityBudgetHatch(gregtechId("budget_hatch.import." + voltageName), i);
 
             registerMetaTileEntity(2000 + i, DUAL_IMPORT_HATCH[i]);

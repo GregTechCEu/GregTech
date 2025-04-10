@@ -33,7 +33,6 @@ public class WorldGenRubberTreeBig extends WorldGenAbstractTree {
             return false; // 返回基座上方位置
         }
 
-        // 调整树干高度为更接近云杉的7-9格
         int trunkHeight = rand.nextInt(6) + 12; // 12-18 logs
 
         final int maxWorldHeight = world.getHeight();
@@ -75,9 +74,6 @@ public class WorldGenRubberTreeBig extends WorldGenAbstractTree {
                     // 生成高度计算
                     int yPos = baseLeafY + layer;
                     mutable.setPos(posX + xOffset, yPos, posZ + zOffset);
-
-                    // 保留树干中心（顶部两层）
-                    if (xOffset == 0 && zOffset == 0 && layer < 2) continue;
 
                     if (isReplaceable(world, mutable)) {
                         setBlockAndNotifyAdequately(world, mutable, MetaBlocks.RUBBER_LEAVES.getDefaultState());

@@ -189,7 +189,7 @@ public class Recipe {
         Pair<Boolean, int[]> fluids = null;
         Pair<Boolean, int[]> items = null;
 
-        if (fluidInputs.getFluidTanks().size() > 0) {
+        if (!fluidInputs.getFluidTanks().isEmpty()) {
             fluids = matchesFluid(GTUtility.fluidHandlerToList(fluidInputs));
             if (!fluids.getKey()) {
                 return false;
@@ -211,12 +211,11 @@ public class Recipe {
                 for (int i = 0; i < fluidAmountInTank.length; i++) {
                     var tank = backedList.get(i);
                     FluidStack fluidStack = tank.getFluid();
-                    int fluidAmount = fluidAmountInTank[i];
 
-                    if (fluidStack == null || fluidStack.amount == fluidAmount) {
+                    if (fluidStack == null || fluidStack.amount == fluidAmountInTank[i]) {
                         continue;
                     }
-                    tank.drain(Math.abs(fluidAmount - fluidStack.amount), true);
+                    tank.drain(Math.abs(fluidAmountInTank[i] - fluidStack.amount), true);
                 }
             }
             if (items != null) {
