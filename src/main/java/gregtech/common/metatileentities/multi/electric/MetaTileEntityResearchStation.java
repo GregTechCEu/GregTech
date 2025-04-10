@@ -13,13 +13,16 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+import gregtech.api.metatileentity.multiblock.ui.Operation;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -33,11 +36,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.cleanroommc.modularui.utils.serialization.ByteBufAdapters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -233,6 +238,19 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                 .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
                 .addParallelsLine(recipeMapWorkable.getParallelLimit())
                 .addWorkingStatusLine()
+                .addCustom((manager, syncer) -> {
+                    manager.add(KeyUtil.string(TextFormatting.GRAY, "Researching: "), Operation.ADD);
+                    Recipe previousRecipe = getRecipeMapWorkable().getPreviousRecipe();
+                    if (syncer.syncBoolean(previousRecipe == null)) return;
+                    ItemStack stack = ItemStack.EMPTY;
+                    if (!getWorld().isRemote) {
+                        stack = previousRecipe.getOutputs().get(0);
+                    }
+                    stack = syncer.syncObject(stack, ByteBufAdapters.ITEM_STACK);
+                    String id = AssemblyLineManager.readResearchId(stack);
+                    if (id == null) return;
+                    manager.add(KeyUtil.string(id));
+                })
                 .addProgressLine(recipeMapWorkable.getProgress(), recipeMapWorkable.getMaxProgress());
     }
 

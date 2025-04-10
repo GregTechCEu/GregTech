@@ -1,7 +1,5 @@
 package gregtech.api.mui.drawable;
 
-import com.cleanroommc.modularui.theme.WidgetSlotTheme;
-
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
 
@@ -15,6 +13,7 @@ import com.cleanroommc.modularui.drawable.text.TextRenderer;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
