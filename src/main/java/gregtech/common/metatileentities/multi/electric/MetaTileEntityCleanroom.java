@@ -150,7 +150,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         this.cleanroomLogic.setMaxProgress(Math.max(100,
                 ((lDist + rDist + 1) * (bDist + fDist + 1) * hDist) - ((lDist + rDist + 1) * (bDist + fDist + 1))));
         this.cleanroomLogic.setMinEnergyTier(cleanroomFilter.getMinTier());
-        this.doors = context.get("Doors");
+        this.doors = context.get("Doors")==null?Collections.emptySet():context.get("Doors");
+
     }
 
     @Override
