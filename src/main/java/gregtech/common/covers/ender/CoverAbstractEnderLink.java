@@ -22,6 +22,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.text.TextFormatting;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -29,7 +30,6 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.Rectangle;
-import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -40,18 +40,18 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ListWidget;
+import com.cleanroommc.modularui.widgets.ListValueWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -142,28 +142,29 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         this.playerUUID = guiData.getPlayer().getUniqueID();
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(createWidgets(guiData, guiSyncManager))
+                .child(createWidgets(panel, guiSyncManager))
                 .bindPlayerInventory();
     }
 
-    protected Flow createWidgets(GuiData data, PanelSyncManager syncManager) {
+    protected Flow createWidgets(ModularPanel modularPanel, PanelSyncManager syncManager) {
         var name = new StringSyncValue(this::getColorStr, this::updateColor);
 
         var entrySelectorSH = syncManager.panel("entry_selector", entrySelector(getType()), true);
 
         return Flow.column().coverChildrenHeight().top(24)
                 .margin(7, 0).widthRel(1f)
-                .child(new Row().marginBottom(2)
+                .child(Flow.row()
+                        .marginBottom(2)
                         .coverChildrenHeight()
                         .child(createPrivateButton())
                         .child(createColorIcon())
                         .child(new TextFieldWidget()
-                                .height(18)
+                                .height(16) // todo height is actually 20 for some reason?
                                 .value(name)
                                 .setPattern(COLOR_INPUT_PATTERN)
                                 .widthRel(0.5f)
                                 .marginRight(2))
-                        .child(createEntrySlot())
+                        .child(createEntrySlot(modularPanel, syncManager))
                         .child(new ButtonWidget<>()
                                 .overlay(GTGuiTextures.MENU_OVERLAY)
                                 .background(GTGuiTextures.MC_BUTTON)
@@ -181,7 +182,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .child(createIoRow());
     }
 
-    protected abstract IWidget createEntrySlot();
+    protected abstract IWidget createEntrySlot(ModularPanel panel, PanelSyncManager syncManager);
 
     protected IWidget createColorIcon() {
         return new DynamicDrawable(() -> new Rectangle()
@@ -196,28 +197,31 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     protected IWidget createPrivateButton() {
         return new ToggleButton()
                 .value(new BooleanSyncValue(this::isPrivate, this::setPrivate))
-                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                 .background(GTGuiTextures.PRIVATE_MODE_BUTTON[0])
                 .hoverBackground(GTGuiTextures.PRIVATE_MODE_BUTTON[0])
                 .selectedBackground(GTGuiTextures.PRIVATE_MODE_BUTTON[1])
                 .selectedHoverBackground(GTGuiTextures.PRIVATE_MODE_BUTTON[1])
-                .tooltipBuilder(tooltip -> tooltip.addLine(IKey.lang(this.isPrivate ?
-                        "cover.ender_fluid_link.private.tooltip.enabled" :
-                        "cover.ender_fluid_link.private.tooltip.disabled")))
+                .addTooltip(true, IKey.lang("cover.ender_fluid_link.private.tooltip.enabled"))
+                .addTooltip(false, IKey.lang("cover.ender_fluid_link.private.tooltip.disabled"))
                 .marginRight(2);
     }
 
     protected IWidget createIoRow() {
-        return Flow.row().marginBottom(2)
+        return Flow.row()
+                .marginBottom(2)
                 .coverChildrenHeight()
                 .child(new ToggleButton()
+                        .value(new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled))
+                        .overlay(true, IKey.lang("behaviour.soft_hammer.enabled").style(TextFormatting.WHITE))
+                        .overlay(false, IKey.lang("behaviour.soft_hammer.disabled").style(TextFormatting.WHITE))
+                        .widthRel(0.525f)
+                        .left(0))
+                .child(new ToggleButton()
                         .value(new BooleanSyncValue(this::isIoEnabled, this::setIoEnabled))
-                        .overlay(IKey.dynamic(() -> IKey.lang(this.ioEnabled ?
-                                "behaviour.soft_hammer.enabled" :
-                                "behaviour.soft_hammer.disabled").get())
-                                .color(Color.WHITE.darker(1)))
-                        .widthRel(0.6f)
-                        .left(0));
+                        .overlay(true, IKey.lang("cover.generic.ender.iomode.enabled").style(TextFormatting.WHITE))
+                        .overlay(false, IKey.lang("cover.generic.ender.iomode.disabled").style(TextFormatting.WHITE))
+                        .widthRel(0.425f)
+                        .right(0));
     }
 
     @Override
@@ -284,19 +288,20 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     protected PanelSyncHandler.IPanelBuilder entrySelector(EntryTypes<T> type) {
         return (syncManager, syncHandler) -> {
-            List<IWidget> rows = new ArrayList<>();
-            for (String name : VirtualEnderRegistry.getEntryNames(getOwner(), type)) {
-                rows.add(createRow(name, syncManager, type));
-            }
-            return GTGuis.createPopupPanel("entry_selector", 168, 112, true)
-                    .child(IKey.lang("cover.generic.ender.known_channels")
-                            .color(UI_TITLE_COLOR)
-                            .asWidget()
-                            .top(6)
-                            .left(4))
-                    .child(new ListWidget<>()
-                            .children(rows)
-                            // .builder(names, name -> createRow(name, syncManager, type))
+            Set<String> names = VirtualEnderRegistry.getEntryNames(getOwner(), type);
+            Map<IWidget, String> reverse = new Reference2ObjectArrayMap<>(names.size());
+            var panel = GTGuis.createPopupPanel("entry_selector", 168, 112, true);
+            return panel.child(IKey.lang("cover.generic.ender.known_channels")
+                    .color(UI_TITLE_COLOR)
+                    .asWidget()
+                    .top(6)
+                    .left(4))
+                    .child(new ListValueWidget<>(reverse::get)
+                            .children(names, name -> {
+                                IWidget row = createRow(name, panel, syncManager, type);
+                                reverse.put(row, name);
+                                return row;
+                            })
                             .background(GTGuiTextures.DISPLAY.asIcon()
                                     .width(168 - 8)
                                     .height(112 - 20))
@@ -339,7 +344,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         };
     }
 
-    protected IWidget createRow(final String name, final PanelSyncManager syncManager, final EntryTypes<T> type) {
+    protected IWidget createRow(final String name, final ModularPanel mainPanel,
+                                final PanelSyncManager syncManager, final EntryTypes<T> type) {
         final T entry = VirtualEnderRegistry.getEntry(getOwner(), type, name);
         var key = String.format("entry#%s_description", entry.getColorStr());
         var syncKey = PanelSyncManager.makeSyncKey(key, isPrivate ? 1 : 0);
@@ -383,7 +389,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             }
                             return true;
                         }))
-                .child(createSlotWidget(entry))
+                .child(createSlotWidget(entry, mainPanel, syncManager))
                 .child(new ButtonWidget<>()
                         .overlay(GTGuiTextures.BUTTON_CROSS)
                         .setEnabledIf(w -> !Objects.equals(entry.getColor(), activeEntry.getColor()))
@@ -400,9 +406,13 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                         }));
     }
 
-    protected abstract IWidget createSlotWidget(T entry);
+    protected abstract IWidget createSlotWidget(T entry, ModularPanel panel, PanelSyncManager syncManager);
 
-    protected abstract void deleteEntry(UUID player, String name);
+    protected void deleteEntry(UUID player, String name) {
+        VirtualEnderRegistry.deleteEntry(player, getType(), name, this::shouldDeleteEntry);
+    }
+
+    protected abstract boolean shouldDeleteEntry(T activeEntry);
 
     private final class EnderCoverSyncHandler extends SyncHandler {
 

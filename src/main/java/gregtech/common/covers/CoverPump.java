@@ -42,7 +42,6 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
-import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
@@ -195,11 +194,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         getFluidFilterContainer().setMaxTransferSize(getMaxTransferRate());
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(createUI(guiData, guiSyncManager))
+                .child(createUI(panel, guiSyncManager))
                 .bindPlayerInventory();
     }
 
-    protected ParentWidget<?> createUI(GuiData data, PanelSyncManager syncManager) {
+    protected ParentWidget<?> createUI(ModularPanel panel, PanelSyncManager syncManager) {
         var manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
 
@@ -244,7 +243,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
 
         if (createFilterRow())
-            column.child(getFluidFilterContainer().initUI(data, syncManager));
+            column.child(getFluidFilterContainer().initUI(panel, syncManager));
 
         if (createManualIOModeRow())
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
@@ -263,7 +262,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         if (createPumpModeRow())
             column.child(new EnumRowBuilder<>(PumpMode.class)
                     .value(pumpMode)
-                    .lang("cover.pump.mode")
+                    .lang("cover.generic.io")
                     .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY) // todo pump mode overlays
                     .build());
 

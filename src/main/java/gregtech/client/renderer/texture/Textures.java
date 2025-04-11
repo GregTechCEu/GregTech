@@ -323,6 +323,8 @@ public class Textures {
             "cover/overlay_item_voiding_advanced");
     public static final SimpleOverlayRenderer ENDER_FLUID_LINK = new SimpleOverlayRenderer(
             "cover/overlay_ender_fluid_link");
+    public static final SimpleOverlayRenderer ENDER_ITEM_LINK = new SimpleOverlayRenderer(
+            "cover/overlay_ender_item_link");
     public static final SimpleOverlayRenderer STORAGE = new SimpleOverlayRenderer("cover/overlay_storage");
     public static final SimpleOverlayRenderer PIPE_OUT_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_pipe_out");

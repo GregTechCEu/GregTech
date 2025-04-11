@@ -14,8 +14,8 @@ import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiTextures;
-import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -211,8 +211,8 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     /** Uses Cleanroom MUI */
-    public IWidget initUI(GuiData data, PanelSyncManager manager) {
-        IPanelHandler panel = manager.panel("filter_panel", (syncManager, syncHandler) -> {
+    public IWidget initUI(ModularPanel mainPanel, PanelSyncManager manager) {
+        IPanelHandler filterPanel = manager.panel("filter_panel", (syncManager, syncHandler) -> {
             var filter = hasFilter() ? getFilter() : BaseFilter.ERROR_FILTER;
             filter.setMaxTransferSize(getMaxTransferSize());
             return filter.createPopupPanel(syncManager);
@@ -225,8 +225,8 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                                 .filter(this::isItemValid)
                                 .singletonSlotGroup(101)
                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                    if (!isItemValid(newItem) && panel.isPanelOpen()) {
-                                        panel.closePanel();
+                                    if (!isItemValid(newItem) && filterPanel.isPanelOpen()) {
+                                        filterPanel.closePanel();
                                     }
                                 }))
                         .size(18).marginRight(2)
@@ -237,10 +237,10 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                                 GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
                         .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
-                            if (!panel.isPanelOpen()) {
-                                panel.openPanel();
+                            if (!filterPanel.isPanelOpen()) {
+                                filterPanel.openPanel();
                             } else {
-                                panel.closePanel();
+                                filterPanel.closePanel();
                             }
                             return true;
                         }))
