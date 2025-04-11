@@ -154,7 +154,7 @@ public class ConfigHolder {
                 "Other mods can override this to true, regardless of the config file.",
                 "Default: false" })
         @Config.RequiresMcRestart
-        public boolean highTierContent = false;
+        public boolean highTierContent = true;
 
         @Config.Comment({ "Whether tick acceleration effects are allowed to affect GT machines.",
                 "This does NOT apply to the World Accelerator, but to external effects like Time in a Bottle.",
@@ -270,8 +270,11 @@ public class ConfigHolder {
         @Config.Comment({ "Whether to make the recipe for the EBF Controller harder.", "Default: false" })
         public boolean harderEBFControllerRecipe = false;
 
-        @Config.Comment({ "How many Multiblock Casings to make per craft. Either 1, 2, or 3.", "Default: 2" })
-        @Config.RangeInt(min = 1, max = 3)
+        @Config.Comment({
+                "How many Multiblock Casings to make per craft. Must be greater than 0 and fit in a stack.",
+                "'Normal' values would be 1, 2, or 3.",
+                "Default: 2" })
+        @Config.RangeInt(min = 1, max = 64)
         public int casingsPerCraft = 2;
 
         @Config.Comment({

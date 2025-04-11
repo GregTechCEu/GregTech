@@ -232,22 +232,6 @@ public class OreDictionaryItemFilter extends BaseFilter {
                     builder.insert(i++, TextFormatting.YELLOW);
                     i += 2;
                 }
-                case '$' -> { // TODO: remove this switch case in 2.9
-                    builder.insert(i, TextFormatting.DARK_GREEN);
-                    for (; i < builder.length(); i++) {
-                        switch (builder.charAt(i)) {
-                            case ' ', '\t', '\n', '\r' -> {}
-                            case '\\' -> {
-                                i++;
-                                continue;
-                            }
-                            default -> {
-                                continue;
-                            }
-                        }
-                        break;
-                    }
-                }
                 default -> {
                     continue;
                 }

@@ -37,9 +37,9 @@ public class MaterialProperties {
     }
 
     public <T extends IMaterialProperty> void setProperty(PropertyKey<T> key, IMaterialProperty value) {
-        if (value == null) throw new IllegalArgumentException("Material Property must not be null!");
+        if (value == null) return;
         if (hasProperty(key))
-            throw new IllegalArgumentException("Material Property " + key.toString() + " already registered!");
+            return;
         propertyMap.put(key, value);
         propertyMap.remove(PropertyKey.EMPTY);
     }

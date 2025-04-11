@@ -43,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static gregtech.api.GTValues.ULV;
@@ -54,37 +55,30 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
 
     private final RecipeMap<?> recipeMap;
-
-    private double euDiscount = -1;
-    private double speedBonus = -1;
-
-    protected Recipe previousRecipe;
-    private boolean allowOverclocking = true;
-    protected int parallelRecipesPerformed;
-    private long overclockVoltage;
     private final OCParams ocParams = new OCParams();
     private final OCResult ocResult = new OCResult();
-
+    protected Recipe previousRecipe;
+    protected LinkedList<Recipe> latestRecipes = new LinkedList<>();
+    protected int parallelRecipesPerformed;
     protected boolean canRecipeProgress = true;
-
     protected int progressTime;
     protected int maxProgressTime;
     protected long recipeEUt;
     protected List<FluidStack> fluidOutputs;
     protected List<ItemStack> itemOutputs;
-
     protected boolean isActive;
     protected boolean workingEnabled = true;
     protected boolean hasNotEnoughEnergy;
     protected boolean wasActiveAndNeedsUpdate;
     protected boolean isOutputsFull;
     protected boolean invalidInputsForRecipes;
-
     protected boolean hasPerfectOC;
-
+    private double euDiscount = -1;
+    private double speedBonus = -1;
+    private boolean allowOverclocking = true;
+    private long overclockVoltage;
     /**
-     * DO NOT use the parallelLimit field directly, EVER
-     * use {@link AbstractRecipeLogic#setParallelLimit(int)} instead
+     * DO NOT use the parallelLimit field directly, EVER use {@link AbstractRecipeLogic#setParallelLimit(int)} instead
      */
     private int parallelLimit = 1;
 
@@ -97,6 +91,32 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         super(tileEntity);
         this.recipeMap = recipeMap;
         this.hasPerfectOC = hasPerfectOC;
+    }
+
+    /**
+     * @param tanks the tanks to check
+     * @return the minimum fluid capacity of the tanks
+     */
+    protected static int getMinTankCapacity(@NotNull IMultipleTankHandler tanks) {
+        if (tanks.getTanks() == 0) {
+            return 0;
+        }
+        int result = Integer.MAX_VALUE;
+        for (IFluidTank fluidTank : tanks.getFluidTanks()) {
+            result = Math.min(fluidTank.getCapacity(), result);
+        }
+        return result;
+    }
+
+    /**
+     * @param stackA the first stack to check
+     * @param stackB the second stack to check
+     * @return true if both ItemStacks are equal
+     */
+    protected static boolean areItemStacksEqual(@NotNull ItemStack stackA, @NotNull ItemStack stackB) {
+        return (stackA.isEmpty() && stackB.isEmpty()) ||
+                (ItemStack.areItemsEqual(stackA, stackB) &&
+                        ItemStack.areItemStackTagsEqual(stackA, stackB));
     }
 
     /**
@@ -149,7 +169,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     *
      * @return the maximum voltage the machine can use/handle for parallel recipe creation
      */
     protected long getMaxParallelVoltage() {
@@ -236,8 +255,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * DO NOT use the recipeMap field directly, EVER
      * <p>
-     * This can be null due to Processing Array logic.
-     * Normally this should never be null.
+     * This can be null due to Processing Array logic. Normally this should never be null.
      *
      * @return the current RecipeMap of the logic
      */
@@ -385,8 +403,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * Force the workable to search for new recipes.
-     * This can be performance intensive. Use sparingly.
+     * Force the workable to search for new recipes. This can be performance intensive. Use sparingly.
      */
     public void forceRecipeRecheck() {
         this.previousRecipe = null;
@@ -398,7 +415,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     protected void trySearchNewRecipe() {
         long maxVoltage = getMaxVoltage();
-        Recipe currentRecipe;
+        Recipe currentRecipe = null;
         IItemHandlerModifiable importInventory = getInputInventory();
         IMultipleTankHandler importFluids = getInputTank();
 
@@ -406,18 +423,46 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         if (checkPreviousRecipe()) {
             currentRecipe = this.previousRecipe;
             // If there is no active recipe, then we need to find one.
-        } else {
+        }
+        // 若无效则遍历历史记录寻找其他有效配方
+        else {
+            for (int i = latestRecipes.size() - 2; i >= 0; i--) { // 从倒数第二个开始
+                Recipe recipe = latestRecipes.get(i);
+                if (recipe == null) continue;
+                if (recipe.getEUt() <= maxVoltage && recipe.matches(false, importInventory, importFluids)) {
+                    currentRecipe = recipe;
+                    break;
+                }
+            }
+        }
+
+        // 若历史配方均无效则搜索新配方
+        if (currentRecipe == null) {
             currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
         }
         // If a recipe was found, then inputs were valid. Cache found recipe.
         if (currentRecipe != null) {
+            //最临近配方
             this.previousRecipe = currentRecipe;
+            //热点配方
+            addToPreviousRecipes(currentRecipe);
         }
         this.invalidInputsForRecipes = (currentRecipe == null);
 
         // proceed if we have a usable recipe.
         if (currentRecipe != null && checkRecipe(currentRecipe)) {
             prepareRecipe(currentRecipe);
+        }
+    }
+
+    protected void addToPreviousRecipes(Recipe recipe) {
+        // 移除已存在的旧记录
+        latestRecipes.removeIf(r -> r.equals(recipe));
+        // 添加到末尾
+        latestRecipes.add(recipe);
+        // 移除超出限制的最旧配方
+        while (latestRecipes.size() > 16) {
+            latestRecipes.remove(0);
         }
     }
 
@@ -552,7 +597,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * Set the parallel limit
-     * 
+     *
      * @param amount the amount to set
      */
     public void setParallelLimit(int amount) {
@@ -560,13 +605,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * Sets an EU/t discount to apply to a machine when running recipes.<br>
-     * This does NOT affect recipe lookup voltage, even if the discount drops it to a lower voltage tier.<br>
-     * This discount is applied pre-parallel/pre-overclock.
+     * Sets an EU/t discount to apply to a machine when running recipes.<br> This does NOT affect recipe lookup voltage,
+     * even if the discount drops it to a lower voltage tier.<br> This discount is applied pre-parallel/pre-overclock.
      *
-     * @param discount The discount, must be greater than 0 and less than 1.
-     *                 If discount == 0.75, then the recipe will only require 75% of the listed power to run.
-     *                 If discount is > 1, then the recipe will require more than the listed power to run.
+     * @param discount The discount, must be greater than 0 and less than 1. If discount == 0.75, then the recipe will
+     *                 only require 75% of the listed power to run. If discount is > 1, then the recipe will require
+     *                 more than the listed power to run.
      *                 <strong>Be careful as this may not always be possible within the EU/t maximums of the machine!
      *                 </strong>
      */
@@ -586,12 +630,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * Sets a speed multiplier to apply to a machine when running recipes.<br>
-     * This discount is applied pre-parallel/pre-overclock.
+     * @return the speed bonus, or -1 if no bonus.
+     */
+    public double getSpeedBonus() {
+        return speedBonus;
+    }
+
+    /**
+     * Sets a speed multiplier to apply to a machine when running recipes.<br> This discount is applied
+     * pre-parallel/pre-overclock.
      *
-     * @param bonus The bonus, must be greater than 0.
-     *              If bonus == 0.2, then the recipe will be 20% of the normal duration.
-     *              If bonus is > 1, then the recipe will be slower than the normal duration.
+     * @param bonus The bonus, must be greater than 0. If bonus == 0.2, then the recipe will be 20% of the normal
+     *              duration. If bonus is > 1, then the recipe will be slower than the normal duration.
      */
     public void setSpeedBonus(double bonus) {
         if (bonus <= 0) {
@@ -599,13 +649,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return;
         }
         speedBonus = bonus;
-    }
-
-    /**
-     * @return the speed bonus, or -1 if no bonus.
-     */
-    public double getSpeedBonus() {
-        return speedBonus;
     }
 
     /**
@@ -618,23 +661,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * @param tanks the tanks to check
-     * @return the minimum fluid capacity of the tanks
-     */
-    protected static int getMinTankCapacity(@NotNull IMultipleTankHandler tanks) {
-        if (tanks.getTanks() == 0) {
-            return 0;
-        }
-        int result = Integer.MAX_VALUE;
-        for (IFluidTank fluidTank : tanks.getFluidTanks()) {
-            result = Math.min(fluidTank.getCapacity(), result);
-        }
-        return result;
-    }
-
-    /**
      * Find a recipe using inputs
-     * 
+     *
      * @param maxVoltage  the maximum voltage the recipe can have
      * @param inputs      the item inputs used to search for the recipe
      * @param fluidInputs the fluid inputs used to search for the recipe
@@ -656,17 +684,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     public boolean isRecipeMapValid(@NotNull RecipeMap<?> recipeMap) {
         return true;
-    }
-
-    /**
-     * @param stackA the first stack to check
-     * @param stackB the second stack to check
-     * @return true if both ItemStacks are equal
-     */
-    protected static boolean areItemStacksEqual(@NotNull ItemStack stackA, @NotNull ItemStack stackB) {
-        return (stackA.isEmpty() && stackB.isEmpty()) ||
-                (ItemStack.areItemsEqual(stackA, stackB) &&
-                        ItemStack.areItemStackTagsEqual(stackA, stackB));
     }
 
     /**
@@ -696,8 +713,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param importInventory The inventory that the recipe should be consumed from. Used mainly for Distinct bus
      *                        implementation for multiblocks to specify a specific bus, or for addons to use external
      *                        inventories.
-     * @param importFluids    The tanks that the recipe should be consumed from Used currently in addons to use
-     *                        external tanks.
+     * @param importFluids    The tanks that the recipe should be consumed from Used currently in addons to use external
+     *                        tanks.
      * @return the recipe if the setup is successful, null if the setup is not successful
      */
     protected final @Nullable Recipe setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
@@ -938,10 +955,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * Creates an array of Voltage Names that the machine/multiblock can overclock to.
-     * Since this is for use with the customizable overclock button, all tiers up to
-     * {@link AbstractRecipeLogic#getMaxVoltage()}
-     * are allowed, since the button is initialized to this value.
+     * Creates an array of Voltage Names that the machine/multiblock can overclock to. Since this is for use with the
+     * customizable overclock button, all tiers up to {@link AbstractRecipeLogic#getMaxVoltage()} are allowed, since the
+     * button is initialized to this value.
      *
      * @return a String array of the voltage names allowed to be used for overclocking
      */
@@ -1024,6 +1040,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
+     * sets the amount of ticks of running time to finish the recipe
+     *
+     * @param maxProgress the amount of ticks to set
+     */
+    public void setMaxProgress(int maxProgress) {
+        this.maxProgressTime = maxProgress;
+        metaTileEntity.markDirty();
+    }
+
+    /**
      * @return the current recipe's EU/t
      */
     public long getRecipeEUt() {
@@ -1045,13 +1071,30 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * sets the amount of ticks of running time to finish the recipe
-     *
-     * @param maxProgress the amount of ticks to set
+     * @return true if there is not enough energy to continue recipe progress
      */
-    public void setMaxProgress(int maxProgress) {
-        this.maxProgressTime = maxProgress;
+    public boolean isHasNotEnoughEnergy() {
+        return hasNotEnoughEnergy;
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return workingEnabled;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean workingEnabled) {
+        this.workingEnabled = workingEnabled;
         metaTileEntity.markDirty();
+        World world = metaTileEntity.getWorld();
+        if (world != null && !world.isRemote) {
+            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
+        }
+    }
+
+    @Override
+    public boolean isActive() {
+        return isActive;
     }
 
     /**
@@ -1070,38 +1113,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
     }
 
-    @Override
-    public void setWorkingEnabled(boolean workingEnabled) {
-        this.workingEnabled = workingEnabled;
-        metaTileEntity.markDirty();
-        World world = metaTileEntity.getWorld();
-        if (world != null && !world.isRemote) {
-            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
-        }
-    }
-
-    /**
-     * @return true if there is not enough energy to continue recipe progress
-     */
-    public boolean isHasNotEnoughEnergy() {
-        return hasNotEnoughEnergy;
-    }
-
-    @Override
-    public boolean isWorkingEnabled() {
-        return workingEnabled;
-    }
-
-    @Override
-    public boolean isActive() {
-        return isActive;
-    }
-
     /**
      * @return true if the workable is actively working
      */
     public boolean isWorking() {
         return isActive && !hasNotEnoughEnergy && workingEnabled;
+    }
+
+    /**
+     * @return Whether Overclocking is allowed for the current machine/multiblock
+     */
+    public boolean isAllowOverclocking() {
+        return allowOverclocking;
     }
 
     /**
@@ -1116,31 +1139,24 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * @return Whether Overclocking is allowed for the current machine/multiblock
+     * @return The maximum voltage the machine/multiblock can overclock to
      */
-    public boolean isAllowOverclocking() {
-        return allowOverclocking;
+    public long getMaximumOverclockVoltage() {
+        return overclockVoltage;
     }
 
     /**
-     * Sets the maximum voltage that the machine is allowed to overclock to.
-     * If the passed tier is ULV, overclocking for this machine is disabled.
+     * Sets the maximum voltage that the machine is allowed to overclock to. If the passed tier is ULV, overclocking for
+     * this machine is disabled.
      *
-     * @param overclockVoltage The maximum voltage that the machine can overclock to. This must correspond to a
-     *                         voltage tier in <B>GTValues.V</>
+     * @param overclockVoltage The maximum voltage that the machine can overclock to. This must correspond to a voltage
+     *                         tier in <B>GTValues.V</>
      */
     public void setMaximumOverclockVoltage(final long overclockVoltage) {
         this.overclockVoltage = overclockVoltage;
         // Overclocking is not allowed if the passed voltage is ULV
         this.allowOverclocking = (overclockVoltage != GTValues.V[GTValues.ULV]);
         metaTileEntity.markDirty();
-    }
-
-    /**
-     * @return The maximum voltage the machine/multiblock can overclock to
-     */
-    public long getMaximumOverclockVoltage() {
-        return overclockVoltage;
     }
 
     /**
@@ -1159,9 +1175,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * Sets the maximum Tier that the machine/multiblock is allowed to overclock to.
-     * This is used for the Overclock button in Machine GUIs.
-     * This is needed as CycleButtonWidget requires an Int Supplier, without making an Enum of tiers.
+     * Sets the maximum Tier that the machine/multiblock is allowed to overclock to. This is used for the Overclock
+     * button in Machine GUIs. This is needed as CycleButtonWidget requires an Int Supplier, without making an Enum of
+     * tiers.
      *
      * @param tier The maximum tier the multiblock/machine can overclock to
      */

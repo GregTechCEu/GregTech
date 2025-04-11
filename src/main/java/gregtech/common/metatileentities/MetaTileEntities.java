@@ -214,17 +214,19 @@ public class MetaTileEntities {
     public static final MetaTileEntityFluidHatch[] FLUID_EXPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.V.length - 1];
     public static final MetaTileEntityMultiFluidHatch[] QUADRUPLE_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[11]; // EV+
     public static final MetaTileEntityMultiFluidHatch[] NONUPLE_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[11]; // EV+
+    public static final MetaTileEntityMultiFluidHatch[] SIXTEEN_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[11];
     public static final MetaTileEntityMultiFluidHatch[] QUADRUPLE_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[11]; // EV+
     public static final MetaTileEntityMultiFluidHatch[] NONUPLE_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[11]; // EV+
+    public static final MetaTileEntityMultiFluidHatch[] SIXTEEN_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[11];
     public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
-    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_4A = new MetaTileEntityEnergyHatch[11]; // EV+
+    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_4A = new MetaTileEntityEnergyHatch[14]; // EV+
     public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_16A = new MetaTileEntityEnergyHatch[10]; // IV+
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
-    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_4A = new MetaTileEntityEnergyHatch[11]; // EV+
+    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_4A = new MetaTileEntityEnergyHatch[14]; // EV+
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_16A = new MetaTileEntityEnergyHatch[10]; // IV+
     public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_INPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[10]; // IV+
     public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_OUTPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[10]; // IV+
-    public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[6]; // HV, EV, IV, LuV, ZPM, UV
+    public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[12]; // HV, EV, IV, LuV, ZPM, UV, UHV, UEV, UIV, UXV, OPV,MAX
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UHV + 1]; // LV-UHV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
     public static MetaTileEntityQuantumStorageController QUANTUM_STORAGE_CONTROLLER;
@@ -232,12 +234,12 @@ public class MetaTileEntities {
     public static MetaTileEntityQuantumExtender QUANTUM_STORAGE_EXTENDER;
     public static final MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[10];
     public static final MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[10];
-    public static final MetaTileEntityBuffer[] BUFFER = new MetaTileEntityBuffer[3];
+    public static final MetaTileEntityBuffer[] BUFFER = new MetaTileEntityBuffer[5];
     public static final MetaTileEntityPump[] PUMP = new MetaTileEntityPump[8];
     public static final MetaTileEntityBlockBreaker[] BLOCK_BREAKER = new MetaTileEntityBlockBreaker[4];
     public static final MetaTileEntityItemCollector[] ITEM_COLLECTOR = new MetaTileEntityItemCollector[4];
-    public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
-    public static final MetaTileEntityWorldAccelerator[] WORLD_ACCELERATOR = new MetaTileEntityWorldAccelerator[8]; // LV-UV
+    public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[GTValues.V.length - 1];
+    public static final MetaTileEntityWorldAccelerator[] WORLD_ACCELERATOR = new MetaTileEntityWorldAccelerator[GTValues.V.length - 1]; // LV-OpV
     public static MetaTileEntityMachineHatch MACHINE_HATCH;
     public static MetaTileEntityPassthroughHatchItem PASSTHROUGH_HATCH_ITEM;
     public static MetaTileEntityPassthroughHatchFluid PASSTHROUGH_HATCH_FLUID;
@@ -250,9 +252,14 @@ public class MetaTileEntities {
     public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_256 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_1024 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_4096 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_16384 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_65536 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_256 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_1024 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_4096 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_16384 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_65536 = new MetaTileEntityLaserHatch[10]; // IV+
+
     public static MetaTileEntityPassthroughHatchLaser PASSTHROUGH_HATCH_LASER;
     public static MetaTileEntityComputationHatch COMPUTATION_HATCH_RECEIVER;
     public static MetaTileEntityComputationHatch COMPUTATION_HATCH_TRANSMITTER;
@@ -355,6 +362,15 @@ public class MetaTileEntities {
     public static MetaTileEntityDrum TITANIUM_DRUM;
     public static MetaTileEntityDrum TUNGSTENSTEEL_DRUM;
     public static MetaTileEntityDrum GOLD_DRUM;
+    public static MetaTileEntityDrum LEAD_DRUM;
+    public static MetaTileEntityDrum IRON_DRUM;
+    public static MetaTileEntityDrum COPPER_DRUM;
+
+    public static MetaTileEntityDrum RHODIUM_PLATED_PALLADIUM_DRUM;
+    public static MetaTileEntityDrum NAQUADAH_ALLOY_DRUM;
+    public static MetaTileEntityDrum DARMSTADTIUM_DRUM;
+    public static MetaTileEntityDrum NEUTRONIUM_DRUM;
+
     public static MetaTileEntityCrate WOODEN_CRATE;
     public static MetaTileEntityCrate BRONZE_CRATE;
     public static MetaTileEntityCrate ALUMINIUM_CRATE;
@@ -362,6 +378,11 @@ public class MetaTileEntities {
     public static MetaTileEntityCrate STAINLESS_STEEL_CRATE;
     public static MetaTileEntityCrate TITANIUM_CRATE;
     public static MetaTileEntityCrate TUNGSTENSTEEL_CRATE;
+
+    public static MetaTileEntityCrate RHODIUM_PLATED_PALLADIUM_CRATE;
+    public static MetaTileEntityCrate NAQUADAH_ALLOY_CRATE;
+    public static MetaTileEntityCrate DARMSTADTIUM_CRATE;
+    public static MetaTileEntityCrate NEUTRONIUM_CRATE;
 
     // MISC MACHINES SECTION
     public static MetaTileEntityWorkbench WORKBENCH;
@@ -803,10 +824,10 @@ public class MetaTileEntities {
                 registerMetaTileEntity(1180 + i, FLUID_IMPORT_HATCH[i]);
                 registerMetaTileEntity(1195 + i, FLUID_EXPORT_HATCH[i]);
             } else {
-                registerMetaTileEntity(1850 + i, ITEM_IMPORT_BUS[i]);
-                registerMetaTileEntity(1855 + i, ITEM_EXPORT_BUS[i]);
-                registerMetaTileEntity(1860 + i, FLUID_IMPORT_HATCH[i]);
-                registerMetaTileEntity(1865 + i, FLUID_EXPORT_HATCH[i]);
+                registerMetaTileEntity(1870 + i, ITEM_IMPORT_BUS[i]);
+                registerMetaTileEntity(1875 + i, ITEM_EXPORT_BUS[i]);
+                registerMetaTileEntity(1880 + i, FLUID_IMPORT_HATCH[i]);
+                registerMetaTileEntity(1885 + i, FLUID_EXPORT_HATCH[i]);
             }
         }
 
@@ -823,14 +844,14 @@ public class MetaTileEntities {
                     new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output." + voltageName), i, 2, true));
 
             if (i >= GTValues.IV) {
-                int baseId = (i <= GTValues.UHV ? 1240 : 1820);
+                int baseId = (i <= GTValues.UHV ? 1240 : 1840);
 
-                ENERGY_INPUT_HATCH_4A[i + 1 - GTValues.IV] = registerMetaTileEntity(baseId + i - GTValues.IV,
+                ENERGY_INPUT_HATCH_4A[i + 4 - GTValues.IV] = registerMetaTileEntity(baseId + i - GTValues.IV,
                         new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a." + voltageName), i, 4, false));
                 ENERGY_INPUT_HATCH_16A[i - GTValues.IV] = registerMetaTileEntity(baseId + 5 + i - GTValues.IV,
                         new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_16a." + voltageName), i, 16,
                                 false));
-                ENERGY_OUTPUT_HATCH_4A[i + 1 - GTValues.IV] = registerMetaTileEntity(baseId + 10 + i - GTValues.IV,
+                ENERGY_OUTPUT_HATCH_4A[i + 4 - GTValues.IV] = registerMetaTileEntity(baseId + 10 + i - GTValues.IV,
                         new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a." + voltageName), i, 4, true));
                 ENERGY_OUTPUT_HATCH_16A[i - GTValues.IV] = registerMetaTileEntity(baseId + 15 + i - GTValues.IV,
                         new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_16a." + voltageName), i, 16,
@@ -843,10 +864,26 @@ public class MetaTileEntities {
                                 gregtechId("substation_hatch.output_64a." + voltageName), i, 64, true));
             }
         }
-        ENERGY_INPUT_HATCH_4A[0] = registerMetaTileEntity(1399,
+
+        //补充的4A能源仓
+        ENERGY_INPUT_HATCH_4A[0] = registerMetaTileEntity(1394,
+                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a.lv"), GTValues.LV, 4, false));
+        ENERGY_INPUT_HATCH_4A[1] = registerMetaTileEntity(1395,
+                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a.mv"), GTValues.MV, 4, true));
+        ENERGY_INPUT_HATCH_4A[2] = registerMetaTileEntity(1396,
+                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a.hv"), GTValues.HV, 4, false));
+        ENERGY_INPUT_HATCH_4A[3] = registerMetaTileEntity(1397,
                 new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a.ev"), GTValues.EV, 4, false));
-        ENERGY_OUTPUT_HATCH_4A[0] = registerMetaTileEntity(1400,
+
+        ENERGY_OUTPUT_HATCH_4A[0] = registerMetaTileEntity(1398,
+                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a.lv"), GTValues.LV, 4, true));
+        ENERGY_OUTPUT_HATCH_4A[1] = registerMetaTileEntity(1399,
+                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a.mv"), GTValues.MV, 4, true));
+        ENERGY_OUTPUT_HATCH_4A[2] = registerMetaTileEntity(1400,
+                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a.hv"), GTValues.HV, 4, true));
+        ENERGY_OUTPUT_HATCH_4A[3] = registerMetaTileEntity(1401,
                 new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a.ev"), GTValues.EV, 4, true));
+
 
         // Transformer, IDs 1270-1299
         endPos = GregTechAPI.isHighTier() ? TRANSFORMER.length - 1 : Math.min(TRANSFORMER.length - 1, GTValues.UV);
@@ -887,6 +924,15 @@ public class MetaTileEntities {
             }
         }
 
+        // World Accelerators, IDs 1361-1374
+        if (ConfigHolder.machines.enableWorldAccelerators) {
+            for (int i = 0; i < WORLD_ACCELERATOR.length; i++)
+            {
+                WORLD_ACCELERATOR[i] = registerMetaTileEntity(1361 + i,
+                        new MetaTileEntityWorldAccelerator(gregtechId("world_accelerator." + GTValues.VN[i].toLowerCase()), i + 1));
+            }
+        }
+
         // Charger, IDs 1375-1389
         endPos = GregTechAPI.isHighTier() ? CHARGER.length : GTValues.UHV + 1;
         for (int i = 0; i < endPos; i++) {
@@ -895,37 +941,21 @@ public class MetaTileEntities {
             CHARGER[i] = registerMetaTileEntity(1375 + i, charger);
         }
 
-        // World Accelerators, IDs 1390-1404
-        if (ConfigHolder.machines.enableWorldAccelerators) {
-            WORLD_ACCELERATOR[0] = registerMetaTileEntity(1390,
-                    new MetaTileEntityWorldAccelerator(gregtechId("world_accelerator.lv"), 1));
-            WORLD_ACCELERATOR[1] = registerMetaTileEntity(1391,
-                    new MetaTileEntityWorldAccelerator(gregtechId("world_accelerator.mv"), 2));
-            WORLD_ACCELERATOR[2] = registerMetaTileEntity(1392,
-                    new MetaTileEntityWorldAccelerator(gregtechId("world_accelerator.hv"), 3));
-            WORLD_ACCELERATOR[3] = registerMetaTileEntity(1393,
-                    new MetaTileEntityWorldAccelerator(gregtechId("world_accelerator.ev"), 4));
-            WORLD_ACCELERATOR[4] = registerMetaTileEntity(1394,
-                    new MetaTileEntityWorldAccelerator(gregtechId("world_accelerator.iv"), 5));
-            WORLD_ACCELERATOR[5] = registerMetaTileEntity(1395,
-                    new MetaTileEntityWorldAccelerator(gregtechId("world_accelerator.luv"), 6));
-            WORLD_ACCELERATOR[6] = registerMetaTileEntity(1396,
-                    new MetaTileEntityWorldAccelerator(gregtechId("world_accelerator.zpm"), 7));
-            WORLD_ACCELERATOR[7] = registerMetaTileEntity(1397,
-                    new MetaTileEntityWorldAccelerator(gregtechId("world_accelerator.uv"), 8));
-        }
+        // Maintenance Hatches, IDs 1390-1394
+        MAINTENANCE_HATCH = registerMetaTileEntity(1390,
+                new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch"), false));
+        CONFIGURABLE_MAINTENANCE_HATCH = registerMetaTileEntity(1391,
+                new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_configurable"), true));
+        AUTO_MAINTENANCE_HATCH = registerMetaTileEntity(1392,
+                new MetaTileEntityAutoMaintenanceHatch(gregtechId("maintenance_hatch_full_auto")));
+        CLEANING_MAINTENANCE_HATCH = registerMetaTileEntity(1393,
+                new MetaTileEntityCleaningMaintenanceHatch(gregtechId("maintenance_hatch_cleanroom_auto")));
 
-        MACHINE_HATCH = registerMetaTileEntity(1398, new MetaTileEntityMachineHatch(gregtechId("machine_hatch"), 5));
-
-        // 1399 and 1400 are taken by the EV 4A hatches, and are grouped near the other registration rather than here
-        // 1401 is taken by the Cleanroom Maintenance hatches, and is grouped with the maintenance hatch registration
-        // rather than here
 
         PASSTHROUGH_HATCH_ITEM = registerMetaTileEntity(1402,
                 new MetaTileEntityPassthroughHatchItem(gregtechId("passthrough_hatch_item"), 3));
         PASSTHROUGH_HATCH_FLUID = registerMetaTileEntity(1403,
                 new MetaTileEntityPassthroughHatchFluid(gregtechId("passthrough_hatch_fluid"), 3));
-
         DATA_ACCESS_HATCH = registerMetaTileEntity(1404,
                 new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch"), GTValues.EV, false));
         ADVANCED_DATA_ACCESS_HATCH = registerMetaTileEntity(1405,
@@ -967,35 +997,41 @@ public class MetaTileEntities {
                     new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_256a." + voltageName), false, v, 256));
             LASER_OUTPUT_HATCH_256[i] = registerMetaTileEntity(1429 + i,
                     new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_256a." + voltageName), true, v, 256));
-            LASER_INPUT_HATCH_1024[i] = registerMetaTileEntity(1438 + i, new MetaTileEntityLaserHatch(
-                    gregtechId("laser_hatch.target_1024a." + voltageName), false, v, 1024));
+            LASER_INPUT_HATCH_1024[i] = registerMetaTileEntity(1438 + i,
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_1024a." + voltageName), false, v, 1024));
             LASER_OUTPUT_HATCH_1024[i] = registerMetaTileEntity(1447 + i,
                     new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_1024a." + voltageName), true, v, 1024));
-            LASER_INPUT_HATCH_4096[i] = registerMetaTileEntity(1456 + i, new MetaTileEntityLaserHatch(
-                    gregtechId("laser_hatch.target_4096a." + voltageName), false, v, 4096));
+            LASER_INPUT_HATCH_4096[i] = registerMetaTileEntity(1456 + i,
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_4096a." + voltageName), false, v, 4096));
             LASER_OUTPUT_HATCH_4096[i] = registerMetaTileEntity(1465 + i,
                     new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_4096a." + voltageName), true, v, 4096));
+            LASER_INPUT_HATCH_16384[i] = registerMetaTileEntity(1474 + i,
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_16384a." + voltageName), false, v, 16384));
+            LASER_OUTPUT_HATCH_16384[i] = registerMetaTileEntity(1483 + i,
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_16384a." + voltageName), true, v, 16384));
+            LASER_INPUT_HATCH_65536[i] = registerMetaTileEntity(1492 + i,
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_65536a." + voltageName), false, v, 65536));
+            LASER_OUTPUT_HATCH_65536[i] = registerMetaTileEntity(1501 + i,
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_65536a." + voltageName), true, v, 65536));
         }
-        // Free Range: 1475-1509
-
-        // Buffers, IDs 1510-1512
+        // Buffers, IDs 1510-1514
         BUFFER[0] = registerMetaTileEntity(1510, new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));
         BUFFER[1] = registerMetaTileEntity(1511, new MetaTileEntityBuffer(gregtechId("buffer.mv"), 2));
         BUFFER[2] = registerMetaTileEntity(1512, new MetaTileEntityBuffer(gregtechId("buffer.hv"), 3));
-
-        // Free Range: 1513-1514
+        BUFFER[3] = registerMetaTileEntity(1513, new MetaTileEntityBuffer(gregtechId("buffer.ev"), 4));
+        BUFFER[4] = registerMetaTileEntity(1514, new MetaTileEntityBuffer(gregtechId("buffer.iv"), 5));
 
         // Fishers, IDs 1515-1529
-        FISHER[0] = registerMetaTileEntity(1515, new MetaTileEntityFisher(gregtechId("fisher.lv"), 1));
-        FISHER[1] = registerMetaTileEntity(1516, new MetaTileEntityFisher(gregtechId("fisher.mv"), 2));
-        FISHER[2] = registerMetaTileEntity(1517, new MetaTileEntityFisher(gregtechId("fisher.hv"), 3));
-        FISHER[3] = registerMetaTileEntity(1518, new MetaTileEntityFisher(gregtechId("fisher.ev"), 4));
+        for (int i = 0; i < FISHER.length; i++)
+        {
+            FISHER[i] = registerMetaTileEntity(1515 + i, new MetaTileEntityFisher(gregtechId("fisher." + GTValues.VN[i + 1].toLowerCase()), i + 1));
+        }
 
         // Pumps, IDs 1530-1544
-        PUMP[0] = registerMetaTileEntity(1530, new MetaTileEntityPump(gregtechId("pump.lv"), 1));
-        PUMP[1] = registerMetaTileEntity(1531, new MetaTileEntityPump(gregtechId("pump.mv"), 2));
-        PUMP[2] = registerMetaTileEntity(1532, new MetaTileEntityPump(gregtechId("pump.hv"), 3));
-        PUMP[3] = registerMetaTileEntity(1533, new MetaTileEntityPump(gregtechId("pump.ev"), 4));
+        for (int i = 0; i < PUMP.length; i++)
+        {
+            PUMP[i] = registerMetaTileEntity(1530 + i, new MetaTileEntityPump(gregtechId("pump." + GTValues.VN[i + 1].toLowerCase()), i + 1));
+        }
 
         // Quantum Storage Network 1757 - 1759
         QUANTUM_STORAGE_CONTROLLER = registerMetaTileEntity(1757,
@@ -1042,7 +1078,9 @@ public class MetaTileEntities {
             registerMetaTileEntity(1590 + i, BLOCK_BREAKER[i]);
         }
 
-        // Tanks, IDs 1595-1609
+        MACHINE_HATCH = registerMetaTileEntity(1595, new MetaTileEntityMachineHatch(gregtechId("machine_hatch"), 5));
+
+        // Tanks, IDs 1596-1609
         WOODEN_TANK_VALVE = registerMetaTileEntity(1596,
                 new MetaTileEntityTankValve(gregtechId("tank_valve.wood"), false));
         WOODEN_TANK = registerMetaTileEntity(1597,
@@ -1057,21 +1095,35 @@ public class MetaTileEntities {
         WOODEN_DRUM = registerMetaTileEntity(1610,
                 new MetaTileEntityDrum(gregtechId("drum.wood"), Materials.Wood, 16000));
         BRONZE_DRUM = registerMetaTileEntity(1611,
-                new MetaTileEntityDrum(gregtechId("drum.bronze"), Materials.Bronze, 32000));
-        STEEL_DRUM = registerMetaTileEntity(1612,
-                new MetaTileEntityDrum(gregtechId("drum.steel"), Materials.Steel, 64000));
-        ALUMINIUM_DRUM = registerMetaTileEntity(1613,
-                new MetaTileEntityDrum(gregtechId("drum.aluminium"), Materials.Aluminium, 128000));
-        STAINLESS_STEEL_DRUM = registerMetaTileEntity(1614,
-                new MetaTileEntityDrum(gregtechId("drum.stainless_steel"), Materials.StainlessSteel, 256000));
-        TITANIUM_DRUM = registerMetaTileEntity(1615,
-                new MetaTileEntityDrum(gregtechId("drum.titanium"), Materials.Titanium, 512000));
-        TUNGSTENSTEEL_DRUM = registerMetaTileEntity(1616,
-                new MetaTileEntityDrum(gregtechId("drum.tungstensteel"), Materials.TungstenSteel, 1024000));
-        GOLD_DRUM = registerMetaTileEntity(1617,
+                new MetaTileEntityDrum(gregtechId("drum.bronze"), Materials.Bronze, 24000));
+        GOLD_DRUM = registerMetaTileEntity(1612,
                 new MetaTileEntityDrum(gregtechId("drum.gold"), Materials.Gold, 32000));
+        COPPER_DRUM= MetaTileEntities.registerMetaTileEntity(1613,
+                new MetaTileEntityDrum(gregtechId("drum.tin"), Materials.Copper, 40000));
+        IRON_DRUM = MetaTileEntities.registerMetaTileEntity(1614,
+                new MetaTileEntityDrum(gregtechId("drum.iron"), Materials.Iron, 48000));
+        LEAD_DRUM= MetaTileEntities.registerMetaTileEntity(1615,
+                new MetaTileEntityDrum(gregtechId("drum.lead"), Materials.Lead, 56000));
+        STEEL_DRUM = registerMetaTileEntity(1616,
+                new MetaTileEntityDrum(gregtechId("drum.steel"), Materials.Steel, 64000));
+        ALUMINIUM_DRUM = registerMetaTileEntity(1617,
+                new MetaTileEntityDrum(gregtechId("drum.aluminium"), Materials.Aluminium, 128000));
+        STAINLESS_STEEL_DRUM = registerMetaTileEntity(1618,
+                new MetaTileEntityDrum(gregtechId("drum.stainless_steel"), Materials.StainlessSteel, 256000));
+        TITANIUM_DRUM = registerMetaTileEntity(1619,
+                new MetaTileEntityDrum(gregtechId("drum.titanium"), Materials.Titanium, 512000));
+        TUNGSTENSTEEL_DRUM = registerMetaTileEntity(1620,
+                new MetaTileEntityDrum(gregtechId("drum.tungstensteel"), Materials.TungstenSteel, 1024000));
+        RHODIUM_PLATED_PALLADIUM_DRUM = MetaTileEntities.registerMetaTileEntity(1621,
+                new MetaTileEntityDrum(gregtechId("drum.rhodium_plated_palladium"), Materials.RhodiumPlatedPalladium, 2_048_000));
+        NAQUADAH_ALLOY_DRUM = MetaTileEntities.registerMetaTileEntity(1622,
+                new MetaTileEntityDrum(gregtechId("drum.naquadah_alloy"), Materials.NaquadahAlloy, 4_096_000));
+        DARMSTADTIUM_DRUM = MetaTileEntities.registerMetaTileEntity(1623,
+                new MetaTileEntityDrum(gregtechId("drum.darmstadtium"), Materials.Darmstadtium, 8_192_000));
+        NEUTRONIUM_DRUM = MetaTileEntities.registerMetaTileEntity(1624,
+                new MetaTileEntityDrum(gregtechId("drum.neutronium"), Materials.Neutronium, 16_384_000));
 
-        // Crates, IDs 1625-1639
+        // Crates, IDs 1625-1635
         WOODEN_CRATE = registerMetaTileEntity(1625,
                 new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27, 9));
         BRONZE_CRATE = registerMetaTileEntity(1626,
@@ -1086,44 +1138,36 @@ public class MetaTileEntities {
                 new MetaTileEntityCrate(gregtechId("crate.titanium"), Materials.Titanium, 126, 14));
         TUNGSTENSTEEL_CRATE = registerMetaTileEntity(1631,
                 new MetaTileEntityCrate(gregtechId("crate.tungstensteel"), Materials.TungstenSteel, 144, 16));
+        RHODIUM_PLATED_PALLADIUM_CRATE = MetaTileEntities.registerMetaTileEntity(1632,
+                new MetaTileEntityCrate(gregtechId("crate.rhodium_plated_palladium"), Materials.RhodiumPlatedPalladium, 162, 18));
+        NAQUADAH_ALLOY_CRATE = MetaTileEntities.registerMetaTileEntity(1633,
+                new MetaTileEntityCrate(gregtechId("crate.naquadah_alloy"), Materials.NaquadahAlloy, 180,20));
+        DARMSTADTIUM_CRATE = MetaTileEntities.registerMetaTileEntity(1634,
+                new MetaTileEntityCrate(gregtechId("crate.darmstadtium"), Materials.Darmstadtium, 198, 22));
+        NEUTRONIUM_CRATE = MetaTileEntities.registerMetaTileEntity(1635,
+                new MetaTileEntityCrate(gregtechId("crate.neutronium"), Materials.Neutronium, 216,24));
 
-        // Rotor Holder, IDs 1640-1645
-        ROTOR_HOLDER[0] = registerMetaTileEntity(1640,
-                new MetaTileEntityRotorHolder(gregtechId("rotor_holder.hv"), GTValues.HV));
-        ROTOR_HOLDER[1] = registerMetaTileEntity(1641,
-                new MetaTileEntityRotorHolder(gregtechId("rotor_holder.ev"), GTValues.EV));
-        ROTOR_HOLDER[2] = registerMetaTileEntity(1642,
-                new MetaTileEntityRotorHolder(gregtechId("rotor_holder.iv"), GTValues.IV));
-        ROTOR_HOLDER[3] = registerMetaTileEntity(1643,
-                new MetaTileEntityRotorHolder(gregtechId("rotor_holder.luv"), GTValues.LuV));
-        ROTOR_HOLDER[4] = registerMetaTileEntity(1644,
-                new MetaTileEntityRotorHolder(gregtechId("rotor_holder.zpm"), GTValues.ZPM));
-        ROTOR_HOLDER[5] = registerMetaTileEntity(1645,
-                new MetaTileEntityRotorHolder(gregtechId("rotor_holder.uv"), GTValues.UV));
+        // Rotor Holder, IDs 1636-1645
+        for (int i = 0; i < ROTOR_HOLDER.length; i++)
+        {
+            String voltageName = GTValues.VN[i + 3].toLowerCase();
+            ROTOR_HOLDER[i] = registerMetaTileEntity(1636 + i,
+                    new MetaTileEntityRotorHolder(gregtechId("rotor_holder." + voltageName), i + 3));
+        }
 
         // Misc, IDs 1646-1999
-        WORKBENCH = registerMetaTileEntity(1647, new MetaTileEntityWorkbench(gregtechId("workbench")));
-        PRIMITIVE_WATER_PUMP = registerMetaTileEntity(1648,
+        WORKBENCH = registerMetaTileEntity(1650, new MetaTileEntityWorkbench(gregtechId("workbench")));
+        PRIMITIVE_WATER_PUMP = registerMetaTileEntity(1651,
                 new MetaTileEntityPrimitiveWaterPump(gregtechId("primitive_water_pump")));
-        PUMP_OUTPUT_HATCH = registerMetaTileEntity(1649, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
+        PUMP_OUTPUT_HATCH = registerMetaTileEntity(1652, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
 
-        CREATIVE_ENERGY = registerMetaTileEntity(1650, new MetaTileEntityCreativeEnergy());
+        CREATIVE_ENERGY = registerMetaTileEntity(1653, new MetaTileEntityCreativeEnergy());
         // Steam Hatches/Buses
-        STEAM_EXPORT_BUS = registerMetaTileEntity(1651,
+        STEAM_EXPORT_BUS = registerMetaTileEntity(1654,
                 new MetaTileEntitySteamItemBus(gregtechId("steam_export_bus"), true));
-        STEAM_IMPORT_BUS = registerMetaTileEntity(1652,
+        STEAM_IMPORT_BUS = registerMetaTileEntity(1655,
                 new MetaTileEntitySteamItemBus(gregtechId("steam_import_bus"), false));
-        STEAM_HATCH = registerMetaTileEntity(1653, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
-
-        // Maintenance Hatches, IDs 1654-1656
-        MAINTENANCE_HATCH = registerMetaTileEntity(1654,
-                new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch"), false));
-        CONFIGURABLE_MAINTENANCE_HATCH = registerMetaTileEntity(1655,
-                new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_configurable"), true));
-        AUTO_MAINTENANCE_HATCH = registerMetaTileEntity(1656,
-                new MetaTileEntityAutoMaintenanceHatch(gregtechId("maintenance_hatch_full_auto")));
-        CLEANING_MAINTENANCE_HATCH = registerMetaTileEntity(1401,
-                new MetaTileEntityCleaningMaintenanceHatch(gregtechId("maintenance_hatch_cleanroom_auto")));
+        STEAM_HATCH = registerMetaTileEntity(1656, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
 
         // Muffler Hatches, IDs 1657-1665
         for (int i = 0; i < MUFFLER_HATCH.length - 1; i++) {
@@ -1201,13 +1245,19 @@ public class MetaTileEntities {
                 new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_4x"), GTValues.EV, 4, false));
         NONUPLE_IMPORT_HATCH[0] = registerMetaTileEntity(1191,
                 new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_9x"), GTValues.EV, 9, false));
+        SIXTEEN_IMPORT_HATCH[0] = registerMetaTileEntity(1192,
+                new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_16x"), GTValues.EV, 16, false));
+
         QUADRUPLE_EXPORT_HATCH[0] = registerMetaTileEntity(1205,
                 new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_4x"), GTValues.EV, 4, true));
         NONUPLE_EXPORT_HATCH[0] = registerMetaTileEntity(1206,
                 new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x"), GTValues.EV, 9, true));
+        SIXTEEN_EXPORT_HATCH[0] = registerMetaTileEntity(1207,
+                new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_16x"), GTValues.EV, 16, true));
+
         for (int i = GTValues.IV; i <= (GregTechAPI.isHighTier() ? GTValues.OpV : GTValues.UHV); i++) {
             int index = i - GTValues.IV;
-            int startId = i > GTValues.UHV ? 1800 : 1780;
+            int startId = i > GTValues.UHV ? 1800 : 1760;
             String tierName = GTValues.VN[i].toLowerCase();
             QUADRUPLE_IMPORT_HATCH[index + 1] = registerMetaTileEntity(startId + index,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_4x." + tierName), i, 4, false));
@@ -1217,10 +1267,14 @@ public class MetaTileEntities {
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_4x." + tierName), i, 4, true));
             NONUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(startId + 15 + index,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x." + tierName), i, 9, true));
+            SIXTEEN_IMPORT_HATCH[index + 1] = registerMetaTileEntity(startId + 20 + index,
+                    new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_16x." + tierName), i, 16, false));
+            SIXTEEN_EXPORT_HATCH[index + 1] = registerMetaTileEntity(startId + 25 + index,
+                    new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_16x." + tierName), i, 16, true));
         }
 
-        // 1820-1849 are taken for UHV+ 4A/16A/64A Energy/Dynamo Hatches
-        // 1850-1869 are taken for UHV+ Input/Output Buses/Hatches
+        // 1840-1869 are taken for UHV+ 4A/16A/64A Energy/Dynamo Hatches
+        // 1870-1889 are taken for UHV+ Input/Output Buses/Hatches
 
         /*
          * FOR ADDON DEVELOPERS:
@@ -1307,7 +1361,8 @@ public class MetaTileEntities {
      */
     public static <T extends MetaTileEntity> @NotNull T registerMetaTileEntity(int id, @NotNull T mte) {
         if (mte instanceof IMultiblockAbilityPart<?>abilityPart) {
-            MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), mte);
+            for (var ability : abilityPart.getAbilities())
+                MultiblockAbility.registerMultiblockAbility(ability, mte);
         }
 
         if (Mods.JustEnoughItems.isModLoaded() && mte instanceof MultiblockControllerBase controller &&

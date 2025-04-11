@@ -323,6 +323,8 @@ public class Textures {
             "cover/overlay_item_voiding_advanced");
     public static final SimpleOverlayRenderer ENDER_FLUID_LINK = new SimpleOverlayRenderer(
             "cover/overlay_ender_fluid_link");
+    public static final SimpleOverlayRenderer ENDER_ITEM_LINK = new SimpleOverlayRenderer(
+            "cover/overlay_ender_item_link");
     public static final SimpleOverlayRenderer STORAGE = new SimpleOverlayRenderer("cover/overlay_storage");
     public static final SimpleOverlayRenderer PIPE_OUT_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_pipe_out");
@@ -332,7 +334,8 @@ public class Textures {
             "overlay/machine/overlay_pipe_4x");
     public static final SimpleOverlayRenderer PIPE_9X_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_pipe_9x");
-
+    public static final SimpleOverlayRenderer PIPE_16X_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_pipe_16x");
     public static final SimpleOverlayRenderer FLUID_OUTPUT_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_fluid_output");
     public static final SimpleOverlayRenderer ITEM_OUTPUT_OVERLAY = new SimpleOverlayRenderer(
@@ -348,6 +351,11 @@ public class Textures {
             "overlay/machine/overlay_item_hatch_input");
     public static final SimpleOverlayRenderer WATER_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_water");
+
+    public static final SimpleOverlayRenderer DUAL_HATCH_OUTPUT_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_dual_hatch_output");
+    public static final SimpleOverlayRenderer DUAL_HATCH_INPUT_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_dual_hatch_input");
 
     public static final ICubeRenderer BRONZE_FIREBOX = new SidedCubeRenderer("casings/firebox/overlay/bronze");
     public static final ICubeRenderer BRONZE_FIREBOX_ACTIVE = new FireboxActiveRenderer(

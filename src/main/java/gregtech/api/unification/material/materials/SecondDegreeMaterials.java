@@ -332,6 +332,7 @@ public class SecondDegreeMaterials {
                         .attackSpeed(0.3F).enchantability(33).magnetic().build())
                 .rotorStats(8.0f, 5.0f, 5120)
                 .cableProperties(V[UV], 2, 4)
+                .fluidPipeProperties(8000, 250, true, true, false, false)
                 .blast(b -> b
                         .temp(7200, GasTier.HIGH)
                         .blastStats(VA[LuV], 1000)
@@ -482,6 +483,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Palladium, 3, Rhodium, 1)
                 .rotorStats(12.0f, 3.0f, 1024)
+                .fluidPipeProperties(6200, 200, true, true, false, false)
                 .blast(b -> b
                         .temp(4500, GasTier.HIGH)
                         .blastStats(VA[IV], 1200)

@@ -7,6 +7,7 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.mui.GTGuis;
@@ -37,6 +38,7 @@ import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -61,7 +63,14 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
         this.numSlots = numSlots;
         // Quadruple: 1/4th the capacity of a fluid hatch of this tier
         // Nonuple: 1/8th the capacity of a fluid hatch of this tier
-        this.tankSize = BASE_TANK_SIZE * (1 << tier) / (numSlots == 4 ? 4 : 8);
+        // Sixtenths: 1/16th the capacity of a fluid hatch of this tier
+
+
+        this.tankSize = BASE_TANK_SIZE * (1 << tier) /
+                (numSlots == 4 ? 4 :
+                        numSlots == 9 ? 8 :
+                                numSlots == 16 ? 16 : 1);
+
         FluidTank[] fluidsHandlers = new FluidTank[numSlots];
         for (int i = 0; i < fluidsHandlers.length; i++) {
             fluidsHandlers[i] = new NotifiableFluidTank(tankSize, this, isExportHatch);
@@ -163,9 +172,14 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            SimpleOverlayRenderer renderer = numSlots == 4 ? Textures.PIPE_4X_OVERLAY : Textures.PIPE_9X_OVERLAY;
+            SimpleOverlayRenderer renderer = getOverlay();
             renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
+    }
+    public SimpleOverlayRenderer getOverlay() {
+        if(numSlots==4)return Textures.PIPE_4X_OVERLAY;
+        if(numSlots==9)return Textures.PIPE_9X_OVERLAY;
+        return Textures.PIPE_16X_OVERLAY;
     }
 
     @Override
@@ -199,8 +213,8 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.addAll(fluidTankList.getFluidTanks());
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.addAll(fluidTankList.getFluidTanks());
     }
 
     @Override
@@ -245,6 +259,12 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
                 if (hatch != null) subItems.add(hatch.getStackForm());
             }
             for (var hatch : MetaTileEntities.NONUPLE_EXPORT_HATCH) {
+                if (hatch != null) subItems.add(hatch.getStackForm());
+            }
+            for (var hatch : MetaTileEntities.SIXTEEN_IMPORT_HATCH) {
+                if (hatch != null) subItems.add(hatch.getStackForm());
+            }
+            for (var hatch : MetaTileEntities.SIXTEEN_EXPORT_HATCH) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
             }
         } else if (this.getClass() != MetaTileEntityMultiFluidHatch.class) {

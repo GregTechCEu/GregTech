@@ -1,15 +1,19 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+
+import com.cleanroommc.modularui.widgets.layout.Flow;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -24,8 +28,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -39,7 +41,6 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,6 +54,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     private final GTItemStackHandler inventory;
 
     private boolean frontFaceFree;
+    private boolean outputItem;
 
     public MetaTileEntityMufflerHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
@@ -105,6 +107,11 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
         return frontFaceFree;
     }
 
+    @Override
+    public boolean outputItem() {
+        return outputItem;
+    }
+
     private boolean checkFrontFaceFree() {
         BlockPos frontPos = getPos().offset(getFrontFacing());
         IBlockState blockState = getWorld().getBlockState(frontPos);
@@ -118,17 +125,6 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
             return blockState.getBlock().isAir(blockState, getWorld(), frontPos);
         }
         return blockState.getBlock().isAir(blockState, getWorld(), frontPos) || GTUtility.isBlockSnow(blockState);
-    }
-
-    /** @deprecated No longer needed. Multiblock controller sets the particle type. */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @SideOnly(Side.CLIENT)
-    public void pollutionParticles() {
-        MultiblockControllerBase controller = getController();
-        if (controller instanceof MultiblockWithDisplayBase displayBase) {
-            VanillaParticleEffects.mufflerEffect(this, displayBase.getMufflerParticle());
-        }
     }
 
     @Override
@@ -160,8 +156,8 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     }
 
     @Override
-    public void registerAbilities(List<IMufflerHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(this);
     }
 
     @Override
@@ -186,9 +182,13 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
                         .accessibility(false, true)));
             }
         }
+        BooleanSyncValue outputStateValue = new BooleanSyncValue(() -> outputItem, val -> outputItem = val);
+        guiSyncManager.syncValue("output_state", outputStateValue);
 
+        int backgroundWidth=176 + xOffset * 2 +18 +5;
+        int backgroundHeight=18 + 18 * rowSize + 94;
         // TODO: Change the position of the name when it's standardized.
-        return GTGuis.createPanel(this, 176 + xOffset * 2, 18 + 18 * rowSize + 94)
+        return GTGuis.createPanel(this, backgroundWidth, backgroundHeight)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
                 .child(new Grid()
@@ -196,13 +196,30 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
                         .minElementMargin(0, 0)
                         .minColWidth(18).minRowHeight(18)
                         .alignX(0.5f)
-                        .matrix(widgets));
+                        .matrix(widgets))
+
+                .child(Flow.column()
+                        .pos(backgroundWidth - 7 - 18, backgroundHeight - 18 * 4 - 7 - 5)
+                        .width(18).height(18 * 4 + 5)
+                        .child(GTGuiTextures.getLogo(getUITheme()).asWidget().size(17).top(18 * 3 + 5))
+
+                        .child(new ToggleButton()
+                        .top(0)
+                        .value(new BoolValue.Dynamic(outputStateValue::getBoolValue,
+                                outputStateValue::setBoolValue))
+                        .overlay(GTGuiTextures.OUT_SLOT_OVERLAY)
+                        .tooltipBuilder(t -> t.setAutoUpdate(true)
+                                .addLine(outputStateValue.getBoolValue() ?
+                                        IKey.lang("gregtech.gui.output_item.tooltip.enabled") :
+                                        IKey.lang("gregtech.gui.output_item.tooltip.disabled"))))
+                );
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("RecoveryInventory", inventory.serializeNBT());
+        data.setBoolean("outputItem", outputItem);
         return data;
     }
 
@@ -210,5 +227,6 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.inventory.deserializeNBT(data.getCompoundTag("RecoveryInventory"));
+        outputItem= data.getBoolean("outputItem");
     }
 }

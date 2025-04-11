@@ -913,6 +913,7 @@ metaitem.cover.solar.panel.tooltip.2=作§f覆盖板§7时利用§e太阳§7生�
 metaitem.cover.infinite_water.name=无限水覆盖板
 metaitem.cover.infinite_water.tooltip.1=作§f覆盖板§7时为所附着的容器供§9水§7。
 metaitem.cover.ender_fluid_link.name=末影流体连接覆盖板
+metaitem.cover.ender_item_link.name=末影物品连接覆盖板
 metaitem.cover.ender_fluid_link.tooltip=作§f覆盖板§7时利用§f无线§7§d末影§f连接§7传输§f流体§7。
 
 metaitem.gelled_toluene.name=胶凝甲苯
@@ -1043,7 +1044,8 @@ item.gt.tool.plunger.tooltip=§8从机器中抽除流体
 item.gt.tool.wire_cutter_lv.name=%s剪线钳（LV）
 item.gt.tool.wire_cutter_hv.name=%s剪线钳（HV）
 item.gt.tool.wire_cutter_iv.name=%s剪线钳（IV）
-item.gt.tool.toolbelt.name=%s工具皮带%s
+item.gt.tool.toolbelt.name=%s工具皮带
+item.gt.tool.toolbelt.name.select=%s工具皮带（%s）
 item.gt.tool.toolbelt.size=§a共有%s个工具槽
 item.gt.tool.toolbelt.tooltip=存放GT或类原版工具，可以在世界内手动选择工具并使用，在合成时自动选择工具并使用，或用于维修维护问题。
 item.gt.tool.toolbelt.paint=也支持喷漆罐。
@@ -1211,8 +1213,10 @@ metaitem.blacklight.tooltip=长波§d紫外线§7光源
 gui.widget.incrementButton.default_tooltip=按住Shift，Ctrl或两者来更改数量
 gui.widget.recipeProgressWidget.default_tooltip=显示配方
 
+gregtech.recipe_memory_widget.tooltip.0=使用次数：%d
 gregtech.recipe_memory_widget.tooltip.1=§7左键点击可自动将该配方输入至合成格
 gregtech.recipe_memory_widget.tooltip.2=§7按住Shift并点击以锁定或解锁该配方
+gregtech.recipe_memory_widget.tooltip.3=§7右击以移除未锁定的配方
 
 cover.filter.blacklist.disabled=白名单
 cover.filter.blacklist.enabled=黑名单
@@ -1396,7 +1400,7 @@ cover.generic.ender.delete_entry=删除条目
 
 cover.generic.advanced_detector.latched=锁存
 cover.generic.advanced_detector.continuous=线性
-cover.generic.advanced_detector.latch_tooltip=更改此覆盖板的红石行为。/n§e线性§7 - 默认值；物品数量小于最小值时不发出红石信号，大于最大值时发出信号强度15的红石信号，数量介于二者之间发出信号强度在0 - 15之间的红石信号/n§e锁存§7 - 发出满级红石信号，直到物品数量大于最大值；然后停止发出红石信号，直到数量低于最小值。
+cover.generic.advanced_detector.latch_tooltip=更改此覆盖板的红石行为。/n§e线性§7 - 默认模式；物品数量小于最小值时不发出红石信号，大于最大值时发出信号强度15的红石信号，数量介于二者之间发出信号强度在0 - 15之间的红石信号/n§e锁存§7 - 发出满级红石信号，直到物品数量大于最大值；然后停止发出红石信号，直到数量低于最小值。
 cover.generic.advanced_detector.invert_label=红石输出：
 cover.generic.advanced_detector.latch_label=行为：
 cover.generic.advanced_detector.invert_tooltip=切换以反转红石逻辑
@@ -2811,6 +2815,13 @@ gregtech.machine.drum.stainless_steel.name=不锈钢桶
 gregtech.machine.drum.titanium.name=钛桶
 gregtech.machine.drum.tungstensteel.name=钨钢桶
 gregtech.machine.drum.gold.name=金桶
+gregtech.machine.drum.lead.name=铅桶
+gregtech.machine.drum.iron.name=铁桶
+gregtech.machine.drum.copper.name=铜桶
+gregtech.machine.drum.rhodium_plated_palladium.name=镀铑钯桶
+gregtech.machine.drum.naquadah_alloy.name=硅岩合金桶
+gregtech.machine.drum.darmstadtium.name=钅达桶
+gregtech.machine.drum.neutronium.name=中子素桶
 
 gregtech.machine.drum.enable_output=将流体排至紧贴底面的储罐中
 gregtech.machine.drum.disable_output=不排出流体
@@ -2823,6 +2834,10 @@ gregtech.machine.crate.aluminium.name=铝板条箱
 gregtech.machine.crate.stainless_steel.name=不锈钢板条箱
 gregtech.machine.crate.titanium.name=钛板条箱
 gregtech.machine.crate.tungstensteel.name=钨钢板条箱
+gregtech.machine.crate.rhodium_plated_palladium.name=镀铑钯板条箱
+gregtech.machine.crate.naquadah_alloy.name=硅岩合金板条箱
+gregtech.machine.crate.darmstadtium.name=钅达板条箱
+gregtech.machine.crate.neutronium.name=中子素板条箱
 gregtech.crate.tooltip.taped_movement=可以用胶带打包库存，在破坏时一起带走
 
 # Workbench
@@ -2831,8 +2846,8 @@ gregtech.machine.workbench.tooltip1=比林业的好
 gregtech.machine.workbench.tooltip2=能存物品，能放工具，能从紧邻的物品容器里取出东西，还能保存配方。
 gregtech.machine.workbench.tab.workbench=合成界面
 gregtech.machine.workbench.tab.item_list=存储空间
-gregtech.machine.workbench.storage_note_1=（相邻的物品容器中
-gregtech.machine.workbench.storage_note_2=可参与合成的物品）
+gregtech.machine.workbench.storage_note=（相邻的物品容器中\n可参与合成的物品）
+gregtech.machine.workbench.clear_grid=清除合成格
 gregtech.item_list.item_stored=§7储量：%,d
 
 gregtech.machine.workbench.tab.crafting=合成
@@ -4427,6 +4442,8 @@ gregtech.machine.buffer.tooltip=存储物品和流体的小小缓冲器
 gregtech.machine.buffer.lv.name=基础缓存器
 gregtech.machine.buffer.mv.name=进阶缓存器
 gregtech.machine.buffer.hv.name=进阶缓存器 II
+gregtech.machine.buffer.ev.name=进阶缓存器 III
+gregtech.machine.buffer.iv.name=精英缓存器
 
 #Hermetic Casing
 tile.hermetic_casing.hermetic_casing_lv.name=密封机械方块 I
@@ -4500,6 +4517,15 @@ gregtech.machine.fisher.lv.name=基础捕鱼机
 gregtech.machine.fisher.mv.name=进阶捕鱼机
 gregtech.machine.fisher.hv.name=进阶捕鱼机 II
 gregtech.machine.fisher.ev.name=进阶捕鱼机 III
+gregtech.machine.fisher.iv.name=精英捕鱼机
+gregtech.machine.fisher.luv.name=精英捕鱼机 II
+gregtech.machine.fisher.zpm.name=精英捕鱼机 III
+gregtech.machine.fisher.uv.name=终极捕鱼机
+gregtech.machine.fisher.uhv.name=史诗捕鱼机
+gregtech.machine.fisher.uev.name=史诗捕
+gregtech.machine.fisher.uiv.name=史诗捕鱼机 III
+gregtech.machine.fisher.uxv.name=史诗捕鱼机 IV
+gregtech.machine.fisher.opv.name=传奇捕鱼机
 gregtech.machine.fisher.tooltip=消耗线捕鱼。每次运行消耗一根线。
 gregtech.machine.fisher.speed=每%d刻获得一条鱼（或者其它什么东西）
 gregtech.machine.fisher.requirement=需要在正下方倾倒边长为%,d格的静止水。
@@ -4521,6 +4547,16 @@ gregtech.machine.world_accelerator.zpm.name=精英世界加速器 III
 gregtech.machine.world_accelerator.zpm.tooltip=“时间之§m瓶§r”§7方块
 gregtech.machine.world_accelerator.uv.name=终极世界加速器
 gregtech.machine.world_accelerator.uv.tooltip=时间扭曲者
+gregtech.machine.world_accelerator.uhv.name=史诗世界加速器
+gregtech.machine.world_accelerator.uhv.tooltip=时间扭曲者
+gregtech.machine.world_accelerator.uev.name=史诗世界加速器 II
+gregtech.machine.world_accelerator.uev.tooltip=时间扭曲者
+gregtech.machine.world_accelerator.uiv.name=史诗世界加速器 III
+gregtech.machine.world_accelerator.uiv.tooltip=时间扭曲者
+gregtech.machine.world_accelerator.uxv.name=史诗世界加速器 IV
+gregtech.machine.world_accelerator.uxv.tooltip=时间扭曲者
+gregtech.machine.world_accelerator.opv.name=传奇世界加速器
+gregtech.machine.world_accelerator.opv.tooltip=时间扭曲者
 gregtech.machine.world_accelerator.description=使用§f螺丝刀§7在§f方块实体§7或§f随机刻§7模式中切换。
 gregtech.machine.world_accelerator.power_usage=§7在随机刻模式下最多使用§f%dA，§7在方块实体模式下最多使用§f%dA 。
 gregtech.machine.world_accelerator.acceleration=§d加速倍率: §f%dx
@@ -5114,6 +5150,18 @@ gregtech.machine.fluid_hatch.import_9x.uxv.name=§eUXV§r九重输入仓
 gregtech.machine.fluid_hatch.import_9x.opv.name=§9OpV§r九重输入仓
 gregtech.machine.fluid_hatch.import_9x.max.name=§c§lMAX§r九重输入仓
 
+gregtech.machine.fluid_hatch.import_16x.name=§5EV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.iv.name=§1IV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.luv.name=§dLuV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.zpm.name=§cZPM§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.uv.name=§3UV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.uhv.name=§4UHV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.uev.name=§aUEV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.uiv.name=§2UIV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.uxv.name=§eUXV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.opv.name=§9OpV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.max.name=§c§lMAX§r十六重输入仓
+
 gregtech.machine.fluid_hatch.export_4x.name=§5EV§r四重输出仓
 gregtech.machine.fluid_hatch.export_4x.iv.name=§1IV§r四重输出仓
 gregtech.machine.fluid_hatch.export_4x.luv.name=§dLuV§r四重输出仓
@@ -5137,6 +5185,18 @@ gregtech.machine.fluid_hatch.export_9x.uiv.name=§2UIV§r九重输出仓
 gregtech.machine.fluid_hatch.export_9x.uxv.name=§eUXV§r九重输出仓
 gregtech.machine.fluid_hatch.export_9x.opv.name=§9OpV§r九重输出仓
 gregtech.machine.fluid_hatch.export_9x.max.name=§c§lMAX§r九重输出仓
+
+gregtech.machine.fluid_hatch.export_16x.name=§5EV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.iv.name=§1IV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.luv.name=§dLuV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.zpm.name=§cZPM§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.uv.name=§3UV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.uhv.name=§4UHV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.uev.name=§aUEV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.uiv.name=§2UIV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.uxv.name=§eUXV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.opv.name=§9OpV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.max.name=§c§lMAX§r十六重输出仓
 
 gregtech.machine.fluid_hatch.export.ulv.name=§8ULV§r输出仓
 gregtech.machine.fluid_hatch.export.lv.name=§7LV§r输出仓
@@ -5174,6 +5234,9 @@ gregtech.machine.energy_hatch.input.max.name=§c§lMAX§r能源仓
 
 gregtech.machine.energy_hatch.input_hi_amp.tooltip=为多方块结构输入更多电流
 
+gregtech.machine.energy_hatch.input_4a.lv.name=4安§7LV§r能源仓
+gregtech.machine.energy_hatch.input_4a.mv.name=4安§bMV§r能源仓
+gregtech.machine.energy_hatch.input_4a.hv.name=4安§6HV§r能源仓
 gregtech.machine.energy_hatch.input_4a.ev.name=4安§5EV§r能源仓
 gregtech.machine.energy_hatch.input_4a.iv.name=4安§1IV§r能源仓
 gregtech.machine.energy_hatch.input_4a.luv.name=4安§dLuV§r能源仓
@@ -5230,6 +5293,9 @@ gregtech.machine.energy_hatch.output.max.name=§c§lMAX§r动力仓
 
 gregtech.machine.energy_hatch.output_hi_amp.tooltip=为多方块结构输出更多电流
 
+gregtech.machine.energy_hatch.output_4a.lv.name=4安§7LV§r动力仓
+gregtech.machine.energy_hatch.output_4a.mv.name=4安§bMV§r动力仓
+gregtech.machine.energy_hatch.output_4a.hv.name=4安§6HV§r动力仓
 gregtech.machine.energy_hatch.output_4a.ev.name=4安§5EV§r动力仓
 gregtech.machine.energy_hatch.output_4a.iv.name=4安§1IV§r动力仓
 gregtech.machine.energy_hatch.output_4a.luv.name=4安§dLuV§r动力仓
@@ -5275,6 +5341,12 @@ gregtech.machine.rotor_holder.iv.name=§1IV§r转子支架
 gregtech.machine.rotor_holder.luv.name=§dLuV§r转子支架
 gregtech.machine.rotor_holder.zpm.name=§cZPM§r转子支架
 gregtech.machine.rotor_holder.uv.name=§3UV§r转子支架
+gregtech.machine.rotor_holder.uhv.name=§4UHV§r转子支架
+gregtech.machine.rotor_holder.uev.name=§aUEV§r转子支架
+gregtech.machine.rotor_holder.uiv.name=§2UIV§r转子支架
+gregtech.machine.rotor_holder.uxv.name=§eUXV§r转子支架
+gregtech.machine.rotor_holder.opv.name=§9OpV§r转子支架
+gregtech.machine.rotor_holder.max.name=§c§lMAX§r转子支架
 
 gregtech.machine.maintenance_hatch.name=维护仓
 gregtech.machine.maintenance_hatch.tooltip=用于维护多方块结构
@@ -5394,6 +5466,28 @@ gregtech.machine.laser_hatch.source_4096a.uxv.name=4096安§eUXV§r激光源仓
 gregtech.machine.laser_hatch.source_4096a.opv.name=4096安§9OpV§r激光源仓
 gregtech.machine.laser_hatch.source_4096a.max.name=4096安§c§lMAX§r激光源仓
 
+gregtech.machine.laser_hatch.source_16384a.iv.name=16384安§1IV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.luv.name=16384安§dLuV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.zpm.name=16384安§cZPM§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.uv.name=16384安§3UV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.uhv.name=16384安§4UHV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.uev.name=16384安§aUEV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.uiv.name=16384安§2UIV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.uxv.name=16384安§eUXV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.opv.name=16384安§9OpV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.max.name=16384安§c§lMAX§r激光源仓
+
+gregtech.machine.laser_hatch.source_65536a.iv.name=65536安§1IV§r激光源仓
+gregtech.machine.laser_hatch.source_65536a.luv.name=65536安§dLuV§r激光源仓
+gregtech.machine.laser_hatch.source_65536a.zpm.name=65536安§cZPM§r激光源仓
+gregtech.machine.laser_hatch.source_65536a.uv.name=65536安§3UV§r激光源仓
+gregtech.machine.laser_hatch.source_65536a.uhv.name=65536安§4UHV§r激光源仓
+gregtech.machine.laser_hatch.source_65536a.uev.name=65536安§aUEV§r激光源仓
+gregtech.machine.laser_hatch.source_65536a.uiv.name=65536安§2UIV§r激光源仓
+gregtech.machine.laser_hatch.source_65536a.uxv.name=65536安§eUXV§r激光源仓
+gregtech.machine.laser_hatch.source_65536a.opv.name=65536安§9OpV§r激光源仓
+gregtech.machine.laser_hatch.source_65536a.max.name=65536安§c§lMAX§r激光源仓
+
 gregtech.machine.laser_hatch.target_256a.iv.name=256安§1IV§r激光靶仓
 gregtech.machine.laser_hatch.target_256a.luv.name=256安§dLuV§r激光靶仓
 gregtech.machine.laser_hatch.target_256a.zpm.name=256安§cZPM§r激光靶仓
@@ -5426,6 +5520,28 @@ gregtech.machine.laser_hatch.target_4096a.uiv.name=4096安§2UIV§r激光靶仓
 gregtech.machine.laser_hatch.target_4096a.uxv.name=4096安§eUXV§r激光靶仓
 gregtech.machine.laser_hatch.target_4096a.opv.name=096安§9OpV§r激光靶仓
 gregtech.machine.laser_hatch.target_4096a.max.name=4096安§c§lMAX§r激光靶仓
+
+gregtech.machine.laser_hatch.target_16384a.iv.name=16384安§1IV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.luv.name=16384安§dLuV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.zpm.name=16384安§cZPM§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.uv.name=16384安§3UV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.uhv.name=16384安§4UHV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.uev.name=16384安§aUEV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.uiv.name=16384安§2UIV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.uxv.name=16384安§eUXV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.opv.name=16384安§9OpV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.max.name=16384安§c§lMAX§r激光靶仓
+
+gregtech.machine.laser_hatch.target_65536a.iv.name=65536安§1IV§r激光靶仓
+gregtech.machine.laser_hatch.target_65536a.luv.name=65536安§dLuV§r激光靶仓
+gregtech.machine.laser_hatch.target_65536a.zpm.name=65536安§cZPM§r激光靶仓
+gregtech.machine.laser_hatch.target_65536a.uv.name=65536安§3UV§r激光靶仓
+gregtech.machine.laser_hatch.target_65536a.uhv.name=65536安§4UHV§r激光靶仓
+gregtech.machine.laser_hatch.target_65536a.uev.name=65536安§aUEV§r激光靶仓
+gregtech.machine.laser_hatch.target_65536a.uiv.name=65536安§2UIV§r激光靶仓
+gregtech.machine.laser_hatch.target_65536a.uxv.name=65536安§eUXV§r激光靶仓
+gregtech.machine.laser_hatch.target_65536a.opv.name=65536安§9OpV§r激光靶仓
+gregtech.machine.laser_hatch.target_65536a.max.name=65536安§c§lMAX§r激光靶仓
 
 gregtech.machine.laser_hatch.source.tooltip1=远距离发射能量
 gregtech.machine.laser_hatch.target.tooltip1=远距离接收能量
@@ -5755,8 +5871,8 @@ gregtech.multiblock.universal.problem.wire_cutter=§7有几根线烧焦了。(§
 gregtech.multiblock.universal.problem.crowbar=§7这东西不属于这儿。(§a撬棍§7)
 gregtech.multiblock.universal.muffler_obstructed=消声仓受阻！
 gregtech.multiblock.universal.muffler_obstructed_desc=消音仓口前方必须有一格空气。
-gregtech.multiblock.universal.distinct_enabled=总线隔离：§a是§r/n每个物品总线将在配方识别中被视为完全独立。对于消耗材料相同，使用的非消耗材料（模头、透镜等）不同则产物也不同的配方来说作用显著。
-gregtech.multiblock.universal.distinct_disabled=总线隔离：§c否§r/n每个物品总线将在配方识别中被视为组合的物品输入。
+gregtech.multiblock.universal.distinct_enabled=仓口隔离：§a是§r/n每个物品总线/流体仓/总成将在配方识别中被视为完全独立。对于消耗材料相同，使用的非消耗材料（模头、透镜等）不同则产物也不同的配方以及在使用总成时来说作用显著。
+gregtech.multiblock.universal.distinct_disabled=仓口隔离：§c否§r/n每个物品总线/流体仓/总成将在配方识别中被视为组合的物品/流体输入。
 gregtech.multiblock.universal.distinct_not_supported=这个多方块不支持总线隔离
 gregtech.multiblock.universal.no_flex_button=这个多方块没有这个按钮的附加功能
 gregtech.multiblock.parallel=最大并行：%s

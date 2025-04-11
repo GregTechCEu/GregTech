@@ -913,6 +913,7 @@ metaitem.cover.solar.panel.tooltip.2=Produces §fEnergy§7 from the §eSun§7 as
 metaitem.cover.infinite_water.name=Infinite Water Cover
 metaitem.cover.infinite_water.tooltip.1=Fills attached containers with §9Water§7 as §fCover§7.
 metaitem.cover.ender_fluid_link.name=Ender Fluid Link Cover
+metaitem.cover.ender_item_link.name=Ender Item Link Cover
 metaitem.cover.ender_fluid_link.tooltip=Transports §fFluids§7 with a §fWireless §dEnder§f Connection§7 as §fCover§7.
 
 metaitem.gelled_toluene.name=Gelled Toluene
@@ -1212,8 +1213,10 @@ metaitem.blacklight.tooltip=Long-Wave §dUltraviolet§7 light source
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 gui.widget.recipeProgressWidget.default_tooltip=Show Recipes
 
+gregtech.recipe_memory_widget.tooltip.0=Times used: %d
 gregtech.recipe_memory_widget.tooltip.1=§7Left click to automatically input this recipe into the crafting grid
 gregtech.recipe_memory_widget.tooltip.2=§7Shift click to lock/unlock this recipe
+gregtech.recipe_memory_widget.tooltip.3=§7Right click to remove this recipe if it is unlocked
 
 cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
@@ -1326,7 +1329,6 @@ cover.generic.enabled=Enabled
 cover.generic.transfer_mode=Transfer Mode
 cover.generic.manual_io=Manual IO Mode
 cover.generic.io=IO Mode
-cover.pump.mode=Pump Mode
 cover.conveyor.title=Conveyor Cover Settings (%s)
 cover.conveyor.transfer_rate=§7items/sec
 cover.conveyor.mode.export=Mode: Export
@@ -1382,8 +1384,6 @@ cover.machine_controller.enable_with_redstone=Enable with Redstone
 cover.machine_controller.disable_with_redstone=Disable with Redstone
 
 cover.ender_fluid_link.title=Ender Fluid Link
-cover.ender_fluid_link.iomode.enabled=I/O Enabled
-cover.ender_fluid_link.iomode.disabled=I/O Disabled
 cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode\nPrivate mode uses the player who originally placed the cover
 cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
@@ -1394,6 +1394,8 @@ cover.generic.ender.open_selector=Open Entry Selector
 cover.generic.ender.set_description.tooltip=Set Description
 cover.generic.ender.set_description.title=Set Description [%s]
 cover.generic.ender.delete_entry=Delete Entry
+cover.generic.ender.iomode.enabled=I/O Enabled
+cover.generic.ender.iomode.disabled=I/O Disabled
 
 cover.generic.advanced_detector.latched=Latched
 cover.generic.advanced_detector.continuous=Continuous
@@ -2812,6 +2814,13 @@ gregtech.machine.drum.stainless_steel.name=Stainless Steel Drum
 gregtech.machine.drum.titanium.name=Titanium Drum
 gregtech.machine.drum.tungstensteel.name=Tungstensteel Drum
 gregtech.machine.drum.gold.name=Gold Drum
+gregtech.machine.drum.lead.name=Lead Drum
+gregtech.machine.drum.iron.name=Iron Drum
+gregtech.machine.drum.copper.name=Copper Drum
+gregtech.machine.drum.rhodium_plated_palladium.name=Rhodium Plated Palladium Drum
+gregtech.machine.drum.naquadah_alloy.name=Naquadah Alloy Drum
+gregtech.machine.drum.darmstadtium.name=Darmstadtium Drum
+gregtech.machine.drum.neutronium.name=Neutronium Drum
 
 gregtech.machine.drum.enable_output=Will drain Fluid to downward adjacent Tanks
 gregtech.machine.drum.disable_output=Will not drain Fluid
@@ -2824,6 +2833,10 @@ gregtech.machine.crate.aluminium.name=Aluminium Crate
 gregtech.machine.crate.stainless_steel.name=Stainless Steel Crate
 gregtech.machine.crate.titanium.name=Titanium Crate
 gregtech.machine.crate.tungstensteel.name=Tungstensteel Crate
+gregtech.machine.crate.rhodium_plated_palladium.name=Rhodium Plated Palladium Crate
+gregtech.machine.crate.naquadah_alloy.name=Naquadah Alloy Crate
+gregtech.machine.crate.darmstadtium.name=Darmstadtium Crate
+gregtech.machine.crate.neutronium.name=Neutronium Crate
 gregtech.crate.tooltip.taped_movement=Can be Taped to keep inventory contents when broken
 
 # Workbench
@@ -2832,8 +2845,8 @@ gregtech.machine.workbench.tooltip1=Better than Forestry
 gregtech.machine.workbench.tooltip2=Has Item Storage, Tool Storage, pulls from adjacent Inventories, and saves Recipes.
 gregtech.machine.workbench.tab.workbench=Crafting
 gregtech.machine.workbench.tab.item_list=Storage
-gregtech.machine.workbench.storage_note_1=(Available items from connected
-gregtech.machine.workbench.storage_note_2=inventories usable for crafting)
+gregtech.machine.workbench.storage_note=(Available items from connected\ninventories usable for crafting)
+gregtech.machine.workbench.clear_grid=Clear Crafting Grid
 gregtech.item_list.item_stored=§7Stored: %,d
 
 gregtech.machine.workbench.tab.crafting=Crafting
@@ -4428,6 +4441,8 @@ gregtech.machine.buffer.tooltip=A Small Buffer to store Items and Fluids
 gregtech.machine.buffer.lv.name=Basic Buffer
 gregtech.machine.buffer.mv.name=Advanced Buffer
 gregtech.machine.buffer.hv.name=Advanced Buffer II
+gregtech.machine.buffer.ev.name=Advanced Buffer III
+gregtech.machine.buffer.iv.name=Elite Buffer
 
 #Hermetic Casing
 tile.hermetic_casing.hermetic_casing_lv.name=Hermetic Casing I
@@ -4501,6 +4516,15 @@ gregtech.machine.fisher.lv.name=Basic Fisher
 gregtech.machine.fisher.mv.name=Advanced Fisher
 gregtech.machine.fisher.hv.name=Advanced Fisher II
 gregtech.machine.fisher.ev.name=Advanced Fisher III
+gregtech.machine.fisher.iv.name=Elite Fisher
+gregtech.machine.fisher.luv.name=Elite Fisher II
+gregtech.machine.fisher.zpm.name=Elite Fisher III
+gregtech.machine.fisher.uv.name=Ultimate Fisher
+gregtech.machine.fisher.uhv.name=Epic Fisher
+gregtech.machine.fisher.uev.name=Epic Fisher II
+gregtech.machine.fisher.uiv.name=Epic Fisher III
+gregtech.machine.fisher.uxv.name=Epic Fisher IV
+gregtech.machine.fisher.opv.name=Legendary Fisher
 gregtech.machine.fisher.tooltip=Costs string to fish. Consumes one string each time.
 gregtech.machine.fisher.speed=Catches something every %,d ticks
 gregtech.machine.fisher.requirement=Requires a %,dx%,d centered square of water directly below.
@@ -4522,6 +4546,16 @@ gregtech.machine.world_accelerator.zpm.name=Elite World Accelerator III
 gregtech.machine.world_accelerator.zpm.tooltip=Time in a §mBottle§r§7 Block
 gregtech.machine.world_accelerator.uv.name=Ultimate World Accelerator
 gregtech.machine.world_accelerator.uv.tooltip=Time Anomaly
+gregtech.machine.world_accelerator.uhv.name=Epic World Accelerator
+gregtech.machine.world_accelerator.uhv.tooltip=Time Anomaly
+gregtech.machine.world_accelerator.uev.name=Epic World Accelerator II
+gregtech.machine.world_accelerator.uev.tooltip=Time Anomaly
+gregtech.machine.world_accelerator.uiv.name=Epic World Accelerator III
+gregtech.machine.world_accelerator.uiv.tooltip=Time Anomaly
+gregtech.machine.world_accelerator.uxv.name=Epic World Accelerator IV
+gregtech.machine.world_accelerator.uxv.tooltip=Time Anomaly
+gregtech.machine.world_accelerator.opv.name=Legendary World Accelerator
+gregtech.machine.world_accelerator.opv.tooltip=Time Anomaly
 gregtech.machine.world_accelerator.description=Use §fScrewdriver§7 to change mode between §fRandom Tick§7 and §fTile Entity§7 modes.
 gregtech.machine.world_accelerator.power_usage=Uses up to §f%dA§7 in Random Tick mode, §f%dA§7 in Tile Entity mode.
 gregtech.machine.world_accelerator.acceleration=§dAccelerates up to: §f%dx
@@ -5115,6 +5149,18 @@ gregtech.machine.fluid_hatch.import_9x.uxv.name=UXV Nonuple Input Hatch
 gregtech.machine.fluid_hatch.import_9x.opv.name=OpV Nonuple Input Hatch
 gregtech.machine.fluid_hatch.import_9x.max.name=MAX Nonuple Input Hatch
 
+gregtech.machine.fluid_hatch.import_16x.name=§5EV§r Sixteen Input Hatch
+gregtech.machine.fluid_hatch.import_16x.iv.name=§1IV§r Sixteen Input Hatch
+gregtech.machine.fluid_hatch.import_16x.luv.name=§dLuV§r Sixteen Input Hatch
+gregtech.machine.fluid_hatch.import_16x.zpm.name=§cZPM§r Sixteen Input Hatch
+gregtech.machine.fluid_hatch.import_16x.uv.name=§3UV§r Sixteen Input Hatch
+gregtech.machine.fluid_hatch.import_16x.uhv.name=§4UHV§r Sixteen Input Hatch
+gregtech.machine.fluid_hatch.import_16x.uev.name=§aUEV§r Sixteen Input Hatch
+gregtech.machine.fluid_hatch.import_16x.uiv.name=§2UIV§r Sixteen Input Hatch
+gregtech.machine.fluid_hatch.import_16x.uxv.name=§eUXV§r Sixteen Input Hatch
+gregtech.machine.fluid_hatch.import_16x.opv.name=§9OpV§r Sixteen Input Hatch
+gregtech.machine.fluid_hatch.import_16x.max.name=§c§lMAX§r Sixteen Input Hatch
+
 gregtech.machine.fluid_hatch.export_4x.name=EV Quadruple Output Hatch
 gregtech.machine.fluid_hatch.export_4x.iv.name=IV Quadruple Output Hatch
 gregtech.machine.fluid_hatch.export_4x.luv.name=LuV Quadruple Output Hatch
@@ -5138,6 +5184,18 @@ gregtech.machine.fluid_hatch.export_9x.uiv.name=UIV Nonuple Output Hatch
 gregtech.machine.fluid_hatch.export_9x.uxv.name=UXV Nonuple Output Hatch
 gregtech.machine.fluid_hatch.export_9x.opv.name=OpV Nonuple Output Hatch
 gregtech.machine.fluid_hatch.export_9x.max.name=MAX Nonuple Output Hatch
+
+gregtech.machine.fluid_hatch.export_16x.name=§5EV§r Sixteen Output Hatch
+gregtech.machine.fluid_hatch.export_16x.iv.name=§1IV§r Sixteen Output Hatch
+gregtech.machine.fluid_hatch.export_16x.luv.name=§dLuV§r Sixteen Output Hatch
+gregtech.machine.fluid_hatch.export_16x.zpm.name=§cZPM§r Sixteen Output Hatch
+gregtech.machine.fluid_hatch.export_16x.uv.name=§3UV§r Sixteen Output Hatch
+gregtech.machine.fluid_hatch.export_16x.uhv.name=§4UHV§r Sixteen Output Hatch
+gregtech.machine.fluid_hatch.export_16x.uev.name=§aUEV§r Sixteen Output Hatch
+gregtech.machine.fluid_hatch.export_16x.uiv.name=§2UIV§r Sixteen Output Hatch
+gregtech.machine.fluid_hatch.export_16x.uxv.name=§eUXV§r Sixteen Output Hatch
+gregtech.machine.fluid_hatch.export_16x.opv.name=§9OpV§r Sixteen Output Hatch
+gregtech.machine.fluid_hatch.export_16x.max.name=§c§lMAX§r Sixteen Output Hatch
 
 gregtech.machine.fluid_hatch.export.ulv.name=ULV Output Hatch
 gregtech.machine.fluid_hatch.export.lv.name=LV Output Hatch
@@ -5175,6 +5233,9 @@ gregtech.machine.energy_hatch.input.max.name=MAX Energy Hatch
 
 gregtech.machine.energy_hatch.input_hi_amp.tooltip=Multiple Ampere Energy Input for Multiblocks
 
+gregtech.machine.energy_hatch.input_4a.lv.name=LV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.mv.name=MV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.hv.name=HV 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.ev.name=EV 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.iv.name=IV 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.luv.name=LuV 4A Energy Hatch
@@ -5231,6 +5292,9 @@ gregtech.machine.energy_hatch.output.max.name=MAX Dynamo Hatch
 
 gregtech.machine.energy_hatch.output_hi_amp.tooltip=Multiple Ampere Energy Output for Multiblocks
 
+gregtech.machine.energy_hatch.output_4a.lv.name=LV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.mv.name=MV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.hv.name=HV 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.ev.name=EV 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.iv.name=IV 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.luv.name=LuV 4A Dynamo Hatch
@@ -5276,6 +5340,12 @@ gregtech.machine.rotor_holder.iv.name=IV Rotor Holder
 gregtech.machine.rotor_holder.luv.name=LuV Rotor Holder
 gregtech.machine.rotor_holder.zpm.name=ZPM Rotor Holder
 gregtech.machine.rotor_holder.uv.name=UV Rotor Holder
+gregtech.machine.rotor_holder.uhv.name=UHV Rotor Holder
+gregtech.machine.rotor_holder.uev.name=UEV Rotor Holder
+gregtech.machine.rotor_holder.uiv.name=UIV Rotor Holder
+gregtech.machine.rotor_holder.uxv.name=UXV Rotor Holder
+gregtech.machine.rotor_holder.opv.name=OpV Rotor Holder
+gregtech.machine.rotor_holder.max.name=MAX Rotor Holder
 
 gregtech.machine.maintenance_hatch.name=Maintenance Hatch
 gregtech.machine.maintenance_hatch.tooltip=For maintaining Multiblocks
@@ -5397,6 +5467,28 @@ gregtech.machine.laser_hatch.source_4096a.uxv.name=UXV 4096A Laser Source Hatch
 gregtech.machine.laser_hatch.source_4096a.opv.name=OpV 4096A Laser Source Hatch
 gregtech.machine.laser_hatch.source_4096a.max.name=MAX 4096A Laser Source Hatch
 
+gregtech.machine.laser_hatch.source_16384a.iv.name=IV 16384A Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.luv.name=LuV 16384A Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.zpm.name=ZPM 16384A Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.uv.name=UV 16384A Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.uhv.name=UHV 16384A Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.uev.name=UEV 16384A Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.uiv.name=UIV 16384A Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.uxv.name=UXV 16384A Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.opv.name=OpV 16384A Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.max.name=MAX 16384A Laser Source Hatch
+
+gregtech.machine.laser_hatch.source_65536a.iv.name=IV 65536A Laser Source Hatch
+gregtech.machine.laser_hatch.source_65536a.luv.name=LuV 65536A Laser Source Hatch
+gregtech.machine.laser_hatch.source_65536a.zpm.name=ZPM 65536A Laser Source Hatch
+gregtech.machine.laser_hatch.source_65536a.uv.name=UV 65536A Laser Source Hatch
+gregtech.machine.laser_hatch.source_65536a.uhv.name=UHV 65536A Laser Source Hatch
+gregtech.machine.laser_hatch.source_65536a.uev.name=UEV 65536A Laser Source Hatch
+gregtech.machine.laser_hatch.source_65536a.uiv.name=UIV 65536A Laser Source Hatch
+gregtech.machine.laser_hatch.source_65536a.uxv.name=UXV 65536A Laser Source Hatch
+gregtech.machine.laser_hatch.source_65536a.opv.name=OpV 65536A Laser Source Hatch
+gregtech.machine.laser_hatch.source_65536a.max.name=MAX 65536A Laser Source Hatch
+
 gregtech.machine.laser_hatch.target_256a.iv.name=IV 256A Laser Target Hatch
 gregtech.machine.laser_hatch.target_256a.luv.name=LuV 256A Laser Target Hatch
 gregtech.machine.laser_hatch.target_256a.zpm.name=ZPM 256A Laser Target Hatch
@@ -5429,6 +5521,28 @@ gregtech.machine.laser_hatch.target_4096a.uiv.name=UIV 4096A Laser Target Hatch
 gregtech.machine.laser_hatch.target_4096a.uxv.name=UXV 4096A Laser Target Hatch
 gregtech.machine.laser_hatch.target_4096a.opv.name=OpV 4096A Laser Target Hatch
 gregtech.machine.laser_hatch.target_4096a.max.name=MAX 4096A Laser Target Hatch
+
+gregtech.machine.laser_hatch.target_16384a.iv.name=IV 16384A Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.luv.name=LuV 16384A Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.zpm.name=ZPM 16384A Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.uv.name=UV 16384A Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.uhv.name=UHV 16384A Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.uev.name=UEV 16384A Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.uiv.name=UIV 16384A Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.uxv.name=UXV 16384A Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.opv.name=OpV 16384A Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.max.name=MAX 16384A Laser Target Hatch
+
+gregtech.machine.laser_hatch.target_65536a.iv.name=IV 65536A Laser Target Hatch
+gregtech.machine.laser_hatch.target_65536a.luv.name=LuV 65536A Laser Target Hatch
+gregtech.machine.laser_hatch.target_65536a.zpm.name=ZPM 65536A Laser Target Hatch
+gregtech.machine.laser_hatch.target_65536a.uv.name=UV 65536A Laser Target Hatch
+gregtech.machine.laser_hatch.target_65536a.uhv.name=UHV 65536A Laser Target Hatch
+gregtech.machine.laser_hatch.target_65536a.uev.name=UEV 65536A Laser Target Hatch
+gregtech.machine.laser_hatch.target_65536a.uiv.name=UIV 65536A Laser Target Hatch
+gregtech.machine.laser_hatch.target_65536a.uxv.name=UXV 65536A Laser Target Hatch
+gregtech.machine.laser_hatch.target_65536a.opv.name=OpV 65536A Laser Target Hatch
+gregtech.machine.laser_hatch.target_65536a.max.name=MAX 65536A Laser Target Hatch
 
 gregtech.machine.laser_hatch.source.tooltip1=Transmitting power at distance
 gregtech.machine.laser_hatch.target.tooltip1=Receiving power from distance

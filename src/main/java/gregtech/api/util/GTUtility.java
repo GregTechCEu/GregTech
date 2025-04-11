@@ -432,7 +432,7 @@ public class GTUtility {
      *         modifications in list will reflect on fluid handler and wise-versa
      */
     public static List<FluidStack> fluidHandlerToList(IMultipleTankHandler fluidInputs) {
-        List<IMultipleTankHandler.MultiFluidTankEntry> backedList = fluidInputs.getFluidTanks();
+        List<IMultipleTankHandler.ITankEntry> backedList = fluidInputs.getFluidTanks();
         return new AbstractList<FluidStack>() {
 
             @Override
@@ -919,5 +919,44 @@ public class GTUtility {
      */
     public static int safeCastLongToInt(long v) {
         return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
+    }
+
+    /**
+     * Scales a proposed recipe voltage according to a provided Material working tier.
+     *
+     * @param voltage     The suggested base voltage for the recipe.
+     * @param workingTier The voltage tier ({@link GTValues#V}) to conform this recipe to.
+     *
+     * @return The new recipe voltage.
+     */
+    public static long scaleVoltage(long voltage, int workingTier) {
+        if (workingTier == GTValues.LV) {
+            // no action needed, as this is the default.
+            return voltage;
+        }
+
+        int tierLower = Math.max(0, workingTier - 1);
+        if (voltage > GTValues.V[tierLower]) {
+            // no action needed, this recipe is already scaled accordingly.
+            return voltage;
+        }
+
+        // Multiplying very low voltages (less than 16 EU/t) with a formula like below can cause undesirably high
+        // EU/t. For example, 2 EU/t scaled to MV would multiply all the way to 128 EU/t before being above LV voltage.
+        // For this reason, recipes below 16 EU/t simply get set to their tier's VHA[tier] (half voltage adjusted).
+        if (voltage <= 16) {
+            return GTValues.VHA[workingTier];
+        }
+
+        // Instead of blindly increasing the voltage to something like VA[workingTier], try to scale the
+        // voltage up by a "0/4 overclock". The goal here is to retain recipes with EU/t such as 24 staying
+        // below a full amp but still increasing the tier. For instance, 24 EU/t with working tier of MV would become
+        // 96 EU/t rather than 120 EU/t with this logic.
+        while (voltage <= GTValues.V[workingTier - 1]) {
+            voltage *= 4;
+        }
+
+        // Sanity check to make sure we don't accidentally create full-amp recipes.
+        return Math.min(voltage, GTValues.VA[workingTier]);
     }
 }

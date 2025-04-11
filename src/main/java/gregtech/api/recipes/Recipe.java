@@ -189,17 +189,22 @@ public class Recipe {
         Pair<Boolean, int[]> fluids = null;
         Pair<Boolean, int[]> items = null;
 
-        if (fluidInputs.getFluidTanks().size() > 0) {
+        if (!fluidInputs.getFluidTanks().isEmpty()) {
             fluids = matchesFluid(GTUtility.fluidHandlerToList(fluidInputs));
             if (!fluids.getKey()) {
                 return false;
             }
         }
 
-        if (inputs.getSlots() > 0) {
-            items = matchesItems(GTUtility.itemHandlerToList(inputs));
-            if (!items.getKey()) {
-                return false;
+        if (inputs != null && inputs.getSlots() > 0) {
+            List<ItemStack> itemList = GTUtility.itemHandlerToList(inputs);
+            if (itemList != null) {
+                items = matchesItems(itemList);
+                if (!items.getKey()) {
+                    return false;
+                }
+            } else {
+                return false; // 或者根据业务逻辑处理
             }
         }
 
@@ -211,12 +216,11 @@ public class Recipe {
                 for (int i = 0; i < fluidAmountInTank.length; i++) {
                     var tank = backedList.get(i);
                     FluidStack fluidStack = tank.getFluid();
-                    int fluidAmount = fluidAmountInTank[i];
 
-                    if (fluidStack == null || fluidStack.amount == fluidAmount) {
+                    if (fluidStack == null || fluidStack.amount == fluidAmountInTank[i]) {
                         continue;
                     }
-                    tank.drain(Math.abs(fluidAmount - fluidStack.amount), true);
+                    tank.drain(Math.abs(fluidAmountInTank[i] - fluidStack.amount), true);
                 }
             }
             if (items != null) {
@@ -245,46 +249,40 @@ public class Recipe {
      * @return true if the recipe matches the given inputs false otherwise.
      */
     public boolean matches(boolean consumeIfSuccessful, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
-        Pair<Boolean, int[]> fluids = null;
-        Pair<Boolean, int[]> items = null;
+        if (inputs.size() == 0 && fluidInputs.size() == 0)
+            return false;
 
-        if (fluidInputs.size() > 0) {
-            fluids = matchesFluid(fluidInputs);
-            if (!fluids.getKey()) {
-                return false;
-            }
+        Pair<Boolean, int[]> fluids = matchesFluid(fluidInputs);
+        if (!fluids.getKey()) {
+            return false;
         }
 
-        if (inputs.size() > 0) {
-            items = matchesItems(inputs);
-            if (!items.getKey()) {
-                return false;
-            }
+        Pair<Boolean, int[]> items = matchesItems(inputs);
+        if (!items.getKey()) {
+            return false;
         }
 
         if (consumeIfSuccessful) {
-            if (fluids != null) {
-                int[] fluidAmountInTank = fluids.getValue();
+            int[] fluidAmountInTank = fluids.getValue();
 
-                for (int i = 0; i < fluidAmountInTank.length; i++) {
-                    FluidStack fluidStack = fluidInputs.get(i);
-                    int fluidAmount = fluidAmountInTank[i];
-                    if (fluidStack == null || fluidStack.amount == fluidAmount)
-                        continue;
-                    fluidStack.amount = fluidAmount;
-                    if (fluidStack.amount == 0)
-                        fluidInputs.set(i, null);
-                }
+            for (int i = 0; i < fluidAmountInTank.length; i++) {
+                FluidStack fluidStack = fluidInputs.get(i);
+                int fluidAmount = fluidAmountInTank[i];
+                if (fluidStack == null || fluidStack.amount == fluidAmount)
+                    continue;
+                fluidStack.amount = fluidAmount;
+                if (fluidStack.amount == 0)
+                    fluidInputs.set(i, null);
             }
-            if (items != null) {
-                int[] itemAmountInSlot = items.getValue();
-                for (int i = 0; i < itemAmountInSlot.length; i++) {
-                    ItemStack itemInSlot = inputs.get(i);
-                    int itemAmount = itemAmountInSlot[i];
-                    if (itemInSlot.isEmpty() || itemInSlot.getCount() == itemAmount)
-                        continue;
-                    itemInSlot.setCount(itemAmountInSlot[i]);
-                }
+
+            int[] itemAmountInSlot = items.getValue();
+
+            for (int i = 0; i < itemAmountInSlot.length; i++) {
+                ItemStack itemInSlot = inputs.get(i);
+                int itemAmount = itemAmountInSlot[i];
+                if (itemInSlot.isEmpty() || itemInSlot.getCount() == itemAmount)
+                    continue;
+                itemInSlot.setCount(itemAmountInSlot[i]);
             }
         }
 

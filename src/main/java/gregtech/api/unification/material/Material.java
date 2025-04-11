@@ -1,5 +1,6 @@
 package gregtech.api.unification.material;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidState;
@@ -7,6 +8,7 @@ import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
@@ -28,6 +30,7 @@ import gregtech.api.unification.material.properties.RotorProperty;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.material.properties.WoodProperty;
 import gregtech.api.unification.material.registry.MaterialRegistry;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
@@ -35,6 +38,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -42,7 +46,6 @@ import net.minecraftforge.fluids.FluidStack;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.OperatorType;
@@ -278,6 +281,27 @@ public class Material implements Comparable<Material> {
         return new FluidStack(getFluid(key), amount);
     }
 
+    /**
+     * Gets the item form of this material in the form of an {@link OrePrefix}
+     * 
+     * @param prefix the ore prefix to use
+     * @return an item stack of the ore prefix using this material
+     */
+    public @NotNull ItemStack getItemForm(@NotNull OrePrefix prefix) {
+        return OreDictUnifier.get(prefix, this);
+    }
+
+    /**
+     * Gets the item form of this material in the form of an {@link OrePrefix}
+     * 
+     * @param prefix the ore prefix to use
+     * @param count  the amount the ItemStack will have
+     * @return an item stack of the ore prefix using this material
+     */
+    public @NotNull ItemStack getItemForm(@NotNull OrePrefix prefix, int count) {
+        return OreDictUnifier.get(prefix, this, count);
+    }
+
     public int getBlockHarvestLevel() {
         if (!hasProperty(PropertyKey.DUST)) {
             throw new IllegalArgumentException(
@@ -370,6 +394,26 @@ public class Material implements Comparable<Material> {
         return prop == null ? 0 : prop.getBlastTemperature();
     }
 
+    @ZenGetter("workingTier")
+    public int getWorkingTier() {
+        return materialInfo.workingTier;
+    }
+
+    @ZenMethod
+    public void setWorkingTier(int workingTier) {
+        if (workingTier < 0) {
+            throw new IllegalArgumentException(
+                    "Cannot set working tier for material " + materialInfo.resourceLocation + "to less than 0 (ULV)!");
+        }
+        if (workingTier > GTValues.MAX) {
+            throw new IllegalArgumentException(
+                    "Cannot set working tier for material " + materialInfo.resourceLocation +
+                            "to greater than 14 (MAX)!");
+
+        }
+        materialInfo.workingTier = workingTier;
+    }
+
     public FluidStack getPlasma(int amount) {
         return getFluid(FluidStorageKeys.PLASMA, amount);
     }
@@ -449,7 +493,7 @@ public class Material implements Comparable<Material> {
 
     public <T extends IMaterialProperty> void setProperty(PropertyKey<T> key, IMaterialProperty property) {
         if (!GregTechAPI.materialManager.canModifyMaterials()) {
-            throw new IllegalStateException("Cannot add properties to a Material when registry is frozen!");
+            return;
         }
         properties.setProperty(key, property);
         properties.verify();
@@ -951,34 +995,6 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        /** @deprecated use {@link Material.Builder#blast(int)}. */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder blastTemp(int temp) {
-            return blast(temp);
-        }
-
-        /** @deprecated use {@link Material.Builder#blast(int, BlastProperty.GasTier)}. */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier) {
-            return blast(temp, gasTier);
-        }
-
-        /** @deprecated use {@link Material.Builder#blast(UnaryOperator)} for more detailed stats. */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride) {
-            return blast(b -> b.temp(temp, gasTier).blastStats(eutOverride));
-        }
-
-        /** @deprecated use {@link Material.Builder#blast(UnaryOperator)} for more detailed stats. */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride, int durationOverride) {
-            return blast(b -> b.temp(temp, gasTier).blastStats(eutOverride, durationOverride));
-        }
-
         public Builder blast(int temp) {
             properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp));
             return this;
@@ -1110,6 +1126,28 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        /**
+         * Sets the tier for "working" recipes to require, such as extruding, bending, etc.
+         *
+         * @param tier The tier. Defaults to {@link GTValues#LV} if unset,
+         *             though some recipes may still vary (such as Extruder recipes or Dense Plates).
+         */
+        public Builder workingTier(int tier) {
+            if (tier < 0) {
+                throw new IllegalArgumentException(
+                        "Cannot set working tier for material " + materialInfo.resourceLocation +
+                                "to less than 0 (ULV)!");
+            }
+            if (tier > GTValues.MAX) {
+                throw new IllegalArgumentException(
+                        "Cannot set working tier for material " + materialInfo.resourceLocation +
+                                "to greater than 14 (MAX)!");
+
+            }
+            materialInfo.workingTier = tier;
+            return this;
+        }
+
         public Material build() {
             materialInfo.componentList = ImmutableList.copyOf(composition);
             materialInfo.verifyInfo(properties, averageRGB);
@@ -1167,6 +1205,13 @@ public class Material implements Comparable<Material> {
          * Default: none.
          */
         private Element element;
+
+        /**
+         * The tier for "working" recipes to require, such as extruding, bending, etc.
+         * <p>
+         * Default: {@link GTValues#LV}, though some recipes may still vary (such as Dense Plates being MV).
+         */
+        private int workingTier = GTValues.LV;
 
         private MaterialInfo(int metaItemSubId, @NotNull ResourceLocation resourceLocation) {
             this.metaItemSubId = metaItemSubId;
