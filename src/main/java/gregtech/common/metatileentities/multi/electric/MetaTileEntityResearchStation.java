@@ -11,20 +11,23 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.items.behaviors.DataItemBehavior;
 import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.block.state.IBlockState;
@@ -33,15 +36,18 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.cleanroommc.modularui.utils.serialization.ByteBufAdapters;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -201,7 +207,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     }
 
     @Override
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return false;
     }
 
@@ -223,25 +229,35 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .setWorkingStatusKeys(
-                        "gregtech.multiblock.idling",
-                        "gregtech.multiblock.work_paused",
-                        "gregtech.machine.research_station.researching")
-                .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
+        builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .addEnergyUsageLine(this.getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                 .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
                 .addParallelsLine(recipeMapWorkable.getParallelLimit())
                 .addWorkingStatusLine()
-                .addProgressLine(recipeMapWorkable.getProgressPercent());
+                .addCustom((manager, syncer) -> {
+                    var data = getRecipeMapWorkable().getCachedRecipeData();
+                    ObjectArrayList<ItemStack> outputs = syncer.syncCollection(data.getOutputs(),
+                            ByteBufAdapters.ITEM_STACK);
+                    if (outputs.isEmpty()) return;
+                    ItemStack stack = outputs.top();
+                    String id = AssemblyLineManager.readResearchId(stack);
+                    if (id == null) return;
+                    List<String> stacks = new ArrayList<>();
+                    DataItemBehavior.collectResearchItems(id, stacks);
+                    stacks.remove(0);
+                    manager.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.research_station.researching"));
+                    for (String line : stacks) {
+                        manager.add(KeyUtil.string(line));
+                    }
+                })
+                .addComputationProgressLine(getRecipeMapWorkable());
     }
 
     @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
+    protected void configureWarningText(MultiblockUIBuilder builder) {
+        builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
                 .addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation())
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
