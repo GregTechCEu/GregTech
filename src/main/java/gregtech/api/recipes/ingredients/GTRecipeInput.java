@@ -2,10 +2,13 @@ package gregtech.api.recipes.ingredients;
 
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
+import gregtech.api.util.GTLog;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -14,9 +17,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectLists;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Definition of ItemStacks, Ore dicts, of ingredients for
@@ -200,6 +205,41 @@ public abstract class GTRecipeInput {
      */
     public int getSortingOrder() {
         return this.isNonConsumable() ? SORTING_ORDER_NC : SORTING_ORDER_COMMON;
+    }
+
+    public static NBTTagCompound writeToNBT(GTRecipeInput input) {
+        NBTTagCompound tag = new NBTTagCompound();
+        if (input instanceof GTRecipeItemInput) {
+            NBTTagList stackList = new NBTTagList();
+            for (ItemStack stack : input.getInputStacks()) {
+                stackList.appendTag(stack.serializeNBT());
+            }
+            tag.setTag("stacks", stackList);
+        } else if (input instanceof GTRecipeOreInput) {
+            tag.setInteger("ore", input.getOreDict());
+        } else if (input instanceof GTRecipeFluidInput) {
+            tag.setTag("fluid", input.getInputFluidStack().writeToNBT(new NBTTagCompound()));
+        }
+        tag.setInteger("amount", input.getAmount());
+        return tag;
+    }
+
+    public static GTRecipeInput readFromNBT(NBTTagCompound tag) {
+        int amount = tag.getInteger("amount");
+        if (tag.hasKey("stacks")) {
+            NBTTagList list = tag.getTagList("stacks", Constants.NBT.TAG_COMPOUND);
+            ItemStack[] stacks = new ItemStack[list.tagCount()];
+            Arrays.setAll(stacks, i -> new ItemStack(list.getCompoundTagAt(i)));
+            return new GTRecipeItemInput(stacks, amount);
+
+        } else if (tag.hasKey("ore")) {
+            return new GTRecipeOreInput(tag.getInteger("ore"), amount);
+        } else if (tag.hasKey("fluid")) {
+            FluidStack stack = FluidStack.loadFluidStackFromNBT(tag.getCompoundTag("fluid"));
+            return new GTRecipeFluidInput(Objects.requireNonNull(stack), amount);
+        }
+        GTLog.logger.warn("unable to read tag!: " + tag);
+        return null;
     }
 
     protected static class ItemToMetaList implements Object2ObjectMap.Entry<Item, List<MetaToTAGList>> {
