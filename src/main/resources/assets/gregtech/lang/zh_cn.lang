@@ -5411,6 +5411,8 @@ gregtech.machine.passthrough_hatch_item.name=物品通行仓
 gregtech.machine.passthrough_hatch_item.tooltip=将物品从一侧发送到另一侧
 gregtech.machine.passthrough_hatch_fluid.name=流体通行仓
 gregtech.machine.passthrough_hatch_fluid.tooltip=将流体从一侧输送到另一侧
+gregtech.machine.passthrough_hatch_laser.name=激光通行仓
+gregtech.machine.passthrough_hatch_laser.tooltip=将激光从一侧输送到另一侧
 
 gregtech.machine.reservoir_hatch.name=水库仓
 gregtech.machine.reservoir_hatch.tooltip=并不是水槽
