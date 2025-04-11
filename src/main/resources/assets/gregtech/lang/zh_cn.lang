@@ -913,6 +913,7 @@ metaitem.cover.solar.panel.tooltip.2=作§f覆盖板§7时利用§e太阳§7生�
 metaitem.cover.infinite_water.name=无限水覆盖板
 metaitem.cover.infinite_water.tooltip.1=作§f覆盖板§7时为所附着的容器供§9水§7。
 metaitem.cover.ender_fluid_link.name=末影流体连接覆盖板
+metaitem.cover.ender_item_link.name=末影物品连接覆盖板
 metaitem.cover.ender_fluid_link.tooltip=作§f覆盖板§7时利用§f无线§7§d末影§f连接§7传输§f流体§7。
 
 metaitem.gelled_toluene.name=胶凝甲苯

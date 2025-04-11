@@ -913,6 +913,7 @@ metaitem.cover.solar.panel.tooltip.2=Produces §fEnergy§7 from the §eSun§7 as
 metaitem.cover.infinite_water.name=Infinite Water Cover
 metaitem.cover.infinite_water.tooltip.1=Fills attached containers with §9Water§7 as §fCover§7.
 metaitem.cover.ender_fluid_link.name=Ender Fluid Link Cover
+metaitem.cover.ender_item_link.name=Ender Item Link Cover
 metaitem.cover.ender_fluid_link.tooltip=Transports §fFluids§7 with a §fWireless §dEnder§f Connection§7 as §fCover§7.
 
 metaitem.gelled_toluene.name=Gelled Toluene
