@@ -19,19 +19,25 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -67,8 +73,8 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
     private IItemHandlerModifiable actualImportItems;
     private DualHandler dualHandler;
 
-    private boolean workingEnabled;
-    private boolean autoCollapse;
+    private boolean workingEnabled = true;
+    private boolean autoCollapse = false;
 
     public MetaTileEntityDualHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
@@ -137,6 +143,29 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
     @Override
     protected FluidTankList createExportFluidHandler() {
         return isExportHatch ? new FluidTankList(false, createTanks()) : new FluidTankList(false);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+
+        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
+            if (workingEnabled) {
+                if (isExportHatch) {
+                    pushItemsIntoNearbyHandlers(getFrontFacing());
+                    pushFluidsIntoNearbyHandlers(getFrontFacing());
+                } else {
+                    pullItemsFromNearbyHandlers(getFrontFacing());
+                    pullFluidsFromNearbyHandlers(getFrontFacing());
+                }
+            }
+
+            IItemHandlerModifiable itemHandler = isExportHatch ? getExportItems() : super.getImportItems();
+            if (!isAttachedToMultiBlock() || (isExportHatch ? getNotifiedItemOutputList().contains(itemHandler) :
+                    getNotifiedItemInputList().contains(itemHandler))) {
+                GTUtility.collapseInventorySlotContents(itemHandler);
+            }
+        }
     }
 
     @Override
@@ -210,7 +239,7 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
         BooleanSyncValue collapseStateValue = new BooleanSyncValue(() -> autoCollapse, val -> autoCollapse = val);
         guiSyncManager.syncValue("collapse_state", collapseStateValue);
 
-        boolean hasGhostCircuit = hasGhostCircuitInventory() && this.circuitInventory != null;
+        boolean hasGhostCircuit = hasGhostCircuitInventory() && circuitInventory != null;
 
         return GTGuis.createPanel(this, backgroundWidth, backgroundHeight)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
@@ -275,8 +304,8 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.workingEnabled = buf.readBoolean();
-        this.autoCollapse = buf.readBoolean();
+        workingEnabled = buf.readBoolean();
+        autoCollapse = buf.readBoolean();
     }
 
     @Override
@@ -293,14 +322,51 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
         return workingEnabled;
     }
 
+    @SuppressWarnings("DuplicatedCode")
+    public void setAutoCollapse(boolean inverted) {
+        autoCollapse = inverted;
+        if (!getWorld().isRemote) {
+            if (autoCollapse) {
+                if (isExportHatch) {
+                    addNotifiedOutput(getExportItems());
+                } else {
+                    addNotifiedInput(getImportItems());
+                }
+            }
+            writeCustomData(GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS,
+                    packetBuffer -> packetBuffer.writeBoolean(autoCollapse));
+            notifyBlockUpdate();
+            markDirty();
+        }
+    }
+
+    public boolean isAutoCollapse() {
+        return autoCollapse;
+    }
+
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.WORKING_ENABLED) {
-            this.workingEnabled = buf.readBoolean();
+            workingEnabled = buf.readBoolean();
         } else if (dataId == GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS) {
-            this.autoCollapse = buf.readBoolean();
+            autoCollapse = buf.readBoolean();
         }
+    }
+
+    @Override
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                      CuboidRayTraceResult hitResult) {
+        setAutoCollapse(!autoCollapse);
+
+        if (!getWorld().isRemote) {
+            if (autoCollapse) {
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse_true"), true);
+            } else {
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse_false"), true);
+            }
+        }
+        return true;
     }
 
     @Override
@@ -332,10 +398,11 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
-        if (this.isExportHatch)
+        if (isExportHatch) {
             tooltip.add(I18n.format("gregtech.machine.item_bus.export.tooltip"));
-        else
+        } else {
             tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
+        }
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getItemSize()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", getTankSize()));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
