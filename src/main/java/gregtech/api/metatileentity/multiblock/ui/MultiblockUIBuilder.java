@@ -3,6 +3,7 @@ package gregtech.api.metatileentity.multiblock.ui;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.capability.impl.ComputationRecipeLogic;
 import gregtech.api.mui.GTByteBufAdapters;
 import gregtech.api.mui.drawable.GTObjectDrawable;
 import gregtech.api.recipes.Recipe;
@@ -346,6 +347,30 @@ public class MultiblockUIBuilder {
                 String.format("%,3.2f", (float) progress / 20),
                 String.format("%,3.2f", (float) maxProgress / 20),
                 String.format("%,3.1f", (float) progress / maxProgress * 100f)));
+        return this;
+    }
+
+    /**
+     * Adds a progress line that displays recipe progress as "time / total time (percentage)".
+     * <br>
+     * Added if structure is formed and the machine is active.
+     *
+     */
+    public MultiblockUIBuilder addComputationProgressLine(ComputationRecipeLogic crl) {
+        if (!isStructureFormed || !isActive) return this;
+
+        int progress = getSyncer().syncInt(crl.getProgress());
+        int maxProgress = getSyncer().syncInt(crl.getMaxProgress());
+        int maxCwu = getSyncer().syncInt(() -> crl.getComputationProvider().getMaxCWUt());
+
+        if (crl.shouldShowDuration()) {
+            addKey(IKey.str("%s / %s CWU", KeyUtil.number(progress), KeyUtil.number(maxProgress))
+                    .style(TextFormatting.GRAY));
+        } else {
+            // do fancy things
+            int cwuRate = getSyncer().syncInt(crl.getCurrentDrawnCWUt());
+            int currentCwu = progress * cwuRate;
+        }
         return this;
     }
 
