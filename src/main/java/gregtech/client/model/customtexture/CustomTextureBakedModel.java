@@ -30,7 +30,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.vecmath.Matrix4f;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
@@ -41,6 +40,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import javax.vecmath.Matrix4f;
 
 @SideOnly(Side.CLIENT)
 public class CustomTextureBakedModel implements IBakedModel {
