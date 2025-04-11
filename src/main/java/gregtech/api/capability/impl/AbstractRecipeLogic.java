@@ -16,6 +16,10 @@ import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
+import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
+import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
@@ -28,16 +32,20 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +53,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 import static gregtech.api.GTValues.ULV;
 import static gregtech.api.recipes.logic.OverclockingLogic.*;
@@ -59,6 +69,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private double euDiscount = -1;
     private double speedBonus = -1;
 
+    protected final CachedRecipeData cachedRecipeData = new CachedRecipeData();
     protected Recipe previousRecipe;
     private boolean allowOverclocking = true;
     protected int parallelRecipesPerformed;
@@ -84,6 +95,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected boolean invalidInputsForRecipes;
 
     protected boolean hasPerfectOC;
+    private boolean simulate = false;
 
     /**
      * DO NOT use the parallelLimit field directly, EVER
@@ -260,6 +272,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return previousRecipe;
     }
 
+    @NotNull
+    public CachedRecipeData getCachedRecipeData() {
+        return this.cachedRecipeData;
+    }
+
     /**
      * @return true if recipes should be searched for
      */
@@ -419,6 +436,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         // If a recipe was found, then inputs were valid. Cache found recipe.
         if (currentRecipe != null) {
             this.previousRecipe = currentRecipe;
+            this.cachedRecipeData.serialize(currentRecipe, this);
         }
         this.invalidInputsForRecipes = (currentRecipe == null);
 
@@ -729,7 +747,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         if (checkOutputSpaceItems(recipe, getOutputInventory()) && checkOutputSpaceFluids(recipe, getOutputTank())) {
             this.isOutputsFull = false;
-            if (recipe.matches(true, importInventory, importFluids)) {
+            if (recipe.matches(!simulate, importInventory, importFluids)) {
                 this.metaTileEntity.addNotifiedInput(importInventory);
                 return recipe;
             }
@@ -1197,6 +1215,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             compound.setTag("ItemOutputs", itemOutputsList);
             compound.setTag("FluidOutputs", fluidOutputsList);
         }
+        NBTTagCompound cache = this.cachedRecipeData.serializeNBT();
+        if (!cache.isEmpty())
+            compound.setTag("cache", cache);
         return compound;
     }
 
@@ -1222,6 +1243,156 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             for (int i = 0; i < fluidOutputsList.tagCount(); i++) {
                 this.fluidOutputs.add(FluidStack.loadFluidStackFromNBT(fluidOutputsList.getCompoundTagAt(i)));
             }
+        }
+        if (compound.hasKey("cache") && !compound.getCompoundTag("cache").isEmpty()) {
+            this.cachedRecipeData.deserializeNBT(compound.getCompoundTag("cache"));
+        } else {
+            simulate = true;
+            trySearchNewRecipe();
+            simulate = false;
+            if (previousRecipe != null) {
+                this.cachedRecipeData.serialize(this.previousRecipe, this);
+            } else {
+                this.cachedRecipeData.serialize(this);
+            }
+            // mark to find new recipe to set cached data
+        }
+    }
+
+    public static class CachedRecipeData implements INBTSerializable<NBTTagCompound> {
+
+        private final NBTTagCompound root = new NBTTagCompound();
+        private final Map<String, Object> cache = new Object2ObjectOpenHashMap<>();
+
+        private CachedRecipeData() {}
+
+        public void serialize(AbstractRecipeLogic arl) {
+            NBTTagList itemOutputs = new NBTTagList();
+            for (ItemStack output : arl.itemOutputs) {
+                itemOutputs.appendTag(output.serializeNBT());
+            }
+            root.setTag("arl_item_outputs", itemOutputs);
+
+            NBTTagList fluidOutputs = new NBTTagList();
+            for (FluidStack output : arl.fluidOutputs) {
+                fluidOutputs.appendTag(output.writeToNBT(new NBTTagCompound()));
+            }
+            root.setTag("arl_fluid_outputs", fluidOutputs);
+        }
+
+        public void serialize(Recipe recipe, AbstractRecipeLogic arl) {
+            root.tagMap.clear();
+            serialize(arl);
+            NBTTagList itemInputs = new NBTTagList();
+            for (GTRecipeInput input : recipe.getInputs()) {
+                itemInputs.appendTag(GTRecipeInput.writeToNBT(input));
+            }
+            root.setTag("item_inputs", itemInputs);
+
+            NBTTagList fluidInputs = new NBTTagList();
+            for (GTRecipeInput input : recipe.getFluidInputs()) {
+                fluidInputs.appendTag(GTRecipeInput.writeToNBT(input));
+            }
+            root.setTag("fluid_inputs", fluidInputs);
+
+            NBTTagList itemOutputs = new NBTTagList();
+            for (ItemStack output : recipe.getOutputs()) {
+                itemOutputs.appendTag(output.serializeNBT());
+            }
+            root.setTag("item_outputs", itemOutputs);
+
+            NBTTagList fluidOutputs = new NBTTagList();
+            for (FluidStack output : recipe.getFluidOutputs()) {
+                fluidOutputs.appendTag(output.writeToNBT(new NBTTagCompound()));
+            }
+            root.setTag("fluid_outputs", fluidOutputs);
+
+            root.setInteger("duration", recipe.getDuration());
+            root.setLong("eut", recipe.getEUt());
+            root.setInteger("recipe_tier", GTUtility.getTierByVoltage(recipe.getEUt()));
+            root.setInteger("machine_tier", arl.getOverclockForTier(arl.getMaximumOverclockVoltage()));
+
+            root.setString("item_logic", recipe.getChancedOutputs().getChancedOutputLogic().toString());
+            root.setString("fluid_logic", recipe.getChancedFluidOutputs().getChancedOutputLogic().toString());
+
+            RecipeMap<?> map = arl.getRecipeMap();
+            ChanceBoostFunction chanceFunction = null;
+            if (map != null) {
+                chanceFunction = map.getChanceFunction();
+                root.setString("map", map.getUnlocalizedName());
+            }
+
+            NBTTagList chancedInputs = new NBTTagList();
+            for (ChancedItemOutput entry : recipe.getChancedOutputs().getChancedEntries()) {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setTag("ingredient", entry.getIngredient().serializeNBT());
+                tag.setInteger("chance", entry.getChance());
+                tag.setInteger("chance_boost", entry.getChanceBoost());
+                if (chanceFunction != null) {
+                    tag.setInteger("calculated_chance", chanceFunction.getBoostedChance(entry,
+                            root.getInteger("recipe_tier"),
+                            root.getInteger("machine_tier")));
+                }
+                chancedInputs.appendTag(tag);
+            }
+            root.setTag("chanced_inputs", chancedInputs);
+
+            NBTTagList chancedFluidOutputs = new NBTTagList();
+            for (ChancedFluidOutput entry : recipe.getChancedFluidOutputs().getChancedEntries()) {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setTag("ingredient", entry.getIngredient().writeToNBT(new NBTTagCompound()));
+                tag.setInteger("chance", entry.getChance());
+                tag.setInteger("chance_boost", entry.getChanceBoost());
+                if (chanceFunction != null) {
+                    tag.setInteger("calculated_chance", chanceFunction.getBoostedChance(entry,
+                            root.getInteger("recipe_tier"),
+                            root.getInteger("machine_tier")));
+                }
+                chancedFluidOutputs.appendTag(tag);
+            }
+            root.setTag("chanced_fluid_outputs", chancedFluidOutputs);
+        }
+
+        public ObjectArrayList<ItemStack> getOutputs() {
+            if (!root.hasKey("item_outputs")) return compute("arl_item_outputs", this::deserializeItemStacks);
+            else return compute("item_outputs", this::deserializeItemStacks);
+        }
+
+        public ObjectArrayList<FluidStack> getFluidOutputs() {
+            if (!root.hasKey("fluid_outputs")) return compute("arl_fluid_outputs", this::deserializeFluidStacks);
+            else return compute("fluid_outputs", this::deserializeFluidStacks);
+        }
+
+        private ObjectArrayList<ItemStack> deserializeItemStacks(String k) {
+            ObjectArrayList<ItemStack> list = new ObjectArrayList<>();
+            for (NBTBase tag : root.getTagList(k, Constants.NBT.TAG_COMPOUND)) {
+                list.add(new ItemStack((NBTTagCompound) tag));
+            }
+            return list;
+        }
+
+        private ObjectArrayList<FluidStack> deserializeFluidStacks(String k) {
+            ObjectArrayList<FluidStack> list = new ObjectArrayList<>();
+            for (NBTBase tag : root.getTagList(k, Constants.NBT.TAG_COMPOUND)) {
+                list.add(FluidStack.loadFluidStackFromNBT((NBTTagCompound) tag));
+            }
+            return list;
+        }
+
+        @SuppressWarnings("unchecked")
+        private <T> T compute(String key, Function<String, T> function) {
+            return (T) cache.computeIfAbsent(key, function);
+        }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            return root;
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            root.merge(nbt);
+            cache.clear();
         }
     }
 }
