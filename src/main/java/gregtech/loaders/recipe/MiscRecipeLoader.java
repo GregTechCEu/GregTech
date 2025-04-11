@@ -254,7 +254,7 @@ public class MiscRecipeLoader {
                 .inputs(ELECTRIC_MOTOR_LuV.getStackForm(2))
                 .input(screw, HSSS, 8)
                 .outputs(QUANTUM_CHESTPLATE_ADVANCED.getStackForm())
-                .scannerResearch(GRAVITATION_ENGINE.getStackForm())
+                .scannerResearch(GRAVITATION_ENGINE)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(VA[HV])
