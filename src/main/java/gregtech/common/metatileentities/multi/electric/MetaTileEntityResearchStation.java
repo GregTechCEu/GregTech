@@ -13,7 +13,6 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
-import gregtech.api.metatileentity.multiblock.ui.Operation;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
@@ -28,6 +27,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.items.behaviors.DataItemBehavior;
 import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.block.state.IBlockState;
@@ -42,11 +42,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.utils.serialization.ByteBufAdapters;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -236,24 +237,22 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                 .addParallelsLine(recipeMapWorkable.getParallelLimit())
                 .addWorkingStatusLine()
                 .addCustom((manager, syncer) -> {
-                    Recipe previousRecipe = getRecipeMapWorkable().getPreviousRecipe();
-                    if (syncer.syncBoolean(previousRecipe == null)) return;
-                    ItemStack stack = ItemStack.EMPTY;
-                    if (!getWorld().isRemote) {
-                        stack = previousRecipe.getOutputs().get(0);
-                    }
-                    stack = syncer.syncObject(stack, ByteBufAdapters.ITEM_STACK);
+                    var data = getRecipeMapWorkable().getCachedRecipeData();
+                    ObjectArrayList<ItemStack> outputs = syncer.syncCollection(data.getOutputs(),
+                            ByteBufAdapters.ITEM_STACK);
+                    if (outputs.isEmpty()) return;
+                    ItemStack stack = outputs.top();
                     String id = AssemblyLineManager.readResearchId(stack);
                     if (id == null) return;
-                    id = id.substring(id.indexOf('x') + 1);
-                    id = id.substring(0, id.lastIndexOf('@'));
-                    id += ".name";
-                    manager.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.research_station.researching"),
-                            Operation.ADD);
-                    manager.add(IKey.SPACE, Operation.ADD);
-                    manager.add(KeyUtil.lang(TextFormatting.AQUA, id));
+                    List<String> stacks = new ArrayList<>();
+                    DataItemBehavior.collectResearchItems(id, stacks);
+                    stacks.remove(0);
+                    manager.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.research_station.researching"));
+                    for (String line : stacks) {
+                        manager.add(KeyUtil.string(line));
+                    }
                 })
-                .addProgressLine(recipeMapWorkable.getProgress(), recipeMapWorkable.getMaxProgress());
+                .addComputationProgressLine(getRecipeMapWorkable());
     }
 
     @Override
