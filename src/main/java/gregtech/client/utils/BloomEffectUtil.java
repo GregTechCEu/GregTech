@@ -295,14 +295,6 @@ public class BloomEffectUtil {
         bloom = BlockRenderLayer.valueOf("BLOOM");
     }
 
-    // Calls injected via ASM
-    @SuppressWarnings("unused")
-    public static void initBloomRenderLayer(BufferBuilder[] worldRenderers) {
-        worldRenderers[bloom.ordinal()] = new BufferBuilder(131072);
-    }
-
-    // Calls injected via ASM
-    @SuppressWarnings("unused")
     public static int renderBloomBlockLayer(RenderGlobal renderGlobal,
                                             BlockRenderLayer blockRenderLayer, // 70% sure it's translucent uh yeah
                                             double partialTicks,

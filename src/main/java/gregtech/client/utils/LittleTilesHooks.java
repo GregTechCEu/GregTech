@@ -1,6 +1,4 @@
-package gregtech.asm.hooks;
-
-import gregtech.client.utils.BloomEffectUtil;
+package gregtech.client.utils;
 
 import net.minecraft.util.BlockRenderLayer;
 
@@ -29,17 +27,12 @@ public class LittleTilesHooks {
             if (layer == BloomEffectUtil.getBloomLayer()) {
                 return bloom;
             }
-            switch (layer) {
-                case SOLID:
-                    return solid;
-                case CUTOUT_MIPPED:
-                    return cutout_mipped;
-                case CUTOUT:
-                    return cutout;
-                case TRANSLUCENT:
-                    return translucent;
-            }
-            return null;
+            return switch (layer) {
+                case SOLID -> solid;
+                case CUTOUT_MIPPED -> cutout_mipped;
+                case CUTOUT -> cutout;
+                case TRANSLUCENT -> translucent;
+            };
         }
 
         public void set(List<LittleRenderBox> cubes, BlockRenderLayer layer) {
