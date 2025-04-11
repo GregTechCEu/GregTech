@@ -77,6 +77,7 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityAutoM
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCleaningMaintenanceHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityComputationHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityDataAccessHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityDualHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityEnergyHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
@@ -261,6 +262,8 @@ public class MetaTileEntities {
     public static MetaTileEntityHPCACooler HPCA_HEAT_SINK_COMPONENT;
     public static MetaTileEntityHPCACooler HPCA_ACTIVE_COOLER_COMPONENT;
     public static MetaTileEntityHPCABridge HPCA_BRIDGE_COMPONENT;
+    public static MetaTileEntityDualHatch[] DUAL_INPUT_HATCH = new MetaTileEntityDualHatch[GTValues.V.length - 1];
+    public static MetaTileEntityDualHatch[] DUAL_OUTPUT_HATCH = new MetaTileEntityDualHatch[GTValues.V.length - 1];
 
     // Used for addons if they wish to disable certain tiers of machines
     private static final Map<String, Boolean> MID_TIER = new HashMap<>();
@@ -1218,6 +1221,20 @@ public class MetaTileEntities {
 
         // 1820-1849 are taken for UHV+ 4A/16A/64A Energy/Dynamo Hatches
         // 1850-1869 are taken for UHV+ Input/Output Buses/Hatches
+
+        // Dual Input Hatches
+        for (int tier = GTValues.ULV; tier <= (GregTechAPI.isHighTier() ? GTValues.OpV : GTValues.UHV); tier++) {
+            String voltageName = GTValues.VN[tier].toLowerCase();
+            DUAL_INPUT_HATCH[tier] = registerMetaTileEntity(1879 + tier, new MetaTileEntityDualHatch(
+                    gregtechId(String.format("%s.%s", "dual_input_hatch", voltageName)), tier, false));
+        }
+
+        // Dual Output Hatches
+        for (int tier = GTValues.ULV; tier <= (GregTechAPI.isHighTier() ? GTValues.OpV : GTValues.UHV); tier++) {
+            String voltageName = GTValues.VN[tier].toLowerCase();
+            DUAL_INPUT_HATCH[tier] = registerMetaTileEntity(1893 + tier, new MetaTileEntityDualHatch(
+                    gregtechId(String.format("%s.%s", "dual_output_hatch", voltageName)), tier, true));
+        }
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,
