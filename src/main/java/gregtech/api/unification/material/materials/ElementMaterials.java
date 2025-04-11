@@ -618,6 +618,7 @@ public class ElementMaterials {
         Plutonium239 = new Material.Builder(81, gregtechId("plutonium_239"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(913))
+                .ore()
                 .color(0xF03232).iconSet(METALLIC)
                 .element(Elements.Pu239)
                 .build();
@@ -625,6 +626,7 @@ public class ElementMaterials {
         Plutonium241 = new Material.Builder(82, gregtechId("plutonium_241"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(913))
+                .ore()
                 .color(0xFA4646).iconSet(SHINY)
                 .flags(GENERATE_DOUBLE_PLATE)
                 .element(Elements.Pu241)

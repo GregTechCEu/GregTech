@@ -1011,7 +1011,7 @@ public class MetaTileEntities {
             LASER_OUTPUT_HATCH_65536[i] = registerMetaTileEntity(1501 + i,
                     new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_65536a." + voltageName), true, v, 65536));
         }
-        // Buffers, IDs 1510-1512
+        // Buffers, IDs 1510-1514
         BUFFER[0] = registerMetaTileEntity(1510, new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));
         BUFFER[1] = registerMetaTileEntity(1511, new MetaTileEntityBuffer(gregtechId("buffer.mv"), 2));
         BUFFER[2] = registerMetaTileEntity(1512, new MetaTileEntityBuffer(gregtechId("buffer.hv"), 3));

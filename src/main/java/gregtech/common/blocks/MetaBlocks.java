@@ -113,7 +113,7 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class MetaBlocks {
 
     private MetaBlocks() {}
-
+    public static BlockMachine MACHINE;
     public static final Map<String, BlockCable[]> CABLES = new Object2ObjectOpenHashMap<>();
     public static final Map<String, BlockFluidPipe[]> FLUID_PIPES = new Object2ObjectOpenHashMap<>();
     public static final Map<String, BlockItemPipe[]> ITEM_PIPES = new Object2ObjectOpenHashMap<>();
@@ -188,9 +188,9 @@ public class MetaBlocks {
 
     public static void init() {
         for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
-            BlockMachine machine = new BlockMachine();
-            machine.setRegistryName(registry.getModid(), "mte");
-            registry.setBlock(machine);
+            MACHINE = new BlockMachine();
+            MACHINE.setRegistryName(registry.getModid(), "mte");
+            registry.setBlock(MACHINE);
         }
 
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
