@@ -160,10 +160,12 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                 }
             }
 
-            IItemHandlerModifiable itemHandler = isExportHatch ? getExportItems() : super.getImportItems();
-            if (!isAttachedToMultiBlock() || (isExportHatch ? getNotifiedItemOutputList().contains(itemHandler) :
-                    getNotifiedItemInputList().contains(itemHandler))) {
-                GTUtility.collapseInventorySlotContents(itemHandler);
+            if (autoCollapse()) {
+                IItemHandlerModifiable itemHandler = isExportHatch ? getExportItems() : super.getImportItems();
+                if (!isAttachedToMultiBlock() || (isExportHatch ? getNotifiedItemOutputList().contains(itemHandler) :
+                        getNotifiedItemInputList().contains(itemHandler))) {
+                    GTUtility.collapseInventorySlotContents(itemHandler);
+                }
             }
         }
     }
@@ -340,7 +342,7 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
         }
     }
 
-    public boolean isAutoCollapse() {
+    public boolean autoCollapse() {
         return autoCollapse;
     }
 
