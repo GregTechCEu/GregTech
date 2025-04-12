@@ -12,7 +12,9 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.ui.KeyManager;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+import gregtech.api.metatileentity.multiblock.ui.UISyncer;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
@@ -234,25 +236,17 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                 .addEnergyUsageLine(this.getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                 .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
-                .addParallelsLine(recipeMapWorkable.getParallelLimit())
-                .addWorkingStatusLine()
-                .addCustom((manager, syncer) -> {
-                    var data = getRecipeMapWorkable().getCachedRecipeData();
-                    ObjectArrayList<ItemStack> outputs = syncer.syncCollection(data.getOutputs(),
-                            ByteBufAdapters.ITEM_STACK);
-                    if (outputs.isEmpty()) return;
-                    ItemStack stack = outputs.top();
-                    String id = AssemblyLineManager.readResearchId(stack);
-                    if (id == null) return;
-                    List<String> stacks = new ArrayList<>();
-                    DataItemBehavior.collectResearchItems(id, stacks);
-                    stacks.remove(0);
-                    manager.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.research_station.researching"));
-                    for (String line : stacks) {
-                        manager.add(KeyUtil.string(line));
-                    }
-                })
-                .addComputationProgressLine(getRecipeMapWorkable());
+                .addParallelsLine(recipeMapWorkable.getParallelLimit());
+
+        if (!recipeMapWorkable.isWorkingEnabled())
+            builder.addWorkPausedLine(false);
+        else if (recipeMapWorkable.isWorking()) {
+            builder.addCustom(this::researchingLine);
+        } else {
+            builder.addIdlingLine(false);
+        }
+
+        builder.addComputationProgressLine(getRecipeMapWorkable());
     }
 
     @Override
@@ -260,6 +254,23 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
                 .addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation())
                 .addMaintenanceProblemLines(getMaintenanceProblems());
+    }
+
+    private void researchingLine(KeyManager manager, UISyncer syncer) {
+        var data = getRecipeMapWorkable().getCachedRecipeData();
+        ObjectArrayList<ItemStack> outputs = syncer.syncCollection(data.getOutputs(),
+                ByteBufAdapters.ITEM_STACK);
+        if (outputs.isEmpty()) return;
+        ItemStack stack = outputs.top();
+        String id = AssemblyLineManager.readResearchId(stack);
+        if (id == null) return;
+        List<String> stacks = new ArrayList<>();
+        DataItemBehavior.collectResearchItems(id, stacks);
+        stacks.remove(0);
+        manager.add(KeyUtil.lang(TextFormatting.GREEN, "gregtech.machine.research_station.researching"));
+        for (String line : stacks) {
+            manager.add(KeyUtil.string(line));
+        }
     }
 
     private static class ResearchStationRecipeLogic extends ComputationRecipeLogic {
