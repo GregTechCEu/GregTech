@@ -1,6 +1,6 @@
 package gregtech.api.recipes.ui.impl;
 
-import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageWidget;
@@ -31,7 +31,8 @@ public class ResearchStationUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
     @Override
     @NotNull
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
-                                                 FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+                                                 MultipleTankHandler importFluids, MultipleTankHandler exportFluids,
+                                                 int yOffset) {
         Pair<DoubleSupplier, DoubleSupplier> pairedSuppliers = GTUtility.createPairedSupplier(200, 90, 0.75);
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 166)
                 .widget(new ImageWidget(10, 0, 84, 60, GuiTextures.PROGRESS_BAR_RESEARCH_STATION_BASE))

@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataStickIntractable;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -77,7 +78,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
     }
 
     @Override
-    protected FluidTankList createImportFluidHandler() {
+    protected MultipleTankHandler createImportFluidHandler() {
         return new FluidTankList(false, getAEFluidHandler().getInventory());
     }
 

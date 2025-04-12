@@ -8,6 +8,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
@@ -136,8 +137,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     protected IItemHandler itemInventory;
 
-    protected FluidTankList importFluids;
-    protected FluidTankList exportFluids;
+    protected MultipleTankHandler importFluids;
+    protected MultipleTankHandler exportFluids;
 
     protected IFluidHandler fluidInventory;
 
@@ -450,11 +451,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return new GTItemStackHandler(this, 0);
     }
 
-    protected FluidTankList createImportFluidHandler() {
+    protected MultipleTankHandler createImportFluidHandler() {
         return new FluidTankList(false);
     }
 
-    protected FluidTankList createExportFluidHandler() {
+    protected MultipleTankHandler createExportFluidHandler() {
         return new FluidTankList(false);
     }
 
@@ -1456,11 +1457,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return exportItems;
     }
 
-    public FluidTankList getImportFluids() {
+    public MultipleTankHandler getImportFluids() {
         return importFluids;
     }
 
-    public FluidTankList getExportFluids() {
+    public MultipleTankHandler getExportFluids() {
         return exportFluids;
     }
 

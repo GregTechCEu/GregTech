@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -186,12 +187,12 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    protected FluidTankList createImportFluidHandler() {
+    protected MultipleTankHandler createImportFluidHandler() {
         return isExportHatch ? new FluidTankList(false) : fluidTankList;
     }
 
     @Override
-    protected FluidTankList createExportFluidHandler() {
+    protected MultipleTankHandler createExportFluidHandler() {
         return isExportHatch ? fluidTankList : new FluidTankList(false);
     }
 

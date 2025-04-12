@@ -250,12 +250,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     }
 
     @Override
-    protected FluidTankList createImportFluidHandler() {
+    protected MultipleTankHandler createImportFluidHandler() {
         return new FluidTankList(false, fluidTank);
     }
 
     @Override
-    protected FluidTankList createExportFluidHandler() {
+    protected MultipleTankHandler createExportFluidHandler() {
         return new FluidTankList(false, fluidTank);
     }
 

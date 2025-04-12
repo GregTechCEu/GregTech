@@ -82,7 +82,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     @Override
-    public FluidTankList createImportFluidHandler() {
+    public MultipleTankHandler createImportFluidHandler() {
         return new FluidTankList(false, new FilteredFluidHandler(16000).setFilter(CommonFluidFilters.STEAM));
     }
 

@@ -2,6 +2,7 @@ package gregtech.api.metatileentity;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IActiveOutputSide;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.FuelRecipeLogic;
@@ -62,7 +63,7 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     }
 
     @Override
-    protected FluidTankList createExportFluidHandler() {
+    protected MultipleTankHandler createExportFluidHandler() {
         if (handlesRecipeOutputs)
             return super.createExportFluidHandler();
         return new FluidTankList(false);

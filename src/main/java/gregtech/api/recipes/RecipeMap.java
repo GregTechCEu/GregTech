@@ -892,7 +892,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * @deprecated {@link RecipeMapUI#createJeiUITemplate(IItemHandlerModifiable, IItemHandlerModifiable, FluidTankList, FluidTankList, int)}
+     * @deprecated {@link RecipeMapUI#createJeiUITemplate(IItemHandlerModifiable, IItemHandlerModifiable, MultipleTankHandler, MultipleTankHandler, int)}
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Deprecated

@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IGhostSlotConfigurable;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
@@ -114,7 +115,7 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    protected FluidTankList createImportFluidHandler() {
+    protected MultipleTankHandler createImportFluidHandler() {
         return new FluidTankList(false, fluidTank);
     }
 

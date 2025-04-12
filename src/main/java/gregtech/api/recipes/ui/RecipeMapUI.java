@@ -1,6 +1,6 @@
 package gregtech.api.recipes.ui;
 
-import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
@@ -117,7 +117,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @return the populated builder
      */
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
-                                                 FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+                                                 MultipleTankHandler importFluids, MultipleTankHandler exportFluids,
+                                                 int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
         builder.widget(new RecipeProgressWidget(200, 78, 23 + yOffset, 20, 20, progressBarTexture,
                 moveType, recipeMap));
@@ -141,8 +142,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @return the populated builder
      */
     public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems,
-                                              IItemHandlerModifiable exportItems, FluidTankList importFluids,
-                                              FluidTankList exportFluids, int yOffset) {
+                                              IItemHandlerModifiable exportItems, MultipleTankHandler importFluids,
+                                              MultipleTankHandler exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
         builder.widget(
                 new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture,
@@ -168,8 +169,9 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      */
     public ModularUI.Builder createUITemplateNoOutputs(DoubleSupplier progressSupplier,
                                                        IItemHandlerModifiable importItems,
-                                                       IItemHandlerModifiable exportItems, FluidTankList importFluids,
-                                                       FluidTankList exportFluids, int yOffset) {
+                                                       IItemHandlerModifiable exportItems,
+                                                       MultipleTankHandler importFluids,
+                                                       MultipleTankHandler exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
         builder.widget(
                 new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture,
@@ -190,7 +192,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      */
     protected void addInventorySlotGroup(@NotNull ModularUI.Builder builder,
                                          @NotNull IItemHandlerModifiable itemHandler,
-                                         @NotNull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
+                                         @NotNull MultipleTankHandler fluidHandler, boolean isOutputs, int yOffset) {
         int itemInputsCount = itemHandler.getSlots();
         int fluidInputsCount = fluidHandler.size();
         boolean invertFluids = false;
@@ -250,7 +252,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param isOutputs    if slots should be output slots
      */
     protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
-                           FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
+                           MultipleTankHandler fluidHandler, boolean isFluid, boolean isOutputs) {
         if (!isFluid) {
             builder.widget(new SlotWidget(itemHandler, slotIndex, x, y, true, !isOutputs).setBackgroundTexture(
                     getOverlaysForSlot(isOutputs, false, slotIndex == itemHandler.getSlots() - 1)));

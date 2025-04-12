@@ -5,6 +5,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IFilter;
 import gregtech.api.capability.IGhostSlotConfigurable;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
@@ -237,12 +238,12 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    protected FluidTankList createImportFluidHandler() {
+    protected MultipleTankHandler createImportFluidHandler() {
         return isExportHatch ? new FluidTankList(false) : new FluidTankList(false, fluidTank);
     }
 
     @Override
-    protected FluidTankList createExportFluidHandler() {
+    protected MultipleTankHandler createExportFluidHandler() {
         return isExportHatch ? new FluidTankList(false, fluidTank) : new FluidTankList(false);
     }
 

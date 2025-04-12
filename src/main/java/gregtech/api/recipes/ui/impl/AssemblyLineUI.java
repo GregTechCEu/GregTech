@@ -1,6 +1,6 @@
 package gregtech.api.recipes.ui.impl;
 
-import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ProgressWidget;
@@ -27,7 +27,8 @@ public final class AssemblyLineUI<R extends RecipeMap<?>> extends RecipeMapUI<R>
     @Override
     @NotNull
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
-                                                 FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+                                                 MultipleTankHandler importFluids, MultipleTankHandler exportFluids,
+                                                 int yOffset) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 176)
                 .widget(new ProgressWidget(200, 80, 1, 54, 72, GuiTextures.PROGRESS_BAR_ASSEMBLY_LINE,
                         ProgressWidget.MoveType.HORIZONTAL))
@@ -41,7 +42,7 @@ public final class AssemblyLineUI<R extends RecipeMap<?>> extends RecipeMapUI<R>
     @Override
     protected void addInventorySlotGroup(@NotNull ModularUI.Builder builder,
                                          @NotNull IItemHandlerModifiable itemHandler,
-                                         @NotNull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
+                                         @NotNull MultipleTankHandler fluidHandler, boolean isOutputs, int yOffset) {
         int startInputsX = 80 - 4 * 18;
         int startInputsY = 37 - 2 * 18;
 
