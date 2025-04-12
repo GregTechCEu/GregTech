@@ -164,10 +164,10 @@ public class MultiblockUIBuilder {
     public MultiblockUIBuilder addEnergyTierLine(int tier) {
         if (!isStructureFormed) return this;
         tier = getSyncer().syncInt(tier);
-        if (tier < GTValues.ULV || tier > GTValues.MAX) return this;
+        if (tier < GTValues.ULV || tier > GTValues.MAX_TRUE) return this;
 
         var bodyText = KeyUtil.lang(TextFormatting.GRAY,
-                "gregtech.multiblock.max_recipe_tier", GTValues.VNF[tier]);
+                "gregtech.multiblock.max_recipe_tier", GTValues.VOCNF[tier]);
         var hoverText = KeyUtil.lang(TextFormatting.GRAY,
                 "gregtech.multiblock.max_recipe_tier_hover");
         addKey(bodyText, hoverText);
@@ -197,7 +197,7 @@ public class MultiblockUIBuilder {
     /**
      * Adds the max EU/t that this multiblock can produce.
      * <br>
-     * Added if the structure is formed and if the max voltage is greater than zero and the recipe EU/t.
+     * Added if the structure is formed and if the max voltage is not zero and greater than the recipe EU/t.
      */
     public MultiblockUIBuilder addEnergyProductionLine(long maxVoltage, long recipeEUt) {
         if (!isStructureFormed) return this;
@@ -506,13 +506,13 @@ public class MultiblockUIBuilder {
      * <br>
      * Added if structure is formed, the machine is active, and the passed fuelName parameter is not null.
      */
-    public MultiblockUIBuilder addFuelNeededLine(String fuelName, int previousRecipeDuration) {
+    public MultiblockUIBuilder addFuelNeededLine(String fuelAmount, int previousRecipeDuration) {
         if (!isStructureFormed || !isActive) return this;
-        fuelName = getSyncer().syncString(fuelName);
+        fuelAmount = getSyncer().syncString(fuelAmount);
         previousRecipeDuration = getSyncer().syncInt(previousRecipeDuration);
         addKey(KeyUtil.lang(TextFormatting.GRAY,
                 "gregtech.multiblock.turbine.fuel_needed",
-                KeyUtil.string(TextFormatting.RED, fuelName),
+                KeyUtil.string(TextFormatting.RED, fuelAmount),
                 KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration)));
         return this;
     }
