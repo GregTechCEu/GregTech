@@ -1,6 +1,7 @@
 package gregtech.api.capability;
 
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.ItemStackHashStrategy;
 
@@ -8,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.NotNull;
@@ -158,11 +160,39 @@ public class DualHandler implements IItemHandlerModifiable, IMultipleTankHandler
         if (metaTileEntity == null || this.notifiableEntities.contains(metaTileEntity))
             return;
         this.notifiableEntities.add(metaTileEntity);
+        if (getItemDelegate() instanceof INotifiableHandler handler) {
+            handler.addNotifiableMetaTileEntity(metaTileEntity);
+        } else if (getItemDelegate() instanceof ItemHandlerList list) {
+            for (IItemHandler handler : list.getBackingHandlers()) {
+                if (handler instanceof INotifiableHandler notifiableHandler) {
+                    notifiableHandler.addNotifiableMetaTileEntity(metaTileEntity);
+                }
+            }
+        }
+        for (ITankEntry entry : getFluidDelegate()) {
+            if (entry.getDelegate() instanceof INotifiableHandler handler) {
+                handler.addNotifiableMetaTileEntity(metaTileEntity);
+            }
+        }
     }
 
     @Override
     public void removeNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
         this.notifiableEntities.remove(metaTileEntity);
+        if (getItemDelegate() instanceof INotifiableHandler handler) {
+            handler.removeNotifiableMetaTileEntity(metaTileEntity);
+        } else if (getItemDelegate() instanceof ItemHandlerList list) {
+            for (IItemHandler handler : list.getBackingHandlers()) {
+                if (handler instanceof INotifiableHandler notifiableHandler) {
+                    notifiableHandler.removeNotifiableMetaTileEntity(metaTileEntity);
+                }
+            }
+        }
+        for (ITankEntry entry : getFluidDelegate()) {
+            if (entry.getDelegate() instanceof INotifiableHandler handler) {
+                handler.removeNotifiableMetaTileEntity(metaTileEntity);
+            }
+        }
     }
 
     public @NotNull IItemHandlerModifiable getItemDelegate() {

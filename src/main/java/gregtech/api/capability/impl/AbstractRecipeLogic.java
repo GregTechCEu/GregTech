@@ -119,6 +119,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                         ItemStack.areItemStackTagsEqual(stackA, stackB));
     }
 
+    public List<ItemStack> getItemOutputs() {
+        return itemOutputs;
+    }
+
+    public List<FluidStack> getFluidOutputs() {
+        return fluidOutputs;
+    }
+
     /**
      * @return the energy container's energy input per second
      */
