@@ -119,6 +119,18 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
+    protected void configureWarningText(MultiblockUIBuilder builder) {
+        super.configureWarningText(builder);
+        builder.addCustom((manager, syncer) -> {
+            long canInsert = syncer.syncLong(getEnergyContainer().getEnergyCanBeInserted());
+            if (canInsert < syncer.syncLong(recipeMapWorkable.getRecipeEUt())) {
+                manager.add(KeyUtil.lang(TextFormatting.YELLOW,
+                        "gregtech.multiblock.large_combustion_engine.dynamo_hatch_full"));
+            }
+        });
+    }
+
+    @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.tooltip.base_production_eut", GTValues.V[tier]));
