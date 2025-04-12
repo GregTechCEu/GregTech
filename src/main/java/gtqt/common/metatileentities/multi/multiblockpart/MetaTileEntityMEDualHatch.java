@@ -141,13 +141,24 @@ public class MetaTileEntityMEDualHatch extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        if (this.hasGhostCircuitInventory() && this.actualImportItems != null) {
+            abilityInstances.add(new DualHandler(isExportHatch ? this.outputItem : this.actualImportItems,
+                    outputsFluids, true));
+
+        } else {
+            abilityInstances.add(new DualHandler(isExportHatch ? this.outputItem : this.actualImportItems,
+                    outputsFluids, false));
+        }
+    }
+    @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityMEDualHatch(metaTileEntityId, isExportHatch);
     }
 
     @Override
     public IItemHandlerModifiable getImportItems() {
-        return this.actualImportItems == null ? super.getImportItems() : this.actualImportItems;
+        return this.actualImportItems == null ? this.outputItem : this.actualImportItems;
     }
 
     @Override
@@ -616,17 +627,6 @@ public class MetaTileEntityMEDualHatch extends MetaTileEntityMultiblockNotifiabl
         }
     }
 
-    @Override
-    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
-        if (this.hasGhostCircuitInventory() && this.actualImportItems != null) {
-            abilityInstances.add(new DualHandler(isExportHatch ? this.exportItems : this.actualImportItems,
-                    isExportHatch ? exportFluids : importFluids, true));
-
-        } else {
-            abilityInstances.add(new DualHandler(isExportHatch ? this.exportItems : this.importItems,
-                    isExportHatch ? exportFluids : importFluids, false));
-        }
-    }
 
     @Override
     public boolean usesMui2() {
