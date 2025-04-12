@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.DualHandler;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultiblockController;
+import gregtech.api.capability.IMultipleNotifiableHandler;
 import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -146,9 +147,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                         Iterator<IItemHandlerModifiable> invalidatedIter = invalidatedInputList.iterator();
                         while (invalidatedIter.hasNext()) {
                             IItemHandler invalidatedHandler = invalidatedIter.next();
-                            if (invalidatedHandler instanceof ItemHandlerList) {
-                                for (IItemHandler ih : ((ItemHandlerList) invalidatedHandler).getBackingHandlers()) {
-                                    if (ih == bus) {
+                            if (invalidatedHandler instanceof IMultipleNotifiableHandler multipleNotifiableHandler) {
+                                for (var notifiableHandler : multipleNotifiableHandler.getBackingNotifiers()) {
+                                    if (notifiableHandler == bus) {
                                         canWork = true;
                                         invalidatedIter.remove();
                                         break;
