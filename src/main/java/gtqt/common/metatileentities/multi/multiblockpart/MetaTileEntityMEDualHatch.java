@@ -135,6 +135,7 @@ public class MetaTileEntityMEDualHatch extends MetaTileEntityMultiblockNotifiabl
         this.exportItems = createExportItemHandler();
         this.itemInventory = new ItemHandlerProxy(importItems, exportItems);
 
+        if (this.outputsFluids == null) return;
         this.importFluids = createImportFluidHandler();
         this.exportFluids = createExportFluidHandler();
         this.fluidInventory = new FluidHandlerProxy(importFluids, exportFluids);
@@ -493,15 +494,11 @@ public class MetaTileEntityMEDualHatch extends MetaTileEntityMultiblockNotifiabl
 
     // 修改为直接返回新实例
     protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, IntStream.range(0, 9)
-                .mapToObj(i -> new FluidTank(16000))
-                .toArray(IFluidTank[]::new));
+        return isExportHatch ? new FluidTankList(false) :outputsFluids ;
     }
 
     protected FluidTankList createExportFluidHandler() {
-        return new FluidTankList(false, IntStream.range(0, 9)
-                .mapToObj(i -> new FluidTank(16000))
-                .toArray(IFluidTank[]::new));
+        return isExportHatch ? outputsFluids : new FluidTankList(false);
     }
 
     @Override

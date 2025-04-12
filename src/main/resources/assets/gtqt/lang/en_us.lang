@@ -31,6 +31,8 @@ gregtech.machine.dual_hatch.export.uxv.name=§eUXV§r输出总成
 gregtech.machine.dual_hatch.export.opv.name=§9OpV§r输出总成
 gregtech.machine.dual_hatch.export.max.name=§c§lMAX§r输出总成
 
+gregtech.machine.me_dual_hatch.import.name=ME输入总成
+gregtech.machine.me_dual_hatch.export.name=ME输出总成
 #gui
 gregtech.gui.output_item.tooltip.enabled=排出灰烬（是）
 gregtech.gui.output_item.tooltip.disabled=排出灰烬（否）
