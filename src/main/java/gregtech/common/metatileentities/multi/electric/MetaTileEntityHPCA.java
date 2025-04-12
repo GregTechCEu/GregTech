@@ -858,6 +858,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
             int coolingAmt = syncer.syncInt(getMaxCoolingAmount());
             int coolingDemand = syncer.syncInt(getMaxCoolingDemand());
+            int coolantNeeded = syncer.syncInt(getMaxCoolantDemand());
 
             // Cooling
             TextFormatting coolingColor = coolingAmt < coolingDemand ? TextFormatting.RED :
@@ -871,8 +872,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                     "gregtech.multiblock.hpca.info_max_cooling_available", data));
 
             // Coolant Required
-            if (coolingDemand > 0) {
-                data = KeyUtil.number(TextFormatting.YELLOW, coolingDemand, "L ");
+            if (coolantNeeded > 0) {
+                data = KeyUtil.number(TextFormatting.YELLOW, coolantNeeded, "L ");
                 IKey coolantName = KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.hpca.info_coolant_name");
                 data = IKey.comp(data, coolantName);
