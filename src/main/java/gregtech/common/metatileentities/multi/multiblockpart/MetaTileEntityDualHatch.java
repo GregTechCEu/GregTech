@@ -91,18 +91,19 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
         super.initializeInventory();
         if (hasGhostCircuitInventory()) {
             circuitInventory = new GhostCircuitItemStackHandler(this);
-            circuitInventory.addNotifiableMetaTileEntity(this);
-            actualImportItems = new ItemHandlerList(Arrays.asList(super.getImportItems(), circuitInventory));
+            actualImportItems = new ItemHandlerList(Arrays.asList(this.importItems, circuitInventory));
         } else {
-            actualImportItems = null;
+            actualImportItems = this.importItems;
         }
-        dualHandler = new DualHandler(isExportHatch ? getExportItems() : getImportItems(),
-                isExportHatch ? getExportFluids() : getImportFluids(), isExportHatch);
+        dualHandler = new DualHandler(
+                isExportHatch ? this.exportItems : this.actualImportItems,
+                isExportHatch ? getExportFluids() : getImportFluids(),
+                isExportHatch);
     }
 
     @Override
     public IItemHandlerModifiable getImportItems() {
-        return actualImportItems == null ? super.getImportItems() : actualImportItems;
+        return dualHandler;
     }
 
     protected IFluidTank[] createTanks() {
@@ -217,20 +218,19 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
             widgets.add(new ArrayList<>());
             for (int j = 0; j < rowSize; j++) {
                 int index = i * rowSize + j;
-                IItemHandlerModifiable handler = isExportHatch ? exportItems : importItems;
+                IItemHandlerModifiable handler = isExportHatch ? getExportItems() : getImportItems();
                 widgets.get(i).add(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(handler, index)
                                 .slotGroup("item_inv")
                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                    if (onlyAmountChanged &&
-                                            handler instanceof GTItemStackHandler gtHandler) {
+                                    if (onlyAmountChanged && handler instanceof GTItemStackHandler gtHandler) {
                                         gtHandler.onContentsChanged(index);
                                     }
                                 })
                                 .accessibility(!isExportHatch, true)));
             }
 
-            IFluidTank tankHandler = (isExportHatch ? exportFluids : importFluids).getTankAt(i);
+            IFluidTank tankHandler = dualHandler.getTankAt(i);
             widgets.get(i).add(new GTFluidSlot()
                     .syncHandler(GTFluidSlot.sync(tankHandler)
                             .accessibility(true, !isExportHatch)));
@@ -278,7 +278,11 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                                                 IKey.lang("gregtech.gui.item_auto_collapse.tooltip.enabled") :
                                                 IKey.lang("gregtech.gui.item_auto_collapse.tooltip.disabled"))))
                         .childIf(hasGhostCircuit, new GhostCircuitSlotWidget()
-                                .slot(SyncHandlers.itemSlot(circuitInventory, 0))
+                                .slot(SyncHandlers.itemSlot(circuitInventory, 0)
+                                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                            // add the dual handler to the notified list
+                                            dualHandler.onContentsChanged();
+                                        }))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
                         .childIf(!hasGhostCircuit, new Widget<>()
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.BUTTON_X)
