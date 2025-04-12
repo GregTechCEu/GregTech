@@ -5869,6 +5869,7 @@ gregtech.multiblock.large_combustion_engine.oxygen_boost_disallowed=§eUpgrade t
 gregtech.multiblock.large_combustion_engine.liquid_oxygen_boost_disallowed=§eUpgrade the Dynamo Hatch to enable Liquid Oxygen Boosting.
 gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost=Supply Oxygen to boost.
 gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=Supply Liquid Oxygen to boost.
+gregtech.multiblock.large_combustion_engine.dynamo_hatch_full=Dynamo Hatch is Full!
 gregtech.multiblock.large_combustion_engine.obstructed=Engine Intakes Obstructed!
 gregtech.multiblock.large_combustion_engine.obstructed.desc=Engine Intakes must have a block of airspace in front of them.
 
