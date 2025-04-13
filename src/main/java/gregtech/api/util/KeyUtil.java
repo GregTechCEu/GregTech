@@ -140,7 +140,7 @@ public class KeyUtil {
     public static IKey fluid(@Nullable Fluid fluid, @Nullable FluidStack stack) {
         if (fluid == null) return IKey.EMPTY;
         if (fluid instanceof GTFluid.GTMaterialFluid gtFluid) {
-            return gtFluid.toIKey();
+            return gtFluid.getLocalizedKey();
         }
         if (stack == null) return IKey.lang(fluid.getUnlocalizedName());
         else return IKey.lang(fluid.getUnlocalizedName(stack));
