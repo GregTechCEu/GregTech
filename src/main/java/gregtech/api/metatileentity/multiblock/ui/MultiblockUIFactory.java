@@ -83,6 +83,7 @@ public class MultiblockUIFactory {
     private Widget<?> createIndicator(PanelSyncManager syncManager) {
         if (warningText == NO_OP && errorText == NO_OP) {
             return new Widget<>()
+                    .debugName("indicator_none")
                     .size(18)
                     .pos(174 - 5, screenHeight - 18 - 3)
                     .overlay(GTGuiTextures.GREGTECH_LOGO_DARK);
@@ -108,6 +109,7 @@ public class MultiblockUIFactory {
         });
 
         return new Widget<>()
+                .debugName("indicator")
                 .size(18)
                 .pos(174 - 5, screenHeight - 18 - 3)
                 .overlay(indicator)
@@ -248,6 +250,7 @@ public class MultiblockUIFactory {
      */
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         var panel = GTGuis.createPanel(mte, width, height)
+                .debugName("root_panel")
                 .childIf(!disableDisplay, () -> createScreen(panelSyncManager));
 
         // TODO createExtras() hook for overrides?
@@ -269,9 +272,10 @@ public class MultiblockUIFactory {
         }
 
         return panel.child(Flow.row()
+                .debugName("bottom_row")
                 .bottom(7)
                 .coverChildrenHeight()
-                .left(4).right(4)
+                .margin(4, 0)
                 .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                 .child(playerInv)
                 .childIf(!disableButtons, () -> createButtons(panel, panelSyncManager, guiData)));
@@ -312,6 +316,7 @@ public class MultiblockUIFactory {
         final int calculatedRows = calculateRows(count);
 
         Flow column = Flow.column()
+                .debugName("bar_col")
                 .margin(4, 0)
                 .top(5 + screenHeight)
                 .widthRel(1f)
@@ -325,6 +330,7 @@ public class MultiblockUIFactory {
             final int calculatedCols = calculateCols(count, r);
 
             Flow row = Flow.row()
+                    .debugName("bar_row:" + r)
                     .widthRel(1f)
                     .mainAxisAlignment(Alignment.MainAxis.SPACE_BETWEEN)
                     .height(Bars.HEIGHT);
@@ -350,6 +356,7 @@ public class MultiblockUIFactory {
                 }
 
                 row.child(widget.size(barWidth, Bars.HEIGHT)
+                        .debugName(mte.getClass().getSimpleName() + ":bar:" + i)
                         .direction(ProgressWidget.Direction.RIGHT));
             }
 
@@ -367,6 +374,7 @@ public class MultiblockUIFactory {
             display.sync("display", syncManager);
 
             parent.child(new ScrollableTextWidget()
+                    .debugName("display_text")
                     .sizeRel(1f)
                     .alignment(Alignment.TopLeft)
                     .margin(4, 4)
@@ -379,6 +387,7 @@ public class MultiblockUIFactory {
         }
 
         return parent.childIf(!disableIndicator, () -> createIndicator(syncManager))
+                .debugName("display_root")
                 .background(getDisplayBackground())
                 .size(190, screenHeight)
                 .pos(4, 4);
@@ -394,6 +403,7 @@ public class MultiblockUIFactory {
         IWidget flexButton = this.flexButton.apply(guiData, panelSyncManager);
         if (flexButton == null) {
             flexButton = new ToggleButton()
+                    .debugName("flex_none")
                     .value(ALWAYS_ON)
                     .overlay(GTGuiTextures.OVERLAY_NO_FLEX)
                     .size(18)
@@ -402,6 +412,7 @@ public class MultiblockUIFactory {
         var powerButton = createPowerButton(mainPanel, panelSyncManager);
 
         return Flow.column()
+                .debugName("button_col")
                 .right(4)
                 .coverChildren()
                 .child(createDistinctButton(mainPanel, panelSyncManager))
@@ -414,6 +425,7 @@ public class MultiblockUIFactory {
                                            @NotNull PanelSyncManager panelSyncManager) {
         if (!(mte instanceof IDistinctBusController distinct) || !distinct.canBeDistinct()) {
             return new ToggleButton()
+                    .debugName("distinct_none")
                     .value(ALWAYS_ON)
                     .size(18)
                     .overlay(GTGuiTextures.OVERLAY_DISTINCT_BUSES[0])
@@ -421,6 +433,7 @@ public class MultiblockUIFactory {
         }
 
         return new ToggleButton()
+                .debugName("distinct_button")
                 .size(18)
                 .value(new BooleanSyncValue(distinct::isDistinct, distinct::setDistinct))
                 .disableHoverBackground()
@@ -433,6 +446,7 @@ public class MultiblockUIFactory {
     protected IWidget createVoidingButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
         if (!mte.shouldShowVoidingModeButton()) {
             return new ToggleButton()
+                    .debugName("voiding_none")
                     .value(ALWAYS_ON)
                     .size(18)
                     .overlay(GTGuiTextures.OVERLAY_VOID_NONE)
@@ -442,6 +456,7 @@ public class MultiblockUIFactory {
         IntSyncValue voidingValue = new IntSyncValue(mte::getVoidingMode, mte::setVoidingMode);
 
         return new CycleButtonWidget()
+                .debugName("voiding_button")
                 .size(18)
                 .value(voidingValue)
                 .length(4)
@@ -470,6 +485,7 @@ public class MultiblockUIFactory {
         var detail = GTGuiTextures.BUTTON_POWER_DETAIL.asIcon().size(18, 6).marginTop(24);
 
         return new ToggleButton()
+                .debugName("power_button")
                 .size(18)
                 .disableHoverBackground()
                 .overlay(true, detail, GTGuiTextures.BUTTON_POWER[1])

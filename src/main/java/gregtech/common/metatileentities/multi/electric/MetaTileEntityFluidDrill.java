@@ -201,7 +201,12 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
 
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
-        builder.addLowPowerLine(isStructureFormed() && !drainEnergy(true))
+        boolean lowPower = false;
+        if (!getWorld().isRemote) {
+            // drain energy causes NPE on client
+            lowPower = isStructureFormed() && !drainEnergy(true);
+        }
+        builder.addLowPowerLine(lowPower)
                 .addCustom((list, syncer) -> {
                     if (isStructureFormed() && syncer.syncBoolean(minerLogic.isInventoryFull())) {
                         list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.machine.miner.invfull"));
