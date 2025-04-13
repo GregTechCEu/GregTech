@@ -1,9 +1,13 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.capability.IMultipleNotifiableHandler;
+import gregtech.api.capability.INotifiableHandler;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
@@ -15,7 +19,7 @@ import java.util.*;
 /**
  * Efficiently delegates calls into multiple item handlers
  */
-public class ItemHandlerList implements IItemHandlerModifiable {
+public class ItemHandlerList implements IItemHandlerModifiable, IMultipleNotifiableHandler {
 
     private final Int2ObjectMap<IItemHandler> handlerBySlotIndex = new Int2ObjectOpenHashMap<>();
     private final Object2IntMap<IItemHandler> baseIndexOffset = new Object2IntArrayMap<>();
@@ -91,6 +95,19 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     @NotNull
     public Collection<IItemHandler> getBackingHandlers() {
         return Collections.unmodifiableCollection(baseIndexOffset.keySet());
+    }
+
+    @Override
+    public @NotNull Collection<INotifiableHandler> getBackingNotifiers() {
+        ImmutableList.Builder<INotifiableHandler> notifiableHandlers = ImmutableList.builder();
+
+        for (var handler : getBackingHandlers()) {
+            if (handler instanceof INotifiableHandler notifiableHandler) {
+                notifiableHandlers.add(notifiableHandler);
+            }
+        }
+
+        return notifiableHandlers.build();
     }
 
     private boolean invalidSlot(int slot) {

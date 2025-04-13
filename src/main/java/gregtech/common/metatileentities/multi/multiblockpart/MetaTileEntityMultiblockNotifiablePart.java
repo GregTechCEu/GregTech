@@ -1,9 +1,13 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
+import gregtech.api.capability.IMultipleNotifiableHandler;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 
 import net.minecraft.util.ResourceLocation;
@@ -49,28 +53,50 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
     }
 
     private List<INotifiableHandler> getPartHandlers() {
-        List<INotifiableHandler> handlerList = new ArrayList<>();
+        List<INotifiableHandler> notifiableHandlers = new ArrayList<>();
 
-        for (var notif : getItemHandlers()) {
-            if (notif.size() > 0) {
-                handlerList.add(notif);
-            }
-        }
-
-        if (this.fluidInventory.getTankProperties().length > 0) {
-            FluidTankList fluidTankList = getFluidHandlers();
-            if (fluidTankList != null) {
-                for (IFluidTank fluidTank : fluidTankList) {
-                    if (fluidTank instanceof IMultipleTankHandler.ITankEntry entry) {
-                        fluidTank = entry.getDelegate();
+        if (this instanceof IMultiblockAbilityPart<?>abilityPart) {
+            List<MultiblockAbility<?>> abilities = abilityPart.getAbilities();
+            for (var ability : abilities) {
+                AbilityInstances instances = new AbilityInstances(ability);
+                abilityPart.registerAbilities(instances);
+                for (var handler : instances) {
+                    if (handler instanceof IMultipleNotifiableHandler multipleNotifiableHandler) {
+                        notifiableHandlers.addAll(multipleNotifiableHandler.getBackingNotifiers());
+                    } else if (handler instanceof IMultipleTankHandler multipleTankHandler) {
+                        for (var tank : multipleTankHandler.getFluidTanks()) {
+                            if (tank instanceof INotifiableHandler notifiableTank) {
+                                notifiableHandlers.add(notifiableTank);
+                            }
+                        }
+                    } else if (handler instanceof INotifiableHandler notifiableHandler) {
+                        notifiableHandlers.add(notifiableHandler);
                     }
-                    if (fluidTank instanceof INotifiableHandler) {
-                        handlerList.add((INotifiableHandler) fluidTank);
+                }
+            }
+        } else {
+            for (var notif : getItemHandlers()) {
+                if (notif.size() > 0) {
+                    notifiableHandlers.add(notif);
+                }
+            }
+
+            if (this.fluidInventory.getTankProperties().length > 0) {
+                FluidTankList fluidTankList = getFluidHandlers();
+                if (fluidTankList != null) {
+                    for (IFluidTank fluidTank : fluidTankList) {
+                        if (fluidTank instanceof IMultipleTankHandler.ITankEntry entry) {
+                            fluidTank = entry.getDelegate();
+                        }
+                        if (fluidTank instanceof INotifiableHandler) {
+                            notifiableHandlers.add((INotifiableHandler) fluidTank);
+                        }
                     }
                 }
             }
         }
-        return handlerList;
+
+        return notifiableHandlers;
     }
 
     @Override

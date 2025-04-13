@@ -55,6 +55,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -958,5 +959,43 @@ public class GTUtility {
 
         // Sanity check to make sure we don't accidentally create full-amp recipes.
         return Math.min(voltage, GTValues.VA[workingTier]);
+    }
+
+    public static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {
+        // Gather a snapshot of the provided inventory
+        Object2IntMap<ItemStack> inventoryContents = GTHashMaps.fromItemHandler(inventory, true);
+
+        List<ItemStack> inventoryItemContents = new ArrayList<>();
+
+        // Populate the list of item stacks in the inventory with apportioned item stacks, for easy replacement
+        for (Object2IntMap.Entry<ItemStack> e : inventoryContents.object2IntEntrySet()) {
+            ItemStack stack = e.getKey();
+            int count = e.getIntValue();
+            int maxStackSize = stack.getMaxStackSize();
+            while (count >= maxStackSize) {
+                ItemStack copy = stack.copy();
+                copy.setCount(maxStackSize);
+                inventoryItemContents.add(copy);
+                count -= maxStackSize;
+            }
+            if (count > 0) {
+                ItemStack copy = stack.copy();
+                copy.setCount(count);
+                inventoryItemContents.add(copy);
+            }
+        }
+
+        for (int i = 0; i < inventory.getSlots(); i++) {
+            ItemStack stackToMove;
+            // Ensure that we are not exceeding the List size when attempting to populate items
+            if (i >= inventoryItemContents.size()) {
+                stackToMove = ItemStack.EMPTY;
+            } else {
+                stackToMove = inventoryItemContents.get(i);
+            }
+
+            // Populate the slots
+            inventory.setStackInSlot(i, stackToMove);
+        }
     }
 }

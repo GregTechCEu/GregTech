@@ -5363,6 +5363,38 @@ gregtech.machine.computation_hatch.receiver.tooltip=Computation Data Input for M
 gregtech.machine.research_station.object_holder.name=Object Holder
 gregtech.machine.research_station.object_holder.tooltip=Advanced Holding Mechanism for Research Station
 
+gregtech.machine.dual_input_hatch.ulv.name=ULV Dual Input Hatch
+gregtech.machine.dual_input_hatch.lv.name=LV Dual Input Hatch
+gregtech.machine.dual_input_hatch.mv.name=MV Dual Input Hatch
+gregtech.machine.dual_input_hatch.hv.name=HV Dual Input Hatch
+gregtech.machine.dual_input_hatch.ev.name=EV Dual Input Hatch
+gregtech.machine.dual_input_hatch.iv.name=IV Dual Input Hatch
+gregtech.machine.dual_input_hatch.luv.name=LuV Dual Input Hatch
+gregtech.machine.dual_input_hatch.zpm.name=ZPM Dual Input Hatch
+gregtech.machine.dual_input_hatch.uv.name=UV Dual Input Hatch
+gregtech.machine.dual_input_hatch.uhv.name=UHV Dual Input Hatch
+gregtech.machine.dual_input_hatch.uev.name=UEV Dual Input Hatch
+gregtech.machine.dual_input_hatch.uiv.name=UIV Dual Input Hatch
+gregtech.machine.dual_input_hatch.uxv.name=UXV Dual Input Hatch
+gregtech.machine.dual_input_hatch.opv.name=OpV Dual Input Hatch
+gregtech.machine.dual_input_hatch.max.name=MAX Dual Input Hatch
+
+gregtech.machine.dual_output_hatch.ulv.name=ULV Dual Output Hatch
+gregtech.machine.dual_output_hatch.lv.name=LV Dual Output Hatch
+gregtech.machine.dual_output_hatch.mv.name=MV Dual Output Hatch
+gregtech.machine.dual_output_hatch.hv.name=HV Dual Output Hatch
+gregtech.machine.dual_output_hatch.ev.name=EV Dual Output Hatch
+gregtech.machine.dual_output_hatch.iv.name=IV Dual Output Hatch
+gregtech.machine.dual_output_hatch.luv.name=LuV Dual Output Hatch
+gregtech.machine.dual_output_hatch.zpm.name=ZPM Dual Output Hatch
+gregtech.machine.dual_output_hatch.uv.name=UV Dual Output Hatch
+gregtech.machine.dual_output_hatch.uhv.name=UHV Dual Output Hatch
+gregtech.machine.dual_output_hatch.uev.name=UEV Dual Output Hatch
+gregtech.machine.dual_output_hatch.uiv.name=UIV Dual Output Hatch
+gregtech.machine.dual_output_hatch.uxv.name=UXV Dual Output Hatch
+gregtech.machine.dual_output_hatch.opv.name=OpV Dual Output Hatch
+gregtech.machine.dual_output_hatch.max.name=MAX Dual Output Hatch
+
 # laser hatches
 gregtech.machine.laser_hatch.source_256a.iv.name=IV 256A Laser Source Hatch
 gregtech.machine.laser_hatch.source_256a.luv.name=LuV 256A Laser Source Hatch
