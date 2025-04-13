@@ -1,6 +1,7 @@
 package gregtech.api.capability;
 
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 
 import com.cleanroommc.modularui.drawable.UITexture;
@@ -62,5 +63,10 @@ public interface IHPCAComponentHatch {
     /**
      * The untranslated name of the tile implementing an HPCA component
      */
-    String getTileName();
+    default String getTileName() {
+        if (this instanceof MetaTileEntity mte) {
+            return mte.getMetaFullName();
+        }
+        return ""; // should this throw an exception instead?
+    }
 }

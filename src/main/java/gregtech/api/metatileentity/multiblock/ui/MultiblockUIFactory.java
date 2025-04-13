@@ -91,7 +91,6 @@ public class MultiblockUIFactory {
         MultiblockUIBuilder error = builder();
         error.sync("error", syncManager);
         error.setAction(this.errorText);
-        error.onRebuild(() -> error.updateFormed(mte.isStructureFormed()));
 
         MultiblockUIBuilder warning = builder();
         warning.sync("warning", syncManager);
