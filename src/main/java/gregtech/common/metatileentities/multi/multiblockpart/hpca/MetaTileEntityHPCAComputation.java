@@ -91,9 +91,4 @@ public class MetaTileEntityHPCAComputation extends MetaTileEntityHPCAComponent i
     public boolean canBeDamaged() {
         return true;
     }
-
-    @Override
-    public String getTileName() {
-        return getMetaFullName();
-    }
 }

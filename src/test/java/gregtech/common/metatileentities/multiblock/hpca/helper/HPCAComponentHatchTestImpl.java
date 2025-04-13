@@ -40,10 +40,4 @@ public class HPCAComponentHatchTestImpl implements IHPCAComponentHatch {
     public TextureArea getComponentIcon() {
         return null;
     }
-
-    // not tested
-    @Override
-    public String getTileName() {
-        return "";
-    }
 }

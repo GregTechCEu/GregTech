@@ -77,9 +77,4 @@ public class MetaTileEntityHPCACooler extends MetaTileEntityHPCAComponent implem
     public int getMaxCoolantPerTick() {
         return advanced ? 8 : 0;
     }
-
-    @Override
-    public String getTileName() {
-        return getMetaFullName();
-    }
 }
