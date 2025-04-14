@@ -134,7 +134,7 @@ public class ComponentRecipes {
                 .output(ELECTRIC_MOTOR_UV)
                 .stationResearch(b -> b
                         .researchStack(ELECTRIC_MOTOR_ZPM.getStackForm())
-                        .CWUt(32)
+                        .CWUt(CWT[LuV])
                         .EUt(VA[ZPM]))
                 .duration(600).EUt(100000).buildAndRegister();
 
@@ -336,7 +336,7 @@ public class ComponentRecipes {
                 .output(CONVEYOR_MODULE_UV)
                 .stationResearch(b -> b
                         .researchStack(CONVEYOR_MODULE_ZPM.getStackForm())
-                        .CWUt(32)
+                        .CWUt(CWT[LuV])
                         .EUt(VA[ZPM]))
                 .duration(600).EUt(100000).buildAndRegister();
 
@@ -385,7 +385,7 @@ public class ComponentRecipes {
                 .output(ELECTRIC_PUMP_UV)
                 .stationResearch(b -> b
                         .researchStack(ELECTRIC_PUMP_ZPM.getStackForm())
-                        .CWUt(32)
+                        .CWUt(CWT[LuV])
                         .EUt(VA[ZPM]))
                 .duration(600).EUt(100000).buildAndRegister();
 
@@ -623,7 +623,7 @@ public class ComponentRecipes {
                 .output(ELECTRIC_PISTON_UV)
                 .stationResearch(b -> b
                         .researchStack(ELECTRIC_PISTON_ZPM.getStackForm())
-                        .CWUt(32)
+                        .CWUt(CWT[LuV])
                         .EUt(VA[ZPM]))
                 .duration(600).EUt(100000).buildAndRegister();
 
@@ -746,7 +746,7 @@ public class ComponentRecipes {
                 .output(ROBOT_ARM_UV)
                 .stationResearch(b -> b
                         .researchStack(ROBOT_ARM_ZPM.getStackForm())
-                        .CWUt(32)
+                        .CWUt(CWT[LuV])
                         .EUt(VA[ZPM]))
                 .duration(600).EUt(100000).buildAndRegister();
 
@@ -841,7 +841,7 @@ public class ComponentRecipes {
                 .output(FIELD_GENERATOR_ZPM)
                 .stationResearch(b -> b
                         .researchStack(FIELD_GENERATOR_LuV.getStackForm())
-                        .CWUt(4))
+                        .CWUt(CWT[IV]))
                 .duration(600).EUt(24000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -858,7 +858,7 @@ public class ComponentRecipes {
                 .output(FIELD_GENERATOR_UV)
                 .stationResearch(b -> b
                         .researchStack(FIELD_GENERATOR_ZPM.getStackForm())
-                        .CWUt(48)
+                        .CWUt(CWT[ZPM])
                         .EUt(VA[ZPM]))
                 .duration(600).EUt(100000).buildAndRegister();
 
@@ -949,7 +949,7 @@ public class ComponentRecipes {
                 .output(SENSOR_ZPM)
                 .stationResearch(b -> b
                         .researchStack(SENSOR_LuV.getStackForm())
-                        .CWUt(4))
+                        .CWUt(CWT[IV]))
                 .duration(600).EUt(24000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -966,7 +966,7 @@ public class ComponentRecipes {
                 .output(SENSOR_UV)
                 .stationResearch(b -> b
                         .researchStack(SENSOR_ZPM.getStackForm())
-                        .CWUt(48)
+                        .CWUt(CWT[ZPM])
                         .EUt(VA[ZPM]))
                 .duration(600).EUt(100000).buildAndRegister();
 
@@ -1062,7 +1062,7 @@ public class ComponentRecipes {
                 .output(EMITTER_ZPM)
                 .stationResearch(b -> b
                         .researchStack(EMITTER_LuV.getStackForm())
-                        .CWUt(8))
+                        .CWUt(CWT[IV]))
                 .duration(600).EUt(24000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -1079,7 +1079,7 @@ public class ComponentRecipes {
                 .output(EMITTER_UV)
                 .stationResearch(b -> b
                         .researchStack(EMITTER_ZPM.getStackForm())
-                        .CWUt(48)
+                        .CWUt(CWT[ZPM])
                         .EUt(VA[ZPM]))
                 .duration(600).EUt(100000).buildAndRegister();
     }

@@ -243,7 +243,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                 .where('C', getCasingState())
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LuV], EnumFacing.NORTH)
                 .where('H', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.NORTH)
-                .where('O', MetaTileEntities.COMPUTATION_HATCH_TRANSMITTER, EnumFacing.SOUTH)
+                .where('O', MetaTileEntities.COMPUTATION_HATCH_TRANSMITTER[GTValues.LV], EnumFacing.SOUTH)
                 .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
                         getCasingState(), EnumFacing.NORTH);
 

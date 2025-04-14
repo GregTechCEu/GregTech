@@ -1333,6 +1333,7 @@ cover.generic.enabled=Enabled
 cover.generic.transfer_mode=Transfer Mode
 cover.generic.manual_io=Manual IO Mode
 cover.generic.io=IO Mode
+cover.pump.mode=Pump Mode
 cover.conveyor.title=Conveyor Cover Settings (%s)
 cover.conveyor.transfer_rate=§7items/sec
 cover.conveyor.mode.export=Mode: Export
@@ -1389,6 +1390,8 @@ cover.machine_controller.enable_with_redstone=Enable with Redstone
 cover.machine_controller.disable_with_redstone=Disable with Redstone
 
 cover.ender_fluid_link.title=Ender Fluid Link
+cover.ender_fluid_link.iomode.enabled=I/O Enabled
+cover.ender_fluid_link.iomode.disabled=I/O Disabled
 cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode\nPrivate mode uses the player who originally placed the cover
 cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
@@ -5453,14 +5456,49 @@ gregtech.machine.data_access_hatch.iii.name=Ultimate Data Access Hatch I
 gregtech.machine.data_access_hatch.iv.name=Ultimate Data Access Hatch II
 gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
 
+gregtech.machine.computation_hatch.transmitter.ulv.name=ULV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.lv.name=LV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.mv.name=MV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.hv.name=HV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.ev.name=EV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.iv.name=IV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.luv.name=LuV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.zpm.name=ZPM Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.uv.name=UV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.uhv.name=UHV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.uev.name=UEV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.uiv.name=UIV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.uxv.name=UXV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.opv.name=OpV Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.max.name=MAX Computation Data Transmission Hatch
+
+gregtech.machine.computation_hatch.transmitter.tooltip=Computation Data Output for Multiblocks
+
+gregtech.machine.computation_hatch.receiver.ulv.name=ULV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.lv.name=LV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.mv.name=MV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.hv.name=HV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.ev.name=EV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.iv.name=IV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.luv.name=LuV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.zpm.name=ZPM Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.uv.name=UV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.uhv.name=UHV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.uev.name=UEV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.uiv.name=UIV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.uxv.name=UXV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.opv.name=OpV Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.max.name=MAX Computation Data Reception Hatch
+
+gregtech.machine.computation_hatch.receiver.tooltip=Computation Data Input for Multiblocks
+
+gregtech.machine.computation_hatch.tier=§aHatch Tier§r：%s
+gregtech.machine.computation_hatch.computation=§eMax Computation§r：%s CWU/t
+
 gregtech.machine.data_access_hatch.optical.receiver.name=Optical Data Reception Hatch
 gregtech.machine.data_access_hatch.optical.receiver.tooltip=Research Data Input for Multiblocks
 gregtech.machine.data_access_hatch.optical.transmitter.name=Optical Data Transmission Hatch
 gregtech.machine.data_access_hatch.optical.transmitter.tooltip=Research Data Output for Multiblocks
-gregtech.machine.computation_hatch.transmitter.name=Computation Data Transmission Hatch
-gregtech.machine.computation_hatch.transmitter.tooltip=Computation Data Output for Multiblocks
-gregtech.machine.computation_hatch.receiver.name=Computation Data Reception Hatch
-gregtech.machine.computation_hatch.receiver.tooltip=Computation Data Input for Multiblocks
 gregtech.machine.research_station.object_holder.name=Object Holder
 gregtech.machine.research_station.object_holder.tooltip=Advanced Holding Mechanism for Research Station
 
@@ -6399,6 +6437,7 @@ gregtech.key.armor_mode_switch=Armor Mode Switch
 gregtech.key.armor_hover=Armor Hover Toggle
 gregtech.key.armor_charging=Armor Charging to Inventory Toggle
 gregtech.key.tool_aoe_change=Tool AoE Mode Switch
+gregtech.key.armor_cancel_inertia=Armor Cancel Inertia
 
 gregtech.subtitle.tick.forge_hammer=Hammer smashes
 gregtech.subtitle.tick.macerator=Items macerating

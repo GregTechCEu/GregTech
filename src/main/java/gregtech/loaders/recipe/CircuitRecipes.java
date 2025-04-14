@@ -1458,7 +1458,7 @@ public class CircuitRecipes {
                 .output(CRYSTAL_MAINFRAME_UV)
                 .stationResearch(b -> b
                         .researchStack(CRYSTAL_COMPUTER_ZPM.getStackForm())
-                        .CWUt(16))
+                        .CWUt(CWT[IV]))
                 .buildAndRegister();
 
         // T7: Wetware =================================================================================================
@@ -1525,7 +1525,7 @@ public class CircuitRecipes {
                 .output(WETWARE_SUPER_COMPUTER_UV)
                 .stationResearch(b -> b
                         .researchStack(WETWARE_PROCESSOR_ASSEMBLY_ZPM.getStackForm())
-                        .CWUt(16))
+                        .CWUt(CWT[IV]))
                 .buildAndRegister();
 
         // UHV
@@ -1546,7 +1546,7 @@ public class CircuitRecipes {
                 .output(WETWARE_MAINFRAME_UHV)
                 .stationResearch(b -> b
                         .researchStack(WETWARE_SUPER_COMPUTER_UV.getStackForm())
-                        .CWUt(96)
+                        .CWUt(CWT[ZPM])
                         .EUt(VA[UV]))
                 .EUt(300000).duration(2000).buildAndRegister();
 

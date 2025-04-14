@@ -39,7 +39,7 @@ public final class AssemblyLineManager {
 
     @NotNull
     public static ItemStack getDefaultResearchStationItem(int cwut) {
-        if (cwut > 32) {
+        if (cwut > 256) {
             return MetaItems.TOOL_DATA_MODULE.getStackForm();
         }
         return MetaItems.TOOL_DATA_ORB.getStackForm();

@@ -382,7 +382,7 @@ public class BatteryRecipes {
                 .output(ENERGY_MODULE)
                 .stationResearch(b -> b
                         .researchStack(ENERGY_LAPOTRONIC_ORB_CLUSTER.getStackForm())
-                        .CWUt(16))
+                        .CWUt(CWT[IV]))
                 .buildAndRegister();
 
         // Energy Cluster
@@ -405,7 +405,7 @@ public class BatteryRecipes {
                 .output(ENERGY_CLUSTER)
                 .stationResearch(b -> b
                         .researchStack(ENERGY_MODULE.getStackForm())
-                        .CWUt(96)
+                        .CWUt(CWT[ZPM])
                         .EUt(VA[ZPM]))
                 .buildAndRegister();
 
@@ -430,7 +430,7 @@ public class BatteryRecipes {
                 .output(ULTIMATE_BATTERY)
                 .stationResearch(b -> b
                         .researchStack(ENERGY_CLUSTER.getStackForm())
-                        .CWUt(144)
+                        .CWUt(CWT[UV])
                         .EUt(VA[UHV]))
                 .buildAndRegister();
     }

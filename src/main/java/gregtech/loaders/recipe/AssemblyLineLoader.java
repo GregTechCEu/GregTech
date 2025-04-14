@@ -47,7 +47,7 @@ public class AssemblyLineLoader {
                 .outputs(FUSION_REACTOR[1].getStackForm())
                 .stationResearch(b -> b
                         .researchStack(FUSION_REACTOR[0].getStackForm())
-                        .CWUt(16)
+                        .CWUt(CWT[IV])
                         .EUt(VA[ZPM]))
                 .duration(1000).EUt(61440).buildAndRegister();
 
@@ -65,7 +65,7 @@ public class AssemblyLineLoader {
                 .outputs(FUSION_REACTOR[2].getStackForm())
                 .stationResearch(b -> b
                         .researchStack(FUSION_REACTOR[1].getStackForm())
-                        .CWUt(96)
+                        .CWUt(CWT[ZPM])
                         .EUt(VA[UV]))
                 .duration(1000).EUt(VA[ZPM]).buildAndRegister();
     }

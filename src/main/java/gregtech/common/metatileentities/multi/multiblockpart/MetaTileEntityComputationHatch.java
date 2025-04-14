@@ -30,19 +30,26 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
+import static gregtech.api.GTValues.CWT;
+import static gregtech.api.GTValues.VA;
+
 public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart implements
                                             IMultiblockAbilityPart<IOpticalComputationHatch>, IOpticalComputationHatch {
 
     private final boolean isTransmitter;
+    int tier;
 
-    public MetaTileEntityComputationHatch(ResourceLocation metaTileEntityId, boolean isTransmitter) {
-        super(metaTileEntityId, GTValues.ZPM);
+    public MetaTileEntityComputationHatch(ResourceLocation metaTileEntityId,int tier, boolean isTransmitter) {
+        super(metaTileEntityId,tier);
         this.isTransmitter = isTransmitter;
+        this.tier = tier;
     }
-
+    public int maxComputation() {
+        return CWT[tier];
+    }
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityComputationHatch(metaTileEntityId, isTransmitter);
+        return new MetaTileEntityComputationHatch(metaTileEntityId,tier, isTransmitter);
     }
 
     @Override
@@ -67,7 +74,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
             // Ask the attached Transmitter hatch, if it exists
             IOpticalComputationProvider provider = getOpticalNetProvider();
             if (provider == null) return 0;
-            return provider.requestCWUt(cwut, simulate, seen);
+            return Math.min(provider.requestCWUt(cwut, simulate, seen), maxComputation());
         }
     }
 
@@ -79,7 +86,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
         if (isTransmitter()) {
             // Ask the Multiblock controller, which *should* be an IOpticalComputationProvider
             if (controller instanceof IOpticalComputationProvider provider) {
-                return provider.getMaxCWUt(seen);
+                return Math.min(provider.getMaxCWUt(seen), maxComputation());
             } else {
                 GTLog.logger.error("Computation Transmission Hatch could not get maximum CWU/t from its controller!");
                 return 0;
@@ -88,7 +95,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
             // Ask the attached Transmitter hatch, if it exists
             IOpticalComputationProvider provider = getOpticalNetProvider();
             if (provider == null) return 0;
-            return provider.getMaxCWUt(seen);
+            return Math.min(provider.getMaxCWUt(seen), maxComputation());
         }
     }
 
@@ -168,6 +175,9 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
+        tooltip.add(I18n.format(this.isTransmitter ? "gregtech.machine.computation_hatch.transmitter.tooltip" : "gregtech.machine.computation_hatch.receiver.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.computation_hatch.tier", this.tier));
+        tooltip.add(I18n.format("gregtech.machine.computation_hatch.computation", this.maxComputation()));
         tooltip.add(I18n.format("gregtech.universal.disabled"));
     }
 }

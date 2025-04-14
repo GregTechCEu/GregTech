@@ -46,7 +46,7 @@ public class ComputerRecipes {
                 .output(DATA_ACCESS_HATCH[2])
                 .fluidInputs(SolderingAlloy.getFluid(L * 4))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
-                .stationResearch(b -> b.researchStack(DATA_BANK.getStackForm()).CWUt(4))
+                .stationResearch(b -> b.researchStack(DATA_BANK.getStackForm()).CWUt(CWT[IV]))
                 .duration(400).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -56,7 +56,7 @@ public class ComputerRecipes {
                 .output(DATA_ACCESS_HATCH[3])
                 .fluidInputs(SolderingAlloy.getFluid(L * 16))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 16))
-                .stationResearch(b -> b.researchStack(DATA_BANK.getStackForm()).CWUt(4))
+                .stationResearch(b -> b.researchStack(DATA_BANK.getStackForm()).CWUt(CWT[IV]))
                 .duration(400).EUt(96000).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -175,7 +175,7 @@ public class ComputerRecipes {
                 .output(NETWORK_SWITCH)
                 .stationResearch(b -> b
                         .researchStack(new ItemStack(OPTICAL_PIPES[0]))
-                        .CWUt(32)
+                        .CWUt(CWT[LuV])
                         .EUt(VA[ZPM]))
                 .duration(1200).EUt(100000).buildAndRegister();
 
@@ -275,23 +275,23 @@ public class ComputerRecipes {
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(200).EUt(VA[LuV]).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OPTICAL_DATA_HATCH_RECEIVER)
-                .input(circuit, Tier.ZPM)
-                .input(SENSOR_LuV)
-                .fluidInputs(Polybenzimidazole.getFluid(L * 2))
-                .output(COMPUTATION_HATCH_RECEIVER)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .duration(200).EUt(VA[LuV]).buildAndRegister();
+        gregtech.loaders.recipe.MetaTileEntityLoader.registerMachineRecipe(true, COMPUTATION_HATCH_RECEIVER,
+                "GEG", "PHP", "WXW",
+                'E', CraftingComponent.EMITTER,
+                'H', CraftingComponent.HULL,
+                'P', CraftingComponent.PLATE,
+                'G', CraftingComponent.SENSOR,
+                'W', CraftingComponent.CABLE,
+                'X', CraftingComponent.CIRCUIT);
 
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OPTICAL_DATA_HATCH_TRANSMITTER)
-                .input(circuit, Tier.ZPM)
-                .input(EMITTER_LuV)
-                .fluidInputs(Polybenzimidazole.getFluid(L * 2))
-                .output(COMPUTATION_HATCH_TRANSMITTER)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .duration(200).EUt(VA[LuV]).buildAndRegister();
+        gregtech.loaders.recipe.MetaTileEntityLoader.registerMachineRecipe(true, COMPUTATION_HATCH_TRANSMITTER,
+                "EGE", "PHP", "WXW",
+                'E', CraftingComponent.EMITTER,
+                'H', CraftingComponent.HULL,
+                'P', CraftingComponent.PLATE,
+                'G', CraftingComponent.SENSOR,
+                'W', CraftingComponent.CABLE,
+                'X', CraftingComponent.CIRCUIT);
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(POWER_TRANSFORMER[LuV])

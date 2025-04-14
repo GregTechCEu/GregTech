@@ -159,7 +159,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                 .where('V', getVentState())
                 .where('A', getAdvancedState())
                 .where('P', getCasingState())
-                .where('O', MetaTileEntities.COMPUTATION_HATCH_RECEIVER, EnumFacing.NORTH)
+                .where('O', MetaTileEntities.COMPUTATION_HATCH_RECEIVER[GTValues.LuV], EnumFacing.NORTH)
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LuV], EnumFacing.NORTH)
                 .where('M',
                         () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :

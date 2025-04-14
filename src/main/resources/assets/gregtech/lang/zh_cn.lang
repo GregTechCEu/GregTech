@@ -1162,6 +1162,9 @@ metaarmor.qts.nightvision.error=夸克高科™套装：§c能量不足！
 metaarmor.jetpack.hover.enable=喷气背包：悬浮模式已启用
 metaarmor.jetpack.hover.disable=喷气背包：悬浮模式已禁用
 
+metaarmor.jetpack.cancel_inertia.enable=喷气背包: 已启用惯性消除
+metaarmor.jetpack.cancel_inertia.disable=喷气背包: 已禁用惯性取消
+
 metaarmor.jetpack.emergency_hover_mode=紧急悬浮模式已启用！
 
 metaarmor.nms.share.enable=纳米肌体™套装：供能模式已启用
@@ -1189,6 +1192,7 @@ metaarmor.hud.status.enabled=§a开
 metaarmor.hud.status.disabled=§c关
 metaarmor.hud.energy_lvl=能量存储：%s
 metaarmor.hud.fuel_lvl=燃料存储：%s
+metaarmor.hud.cancel_inertia_mode=惯性消除: %s
 metaarmor.hud.hover_mode=悬浮模式：%s
 mataarmor.hud.supply_mode=供能模式：%s
 metaarmor.hud.gravi_engine=重力引擎：%s
@@ -5450,14 +5454,49 @@ gregtech.machine.data_access_hatch.iii.name=特级数据访问仓
 gregtech.machine.data_access_hatch.iv.name=顶级数据访问仓
 gregtech.machine.data_access_hatch.creative.name=创造模式数据访问仓
 
+gregtech.machine.computation_hatch.transmitter.ulv.name=§8ULV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.lv.name=§7LV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.mv.name=§bMV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.hv.name=§6HV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.ev.name=§5EV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.iv.name=§1IV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.luv.name=§dLuV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.zpm.name=§cZPM§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.uv.name=§3UV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.uhv.name=§4UHV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.uev.name=§aUEV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.uiv.name=§2UIV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.uxv.name=§eUXV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.opv.name=§9OpV§r算力数据源仓
+gregtech.machine.computation_hatch.transmitter.max.name=§c§lMAX§r算力数据源仓
+
+gregtech.machine.computation_hatch.transmitter.tooltip=从多方块结构输出算力数据
+
+gregtech.machine.computation_hatch.receiver.ulv.name=§8ULV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.lv.name=§7LV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.mv.name=§bMV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.hv.name=§6HV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.ev.name=§5EV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.iv.name=§1IV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.luv.name=§dLuV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.zpm.name=§cZPM§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.uv.name=§3UV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.uhv.name=§4UHV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.uev.name=§aUEV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.uiv.name=§2UIV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.uxv.name=§eUXV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.opv.name=§9OpV§r算力数据靶仓
+gregtech.machine.computation_hatch.receiver.max.name=§c§lMAX§r算力数据靶仓
+
+gregtech.machine.computation_hatch.receiver.tooltip=为多方块结构输入算力数据
+
+gregtech.machine.computation_hatch.tier=§a仓口等级§r：%s
+gregtech.machine.computation_hatch.computation=§e算力流量§r：%s CWU/t
+
 gregtech.machine.data_access_hatch.optical.receiver.name=光学数据靶仓
 gregtech.machine.data_access_hatch.optical.receiver.tooltip=为多方块结构输入研究数据
 gregtech.machine.data_access_hatch.optical.transmitter.name=光学数据源仓
 gregtech.machine.data_access_hatch.optical.transmitter.tooltip=从多方块结构输出研究数据
-gregtech.machine.computation_hatch.transmitter.name=算力数据源仓
-gregtech.machine.computation_hatch.transmitter.tooltip=从多方块结构输出算力数据
-gregtech.machine.computation_hatch.receiver.name=算力数据靶仓
-gregtech.machine.computation_hatch.receiver.tooltip=为多方块结构输入算力数据
 gregtech.machine.research_station.object_holder.name=物品支架
 gregtech.machine.research_station.object_holder.tooltip=研究站的先进支撑机构
 
@@ -6395,6 +6434,7 @@ gregtech.key.armor_mode_switch=切换盔甲模式
 gregtech.key.armor_hover=切换盔甲悬浮模式
 gregtech.key.armor_charging=启用/禁用盔甲向物品栏充能
 gregtech.key.tool_aoe_change=切换工具范围性效用模式
+gregtech.key.armor_cancel_inertia=装甲惯性消除
 
 gregtech.subtitle.tick.forge_hammer=锻造锤：DUANG
 gregtech.subtitle.tick.macerator=研磨机：破碎

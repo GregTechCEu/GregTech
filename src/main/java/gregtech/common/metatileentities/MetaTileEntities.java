@@ -263,8 +263,8 @@ public class MetaTileEntities {
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_1048576 = new MetaTileEntityLaserHatch[10]; // IV+
 
     public static MetaTileEntityPassthroughHatchLaser PASSTHROUGH_HATCH_LASER;
-    public static MetaTileEntityComputationHatch COMPUTATION_HATCH_RECEIVER;
-    public static MetaTileEntityComputationHatch COMPUTATION_HATCH_TRANSMITTER;
+    public static MetaTileEntityComputationHatch[] COMPUTATION_HATCH_RECEIVER=new MetaTileEntityComputationHatch[GTValues.V.length - 1];
+    public static MetaTileEntityComputationHatch[] COMPUTATION_HATCH_TRANSMITTER=new MetaTileEntityComputationHatch[GTValues.V.length - 1];
     public static MetaTileEntityObjectHolder OBJECT_HOLDER;
     public static MetaTileEntityHPCAEmpty HPCA_EMPTY_COMPONENT;
     public static MetaTileEntityHPCAComputation HPCA_COMPUTATION_COMPONENT;
@@ -929,10 +929,6 @@ public class MetaTileEntities {
                 new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.receiver"), false));
         OPTICAL_DATA_HATCH_TRANSMITTER = registerMetaTileEntity(1408,
                 new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.transmitter"), true));
-        COMPUTATION_HATCH_RECEIVER = registerMetaTileEntity(1409,
-                new MetaTileEntityComputationHatch(gregtechId("computation_hatch.receiver"), false));
-        COMPUTATION_HATCH_TRANSMITTER = registerMetaTileEntity(1410,
-                new MetaTileEntityComputationHatch(gregtechId("computation_hatch.transmitter"), true));
         OBJECT_HOLDER = registerMetaTileEntity(1411,
                 new MetaTileEntityObjectHolder(gregtechId("research_station.object_holder")));
         HPCA_EMPTY_COMPONENT = registerMetaTileEntity(1412,
@@ -1280,6 +1276,16 @@ public class MetaTileEntities {
             SUBSTATION_ENERGY_OUTPUT_HATCH[i] = registerMetaTileEntity(1995+ i,
                     new MetaTileEntitySubstationEnergyHatch(
                             gregtechId("substation_hatch.output_64a." + voltageName), i, 64, true));
+        }
+
+        //算力仓重做
+        for(int i=0;i<COMPUTATION_HATCH_RECEIVER.length-1;i++)
+        {
+            String voltageName = GTValues.VN[i+1].toLowerCase();
+            COMPUTATION_HATCH_RECEIVER[i] = registerMetaTileEntity(2010+i,
+                    new MetaTileEntityComputationHatch(gregtechId("computation_hatch.receiver."+voltageName),i+1,false));
+            COMPUTATION_HATCH_TRANSMITTER[i] = registerMetaTileEntity(2025+i,
+                    new MetaTileEntityComputationHatch(gregtechId("computation_hatch.transmitter."+voltageName),i+1,true));
         }
     }
 

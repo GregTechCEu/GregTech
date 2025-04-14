@@ -11,6 +11,8 @@ import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
 import net.minecraft.util.ResourceLocation;
 
+import static gregtech.api.GTValues.CWT;
+
 public class MetaTileEntityHPCAComputation extends MetaTileEntityHPCAComponent implements IHPCAComputationProvider {
 
     private final boolean advanced;
@@ -66,7 +68,7 @@ public class MetaTileEntityHPCAComputation extends MetaTileEntityHPCAComponent i
     @Override
     public int getCWUPerTick() {
         if (isDamaged()) return 0;
-        return advanced ? 16 : 4;
+        return advanced ? CWT[GTValues.LuV] : CWT[GTValues.IV];
     }
 
     @Override

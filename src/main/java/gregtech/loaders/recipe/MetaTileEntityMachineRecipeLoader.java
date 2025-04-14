@@ -356,7 +356,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .output(ENERGY_OUTPUT_HATCH[ZPM])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[LuV].getStackForm())
-                        .CWUt(8))
+                        .CWUt(CWT[IV]))
                 .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -370,7 +370,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .output(ENERGY_OUTPUT_HATCH[UV])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[ZPM].getStackForm())
-                        .CWUt(64)
+                        .CWUt(CWT[ZPM])
                         .EUt(VA[ZPM]))
                 .duration(800).EUt(VA[UV]).buildAndRegister();
 
@@ -385,7 +385,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .output(ENERGY_OUTPUT_HATCH[UHV])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[UV].getStackForm())
-                        .CWUt(128)
+                        .CWUt(CWT[UV])
                         .EUt(VA[UV]))
                 .duration(1000).EUt(VA[UHV]).buildAndRegister();
 
@@ -484,7 +484,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .output(ENERGY_INPUT_HATCH[ZPM])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[LuV].getStackForm())
-                        .CWUt(8))
+                        .CWUt(CWT[IV]))
                 .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -498,7 +498,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .output(ENERGY_INPUT_HATCH[UV])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[ZPM].getStackForm())
-                        .CWUt(64)
+                        .CWUt(CWT[ZPM])
                         .EUt(VA[ZPM]))
                 .duration(800).EUt(VA[UV]).buildAndRegister();
 
@@ -513,7 +513,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .output(ENERGY_INPUT_HATCH[UHV])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[UV].getStackForm())
-                        .CWUt(128)
+                        .CWUt(CWT[UV])
                         .EUt(VA[UV]))
                 .duration(1000).EUt(VA[UHV]).buildAndRegister();
 

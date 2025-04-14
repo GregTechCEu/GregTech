@@ -48,6 +48,8 @@ public class GTValues {
     /** Current time on the Client. Will always be zero on the server. */
     public static long CLIENT_TIME = 0;
 
+    //算力上限列表
+    public static final int[] CWT = new int[]{4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072};
     /**
      * The Voltage Tiers. Use this Array instead of the old named Voltage Variables
      */
