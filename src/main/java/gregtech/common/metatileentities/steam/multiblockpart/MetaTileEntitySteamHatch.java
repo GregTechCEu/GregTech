@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.steam.multiblockpart;
 
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
@@ -108,7 +109,7 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    protected FluidTankList createImportFluidHandler() {
+    protected MultipleTankHandler createImportFluidHandler() {
         return new FluidTankList(false, new FilteredFluidHandler(INVENTORY_SIZE)
                 .setFilter(CommonFluidFilters.STEAM));
     }

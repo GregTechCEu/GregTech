@@ -1,6 +1,6 @@
 package gregtech.api.recipes.ui.impl;
 
-import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
@@ -24,7 +24,7 @@ public class FormingPressUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
 
     @Override
     protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
-                           FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
+                           MultipleTankHandler fluidHandler, boolean isFluid, boolean isOutputs) {
         SlotWidget slotWidget = new SlotWidget(itemHandler, slotIndex, x, y, true, !isOutputs);
         TextureArea base = GuiTextures.SLOT;
         if (isOutputs)

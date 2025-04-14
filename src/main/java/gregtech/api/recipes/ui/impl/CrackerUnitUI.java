@@ -1,6 +1,6 @@
 package gregtech.api.recipes.ui.impl;
 
-import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ProgressWidget;
@@ -30,7 +30,8 @@ public class CrackerUnitUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
 
     @Override
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
-                                                 FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+                                                 MultipleTankHandler importFluids, MultipleTankHandler exportFluids,
+                                                 int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
         if (recipeMap().getMaxInputs() == 1) {
             addSlot(builder, 52, 24 + yOffset, 0, importItems, importFluids, false, false);

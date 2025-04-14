@@ -5,7 +5,7 @@ import gregtech.api.capability.DualHandler;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleRecipeMaps;
-import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -95,7 +95,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected IMultipleTankHandler getInputTank() {
+    protected MultipleTankHandler getInputTank() {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         return controller.getInputFluidInventory();
     }
@@ -103,20 +103,20 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     /**
      * Overload of {@link #getInputTank()} to gather extra fluid tanks
      * that could exist in a distinct item handler (such as a {@link DualHandler})
-     * 
+     *
      * @param items Handler to gather fluid tanks from
      * @return a new FluidTankList with extra fluid tanks on top of the existing fluid tanks
      */
-    protected IMultipleTankHandler getInputTank(IItemHandler items) {
+    protected MultipleTankHandler getInputTank(IItemHandler items) {
         var tanks = new ArrayList<>(getInputTank().getFluidTanks());
-        if (items instanceof IMultipleTankHandler tankHandler) {
+        if (items instanceof MultipleTankHandler tankHandler) {
             tanks.addAll(tankHandler.getFluidTanks());
         }
         return new FluidTankList(getInputTank().allowSameFluidFill(), tanks);
     }
 
     @Override
-    protected IMultipleTankHandler getOutputTank() {
+    protected MultipleTankHandler getOutputTank() {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         return controller.getOutputFluidInventory();
     }
@@ -216,6 +216,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         long maxVoltage = getMaxVoltage();
         Recipe currentRecipe;
         List<IItemHandlerModifiable> importInventory = getInputBuses();
+        MultipleTankHandler importFluids = getInputTank();
 
         // Our caching implementation
         // This guarantees that if we get a recipe cache hit, our efficiency is no different from other machines

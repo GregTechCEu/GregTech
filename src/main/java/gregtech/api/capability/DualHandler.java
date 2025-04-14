@@ -5,17 +5,19 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.ItemStackHashStrategy;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DualHandler implements IItemHandlerModifiable, IMultipleTankHandler, INotifiableHandler {
+public class DualHandler extends MultipleTankHandler implements IItemHandlerModifiable, INotifiableHandler {
 
     @NotNull
     private static final ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingAll();
@@ -23,22 +25,22 @@ public class DualHandler implements IItemHandlerModifiable, IMultipleTankHandler
     @NotNull
     protected IItemHandlerModifiable itemDelegate;
     @NotNull
-    protected IMultipleTankHandler fluidDelegate;
+    protected MultipleTankHandler fluidDelegate;
 
-    private final List<ITankEntry> unwrapped;
+    private final List<Entry> unwrapped;
 
     List<MetaTileEntity> notifiableEntities = new ArrayList<>();
     private final boolean isExport;
 
     public DualHandler(@NotNull IItemHandlerModifiable itemDelegate,
-                       @NotNull IMultipleTankHandler fluidDelegate,
+                       @NotNull MultipleTankHandler fluidDelegate,
                        boolean isExport) {
         this.itemDelegate = itemDelegate;
         this.fluidDelegate = fluidDelegate;
         this.isExport = isExport;
 
-        List<ITankEntry> list = new ArrayList<>();
-        for (ITankEntry tank : this.fluidDelegate) {
+        List<Entry> list = new ArrayList<>();
+        for (Entry tank : this.fluidDelegate) {
             list.add(wrap(tank));
         }
         this.unwrapped = list;
@@ -50,8 +52,9 @@ public class DualHandler implements IItemHandlerModifiable, IMultipleTankHandler
         this(itemDelegate, new FluidTankList(false, fluidTank), isExport);
     }
 
-    private DualEntry wrap(ITankEntry entry) {
-        return entry instanceof DualEntry ? (DualEntry) entry : new DualEntry(this, entry);
+    @Override
+    protected Entry wrap(IFluidTank tank) {
+        return tank instanceof DualEntry ? (DualEntry) tank : new DualEntry(this, super.wrap(tank));
     }
 
     public boolean isExport() {
@@ -124,17 +127,17 @@ public class DualHandler implements IItemHandlerModifiable, IMultipleTankHandler
     }
 
     @Override
-    public @NotNull List<ITankEntry> getFluidTanks() {
+    public @NotNull List<Entry> getFluidTanks() {
         return this.unwrapped;
     }
 
     @Override
-    public int getTanks() {
-        return this.fluidDelegate.getTanks();
+    public int size() {
+        return this.fluidDelegate.size();
     }
 
     @Override
-    public @NotNull ITankEntry getTankAt(int index) {
+    public @NotNull Entry getTankAt(int index) {
         return this.unwrapped.get(index);
     }
 
@@ -169,70 +172,62 @@ public class DualHandler implements IItemHandlerModifiable, IMultipleTankHandler
         return itemDelegate;
     }
 
-    public @NotNull IMultipleTankHandler getFluidDelegate() {
+    public @NotNull MultipleTankHandler getFluidDelegate() {
         return fluidDelegate;
     }
 
-    public static class DualEntry implements ITankEntry, INotifiableHandler {
+    public static class DualEntry extends Entry implements INotifiableHandler {
 
         @NotNull
-        private final DualHandler tank;
+        private final DualHandler parent;
 
-        @NotNull
-        private final ITankEntry delegate;
-
-        public DualEntry(@NotNull DualHandler tank, @NotNull ITankEntry delegate) {
-            this.delegate = delegate;
-            this.tank = tank;
-        }
-
-        @Override
-        public @NotNull IMultipleTankHandler getParent() {
-            return this.tank;
-        }
-
-        @Override
-        public @NotNull ITankEntry getDelegate() {
-            return this.delegate;
-        }
-
-        @Override
-        public IFluidTankProperties[] getTankProperties() {
-            return this.getDelegate().getTankProperties();
+        public DualEntry(@NotNull DualHandler parent, @NotNull Entry tank) {
+            super(tank, tank.getParentHandler());
+            this.parent = parent;
         }
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
             int filled = getDelegate().fill(resource, doFill);
             if (doFill && filled > 0)
-                tank.onContentsChanged(this);
+                this.parent.onContentsChanged(this);
             return filled;
-        }
-
-        @Override
-        public FluidStack drain(FluidStack resource, boolean doDrain) {
-            var drained = getDelegate().drain(resource, doDrain);
-            if (doDrain && drained != null)
-                tank.onContentsChanged(this);
-            return drained;
         }
 
         @Override
         public FluidStack drain(int maxDrain, boolean doDrain) {
             var drained = getDelegate().drain(maxDrain, doDrain);
             if (doDrain && drained != null)
-                tank.onContentsChanged(this);
+                this.parent.onContentsChanged(this);
             return drained;
         }
 
         @Override
         public void addNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-            this.tank.addNotifiableMetaTileEntity(metaTileEntity);
+            this.parent.addNotifiableMetaTileEntity(metaTileEntity);
         }
 
         @Override
         public void removeNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-            this.tank.removeNotifiableMetaTileEntity(metaTileEntity);
+            this.parent.removeNotifiableMetaTileEntity(metaTileEntity);
         }
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound root = new NBTTagCompound();
+        if (this.itemDelegate instanceof ItemStackHandler handler) {
+            root.setTag("item", handler.serializeNBT());
+        }
+        root.setTag("fluid", getFluidDelegate().serializeNBT());
+        return root;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        if (this.itemDelegate instanceof ItemStackHandler handler) {
+            handler.deserializeNBT(nbt.getCompoundTag("item"));
+        }
+        getFluidDelegate().deserializeNBT(nbt.getCompoundTag("fluid"));
     }
 }

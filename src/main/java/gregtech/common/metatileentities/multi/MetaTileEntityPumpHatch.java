@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi;
 
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
@@ -88,7 +89,7 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    protected FluidTankList createExportFluidHandler() {
+    protected MultipleTankHandler createExportFluidHandler() {
         return new FluidTankList(false, new FluidTank(FLUID_TANK_SIZE));
     }
 
