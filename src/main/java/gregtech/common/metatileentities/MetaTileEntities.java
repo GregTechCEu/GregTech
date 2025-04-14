@@ -925,9 +925,12 @@ public class MetaTileEntities {
                 new MetaTileEntityPassthroughHatchFluid(gregtechId("passthrough_hatch_fluid"), 3));
         PASSTHROUGH_HATCH_LASER = registerMetaTileEntity(1404,
                 new MetaTileEntityPassthroughHatchLaser(gregtechId("passthrough_hatch_laser"), 5));
+<<<<<<< Updated upstream
         PASSTHROUGH_HATCH_COMPUTATION=registerMetaTileEntity(1405,
                 new MetaTileEntityPassthroughHatchComputation(gregtechId("passthrough_hatch_computer"),5));
 
+=======
+>>>>>>> Stashed changes
         //其他通行仓1405-1406
 
         OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1407,

@@ -36,6 +36,7 @@ public class GTQTMetaTileEntities {
         ME_DUAL_IMPORT_HATCH = new MetaTileEntityMEDualHatch(gregtechId("me_dual_hatch.import"), false);
         ME_DUAL_EXPORT_HATCH = new MetaTileEntityMEDualHatch(gregtechId("me_dual_hatch.export"), true);
 
+<<<<<<< Updated upstream
 
         registerMetaTileEntity(2500, ME_DUAL_IMPORT_HATCH);
         registerMetaTileEntity(2501, ME_DUAL_EXPORT_HATCH);
@@ -43,5 +44,9 @@ public class GTQTMetaTileEntities {
         registerMetaTileEntity(3000, ME_DUAL_IMPORT_HATCH);
         registerMetaTileEntity(3001, ME_DUAL_EXPORT_HATCH);
 
+=======
+        registerMetaTileEntity(3000, ME_DUAL_IMPORT_HATCH);
+        registerMetaTileEntity(3001, ME_DUAL_EXPORT_HATCH);
+>>>>>>> Stashed changes
     }
 }
