@@ -90,6 +90,7 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityOptic
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchFluid;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchItem;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchLaser;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchComputation;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityReservoirHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityRotorHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntitySubstationEnergyHatch;
@@ -262,6 +263,7 @@ public class MetaTileEntities {
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_262144 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_1048576 = new MetaTileEntityLaserHatch[10]; // IV+
 
+    public static MetaTileEntityPassthroughHatchComputation PASSTHROUGH_HATCH_COMPUTATION;
     public static MetaTileEntityPassthroughHatchLaser PASSTHROUGH_HATCH_LASER;
     public static MetaTileEntityComputationHatch COMPUTATION_HATCH_RECEIVER;
     public static MetaTileEntityComputationHatch COMPUTATION_HATCH_TRANSMITTER;
@@ -923,6 +925,9 @@ public class MetaTileEntities {
                 new MetaTileEntityPassthroughHatchFluid(gregtechId("passthrough_hatch_fluid"), 3));
         PASSTHROUGH_HATCH_LASER = registerMetaTileEntity(1404,
                 new MetaTileEntityPassthroughHatchLaser(gregtechId("passthrough_hatch_laser"), 5));
+        PASSTHROUGH_HATCH_COMPUTATION=registerMetaTileEntity(1405,
+                new MetaTileEntityPassthroughHatchComputation(gregtechId("passthrough_hatch_computer"),5));
+
         //其他通行仓1405-1406
 
         OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1407,

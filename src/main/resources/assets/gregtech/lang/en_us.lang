@@ -5439,9 +5439,8 @@ gregtech.machine.passthrough_hatch_fluid.name=Fluid Passthrough Hatch
 gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to the other
 gregtech.machine.passthrough_hatch_laser.name=Laser Passthrough Hatch
 gregtech.machine.passthrough_hatch_laser.tooltip=Sends Laser Power from one Side to the other
-gregtech.machine.passthrough_computationhatch.tooltip.1=§d超净间的算力传递方式
-gregtech.machine.passthrough_computationhatch.tooltip.2=§d正向接收反向输送
-gregtech.machine.passthrough_hatch_computer.name=算力通行仓
+gregtech.machine.passthrough_hatch_computer.name=Computation Passthrough Hatch
+gregtech.machine.passthrough_hatch_computation.tooltip=Sends Computation from one Side to the other
 
 gregtech.machine.reservoir_hatch.name=Reservoir Hatch
 gregtech.machine.reservoir_hatch.tooltip=Not a Sink

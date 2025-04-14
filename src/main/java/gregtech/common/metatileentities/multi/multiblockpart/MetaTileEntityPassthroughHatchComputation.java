@@ -1,4 +1,4 @@
-package gtqt.common.metatileentities.multi.multiblockpart;
+package gregtech.common.metatileentities.multi.multiblockpart;
 
 import codechicken.lib.render.CCRenderState;
 
@@ -16,7 +16,6 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 
@@ -34,17 +33,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-public class MetaTileeneityPassthroughHatchComputationHatch extends MetaTileEntityMultiblockPart
+public class MetaTileEntityPassthroughHatchComputation extends MetaTileEntityMultiblockPart
         implements IPassthroughHatch,
                    IMultiblockAbilityPart<IPassthroughHatch>, IOpticalComputationHatch {
 
-    public MetaTileeneityPassthroughHatchComputationHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, 1);
+    public MetaTileEntityPassthroughHatchComputation(ResourceLocation metaTileEntityId,int tier) {
+        super(metaTileEntityId, tier);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileeneityPassthroughHatchComputationHatch(this.metaTileEntityId);
+        return new MetaTileEntityPassthroughHatchComputation(this.metaTileEntityId, getTier());
     }
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
@@ -94,8 +93,7 @@ public class MetaTileeneityPassthroughHatchComputationHatch extends MetaTileEnti
         return null;
     }
     public void addInformation(ItemStack stack, World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format( "gregtech.machine.passthrough_computationhatch.tooltip.1"));
-        tooltip.add(I18n.format( "gregtech.machine.passthrough_computationhatch.tooltip.2"));
+        tooltip.add(I18n.format( "gregtech.machine.passthrough_hatch_computation.tooltip"));
     }
     @Override
     public boolean isTransmitter() {

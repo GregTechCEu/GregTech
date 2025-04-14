@@ -5436,6 +5436,7 @@ gregtech.machine.passthrough_hatch_fluid.tooltip=将流体从一侧输送到另�
 gregtech.machine.passthrough_hatch_laser.name=激光通行仓
 gregtech.machine.passthrough_hatch_laser.tooltip=将激光从一侧输送到另一侧
 gregtech.machine.passthrough_hatch_computer.name=算力通行仓
+gregtech.machine.passthrough_hatch_computation.tooltip=将算力从一侧输送到另一侧
 
 
 gregtech.machine.reservoir_hatch.name=水库仓
@@ -5805,8 +5806,6 @@ gregtech.gui.item_passthrough.enabled=物品通行已启用
 gregtech.gui.item_passthrough.disabled=物品通行已禁用
 gregtech.gui.fluid_passthrough.enabled=流体通行已启用
 gregtech.gui.fluid_passthrough.disabled=流体通行已禁用
-gregtech.machine.passthrough_computationhatch.tooltip.1=§d超净间的算力传递方式
-gregtech.machine.passthrough_computationhatch.tooltip.2=§d正向接收反向输送
 
 ore.spawnlocation.name=矿物生成信息
 gregtech.jei.ore.surface_rock_1=这种地表岩石标志着矿脉的生成位置。
