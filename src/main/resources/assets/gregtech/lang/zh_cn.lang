@@ -5234,6 +5234,7 @@ gregtech.machine.energy_hatch.input.max.name=§c§lMAX§r能源仓
 
 gregtech.machine.energy_hatch.input_hi_amp.tooltip=为多方块结构输入更多电流
 
+gregtech.machine.energy_hatch.input_4a.ulv.name=4安§8ULV§r能源仓
 gregtech.machine.energy_hatch.input_4a.lv.name=4安§7LV§r能源仓
 gregtech.machine.energy_hatch.input_4a.mv.name=4安§bMV§r能源仓
 gregtech.machine.energy_hatch.input_4a.hv.name=4安§6HV§r能源仓
@@ -5249,6 +5250,11 @@ gregtech.machine.energy_hatch.input_4a.uxv.name=4安§eUXV§r能源仓
 gregtech.machine.energy_hatch.input_4a.opv.name=4安§9OpV§r能源仓
 gregtech.machine.energy_hatch.input_4a.max.name=4安§c§lMAX§r能源仓
 
+gregtech.machine.energy_hatch.input_16a.ulv.name=16安§8ULV§r能源仓
+gregtech.machine.energy_hatch.input_16a.lv.name=16安§7LV§r能源仓
+gregtech.machine.energy_hatch.input_16a.mv.name=16安§bMV§r能源仓
+gregtech.machine.energy_hatch.input_16a.hv.name=16安§6HV§r能源仓
+gregtech.machine.energy_hatch.input_16a.ev.name=16安§5EV§r能源仓
 gregtech.machine.energy_hatch.input_16a.iv.name=16安§1IV§r能源仓
 gregtech.machine.energy_hatch.input_16a.luv.name=16安§dLuV§r能源仓
 gregtech.machine.energy_hatch.input_16a.zpm.name=16安§cZPM§r能源仓
@@ -5262,6 +5268,11 @@ gregtech.machine.energy_hatch.input_16a.max.name=16安§c§lMAX§r能源仓
 
 gregtech.machine.substation_hatch.input.tooltip=为蓄能变电站输入能量
 
+gregtech.machine.substation_hatch.input_64a.ulv.name=64安§8ULV§r变电能源仓
+gregtech.machine.substation_hatch.input_64a.lv.name=64安§7LV§r变电能源仓
+gregtech.machine.substation_hatch.input_64a.mv.name=64安§bMV§r变电能源仓
+gregtech.machine.substation_hatch.input_64a.hv.name=64安§6HV§r变电能源仓
+gregtech.machine.substation_hatch.input_64a.ev.name=64安§5EV§r变电能源仓
 gregtech.machine.substation_hatch.input_64a.iv.name=64安§1IV§r变电能源仓
 gregtech.machine.substation_hatch.input_64a.luv.name=64安§dLuV§r变电能源仓
 gregtech.machine.substation_hatch.input_64a.zpm.name=64安§cZPM§r变电能源仓
@@ -5293,6 +5304,7 @@ gregtech.machine.energy_hatch.output.max.name=§c§lMAX§r动力仓
 
 gregtech.machine.energy_hatch.output_hi_amp.tooltip=为多方块结构输出更多电流
 
+gregtech.machine.energy_hatch.output_4a.ulv.name=4安§8ULV§r动力仓
 gregtech.machine.energy_hatch.output_4a.lv.name=4安§7LV§r动力仓
 gregtech.machine.energy_hatch.output_4a.mv.name=4安§bMV§r动力仓
 gregtech.machine.energy_hatch.output_4a.hv.name=4安§6HV§r动力仓
@@ -5308,6 +5320,11 @@ gregtech.machine.energy_hatch.output_4a.uxv.name=4安§eUXV§r动力仓
 gregtech.machine.energy_hatch.output_4a.opv.name=4安§9OpV§r动力仓
 gregtech.machine.energy_hatch.output_4a.max.name=4安§c§lMAX§r动力仓
 
+gregtech.machine.energy_hatch.output_16a.ulv.name=64安§8ULV§r动力仓
+gregtech.machine.energy_hatch.output_16a.lv.name=16安§7LV§r动力仓
+gregtech.machine.energy_hatch.output_16a.mv.name=16安§bMV§r动力仓
+gregtech.machine.energy_hatch.output_16a.hv.name=16安§6HV§r动力仓
+gregtech.machine.energy_hatch.output_16a.ev.name=16安§5EV§r动力仓
 gregtech.machine.energy_hatch.output_16a.iv.name=16安§1IV§r动力仓
 gregtech.machine.energy_hatch.output_16a.luv.name=16安§dLuV§r动力仓
 gregtech.machine.energy_hatch.output_16a.zpm.name=16安§cZPM§r动力仓
@@ -5321,6 +5338,11 @@ gregtech.machine.energy_hatch.output_16a.max.name=16安§c§lMAX§r动力仓
 
 gregtech.machine.substation_hatch.output.tooltip=为蓄能变电站输出能量
 
+gregtech.machine.substation_hatch.output_64a.ulv.name=64安§8ULV§r变电动力仓
+gregtech.machine.substation_hatch.output_64a.lv.name=64安§7LV§r变电动力仓
+gregtech.machine.substation_hatch.output_64a.mv.name=64安§bMV§r变电动力仓
+gregtech.machine.substation_hatch.output_64a.hv.name=64安§6HV§r变电动力仓
+gregtech.machine.substation_hatch.output_64a.ev.name=64安§5EV§r变电动力仓
 gregtech.machine.substation_hatch.output_64a.iv.name=64安§1IV§r变电动力仓
 gregtech.machine.substation_hatch.output_64a.luv.name=64安§dLuV§r变电动力仓
 gregtech.machine.substation_hatch.output_64a.zpm.name=64安§cZPM§r变电动力仓
@@ -5419,10 +5441,12 @@ gregtech.machine.passthrough_hatch_computer.name=算力通行仓
 gregtech.machine.reservoir_hatch.name=水库仓
 gregtech.machine.reservoir_hatch.tooltip=并不是水槽
 
-gregtech.machine.data_access_hatch.name=数据访问仓
 gregtech.machine.data_access_hatch.tooltip.1=令多方块结构得以访问数据
 gregtech.machine.data_access_hatch.tooltip.2=添加了§a%s§7个数据容器（闪存等）插槽
-gregtech.machine.data_access_hatch.advanced.name=高级数据访问仓
+gregtech.machine.data_access_hatch.i.name=基础数据访问仓
+gregtech.machine.data_access_hatch.ii.name=高级数据访问仓
+gregtech.machine.data_access_hatch.iii.name=特级数据访问仓
+gregtech.machine.data_access_hatch.iv.name=顶级数据访问仓
 gregtech.machine.data_access_hatch.creative.name=创造模式数据访问仓
 
 gregtech.machine.data_access_hatch.optical.receiver.name=光学数据靶仓
@@ -5492,6 +5516,28 @@ gregtech.machine.laser_hatch.source_65536a.uxv.name=65536安§eUXV§r激光源�
 gregtech.machine.laser_hatch.source_65536a.opv.name=65536安§9OpV§r激光源仓
 gregtech.machine.laser_hatch.source_65536a.max.name=65536安§c§lMAX§r激光源仓
 
+gregtech.machine.laser_hatch.source_262144a.iv.name=262144安§1IV§r激光源仓
+gregtech.machine.laser_hatch.source_262144a.luv.name=262144安§dLuV§r激光源仓
+gregtech.machine.laser_hatch.source_262144a.zpm.name=262144安§cZPM§r激光源仓
+gregtech.machine.laser_hatch.source_262144a.uv.name=262144安§3UV§r激光源仓
+gregtech.machine.laser_hatch.source_262144a.uhv.name=262144安§4UHV§r激光源仓
+gregtech.machine.laser_hatch.source_262144a.uev.name=262144安§aUEV§r激光源仓
+gregtech.machine.laser_hatch.source_262144a.uiv.name=262144安§2UIV§r激光源仓
+gregtech.machine.laser_hatch.source_262144a.uxv.name=262144安§eUXV§r激光源仓
+gregtech.machine.laser_hatch.source_262144a.opv.name=262144安§9OpV§r激光源仓
+gregtech.machine.laser_hatch.source_262144a.max.name=262144安§c§lMAX§r激光源仓
+
+gregtech.machine.laser_hatch.source_1048576a.iv.name=1048576安§1IV§r激光源仓
+gregtech.machine.laser_hatch.source_1048576a.luv.name=1048576安§dLuV§r激光源仓
+gregtech.machine.laser_hatch.source_1048576a.zpm.name=1048576安§cZPM§r激光源仓
+gregtech.machine.laser_hatch.source_1048576a.uv.name=1048576安§3UV§r激光源仓
+gregtech.machine.laser_hatch.source_1048576a.uhv.name=1048576安§4UHV§r激光源仓
+gregtech.machine.laser_hatch.source_1048576a.uev.name=1048576安§aUEV§r激光源仓
+gregtech.machine.laser_hatch.source_1048576a.uiv.name=1048576安§2UIV§r激光源仓
+gregtech.machine.laser_hatch.source_1048576a.uxv.name=1048576安§eUXV§r激光源仓
+gregtech.machine.laser_hatch.source_1048576a.opv.name=1048576安§9OpV§r激光源仓
+gregtech.machine.laser_hatch.source_1048576a.max.name=1048576安§c§lMAX§r激光源仓
+
 gregtech.machine.laser_hatch.target_256a.iv.name=256安§1IV§r激光靶仓
 gregtech.machine.laser_hatch.target_256a.luv.name=256安§dLuV§r激光靶仓
 gregtech.machine.laser_hatch.target_256a.zpm.name=256安§cZPM§r激光靶仓
@@ -5546,6 +5592,28 @@ gregtech.machine.laser_hatch.target_65536a.uiv.name=65536安§2UIV§r激光靶�
 gregtech.machine.laser_hatch.target_65536a.uxv.name=65536安§eUXV§r激光靶仓
 gregtech.machine.laser_hatch.target_65536a.opv.name=65536安§9OpV§r激光靶仓
 gregtech.machine.laser_hatch.target_65536a.max.name=65536安§c§lMAX§r激光靶仓
+
+gregtech.machine.laser_hatch.target_262144a.iv.name=262144安§1IV§r激光靶仓
+gregtech.machine.laser_hatch.target_262144a.luv.name=262144安§dLuV§r激光靶仓
+gregtech.machine.laser_hatch.target_262144a.zpm.name=262144安§cZPM§r激光靶仓
+gregtech.machine.laser_hatch.target_262144a.uv.name=262144安§3UV§r激光靶仓
+gregtech.machine.laser_hatch.target_262144a.uhv.name=262144安§4UHV§r激光靶仓
+gregtech.machine.laser_hatch.target_262144a.uev.name=262144安§aUEV§r激光靶仓
+gregtech.machine.laser_hatch.target_262144a.uiv.name=262144安§2UIV§r激光靶仓
+gregtech.machine.laser_hatch.target_262144a.uxv.name=262144安§eUXV§r激光靶仓
+gregtech.machine.laser_hatch.target_262144a.opv.name=262144安§9OpV§r激光靶仓
+gregtech.machine.laser_hatch.target_262144a.max.name=262144安§c§lMAX§r激光靶仓
+
+gregtech.machine.laser_hatch.target_1048576a.iv.name=1048576安§1IV§r激光靶仓
+gregtech.machine.laser_hatch.target_1048576a.luv.name=1048576安§dLuV§r激光靶仓
+gregtech.machine.laser_hatch.target_1048576a.zpm.name=1048576安§cZPM§r激光靶仓
+gregtech.machine.laser_hatch.target_1048576a.uv.name=1048576安§3UV§r激光靶仓
+gregtech.machine.laser_hatch.target_1048576a.uhv.name=1048576安§4UHV§r激光靶仓
+gregtech.machine.laser_hatch.target_1048576a.uev.name=1048576安§aUEV§r激光靶仓
+gregtech.machine.laser_hatch.target_1048576a.uiv.name=1048576安§2UIV§r激光靶仓
+gregtech.machine.laser_hatch.target_1048576a.uxv.name=1048576安§eUXV§r激光靶仓
+gregtech.machine.laser_hatch.target_1048576a.opv.name=1048576安§9OpV§r激光靶仓
+gregtech.machine.laser_hatch.target_1048576a.max.name=1048576安§c§lMAX§r激光靶仓
 
 gregtech.machine.laser_hatch.source.tooltip1=远距离发射能量
 gregtech.machine.laser_hatch.target.tooltip1=远距离接收能量

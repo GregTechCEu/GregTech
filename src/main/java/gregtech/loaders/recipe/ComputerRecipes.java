@@ -23,10 +23,18 @@ public class ComputerRecipes {
 
     public static void init() {
         ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ITEM_IMPORT_BUS[MV])
+                .inputNBT(TOOL_DATA_STICK, 1, NBTMatcher.ANY, NBTCondition.ANY)
+                .input(circuit, Tier.HV, 4)
+                .output(DATA_ACCESS_HATCH[0])
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 2))
+                .duration(200).EUt(VA[MV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ITEM_IMPORT_BUS[EV])
                 .inputNBT(TOOL_DATA_STICK, 4, NBTMatcher.ANY, NBTCondition.ANY)
                 .input(circuit, Tier.IV, 4)
-                .output(DATA_ACCESS_HATCH)
+                .output(DATA_ACCESS_HATCH[1])
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 2))
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(200).EUt(VA[EV]).buildAndRegister();
@@ -35,11 +43,21 @@ public class ComputerRecipes {
                 .input(ITEM_IMPORT_BUS[LuV])
                 .inputNBT(TOOL_DATA_ORB, 4, NBTMatcher.ANY, NBTCondition.ANY)
                 .input(circuit, Tier.ZPM, 4)
-                .output(ADVANCED_DATA_ACCESS_HATCH)
+                .output(DATA_ACCESS_HATCH[2])
                 .fluidInputs(SolderingAlloy.getFluid(L * 4))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .stationResearch(b -> b.researchStack(DATA_BANK.getStackForm()).CWUt(4))
                 .duration(400).EUt(6000).buildAndRegister();
+
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(ITEM_IMPORT_BUS[UV])
+                .inputNBT(TOOL_DATA_ORB, 4, NBTMatcher.ANY, NBTCondition.ANY)
+                .input(circuit, Tier.UHV, 4)
+                .output(DATA_ACCESS_HATCH[3])
+                .fluidInputs(SolderingAlloy.getFluid(L * 16))
+                .fluidInputs(Polybenzimidazole.getFluid(L * 16))
+                .stationResearch(b -> b.researchStack(DATA_BANK.getStackForm()).CWUt(4))
+                .duration(400).EUt(96000).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(frameGt, Iridium)
@@ -103,7 +121,7 @@ public class ComputerRecipes {
                 .fluidInputs(Lubricant.getFluid(500))
                 .output(DATA_BANK)
                 .scannerResearch(b -> b
-                        .researchStack(DATA_ACCESS_HATCH.getStackForm())
+                        .researchStack(DATA_ACCESS_HATCH[1].getStackForm())
                         .duration(2400)
                         .EUt(VA[EV]))
                 .duration(1200).EUt(6000).buildAndRegister();

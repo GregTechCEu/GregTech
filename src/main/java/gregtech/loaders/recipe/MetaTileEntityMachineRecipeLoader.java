@@ -24,6 +24,7 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.blocks.MetaBlocks.*;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
+import static gtqt.api.util.MaterialHelper.*;
 
 public class MetaTileEntityMachineRecipeLoader {
 
@@ -517,7 +518,6 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(1000).EUt(VA[UHV]).buildAndRegister();
 
         // Power Transformers
-
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HI_AMP_TRANSFORMER[ULV])
                 .input(ELECTRIC_PUMP_LV)
@@ -618,264 +618,70 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(200).EUt(VA[UV]).buildAndRegister();
 
         // 4A Energy Hatches
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH[EV])
-                .input(wireGtQuadruple, Aluminium, 2)
-                .input(plate, Titanium, 2)
-                .output(ENERGY_INPUT_HATCH_4A[0])
-                .duration(100).EUt(VA[HV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH[IV])
-                .input(wireGtQuadruple, Tungsten, 2)
-                .input(plate, TungstenSteel, 2)
-                .output(ENERGY_INPUT_HATCH_4A[1])
-                .duration(100).EUt(VA[EV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH[LuV])
-                .input(wireGtQuadruple, NiobiumTitanium, 2)
-                .input(plate, RhodiumPlatedPalladium, 2)
-                .output(ENERGY_INPUT_HATCH_4A[2])
-                .duration(100).EUt(VA[IV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH[ZPM])
-                .input(wireGtQuadruple, VanadiumGallium, 2)
-                .input(plate, NaquadahAlloy, 2)
-                .output(ENERGY_INPUT_HATCH_4A[3])
-                .duration(100).EUt(VA[LuV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH[UV])
-                .input(wireGtQuadruple, YttriumBariumCuprate, 2)
-                .input(plate, Darmstadtium, 2)
-                .output(ENERGY_INPUT_HATCH_4A[4])
-                .duration(100).EUt(VA[ZPM]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH[UHV])
-                .input(wireGtQuadruple, Europium, 2)
-                .input(plate, Neutronium, 2)
-                .output(ENERGY_INPUT_HATCH_4A[5])
-                .duration(100).EUt(VA[UV]).buildAndRegister();
+        for (int i = 0; i < 10; i++) {
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(ENERGY_INPUT_HATCH[i])
+                    .input(wireGtQuadruple, Cable[i], 2)
+                    .input(plate, Plate[i], 2)
+                    .output(ENERGY_INPUT_HATCH_4A[i])
+                    .duration(100).EUt(VA[ULV + i]).buildAndRegister();
+        }
 
         // 16A Energy Hatches
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[IV])
-                .input(ENERGY_INPUT_HATCH_4A[1])
-                .input(wireGtOctal, Tungsten, 2)
-                .input(plate, TungstenSteel, 4)
-                .output(ENERGY_INPUT_HATCH_16A[0])
-                .duration(200).EUt(VA[EV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[LuV])
-                .input(ENERGY_INPUT_HATCH_4A[2])
-                .input(wireGtOctal, NiobiumTitanium, 2)
-                .input(plate, RhodiumPlatedPalladium, 4)
-                .output(ENERGY_INPUT_HATCH_16A[1])
-                .duration(200).EUt(VA[IV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[ZPM])
-                .input(ENERGY_INPUT_HATCH_4A[3])
-                .input(wireGtOctal, VanadiumGallium, 2)
-                .input(plate, NaquadahAlloy, 4)
-                .output(ENERGY_INPUT_HATCH_16A[2])
-                .duration(200).EUt(VA[LuV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[UV])
-                .input(ENERGY_INPUT_HATCH_4A[4])
-                .input(wireGtOctal, YttriumBariumCuprate, 2)
-                .input(plate, Darmstadtium, 4)
-                .output(ENERGY_INPUT_HATCH_16A[3])
-                .duration(200).EUt(VA[ZPM]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[UV])
-                .input(ENERGY_INPUT_HATCH_4A[5], 2)
-                .input(wireGtOctal, Europium, 2)
-                .input(plate, Neutronium, 4)
-                .output(ENERGY_INPUT_HATCH_16A[4])
-                .duration(200).EUt(VA[UV]).buildAndRegister();
+        for (int i = 0; i < 10; i++) {
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(TRANSFORMER[i])
+                    .input(ENERGY_INPUT_HATCH_4A[i])
+                    .input(wireGtOctal, Cable[i], 2)
+                    .input(plate, Plate[i], 4)
+                    .output(ENERGY_INPUT_HATCH_16A[i])
+                    .duration(200).EUt(VA[ULV + i]).buildAndRegister();
+        }
 
         // 64A Substation Energy Hatches
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[IV])
-                .input(ENERGY_INPUT_HATCH_16A[0])
-                .input(wireGtHex, Tungsten, 2)
-                .input(plate, TungstenSteel, 6)
-                .output(SUBSTATION_ENERGY_INPUT_HATCH[0])
-                .duration(400).EUt(VA[EV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[LuV])
-                .input(ENERGY_INPUT_HATCH_16A[1])
-                .input(wireGtHex, NiobiumTitanium, 2)
-                .input(plate, RhodiumPlatedPalladium, 6)
-                .output(SUBSTATION_ENERGY_INPUT_HATCH[1])
-                .duration(400).EUt(VA[IV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[ZPM])
-                .input(ENERGY_INPUT_HATCH_16A[2])
-                .input(wireGtHex, VanadiumGallium, 2)
-                .input(plate, NaquadahAlloy, 6)
-                .output(SUBSTATION_ENERGY_INPUT_HATCH[2])
-                .duration(400).EUt(VA[LuV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[UV])
-                .input(ENERGY_INPUT_HATCH_16A[3])
-                .input(wireGtHex, YttriumBariumCuprate, 2)
-                .input(plate, Darmstadtium, 6)
-                .output(SUBSTATION_ENERGY_INPUT_HATCH[3])
-                .duration(400).EUt(VA[ZPM]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[UV])
-                .input(ENERGY_INPUT_HATCH_16A[4])
-                .input(wireGtHex, Europium, 2)
-                .input(plate, Neutronium, 6)
-                .output(SUBSTATION_ENERGY_INPUT_HATCH[4])
-                .duration(400).EUt(VA[UV]).buildAndRegister();
+        for (int i = 0; i < 10; i++) {
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(POWER_TRANSFORMER[i])
+                    .input(ENERGY_INPUT_HATCH_16A[i])
+                    .input(wireGtHex, Cable[i], 2)
+                    .input(plate, Plate[i], 6)
+                    .output(SUBSTATION_ENERGY_INPUT_HATCH[i])
+                    .duration(400).EUt(VA[ULV + i]).buildAndRegister();
+        }
 
         // 4A Dynamo Hatches
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH[EV])
-                .input(wireGtQuadruple, Aluminium, 2)
-                .input(plate, Titanium, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[0])
-                .duration(100).EUt(VA[HV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH[IV])
-                .input(wireGtQuadruple, Tungsten, 2)
-                .input(plate, TungstenSteel, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[1])
-                .duration(100).EUt(VA[EV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH[LuV])
-                .input(wireGtQuadruple, NiobiumTitanium, 2)
-                .input(plate, RhodiumPlatedPalladium, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[2])
-                .duration(100).EUt(VA[IV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[ZPM])
-                .input(ENERGY_OUTPUT_HATCH[ZPM])
-                .input(wireGtQuadruple, VanadiumGallium, 2)
-                .input(plate, NaquadahAlloy, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[3])
-                .duration(100).EUt(VA[LuV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH[UV])
-                .input(wireGtQuadruple, YttriumBariumCuprate, 2)
-                .input(plate, Darmstadtium, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[4])
-                .duration(100).EUt(VA[ZPM]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH[UHV])
-                .input(wireGtQuadruple, Europium, 2)
-                .input(plate, Neutronium, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[5])
-                .duration(100).EUt(VA[UV]).buildAndRegister();
+        for (int i = 0; i < 10; i++) {
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(ENERGY_OUTPUT_HATCH[i])
+                    .input(wireGtQuadruple, Cable[i], 2)
+                    .input(plate, Plate[i], 2)
+                    .output(ENERGY_OUTPUT_HATCH_4A[i])
+                    .duration(100).EUt(VA[ULV + i]).buildAndRegister();
+        }
 
         // 16A Dynamo Hatches
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[IV])
-                .input(ENERGY_OUTPUT_HATCH_4A[1])
-                .input(wireGtOctal, Tungsten, 2)
-                .input(plate, TungstenSteel, 4)
-                .output(ENERGY_OUTPUT_HATCH_16A[0])
-                .duration(200).EUt(VA[EV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[LuV])
-                .input(ENERGY_OUTPUT_HATCH_4A[2])
-                .input(wireGtOctal, NiobiumTitanium, 2)
-                .input(plate, RhodiumPlatedPalladium, 4)
-                .output(ENERGY_OUTPUT_HATCH_16A[1])
-                .duration(200).EUt(VA[IV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[ZPM])
-                .input(ENERGY_OUTPUT_HATCH_4A[3])
-                .input(wireGtOctal, VanadiumGallium, 2)
-                .input(plate, NaquadahAlloy, 4)
-                .output(ENERGY_OUTPUT_HATCH_16A[2])
-                .duration(200).EUt(VA[LuV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[UV])
-                .input(ENERGY_OUTPUT_HATCH_4A[4])
-                .input(wireGtOctal, YttriumBariumCuprate, 2)
-                .input(plate, Darmstadtium, 4)
-                .output(ENERGY_OUTPUT_HATCH_16A[3])
-                .duration(200).EUt(VA[ZPM]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[UV])
-                .input(ENERGY_OUTPUT_HATCH_4A[5])
-                .input(wireGtOctal, Europium, 2)
-                .input(plate, Neutronium, 4)
-                .output(ENERGY_OUTPUT_HATCH_16A[4])
-                .duration(200).EUt(VA[UV]).buildAndRegister();
+        for (int i = 0; i < 10; i++) {
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(TRANSFORMER[i])
+                    .input(ENERGY_OUTPUT_HATCH_4A[i])
+                    .input(wireGtOctal, Cable[i], 2)
+                    .input(plate, Plate[i], 4)
+                    .output(ENERGY_OUTPUT_HATCH_16A[i])
+                    .duration(200).EUt(VA[ULV + i]).buildAndRegister();
+        }
 
         // 64A Substation Dynamo Hatches
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[IV])
-                .input(ENERGY_OUTPUT_HATCH_16A[0])
-                .input(wireGtHex, Tungsten, 2)
-                .input(plate, TungstenSteel, 6)
-                .output(SUBSTATION_ENERGY_OUTPUT_HATCH[0])
-                .duration(400).EUt(VA[EV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[LuV])
-                .input(ENERGY_OUTPUT_HATCH_16A[1])
-                .input(wireGtHex, NiobiumTitanium, 2)
-                .input(plate, RhodiumPlatedPalladium, 6)
-                .output(SUBSTATION_ENERGY_OUTPUT_HATCH[1])
-                .duration(400).EUt(VA[IV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[ZPM])
-                .input(ENERGY_OUTPUT_HATCH_16A[2])
-                .input(wireGtHex, VanadiumGallium, 2)
-                .input(plate, NaquadahAlloy, 6)
-                .output(SUBSTATION_ENERGY_OUTPUT_HATCH[2])
-                .duration(400).EUt(VA[LuV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[UV])
-                .input(ENERGY_OUTPUT_HATCH_16A[3])
-                .input(wireGtHex, YttriumBariumCuprate, 2)
-                .input(plate, Darmstadtium, 6)
-                .output(SUBSTATION_ENERGY_OUTPUT_HATCH[3])
-                .duration(400).EUt(VA[ZPM]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[UV])
-                .input(ENERGY_OUTPUT_HATCH_16A[4])
-                .input(wireGtHex, Europium, 2)
-                .input(plate, Neutronium, 6)
-                .output(SUBSTATION_ENERGY_OUTPUT_HATCH[4])
-                .duration(400).EUt(VA[UV]).buildAndRegister();
+        for (int i = 0; i < 10; i++) {
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(POWER_TRANSFORMER[i])
+                    .input(ENERGY_OUTPUT_HATCH_16A[i])
+                    .input(wireGtHex, Cable[i], 2)
+                    .input(plate, Plate[i], 6)
+                    .output(SUBSTATION_ENERGY_OUTPUT_HATCH[i])
+                    .duration(400).EUt(VA[ULV + i]).buildAndRegister();
+        }
 
         // Maintenance Hatch
-
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[LV])
                 .circuitMeta(8)

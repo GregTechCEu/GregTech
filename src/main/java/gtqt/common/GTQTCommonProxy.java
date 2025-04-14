@@ -6,6 +6,8 @@ import gregtech.common.items.MetaItems;
 
 import gtqt.common.metatileentities.GTQTMetaTileEntities;
 
+import gtqt.loaders.recipe.RecipeManager;
+
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -35,5 +37,9 @@ public class GTQTCommonProxy {
 
     public static void preInit() {
         GTQTMetaTileEntities.initialization();
+    }
+
+    public static void registerRecipes() {
+        RecipeManager.register();
     }
 }

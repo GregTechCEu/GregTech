@@ -350,6 +350,7 @@ public class CommonProxy {
         GTLog.logger.info("Registering recipes...");
 
         GTRecipeManager.load();
+        GTQTCommonProxy.registerRecipes();
     }
 
     // this is called almost last, to make sure all mods registered their ore dictionary

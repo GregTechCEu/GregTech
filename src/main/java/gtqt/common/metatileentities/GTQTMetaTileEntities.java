@@ -19,7 +19,7 @@ public class GTQTMetaTileEntities {
     public static MetaTileEntityMEDualHatch ME_DUAL_EXPORT_HATCH;
     public static MetaTileeneityPassthroughHatchComputationHatch MTE_PAS_COM_HATCH;
 
-    //从2000开始写 与gtceu本体共用一个注册表
+    //从2500开始写 与gtceu本体共用一个注册表
     //任务：GTQT内不方便写的内容转移到这里来写
     //例如 高等级的能源仓 激光仓等等
     public static void initialization() {
@@ -31,15 +31,20 @@ public class GTQTMetaTileEntities {
             DUAL_IMPORT_HATCH[i] = new MetaTileEntityDualHatch(gregtechId("dual_hatch.import." + voltageName), i+1, false);
             DUAL_EXPORT_HATCH[i] = new MetaTileEntityDualHatch(gregtechId("dual_hatch.export." + voltageName), i+1, true);
 
-            registerMetaTileEntity(2000 + i, DUAL_IMPORT_HATCH[i]);
-            registerMetaTileEntity(2015 + i, DUAL_EXPORT_HATCH[i]);
+            registerMetaTileEntity(2500 + i, DUAL_IMPORT_HATCH[i]);
+            registerMetaTileEntity(2515 + i, DUAL_EXPORT_HATCH[i]);
 
         }
         ME_DUAL_IMPORT_HATCH = new MetaTileEntityMEDualHatch(gregtechId("me_dual_hatch.import"), false);
         ME_DUAL_EXPORT_HATCH = new MetaTileEntityMEDualHatch(gregtechId("me_dual_hatch.export"), true);
 
+<<<<<<< Updated upstream
         registerMetaTileEntity(2500, ME_DUAL_IMPORT_HATCH);
         registerMetaTileEntity(2501, ME_DUAL_EXPORT_HATCH);
         registerMetaTileEntity(2502, new MetaTileeneityPassthroughHatchComputationHatch(gregtechId("passthrough_hatch_computer")));
+=======
+        registerMetaTileEntity(3000, ME_DUAL_IMPORT_HATCH);
+        registerMetaTileEntity(3001, ME_DUAL_EXPORT_HATCH);
+>>>>>>> Stashed changes
     }
 }

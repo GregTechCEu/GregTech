@@ -5238,6 +5238,7 @@ gregtech.machine.energy_hatch.input.max.name=MAX Energy Hatch
 
 gregtech.machine.energy_hatch.input_hi_amp.tooltip=Multiple Ampere Energy Input for Multiblocks
 
+gregtech.machine.energy_hatch.input_4a.ulv.name=ULV 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.lv.name=LV 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.mv.name=MV 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.hv.name=HV 4A Energy Hatch
@@ -5253,6 +5254,11 @@ gregtech.machine.energy_hatch.input_4a.uxv.name=UXV 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.opv.name=OpV 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.max.name=MAX 4A Energy Hatch
 
+gregtech.machine.energy_hatch.input_16a.ulv.name=ULV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.lv.name=LV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.mv.name=MV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.hv.name=HV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.ev.name=EV 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.iv.name=IV 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.luv.name=LuV 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.zpm.name=ZPM 16A Energy Hatch
@@ -5266,6 +5272,11 @@ gregtech.machine.energy_hatch.input_16a.max.name=MAX 16A Energy Hatch
 
 gregtech.machine.substation_hatch.input.tooltip=Energy Input for the Power Substation
 
+gregtech.machine.substation_hatch.input_64a.ulv.name=ULV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.lv.name=LV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.mv.name=MV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.hv.name=HV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.ev.name=EV 64A Substation Energy Hatch
 gregtech.machine.substation_hatch.input_64a.iv.name=IV 64A Substation Energy Hatch
 gregtech.machine.substation_hatch.input_64a.luv.name=LuV 64A Substation Energy Hatch
 gregtech.machine.substation_hatch.input_64a.zpm.name=ZPM 64A Substation Energy Hatch
@@ -5297,6 +5308,7 @@ gregtech.machine.energy_hatch.output.max.name=MAX Dynamo Hatch
 
 gregtech.machine.energy_hatch.output_hi_amp.tooltip=Multiple Ampere Energy Output for Multiblocks
 
+gregtech.machine.energy_hatch.output_4a.ulv.name=ULV 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.lv.name=LV 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.mv.name=MV 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.hv.name=HV 4A Dynamo Hatch
@@ -5312,6 +5324,11 @@ gregtech.machine.energy_hatch.output_4a.uxv.name=UXV 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.opv.name=OpV 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.max.name=MAX 4A Dynamo Hatch
 
+gregtech.machine.energy_hatch.output_16a.ulv.name=ULV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.lv.name=LV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.mv.name=MV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.hv.name=HV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.ev.name=EV 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.iv.name=IV 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.luv.name=LuV 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.zpm.name=ZPM 16A Dynamo Hatch
@@ -5325,6 +5342,11 @@ gregtech.machine.energy_hatch.output_16a.max.name=MAX 16A Dynamo Hatch
 
 gregtech.machine.substation_hatch.output.tooltip=Energy Output for the Power Substation
 
+gregtech.machine.substation_hatch.output_64a.ulv.name=ULV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.lv.name=LV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.mv.name=MV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.hv.name=HV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.ev.name=EV 64A Substation Dynamo Hatch
 gregtech.machine.substation_hatch.output_64a.iv.name=IV 64A Substation Dynamo Hatch
 gregtech.machine.substation_hatch.output_64a.luv.name=LuV 64A Substation Dynamo Hatch
 gregtech.machine.substation_hatch.output_64a.zpm.name=ZPM 64A Substation Dynamo Hatch
@@ -5424,10 +5446,12 @@ gregtech.machine.passthrough_hatch_computer.name=算力通行仓
 gregtech.machine.reservoir_hatch.name=Reservoir Hatch
 gregtech.machine.reservoir_hatch.tooltip=Not a Sink
 
-gregtech.machine.data_access_hatch.name=Data Access Hatch
 gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
 gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Items
-gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
+gregtech.machine.data_access_hatch.i.name=Basic Data Access Hatch
+gregtech.machine.data_access_hatch.ii.name=Advanced Data Access Hatch
+gregtech.machine.data_access_hatch.iii.name=Ultimate Data Access Hatch I
+gregtech.machine.data_access_hatch.iv.name=Ultimate Data Access Hatch II
 gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
 
 gregtech.machine.data_access_hatch.optical.receiver.name=Optical Data Reception Hatch
@@ -5497,6 +5521,28 @@ gregtech.machine.laser_hatch.source_65536a.uxv.name=UXV 65536A Laser Source Hatc
 gregtech.machine.laser_hatch.source_65536a.opv.name=OpV 65536A Laser Source Hatch
 gregtech.machine.laser_hatch.source_65536a.max.name=MAX 65536A Laser Source Hatch
 
+gregtech.machine.laser_hatch.source_262144a.iv.name=IV 262144A Laser Source Hatch
+gregtech.machine.laser_hatch.source_262144a.luv.name=LuV 262144A Laser Source Hatch
+gregtech.machine.laser_hatch.source_262144a.zpm.name=ZPM 262144A Laser Source Hatch
+gregtech.machine.laser_hatch.source_262144a.uv.name=UV 262144A Laser Source Hatch
+gregtech.machine.laser_hatch.source_262144a.uhv.name=UHV 262144A Laser Source Hatch
+gregtech.machine.laser_hatch.source_262144a.uev.name=UEV 262144A Laser Source Hatch
+gregtech.machine.laser_hatch.source_262144a.uiv.name=UIV 262144A Laser Source Hatch
+gregtech.machine.laser_hatch.source_262144a.uxv.name=UXV 262144A Laser Source Hatch
+gregtech.machine.laser_hatch.source_262144a.opv.name=OpV 262144A Laser Source Hatch
+gregtech.machine.laser_hatch.source_262144a.max.name=MAX 262144A Laser Source Hatch
+
+gregtech.machine.laser_hatch.source_1048576a.iv.name=IV 1048576A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1048576a.luv.name=LuV 1048576A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1048576a.zpm.name=ZPM 1048576A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1048576a.uv.name=UV 1048576A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1048576a.uhv.name=UHV 1048576A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1048576a.uev.name=UEV 1048576A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1048576a.uiv.name=UIV 1048576A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1048576a.uxv.name=UXV 1048576A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1048576a.opv.name=OpV 1048576A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1048576a.max.name=MAX 1048576A Laser Source Hatch
+
 gregtech.machine.laser_hatch.target_256a.iv.name=IV 256A Laser Target Hatch
 gregtech.machine.laser_hatch.target_256a.luv.name=LuV 256A Laser Target Hatch
 gregtech.machine.laser_hatch.target_256a.zpm.name=ZPM 256A Laser Target Hatch
@@ -5551,6 +5597,28 @@ gregtech.machine.laser_hatch.target_65536a.uiv.name=UIV 65536A Laser Target Hatc
 gregtech.machine.laser_hatch.target_65536a.uxv.name=UXV 65536A Laser Target Hatch
 gregtech.machine.laser_hatch.target_65536a.opv.name=OpV 65536A Laser Target Hatch
 gregtech.machine.laser_hatch.target_65536a.max.name=MAX 65536A Laser Target Hatch
+
+gregtech.machine.laser_hatch.target_262144a.iv.name=IV 262144A Laser Target Hatch
+gregtech.machine.laser_hatch.target_262144a.luv.name=LuV 262144A Laser Target Hatch
+gregtech.machine.laser_hatch.target_262144a.zpm.name=ZPM 262144A Laser Target Hatch
+gregtech.machine.laser_hatch.target_262144a.uv.name=UV 262144A Laser Target Hatch
+gregtech.machine.laser_hatch.target_262144a.uhv.name=UHV 262144A Laser Target Hatch
+gregtech.machine.laser_hatch.target_262144a.uev.name=UEV 262144A Laser Target Hatch
+gregtech.machine.laser_hatch.target_262144a.uiv.name=UIV 262144A Laser Target Hatch
+gregtech.machine.laser_hatch.target_262144a.uxv.name=UXV 262144A Laser Target Hatch
+gregtech.machine.laser_hatch.target_262144a.opv.name=OpV 262144A Laser Target Hatch
+gregtech.machine.laser_hatch.target_262144a.max.name=MAX 262144A Laser Target Hatch
+
+gregtech.machine.laser_hatch.target_1048576a.iv.name=IV 1048576A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1048576a.luv.name=LuV 1048576A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1048576a.zpm.name=ZPM 1048576A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1048576a.uv.name=UV 1048576A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1048576a.uhv.name=UHV 1048576A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1048576a.uev.name=UEV 1048576A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1048576a.uiv.name=UIV 1048576A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1048576a.uxv.name=UXV 1048576A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1048576a.opv.name=OpV 1048576A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1048576a.max.name=MAX 1048576A Laser Target Hatch
 
 gregtech.machine.laser_hatch.source.tooltip1=Transmitting power at distance
 gregtech.machine.laser_hatch.target.tooltip1=Receiving power from distance

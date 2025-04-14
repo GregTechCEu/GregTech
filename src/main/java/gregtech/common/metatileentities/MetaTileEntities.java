@@ -219,13 +219,13 @@ public class MetaTileEntities {
     public static final MetaTileEntityMultiFluidHatch[] NONUPLE_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[11]; // EV+
     public static final MetaTileEntityMultiFluidHatch[] SIXTEEN_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[11];
     public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
-    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_4A = new MetaTileEntityEnergyHatch[14]; // EV+
-    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_16A = new MetaTileEntityEnergyHatch[10]; // IV+
+    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_4A = new MetaTileEntityEnergyHatch[GTValues.V.length];
+    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_16A = new MetaTileEntityEnergyHatch[GTValues.V.length];
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
-    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_4A = new MetaTileEntityEnergyHatch[14]; // EV+
-    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_16A = new MetaTileEntityEnergyHatch[10]; // IV+
-    public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_INPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[10]; // IV+
-    public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_OUTPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[10]; // IV+
+    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_4A = new MetaTileEntityEnergyHatch[GTValues.V.length];
+    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_16A = new MetaTileEntityEnergyHatch[GTValues.V.length];
+    public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_INPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[GTValues.V.length];
+    public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_OUTPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[GTValues.V.length];
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[12]; // HV, EV, IV, LuV, ZPM, UV, UHV, UEV, UIV, UXV, OPV,MAX
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UHV + 1]; // LV-UHV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
@@ -244,9 +244,7 @@ public class MetaTileEntities {
     public static MetaTileEntityPassthroughHatchItem PASSTHROUGH_HATCH_ITEM;
     public static MetaTileEntityPassthroughHatchFluid PASSTHROUGH_HATCH_FLUID;
     public static MetaTileEntityReservoirHatch RESERVOIR_HATCH;
-    public static MetaTileEntityDataAccessHatch DATA_ACCESS_HATCH;
-    public static MetaTileEntityDataAccessHatch ADVANCED_DATA_ACCESS_HATCH;
-    public static MetaTileEntityDataAccessHatch CREATIVE_DATA_HATCH;
+    public static MetaTileEntityDataAccessHatch[] DATA_ACCESS_HATCH= new MetaTileEntityDataAccessHatch[5];
     public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_RECEIVER;
     public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_TRANSMITTER;
     public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_256 = new MetaTileEntityLaserHatch[10]; // IV+
@@ -254,11 +252,15 @@ public class MetaTileEntities {
     public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_4096 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_16384 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_65536 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_262144 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_1048576 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_256 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_1024 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_4096 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_16384 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_65536 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_262144 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_1048576 = new MetaTileEntityLaserHatch[10]; // IV+
 
     public static MetaTileEntityPassthroughHatchLaser PASSTHROUGH_HATCH_LASER;
     public static MetaTileEntityComputationHatch COMPUTATION_HATCH_RECEIVER;
@@ -842,47 +844,11 @@ public class MetaTileEntities {
                     new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input." + voltageName), i, 2, false));
             ENERGY_OUTPUT_HATCH[i] = registerMetaTileEntity(1225 + i,
                     new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output." + voltageName), i, 2, true));
-
-            if (i >= GTValues.IV) {
-                int baseId = (i <= GTValues.UHV ? 1240 : 1840);
-
-                ENERGY_INPUT_HATCH_4A[i + 4 - GTValues.IV] = registerMetaTileEntity(baseId + i - GTValues.IV,
-                        new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a." + voltageName), i, 4, false));
-                ENERGY_INPUT_HATCH_16A[i - GTValues.IV] = registerMetaTileEntity(baseId + 5 + i - GTValues.IV,
-                        new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_16a." + voltageName), i, 16,
-                                false));
-                ENERGY_OUTPUT_HATCH_4A[i + 4 - GTValues.IV] = registerMetaTileEntity(baseId + 10 + i - GTValues.IV,
-                        new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a." + voltageName), i, 4, true));
-                ENERGY_OUTPUT_HATCH_16A[i - GTValues.IV] = registerMetaTileEntity(baseId + 15 + i - GTValues.IV,
-                        new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_16a." + voltageName), i, 16,
-                                true));
-                SUBSTATION_ENERGY_INPUT_HATCH[i - GTValues.IV] = registerMetaTileEntity(baseId + 20 + i - GTValues.IV,
-                        new MetaTileEntitySubstationEnergyHatch(gregtechId("substation_hatch.input_64a." + voltageName),
-                                i, 64, false));
-                SUBSTATION_ENERGY_OUTPUT_HATCH[i - GTValues.IV] = registerMetaTileEntity(baseId + 25 + i - GTValues.IV,
-                        new MetaTileEntitySubstationEnergyHatch(
-                                gregtechId("substation_hatch.output_64a." + voltageName), i, 64, true));
-            }
+            ENERGY_INPUT_HATCH_4A[i] = registerMetaTileEntity(1240 + i,
+                    new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a." + voltageName), i, 4, false));
+            ENERGY_OUTPUT_HATCH_4A[i] = registerMetaTileEntity(1255 + i,
+                    new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a." + voltageName), i, 4, true));
         }
-
-        //补充的4A能源仓
-        ENERGY_INPUT_HATCH_4A[0] = registerMetaTileEntity(1394,
-                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a.lv"), GTValues.LV, 4, false));
-        ENERGY_INPUT_HATCH_4A[1] = registerMetaTileEntity(1395,
-                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a.mv"), GTValues.MV, 4, true));
-        ENERGY_INPUT_HATCH_4A[2] = registerMetaTileEntity(1396,
-                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a.hv"), GTValues.HV, 4, false));
-        ENERGY_INPUT_HATCH_4A[3] = registerMetaTileEntity(1397,
-                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a.ev"), GTValues.EV, 4, false));
-
-        ENERGY_OUTPUT_HATCH_4A[0] = registerMetaTileEntity(1398,
-                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a.lv"), GTValues.LV, 4, true));
-        ENERGY_OUTPUT_HATCH_4A[1] = registerMetaTileEntity(1399,
-                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a.mv"), GTValues.MV, 4, true));
-        ENERGY_OUTPUT_HATCH_4A[2] = registerMetaTileEntity(1400,
-                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a.hv"), GTValues.HV, 4, true));
-        ENERGY_OUTPUT_HATCH_4A[3] = registerMetaTileEntity(1401,
-                new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a.ev"), GTValues.EV, 4, true));
 
 
         // Transformer, IDs 1270-1299
@@ -950,18 +916,15 @@ public class MetaTileEntities {
                 new MetaTileEntityAutoMaintenanceHatch(gregtechId("maintenance_hatch_full_auto")));
         CLEANING_MAINTENANCE_HATCH = registerMetaTileEntity(1393,
                 new MetaTileEntityCleaningMaintenanceHatch(gregtechId("maintenance_hatch_cleanroom_auto")));
-
-
+        //1394-1401为能源仓
         PASSTHROUGH_HATCH_ITEM = registerMetaTileEntity(1402,
                 new MetaTileEntityPassthroughHatchItem(gregtechId("passthrough_hatch_item"), 3));
         PASSTHROUGH_HATCH_FLUID = registerMetaTileEntity(1403,
                 new MetaTileEntityPassthroughHatchFluid(gregtechId("passthrough_hatch_fluid"), 3));
-        DATA_ACCESS_HATCH = registerMetaTileEntity(1404,
-                new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch"), GTValues.EV, false));
-        ADVANCED_DATA_ACCESS_HATCH = registerMetaTileEntity(1405,
-                new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.advanced"), GTValues.LuV, false));
-        CREATIVE_DATA_HATCH = registerMetaTileEntity(1406,
-                new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.creative"), GTValues.MAX, true));
+        PASSTHROUGH_HATCH_LASER = registerMetaTileEntity(1404,
+                new MetaTileEntityPassthroughHatchLaser(gregtechId("passthrough_hatch_laser"), 5));
+        //其他通行仓1405-1406
+
         OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1407,
                 new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.receiver"), false));
         OPTICAL_DATA_HATCH_TRANSMITTER = registerMetaTileEntity(1408,
@@ -984,10 +947,9 @@ public class MetaTileEntities {
                 new MetaTileEntityHPCACooler(gregtechId("hpca.active_cooler_component"), true));
         HPCA_BRIDGE_COMPONENT = registerMetaTileEntity(1417,
                 new MetaTileEntityHPCABridge(gregtechId("hpca.bridge_component")));
+        RESERVOIR_HATCH = registerMetaTileEntity(1418,
+                new MetaTileEntityReservoirHatch(gregtechId("reservoir_hatch")));
 
-        RESERVOIR_HATCH = registerMetaTileEntity(1418, new MetaTileEntityReservoirHatch(gregtechId("reservoir_hatch")));
-        PASSTHROUGH_HATCH_LASER = registerMetaTileEntity(1419,
-                new MetaTileEntityPassthroughHatchLaser(gregtechId("passthrough_hatch_laser"), 5));
         endPos = GregTechAPI.isHighTier() ? LASER_INPUT_HATCH_256.length - 1 :
                 Math.min(LASER_INPUT_HATCH_256.length - 1, GTValues.UHV - GTValues.IV);
         for (int i = 0; i < endPos; i++) {
@@ -1273,30 +1235,52 @@ public class MetaTileEntities {
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_16x." + tierName), i, 16, true));
         }
 
-        // 1840-1869 are taken for UHV+ 4A/16A/64A Energy/Dynamo Hatches
-        // 1870-1889 are taken for UHV+ Input/Output Buses/Hatches
+        // Data Access Hatches, IDs 1900-1904
+        DATA_ACCESS_HATCH[0] = registerMetaTileEntity(1900,
+                new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.i"), GTValues.MV, false));
+        DATA_ACCESS_HATCH[1] = registerMetaTileEntity(1901,
+                new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.ii"), GTValues.EV, false));
+        DATA_ACCESS_HATCH[2] = registerMetaTileEntity(1902,
+                new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.iii"), GTValues.LuV, false));
+        DATA_ACCESS_HATCH[3] = registerMetaTileEntity(1903,
+                new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.iv"), GTValues.UV, false));
+        DATA_ACCESS_HATCH[4] = registerMetaTileEntity(1904,
+                new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.creative"), GTValues.MAX, true));
 
-        /*
-         * FOR ADDON DEVELOPERS:
-         *
-         * GTCEu will not take more than 2000 IDs. Anything past ID 1999
-         * is considered FAIR GAME, take whatever you like.
-         *
-         * If you would like to reserve IDs, feel free to reach out to the
-         * development team and claim a range of IDs! We will mark any
-         * claimed ranges below this comment. Max value is 32767.
-         *
-         * - Gregicality / Shadows of Greg: 2000-3999
-         * - Reserved for Integration Modules in GTCEu: 4000-4499
-         * - GregTech Food Option: 8500-8999
-         * - HtmlTech: 9000-9499
-         * - PCM's Ore Addon: 9500-9999
-         * - GCM: 10000-10099
-         * - MechTech: 10100-10499
-         * - MBT 10500 - 10999
-         * - CT(MBT) 32000 - ~
-         * - FREE RANGE 11000-32767
-         */
+        //更多激光仓
+        endPos = GregTechAPI.isHighTier() ? LASER_INPUT_HATCH_256.length - 1 :
+                Math.min(LASER_INPUT_HATCH_256.length - 1, GTValues.UHV - GTValues.IV);
+        for (int i = 0; i < endPos; i++) {
+            int v = i + GTValues.IV;
+            String voltageName = GTValues.VN[v].toLowerCase();
+            LASER_INPUT_HATCH_262144[i] = registerMetaTileEntity(1910 + i,
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_262144a." + voltageName), false, v, 262144));
+            LASER_OUTPUT_HATCH_262144[i] = registerMetaTileEntity(1919 + i,
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_262144a." + voltageName), true, v, 262144));
+            LASER_INPUT_HATCH_1048576[i] = registerMetaTileEntity(1928 + i,
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_1048576a." + voltageName), false, v, 1048576));
+            LASER_OUTPUT_HATCH_1048576[i] = registerMetaTileEntity(1937 + i,
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_1048576a." + voltageName), true, v, 1048576));
+        }
+
+        //更多能源仓 1950
+        endPos = GregTechAPI.isHighTier() ? ENERGY_INPUT_HATCH.length - 1 :
+                Math.min(ENERGY_INPUT_HATCH.length - 1, GTValues.UV + 2);
+        for (int i = 0; i < endPos; i++) {
+            String voltageName = GTValues.VN[i].toLowerCase();
+            ENERGY_INPUT_HATCH_16A[i] = registerMetaTileEntity(1950+ i,
+                    new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_16a." + voltageName), i, 16,
+                            false));
+            ENERGY_OUTPUT_HATCH_16A[i] = registerMetaTileEntity(1965 + i,
+                    new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_16a." + voltageName), i, 16,
+                            true));
+            SUBSTATION_ENERGY_INPUT_HATCH[i] = registerMetaTileEntity(1980 + i,
+                    new MetaTileEntitySubstationEnergyHatch(gregtechId("substation_hatch.input_64a." + voltageName),
+                            i, 64, false));
+            SUBSTATION_ENERGY_OUTPUT_HATCH[i] = registerMetaTileEntity(1995+ i,
+                    new MetaTileEntitySubstationEnergyHatch(
+                            gregtechId("substation_hatch.output_64a." + voltageName), i, 64, true));
+        }
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,

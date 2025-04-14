@@ -127,7 +127,14 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     protected int getInventorySize() {
-        return getTier() == GTValues.LuV ? 16 : 9;
+        switch (getTier())
+        {
+            case GTValues.MV -> {return 4;}
+            case GTValues.EV -> {return 9;}
+            case GTValues.LuV -> {return 16;}
+            case GTValues.UV -> {return 25;}
+        }
+        return 0;
     }
 
     private void rebuildData(boolean isDataBank) {
