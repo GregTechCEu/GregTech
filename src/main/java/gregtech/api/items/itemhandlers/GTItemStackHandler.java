@@ -62,6 +62,6 @@ public class GTItemStackHandler extends ItemStackHandler implements IFilteredIte
 
     @Override
     public @Nullable IFilter<ItemStack> getFilter() {
-        return null;
+        return this.filter;
     }
 }

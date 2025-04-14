@@ -395,14 +395,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void addNotifiedInput(Object input) {
-        if (input instanceof IItemHandlerModifiable) {
-            if (!notifiedItemInputList.contains(input)) {
-                this.notifiedItemInputList.add((IItemHandlerModifiable) input);
+        if (input instanceof IItemHandlerModifiable handlerModifiable) {
+            if (!notifiedItemInputList.contains(handlerModifiable)) {
+                this.notifiedItemInputList.add(handlerModifiable);
             }
         }
-        if (input instanceof IFluidTank) {
-            if (!notifiedFluidInputList.contains(input)) {
-                this.notifiedFluidInputList.add((IFluidTank) input);
+        if (input instanceof IFluidTank tank) {
+            if (!notifiedFluidInputList.contains(tank)) {
+                this.notifiedFluidInputList.add(tank);
             }
         }
     }
