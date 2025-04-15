@@ -57,7 +57,7 @@ public class MetaTileEntityHPCACooler extends MetaTileEntityHPCAComponent implem
 
     @Override
     public int getCoolingAmount() {
-        return advanced ? 2 : 1;
+        return advanced ? 8 : 1;
     }
 
     @Override

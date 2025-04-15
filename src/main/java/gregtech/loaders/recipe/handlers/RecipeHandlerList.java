@@ -6,6 +6,7 @@ public class RecipeHandlerList {
         MaterialRecipeHandler.register();
         OreRecipeHandler.register();
         PartsRecipeHandler.register();
+        PartRecipeHandler1.register();
         WireRecipeHandler.register();
         WireCombiningHandler.register();
         PipeRecipeHandler.register();

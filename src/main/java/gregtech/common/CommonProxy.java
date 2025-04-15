@@ -227,7 +227,7 @@ public class CommonProxy {
     }
     @SubscribeEvent
     public static void registerCoverBehavior(GregTechAPI.RegisterEvent<CoverDefinition> event) {
-        GTQTCommonProxy.registerCoverBehavior(event);
+        GTQTCommonProxy.registerCoverBehavior();
     }
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {

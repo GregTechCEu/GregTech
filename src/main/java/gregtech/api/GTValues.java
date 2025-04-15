@@ -18,6 +18,17 @@ import static net.minecraft.util.text.TextFormatting.*;
  */
 public class GTValues {
 
+    public static final int TICK = 1;
+
+    public static final int SECOND = 20;
+
+    public static final int MINUTE = 60 * SECOND;
+
+    public static final int HOUR = 60 * MINUTE;
+
+    public static final int HALF_HOUR = HOUR / 2;
+
+    public static final int QUAT_HOUR = HOUR / 4;
     /**
      * <p/>
      * This is worth exactly one normal Item.

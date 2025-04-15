@@ -87,6 +87,7 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMuffl
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityObjectHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityOpticalDataHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchComputation;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchFluid;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchItem;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchLaser;
@@ -99,6 +100,8 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEnti
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEStockingBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEStockingHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCAAdvancedComputation;
+import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCAAdvancedCooler;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCABridge;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCAComputation;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCACooler;
@@ -261,7 +264,7 @@ public class MetaTileEntities {
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_65536 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_262144 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_1048576 = new MetaTileEntityLaserHatch[10]; // IV+
-
+    public static MetaTileEntityPassthroughHatchComputation PASSTHROUGH_HATCH_COMPUTATION;
     public static MetaTileEntityPassthroughHatchLaser PASSTHROUGH_HATCH_LASER;
     public static MetaTileEntityComputationHatch[] COMPUTATION_HATCH_RECEIVER=new MetaTileEntityComputationHatch[GTValues.V.length - 1];
     public static MetaTileEntityComputationHatch[] COMPUTATION_HATCH_TRANSMITTER=new MetaTileEntityComputationHatch[GTValues.V.length - 1];
@@ -272,6 +275,10 @@ public class MetaTileEntities {
     public static MetaTileEntityHPCACooler HPCA_HEAT_SINK_COMPONENT;
     public static MetaTileEntityHPCACooler HPCA_ACTIVE_COOLER_COMPONENT;
     public static MetaTileEntityHPCABridge HPCA_BRIDGE_COMPONENT;
+    public static MetaTileEntityHPCAAdvancedComputation HPCA_SUPER_COMPUTATION_COMPONENT;
+    public static MetaTileEntityHPCAAdvancedComputation HPCA_ULTIMATE_COMPUTATION_COMPONENT;
+    public static MetaTileEntityHPCAAdvancedCooler HPCA_SUPER_COOLER_COMPONENT;
+    public static MetaTileEntityHPCAAdvancedCooler HPCA_ULTIMATE_COOLER_COMPONENT;
 
     // Used for addons if they wish to disable certain tiers of machines
     private static final Map<String, Boolean> MID_TIER = new HashMap<>();
@@ -923,28 +930,38 @@ public class MetaTileEntities {
                 new MetaTileEntityPassthroughHatchFluid(gregtechId("passthrough_hatch_fluid"), 3));
         PASSTHROUGH_HATCH_LASER = registerMetaTileEntity(1404,
                 new MetaTileEntityPassthroughHatchLaser(gregtechId("passthrough_hatch_laser"), 5));
-        //其他通行仓1405-1406
+        PASSTHROUGH_HATCH_COMPUTATION= registerMetaTileEntity(1405,
+                new MetaTileEntityPassthroughHatchComputation(gregtechId("passthrough_hatch_computation"), 5));
 
-        OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1407,
+        OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1406,
                 new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.receiver"), false));
-        OPTICAL_DATA_HATCH_TRANSMITTER = registerMetaTileEntity(1408,
+        OPTICAL_DATA_HATCH_TRANSMITTER = registerMetaTileEntity(1407,
                 new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.transmitter"), true));
-        OBJECT_HOLDER = registerMetaTileEntity(1411,
+        OBJECT_HOLDER = registerMetaTileEntity(1408,
                 new MetaTileEntityObjectHolder(gregtechId("research_station.object_holder")));
-        HPCA_EMPTY_COMPONENT = registerMetaTileEntity(1412,
+        HPCA_EMPTY_COMPONENT = registerMetaTileEntity(1409,
                 new MetaTileEntityHPCAEmpty(gregtechId("hpca.empty_component")));
-        HPCA_COMPUTATION_COMPONENT = registerMetaTileEntity(1413,
+        HPCA_COMPUTATION_COMPONENT = registerMetaTileEntity(1410,
                 new MetaTileEntityHPCAComputation(gregtechId("hpca.computation_component"), false));
-        HPCA_ADVANCED_COMPUTATION_COMPONENT = registerMetaTileEntity(1414,
+        HPCA_ADVANCED_COMPUTATION_COMPONENT = registerMetaTileEntity(1411,
                 new MetaTileEntityHPCAComputation(gregtechId("hpca.advanced_computation_component"), true));
-        HPCA_HEAT_SINK_COMPONENT = registerMetaTileEntity(1415,
+        HPCA_HEAT_SINK_COMPONENT = registerMetaTileEntity(1412,
                 new MetaTileEntityHPCACooler(gregtechId("hpca.heat_sink_component"), false));
-        HPCA_ACTIVE_COOLER_COMPONENT = registerMetaTileEntity(1416,
+        HPCA_ACTIVE_COOLER_COMPONENT = registerMetaTileEntity(1413,
                 new MetaTileEntityHPCACooler(gregtechId("hpca.active_cooler_component"), true));
-        HPCA_BRIDGE_COMPONENT = registerMetaTileEntity(1417,
+        HPCA_SUPER_COMPUTATION_COMPONENT = registerMetaTileEntity(1414,
+                new MetaTileEntityHPCAAdvancedComputation(gregtechId("hpca.super_computation_component"), false));
+        HPCA_ULTIMATE_COMPUTATION_COMPONENT = registerMetaTileEntity(1415,
+                new MetaTileEntityHPCAAdvancedComputation(gregtechId("hpca.ultimate_computation_component"), true));
+        HPCA_SUPER_COOLER_COMPONENT = registerMetaTileEntity(1416,
+                new MetaTileEntityHPCAAdvancedCooler(gregtechId("hpca.super_cooler_component"), true, false));
+        HPCA_ULTIMATE_COOLER_COMPONENT = registerMetaTileEntity(1417,
+                new MetaTileEntityHPCAAdvancedCooler(gregtechId("hpca.ultimate_cooler_component"), false, true));
+        HPCA_BRIDGE_COMPONENT = registerMetaTileEntity(1418,
                 new MetaTileEntityHPCABridge(gregtechId("hpca.bridge_component")));
-        RESERVOIR_HATCH = registerMetaTileEntity(1418,
+        RESERVOIR_HATCH = registerMetaTileEntity(1419,
                 new MetaTileEntityReservoirHatch(gregtechId("reservoir_hatch")));
+
 
         endPos = GregTechAPI.isHighTier() ? LASER_INPUT_HATCH_256.length - 1 :
                 Math.min(LASER_INPUT_HATCH_256.length - 1, GTValues.UHV - GTValues.IV);

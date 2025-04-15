@@ -69,6 +69,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import static gregtech.api.GTValues.M;
+import static gregtech.api.unification.material.Materials.Steel;
 import static gregtech.api.util.DyeUtil.getOredictColorName;
 import static gregtech.common.items.MetaItems.*;
 
@@ -104,7 +105,6 @@ public class MetaItem1 extends StandardMetaItem {
         // Solidifier Shapes: ID 11-30
         SHAPE_EMPTY = addItem(11, "shape.empty")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-
         SHAPE_MOLDS[0] = SHAPE_MOLD_PLATE = addItem(12, "shape.mold.plate")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[1] = SHAPE_MOLD_GEAR = addItem(13, "shape.mold.gear")
@@ -131,33 +131,49 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[12] = SHAPE_MOLD_ROTOR = addItem(24, "shape.mold.rotor")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[13] =SHAPE_MOLD_ROD = this.addItem(25, "shape.mold.rod")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Steel, M * 4)));
+        SHAPE_MOLDS[14] =SHAPE_MOLD_BOLT = this.addItem(26, "shape.mold.bolt")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Steel, M * 4)));
+        SHAPE_MOLDS[15] =SHAPE_MOLD_ROUND = this.addItem(27, "shape.mold.round")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Steel, M * 4)));
+        SHAPE_MOLDS[16] =SHAPE_MOLD_SCREW = this.addItem(28, "shape.mold.screw")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Steel, M * 4)));
+        SHAPE_MOLDS[17] =SHAPE_MOLD_RING = this.addItem(29, "shape.mold.ring")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Steel, M * 4)));
+        SHAPE_MOLDS[18] =SHAPE_MOLD_ROD_LONG = this.addItem(30, "shape.mold.rod_long")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Steel, M * 4)));
+        SHAPE_MOLDS[19] =SHAPE_MOLD_TURBINE_BLADE = this.addItem(31, "shape.mold.turbine_blade")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Steel, M * 4)));
+        SHAPE_MOLDS[20] =SHAPE_MOLD_DRILL_HEAD = this.addItem(32, "shape.mold.drill_head")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Steel, M * 4)));
 
         // Extruder Shapes: ID 31-59
-        SHAPE_EXTRUDERS[0] = SHAPE_EXTRUDER_PLATE = addItem(31, "shape.extruder.plate")
+        SHAPE_EXTRUDERS[0] = SHAPE_EXTRUDER_PLATE = addItem(33, "shape.extruder.plate")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[1] = SHAPE_EXTRUDER_ROD = addItem(32, "shape.extruder.rod")
+        SHAPE_EXTRUDERS[1] = SHAPE_EXTRUDER_ROD = addItem(34, "shape.extruder.rod")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[2] = SHAPE_EXTRUDER_BOLT = addItem(33, "shape.extruder.bolt")
+        SHAPE_EXTRUDERS[2] = SHAPE_EXTRUDER_BOLT = addItem(35, "shape.extruder.bolt")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[3] = SHAPE_EXTRUDER_RING = addItem(34, "shape.extruder.ring")
+        SHAPE_EXTRUDERS[3] = SHAPE_EXTRUDER_RING = addItem(36, "shape.extruder.ring")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[4] = SHAPE_EXTRUDER_CELL = addItem(35, "shape.extruder.cell")
+        SHAPE_EXTRUDERS[4] = SHAPE_EXTRUDER_CELL = addItem(37, "shape.extruder.cell")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[5] = SHAPE_EXTRUDER_INGOT = addItem(36, "shape.extruder.ingot")
+        SHAPE_EXTRUDERS[5] = SHAPE_EXTRUDER_INGOT = addItem(38, "shape.extruder.ingot")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[6] = SHAPE_EXTRUDER_WIRE = addItem(37, "shape.extruder.wire")
+        SHAPE_EXTRUDERS[6] = SHAPE_EXTRUDER_WIRE = addItem(39, "shape.extruder.wire")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[7] = SHAPE_EXTRUDER_PIPE_TINY = addItem(38, "shape.extruder.pipe.tiny")
+        SHAPE_EXTRUDERS[7] = SHAPE_EXTRUDER_PIPE_TINY = addItem(40, "shape.extruder.pipe.tiny")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[8] = SHAPE_EXTRUDER_PIPE_SMALL = addItem(39, "shape.extruder.pipe.small")
+        SHAPE_EXTRUDERS[8] = SHAPE_EXTRUDER_PIPE_SMALL = addItem(41, "shape.extruder.pipe.small")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[9] = SHAPE_EXTRUDER_PIPE_NORMAL = addItem(40, "shape.extruder.pipe.normal")
+        SHAPE_EXTRUDERS[9] = SHAPE_EXTRUDER_PIPE_NORMAL = addItem(42, "shape.extruder.pipe.normal")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[10] = SHAPE_EXTRUDER_PIPE_LARGE = addItem(41, "shape.extruder.pipe.large")
+        SHAPE_EXTRUDERS[10] = SHAPE_EXTRUDER_PIPE_LARGE = addItem(43, "shape.extruder.pipe.large")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[11] = SHAPE_EXTRUDER_PIPE_HUGE = addItem(42, "shape.extruder.pipe.huge")
+        SHAPE_EXTRUDERS[11] = SHAPE_EXTRUDER_PIPE_HUGE = addItem(44, "shape.extruder.pipe.huge")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[12] = SHAPE_EXTRUDER_BLOCK = addItem(43, "shape.extruder.block")
+        SHAPE_EXTRUDERS[12] = SHAPE_EXTRUDER_BLOCK = addItem(45, "shape.extruder.block")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         // Extruder Shapes index 13-20 (inclusive), id 44-51 (inclusive) are unused
         SHAPE_EXTRUDERS[21] = SHAPE_EXTRUDER_GEAR = addItem(52, "shape.extruder.gear")
@@ -172,6 +188,10 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[26] = SHAPE_EXTRUDER_ROTOR = addItem(57, "shape.extruder.rotor")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[27] =SHAPE_EXTRUDER_TURBINE_BLADE = this.addItem(58, "shape.extruder.turbine_blade")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Steel, M * 4)));
+        SHAPE_EXTRUDERS[28] =SHAPE_EXTRUDER_DRILL_HEAD = this.addItem(59, "shape.extruder.drill_head")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Steel, M * 4)));
 
         // Spray Cans: ID 60-77
         SPRAY_EMPTY = addItem(61, "spray.empty");
