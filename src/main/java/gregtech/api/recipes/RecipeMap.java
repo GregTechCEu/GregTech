@@ -142,8 +142,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      *
      * @deprecated {@link RecipeMap#RecipeMap(String, R, RecipeMapUIFunction, int, int, int, int)}
      */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
     public RecipeMap(@NotNull String unlocalizedName,
                      int maxInputs, int maxOutputs, int maxFluidInputs, int maxFluidOutputs,
                      @NotNull R defaultRecipeBuilder,
@@ -171,8 +169,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      *
      * @deprecated {@link RecipeMap#RecipeMap(String, R, RecipeMapUIFunction, int, int, int, int)}
      */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
     public RecipeMap(@NotNull String unlocalizedName,
                      int maxInputs, boolean modifyItemInputs,
                      int maxOutputs, boolean modifyItemOutputs,
