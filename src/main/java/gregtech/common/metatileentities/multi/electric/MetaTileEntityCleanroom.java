@@ -511,7 +511,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
-        builder.addLowPowerLine(!drainEnergy(true))
+        boolean lowPower = false;
+        if (isStructureFormed() && !getWorld().isRemote) {
+            lowPower = !drainEnergy(true);
+        }
+        builder.addLowPowerLine(lowPower)
                 .addCustom((list, syncer) -> {
                     if (isStructureFormed() && !syncer.syncBoolean(isClean())) {
                         list.add(KeyUtil.lang(TextFormatting.YELLOW,

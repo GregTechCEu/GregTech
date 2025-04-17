@@ -298,7 +298,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     @Override
     protected void configureErrorText(MultiblockUIBuilder builder) {
         builder.addCustom((list, syncer) -> {
-            if (isStructureFormed() && syncer.syncBoolean(!drainFluid(false))) {
+            if (isStructureFormed() && syncer.syncBoolean(() -> !drainFluid(false))) {
                 list.add(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.miner.multi.needsfluid"));
             }
         });
@@ -306,12 +306,16 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
 
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
-        builder.addLowPowerLine(!drainEnergy(true));
-        builder.addCustom((list, syncer) -> {
-            if (isStructureFormed() && syncer.syncBoolean(isInventoryFull)) {
-                list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.machine.miner.invfull"));
-            }
-        });
+        boolean lowPower = false;
+        if (isStructureFormed() && !getWorld().isRemote) {
+            lowPower = !drainEnergy(true);
+        }
+        builder.addLowPowerLine(lowPower)
+                .addCustom((list, syncer) -> {
+                    if (isStructureFormed() && syncer.syncBoolean(isInventoryFull)) {
+                        list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.machine.miner.invfull"));
+                    }
+                });
     }
 
     public IBlockState getCasingState() {
