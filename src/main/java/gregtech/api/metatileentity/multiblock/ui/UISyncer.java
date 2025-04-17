@@ -14,6 +14,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
 public interface UISyncer {
 
@@ -97,9 +98,18 @@ public interface UISyncer {
         return syncObject(initial, GTByteBufAdapters.BIG_INT);
     }
 
-    <T> T syncObject(T initial, IByteBufSerializer<T> serializer, IByteBufDeserializer<T> deserializer);
+    default <T> T syncObject(T initial, IByteBufSerializer<T> serializer, IByteBufDeserializer<T> deserializer) {
+        return syncObject((Supplier<T>) () -> initial, serializer, deserializer);
+    }
 
     default <T> T syncObject(T initial, IByteBufAdapter<T> adapter) {
+        return syncObject(initial, adapter, adapter);
+    }
+
+    <T> T syncObject(@NotNull Supplier<@NotNull T> initial, IByteBufSerializer<T> serializer,
+                     IByteBufDeserializer<T> deserializer);
+
+    default <T> T syncObject(@NotNull Supplier<@NotNull T> initial, IByteBufAdapter<T> adapter) {
         return syncObject(initial, adapter, adapter);
     }
 

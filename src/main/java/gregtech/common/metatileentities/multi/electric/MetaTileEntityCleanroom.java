@@ -492,12 +492,13 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                     // Cleanliness status line
                     if (isStructureFormed()) {
                         IKey cleanState;
-                        if (syncer.syncBoolean(isClean())) { // is this method actually synced?
-                            cleanState = KeyUtil.lang(TextFormatting.GREEN, "gregtech.multiblock.cleanroom.clean_state",
-                                    cleanAmount);
+                        int amount = syncer.syncInt(cleanAmount);
+                        if (amount >= CLEAN_AMOUNT_THRESHOLD) {
+                            cleanState = KeyUtil.lang(TextFormatting.GREEN,
+                                    "gregtech.multiblock.cleanroom.clean_state", amount);
                         } else {
                             cleanState = KeyUtil.lang(TextFormatting.DARK_RED,
-                                    "gregtech.multiblock.cleanroom.dirty_state", cleanAmount);
+                                    "gregtech.multiblock.cleanroom.dirty_state", amount);
                         }
 
                         list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.cleanroom.clean_status",

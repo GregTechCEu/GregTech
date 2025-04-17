@@ -47,6 +47,7 @@ import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
 public class MultiblockUIBuilder {
@@ -135,13 +136,18 @@ public class MultiblockUIBuilder {
      * <br>
      * Added if the structure is formed and if the passed energy container has greater than zero capacity.
      */
+    @SuppressWarnings("Convert2MethodRef")
     public MultiblockUIBuilder addEnergyUsageLine(IEnergyContainer energyContainer) {
-        if (!isStructureFormed || energyContainer == null) return this;
-        boolean hasEnergy = getSyncer().syncBoolean(energyContainer.getEnergyCapacity() > 0);
-        if (!hasEnergy) return this;
+        if (!isStructureFormed) return this;
 
-        long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-        maxVoltage = getSyncer().syncLong(maxVoltage);
+        // cannot use method reference since energy container can be null on client
+        long capacity = getSyncer().syncLong(() -> energyContainer.getEnergyCapacity());
+        long inV = getSyncer().syncLong(() -> energyContainer.getInputVoltage());
+        long outV = getSyncer().syncLong(() -> energyContainer.getOutputVoltage());
+
+        if (capacity <= 0) return this;
+
+        long maxVoltage = Math.max(inV, outV);
         int tier = GTUtility.getFloorTierByVoltage(maxVoltage);
 
         IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
@@ -912,11 +918,12 @@ public class MultiblockUIBuilder {
 
         @Override
         @NotNull
-        public <T> T syncObject(@NotNull T initial, IByteBufSerializer<T> serializer,
+        public <T> T syncObject(@NotNull Supplier<T> initial, IByteBufSerializer<T> serializer,
                                 IByteBufDeserializer<T> deserializer) {
             if (isServer()) {
-                serializer.serializeSafe(internal, Objects.requireNonNull(initial));
-                return initial;
+                T val = initial.get();
+                serializer.serializeSafe(internal, Objects.requireNonNull(val));
+                return val;
             } else {
                 try {
                     return deserializer.deserialize(internal);
