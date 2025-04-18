@@ -88,6 +88,10 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     private static final BigInteger BIG_INTEGER_MAX_LONG = BigInteger.valueOf(Long.MAX_VALUE);
 
     private PowerStationEnergyBank energyBank;
+    public PowerStationEnergyBank getEnergyBank()
+    {
+        return energyBank;
+    }
     private EnergyContainerList inputHatches;
     private EnergyContainerList outputHatches;
     private long passiveDrain;

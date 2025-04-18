@@ -17,6 +17,7 @@ public enum ToolOreDict {
     toolScrewdriver,
     toolMortar,
     toolWireCutter,
+    toolHammerDrill,
     toolScythe,
     toolKnife,
     toolButcheryKnife,

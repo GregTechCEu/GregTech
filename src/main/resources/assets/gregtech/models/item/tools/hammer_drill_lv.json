@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "gregtech:items/tools/hammer_drill_lv",
+    "layer1": "gregtech:items/tools/hammer_drill_head"
+  }
+}

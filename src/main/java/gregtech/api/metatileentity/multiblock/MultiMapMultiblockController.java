@@ -32,7 +32,7 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 public abstract class MultiMapMultiblockController extends RecipeMapMultiblockController
-                                                   implements IMultipleRecipeMaps {
+        implements IMultipleRecipeMaps {
 
     // array of possible recipes, specific to each multi - used when the multi has multiple RecipeMaps
     private final RecipeMap<?>[] recipeMaps;
@@ -74,6 +74,11 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     }
 
     @Override
+    public int getRecipeMapIndex() {
+        return recipeMapIndex;
+    }
+
+    @Override
     public void setRecipeMapIndex(int index) {
         this.recipeMapIndex = index;
         if (!getWorld().isRemote) {
@@ -81,11 +86,6 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
             recipeMapWorkable.forceRecipeRecheck();
             markDirty();
         }
-    }
-
-    @Override
-    public int getRecipeMapIndex() {
-        return recipeMapIndex;
     }
 
     @Override
@@ -128,15 +128,11 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
                     predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setPreviewCount(1));
                 }
             }
-            if ((!checkedItemIn && checkItemIn) ||(!checkedFluidIn && checkFluidIn)) {
-                if (recipeMap.getMaxInputs() > 0 && recipeMap.getMaxFluidInputs() > 0) {
-                    predicate = predicate.or(abilities(MultiblockAbility.DUAL_IMPORT).setPreviewCount(1));
-                }
+            if (checkedItemIn && checkedFluidIn) {
+                predicate = predicate.or(abilities(MultiblockAbility.DUAL_IMPORT).setPreviewCount(1));
             }
-            if ((!checkedItemOut && checkItemOut) || (!checkedFluidOut && checkFluidOut)) {
-                if (recipeMap.getMaxOutputs() > 0 && recipeMap.getMaxFluidOutputs() > 0) {
-                    predicate = predicate.or(abilities(MultiblockAbility.DUAL_EXPORT).setPreviewCount(1));
-                }
+            if (checkedItemOut && checkedFluidOut) {
+                predicate = predicate.or(abilities(MultiblockAbility.DUAL_EXPORT).setPreviewCount(1));
             }
         }
         return predicate;
@@ -147,11 +143,11 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
         if (getAvailableRecipeMaps() != null && getAvailableRecipeMaps().length > 1) {
             return new ImageCycleButtonWidget(x, y, width, height, GuiTextures.BUTTON_MULTI_MAP,
                     getAvailableRecipeMaps().length, this::getRecipeMapIndex, this::setRecipeMapIndex)
-                            .shouldUseBaseBackground().singleTexture()
-                            .setTooltipHoverString(i -> LocalizationUtils
-                                    .format("gregtech.multiblock.multiple_recipemaps.header") + " " +
-                                    LocalizationUtils.format(
-                                            "recipemap." + getAvailableRecipeMaps()[i].getUnlocalizedName() + ".name"));
+                    .shouldUseBaseBackground().singleTexture()
+                    .setTooltipHoverString(i -> LocalizationUtils
+                            .format("gregtech.multiblock.multiple_recipemaps.header") + " " +
+                            LocalizationUtils.format(
+                                    "recipemap." + getAvailableRecipeMaps()[i].getUnlocalizedName() + ".name"));
         }
         return super.getFlexButton(x, y, width, height);
     }

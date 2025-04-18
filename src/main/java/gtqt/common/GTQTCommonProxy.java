@@ -17,13 +17,6 @@ import net.minecraftforge.event.RegistryEvent;
 
 public class GTQTCommonProxy {
 
-    public static final CreativeTabs GTQTCore_TAB = new CreativeTabs("gtqt") {
-
-        @Override
-        public ItemStack createIcon() {
-            return MetaItems.WETWARE_MAINFRAME_UHV.getStackForm();
-        }
-    };
     public static final CreativeTabs GTQTCore_PC = new CreativeTabs("gtqt_programmable") {
 
         @Override

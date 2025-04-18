@@ -2,13 +2,20 @@ package gtqt.common.items;
 
 import gregtech.api.items.metaitem.StandardMetaItem;
 
+import gregtech.common.creativetab.GTCreativeTabs;
+import gregtech.common.items.behaviors.ColorSprayBehaviour;
+
 import gtqt.common.GTQTCommonProxy;
 import gtqt.common.items.behaviors.ProgrammableCircuit;
+
+import net.minecraft.item.EnumDyeColor;
+
+import static gtqt.common.items.GTQTMetaItems.ENDLESS_SPRAY_EMPTY;
+
 public class GTQTMetaItem1 extends StandardMetaItem {
 
     public GTQTMetaItem1() {
         this.setRegistryName("gtqt_meta_item_0");
-        setCreativeTab(GTQTCommonProxy.GTQTCore_TAB);
     }
 
     public void registerSubItems() {
@@ -48,6 +55,16 @@ public class GTQTMetaItem1 extends StandardMetaItem {
         GTQTMetaItems.PROGRAMMABLE_CIRCUIT_30 = this.addItem(50, "programmable_circuit_30").addComponents(new ProgrammableCircuit(30, "programmable_circuit")).setCreativeTabs(GTQTCommonProxy.GTQTCore_PC);
         GTQTMetaItems.PROGRAMMABLE_CIRCUIT_31 = this.addItem(51, "programmable_circuit_31").addComponents(new ProgrammableCircuit(31, "programmable_circuit")).setCreativeTabs(GTQTCommonProxy.GTQTCore_PC);
         GTQTMetaItems.PROGRAMMABLE_CIRCUIT_32 = this.addItem(52, "programmable_circuit_32").addComponents(new ProgrammableCircuit(32, "programmable_circuit")).setCreativeTabs(GTQTCommonProxy.GTQTCore_PC);
+
+        // Spray Cans: ID 60-77
+        ENDLESS_SPRAY_EMPTY = addItem(161, "endless_spray.empty");
+
+        // out of registry order so it can reference the Empty Spray Can
+        GTQTMetaItems.ENDLESS_SPRAY_SOLVENT = addItem(160, "endless_spray.solvent").setMaxStackSize(1).addComponents(new ColorSprayBehaviour(ENDLESS_SPRAY_EMPTY.getStackForm(), Integer.MAX_VALUE, -1)).setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+
+        for (int i = 0; i < EnumDyeColor.values().length; i++) {
+            GTQTMetaItems.ENDLESS_SPRAY_CAN_DYES[i] = addItem(162 + i, "endless_spray.can.dyes." + EnumDyeColor.values()[i].getName()).setMaxStackSize(1).addComponents(new ColorSprayBehaviour(ENDLESS_SPRAY_EMPTY.getStackForm(), Integer.MAX_VALUE, i)).setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+        }
 
     }
 }

@@ -22,6 +22,8 @@ import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.ctm.IFacadeWrapper;
 
+import gtqt.common.items.GTQTMetaItems;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
@@ -331,6 +333,11 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             for (int i = 0; i < EnumDyeColor.values().length; i++) {
                 if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
                     MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
+                            pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
+                    break;
+                }
+                if (offhand.isItemEqual(GTQTMetaItems.ENDLESS_SPRAY_CAN_DYES[i].getStackForm())) {
+                    GTQTMetaItems.ENDLESS_SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
                             pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
                     break;
                 }

@@ -15,6 +15,7 @@ import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.crafting.ToolHeadReplaceRecipe;
 import gregtech.common.items.MetaItems;
@@ -36,8 +37,10 @@ import java.util.Map;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.LATHE_RECIPES;
+import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.material.properties.PropertyKey.GEM;
+import static gregtech.api.unification.material.properties.PropertyKey.INGOT;
 
 public class ToolRecipeHandler {
 
@@ -89,6 +92,11 @@ public class ToolRecipeHandler {
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadDrill, ToolItems.DRILL_HV);
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadDrill, ToolItems.DRILL_EV);
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadDrill, ToolItems.DRILL_IV);
+        ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadDrill, ToolItems.HARD_HAMMER_LV);
+        ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadDrill, ToolItems.HARD_HAMMER_MV);
+        ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadDrill, ToolItems.HARD_HAMMER_HV);
+        ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadDrill, ToolItems.HARD_HAMMER_EV);
+        ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadDrill, ToolItems.HARD_HAMMER_IV);
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadChainsaw, ToolItems.CHAINSAW_LV);
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadWrench, ToolItems.WRENCH_LV);
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadWrench, ToolItems.WRENCH_HV);
@@ -257,6 +265,9 @@ public class ToolRecipeHandler {
             addElectricToolRecipe(toolPrefix, material, new IGTTool[] { ToolItems.DRILL_LV, ToolItems.DRILL_MV,
                     ToolItems.DRILL_HV, ToolItems.DRILL_EV, ToolItems.DRILL_IV });
 
+            addHammerDrillRecipe(toolPrefix, material,
+                    new IGTTool[] { ToolItems.HARD_HAMMER_LV, ToolItems.HARD_HAMMER_MV, ToolItems.HARD_HAMMER_HV,
+                            ToolItems.HARD_HAMMER_EV,ToolItems.HARD_HAMMER_IV});
             // chainsaw
             toolPrefix = OrePrefix.toolHeadChainsaw;
             ModHandler.addShapedRecipe(String.format("chainsaw_head_%s", material),
@@ -344,6 +355,21 @@ public class ToolRecipeHandler {
                     'R', new UnificationEntry(OrePrefix.stick, material));
         }
     }
+    public static void addHammerDrillRecipe(OrePrefix toolHead, Material material, IGTTool[] toolItems) {
+        for (IGTTool toolItem : toolItems) {
+            int tier = toolItem.getElectricTier();
+            ItemStack powerUnitStack = powerUnitItems.get(tier).getStackForm();
+            IElectricItem powerUnit = powerUnitStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            ItemStack tool = toolItem.get(material, 0, powerUnit.getMaxCharge());
+            ModHandler.addShapedEnergyTransferRecipe(String.format("%s_%s", toolItem.getToolId(), material),
+                    tool,
+                    Ingredient.fromStacks(powerUnitStack), true, true,
+                    "dHw", "PUP",
+                    'P', new UnificationEntry(OrePrefix.plate, material),
+                    'H', new UnificationEntry(toolHead, material),
+                    'U', powerUnitStack);
+        }
+    }
 
     public static void addToolRecipe(@NotNull Material material, @NotNull IGTTool tool, boolean mirrored,
                                      Object... recipe) {
@@ -405,9 +431,10 @@ public class ToolRecipeHandler {
 
     private static void registerMortarRecipes() {
         for (Material material : new Material[] {
-                Materials.Bronze, Materials.Iron, Materials.Invar, Materials.Steel,
-                Materials.DamascusSteel, Materials.CobaltBrass, Materials.WroughtIron }) {
-
+                Materials.Bronze, Materials.Iron, Materials.Invar, Materials.Steel, Materials.DamascusSteel,
+                Materials.CobaltBrass, Materials.WroughtIron,TungstenSteel, NaquadahAlloy, Neutronium,
+                StainlessSteel,VanadiumSteel, RedSteel, BlueSteel,HSSE})
+        {
             addToolRecipe(material, ToolItems.MORTAR, false,
                     " I ", "SIS", "SSS",
                     'I', new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot, material),

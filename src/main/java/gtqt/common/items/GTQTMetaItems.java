@@ -2,6 +2,8 @@ package gtqt.common.items;
 
 import gregtech.api.items.metaitem.MetaItem;
 
+import net.minecraft.item.EnumDyeColor;
+
 public class GTQTMetaItems {
 
     public static MetaItem<?>.MetaValueItem COVER_PROGRAMMABLE_CIRCUIT;
@@ -38,6 +40,10 @@ public class GTQTMetaItems {
     public static MetaItem<?>.MetaValueItem PROGRAMMABLE_CIRCUIT_30;
     public static MetaItem<?>.MetaValueItem PROGRAMMABLE_CIRCUIT_31;
     public static MetaItem<?>.MetaValueItem PROGRAMMABLE_CIRCUIT_32;
+
+    public static final MetaItem<?>.MetaValueItem[] ENDLESS_SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
+    public static MetaItem<?>.MetaValueItem ENDLESS_SPRAY_SOLVENT;
+    public static MetaItem<?>.MetaValueItem ENDLESS_SPRAY_EMPTY;
 
     public static GTQTMetaItem1 GTQT_META_ITEM;
 

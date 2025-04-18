@@ -34,6 +34,25 @@ metaitem.programmable_circuit_29.name=Programmable Circuit（29）
 metaitem.programmable_circuit_30.name=Programmable Circuit（30）
 metaitem.programmable_circuit_31.name=Programmable Circuit（31）
 metaitem.programmable_circuit_32.name=Programmable Circuit（32）
+
+metaitem.endless_spray.empty.name=Endless Spray Can (Empty)
+metaitem.endless_spray.solvent.name=Endless Spray Can (Solvent)
+metaitem.endless_spray.can.dyes.white.name=Endless Spray Can (White)
+metaitem.endless_spray.can.dyes.orange.name=Endless Spray Can (Orange)
+metaitem.endless_spray.can.dyes.magenta.name=Endless Spray Can (Magenta)
+metaitem.endless_spray.can.dyes.light_blue.name=Endless Spray Can (Light Blue)
+metaitem.endless_spray.can.dyes.yellow.name=Endless Spray Can (Yellow)
+metaitem.endless_spray.can.dyes.lime.name=Endless Spray Can (Lime)
+metaitem.endless_spray.can.dyes.pink.name=Endless Spray Can (Pink)
+metaitem.endless_spray.can.dyes.gray.name=Endless Spray Can (Gray)
+metaitem.endless_spray.can.dyes.silver.name=Endless Spray Can (Light Gray)
+metaitem.endless_spray.can.dyes.cyan.name=Endless Spray Can (Cyan)
+metaitem.endless_spray.can.dyes.purple.name=Endless Spray Can (Purple)
+metaitem.endless_spray.can.dyes.blue.name=Endless Spray Can (Blue)
+metaitem.endless_spray.can.dyes.brown.name=Endless Spray Can (Brown)
+metaitem.endless_spray.can.dyes.green.name=Endless Spray Can (Green)
+metaitem.endless_spray.can.dyes.red.name=Endless Spray Can (Red)
+metaitem.endless_spray.can.dyes.black.name=Endless Spray Can (Black)
 #hatch
 gregtech.machine.dual_hatch.import.ulv.name=§8ULV§r输入总成
 gregtech.machine.dual_hatch.import.lv.name=§7LV§r输入总成
@@ -77,3 +96,6 @@ gregtech.gui.dual_auto_input.tooltip.enabled=物品/流体自动输入已启用
 gregtech.gui.dual_auto_input.tooltip.disabled=物品/流体自动输入已禁用
 gregtech.gui.dual_auto_output.tooltip.enabled=物品/流体自动输出已启用
 gregtech.gui.dual_auto_output.tooltip.disabled=物品/流体自动输出已禁用
+
+#item group
+itemGroup.gtqt_programmable=量子跃迁 | 可编程舱室

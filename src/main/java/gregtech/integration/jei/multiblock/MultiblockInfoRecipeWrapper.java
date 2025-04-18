@@ -4,6 +4,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.registry.MBPattern;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
@@ -68,6 +69,8 @@ import java.util.stream.Collectors;
 
 import javax.vecmath.Vector3f;
 
+import static gregtech.api.GregTechAPI.MULTIBLOCK_INFO_CACHE;
+
 public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
     private static final int MAX_PARTS = 18;
@@ -77,22 +80,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private static final int ICON_SIZE = 20;
     private static final int RIGHT_PADDING = 5;
 
-    private static class MBPattern {
-
-        final WorldSceneRenderer sceneRenderer;
-        final List<ItemStack> parts;
-        final Map<BlockPos, TraceabilityPredicate> predicateMap;
-
-        public MBPattern(final WorldSceneRenderer sceneRenderer, final List<ItemStack> parts,
-                         Map<BlockPos, TraceabilityPredicate> predicateMap) {
-            this.sceneRenderer = sceneRenderer;
-            this.parts = parts;
-            this.predicateMap = predicateMap;
-        }
-    }
-
     private final MultiblockControllerBase controller;
     private final MBPattern[] patterns;
+
     private final Map<GuiButton, Runnable> buttons = new HashMap<>();
     private RecipeLayout recipeLayout;
     private final List<ItemStack> allItemStackInputs = new ArrayList<>();
@@ -140,6 +130,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         this.buttonPreviousPattern.visible = !isPagesDisabled;
         this.buttonNextPattern.visible = !isPagesDisabled;
         this.predicates = new ArrayList<>();
+        MULTIBLOCK_INFO_CACHE.put(controller, patterns);
     }
 
     @Override
@@ -192,7 +183,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     public WorldSceneRenderer getCurrentRenderer() {
-        return patterns[currentRendererPage].sceneRenderer;
+        return patterns[currentRendererPage].getSceneRenderer();
     }
 
     public int getLayerIndex() {
@@ -269,7 +260,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
     private void updateParts() {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-        List<ItemStack> parts = this.patterns[currentRendererPage].parts;
+        List<ItemStack> parts = this.patterns[currentRendererPage].getParts();
         int limit = Math.min(parts.size(), MAX_PARTS);
         for (int i = 0; i < limit; ++i) {
             itemStackGroup.set(i, parts.get(i));
@@ -349,7 +340,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             IBlockState blockState = renderer.world.getBlockState(rayTraceResult.getBlockPos());
             ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, rayTraceResult, renderer.world,
                     rayTraceResult.getBlockPos(), minecraft.player);
-            TraceabilityPredicate predicates = patterns[currentRendererPage].predicateMap
+            TraceabilityPredicate predicates = patterns[currentRendererPage].getPredicateMap()
                     .get(rayTraceResult.getBlockPos());
             if (predicates != null) {
                 BlockWorldState worldState = new BlockWorldState();
@@ -424,7 +415,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 predicates.clear();
                 this.father = null;
                 this.selected = selected;
-                TraceabilityPredicate predicate = patterns[currentRendererPage].predicateMap.get(this.selected);
+                TraceabilityPredicate predicate = patterns[currentRendererPage].getPredicateMap().get(this.selected);
                 if (predicate != null) {
                     predicates.addAll(predicate.common);
                     predicates.addAll(predicate.limited);

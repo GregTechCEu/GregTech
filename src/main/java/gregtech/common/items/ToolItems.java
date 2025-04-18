@@ -63,6 +63,11 @@ public final class ToolItems {
     public static IGTTool WIRECUTTER_LV;
     public static IGTTool WIRECUTTER_HV;
     public static IGTTool WIRECUTTER_IV;
+    public static IGTTool HARD_HAMMER_LV;
+    public static IGTTool HARD_HAMMER_MV;
+    public static IGTTool HARD_HAMMER_HV;
+    public static IGTTool HARD_HAMMER_EV;
+    public static IGTTool HARD_HAMMER_IV;
     public static ItemGTToolbelt TOOLBELT;
 
     private ToolItems() {/**/}
@@ -360,6 +365,61 @@ public final class ToolItems {
                 .secondaryOreDicts("craftingToolWireCutter")
                 .toolClasses(ToolClasses.WIRE_CUTTER)
                 .electric(GTValues.IV));
+        //风钻
+        HARD_HAMMER_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer_drill_lv")
+                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(2)
+                        .attackDamage(1.0F).attackSpeed(3.2F).aoe(1, 1, 2)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV)
+                        .defaultEnchantment(Enchantments.FORTUNE,1)
+                        .behaviors(TorchPlaceBehavior.INSTANCE))
+                .sound(SoundEvents.BLOCK_ANVIL_LAND)
+                .oreDict(ToolOreDict.toolHammerDrill)
+                .electric(GTValues.LV)
+                .toolClasses(ToolClasses.PICKAXE, ToolClasses.HARD_HAMMER));
+
+        HARD_HAMMER_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer_drill_mv")
+                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(2)
+                        .attackDamage(5.0F).attackSpeed(3.6F).aoe(2, 2, 4)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_MV)
+                        .defaultEnchantment(Enchantments.FORTUNE,1)
+                        .behaviors(TorchPlaceBehavior.INSTANCE))
+                .sound(SoundEvents.BLOCK_ANVIL_LAND)
+                .oreDict(ToolOreDict.toolHammerDrill)
+                .electric(GTValues.MV)
+                .toolClasses(ToolClasses.PICKAXE, ToolClasses.HARD_HAMMER));
+
+        HARD_HAMMER_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer_drill_hv")
+                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(2)
+                        .attackDamage(7.0F).attackSpeed(4.2F).aoe(3, 3, 6)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV)
+                        .defaultEnchantment(Enchantments.FORTUNE,2)
+                        .behaviors(TorchPlaceBehavior.INSTANCE))
+                .sound(SoundEvents.BLOCK_ANVIL_LAND)
+                .oreDict(ToolOreDict.toolHammerDrill)
+                .electric(GTValues.HV)
+                .toolClasses(ToolClasses.PICKAXE, ToolClasses.HARD_HAMMER));
+
+        HARD_HAMMER_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer_drill_ev")
+                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(2)
+                        .attackDamage(9.0F).attackSpeed(4.8F).aoe(4, 4, 8)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_EV)
+                        .defaultEnchantment(Enchantments.FORTUNE,2)
+                        .behaviors(TorchPlaceBehavior.INSTANCE))
+                .sound(SoundEvents.BLOCK_ANVIL_LAND)
+                .oreDict(ToolOreDict.toolHammerDrill)
+                .electric(GTValues.EV)
+                .toolClasses(ToolClasses.PICKAXE, ToolClasses.HARD_HAMMER));
+
+        HARD_HAMMER_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer_drill_iv")
+                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(2)
+                        .attackDamage(11.0F).attackSpeed(5.6F).aoe(9, 9, 0)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV)
+                        .defaultEnchantment(Enchantments.FORTUNE,3)
+                        .behaviors(TorchPlaceBehavior.INSTANCE))
+                .sound(SoundEvents.BLOCK_ANVIL_LAND)
+                .oreDict(ToolOreDict.toolHammerDrill)
+                .electric(GTValues.IV)
+                .toolClasses(ToolClasses.PICKAXE, ToolClasses.HARD_HAMMER, ToolClasses.SHOVEL));
     }
 
     public static IGTTool register(@NotNull ToolBuilder<?> builder) {
