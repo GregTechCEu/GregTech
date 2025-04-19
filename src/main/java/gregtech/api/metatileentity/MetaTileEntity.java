@@ -892,7 +892,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (sound == null) {
             return;
         }
-        if (isValid() && isActive()) {
+        boolean canPlay = isValid() && isActive();
+        if (this instanceof IControllable controllable) {
+            canPlay &= controllable.isWorkingEnabled();
+        }
+        if (canPlay) {
             if (--playSoundCooldown > 0) {
                 return;
             }
