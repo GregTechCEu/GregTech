@@ -629,6 +629,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
             } else {
                 stored[0] = storageTag.getLong(NBT_STORED + "0");
                 stored[1] = storageTag.getLong(NBT_STORED + "1");
+                drain = storageTag.getLong("drain");
+                drainMod = storageTag.getLong("drainMod");
             }
             capacity = summarize(max);
         }
@@ -636,6 +638,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         public NBTTagCompound writeToNBT(NBTTagCompound compound) {
             compound.setLong(NBT_STORED + "0", stored[0]);
             compound.setLong(NBT_STORED + "1", stored[1]);
+            compound.setLong("drain", drain);
+            compound.setLong("drainMod", drainMod);
             return compound;
         }
 
@@ -706,7 +710,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
             }
             if (stored[1] < amount) {
                 stored[0]--;
-                stored[1] = stored[1] - amount + Long.MAX_VALUE + 1;
+                stored[1] -= amount + Long.MIN_VALUE;
             } else stored[1] -= amount;
             return amount;
         }
@@ -728,11 +732,10 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         }
 
         private static void add(long[] num, long val) {
-            if (val + num[1] < 0) {
+            if ((num[1] += val) < 0) {
                 num[0]++;
-                num[1] += Long.MIN_VALUE;
+                num[1] -= Long.MIN_VALUE;
             }
-            num[1] += val;
         }
 
         @VisibleForTesting
