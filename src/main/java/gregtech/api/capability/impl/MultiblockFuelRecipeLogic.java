@@ -156,4 +156,16 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     public boolean isAllowOverclocking() {
         return false;
     }
+
+    // generators always run recipes
+    @Override
+    protected void updateRecipeProgress() {
+        if (canRecipeProgress && drawEnergy(recipeEUt, true)) {
+            drawEnergy(recipeEUt, false);
+            // as recipe starts with progress on 1 this has to be > only not => to compensate for it
+            if (++progressTime > maxProgressTime) {
+                completeRecipe();
+            }
+        }
+    }
 }

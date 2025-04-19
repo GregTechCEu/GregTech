@@ -49,6 +49,7 @@ import static gregtech.api.GTValues.MAX;
 import static gregtech.api.GTValues.V;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_ACTIVE;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_IO_SPEED;
+import static gregtech.api.capability.GregtechTileCapabilities.CAPABILITY_LASER;
 
 public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILaserContainer, IControllable {
 
@@ -94,8 +95,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(this);
-        } else if (capability == GregtechTileCapabilities.CAPABILITY_LASER) {
-            return GregtechTileCapabilities.CAPABILITY_LASER.cast(this);
+        } else if (capability == CAPABILITY_LASER) {
+            return CAPABILITY_LASER.cast(this);
         } else if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         } else {
@@ -182,36 +183,35 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     public void update() {
         super.update();
         if (getWorld().isRemote) return;
+
         if (getOffsetTimer() % 20 == 0) {
             this.setIOSpeed(energyIOPerSec);
             energyIOPerSec = 0;
-            if (doExplosion) {
-                getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                        1, false);
-                doExplosion = false;
-            }
         }
+
         ampsReceived = 0;
         if (!active || !source || voltage <= 0 || amps <= 0) return;
-        long ampsUsed = 0;
-        for (EnumFacing facing : EnumFacing.values()) {
-            EnumFacing opposite = facing.getOpposite();
-            TileEntity tile = getNeighbor(facing);
-            if (tile != null) {
-                IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
-                        opposite);
-                // Try to get laser capability
-                if (container == null)
-                    container = tile.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, opposite);
 
-                if (container == null || !container.inputsEnergy(opposite) || container.getEnergyCanBeInserted() == 0)
-                    continue;
-                ampsUsed += container.acceptEnergyFromNetwork(opposite, voltage, amps - ampsUsed);
-                if (ampsUsed >= amps)
-                    break;
+        for (EnumFacing facing : EnumFacing.values()) {
+            TileEntity tile = getNeighbor(facing);
+            for (EnumFacing opposite : EnumFacing.values()) {
+                if (tile != null) {
+                    if (tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, opposite) instanceof IEnergyContainer) {
+                        IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, opposite);
+                        if (container != null) {
+                            container.addEnergy(voltage * amps);
+                        }
+                    }
+                    else if (tile.getCapability(CAPABILITY_LASER, opposite) != null) {
+                        IEnergyContainer container = tile.getCapability(CAPABILITY_LASER, opposite);
+                        if (container != null) {
+                            container.addEnergy(voltage * amps);
+                        }
+                    }
+                }
             }
         }
-        energyIOPerSec += ampsUsed * voltage;
+        energyIOPerSec += voltage*amps;
     }
 
     @Override

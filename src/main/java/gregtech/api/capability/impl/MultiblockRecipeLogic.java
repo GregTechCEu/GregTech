@@ -454,7 +454,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     @Override
     protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {
         super.modifyOverclockPost(ocResult, storage);
-
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
