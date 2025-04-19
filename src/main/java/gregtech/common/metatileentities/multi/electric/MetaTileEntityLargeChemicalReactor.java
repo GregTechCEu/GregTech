@@ -71,7 +71,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         ArrayList<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
-        MultiblockShapeInfo.Builder baseBuilder = MultiblockShapeInfo.builder(RIGHT, DOWN, FRONT)
+        MultiblockShapeInfo.Builder baseBuilder = MultiblockShapeInfo.builder()
                 .where('S', MetaTileEntities.LARGE_CHEMICAL_REACTOR, EnumFacing.SOUTH)
                 .where('X', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING))
                 .where('P',

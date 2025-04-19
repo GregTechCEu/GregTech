@@ -1053,7 +1053,7 @@ public class MetaTileEntities {
             registerMetaTileEntity(1590 + i, BLOCK_BREAKER[i]);
         }
 
-        MACHINE_HATCH = registerMetaTileEntity(1595, new MetaTileEntityMachineHatch(gregtechId("machine_hatch"), 5));
+        MACHINE_HATCH = registerMetaTileEntity(1595, new MetaTileEntityMachineHatch(gregtechId("machine_hatch"), 2));
 
         // Tanks, IDs 1596-1609
         WOODEN_TANK_VALVE = registerMetaTileEntity(1596,

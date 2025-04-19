@@ -13,10 +13,12 @@ import gregtech.loaders.recipe.WoodRecipeLoader;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Loader;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.GTValues.W;
 import static gregtech.api.unification.material.Materials.*;
+import static gregtech.api.util.Mods.Names.GTQT_CORE;
 import static gregtech.common.metatileentities.MetaTileEntities.LONG_DIST_FLUID_ENDPOINT;
 import static gregtech.common.metatileentities.MetaTileEntities.LONG_DIST_ITEM_ENDPOINT;
 
@@ -64,55 +66,57 @@ public class MaterialInfoLoader {
                         new MaterialStack(Materials.Trinium, M)) // ingot
         );
 
-        OreDictUnifier.registerOre(MetaTileEntities.HULL[0].getStackForm(), new ItemMaterialInfo(
-                new MaterialStack(Materials.WroughtIron, M * 8), // plate
-                new MaterialStack(Materials.RedAlloy, M), // single cable
-                new MaterialStack(Materials.Rubber, M * 2))); // plate
+        if (!Loader.isModLoaded(GTQT_CORE)) {
+            OreDictUnifier.registerOre(MetaTileEntities.HULL[0].getStackForm(), new ItemMaterialInfo(
+                    new MaterialStack(Materials.WroughtIron, M * 8), // plate
+                    new MaterialStack(Materials.RedAlloy, M), // single cable
+                    new MaterialStack(Materials.Rubber, M * 2))); // plate
 
-        OreDictUnifier.registerOre(MetaTileEntities.HULL[1].getStackForm(), new ItemMaterialInfo(
-                new MaterialStack(Materials.Steel, M * 8), // plate
-                new MaterialStack(Materials.Tin, M), // single cable
-                new MaterialStack(Materials.Rubber, M * 2))); // plate
+            OreDictUnifier.registerOre(MetaTileEntities.HULL[1].getStackForm(), new ItemMaterialInfo(
+                    new MaterialStack(Materials.Steel, M * 8), // plate
+                    new MaterialStack(Materials.Tin, M), // single cable
+                    new MaterialStack(Materials.Rubber, M * 2))); // plate
 
-        OreDictUnifier.registerOre(MetaTileEntities.HULL[2].getStackForm(), new ItemMaterialInfo(
-                new MaterialStack(Materials.Aluminium, M * 8), // plate
-                new MaterialStack(Materials.Copper, M), // single cable
-                new MaterialStack(Materials.Rubber, M * 2))); // plate
+            OreDictUnifier.registerOre(MetaTileEntities.HULL[2].getStackForm(), new ItemMaterialInfo(
+                    new MaterialStack(Materials.Aluminium, M * 8), // plate
+                    new MaterialStack(Materials.Copper, M), // single cable
+                    new MaterialStack(Materials.Rubber, M * 2))); // plate
 
-        OreDictUnifier.registerOre(MetaTileEntities.HULL[3].getStackForm(), new ItemMaterialInfo(
-                new MaterialStack(Materials.StainlessSteel, M * 8), // plate
-                new MaterialStack(Materials.Gold, M), // single cable
-                new MaterialStack(Materials.Rubber, M * 2))); // plate
+            OreDictUnifier.registerOre(MetaTileEntities.HULL[3].getStackForm(), new ItemMaterialInfo(
+                    new MaterialStack(Materials.StainlessSteel, M * 8), // plate
+                    new MaterialStack(Materials.Gold, M), // single cable
+                    new MaterialStack(Materials.Rubber, M * 2))); // plate
 
-        OreDictUnifier.registerOre(MetaTileEntities.HULL[4].getStackForm(), new ItemMaterialInfo(
-                new MaterialStack(Materials.Titanium, M * 8), // plate
-                new MaterialStack(Materials.Aluminium, M), // single cable
-                new MaterialStack(Materials.Rubber, M * 2))); // plate
+            OreDictUnifier.registerOre(MetaTileEntities.HULL[4].getStackForm(), new ItemMaterialInfo(
+                    new MaterialStack(Materials.Titanium, M * 8), // plate
+                    new MaterialStack(Materials.Aluminium, M), // single cable
+                    new MaterialStack(Materials.Rubber, M * 2))); // plate
 
-        OreDictUnifier.registerOre(MetaTileEntities.HULL[5].getStackForm(), new ItemMaterialInfo(
-                new MaterialStack(Materials.TungstenSteel, M * 8), // plate
-                new MaterialStack(Materials.Platinum, M), // single cable
-                new MaterialStack(Materials.Rubber, M * 2))); // plate
+            OreDictUnifier.registerOre(MetaTileEntities.HULL[5].getStackForm(), new ItemMaterialInfo(
+                    new MaterialStack(Materials.TungstenSteel, M * 8), // plate
+                    new MaterialStack(Materials.Platinum, M), // single cable
+                    new MaterialStack(Materials.Rubber, M * 2))); // plate
 
-        OreDictUnifier.registerOre(MetaTileEntities.HULL[6].getStackForm(), new ItemMaterialInfo(
-                new MaterialStack(Materials.RhodiumPlatedPalladium, M * 8), // plate
-                new MaterialStack(Materials.NiobiumTitanium, M), // single cable
-                new MaterialStack(Materials.Rubber, M * 2))); // plate
+            OreDictUnifier.registerOre(MetaTileEntities.HULL[6].getStackForm(), new ItemMaterialInfo(
+                    new MaterialStack(Materials.RhodiumPlatedPalladium, M * 8), // plate
+                    new MaterialStack(Materials.NiobiumTitanium, M), // single cable
+                    new MaterialStack(Materials.Rubber, M * 2))); // plate
 
-        OreDictUnifier.registerOre(MetaTileEntities.HULL[7].getStackForm(), new ItemMaterialInfo(
-                new MaterialStack(Materials.NaquadahAlloy, M * 8), // plate
-                new MaterialStack(Materials.VanadiumGallium, M), // single cable
-                new MaterialStack(Materials.Rubber, M * 2))); // plate
+            OreDictUnifier.registerOre(MetaTileEntities.HULL[7].getStackForm(), new ItemMaterialInfo(
+                    new MaterialStack(Materials.NaquadahAlloy, M * 8), // plate
+                    new MaterialStack(Materials.VanadiumGallium, M), // single cable
+                    new MaterialStack(Materials.Rubber, M * 2))); // plate
 
-        OreDictUnifier.registerOre(MetaTileEntities.HULL[8].getStackForm(), new ItemMaterialInfo(
-                new MaterialStack(Materials.Darmstadtium, M * 8), // plate
-                new MaterialStack(Materials.YttriumBariumCuprate, M), // single cable
-                new MaterialStack(Materials.Rubber, M * 2))); // plate
+            OreDictUnifier.registerOre(MetaTileEntities.HULL[8].getStackForm(), new ItemMaterialInfo(
+                    new MaterialStack(Materials.Darmstadtium, M * 8), // plate
+                    new MaterialStack(Materials.YttriumBariumCuprate, M), // single cable
+                    new MaterialStack(Materials.Rubber, M * 2))); // plate
 
-        OreDictUnifier.registerOre(MetaTileEntities.HULL[9].getStackForm(), new ItemMaterialInfo(
-                new MaterialStack(Materials.Neutronium, M * 8), // plate
-                new MaterialStack(Materials.Europium, M), // single cable
-                new MaterialStack(Materials.Rubber, M * 2))); // plate
+            OreDictUnifier.registerOre(MetaTileEntities.HULL[9].getStackForm(), new ItemMaterialInfo(
+                    new MaterialStack(Materials.Neutronium, M * 8), // plate
+                    new MaterialStack(Materials.Europium, M), // single cable
+                    new MaterialStack(Materials.Rubber, M * 2))); // plate
+        }
 
         OreDictUnifier.registerOre(MetaTileEntities.ENERGY_INPUT_HATCH[3].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.StainlessSteel, M * 8), // plate

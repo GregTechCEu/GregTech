@@ -1,9 +1,12 @@
 package gregtech.loaders.recipe.chemistry;
 
+import net.minecraftforge.fml.common.Loader;
+
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.LARGE_CHEMICAL_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.api.util.Mods.Names.GTQT_CORE;
 
 public class LCRCombined {
 
@@ -59,12 +62,14 @@ public class LCRCombined {
                 .fluidOutputs(HydrochloricAcid.getFluid(2000))
                 .duration(1120).EUt(VA[LV]).buildAndRegister();
 
-        LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .circuitMeta(24)
-                .fluidInputs(LightFuel.getFluid(20000))
-                .fluidInputs(HeavyFuel.getFluid(4000))
-                .fluidOutputs(Diesel.getFluid(24000))
-                .duration(100).EUt(VA[HV]).buildAndRegister();
+        if (!Loader.isModLoaded(GTQT_CORE)) {
+            LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                    .circuitMeta(24)
+                    .fluidInputs(LightFuel.getFluid(20000))
+                    .fluidInputs(HeavyFuel.getFluid(4000))
+                    .fluidOutputs(Diesel.getFluid(24000))
+                    .duration(100).EUt(VA[HV]).buildAndRegister();
+        }
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(24)

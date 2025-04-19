@@ -264,7 +264,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         List<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
-        MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder(RIGHT, DOWN, FRONT)
+        MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
                 .aisle("CCCCC", "CCCCC", "GGGGG", "GGGGG", "GGGGG")
                 .aisle("CCCCC", "CCCCC", "GBBBG", "GBBBG", "GGGGG")
                 .aisle("CCCCC", "CCCCC", "GBBBG", "GBBBG", "GGGGG")

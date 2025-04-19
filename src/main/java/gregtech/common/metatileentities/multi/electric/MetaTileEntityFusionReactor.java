@@ -161,7 +161,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     public List<MultiblockShapeInfo> getMatchingShapes() {
         List<MultiblockShapeInfo> shapeInfos = new ArrayList<>();
 
-        MultiblockShapeInfo.Builder baseBuilder = MultiblockShapeInfo.builder(RIGHT, DOWN, FRONT)
+        MultiblockShapeInfo.Builder baseBuilder = MultiblockShapeInfo.builder()
                 .aisle("###############", "######WGW######", "###############")
                 .aisle("######DCD######", "####GG###GG####", "######UCU######")
                 .aisle("####CC###CC####", "###w##EGE##s###", "####CC###CC####")

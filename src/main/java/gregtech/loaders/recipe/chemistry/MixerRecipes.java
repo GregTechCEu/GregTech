@@ -4,10 +4,13 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.UnificationEntry;
 
+import net.minecraftforge.fml.common.Loader;
+
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.MIXER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.api.util.Mods.Names.GTQT_CORE;
 
 public class MixerRecipes {
 
@@ -60,11 +63,13 @@ public class MixerRecipes {
                 .fluidOutputs(RocketFuel.getFluid(6000))
                 .duration(60).EUt(16).buildAndRegister();
 
-        MIXER_RECIPES.recipeBuilder()
-                .fluidInputs(LightFuel.getFluid(5000))
-                .fluidInputs(HeavyFuel.getFluid(1000))
-                .fluidOutputs(Diesel.getFluid(6000))
-                .duration(16).EUt(VA[MV]).buildAndRegister();
+        if (!Loader.isModLoaded(GTQT_CORE)) {
+            MIXER_RECIPES.recipeBuilder()
+                    .fluidInputs(LightFuel.getFluid(5000))
+                    .fluidInputs(HeavyFuel.getFluid(1000))
+                    .fluidOutputs(Diesel.getFluid(6000))
+                    .duration(16).EUt(VA[MV]).buildAndRegister();
+        }
 
         MIXER_RECIPES.recipeBuilder()
                 .input(dust, Clay)

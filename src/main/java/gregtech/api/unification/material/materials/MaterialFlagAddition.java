@@ -51,7 +51,7 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(RareEarth);
 
         oreProp = Nickel.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Cobalt, Iron, Platinum);
+        oreProp.setOreByProducts(Cobalt, Iron, Gold);
         oreProp.setSeparatedInto(Iron);
         oreProp.setWashedIn(Mercury);
 

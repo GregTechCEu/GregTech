@@ -231,10 +231,6 @@ public class CraftingRecipeLoader {
                 " h ", " M ", "  f",
                 'M', SHAPE_EMPTY);
 
-        ModHandler.addShapedRecipe(true, "shape_mold.credit", SHAPE_MOLD_CREDIT.getStackForm(),
-                "   ", " M ", "hf ",
-                'M', SHAPE_EMPTY);
-
         ModHandler.addShapedRecipe(true, "shape_mold.bottle", SHAPE_MOLD_BOTTLE.getStackForm(),
                 " h ", " M ", " f ",
                 'M', SHAPE_EMPTY);

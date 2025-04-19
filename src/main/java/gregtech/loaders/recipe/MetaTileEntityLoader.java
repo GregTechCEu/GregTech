@@ -5,6 +5,7 @@ import gregtech.api.items.OreDictNames;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
@@ -13,6 +14,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockGlassCasing;
+import gregtech.common.blocks.BlockMachineCasing;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
@@ -26,10 +28,17 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidUtil;
 
+import net.minecraftforge.fml.common.Loader;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
 
+import static gregtech.api.GTValues.L;
+import static gregtech.api.unification.material.Materials.Polybenzimidazole;
+import static gregtech.api.unification.material.Materials.Polytetrafluoroethylene;
+import static gregtech.api.unification.ore.OrePrefix.cableGtSingle;
+import static gregtech.api.util.Mods.Names.GTQT_CORE;
 import static gregtech.common.blocks.BlockBoilerCasing.BoilerCasingType.*;
 import static gregtech.common.blocks.BlockFireboxCasing.FireboxCasingType.*;
 import static gregtech.common.blocks.BlockHermeticCasing.HermeticCasingsType.*;
@@ -68,8 +77,60 @@ public class MetaTileEntityLoader {
                 "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Neutronium));
 
         // If these recipes are changed, change the values in MaterialInfoLoader.java
-        registerMachineRecipe(false, MetaTileEntities.HULL, "PLP", "CHC", 'P', HULL_PLATE, 'L', PLATE, 'C', CABLE, 'H',
-                CASING);
+        if (!Loader.isModLoaded(GTQT_CORE)){
+            registerMachineRecipe(false, MetaTileEntities.HULL, "PLP", "CHC", 'P', HULL_PLATE, 'L', PLATE, 'C', CABLE, 'H', CASING);
+
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(25).EUt(16)
+                    .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.ULV))
+                    .input(OrePrefix.cableGtSingle, Materials.RedAlloy, 2)
+                    .fluidInputs(Materials.Polyethylene.getFluid(L * 2)).outputs(MetaTileEntities.HULL[0].getStackForm())
+                    .buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16)
+                    .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.LV))
+                    .input(OrePrefix.cableGtSingle, Materials.Tin, 2).fluidInputs(Materials.Polyethylene.getFluid(L * 2))
+                    .outputs(MetaTileEntities.HULL[1].getStackForm()).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16)
+                    .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.MV))
+                    .input(OrePrefix.cableGtSingle, Materials.Copper, 2).fluidInputs(Materials.Polyethylene.getFluid(L * 2))
+                    .outputs(MetaTileEntities.HULL[2].getStackForm()).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16)
+                    .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.MV))
+                    .input(OrePrefix.cableGtSingle, Materials.AnnealedCopper, 2)
+                    .fluidInputs(Materials.Polyethylene.getFluid(L * 2)).outputs(MetaTileEntities.HULL[2].getStackForm())
+                    .buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16)
+                    .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.HV))
+                    .input(OrePrefix.cableGtSingle, Materials.Gold, 2).fluidInputs(Materials.Polyethylene.getFluid(L * 2))
+                    .outputs(MetaTileEntities.HULL[3].getStackForm()).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16)
+                    .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.EV))
+                    .input(OrePrefix.cableGtSingle, Materials.Aluminium, 2)
+                    .fluidInputs(Materials.Polyethylene.getFluid(L * 2)).outputs(MetaTileEntities.HULL[4].getStackForm())
+                    .buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16)
+                    .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.IV))
+                    .input(OrePrefix.cableGtSingle, Materials.Platinum, 2)
+                    .fluidInputs(Polytetrafluoroethylene.getFluid(L * 2)).outputs(MetaTileEntities.HULL[5].getStackForm())
+                    .buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16)
+                    .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.LuV))
+                    .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
+                    .fluidInputs(Polytetrafluoroethylene.getFluid(L * 2)).outputs(MetaTileEntities.HULL[6].getStackForm())
+                    .buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16)
+                    .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.ZPM))
+                    .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
+                    .fluidInputs(Polybenzimidazole.getFluid(L * 2)).outputs(MetaTileEntities.HULL[7].getStackForm())
+                    .buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16)
+                    .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UV))
+                    .input(cableGtSingle, Materials.YttriumBariumCuprate, 2).fluidInputs(Polybenzimidazole.getFluid(L * 2))
+                    .outputs(MetaTileEntities.HULL[8].getStackForm()).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(16)
+                    .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UHV))
+                    .input(cableGtSingle, Materials.Europium, 2).fluidInputs(Polybenzimidazole.getFluid(L * 2))
+                    .outputs(MetaTileEntities.HULL[9].getStackForm()).buildAndRegister();
+        }
 
         if (ConfigHolder.recipes.harderBrickRecipes) {
             ModHandler.addFluidReplaceRecipe("bucket_of_concrete",
@@ -393,8 +454,8 @@ public class MetaTileEntityLoader {
                 new UnificationEntry(OrePrefix.cableGtSingle, Materials.YttriumBariumCuprate));
 
         ModHandler.addShapedRecipe(true, "machine_access_interface", MetaTileEntities.MACHINE_HATCH.getStackForm(),
-                "CHS", 'C', new UnificationEntry(OrePrefix.circuit, Tier.IV), 'H',
-                MetaTileEntities.HULL[GTValues.IV].getStackForm(), 'S', MetaItems.SENSOR_IV.getStackForm());
+                "CHS", 'C', new UnificationEntry(OrePrefix.circuit, Tier.MV), 'H',
+                MetaTileEntities.HULL[GTValues.MV].getStackForm(), 'S', MetaItems.SENSOR_MV.getStackForm());
 
         ModHandler.addShapedRecipe(true, "passthrough_hatch_item",
                 MetaTileEntities.PASSTHROUGH_HATCH_ITEM.getStackForm(), " C ", "GHG", " S ", 'C',

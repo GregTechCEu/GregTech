@@ -38,7 +38,7 @@ public class MultiblockShapeInfo {
     }
 
     public static Builder builder() {
-        return builder(RIGHT, DOWN, BACK);
+        return builder(RIGHT, DOWN, FRONT);
     }
 
     public static Builder builder(@NotNull RelativeDirection... structureDir) {
