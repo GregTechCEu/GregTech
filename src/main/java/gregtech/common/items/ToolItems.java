@@ -40,6 +40,7 @@ public final class ToolItems {
     public static IGTTool MINING_HAMMER;
     public static IGTTool SPADE;
     public static IGTTool WRENCH;
+    public static IGTTool CHOOCHER;
     public static IGTTool FILE;
     public static IGTTool CROWBAR;
     public static IGTTool SCREWDRIVER;
@@ -152,6 +153,15 @@ public final class ToolItems {
                 .secondaryOreDicts("craftingToolWrench")
                 .symbol('w')
                 .toolClasses(ToolClasses.WRENCH));
+
+        CHOOCHER = register(ItemGTTool.Builder.of(GTValues.MODID, "choocher")
+                .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
+                        .attackDamage(1.0F).attackSpeed(-2.8F)
+                        .behaviors(BlockRotatingBehavior.INSTANCE, new EntityDamageBehavior(3.0F, EntityGolem.class)))
+                .sound(GTSoundEvents.WRENCH_TOOL, true)
+                .secondaryOreDicts(ToolOreDict.toolPickaxe, ToolOreDict.toolShovel)
+                .toolClasses(ToolClasses.WRENCH,ToolClasses.HARD_HAMMER));
+
         FILE = register(ItemGTTool.Builder.of(GTValues.MODID, "file")
                 .toolStats(b -> b.crafting().damagePerCraftingAction(4)
                         .cannotAttack().attackSpeed(-2.4F))

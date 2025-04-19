@@ -35,6 +35,15 @@ metaitem.programmable_circuit_30.name=Programmable Circuit（30）
 metaitem.programmable_circuit_31.name=Programmable Circuit（31）
 metaitem.programmable_circuit_32.name=Programmable Circuit（32）
 
+metaitem.wooden_bucket.name=Wooden Bucket
+metaitem.large_fluid_cell.chrome.name=%s Chrome Cell
+metaitem.large_fluid_cell.iridium.name=%s Iridium Cell
+metaitem.large_fluid_cell.naquadah_alloy.name=%s Naquadah Alloy Cell
+metaitem.large_fluid_cell.neutronium.name=%s Neutronium Cell
+
+metaitem.prospector.uv.name=Electric Prospector's Scanner (UV)
+metaitem.prospector.uev.name=Electric Prospector's Scanner (UEV)
+
 metaitem.endless_spray.empty.name=Endless Spray Can (Empty)
 metaitem.endless_spray.solvent.name=Endless Spray Can (Solvent)
 metaitem.endless_spray.can.dyes.white.name=Endless Spray Can (White)

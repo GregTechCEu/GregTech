@@ -1,15 +1,28 @@
 package gtqt.common.items;
 
+import gregtech.api.GTValues;
+import gregtech.api.items.metaitem.ElectricStats;
+import gregtech.api.items.metaitem.FilteredFluidStats;
 import gregtech.api.items.metaitem.StandardMetaItem;
 
+import gregtech.api.items.metaitem.stats.ItemFluidContainer;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.behaviors.ColorSprayBehaviour;
+
+import gregtech.common.items.behaviors.ProspectorScannerBehavior;
 
 import gtqt.common.GTQTCommonProxy;
 import gtqt.common.items.behaviors.ProgrammableCircuit;
 
 import net.minecraft.item.EnumDyeColor;
 
+import static gregtech.api.GTValues.M;
+import static gregtech.api.unification.material.Materials.*;
+import static gregtech.common.items.MetaItems.PROSPECTOR_LUV;
 import static gtqt.common.items.GTQTMetaItems.ENDLESS_SPRAY_EMPTY;
 
 public class GTQTMetaItem1 extends StandardMetaItem {
@@ -56,15 +69,70 @@ public class GTQTMetaItem1 extends StandardMetaItem {
         GTQTMetaItems.PROGRAMMABLE_CIRCUIT_31 = this.addItem(51, "programmable_circuit_31").addComponents(new ProgrammableCircuit(31, "programmable_circuit")).setCreativeTabs(GTQTCommonProxy.GTQTCore_PC);
         GTQTMetaItems.PROGRAMMABLE_CIRCUIT_32 = this.addItem(52, "programmable_circuit_32").addComponents(new ProgrammableCircuit(32, "programmable_circuit")).setCreativeTabs(GTQTCommonProxy.GTQTCore_PC);
 
+        //流体单元90
+        GTQTMetaItems.WOODEN_BUCKET = this.addItem(90, "wooden_bucket")
+                .addComponents(new FilteredFluidStats(1000, Wood.getProperty(PropertyKey.FLUID_PIPE)
+                        .getMaxFluidTemperature(), true, false, false, false, true),
+                        new ItemFluidContainer())
+                .setMaxStackSize(1)
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Wood, M * 8))) // ingot * 8
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+
+        GTQTMetaItems.FLUID_CELL_CHROME = this.addItem(91, "large_fluid_cell.chrome")
+                .addComponents(new FilteredFluidStats(2_048_000, Chrome.getProperty(PropertyKey.FLUID_PIPE)
+                        .getMaxFluidTemperature(), true, true, false, false, true),
+                        new ItemFluidContainer())
+                .setMaxStackSize(32)
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Chrome, M * 8))) // ingot * 8
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+
+        GTQTMetaItems.FLUID_CELL_IRIDIUM = this.addItem(92, "large_fluid_cell.iridium")
+                .addComponents(new FilteredFluidStats(8_192_000, Iridium.getProperty(PropertyKey.FLUID_PIPE)
+                        .getMaxFluidTemperature(), true, true, true, false, true),
+                        new ItemFluidContainer())
+                .setMaxStackSize(32)
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Iridium, M * 8))) // ingot * 8
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+
+        GTQTMetaItems.FLUID_CELL_NAQUADAH_ALLOY = this.addItem(93, "large_fluid_cell.naquadah_alloy")
+                .addComponents(new FilteredFluidStats(32_768_000, NaquadahAlloy.getProperty(PropertyKey.FLUID_PIPE)
+                        .getMaxFluidTemperature(), true, true, true, true, true),
+                        new ItemFluidContainer())
+                .setMaxStackSize(32)
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.NaquadahAlloy, M * 8))) // ingot * 8
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+
+        GTQTMetaItems.FLUID_CELL_NEUTRONIUM = this.addItem(94, "large_fluid_cell.neutronium")
+                .addComponents(new FilteredFluidStats(131_072_000, Neutronium.getProperty(PropertyKey.FLUID_PIPE)
+                        .getMaxFluidTemperature(), true, true, true, true, true),
+                        new ItemFluidContainer())
+                .setMaxStackSize(32)
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Neutronium, M * 8))) // ingot * 8
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+
+        GTQTMetaItems.PROSPECTOR_UV = addItem(95, "prospector.uv")
+                .addComponents(ElectricStats.createElectricItem(16_000_000_000L, GTValues.UV),
+                        new ProspectorScannerBehavior(7, GTValues.UV))
+                .setMaxStackSize(1)
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+
+        GTQTMetaItems.PROSPECTOR_UEV = addItem(96, "prospector.uev")
+                .addComponents(ElectricStats.createElectricItem(16_000_000_000L, GTValues.UEV),
+                        new ProspectorScannerBehavior(9, GTValues.UEV))
+                .setMaxStackSize(1)
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+
+
         // Spray Cans: ID 60-77
-        ENDLESS_SPRAY_EMPTY = addItem(161, "endless_spray.empty");
+        ENDLESS_SPRAY_EMPTY = addItem(101, "endless_spray.empty");
 
         // out of registry order so it can reference the Empty Spray Can
-        GTQTMetaItems.ENDLESS_SPRAY_SOLVENT = addItem(160, "endless_spray.solvent").setMaxStackSize(1).addComponents(new ColorSprayBehaviour(ENDLESS_SPRAY_EMPTY.getStackForm(), Integer.MAX_VALUE, -1)).setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+        GTQTMetaItems.ENDLESS_SPRAY_SOLVENT = addItem(100, "endless_spray.solvent").setMaxStackSize(1).addComponents(new ColorSprayBehaviour(ENDLESS_SPRAY_EMPTY.getStackForm(), Integer.MAX_VALUE, -1)).setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         for (int i = 0; i < EnumDyeColor.values().length; i++) {
-            GTQTMetaItems.ENDLESS_SPRAY_CAN_DYES[i] = addItem(162 + i, "endless_spray.can.dyes." + EnumDyeColor.values()[i].getName()).setMaxStackSize(1).addComponents(new ColorSprayBehaviour(ENDLESS_SPRAY_EMPTY.getStackForm(), Integer.MAX_VALUE, i)).setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+            GTQTMetaItems.ENDLESS_SPRAY_CAN_DYES[i] = addItem(102 + i, "endless_spray.can.dyes." + EnumDyeColor.values()[i].getName()).setMaxStackSize(1).addComponents(new ColorSprayBehaviour(ENDLESS_SPRAY_EMPTY.getStackForm(), Integer.MAX_VALUE, i)).setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         }
+
 
     }
 }

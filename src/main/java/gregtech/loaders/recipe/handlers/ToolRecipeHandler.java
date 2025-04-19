@@ -134,8 +134,7 @@ public class ToolRecipeHandler {
     private static void processTool(OrePrefix prefix, Material material, MaterialToolProperty property) {
         UnificationEntry stick = new UnificationEntry(OrePrefix.stick, Materials.Wood);
         UnificationEntry plate = new UnificationEntry(OrePrefix.plate, material);
-        UnificationEntry ingot = new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot,
-                material);
+        UnificationEntry ingot = new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot, material);
 
         if (material.hasFlag(GENERATE_PLATE)) {
             addToolRecipe(material, ToolItems.MINING_HAMMER, true,
@@ -205,10 +204,15 @@ public class ToolRecipeHandler {
             addToolRecipe(material, ToolItems.WRENCH, false,
                     "PhP", " P ", " P ",
                     'P', plate);
-        }
 
+        }
         if (material.hasFlag(GENERATE_ROD)) {
             UnificationEntry rod = new UnificationEntry(OrePrefix.stick, material);
+
+            addToolRecipe(material, ToolItems.CHOOCHER, false,
+                    "PhP", "SPS", " P ",
+                    'P', plate,
+                    'S', rod);
 
             if (material.hasFlag(GENERATE_PLATE)) {
                 addToolRecipe(material, ToolItems.BUTCHERY_KNIFE, false,
