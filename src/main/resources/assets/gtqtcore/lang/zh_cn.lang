@@ -35,6 +35,39 @@ metaitem.programmable_circuit_30.name=可编程电路卡（30）
 metaitem.programmable_circuit_31.name=可编程电路卡（31）
 metaitem.programmable_circuit_32.name=可编程电路卡（32）
 
+#  通用电路板s
+metaitem.general_circuit.ulv.name=通用电路板 (§8ULV§r)
+metaitem.general_circuit.lv.name=通用电路板 (§7LV§r)
+metaitem.general_circuit.mv.name=通用电路板 (§bMV§r)
+metaitem.general_circuit.hv.name=通用电路板 (§6HV§r)
+metaitem.general_circuit.ev.name=通用电路板 (§5EV§r)
+metaitem.general_circuit.iv.name=通用电路板 (§1IV§r)
+metaitem.general_circuit.luv.name=通用电路板 (§dLuV§r)
+metaitem.general_circuit.zpm.name=通用电路板 (§cZPM§r)
+metaitem.general_circuit.uv.name=通用电路板 (§3UV§r)
+metaitem.general_circuit.uhv.name=通用电路板 (§4UHV§r)
+metaitem.general_circuit.uev.name=通用电路板 (§aUEV§r)
+metaitem.general_circuit.uiv.name=通用电路板 (§2UIV§r)
+metaitem.general_circuit.uxv.name=通用电路板 (§eUXV§r)
+metaitem.general_circuit.opv.name=通用电路板 (§9OpV§r)
+metaitem.general_circuit.max.name=通用电路板 (§c§lMAX§r)
+
+metaitem.general_circuit.ulv.tooltip=§我是可爱的通用电路板§r
+metaitem.general_circuit.lv.tooltip=§7我是可爱的通用电路板§r
+metaitem.general_circuit.mv.tooltip=§b我是可爱的通用电路板§r
+metaitem.general_circuit.hv.tooltip=§6我是可爱的通用电路板§r
+metaitem.general_circuit.ev.tooltip=§5我是可爱的通用电路板§r
+metaitem.general_circuit.iv.tooltip=§1我是可爱的通用电路板§r
+metaitem.general_circuit.luv.tooltip=§d我是可爱的通用电路板§r
+metaitem.general_circuit.zpm.tooltip=§c我是可爱的通用电路板§r
+metaitem.general_circuit.uv.tooltip=§3我是可爱的通用电路板§r
+metaitem.general_circuit.uhv.tooltip=§4我是可爱的通用电路板§r
+metaitem.general_circuit.uev.tooltip=§a我是可爱的通用电路板§r
+metaitem.general_circuit.uiv.tooltip=§2我是可爱的通用电路板§r
+metaitem.general_circuit.uxv.tooltip=§e我是可爱的通用电路板§r
+metaitem.general_circuit.opv.tooltip=§9我是可爱的通用电路板§r
+metaitem.general_circuit.max.tooltip=§c§l我是可爱的通用电路板§r
+
 metaitem.wooden_bucket.name=木桶
 metaitem.large_fluid_cell.chrome.name=%s铬单元
 metaitem.large_fluid_cell.iridium.name=%s铱单元

@@ -130,7 +130,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         this.buttonPreviousPattern.visible = !isPagesDisabled;
         this.buttonNextPattern.visible = !isPagesDisabled;
         this.predicates = new ArrayList<>();
-        MULTIBLOCK_INFO_CACHE.put(controller, patterns);
+        MULTIBLOCK_INFO_CACHE.put(controller.metaTileEntityId, patterns);
     }
 
     @Override

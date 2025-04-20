@@ -67,7 +67,7 @@ public class GregTechAPI {
     private static boolean highTier;
     private static boolean highTierInitialized;
 
-    public static Map<MultiblockControllerBase, MBPattern[]> MULTIBLOCK_INFO_CACHE = new HashMap<>();
+    public static Map<ResourceLocation, MBPattern[]> MULTIBLOCK_INFO_CACHE = new HashMap<>();
 
     @Deprecated
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(

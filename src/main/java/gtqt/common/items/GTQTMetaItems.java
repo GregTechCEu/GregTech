@@ -41,6 +41,22 @@ public class GTQTMetaItems {
     public static MetaItem<?>.MetaValueItem PROGRAMMABLE_CIRCUIT_31;
     public static MetaItem<?>.MetaValueItem PROGRAMMABLE_CIRCUIT_32;
 
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_ULV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_LV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_MV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_HV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_EV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_IV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_LuV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_ZPM;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_UV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_UHV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_UEV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_UIV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_UXV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_OpV;
+    public static MetaItem<?>.MetaValueItem GENERAL_CIRCUIT_MAX;
+
     public static MetaItem<?>.MetaValueItem WOODEN_BUCKET;
     public static MetaItem<?>.MetaValueItem FLUID_CELL_CHROME;
     public static MetaItem<?>.MetaValueItem FLUID_CELL_IRIDIUM;

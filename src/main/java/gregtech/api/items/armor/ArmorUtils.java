@@ -148,6 +148,7 @@ public class ArmorUtils {
      * @return result of eating food
      */
     public static ActionResult<ItemStack> canEat(EntityPlayer player, ItemStack food) {
+        if(player==null)return new ActionResult<>(EnumActionResult.FAIL, food);
         if (!(food.getItem() instanceof ItemFood)) {
             return new ActionResult<>(EnumActionResult.FAIL, food);
         }
