@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.multiblock.IProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
@@ -196,6 +197,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     private boolean checkIntakesObstructed() {
+        GreggyBlockPos pos = new GreggyBlockPos(0, 0, -1);
         for (int left = -1; left <= 1; left++) {
             for (int up = -1; up <= 1; up++) {
                 if (left == 0 && up == 0) {
@@ -203,9 +205,11 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                     continue;
                 }
 
-                final BlockPos checkPos = RelativeDirection.offsetPos(
-                        getPos(), getFrontFacing(), getUpwardsFacing(), isFlipped(), up, left, 1);
-                final IBlockState state = getWorld().getBlockState(checkPos);
+                pos.x(left);
+                pos.y(up);
+                pos.z(-1);
+                BlockPos checkPos = mat.apply(pos).immutable();
+                IBlockState state = getWorld().getBlockState(checkPos);
                 if (!state.getBlock().isAir(state, getWorld(), checkPos)) {
                     return true;
                 }

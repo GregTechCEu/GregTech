@@ -19,6 +19,7 @@ import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.covers.CoverDigitalInterface;
 import gregtech.common.gui.widget.WidgetARGB;
@@ -209,8 +210,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         MultiblockControllerBase controller = getController();
         if (controller == null) return -1;
 
-        EnumFacing.Axis lrAxis = RIGHT.getRelativeFacing(controller.getFrontFacing(), controller.getUpwardsFacing())
-                .getAxis();
+        EnumFacing.Axis lrAxis = GTUtility.cross(controller.getFrontFacing(), controller.getUpwardsFacing()).getAxis();
         return Math.abs(
                 GreggyBlockPos.getAxis(getPos(), lrAxis) - GreggyBlockPos.getAxis(controller.getPos(), lrAxis)) - 1;
     }
@@ -223,7 +223,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         // top left corner of screen
         GreggyBlockPos pos = new GreggyBlockPos(controller.getPos());
         pos.offset(controller.getUpwardsFacing(), ((MetaTileEntityCentralMonitor) controller).height - 2);
-        pos.offset(LEFT.getRelativeFacing(controller.getFrontFacing(), controller.getUpwardsFacing()));
+        pos.offset(GTUtility.cross(controller.getUpwardsFacing(), controller.getFrontFacing()));
 
         return Math.abs(pos.get(udAxis) - GreggyBlockPos.getAxis(getPos(), udAxis));
     }

@@ -3,6 +3,7 @@ package gregtech.api.pattern.pattern;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
+import gregtech.api.pattern.MatrixPair;
 import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.TraceabilityPredicate;
@@ -54,14 +55,14 @@ public class BlockPattern implements IBlockPattern {
     public BlockPattern(@NotNull PatternAisle @NotNull [] aisles,
                         @NotNull AisleStrategy aisleStrategy,
                         int @NotNull [] dimensions,
-                        @NotNull RelativeDirection @NotNull [] directions,
+                        @NotNull EnumFacing @NotNull [] directions,
                         @Nullable OriginOffset offset,
                         @NotNull Char2ObjectMap<@NotNull TraceabilityPredicate> predicates,
                         char centerChar) {
         this.aisles = aisles;
         this.aisleStrategy = aisleStrategy;
         this.dimensions = dimensions;
-        this.directions = Arrays.stream(directions).map(i -> DEFAULT_FACINGS[i.ordinal()]).toArray(EnumFacing[]::new);
+        this.directions = directions;
         this.predicates = predicates;
 
         if (offset == null) {
@@ -79,12 +80,10 @@ public class BlockPattern implements IBlockPattern {
      * @param center The center char to look for
      */
     private void legacyStartOffset(char center) {
-        // don't do anything if center char isn't specified
         if (center == 0) return;
         for (int aisleI = 0; aisleI < dimensions[0]; aisleI++) {
             int[] result = aisles[aisleI].firstInstanceOf(center);
             if (result != null) {
-                // structure starts at aisle 0, string 0, char 0, think about it
                 moveOffset(directions[0], -aisleI);
                 moveOffset(directions[1], -result[0]);
                 moveOffset(directions[2], -result[1]);
@@ -98,38 +97,8 @@ public class BlockPattern implements IBlockPattern {
     @Nullable
     @Override
     public PatternState cachedPattern(World world) {
-        if (!cache.isEmpty()) {
-            boolean pass = true;
-            GreggyBlockPos gregPos = new GreggyBlockPos();
-            for (Long2ObjectMap.Entry<BlockInfo> entry : cache.long2ObjectEntrySet()) {
-                BlockPos pos = gregPos.fromLong(entry.getLongKey()).immutable();
-                IBlockState blockState = world.getBlockState(pos);
-
-                if (blockState != entry.getValue().getBlockState()) {
-                    pass = false;
-                    break;
-                }
-
-                TileEntity cachedTileEntity = entry.getValue().getTileEntity();
-
-                if (cachedTileEntity != null) {
-                    TileEntity tileEntity = world.getTileEntity(pos);
-                    if (tileEntity != cachedTileEntity) {
-                        pass = false;
-                        break;
-                    }
-                }
-            }
-            if (pass) {
-                if (state.hasError()) {
-                    state.setState(PatternState.EnumCheckState.INVALID);
-                } else {
-                    state.setState(PatternState.EnumCheckState.VALID_CACHED);
-                }
-
-                return state;
-            }
-        }
+        PatternState result = validateCache(world);
+        if (result != null) return result;
 
         clearCache();
         state.setError(null);
@@ -189,7 +158,7 @@ public class BlockPattern implements IBlockPattern {
 
         for (int stringI = 0; stringI < dimensions[1]; stringI++) {
             for (int charI = 0; charI < dimensions[2]; charI++) {
-                GTUtility.apply(transform, transformed.from(pos));
+                MatrixPair.apply(transform, transformed.from(pos));
                 worldState.setPos(transformed);
                 TraceabilityPredicate predicate = predicates.get(aisle.charAt(stringI, charI));
 
@@ -210,7 +179,6 @@ public class BlockPattern implements IBlockPattern {
                 pos.offset(directions[2]);
             }
 
-            // offset the string start once after every string
             pos.offset(directions[2].getOpposite(), dimensions[2]);
             pos.offset(directions[1]);
         }
@@ -249,7 +217,7 @@ public class BlockPattern implements IBlockPattern {
                 for (int k = 0; k < dimensions[2]; k++) {
                     TraceabilityPredicate pred = predicates.get(aisles[order[i]].charAt(j, k));
                     if (pred != TraceabilityPredicate.ANY && pred != TraceabilityPredicate.AIR)
-                        map.put(GTUtility.apply(transform, transformed.from(pos)).toLong(),
+                        map.put(MatrixPair.apply(transform, transformed.from(pos)).toLong(),
                                 predicates.get(aisles[order[i]].charAt(j, k)));
                     pos.offset(directions[2]);
                 }
@@ -265,7 +233,7 @@ public class BlockPattern implements IBlockPattern {
     }
 
     @Override
-    public PatternState getPatternState() {
+    public PatternState getState() {
         return state;
     }
 

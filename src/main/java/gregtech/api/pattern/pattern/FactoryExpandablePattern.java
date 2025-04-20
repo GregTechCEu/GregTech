@@ -4,6 +4,8 @@ import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.RelativeDirection;
 
+import net.minecraft.util.EnumFacing;
+
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -11,13 +13,13 @@ public class FactoryExpandablePattern {
 
     protected Supplier<int[]> boundsSupplier;
     protected BiFunction<GreggyBlockPos, int[], TraceabilityPredicate> predicateFunction;
-    protected final RelativeDirection[] directions = new RelativeDirection[3];
+    protected final EnumFacing[] directions = new EnumFacing[3];
 
     private FactoryExpandablePattern(RelativeDirection aisleDir, RelativeDirection stringDir,
                                      RelativeDirection charDir) {
-        directions[0] = aisleDir;
-        directions[1] = stringDir;
-        directions[2] = charDir;
+        directions[0] = aisleDir.getRelativeFacing(EnumFacing.NORTH, EnumFacing.UP);
+        directions[1] = stringDir.getRelativeFacing(EnumFacing.NORTH, EnumFacing.UP);
+        directions[2] = charDir.getRelativeFacing(EnumFacing.NORTH, EnumFacing.UP);
         GreggyBlockPos.validateFacingsArray(directions);
     }
 

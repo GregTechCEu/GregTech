@@ -320,9 +320,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     @Override
     protected boolean checkUncachedPattern(IBlockPattern pattern) {
-        transform.setIdentity();
+        mat.identity();
         defaultTranslate();
-        return pattern.checkPatternAt(getWorld(), transform);
+        return pattern.checkPatternAt(getWorld(), mat.mat);
     }
 
     @Override

@@ -71,7 +71,8 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
      */
     @Override
     protected ToIntFunction<BlockPos> multiblockPartSorter() {
-        return RelativeDirection.UP.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
+        // technically doesn't matter since extended facing is false you can just sort by y
+        return pos -> mat.unapply(pos).y();
     }
 
     /**

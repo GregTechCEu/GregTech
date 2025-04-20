@@ -8,6 +8,9 @@ import gregtech.api.util.RelativeDirection;
 import com.google.common.base.Joiner;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
+
+import net.minecraft.util.EnumFacing;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -44,13 +47,9 @@ public class FactoryBlockPattern {
     protected static final Joiner COMMA_JOIN = Joiner.on(",");
 
     /**
-     * In the form of [ num aisles, num string per aisle, num char per string ]
+     * [ num aisles, num string per aisle, num char per string ]
      */
     private final int[] dimensions = { -1, -1, -1 };
-    /**
-     * Look at the field with the same name in {@link BlockPattern} for docs
-     */
-    private OriginOffset offset;
     private char centerChar;
     private AisleStrategy aisleStrategy;
 
@@ -64,15 +63,15 @@ public class FactoryBlockPattern {
     /**
      * In the form of [ aisleDir, stringDir, charDir ]
      */
-    private final RelativeDirection[] directions = new RelativeDirection[3];
+    private final EnumFacing[] directions = new EnumFacing[3];
 
     /**
      * @see FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)
      */
     private FactoryBlockPattern(RelativeDirection aisleDir, RelativeDirection stringDir, RelativeDirection charDir) {
-        directions[0] = aisleDir;
-        directions[1] = stringDir;
-        directions[2] = charDir;
+        directions[0] = aisleDir.getRelativeFacing(EnumFacing.NORTH, EnumFacing.UP);
+        directions[1] = stringDir.getRelativeFacing(EnumFacing.NORTH, EnumFacing.UP);
+        directions[2] = charDir.getRelativeFacing(EnumFacing.NORTH, EnumFacing.UP);
         GreggyBlockPos.validateFacingsArray(directions);
         this.symbolMap.put(' ', TraceabilityPredicate.ANY);
     }

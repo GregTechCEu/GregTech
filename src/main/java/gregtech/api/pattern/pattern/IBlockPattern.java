@@ -1,10 +1,14 @@
 package gregtech.api.pattern.pattern;
 
+import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -19,12 +23,12 @@ public interface IBlockPattern {
 
     // a[i] is RelativeDirection.values()[i].getRelativeFacing(NORTH, UP)
     EnumFacing[] DEFAULT_FACINGS = {
-            RelativeDirection.VALUES[0].getRelativeFacing(EnumFacing.NORTH, EnumFacing.UP),
-            RelativeDirection.VALUES[1].getRelativeFacing(EnumFacing.NORTH, EnumFacing.UP),
-            RelativeDirection.VALUES[2].getRelativeFacing(EnumFacing.NORTH, EnumFacing.UP),
-            RelativeDirection.VALUES[3].getRelativeFacing(EnumFacing.NORTH, EnumFacing.UP),
-            RelativeDirection.VALUES[4].getRelativeFacing(EnumFacing.NORTH, EnumFacing.UP),
-            RelativeDirection.VALUES[5].getRelativeFacing(EnumFacing.NORTH, EnumFacing.UP)
+            EnumFacing.UP,
+            EnumFacing.DOWN,
+            EnumFacing.WEST,
+            EnumFacing.EAST,
+            EnumFacing.NORTH,
+            EnumFacing.SOUTH
     };
 
     /**
@@ -34,10 +38,6 @@ public interface IBlockPattern {
     PatternState cachedPattern(World world);
 
     /**
-     * Checks the whole pattern, you should probably use checkPatternFastAt(...) instead.
-     * 
-     * @param world     The world the multiblock is in.
-     * @param transform Matrix transforming coordinates(specified by the specific impl) into world coordinates.
      * @return True if the check passed, in which case the context is mutated for returning from checkPatternFastAt(...)
      */
     boolean checkPatternAt(World world, Matrix4f transform);
@@ -48,37 +48,62 @@ public interface IBlockPattern {
      *
      * @param transform Matrix transforming coordinates(specified by the specific impl) into world coordinates.
      * @param keyMap    The map from multiblock builder for autobuild.
-     * @return The long key is using {@link gregtech.api.pattern.GreggyBlockPos#toLong(int, int, int)} with x, y, z
-     *         respectively being. The map is sorted using the natural ordering(thus with x, y, z order).
+     * @return Expected that each invocation returns a new map instance.
      */
     Long2ObjectSortedMap<TraceabilityPredicate> getDefaultShape(Matrix4f transform,
                                                                 @NotNull Map<String, String> keyMap);
 
-    /**
-     * Gets the internal pattern state, probably use the one returned from
-     * {@link IBlockPattern#cachedPattern(World)}
-     */
-    PatternState getPatternState();
+    PatternState getState();
 
-    /**
-     * Clears the cache for checkPatternFastAt(...) in case something in the pattern is changed. Default impl just
-     * getCache and then clears it.
-     */
     default void clearCache() {
         getCache().clear();
     }
 
-    /**
-     * Gets the cache, do not modify. Note that the cache stores everything in the AABB of the substructure, except for
-     * any() TraceabilityPredicates.
-     * 
-     * @return The cache for rapid pattern checking.
-     */
     Long2ObjectMap<BlockInfo> getCache();
 
     void moveOffset(RelativeDirection dir, int amount);
 
     default void moveOffset(RelativeDirection dir) {
         moveOffset(dir, 1);
+    }
+
+    /**
+     * Common code for validating a structure's cache.
+     * @return The state iff cache is valid.
+     */
+    default PatternState validateCache(World world) {
+        if (!getCache().isEmpty()) {
+            boolean pass = true;
+            GreggyBlockPos gregPos = new GreggyBlockPos();
+            for (Long2ObjectMap.Entry<BlockInfo> entry : getCache().long2ObjectEntrySet()) {
+                BlockPos pos = gregPos.fromLong(entry.getLongKey()).immutable();
+                IBlockState blockState = world.getBlockState(pos);
+
+                if (blockState != entry.getValue().getBlockState()) {
+                    pass = false;
+                    break;
+                }
+
+                TileEntity cachedTileEntity = entry.getValue().getTileEntity();
+
+                if (cachedTileEntity != null) {
+                    TileEntity tileEntity = world.getTileEntity(pos);
+                    if (tileEntity != cachedTileEntity) {
+                        pass = false;
+                        break;
+                    }
+                }
+            }
+            if (pass) {
+                if (getState().hasError()) {
+                    getState().setState(PatternState.EnumCheckState.INVALID);
+                } else {
+                    getState().setState(PatternState.EnumCheckState.VALID_CACHED);
+                }
+
+                return getState();
+            }
+        }
+        return null;
     }
 }

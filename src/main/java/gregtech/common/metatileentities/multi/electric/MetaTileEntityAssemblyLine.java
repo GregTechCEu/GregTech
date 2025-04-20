@@ -78,31 +78,13 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     private GTLaserBeamParticle[][] beamParticles;
     private int beamCount;
     private int beamTime;
-    // todo remove
-    private final Matrix4f temp = new Matrix4f();
-    private static final Field[][] fields = new Field[4][4];
-
-    static {
-        try {
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    fields[i][j] = Matrix4f.class.getDeclaredField("m" + i + j);
-                }
-            }
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        MetaTileEntityAssemblyLine mte = new MetaTileEntityAssemblyLine(metaTileEntityId);
-        mte.temp.load(temp);
-        return mte;
+        return new MetaTileEntityAssemblyLine(metaTileEntityId);
     }
 
     @NotNull
@@ -172,7 +154,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     @Override
     protected ToIntFunction<BlockPos> multiblockPartSorter() {
         // player's right when looking at the controller, but the controller's left
-        return RelativeDirection.LEFT.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
+        return pos -> -mat.unapply(pos).x();
     }
 
     @SideOnly(Side.CLIENT)
@@ -241,62 +223,6 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        try {
-            for (int i = 0; i < 4; i++) {
-                ITextComponent comp = new TextComponentString("");
-                for (int j = 0; j < 4; j++) {
-                    comp.appendSibling(withButton(
-                            new TextComponentString(String.valueOf(MathHelper.floor(fields[j][i].getFloat(temp)))), "" + j + i));
-                    comp.appendText(" ");
-                }
-                textList.add(comp);
-            }
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
-        Field f = fields[componentData.charAt(0) - '0'][componentData.charAt(1) - '0'];
-        int delta = clickData.isShiftClick ? -1 : 1;
-        writeCustomData(1239234, buf -> buf.writeVarInt(componentData.charAt(0) - '0').writeVarInt(componentData.charAt(1) - '0').writeVarInt(delta));
-        try {
-            f.setFloat(temp, f.getFloat(temp) + delta);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    protected boolean checkUncachedPattern(IBlockPattern pattern) {
-        transform.setIdentity();
-
-        defaultTranslate();
-        Matrix4f.mul(transform, temp, transform);
-        defaultRotate();
-        return pattern.checkPatternAt(getWorld(), transform);
-    }
-
-    public void autoBuild(EntityPlayer player, Map<String, String> map, String substructure) {
-        if (getWorld().isRemote) throw new IllegalArgumentException("client side call wuh");
-
-        IBlockPattern structure = getSubstructure(trySubstructure(substructure));
-
-        transform.setIdentity();
-        defaultTranslate();
-        Matrix4f.mul(transform, temp, transform);
-        defaultRotate();
-
-        Long2ObjectMap<TraceabilityPredicate> predicates = structure.getDefaultShape(transform, map);
-        if (predicates == null) return;
-
-        autoBuild(player, map, predicates);
-    }
-
-    @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         writeParticles(buf);
@@ -310,14 +236,6 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if (dataId == 1239234) {
-            Field f = fields[buf.readVarInt()][buf.readVarInt()];
-            try {
-                f.setFloat(temp, f.getFloat(temp) + buf.readVarInt());
-            } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
-            }
-        }
         if (dataId == GregtechDataCodes.UPDATE_PARTICLE) {
             readParticles(buf);
         } else {
@@ -353,8 +271,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getPos());
 
-        EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
-                isFlipped());
+        EnumFacing relativeUp = getUpwardsFacing();
         EnumFacing relativeLeft = RelativeDirection.LEFT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
                 isFlipped());
         boolean negativeUp = relativeUp.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE;

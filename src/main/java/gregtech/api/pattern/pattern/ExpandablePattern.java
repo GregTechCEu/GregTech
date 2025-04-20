@@ -3,6 +3,7 @@ package gregtech.api.pattern.pattern;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
+import gregtech.api.pattern.MatrixPair;
 import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
@@ -56,10 +57,10 @@ public class ExpandablePattern implements IBlockPattern {
      */
     public ExpandablePattern(@NotNull Supplier<int[]> boundSupplier,
                              @NotNull BiFunction<GreggyBlockPos, int[], TraceabilityPredicate> predicateFunction,
-                             @NotNull RelativeDirection[] directions) {
+                             @NotNull EnumFacing[] directions) {
         this.boundSupplier = boundSupplier;
         this.predicateFunction = predicateFunction;
-        this.directions = Arrays.stream(directions).map(i -> DEFAULT_FACINGS[i.ordinal()]).toArray(EnumFacing[]::new);
+        this.directions = directions;
 
         this.worldState = new BlockWorldState();
     }
@@ -67,38 +68,8 @@ public class ExpandablePattern implements IBlockPattern {
     @Nullable
     @Override
     public PatternState cachedPattern(World world) {
-        if (!cache.isEmpty()) {
-            boolean pass = true;
-            GreggyBlockPos gregPos = new GreggyBlockPos();
-            for (Long2ObjectMap.Entry<BlockInfo> entry : cache.long2ObjectEntrySet()) {
-                BlockPos pos = gregPos.fromLong(entry.getLongKey()).immutable();
-                IBlockState blockState = world.getBlockState(pos);
-
-                if (blockState != entry.getValue().getBlockState()) {
-                    pass = false;
-                    break;
-                }
-
-                TileEntity cachedTileEntity = entry.getValue().getTileEntity();
-
-                if (cachedTileEntity != null) {
-                    TileEntity tileEntity = world.getTileEntity(pos);
-                    if (tileEntity != cachedTileEntity) {
-                        pass = false;
-                        break;
-                    }
-                }
-            }
-            if (pass) {
-                if (state.hasError()) {
-                    state.setState(PatternState.EnumCheckState.INVALID);
-                } else {
-                    state.setState(PatternState.EnumCheckState.VALID_CACHED);
-                }
-
-                return state;
-            }
-        }
+        PatternState result = validateCache(world);
+        if (result != null) return result;
 
         clearCache();
         state.setError(null);
@@ -137,7 +108,7 @@ public class ExpandablePattern implements IBlockPattern {
             // this basically reshuffles the coordinates into absolute form from relative form
             pos.zero().offset(directions[0], arr[0]).offset(directions[1], arr[1]).offset(directions[2], arr[2]);
 
-            GTUtility.apply(transform, transformed.from(pos));
+            MatrixPair.apply(transform, transformed.from(pos));
             worldState.setPos(transformed);
 
             if (predicate != TraceabilityPredicate.ANY) {
@@ -188,7 +159,7 @@ public class ExpandablePattern implements IBlockPattern {
             pos.zero().offset(directions[0], arr[0]).offset(directions[1], arr[1]).offset(directions[2], arr[2]);
 
             if (predicate != TraceabilityPredicate.ANY && predicate != TraceabilityPredicate.AIR) {
-                predicates.put(GTUtility.apply(transform, translation.from(pos)).toLong(), predicate);
+                predicates.put(MatrixPair.apply(transform, translation.from(pos)).toLong(), predicate);
             }
         }
 
@@ -196,7 +167,7 @@ public class ExpandablePattern implements IBlockPattern {
     }
 
     @Override
-    public PatternState getPatternState() {
+    public PatternState getState() {
         return state;
     }
 

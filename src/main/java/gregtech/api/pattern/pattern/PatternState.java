@@ -1,8 +1,10 @@
 package gregtech.api.pattern.pattern;
 
+import gregtech.api.pattern.MatrixPair;
 import gregtech.api.pattern.PatternError;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.lwjgl.util.vector.Matrix4f;
 
 import java.util.HashMap;
 import java.util.Map;

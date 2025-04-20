@@ -4,6 +4,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 
 import com.google.common.base.Preconditions;
@@ -90,7 +91,7 @@ public class BasicAisleStrategy extends AisleStrategy {
     }
 
     @Override
-    protected void finish(int[] dimensions, RelativeDirection[] directions, List<PatternAisle> aisles) {
+    protected void finish(int[] dimensions, EnumFacing[] directions, List<PatternAisle> aisles) {
         super.finish(dimensions, directions, aisles);
 
         // maybe just set the reference? but then the field cant be final

@@ -249,7 +249,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                 if (holder != null && holder.getMetaTileEntity() instanceof MultiblockControllerBase entity) {
                     if (entity.isStructureFormed()) {
                         if (!isValid) {
-                            if (entity.getSubstructure().getPatternState().getState().isValid()) {
+                            if (entity.getSubstructure().getState().getState().isValid()) {
                                 validPos = entity.getSubstructure().getCache().keySet().stream()
                                         .map(BlockPos::fromLong)
                                         .collect(Collectors.toSet());

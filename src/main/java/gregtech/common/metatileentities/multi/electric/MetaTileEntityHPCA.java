@@ -204,7 +204,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                 .where('A', states(getAdvancedState()))
                 .where('V', states(getVentState()))
                 .where('X',
-                        abilities(() -> RIGHT.getRelativeFacing(frontFacing, upwardsFacing),
+                        abilities(() -> GTUtility.cross(frontFacing, upwardsFacing),
                                 MultiblockAbility.HPCA_COMPONENT))
                 .where('C', states(getCasingState()).setMinGlobalLimited(5)
                         .or(maintenancePredicate())
@@ -911,16 +911,15 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
         public void tryGatherClientComponents(World world, BlockPos pos, EnumFacing frontFacing,
                                               EnumFacing upwardsFacing, boolean flip) {
-            EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(frontFacing, upwardsFacing, flip);
 
             if (components.isEmpty()) {
                 BlockPos testPos = pos
                         .offset(frontFacing.getOpposite(), 3)
-                        .offset(relativeUp, 3);
+                        .offset(upwardsFacing, 3);
 
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
-                        BlockPos tempPos = testPos.offset(frontFacing, j).offset(relativeUp.getOpposite(), i);
+                        BlockPos tempPos = testPos.offset(frontFacing, j).offset(upwardsFacing.getOpposite(), i);
                         TileEntity te = world.getTileEntity(tempPos);
                         if (te instanceof IHPCAComponentHatch hatch) {
                             components.add(hatch);

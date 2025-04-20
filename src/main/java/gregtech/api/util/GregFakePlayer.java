@@ -46,8 +46,7 @@ public class GregFakePlayer extends EntityPlayer {
 
     @Override
     public boolean isCreative() {
-        // is this cooked? surely someone wouldnt
-        return true;
+        return false;
     }
 
     @Override

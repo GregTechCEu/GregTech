@@ -12,6 +12,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.pattern.GreggyBlockPos;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
@@ -163,15 +165,16 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     private boolean checkTurbineFaceFree() {
-        final EnumFacing front = getFrontFacing();
-        // this can be anything really, as long as it is not up/down when on Y axis
-        final EnumFacing upwards = front.getAxis() == EnumFacing.Axis.Y ? EnumFacing.NORTH : EnumFacing.UP;
-
+        EnumFacing side = frontFacing.getAxis() == EnumFacing.Axis.Y ? EnumFacing.NORTH : EnumFacing.UP;
+        EnumFacing other = GTUtility.cross(frontFacing, side);
+        GreggyBlockPos pos = new GreggyBlockPos();
         for (int left = -1; left <= 1; left++) {
             for (int up = -1; up <= 1; up++) {
-                // flip doesn't affect anything here since we are checking a square anyway
-                final BlockPos checkPos = RelativeDirection.offsetPos(
-                        getPos(), front, upwards, false, up, left, 1);
+                pos.from(getPos());
+                pos.offset(getFrontFacing(), 1);
+                pos.offset(side, left);
+                pos.offset(other, up);
+                BlockPos checkPos = pos.immutable();
                 final IBlockState state = getWorld().getBlockState(checkPos);
                 if (!state.getBlock().isAir(state, getWorld(), checkPos)) {
                     return false;

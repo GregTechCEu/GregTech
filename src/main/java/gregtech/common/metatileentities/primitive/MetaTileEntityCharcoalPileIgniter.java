@@ -328,11 +328,10 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.UPDATE_STRUCTURE_SIZE) {} else
-            if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
-                this.isActive = buf.readBoolean();
-                scheduleRenderUpdate();
-            }
+        if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+            this.isActive = buf.readBoolean();
+            scheduleRenderUpdate();
+        }
     }
 
     /**

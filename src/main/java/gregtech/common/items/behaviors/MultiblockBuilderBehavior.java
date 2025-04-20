@@ -187,7 +187,7 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
         } else {
             // If not sneaking, try to show structure debug info (if any) in chat.
             if (!multiblock.isStructureFormed(structure)) {
-                PatternError error = multiblock.getSubstructure(structure).getPatternState().getError();
+                PatternError error = multiblock.getSubstructure(structure).getState().getError();
                 if (error != null) {
                     player.sendMessage(
                             new TextComponentTranslation("gregtech.multiblock.pattern.error_message_header"));

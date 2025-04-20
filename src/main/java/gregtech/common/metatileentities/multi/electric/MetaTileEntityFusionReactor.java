@@ -653,10 +653,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         float r = (float) (color >> 16 & 255) / 255.0F;
         float g = (float) (color >> 8 & 255) / 255.0F;
         float b = (float) (color & 255) / 255.0F;
-        EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
-                isFlipped());
-        EnumFacing.Axis axis = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped())
-                .getAxis();
+        EnumFacing relativeBack = getFrontFacing().getOpposite();
+        EnumFacing.Axis axis = getUpwardsFacing().getAxis();
 
         buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
         RenderBufferHelper.renderRing(buffer,
@@ -678,8 +676,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     public AxisAlignedBB getRenderBoundingBox() {
         EnumFacing relativeRight = RelativeDirection.RIGHT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
                 isFlipped());
-        EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
-                isFlipped());
+        EnumFacing relativeBack = getFrontFacing().getOpposite();
 
         return new AxisAlignedBB(
                 this.getPos().offset(relativeBack).offset(relativeRight, 6),
