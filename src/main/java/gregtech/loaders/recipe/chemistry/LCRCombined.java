@@ -71,20 +71,22 @@ public class LCRCombined {
                     .duration(100).EUt(VA[HV]).buildAndRegister();
         }
 
-        LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .circuitMeta(24)
-                .fluidInputs(Diesel.getFluid(10000))
-                .fluidInputs(Tetranitromethane.getFluid(200))
-                .fluidOutputs(CetaneBoostedDiesel.getFluid(10000))
-                .duration(120).EUt(VA[HV]).buildAndRegister();
+        if (!Loader.isModLoaded(GTQT_CORE)) {
+            LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                    .circuitMeta(24)
+                    .fluidInputs(Diesel.getFluid(10000))
+                    .fluidInputs(Tetranitromethane.getFluid(200))
+                    .fluidOutputs(CetaneBoostedDiesel.getFluid(10000))
+                    .duration(120).EUt(VA[HV]).buildAndRegister();
 
-        LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .circuitMeta(24)
-                .fluidInputs(BioDiesel.getFluid(10000))
-                .fluidInputs(Tetranitromethane.getFluid(400))
-                .fluidOutputs(CetaneBoostedDiesel.getFluid(7500))
-                .duration(120).EUt(VA[HV]).buildAndRegister();
+            LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                    .circuitMeta(24)
+                    .fluidInputs(BioDiesel.getFluid(10000))
+                    .fluidInputs(Tetranitromethane.getFluid(400))
+                    .fluidOutputs(CetaneBoostedDiesel.getFluid(7500))
+                    .duration(120).EUt(VA[HV]).buildAndRegister();
 
+        }
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(AceticAcid.getFluid(3000))
                 .notConsumable(dust, Quicklime)
@@ -92,6 +94,7 @@ public class LCRCombined {
                 .fluidOutputs(Acetone.getFluid(2000))
                 .fluidOutputs(Oxygen.getFluid(1000))
                 .duration(400).EUt(VA[HV]).buildAndRegister();
+
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(5)

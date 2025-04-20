@@ -63,7 +63,8 @@ public class MachineRecipeLoader {
     public static void init() {
         ChemistryRecipes.init();
         FuelRecipes.registerFuels();
-        AssemblyLineLoader.init();
+        if (!Loader.isModLoaded(GTQT_CORE))
+            AssemblyLineLoader.init();
         FusionLoader.init();
         AssemblerRecipeLoader.init();
         ComponentRecipes.register();
@@ -758,41 +759,44 @@ public class MachineRecipeLoader {
                 .outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.PTFE_INERT_CASING)).duration(50)
                 .buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LuV])
-                .input(OrePrefix.wireGtDouble, Materials.IndiumTinBariumTitaniumCuprate, 32)
-                .input(OrePrefix.foil, Materials.NiobiumTitanium, 32)
-                .fluidInputs(Materials.Trinium.getFluid(GTValues.L * 24))
-                .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
-                .duration(100).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ZPM])
-                .input(OrePrefix.wireGtDouble, Materials.UraniumRhodiumDinaquadide, 16)
-                .input(OrePrefix.foil, Materials.NiobiumTitanium, 16)
-                .fluidInputs(Materials.Trinium.getFluid(GTValues.L * 16))
-                .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
-                .duration(100).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[UV])
-                .input(OrePrefix.wireGtDouble, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 8)
-                .input(OrePrefix.foil, Materials.NiobiumTitanium, 8)
-                .fluidInputs(Materials.Trinium.getFluid(GTValues.L * 8))
-                .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
-                .duration(100).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[UV])
-                .input(OrePrefix.wireGtDouble, Materials.RutheniumTriniumAmericiumNeutronate, 4)
-                .input(OrePrefix.foil, Materials.NiobiumTitanium, 4)
-                .fluidInputs(Materials.Trinium.getFluid(GTValues.L * 4))
-                .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
-                .duration(200).buildAndRegister();
+        if (!Loader.isModLoaded(GTQT_CORE)) {
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LuV])
+                    .input(OrePrefix.wireGtDouble, Materials.IndiumTinBariumTitaniumCuprate, 32)
+                    .input(OrePrefix.foil, Materials.NiobiumTitanium, 32)
+                    .fluidInputs(Materials.Trinium.getFluid(GTValues.L * 24))
+                    .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
+                    .duration(100).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ZPM])
+                    .input(OrePrefix.wireGtDouble, Materials.UraniumRhodiumDinaquadide, 16)
+                    .input(OrePrefix.foil, Materials.NiobiumTitanium, 16)
+                    .fluidInputs(Materials.Trinium.getFluid(GTValues.L * 16))
+                    .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
+                    .duration(100).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[UV])
+                    .input(OrePrefix.wireGtDouble, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 8)
+                    .input(OrePrefix.foil, Materials.NiobiumTitanium, 8)
+                    .fluidInputs(Materials.Trinium.getFluid(GTValues.L * 8))
+                    .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
+                    .duration(100).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[UV])
+                    .input(OrePrefix.wireGtDouble, Materials.RutheniumTriniumAmericiumNeutronate, 4)
+                    .input(OrePrefix.foil, Materials.NiobiumTitanium, 4)
+                    .fluidInputs(Materials.Trinium.getFluid(GTValues.L * 4))
+                    .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
+                    .duration(200).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ZPM])
-                .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
-                .inputs(MetaItems.FIELD_GENERATOR_IV.getStackForm(2)).inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
-                .inputs(MetaItems.NEUTRON_REFLECTOR.getStackForm(2))
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.LuV, 4)
-                .input(OrePrefix.pipeSmallFluid, Materials.Naquadah, 4).input(OrePrefix.plate, Materials.Europium, 4)
-                .fluidInputs(Materials.VanadiumGallium.getFluid(GTValues.L * 4))
-                .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_COIL))
-                .duration(100).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
-
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ZPM])
+                    .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
+                    .inputs(MetaItems.FIELD_GENERATOR_IV.getStackForm(2))
+                    .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
+                    .inputs(MetaItems.NEUTRON_REFLECTOR.getStackForm(2))
+                    .input(OrePrefix.circuit, MarkerMaterials.Tier.LuV, 4)
+                    .input(OrePrefix.pipeSmallFluid, Materials.Naquadah, 4)
+                    .input(OrePrefix.plate, Materials.Europium, 4)
+                    .fluidInputs(Materials.VanadiumGallium.getFluid(GTValues.L * 4))
+                    .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_COIL))
+                    .duration(100).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
+        }
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LuV])
                 .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.LAMINATED_GLASS))
                 .input(OrePrefix.plate, Materials.Naquadah, 4).inputs(MetaItems.NEUTRON_REFLECTOR.getStackForm(4))
@@ -1162,51 +1166,51 @@ public class MachineRecipeLoader {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Endstone)
                 .output(dust, Endstone)
-                .chancedOutput(dust, Tungstate, 130, 30)
+                .chancedOutput(dust, Stone, 130, 30)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Netherrack)
                 .output(dust, Netherrack)
-                .chancedOutput(nugget, Gold, 500, 120)
+                .chancedOutput(nugget, Stone, 500, 120)
                 .buildAndRegister();
 
         if (!OreDictionary.getOres("stoneSoapstone").isEmpty())
             MACERATOR_RECIPES.recipeBuilder()
                     .input(stone, Soapstone)
                     .output(dustImpure, Talc)
-                    .chancedOutput(dust, Chromite, 111, 30)
+                    .chancedOutput(dust, Stone, 111, 30)
                     .buildAndRegister();
 
         if (!OreDictionary.getOres("stoneRedrock").isEmpty())
             MACERATOR_RECIPES.recipeBuilder()
                     .input(stone, Redrock)
                     .output(dust, Redrock)
-                    .chancedOutput(dust, Redrock, 1000, 380)
+                    .chancedOutput(dust, Stone, 1000, 380)
                     .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Marble)
                 .output(dust, Marble)
-                .chancedOutput(dust, Marble, 1000, 380)
+                .chancedOutput(dust, Stone, 1000, 380)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Basalt)
                 .output(dust, Basalt)
-                .chancedOutput(dust, Basalt, 1000, 380)
+                .chancedOutput(dust, Stone, 1000, 380)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, GraniteBlack)
                 .output(dust, GraniteBlack)
-                .chancedOutput(dust, Thorium, 100, 40)
+                .chancedOutput(dust, Stone, 100, 40)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, GraniteRed)
                 .output(dust, GraniteRed)
-                .chancedOutput(dust, Uranium, 10, 5)
+                .chancedOutput(dust, Stone, 10, 5)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()

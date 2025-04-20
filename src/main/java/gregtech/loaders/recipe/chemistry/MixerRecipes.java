@@ -38,19 +38,19 @@ public class MixerRecipes {
                 .fluidInputs(Water.getFluid(1000))
                 .fluidOutputs(SaltWater.getFluid(1000))
                 .duration(40).EUt(VA[ULV]).buildAndRegister();
+        if (!Loader.isModLoaded(GTQT_CORE)) {
+            MIXER_RECIPES.recipeBuilder()
+                    .fluidInputs(BioDiesel.getFluid(1000))
+                    .fluidInputs(Tetranitromethane.getFluid(40))
+                    .fluidOutputs(CetaneBoostedDiesel.getFluid(750))
+                    .duration(20).EUt(VA[HV]).buildAndRegister();
 
-        MIXER_RECIPES.recipeBuilder()
-                .fluidInputs(BioDiesel.getFluid(1000))
-                .fluidInputs(Tetranitromethane.getFluid(40))
-                .fluidOutputs(CetaneBoostedDiesel.getFluid(750))
-                .duration(20).EUt(VA[HV]).buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder()
-                .fluidInputs(Diesel.getFluid(1000))
-                .fluidInputs(Tetranitromethane.getFluid(20))
-                .fluidOutputs(CetaneBoostedDiesel.getFluid(1000))
-                .duration(20).EUt(VA[HV]).buildAndRegister();
-
+            MIXER_RECIPES.recipeBuilder()
+                    .fluidInputs(Diesel.getFluid(1000))
+                    .fluidInputs(Tetranitromethane.getFluid(20))
+                    .fluidOutputs(CetaneBoostedDiesel.getFluid(1000))
+                    .duration(20).EUt(VA[HV]).buildAndRegister();
+        }
         MIXER_RECIPES.recipeBuilder()
                 .fluidInputs(Oxygen.getFluid(1000))
                 .fluidInputs(Dimethylhydrazine.getFluid(1000))

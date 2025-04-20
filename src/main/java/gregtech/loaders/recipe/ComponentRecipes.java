@@ -6,10 +6,9 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.UnificationEntry;
 
 import net.minecraft.init.Items;
+import net.minecraftforge.fml.common.Loader;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import net.minecraftforge.fml.common.Loader;
 
 import java.util.Map;
 
@@ -150,40 +149,42 @@ public class ComponentRecipes {
 
         // Conveyors
         // Start-----------------------------------------------------------------------------------------------
-        if (!Loader.isModLoaded(GTQT_CORE)) {
-            final Map<String, Material> rubberMaterials = new Object2ObjectOpenHashMap<>();
-            rubberMaterials.put("rubber", Rubber);
-            rubberMaterials.put("silicone_rubber", SiliconeRubber);
-            rubberMaterials.put("styrene_butadiene_rubber", StyreneButadieneRubber);
 
-            for (Map.Entry<String, Material> materialEntry : rubberMaterials.entrySet()) {
-                Material material = materialEntry.getValue();
-                String name = materialEntry.getKey();
+        final Map<String, Material> rubberMaterials = new Object2ObjectOpenHashMap<>();
+        rubberMaterials.put("rubber", Rubber);
+        rubberMaterials.put("silicone_rubber", SiliconeRubber);
+        rubberMaterials.put("styrene_butadiene_rubber", StyreneButadieneRubber);
 
-                ModHandler.addShapedRecipe(material.equals(Rubber), String.format("conveyor_module_lv_%s", name),
-                        CONVEYOR_MODULE_LV.getStackForm(), "RRR", "MCM", "RRR", 'R',
-                        new UnificationEntry(plate, material),
-                        'C', new UnificationEntry(cableGtSingle, Tin), 'M', ELECTRIC_MOTOR_LV.getStackForm());
-                ModHandler.addShapedRecipe(material.equals(Rubber), String.format("conveyor_module_mv_%s", name),
-                        CONVEYOR_MODULE_MV.getStackForm(), "RRR", "MCM", "RRR", 'R',
-                        new UnificationEntry(plate, material),
-                        'C', new UnificationEntry(cableGtSingle, Copper), 'M', ELECTRIC_MOTOR_MV.getStackForm());
-                ModHandler.addShapedRecipe(material.equals(Rubber), String.format("conveyor_module_hv_%s", name),
-                        CONVEYOR_MODULE_HV.getStackForm(), "RRR", "MCM", "RRR", 'R',
-                        new UnificationEntry(plate, material),
-                        'C', new UnificationEntry(cableGtSingle, Gold), 'M', ELECTRIC_MOTOR_HV.getStackForm());
-                ModHandler.addShapedRecipe(material.equals(Rubber), String.format("conveyor_module_ev_%s", name),
-                        CONVEYOR_MODULE_EV.getStackForm(), "RRR", "MCM", "RRR", 'R',
-                        new UnificationEntry(plate, material),
-                        'C', new UnificationEntry(cableGtSingle, Aluminium), 'M', ELECTRIC_MOTOR_EV.getStackForm());
-                if (!materialEntry.getValue().equals(Rubber))
-                    ModHandler.addShapedRecipe(material.equals(SiliconeRubber),
-                            String.format("conveyor_module_iv_%s", materialEntry.getKey()),
-                            CONVEYOR_MODULE_IV.getStackForm(), "RRR", "MCM", "RRR", 'R',
-                            new UnificationEntry(plate, material), 'C', new UnificationEntry(cableGtSingle, Tungsten),
-                            'M',
-                            ELECTRIC_MOTOR_IV.getStackForm());
+        for (Map.Entry<String, Material> materialEntry : rubberMaterials.entrySet()) {
+            Material material = materialEntry.getValue();
+            String name = materialEntry.getKey();
 
+            ModHandler.addShapedRecipe(material.equals(Rubber), String.format("conveyor_module_lv_%s", name),
+                    CONVEYOR_MODULE_LV.getStackForm(), "RRR", "MCM", "RRR", 'R',
+                    new UnificationEntry(plate, material),
+                    'C', new UnificationEntry(cableGtSingle, Tin), 'M', ELECTRIC_MOTOR_LV.getStackForm());
+            ModHandler.addShapedRecipe(material.equals(Rubber), String.format("conveyor_module_mv_%s", name),
+                    CONVEYOR_MODULE_MV.getStackForm(), "RRR", "MCM", "RRR", 'R',
+                    new UnificationEntry(plate, material),
+                    'C', new UnificationEntry(cableGtSingle, Copper), 'M', ELECTRIC_MOTOR_MV.getStackForm());
+            ModHandler.addShapedRecipe(material.equals(Rubber), String.format("conveyor_module_hv_%s", name),
+                    CONVEYOR_MODULE_HV.getStackForm(), "RRR", "MCM", "RRR", 'R',
+                    new UnificationEntry(plate, material),
+                    'C', new UnificationEntry(cableGtSingle, Gold), 'M', ELECTRIC_MOTOR_HV.getStackForm());
+            ModHandler.addShapedRecipe(material.equals(Rubber), String.format("conveyor_module_ev_%s", name),
+                    CONVEYOR_MODULE_EV.getStackForm(), "RRR", "MCM", "RRR", 'R',
+                    new UnificationEntry(plate, material),
+                    'C', new UnificationEntry(cableGtSingle, Aluminium), 'M', ELECTRIC_MOTOR_EV.getStackForm());
+
+            if (!materialEntry.getValue().equals(Rubber))
+                ModHandler.addShapedRecipe(material.equals(SiliconeRubber),
+                        String.format("conveyor_module_iv_%s", materialEntry.getKey()),
+                        CONVEYOR_MODULE_IV.getStackForm(), "RRR", "MCM", "RRR", 'R',
+                        new UnificationEntry(plate, material), 'C', new UnificationEntry(cableGtSingle, Tungsten),
+                        'M',
+                        ELECTRIC_MOTOR_IV.getStackForm());
+
+            if (!Loader.isModLoaded(GTQT_CORE)) {
                 ASSEMBLER_RECIPES.recipeBuilder()
                         .input(cableGtSingle, Tin)
                         .inputs(ELECTRIC_MOTOR_LV.getStackForm(2))

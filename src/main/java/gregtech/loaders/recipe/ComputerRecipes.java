@@ -9,12 +9,14 @@ import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Loader;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.api.util.Mods.Names.GTQT_CORE;
 import static gregtech.common.blocks.MetaBlocks.*;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
@@ -107,42 +109,44 @@ public class ComputerRecipes {
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L))
                 .cleanroom(CleanroomType.CLEANROOM)
                 .output(OPTICAL_PIPES[0])
-                .duration(100).EUt(VA[IV]).buildAndRegister();
+                .duration(100).EUt(VA[MV]).buildAndRegister();
 
-        ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .inputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_CASING))
-                .input(circuit, Tier.LuV, 8)
-                .inputNBT(TOOL_DATA_ORB, NBTMatcher.ANY, NBTCondition.ANY)
-                .input(wireFine, Cobalt, 64)
-                .input(wireFine, Copper, 64)
-                .input(OPTICAL_PIPES[0], 4)
-                .input(wireGtDouble, IndiumTinBariumTitaniumCuprate, 16)
-                .fluidInputs(SolderingAlloy.getFluid(L * 2))
-                .fluidInputs(Lubricant.getFluid(500))
-                .output(DATA_BANK)
-                .scannerResearch(b -> b
-                        .researchStack(DATA_ACCESS_HATCH[1].getStackForm())
-                        .duration(2400)
-                        .EUt(VA[EV]))
-                .duration(1200).EUt(6000).buildAndRegister();
+        if (!Loader.isModLoaded(GTQT_CORE)) {
+            ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                    .inputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_CASING))
+                    .input(circuit, Tier.LuV, 8)
+                    .inputNBT(TOOL_DATA_ORB, NBTMatcher.ANY, NBTCondition.ANY)
+                    .input(wireFine, Cobalt, 64)
+                    .input(wireFine, Copper, 64)
+                    .input(OPTICAL_PIPES[0], 4)
+                    .input(wireGtDouble, IndiumTinBariumTitaniumCuprate, 16)
+                    .fluidInputs(SolderingAlloy.getFluid(L * 2))
+                    .fluidInputs(Lubricant.getFluid(500))
+                    .output(DATA_BANK)
+                    .scannerResearch(b -> b
+                            .researchStack(DATA_ACCESS_HATCH[1].getStackForm())
+                            .duration(2400)
+                            .EUt(VA[EV]))
+                    .duration(1200).EUt(6000).buildAndRegister();
 
-        ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(DATA_BANK)
-                .input(SENSOR_LuV, 8)
-                .input(circuit, Tier.ZPM, 8)
-                .input(FIELD_GENERATOR_LuV, 2)
-                .input(ELECTRIC_MOTOR_ZPM, 2)
-                .input(wireGtDouble, UraniumRhodiumDinaquadide, 32)
-                .input(foil, Trinium, 32)
-                .input(OPTICAL_PIPES[0], 16)
-                .fluidInputs(SolderingAlloy.getFluid(L * 8))
-                .fluidInputs(VanadiumGallium.getFluid(L * 8))
-                .output(RESEARCH_STATION)
-                .scannerResearch(b -> b
-                        .researchStack(SCANNER[LuV].getStackForm())
-                        .duration(2400)
-                        .EUt(VA[IV]))
-                .duration(1200).EUt(100000).buildAndRegister();
+            ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                    .input(DATA_BANK)
+                    .input(SENSOR_LuV, 8)
+                    .input(circuit, Tier.ZPM, 8)
+                    .input(FIELD_GENERATOR_LuV, 2)
+                    .input(ELECTRIC_MOTOR_ZPM, 2)
+                    .input(wireGtDouble, UraniumRhodiumDinaquadide, 32)
+                    .input(foil, Trinium, 32)
+                    .input(OPTICAL_PIPES[0], 16)
+                    .fluidInputs(SolderingAlloy.getFluid(L * 8))
+                    .fluidInputs(VanadiumGallium.getFluid(L * 8))
+                    .output(RESEARCH_STATION)
+                    .scannerResearch(b -> b
+                            .researchStack(SCANNER[LuV].getStackForm())
+                            .duration(2400)
+                            .EUt(VA[IV]))
+                    .duration(1200).EUt(100000).buildAndRegister();
+        }
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(ITEM_IMPORT_BUS[ZPM])
@@ -293,14 +297,16 @@ public class ComputerRecipes {
                 'W', CraftingComponent.CABLE,
                 'X', CraftingComponent.CIRCUIT);
 
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[LuV])
-                .input(circuit, Tier.LuV, 2)
-                .input(wireGtSingle, IndiumTinBariumTitaniumCuprate, 8)
-                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .fluidInputs(PCBCoolant.getFluid(1000))
-                .output(ACTIVE_TRANSFORMER)
-                .duration(300).EUt(VA[LuV]).buildAndRegister();
+        if (!Loader.isModLoaded(GTQT_CORE)) {
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(POWER_TRANSFORMER[LuV])
+                    .input(circuit, Tier.LuV, 2)
+                    .input(wireGtSingle, IndiumTinBariumTitaniumCuprate, 8)
+                    .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                    .fluidInputs(PCBCoolant.getFluid(1000))
+                    .output(ACTIVE_TRANSFORMER)
+                    .duration(300).EUt(VA[LuV]).buildAndRegister();
+        }
 
         /*
          * TODO UPSATUPDATE
@@ -312,7 +318,7 @@ public class ComputerRecipes {
          * .output(LASER_OUTPUT_HATCH)
          * .circuitMeta(1)
          * .duration(300).EUt(VA[IV]).buildAndRegister();
-         * 
+         *
          * ASSEMBLER_RECIPES.recipeBuilder()
          * .input(HULL[LuV])
          * .input(lens, Diamond)
