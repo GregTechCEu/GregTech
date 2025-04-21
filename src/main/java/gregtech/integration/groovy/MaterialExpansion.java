@@ -26,13 +26,13 @@ public class MaterialExpansion {
     // Material Methods //
     ////////////////////////////////////
 
-    public static void setFormula(Material m, String formula) {
-        setFormula(m, formula, false);
+    public static Material setFormula(Material m, String formula) {
+        return setFormula(m, formula, false);
     }
 
-    public static void setFormula(Material m, String formula, boolean withFormatting) {
-        if (checkFrozen("set material chemical formula")) return;
-        m.setFormula(formula, withFormatting);
+    public static Material setFormula(Material m, String formula, boolean withFormatting) {
+        if (checkFrozen("set material chemical formula")) return m;
+        return m.setFormula(formula, withFormatting);
     }
 
     public static boolean hasFlag(Material m, String flagName) {
