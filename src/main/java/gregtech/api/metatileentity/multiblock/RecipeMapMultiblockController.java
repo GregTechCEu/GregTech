@@ -127,16 +127,15 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.inputInventory = new ItemHandlerList(inputItems);
 
         List<IMultipleTankHandler> inputFluids = new ArrayList<>(getAbilities(MultiblockAbility.DUAL_IMPORT));
-        inputFluids.add(
-                new FluidTankList(allowSameFluidFillForOutputs(), getAbilities(MultiblockAbility.IMPORT_FLUIDS)));
-        this.inputFluidInventory = GTQTUtility.mergeTankHandlers(inputFluids, allowSameFluidFillForOutputs());
+        inputFluids.add(new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS)));
+        this.inputFluidInventory = GTQTUtility.mergeTankHandlers(inputFluids, true);
 
         List<IItemHandler> outputItems = new ArrayList<>(this.getAbilities(MultiblockAbility.EXPORT_ITEMS));
         outputItems.addAll(getAbilities(MultiblockAbility.DUAL_EXPORT));
         this.outputInventory = new ItemHandlerList(outputItems);
         List<IMultipleTankHandler> outputFluids = new ArrayList<>(getAbilities(MultiblockAbility.DUAL_EXPORT));
-        outputFluids.add(new FluidTankList(allowSameFluidFillForOutputs(), getAbilities(MultiblockAbility.EXPORT_FLUIDS)));
-        this.outputFluidInventory = GTQTUtility.mergeTankHandlers(outputFluids, allowSameFluidFillForOutputs());;
+        outputFluids.add(new FluidTankList(false, getAbilities(MultiblockAbility.EXPORT_FLUIDS)));
+        this.outputFluidInventory = GTQTUtility.mergeTankHandlers(outputFluids, false);;
 
         List<IEnergyContainer> inputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
         inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));

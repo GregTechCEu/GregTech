@@ -350,12 +350,13 @@ public class GTGuiTextures {
             .build();
 
     // BUTTON OVERLAYS
+    public static final UITexture BUTTON_DUAL_OUTPUT = fullImage("textures/gui/widget/button_dual_output_overlay.png");
+    public static final UITexture BUTTON_DUAL_COLLAPSE = fullImage("textures/gui/widget/button_dual_collapse_overlay.png");
 
     public static final UITexture BUTTON_ITEM_OUTPUT = fullImage("textures/gui/widget/button_item_output_overlay.png");
     public static final UITexture BUTTON_FLUID_OUTPUT = fullImage(
             "textures/gui/widget/button_fluid_output_overlay.png");
-    public static final UITexture BUTTON_AUTO_COLLAPSE = fullImage(
-            "textures/gui/widget/button_auto_collapse_overlay.png");
+    public static final UITexture BUTTON_AUTO_COLLAPSE = fullImage("textures/gui/widget/button_auto_collapse_overlay.png");
     public static final UITexture BUTTON_X = fullImage("textures/gui/widget/button_x_overlay.png", true);
     public static final UITexture BUTTON_CLEAR_GRID = fullImage("textures/gui/widget/button_clear_grid.png", false);
 

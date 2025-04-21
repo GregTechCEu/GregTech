@@ -199,6 +199,11 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                         this.getNotifiedItemInputList().contains(inventory))) {
                     GTUtility.collapseInventorySlotContents(inventory);
                 }
+
+                FluidTankList fluidInventory = (isExportHatch ? this.getExportFluids() : this.getImportFluids());
+                if (!isAttachedToMultiBlock()) {
+                    GTUtility.collapseFluidTankContents(fluidInventory);
+                }
             }
         }
     }
@@ -398,7 +403,7 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                                 .top(18 * 2)
                                 .value(new BoolValue.Dynamic(workingStateValue::getBoolValue,
                                         workingStateValue::setBoolValue))
-                                .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
+                                .overlay(GTGuiTextures.BUTTON_DUAL_OUTPUT)
                                 .tooltipBuilder(t -> t.setAutoUpdate(true)
                                         .addLine(isExportHatch ?
                                                 (workingStateValue.getBoolValue() ?
@@ -411,11 +416,11 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                                 .top(18)
                                 .value(new BoolValue.Dynamic(collapseStateValue::getBoolValue,
                                         collapseStateValue::setBoolValue))
-                                .overlay(GTGuiTextures.BUTTON_AUTO_COLLAPSE)
+                                .overlay(GTGuiTextures.BUTTON_DUAL_COLLAPSE)
                                 .tooltipBuilder(t -> t.setAutoUpdate(true)
                                         .addLine(collapseStateValue.getBoolValue() ?
-                                                IKey.lang("gregtech.gui.item_auto_collapse.tooltip.enabled") :
-                                                IKey.lang("gregtech.gui.item_auto_collapse.tooltip.disabled"))))
+                                                IKey.lang("gregtech.gui.dual_auto_collapse.tooltip.enabled") :
+                                                IKey.lang("gregtech.gui.dual_auto_collapse.tooltip.disabled"))))
                         .childIf(hasGhostCircuit, new GhostCircuitSlotWidget()
                                 .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))

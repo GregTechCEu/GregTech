@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.GTFluid;
 import gregtech.api.gui.widgets.ProgressWidget;
@@ -997,6 +998,53 @@ public class GTUtility {
 
             // Populate the slots
             inventory.setStackInSlot(i, stackToMove);
+        }
+    }
+    public static void collapseFluidTankContents(FluidTankList fluidInventory) {
+        // 获取所有流体槽中的流体内容
+        List<FluidStack> fluidContents = new ArrayList<>();
+        for (IFluidTank tank : fluidInventory.getFluidTanks()) {
+            FluidStack fluid = tank.getFluid();
+            if (fluid != null && fluid.amount > 0) {
+                fluidContents.add(fluid.copy()); // 复制流体以避免修改原始数据
+            }
+        }
+
+        // 清空所有流体槽
+        for (IFluidTank tank : fluidInventory.getFluidTanks()) {
+            tank.drain(tank.getCapacity(), true);
+        }
+
+        // 将流体内容重新填充到流体槽中
+        for (FluidStack fluidStack : fluidContents) {
+            int remainingAmount = fluidStack.amount;
+
+            // 优先填充已经包含相同流体的槽
+            for (IFluidTank tank : fluidInventory.getFluidTanks()) {
+                if (remainingAmount <= 0) break;
+
+                FluidStack tankFluid = tank.getFluid();
+                if (tankFluid != null && tankFluid.isFluidEqual(fluidStack)) {
+                    int fillableAmount = Math.min(remainingAmount, tank.getCapacity() - tankFluid.amount);
+                    if (fillableAmount > 0) {
+                        tank.fill(new FluidStack(fluidStack, fillableAmount), true);
+                        remainingAmount -= fillableAmount;
+                    }
+                }
+            }
+
+            // 如果还有剩余，填充到空槽
+            for (IFluidTank tank : fluidInventory.getFluidTanks()) {
+                if (remainingAmount <= 0) break;
+
+                if (tank.getFluid() == null) {
+                    int fillableAmount = Math.min(remainingAmount, tank.getCapacity());
+                    if (fillableAmount > 0) {
+                        tank.fill(new FluidStack(fluidStack, fillableAmount), true);
+                        remainingAmount -= fillableAmount;
+                    }
+                }
+            }
         }
     }
 }
