@@ -77,20 +77,22 @@ public class MaterialExpansion {
         return 0;
     }
 
-    public static void setHarvestLevel(Material m, int harvestLevel) {
-        if (checkFrozen("set harvest level")) return;
+    public static Material setHarvestLevel(Material m, int harvestLevel) {
+        if (checkFrozen("set harvest level")) return m;
         DustProperty prop = m.getProperty(PropertyKey.DUST);
         if (prop != null) {
             prop.setHarvestLevel(harvestLevel);
         } else logError(m, "set the harvest level", "Dust");
+        return m;
     }
 
-    public static void setBurnTime(Material m, int burnTime) {
-        if (checkFrozen("set burn time")) return;
+    public static Material setBurnTime(Material m, int burnTime) {
+        if (checkFrozen("set burn time")) return m;
         DustProperty prop = m.getProperty(PropertyKey.DUST);
         if (prop != null) {
             prop.setBurnTime(burnTime);
         } else logError(m, "set the burn time", "Dust");
+        return m;
     }
 
     ///////////////////////////////////
@@ -136,46 +138,47 @@ public class MaterialExpansion {
         return 0;
     }
 
-    public static void addToolEnchantment(Material m, Enchantment enchantment, int level) {
-        addScaledToolEnchantment(m, enchantment, level, 0);
+    public static Material addToolEnchantment(Material m, Enchantment enchantment, int level) {
+        return addScaledToolEnchantment(m, enchantment, level, 0);
     }
 
-    public static void addScaledToolEnchantment(Material m, Enchantment enchantment, int level, double levelGrowth) {
-        if (checkFrozen("add tool enchantment")) return;
+    public static Material addScaledToolEnchantment(Material m, Enchantment enchantment, int level, double levelGrowth) {
+        if (checkFrozen("add tool enchantment")) return m;
         MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             prop.addEnchantmentForTools(enchantment, level, levelGrowth);
         } else logError(m, "change tool enchantments", "Tool");
+        return m;
     }
 
-    public static void setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
+    public static Material setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
                                     boolean shouldIngoreCraftingTools) {
-        setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, 0, 0, shouldIngoreCraftingTools);
+        return setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, 0, 0, shouldIngoreCraftingTools);
     }
 
-    public static void setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
+    public static Material setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
                                     int enchantability, boolean shouldIngoreCraftingTools) {
-        setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, enchantability, 0, shouldIngoreCraftingTools);
+        return setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, enchantability, 0, shouldIngoreCraftingTools);
     }
 
-    public static void setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability) {
-        setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, 0, 0, false);
+    public static Material setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability) {
+        return setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, 0, 0, false);
     }
 
-    public static void setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
+    public static Material setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
                                     int enchantability) {
-        setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, enchantability, 0, false);
+        return setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, enchantability, 0, false);
     }
 
-    public static void setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
+    public static Material setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
                                     int enchantability, int toolHarvestLevel) {
-        setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, enchantability, toolHarvestLevel, false);
+        return setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, enchantability, toolHarvestLevel, false);
     }
 
-    public static void setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
+    public static Material setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
                                     int enchantability, int toolHarvestLevel,
                                     boolean shouldIngoreCraftingTools) {
-        if (checkFrozen("set tool stats")) return;
+        if (checkFrozen("set tool stats")) return m;
         MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             prop.setToolSpeed(toolSpeed);
@@ -185,19 +188,21 @@ public class MaterialExpansion {
             prop.setToolEnchantability(enchantability == 0 ? 10 : enchantability);
             prop.setShouldIgnoreCraftingTools(shouldIngoreCraftingTools);
         } else logError(m, "change tool stats", "Tool");
+        return m;
     }
 
     ////////////////////////////////////
     // Extra Tool Property //
     ////////////////////////////////////
 
-    public static void setOverrideToolStats(Material m, String toolId, ExtraToolProperty.Builder overrideBuilder) {
-        if (checkFrozen("set overriding tool stats")) return;
+    public static Material setOverrideToolStats(Material m, String toolId, ExtraToolProperty.Builder overrideBuilder) {
+        if (checkFrozen("set overriding tool stats")) return m;
         m.getProperties().ensureSet(PropertyKey.EXTRATOOL);
         ExtraToolProperty prop = m.getProperty(PropertyKey.EXTRATOOL);
         if (prop != null) {
             prop.setOverrideProperty(toolId, overrideBuilder.build());
         } else logError(m, "change tool stats", "Tool");
+        return m;
     }
 
     // Wire/Item Pipe/Fluid Pipe stuff?
@@ -206,15 +211,16 @@ public class MaterialExpansion {
     // Blast Property //
     ////////////////////////////////////
 
-    public static void setBlastTemp(Material m, int blastTemp) {
-        if (checkFrozen("set blast temperature")) return;
+    public static Material setBlastTemp(Material m, int blastTemp) {
+        if (checkFrozen("set blast temperature")) return m;
         if (blastTemp <= 0) {
             GroovyLog.get().error("Blast Temperature must be greater than zero! Material: " + m.getUnlocalizedName());
-            return;
+            return m;
         }
         BlastProperty prop = m.getProperty(PropertyKey.BLAST);
         if (prop != null) prop.setBlastTemperature(blastTemp);
         else m.setProperty(PropertyKey.BLAST, new BlastProperty(blastTemp));
+        return m;
     }
 
     public static int blastTemp(Material m) {
