@@ -43,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -287,7 +288,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if recipes should be searched for
      */
     protected boolean shouldSearchForRecipes() {
-        return canWorkWithInputs() && canFitNewOutputs();
+        return canWorkWithInputs() || canFitNewOutputs();
     }
 
     /**
@@ -426,40 +427,78 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         Recipe currentRecipe = null;
         IItemHandlerModifiable importInventory = getInputInventory();
         IMultipleTankHandler importFluids = getInputTank();
+        boolean invalidOutputs = false;
+        boolean invalidInputs = false;
 
-        // see if the last recipe we used still works
+        // 1. 检查上一个配方是否仍然有效
         if (checkPreviousRecipe()) {
             currentRecipe = this.previousRecipe;
-            // If there is no active recipe, then we need to find one.
+            if (checkRecipe(currentRecipe) && prepareRecipe(currentRecipe)) {
+                addToPreviousRecipes(currentRecipe); // 更新历史记录
+                return; // 成功则直接返回
+            }
+            currentRecipe = null; // 若无效则继续搜索
         }
-        // 若无效则遍历历史记录寻找其他有效配方
-        else {
-            for (int i = latestRecipes.size() - 2; i >= 0; i--) { // 从倒数第二个开始
+
+        // 2. 搜索历史记录中的其他有效配方（从倒数第二个开始）
+        if (currentRecipe == null) {
+            for (int i = latestRecipes.size() - 2; i >= 0; i--) {
                 Recipe recipe = latestRecipes.get(i);
                 if (recipe == null) continue;
+                // 检查电压和输入匹配（不消耗资源）
                 if (recipe.getEUt() <= maxVoltage && recipe.matches(false, importInventory, importFluids)) {
-                    currentRecipe = recipe;
-                    break;
+                    if (checkRecipe(recipe) && prepareRecipe(recipe)) {
+                        currentRecipe = recipe;
+                        break;
+                    } else {
+                        // 记录失败原因并重置状态
+                        invalidOutputs |= this.isOutputsFull;
+                        invalidInputs |= this.invalidInputsForRecipes;
+                        this.isOutputsFull = false;
+                        this.invalidInputsForRecipes = false;
+                    }
                 }
             }
         }
 
-        // 若历史配方均无效则搜索新配方
+        // 3. 若仍未找到，遍历配方迭代器搜索新配方
         if (currentRecipe == null) {
-            currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
-        }
-        // If a recipe was found, then inputs were valid. Cache found recipe.
-        if (currentRecipe != null) {
-            //最临近配方
-            this.previousRecipe = currentRecipe;
-            //热点配方
-            addToPreviousRecipes(currentRecipe);
-        }
-        this.invalidInputsForRecipes = (currentRecipe == null);
+            Iterator<Recipe> recipeIterator = getRecipeIterator(maxVoltage, importInventory, importFluids);
+            if (recipeIterator != null && recipeIterator.hasNext()) {
+                while (recipeIterator.hasNext()) {
+                    Recipe next = recipeIterator.next();
+                    if (next == null) continue;
 
-        // proceed if we have a usable recipe.
-        if (currentRecipe != null && checkRecipe(currentRecipe)) {
-            prepareRecipe(currentRecipe);
+                    if (checkRecipe(next) && prepareRecipe(next)) {
+                        currentRecipe = next;
+                        break;
+                    } else {
+                        // 累积失败状态并重置检查标记
+                        invalidOutputs |= this.isOutputsFull;
+                        invalidInputs |= this.invalidInputsForRecipes;
+                        this.isOutputsFull = false;
+                        this.invalidInputsForRecipes = false;
+                    }
+                }
+            } else {
+                // 4. 若迭代器不可用，直接调用 findRecipe
+                currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
+                if (currentRecipe != null && !(checkRecipe(currentRecipe) && prepareRecipe(currentRecipe))) {
+                    currentRecipe = null; // 确保配方有效且可执行
+                }
+            }
+        }
+
+        // 5. 更新最终状态和缓存
+        if (currentRecipe != null) {
+            this.previousRecipe = currentRecipe;
+            addToPreviousRecipes(currentRecipe); // 加入最近使用列表
+            this.invalidInputsForRecipes = false;
+            this.isOutputsFull = false;
+        } else {
+            // 若所有途径均失败，合并记录的失败原因
+            this.invalidInputsForRecipes = invalidInputs || (currentRecipe == null);
+            this.isOutputsFull = invalidOutputs;
         }
     }
 
@@ -1283,5 +1322,24 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 this.fluidOutputs.add(FluidStack.loadFluidStackFromNBT(fluidOutputsList.getCompoundTagAt(i)));
             }
         }
+    }
+
+    /**
+     * Creates a Recipe Iterator using inputs
+     *
+     * @param maxVoltage  the maximum voltage the recipe can have
+     * @param inputs      the item inputs used to search for the recipe
+     * @param fluidInputs the fluid inputs used to search for the recipe
+     * @return the recipe iterator if this.recipeMap is valid, otherwise null
+     */
+    @Nullable
+    protected Iterator<Recipe> getRecipeIterator(long maxVoltage, IItemHandlerModifiable inputs,
+                                                 IMultipleTankHandler fluidInputs) {
+        RecipeMap<?> map = getRecipeMap();
+        if (map == null || !isRecipeMapValid(map)) {
+            return null;
+        }
+
+        return map.getRecipeIterator(maxVoltage, inputs, fluidInputs);
     }
 }
