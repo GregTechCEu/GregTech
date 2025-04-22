@@ -166,7 +166,7 @@ gregtech.multiblock.fusion_reactor.luv.description=核聚变反应堆MK-I是台�
 gregtech.multiblock.fusion_reactor.zpm.description=核聚变反应堆MK-II是台大型多方块结构，用于融合元素形成更重的元素。它仅可使用ZPM或UV等级的能源仓。每个能源仓可增加20MEU的能量缓存，最大能量缓存为320MEU。
 gregtech.multiblock.fusion_reactor.uv.description=核聚变反应堆MK-III是台大型多方块结构，用于融合元素形成更重的元素。它仅可使用UV等级的能源仓。每个能源仓可增加40MEU的能量缓存，最大能量缓存为640MEU。
 gregtech.multiblock.fusion_reactor.heat=热量：%s
-gregtech.multiblock.large_chemical_reactor.description=大型化学反应釜能够以100%的能效进行化学反应。每次超频将使处理速度与能耗均提升4倍。该多方块结构需要在中心位置的聚四氟乙烯管道外壳旁放置一个白铜线圈方块。
+gregtech.multiblock.large_chemical_reactor.description=大型化学反应釜能够以100%%的能效进行化学反应。每次超频将使处理速度与能耗均提升4倍。该多方块结构需要在中心位置的聚四氟乙烯管道外壳旁放置一个白铜线圈方块。
 gregtech.multiblock.primitive_water_pump.description=原始水泵是台前蒸汽时代的多方块结构。它每秒收集一次水资源，基础收集量取决于其所处的生物群系。水泵输出仓以及ULV和LV的输出仓都可以使用，输出仓的等级越高，水资源收集量也会越多。收集量的公式为：生物群系系数*输出仓倍数。
 gregtech.multiblock.primitive_water_pump.extra1=生物群系系数：/n  海洋（Ocean）、河流（River）：1000 L/s/n  沼泽（Swamp）：800 L/s/n  丛林（Jungle）：350 L/s/n  积雪的（Snowy）：300 L/s/n  平原（Plains）、森林（Forest）：250 L/s/n  针叶林（Taiga）：175 L/s/n  沙滩（Beach）：170 L/s/n  其他：100 L/s
 gregtech.multiblock.primitive_water_pump.extra2=输出仓倍数：/n水泵输出仓：1x/nULV输出仓：2x/nLV输出仓：4x
@@ -5784,13 +5784,14 @@ gregtech.block.tooltip.no_mob_spawning=§b生物不会在这个方块上生成
 
 gregtech.recipe.total=总计：%,d EU
 gregtech.recipe.max_eu=最大EU：%,d EU
-gregtech.recipe.eu=耗能功率：%,d EU/t（%s）
+gregtech.recipe.eu=耗能功率：%,d EU/t(%s§r)
 gregtech.recipe.eu_inverted=产能功率：%,d EU/t
 gregtech.recipe.duration=耗时：%s 秒
 gregtech.recipe.amperage=电流：%,d
 gregtech.recipe.not_consumed=不在加工中消耗
 gregtech.recipe.chance=出产概率：%s%% + %s%%/电压等级
 gregtech.recipe.chance_logic=出产概率：%s%% +%s%%/电压等级（%s）
+gregtech.recipe.chance_total=当 %s§r: %f%%
 gregtech.chance_logic.or=OR
 gregtech.chance_logic.and=AND
 gregtech.chance_logic.xor=XOR
@@ -5929,6 +5930,9 @@ gregtech.jei.fluid.max_hover=流体矿脉所能具有的的最大产量
 gregtech.jei.fluid.dep_chance_hover=开采流体矿脉时消耗的概率
 gregtech.jei.fluid.dep_amount_hover=消耗后消耗的量
 gregtech.jei.fluid.dep_yield_hover=流体矿脉殆尽后能开采的最大流体量
+
+gregtech.jei.overclock_button=配方在%s§r时的速度
+gregtech.jei.overclock_warn=某些配方的结果可能不完全准确！
 
 gregtech.jei.materials.average_mass=平均质量：%,d
 gregtech.jei.materials.average_protons=平均质子：%,d

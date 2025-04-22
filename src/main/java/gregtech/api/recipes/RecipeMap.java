@@ -109,6 +109,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public ChanceBoostFunction chanceFunction = DEFAULT_CHANCE_FUNCTION;
     protected RecipeMapUI<?> recipeMapUI;
     protected @Nullable SoundEvent sound;
+    private boolean jeiOverclockButton = true;
     private int maxInputs;
     private int maxOutputs;
     private int maxFluidInputs;
@@ -1588,5 +1589,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                                               @NotNull Predicate<Recipe> canHandle) {
         List<List<AbstractMapIngredient>> list = prepareRecipeFind(items, fluids);
         return new RecipeIterator(this, list, canHandle);
+    }
+
+    public RecipeMap<R> disableJeiOverclockButton() {
+        this.jeiOverclockButton = false;
+        return this;
+    }
+
+    public boolean jeiOverclockButtonEnabled() {
+        return this.jeiOverclockButton;
     }
 }

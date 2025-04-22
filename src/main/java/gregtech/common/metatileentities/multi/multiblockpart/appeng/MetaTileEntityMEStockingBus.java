@@ -6,6 +6,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.interfaces.IRefreshBeforeConsumption;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -37,7 +38,7 @@ import java.util.function.Predicate;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_PULL;
 
-public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
+public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus implements IRefreshBeforeConsumption {
 
     private static final int CONFIG_SIZE = 16;
     private boolean autoPull;
@@ -46,6 +47,14 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     public MetaTileEntityMEStockingBus(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.IV);
         this.autoPullTest = $ -> false;
+    }
+
+    @Override
+    public void refreshBeforeConsumption() {
+        if (isWorkingEnabled() && updateMEStatus()) {
+            if (autoPull) refreshList();
+            syncME();
+        }
     }
 
     @Override
@@ -145,8 +154,8 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     }
 
     /**
-     * Test for if any of our configured items are in another stocking bus on the multi
-     * we are attached to. Prevents dupes in certain situations.
+     * Test for if any of our configured items are in another stocking bus on the multi we are attached to. Prevents
+     * dupes in certain situations.
      */
     private void validateConfig() {
         for (var slot : this.getAEItemHandler().getInventory()) {
@@ -201,8 +210,8 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     }
 
     /**
-     * Refresh the configuration list in auto-pull mode.
-     * Sets the config to the first 16 valid items found in the network.
+     * Refresh the configuration list in auto-pull mode. Sets the config to the first 16 valid items found in the
+     * network.
      */
     private void refreshList() {
         IMEMonitor<IAEItemStack> monitor = getMonitor();
@@ -305,6 +314,45 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         this.autoPull = buf.readBoolean();
     }
 
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
+        tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.stocking_item.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me_import_item_hatch.configs.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.copy_paste.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.stocking_item.tooltip.2"));
+        tooltip.add(I18n.format("gregtech.machine.me.extra_connections.tooltip"));
+        tooltip.add(I18n.format("gregtech.universal.enabled"));
+    }
+
+    @Override
+    protected NBTTagCompound writeConfigToTag() {
+        if (!autoPull) {
+            NBTTagCompound tag = super.writeConfigToTag();
+            tag.setBoolean("AutoPull", false);
+            return tag;
+        }
+        // if in auto-pull, no need to write actual configured slots, but still need to write the ghost circuit
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setBoolean("AutoPull", true);
+        tag.setByte("GhostCircuit", (byte) this.circuitInventory.getCircuitValue());
+        return tag;
+    }
+
+    @Override
+    protected void readConfigFromTag(NBTTagCompound tag) {
+        if (tag.getBoolean("AutoPull")) {
+            // if being set to auto-pull, no need to read the configured slots
+            this.setAutoPull(true);
+            this.setGhostCircuitConfig(tag.getByte("GhostCircuit"));
+            return;
+        }
+        // set auto pull first to avoid issues with clearing the config after reading from the data stick
+        this.setAutoPull(false);
+        super.readConfigFromTag(tag);
+    }
+
     private static class ExportOnlyAEStockingItemSlot extends ExportOnlyAEItemSlot {
 
         private final MetaTileEntityMEStockingBus holder;
@@ -363,45 +411,6 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
             }
             return ItemStack.EMPTY;
         }
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
-                               boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.me.stocking_item.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.me_import_item_hatch.configs.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.me.copy_paste.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.me.stocking_item.tooltip.2"));
-        tooltip.add(I18n.format("gregtech.machine.me.extra_connections.tooltip"));
-        tooltip.add(I18n.format("gregtech.universal.enabled"));
-    }
-
-    @Override
-    protected NBTTagCompound writeConfigToTag() {
-        if (!autoPull) {
-            NBTTagCompound tag = super.writeConfigToTag();
-            tag.setBoolean("AutoPull", false);
-            return tag;
-        }
-        // if in auto-pull, no need to write actual configured slots, but still need to write the ghost circuit
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setBoolean("AutoPull", true);
-        tag.setByte("GhostCircuit", (byte) this.circuitInventory.getCircuitValue());
-        return tag;
-    }
-
-    @Override
-    protected void readConfigFromTag(NBTTagCompound tag) {
-        if (tag.getBoolean("AutoPull")) {
-            // if being set to auto-pull, no need to read the configured slots
-            this.setAutoPull(true);
-            this.setGhostCircuitConfig(tag.getByte("GhostCircuit"));
-            return;
-        }
-        // set auto pull first to avoid issues with clearing the config after reading from the data stick
-        this.setAutoPull(false);
-        super.readConfigFromTag(tag);
     }
 
     private static class ExportOnlyAEStockingItemList extends ExportOnlyAEItemList {

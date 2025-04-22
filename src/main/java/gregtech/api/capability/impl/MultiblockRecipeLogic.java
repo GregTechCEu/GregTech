@@ -1,6 +1,5 @@
 package gregtech.api.capability.impl;
 
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.DualHandler;
 import gregtech.api.capability.IEnergyContainer;
@@ -332,7 +331,14 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         return false;
     }
 
+    @Override
+    public boolean prepareRecipe(Recipe recipe) {
+        ((RecipeMapMultiblockController) metaTileEntity).refreshAllBeforeConsumption();
+        return super.prepareRecipe(recipe);
+    }
+
     protected boolean prepareRecipeDistinct(Recipe recipe) {
+        ((RecipeMapMultiblockController) metaTileEntity).refreshAllBeforeConsumption();
         recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(),
                 metaTileEntity.getFluidOutputLimit());
         boolean dualInput = hasDualInput();

@@ -33,6 +33,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private boolean modifyFluidInputs = true;
     private int fluidOutputs;
     private boolean modifyFluidOutputs = true;
+    private boolean jeiOverclockButton = true;
 
     private boolean isGenerator;
 
@@ -297,6 +298,14 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
         if (buildActions != null) {
             recipeMap.onRecipeBuild(buildActions);
         }
+        if (!jeiOverclockButton) {
+            recipeMap.disableJeiOverclockButton();
+        }
         return recipeMap;
+    }
+
+    public @NotNull RecipeMapBuilder<B> disableJeiOverclockButton() {
+        this.jeiOverclockButton = false;
+        return this;
     }
 }
