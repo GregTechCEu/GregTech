@@ -58,14 +58,8 @@ public abstract class BaseFilter implements IFilter {
     };
     protected IDirtyNotifiable dirtyNotifiable;
 
-    public abstract BaseFilterReader getFilterReader();
-
-    public final ItemStack getContainerStack() {
-        return this.getFilterReader().getContainer();
-    }
-
     public static @Nullable BaseFilter getFilterFromStack(ItemStack stack) {
-        if (stack.getItem() instanceof MetaItem<?>metaItem) {
+        if (stack.getItem() instanceof MetaItem<?> metaItem) {
             var metaValueItem = metaItem.getItem(stack);
             var factory = metaValueItem == null ? null : metaValueItem.getFilterFactory();
             if (factory != null)
@@ -74,9 +68,10 @@ public abstract class BaseFilter implements IFilter {
         return null;
     }
 
-    public final void setBlacklistFilter(boolean blacklistFilter) {
-        this.getFilterReader().setBlacklistFilter(blacklistFilter);
-        markDirty();
+    public abstract BaseFilterReader getFilterReader();
+
+    public final ItemStack getContainerStack() {
+        return this.getFilterReader().getContainer();
     }
 
     @Override
@@ -136,6 +131,11 @@ public abstract class BaseFilter implements IFilter {
 
     public final boolean isBlacklistFilter() {
         return getFilterReader().isBlacklistFilter();
+    }
+
+    public final void setBlacklistFilter(boolean blacklistFilter) {
+        this.getFilterReader().setBlacklistFilter(blacklistFilter);
+        markDirty();
     }
 
     public IWidget createBlacklistUI() {

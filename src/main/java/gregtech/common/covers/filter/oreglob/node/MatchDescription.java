@@ -43,8 +43,8 @@ public enum MatchDescription {
     }
 
     /**
-     * @return If this description is incomplete; {@code OTHER_EXCLUDING_NOTHING} and
-     *         {@code OTHER_INCLUDING_NOTHING} does not fully describe the match result.
+     * @return If this description is incomplete; {@code OTHER_EXCLUDING_NOTHING} and {@code OTHER_INCLUDING_NOTHING}
+     * does not fully describe the match result.
      */
     public boolean isIncomplete() {
         return this == OTHER_EXCLUDING_EMPTY || this == OTHER_INCLUDING_EMPTY;
@@ -63,16 +63,16 @@ public enum MatchDescription {
         if (another == NOTHING) return NOTHING;
         return switch (this) {
             case EVERYTHING -> switch (another) {
-                    case NONEMPTY -> NONEMPTY;
-                    case OTHER_EXCLUDING_EMPTY -> OTHER_EXCLUDING_EMPTY;
-                    case OTHER_INCLUDING_EMPTY -> OTHER_INCLUDING_EMPTY;
-                    default -> EVERYTHING;
-                };
+                case NONEMPTY -> NONEMPTY;
+                case OTHER_EXCLUDING_EMPTY -> OTHER_EXCLUDING_EMPTY;
+                case OTHER_INCLUDING_EMPTY -> OTHER_INCLUDING_EMPTY;
+                default -> EVERYTHING;
+            };
             case NOTHING -> NOTHING;
             case NONEMPTY -> switch (another) { // 2 or more
-                    case NONEMPTY, OTHER_EXCLUDING_EMPTY, OTHER_INCLUDING_EMPTY -> OTHER_EXCLUDING_EMPTY;
-                    default -> NONEMPTY;
-                };
+                case NONEMPTY, OTHER_EXCLUDING_EMPTY, OTHER_INCLUDING_EMPTY -> OTHER_EXCLUDING_EMPTY;
+                default -> NONEMPTY;
+            };
             case EMPTY -> another;
             case OTHER_EXCLUDING_EMPTY -> OTHER_EXCLUDING_EMPTY;
             case OTHER_INCLUDING_EMPTY -> another.canMatchNothing() ? OTHER_INCLUDING_EMPTY : OTHER_EXCLUDING_EMPTY;
@@ -87,15 +87,15 @@ public enum MatchDescription {
             case NOTHING -> desc;
             case NONEMPTY -> desc.canMatchNothing() ? EVERYTHING : NONEMPTY;
             case EMPTY -> switch (desc) {
-                    case NONEMPTY -> EVERYTHING;
-                    case OTHER_EXCLUDING_EMPTY -> OTHER_INCLUDING_EMPTY;
-                    default -> desc;
-                };
+                case NONEMPTY -> EVERYTHING;
+                case OTHER_EXCLUDING_EMPTY -> OTHER_INCLUDING_EMPTY;
+                default -> desc;
+            };
             case OTHER_EXCLUDING_EMPTY -> switch (desc) {
-                    case NONEMPTY -> NONEMPTY;
-                    case OTHER_EXCLUDING_EMPTY -> OTHER_EXCLUDING_EMPTY;
-                    default -> OTHER_INCLUDING_EMPTY;
-                };
+                case NONEMPTY -> NONEMPTY;
+                case OTHER_EXCLUDING_EMPTY -> OTHER_EXCLUDING_EMPTY;
+                default -> OTHER_INCLUDING_EMPTY;
+            };
             case OTHER_INCLUDING_EMPTY -> desc == MatchDescription.NONEMPTY ? EVERYTHING : OTHER_INCLUDING_EMPTY;
         };
     }
@@ -122,11 +122,11 @@ public enum MatchDescription {
         return switch (this) {
             case NONEMPTY -> desc == MatchDescription.EMPTY ? EVERYTHING : desc;
             case EMPTY -> switch (desc) {
-                    case NONEMPTY -> EVERYTHING;
-                    case OTHER_EXCLUDING_EMPTY -> OTHER_INCLUDING_EMPTY;
-                    case OTHER_INCLUDING_EMPTY -> OTHER_EXCLUDING_EMPTY;
-                    default -> throw new IllegalStateException("Unreachable");
-                };
+                case NONEMPTY -> EVERYTHING;
+                case OTHER_EXCLUDING_EMPTY -> OTHER_INCLUDING_EMPTY;
+                case OTHER_INCLUDING_EMPTY -> OTHER_EXCLUDING_EMPTY;
+                default -> throw new IllegalStateException("Unreachable");
+            };
             // technically an incomplete descriptions can produce other results
             // but we can't factor them in currently
             case OTHER_EXCLUDING_EMPTY -> desc == MatchDescription.NONEMPTY ? OTHER_EXCLUDING_EMPTY :

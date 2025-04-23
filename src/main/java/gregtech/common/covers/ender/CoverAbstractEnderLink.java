@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
 
 @SuppressWarnings("SameParameterValue")
 public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends CoverBase
-                                            implements CoverWithUI, ITickable, IControllable {
+        implements CoverWithUI, ITickable, IControllable {
 
     protected static final Pattern COLOR_INPUT_PATTERN = Pattern.compile("[0-9a-fA-F]*");
 
@@ -188,10 +188,10 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         return new DynamicDrawable(() -> new Rectangle()
                 .setColor(this.activeEntry.getColor())
                 .asIcon().size(16))
-                        .asWidget()
-                        .background(GTGuiTextures.SLOT)
-                        .size(18)
-                        .marginRight(2);
+                .asWidget()
+                .background(GTGuiTextures.SLOT)
+                .size(18)
+                .marginRight(2);
     }
 
     protected IWidget createPrivateButton() {
@@ -292,10 +292,10 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
             Map<IWidget, String> reverse = new Reference2ObjectArrayMap<>(names.size());
             var panel = GTGuis.createPopupPanel("entry_selector", 168, 112, true);
             return panel.child(IKey.lang("cover.generic.ender.known_channels")
-                    .color(UI_TITLE_COLOR)
-                    .asWidget()
-                    .top(6)
-                    .left(4))
+                            .color(UI_TITLE_COLOR)
+                            .asWidget()
+                            .top(6)
+                            .left(4))
                     .child(new ListValueWidget<>(reverse::get)
                             .children(names, name -> {
                                 IWidget row = createRow(name, panel, syncManager, type);

@@ -46,7 +46,7 @@ public class ItemFilterContainer extends BaseFilterContainer {
         ServerWidgetGroup blacklistButton = new ServerWidgetGroup(this::hasFilter);
         blacklistButton.addWidget(new ToggleButtonWidget(144, y, 20, 20, gregtech.api.gui.GuiTextures.BUTTON_BLACKLIST,
                 this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
-                        .setTooltipText("cover.filter.blacklist"));
+                .setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(blacklistButton);
     }
 

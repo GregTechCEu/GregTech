@@ -14,13 +14,22 @@ import org.jetbrains.annotations.NotNull;
 public class SimpleItemFilterReader extends BaseFilterReader implements IItemHandlerModifiable {
 
     public static final String COUNT = "Count";
-    protected static final String LEGACY_ITEM_KEY = "ItemFilter";
-    protected static final String LEGACY_STACK_SIZE = "BigStackSize";
     public static final String RESPECT_NBT = "IgnoreNBT";
     public static final String RESPECT_DAMAGE = "IgnoreDamage";
+    protected static final String LEGACY_ITEM_KEY = "ItemFilter";
+    protected static final String LEGACY_STACK_SIZE = "BigStackSize";
 
     public SimpleItemFilterReader(ItemStack container, int slots) {
         super(container, slots);
+    }
+
+    @Override
+    public int getSlots() {
+        return getSize();
+    }
+
+    public boolean isIgnoreDamage() {
+        return !getStackTag().getBoolean(RESPECT_DAMAGE);
     }
 
     public void setIgnoreDamage(boolean ignoreDamage) {
@@ -34,9 +43,8 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
         markDirty();
     }
 
-    @Override
-    public int getSlots() {
-        return getSize();
+    public boolean isIgnoreNBT() {
+        return !getStackTag().getBoolean(RESPECT_NBT);
     }
 
     public void setIgnoreNBT(boolean ignoreNBT) {
@@ -48,14 +56,6 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
         else
             getStackTag().setBoolean(RESPECT_NBT, true);
         markDirty();
-    }
-
-    public boolean isIgnoreDamage() {
-        return !getStackTag().getBoolean(RESPECT_DAMAGE);
-    }
-
-    public boolean isIgnoreNBT() {
-        return !getStackTag().getBoolean(RESPECT_NBT);
     }
 
     @Override

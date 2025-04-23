@@ -71,14 +71,15 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     public final int tier;
     public final int maxItemTransferRate;
-    private int transferRate;
+    protected final ItemFilterContainer itemFilterContainer;
     protected ConveyorMode conveyorMode;
     protected DistributionMode distributionMode;
     protected ManualImportExportMode manualImportExportMode = ManualImportExportMode.DISABLED;
-    protected final ItemFilterContainer itemFilterContainer;
     protected int itemsLeftToTransferLastSecond;
-    private CoverableItemHandlerWrapper itemHandlerWrapper;
     protected boolean isWorkingAllowed = true;
+    private int transferRate;
+    private int updateTime = 5;
+    private CoverableItemHandlerWrapper itemHandlerWrapper;
 
     public CoverConveyor(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                          @NotNull EnumFacing attachedSide, int tier, int itemsPerSecond) {
@@ -90,138 +91,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         this.conveyorMode = ConveyorMode.EXPORT;
         this.distributionMode = DistributionMode.INSERT_FIRST;
         this.itemFilterContainer = new ItemFilterContainer(this);
-    }
-
-    public void setTransferRate(int transferRate) {
-        this.transferRate = MathHelper.clamp(transferRate, 1, maxItemTransferRate);
-        CoverableView coverable = getCoverableView();
-        coverable.markDirty();
-
-        if (getWorld() != null && getWorld().isRemote) {
-            // tile at cover holder pos
-            TileEntity te = getTileEntityHere();
-            if (te instanceof TileEntityItemPipe) {
-                ((TileEntityItemPipe) te).resetTransferred();
-            }
-            // tile neighbour to holder pos at attached side
-            te = getNeighbor(getAttachedSide());
-            if (te instanceof TileEntityItemPipe) {
-                ((TileEntityItemPipe) te).resetTransferred();
-            }
-        }
-    }
-
-    public int getTransferRate() {
-        return transferRate;
-    }
-
-    protected void adjustTransferRate(int amount) {
-        setTransferRate(MathHelper.clamp(transferRate + amount, 1, maxItemTransferRate));
-    }
-
-    public void setConveyorMode(ConveyorMode conveyorMode) {
-        this.conveyorMode = conveyorMode;
-        writeCustomData(GregtechDataCodes.UPDATE_COVER_MODE, buf -> buf.writeEnumValue(conveyorMode));
-        markDirty();
-    }
-
-    public ConveyorMode getConveyorMode() {
-        return conveyorMode;
-    }
-
-    public DistributionMode getDistributionMode() {
-        return distributionMode;
-    }
-
-    public void setDistributionMode(DistributionMode distributionMode) {
-        this.distributionMode = distributionMode;
-        markDirty();
-    }
-
-    public ManualImportExportMode getManualImportExportMode() {
-        return manualImportExportMode;
-    }
-
-    protected void setManualImportExportMode(ManualImportExportMode manualImportExportMode) {
-        this.manualImportExportMode = manualImportExportMode;
-        markDirty();
-    }
-
-    public ItemFilterContainer getItemFilterContainer() {
-        return itemFilterContainer;
-    }
-
-    @Override
-    public void update() {
-        CoverableView coverable = getCoverableView();
-        long timer = coverable.getOffsetTimer();
-        if (timer % 5 == 0 && isWorkingAllowed && itemsLeftToTransferLastSecond > 0) {
-            EnumFacing side = getAttachedSide();
-            TileEntity tileEntity = coverable.getNeighbor(side);
-            IItemHandler itemHandler = tileEntity == null ? null :
-                    tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
-            IItemHandler myItemHandler = coverable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
-            if (itemHandler != null && myItemHandler != null) {
-                int totalTransferred = doTransferItems(itemHandler, myItemHandler, itemsLeftToTransferLastSecond);
-                this.itemsLeftToTransferLastSecond -= totalTransferred;
-            }
-        }
-        if (timer % 20 == 0) {
-            this.itemsLeftToTransferLastSecond = transferRate;
-        }
-    }
-
-    protected int doTransferItems(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
-        return doTransferItemsAny(itemHandler, myItemHandler, maxTransferAmount);
-    }
-
-    protected int doTransferItemsAny(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
-        if (conveyorMode == ConveyorMode.IMPORT) {
-            return moveInventoryItems(itemHandler, myItemHandler, maxTransferAmount);
-        } else if (conveyorMode == ConveyorMode.EXPORT) {
-            return moveInventoryItems(myItemHandler, itemHandler, maxTransferAmount);
-        }
-        return 0;
-    }
-
-    protected int doTransferItemsByGroup(IItemHandler itemHandler, IItemHandler myItemHandler,
-                                         Map<Integer, GroupItemInfo> itemInfos, int maxTransferAmount) {
-        if (conveyorMode == ConveyorMode.IMPORT) {
-            return moveInventoryItems(itemHandler, myItemHandler, itemInfos, maxTransferAmount);
-        } else if (conveyorMode == ConveyorMode.EXPORT) {
-            return moveInventoryItems(myItemHandler, itemHandler, itemInfos, maxTransferAmount);
-        }
-        return 0;
-    }
-
-    protected Map<Integer, GroupItemInfo> doCountDestinationInventoryItemsByMatchIndex(IItemHandler itemHandler,
-                                                                                       IItemHandler myItemHandler) {
-        if (conveyorMode == ConveyorMode.IMPORT) {
-            return countInventoryItemsByMatchSlot(myItemHandler);
-        } else if (conveyorMode == ConveyorMode.EXPORT) {
-            return countInventoryItemsByMatchSlot(itemHandler);
-        }
-        return Collections.emptyMap();
-    }
-
-    protected Map<ItemStack, TypeItemInfo> doCountSourceInventoryItemsByType(IItemHandler itemHandler,
-                                                                             IItemHandler myItemHandler) {
-        if (conveyorMode == ConveyorMode.IMPORT) {
-            return countInventoryItemsByType(itemHandler);
-        } else if (conveyorMode == ConveyorMode.EXPORT) {
-            return countInventoryItemsByType(myItemHandler);
-        }
-        return Collections.emptyMap();
-    }
-
-    protected boolean doTransferItemsExact(IItemHandler itemHandler, IItemHandler myItemHandler,
-                                           TypeItemInfo itemInfo) {
-        if (conveyorMode == ConveyorMode.IMPORT) {
-            return moveInventoryItemsExact(itemHandler, myItemHandler, itemInfo);
-        } else if (conveyorMode == ConveyorMode.EXPORT) {
-            return moveInventoryItemsExact(myItemHandler, itemHandler, itemInfo);
-        }
-        return false;
     }
 
     protected static boolean moveInventoryItemsExact(IItemHandler sourceInventory, IItemHandler targetInventory,
@@ -279,6 +148,138 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             }
         }
         return true;
+    }
+
+    public int getTransferRate() {
+        return transferRate;
+    }
+
+    public void setTransferRate(int transferRate) {
+        this.transferRate = MathHelper.clamp(transferRate, 1, maxItemTransferRate);
+        CoverableView coverable = getCoverableView();
+        coverable.markDirty();
+
+        if (getWorld() != null && getWorld().isRemote) {
+            // tile at cover holder pos
+            TileEntity te = getTileEntityHere();
+            if (te instanceof TileEntityItemPipe) {
+                ((TileEntityItemPipe) te).resetTransferred();
+            }
+            // tile neighbour to holder pos at attached side
+            te = getNeighbor(getAttachedSide());
+            if (te instanceof TileEntityItemPipe) {
+                ((TileEntityItemPipe) te).resetTransferred();
+            }
+        }
+    }
+
+    protected void adjustTransferRate(int amount) {
+        setTransferRate(MathHelper.clamp(transferRate + amount, 1, maxItemTransferRate));
+    }
+
+    public ConveyorMode getConveyorMode() {
+        return conveyorMode;
+    }
+
+    public void setConveyorMode(ConveyorMode conveyorMode) {
+        this.conveyorMode = conveyorMode;
+        writeCustomData(GregtechDataCodes.UPDATE_COVER_MODE, buf -> buf.writeEnumValue(conveyorMode));
+        markDirty();
+    }
+
+    public DistributionMode getDistributionMode() {
+        return distributionMode;
+    }
+
+    public void setDistributionMode(DistributionMode distributionMode) {
+        this.distributionMode = distributionMode;
+        markDirty();
+    }
+
+    public ManualImportExportMode getManualImportExportMode() {
+        return manualImportExportMode;
+    }
+
+    protected void setManualImportExportMode(ManualImportExportMode manualImportExportMode) {
+        this.manualImportExportMode = manualImportExportMode;
+        markDirty();
+    }
+
+    public ItemFilterContainer getItemFilterContainer() {
+        return itemFilterContainer;
+    }
+
+    @Override
+    public void update() {
+        CoverableView coverable = getCoverableView();
+        long timer = coverable.getOffsetTimer();
+        if (timer % 5 == 0 && isWorkingAllowed && itemsLeftToTransferLastSecond > 0) {
+            EnumFacing side = getAttachedSide();
+            TileEntity tileEntity = coverable.getNeighbor(side);
+            IItemHandler itemHandler = tileEntity == null ? null :
+                    tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
+            IItemHandler myItemHandler = coverable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+            if (itemHandler != null && myItemHandler != null) {
+                int totalTransferred = doTransferItems(itemHandler, myItemHandler, itemsLeftToTransferLastSecond);
+                this.itemsLeftToTransferLastSecond -= totalTransferred;
+            }
+        }
+        if (timer % updateTime == 0) {
+            this.itemsLeftToTransferLastSecond = transferRate;
+        }
+    }
+
+    protected int doTransferItems(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
+        return doTransferItemsAny(itemHandler, myItemHandler, maxTransferAmount);
+    }
+
+    protected int doTransferItemsAny(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
+        if (conveyorMode == ConveyorMode.IMPORT) {
+            return moveInventoryItems(itemHandler, myItemHandler, maxTransferAmount);
+        } else if (conveyorMode == ConveyorMode.EXPORT) {
+            return moveInventoryItems(myItemHandler, itemHandler, maxTransferAmount);
+        }
+        return 0;
+    }
+
+    protected int doTransferItemsByGroup(IItemHandler itemHandler, IItemHandler myItemHandler,
+                                         Map<Integer, GroupItemInfo> itemInfos, int maxTransferAmount) {
+        if (conveyorMode == ConveyorMode.IMPORT) {
+            return moveInventoryItems(itemHandler, myItemHandler, itemInfos, maxTransferAmount);
+        } else if (conveyorMode == ConveyorMode.EXPORT) {
+            return moveInventoryItems(myItemHandler, itemHandler, itemInfos, maxTransferAmount);
+        }
+        return 0;
+    }
+
+    protected Map<Integer, GroupItemInfo> doCountDestinationInventoryItemsByMatchIndex(IItemHandler itemHandler,
+                                                                                       IItemHandler myItemHandler) {
+        if (conveyorMode == ConveyorMode.IMPORT) {
+            return countInventoryItemsByMatchSlot(myItemHandler);
+        } else if (conveyorMode == ConveyorMode.EXPORT) {
+            return countInventoryItemsByMatchSlot(itemHandler);
+        }
+        return Collections.emptyMap();
+    }
+
+    protected Map<ItemStack, TypeItemInfo> doCountSourceInventoryItemsByType(IItemHandler itemHandler,
+                                                                             IItemHandler myItemHandler) {
+        if (conveyorMode == ConveyorMode.IMPORT) {
+            return countInventoryItemsByType(itemHandler);
+        } else if (conveyorMode == ConveyorMode.EXPORT) {
+            return countInventoryItemsByType(myItemHandler);
+        }
+        return Collections.emptyMap();
+    }
+
+    protected boolean doTransferItemsExact(IItemHandler itemHandler, IItemHandler myItemHandler,
+                                           TypeItemInfo itemInfo) {
+        if (conveyorMode == ConveyorMode.IMPORT) {
+            return moveInventoryItemsExact(itemHandler, myItemHandler, itemInfo);
+        } else if (conveyorMode == ConveyorMode.EXPORT) {
+            return moveInventoryItemsExact(myItemHandler, itemHandler, itemInfo);
+        }
+        return false;
     }
 
     protected int moveInventoryItems(IItemHandler sourceInventory, IItemHandler targetInventory,
@@ -356,34 +357,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             }
         }
         return maxTransferAmount - itemsLeftToTransfer;
-    }
-
-    protected static class TypeItemInfo {
-
-        public final ItemStack itemStack;
-        public final int filterSlot;
-        public final IntList slots;
-        public int totalCount;
-
-        public TypeItemInfo(ItemStack itemStack, int filterSlot, IntList slots, int totalCount) {
-            this.itemStack = itemStack;
-            this.filterSlot = filterSlot;
-            this.slots = slots;
-            this.totalCount = totalCount;
-        }
-    }
-
-    protected static class GroupItemInfo {
-
-        public final int filterSlot;
-        public final Set<ItemStack> itemStackTypes;
-        public int totalCount;
-
-        public GroupItemInfo(int filterSlot, Set<ItemStack> itemStackTypes, int totalCount) {
-            this.filterSlot = filterSlot;
-            this.itemStackTypes = itemStackTypes;
-            this.totalCount = totalCount;
-        }
     }
 
     @NotNull
@@ -503,7 +476,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
-        var panel = GTGuis.createPanel(this, 176, 192 + 18);
+        var panel = GTGuis.createPanel(this, 176, 210 + 36);
 
         getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
 
@@ -530,10 +503,15 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         EnumSyncValue<DistributionMode> distributionMode = new EnumSyncValue<>(DistributionMode.class,
                 this::getDistributionMode, this::setDistributionMode);
 
+        IntSyncValue updateTime = new IntSyncValue(this::getUpdateTime, this::setUpdateTime);
+        StringSyncValue formattedUpdateTime = new StringSyncValue(updateTime::getStringValue,
+                updateTime::setStringValue);
+
         guiSyncManager.syncValue("manual_io", manualIOmode);
         guiSyncManager.syncValue("conveyor_mode", conveyorMode);
         guiSyncManager.syncValue("distribution_mode", distributionMode);
         guiSyncManager.syncValue("throughput", throughput);
+        guiSyncManager.syncValue("update_time", updateTime);
 
         if (createThroughputRow())
             column.child(Flow.row().coverChildrenHeight()
@@ -557,6 +535,34 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
                                 throughput.setValue(val, true, true);
+                                return true;
+                            })
+                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
+
+        if (createUpdateTimeRow())
+            column.child(Flow.row().coverChildrenHeight()
+                    .marginBottom(2).widthRel(1f)
+                    .child(new ButtonWidget<>()
+                            .left(0).width(18)
+                            .onMousePressed(mouseButton -> {
+                                updateTime.setValue(MathHelper.clamp(
+                                        updateTime.getValue() - getIncrementValue(MouseData.create(mouseButton)), 1,
+                                        100));
+                                return true;
+                            })
+                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
+                    .child(new TextFieldWidget()
+                            .left(18).right(18)
+                            .setTextColor(Color.WHITE.darker(1))
+                            .setNumbers(1, 100)
+                            .value(formattedUpdateTime)
+                            .background(GTGuiTextures.DISPLAY))
+                    .child(new ButtonWidget<>()
+                            .right(0).width(18)
+                            .onMousePressed(mouseButton -> {
+                                updateTime.setValue(MathHelper.clamp(
+                                        updateTime.getValue() + getIncrementValue(MouseData.create(mouseButton)), 1,
+                                        100));
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
@@ -595,6 +601,14 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         return column;
     }
 
+    public int getUpdateTime() {
+        return this.updateTime;
+    }
+
+    protected void setUpdateTime(int i) {
+        this.updateTime = i;
+    }
+
     protected boolean createThroughputRow() {
         return true;
     }
@@ -604,6 +618,10 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     protected boolean createManualIOModeRow() {
+        return true;
+    }
+
+    protected boolean createUpdateTimeRow() {
         return true;
     }
 
@@ -642,6 +660,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeInt(transferRate);
+        packetBuffer.writeInt(updateTime);
         packetBuffer.writeByte(conveyorMode.ordinal());
         packetBuffer.writeByte(distributionMode.ordinal());
         packetBuffer.writeByte(manualImportExportMode.ordinal());
@@ -652,6 +671,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.transferRate = packetBuffer.readInt();
+        this.updateTime = packetBuffer.readInt();
         this.conveyorMode = ConveyorMode.VALUES[packetBuffer.readByte()];
         this.distributionMode = DistributionMode.VALUES[packetBuffer.readByte()];
         this.manualImportExportMode = ManualImportExportMode.VALUES[packetBuffer.readByte()];
@@ -662,6 +682,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferRate", transferRate);
+        tagCompound.setInteger("UpdateTime", updateTime);
         tagCompound.setInteger("ConveyorMode", conveyorMode.ordinal());
         tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
@@ -673,6 +694,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
+        this.updateTime = tagCompound.getInteger("UpdateTime");
         this.conveyorMode = ConveyorMode.VALUES[tagCompound.getInteger("ConveyorMode")];
         this.distributionMode = DistributionMode.VALUES[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
@@ -712,6 +734,34 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         @Override
         public boolean isImport() {
             return this == IMPORT;
+        }
+    }
+
+    protected static class TypeItemInfo {
+
+        public final ItemStack itemStack;
+        public final int filterSlot;
+        public final IntList slots;
+        public int totalCount;
+
+        public TypeItemInfo(ItemStack itemStack, int filterSlot, IntList slots, int totalCount) {
+            this.itemStack = itemStack;
+            this.filterSlot = filterSlot;
+            this.slots = slots;
+            this.totalCount = totalCount;
+        }
+    }
+
+    protected static class GroupItemInfo {
+
+        public final int filterSlot;
+        public final Set<ItemStack> itemStackTypes;
+        public int totalCount;
+
+        public GroupItemInfo(int filterSlot, Set<ItemStack> itemStackTypes, int totalCount) {
+            this.filterSlot = filterSlot;
+            this.itemStackTypes = itemStackTypes;
+            this.totalCount = totalCount;
         }
     }
 

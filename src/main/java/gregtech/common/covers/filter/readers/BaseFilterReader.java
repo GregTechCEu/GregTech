@@ -13,13 +13,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCompound> {
 
-    protected ItemStack container;
-    private IDirtyNotifiable dirtyNotifiable;
-    private final int size;
-    private int maxTransferRate = 1;
     protected static final String BLACKLIST = "IsBlacklist";
     protected static final String FILTER_CONTENTS = "FilterSlots";
     protected static final String KEY_LEGACY_FILTER = "Filter";
+    private final int size;
+    protected ItemStack container;
+    private IDirtyNotifiable dirtyNotifiable;
+    private int maxTransferRate = 1;
 
     public BaseFilterReader(ItemStack container, int slots) {
         this.container = container;
@@ -74,6 +74,10 @@ public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCo
 
     public void onTransferRateChange() {}
 
+    public final boolean isBlacklistFilter() {
+        return getStackTag().getBoolean(BLACKLIST);
+    }
+
     public final void setBlacklistFilter(boolean blacklistFilter) {
         if (getStackTag().getBoolean(BLACKLIST) != blacklistFilter) {
             if (blacklistFilter)
@@ -85,8 +89,8 @@ public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCo
         }
     }
 
-    public final boolean isBlacklistFilter() {
-        return getStackTag().getBoolean(BLACKLIST);
+    public int getMaxTransferRate() {
+        return isBlacklistFilter() ? 1 : this.maxTransferRate;
     }
 
     public void setMaxTransferRate(int transferRate) {
@@ -95,10 +99,6 @@ public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCo
             this.maxTransferRate = transferRate;
             onTransferRateChange();
         }
-    }
-
-    public int getMaxTransferRate() {
-        return isBlacklistFilter() ? 1 : this.maxTransferRate;
     }
 
     @Override

@@ -98,13 +98,13 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         }
     }
 
+    public ItemFilterMode getFilterMode() {
+        return filterMode;
+    }
+
     public void setFilterMode(ItemFilterMode filterMode) {
         this.filterMode = filterMode;
         getCoverableView().markDirty();
-    }
-
-    public ItemFilterMode getFilterMode() {
-        return filterMode;
     }
 
     public @NotNull BaseFilter getFilter() {
@@ -168,8 +168,8 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                                 .setEnabledIf(b -> getFilterMode() != ItemFilterMode.FILTER_BOTH)
                                 .child(new ToggleButton()
                                         .overlay(IKey.dynamic(() -> IKey.lang(allowFlow ?
-                                                "cover.generic.enabled" :
-                                                "cover.generic.disabled").get())
+                                                        "cover.generic.enabled" :
+                                                        "cover.generic.disabled").get())
                                                 .color(Color.WHITE.main).shadow(false))
                                         .tooltip(tooltip -> tooltip
                                                 .addLine(IKey.lang("cover.filter.allow_flow.tooltip")))

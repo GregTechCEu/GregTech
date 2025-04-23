@@ -47,6 +47,36 @@ public class CoverFluidRegulator extends CoverPump {
         this.fluidFilterContainer = new FluidFilterContainer(this);
     }
 
+    /**
+     * Copies a FluidStack and sets its amount to the specified value.
+     *
+     * @param fs     the original fluid stack to copy
+     * @param amount the amount to set the copied FluidStack to
+     * @return the copied FluidStack with the specified amount
+     */
+    private static FluidStack copyFluidStackWithAmount(FluidStack fs, int amount) {
+        FluidStack fs2 = fs.copy();
+        fs2.amount = amount;
+        return fs2;
+    }
+
+    private static Map<FluidStack, Integer> collectDistinctFluids(IFluidHandler handler,
+                                                                  Predicate<IFluidTankProperties> tankTypeFilter,
+                                                                  Predicate<FluidStack> fluidTypeFilter) {
+        final Map<FluidStack, Integer> summedFluids = new Object2IntOpenHashMap<>();
+        Arrays.stream(handler.getTankProperties())
+                .filter(tankTypeFilter)
+                .map(IFluidTankProperties::getContents)
+                .filter(Objects::nonNull)
+                .filter(fluidTypeFilter)
+                .forEach(fs -> {
+                    summedFluids.putIfAbsent(fs, 0);
+                    summedFluids.computeIfPresent(fs, (k, v) -> v + fs.amount);
+                });
+
+        return summedFluids;
+    }
+
     @Override
     protected int doTransferFluidsInternal(IFluidHandler myFluidHandler, IFluidHandler fluidHandler,
                                            int transferLimit) {
@@ -196,34 +226,8 @@ public class CoverFluidRegulator extends CoverPump {
         return transferred;
     }
 
-    /**
-     * Copies a FluidStack and sets its amount to the specified value.
-     *
-     * @param fs     the original fluid stack to copy
-     * @param amount the amount to set the copied FluidStack to
-     * @return the copied FluidStack with the specified amount
-     */
-    private static FluidStack copyFluidStackWithAmount(FluidStack fs, int amount) {
-        FluidStack fs2 = fs.copy();
-        fs2.amount = amount;
-        return fs2;
-    }
-
-    private static Map<FluidStack, Integer> collectDistinctFluids(IFluidHandler handler,
-                                                                  Predicate<IFluidTankProperties> tankTypeFilter,
-                                                                  Predicate<FluidStack> fluidTypeFilter) {
-        final Map<FluidStack, Integer> summedFluids = new Object2IntOpenHashMap<>();
-        Arrays.stream(handler.getTankProperties())
-                .filter(tankTypeFilter)
-                .map(IFluidTankProperties::getContents)
-                .filter(Objects::nonNull)
-                .filter(fluidTypeFilter)
-                .forEach(fs -> {
-                    summedFluids.putIfAbsent(fs, 0);
-                    summedFluids.computeIfPresent(fs, (k, v) -> v + fs.amount);
-                });
-
-        return summedFluids;
+    public TransferMode getTransferMode() {
+        return transferMode;
     }
 
     public void setTransferMode(TransferMode transferMode) {
@@ -232,10 +236,6 @@ public class CoverFluidRegulator extends CoverPump {
             this.fluidFilterContainer.setMaxTransferSize(getMaxTransferRate());
             this.markDirty();
         }
-    }
-
-    public TransferMode getTransferMode() {
-        return transferMode;
     }
 
     private boolean shouldDisplayAmountSlider() {
@@ -247,7 +247,7 @@ public class CoverFluidRegulator extends CoverPump {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
-        return super.buildUI(guiData, guiSyncManager).height(192 + 36);
+        return super.buildUI(guiData, guiSyncManager).height(210 + 54);
     }
 
     @Override

@@ -36,10 +36,10 @@ import java.util.List;
 
 public class CoverStorage extends CoverBase implements CoverWithUI {
 
-    private final ItemStackHandler storageHandler = new ItemStackHandler(9);
     private static final int MAX_WIDTH = 176;
     private static final int MAX_HEIGHT = 126;
     private static final int SLOT_SIZE = 18;
+    private final ItemStackHandler storageHandler = new ItemStackHandler(9);
 
     public CoverStorage(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                         @NotNull EnumFacing attachedSide) {

@@ -67,11 +67,6 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         this.texture = texture;
     }
 
-    public void setFilterMode(FluidFilterMode filterMode) {
-        this.filterMode = filterMode;
-        this.getCoverableView().markDirty();
-    }
-
     @Override
     public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
                              @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
@@ -107,6 +102,11 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     public FluidFilterMode getFilterMode() {
         return filterMode;
+    }
+
+    public void setFilterMode(FluidFilterMode filterMode) {
+        this.filterMode = filterMode;
+        this.getCoverableView().markDirty();
     }
 
     public @NotNull BaseFilter getFilter() {
@@ -166,8 +166,8 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                                 .setEnabledIf(b -> getFilterMode() != FluidFilterMode.FILTER_BOTH)
                                 .child(new ToggleButton()
                                         .overlay(IKey.dynamic(() -> IKey.lang(allowFlow ?
-                                                "cover.generic.enabled" :
-                                                "cover.generic.disabled").get())
+                                                        "cover.generic.enabled" :
+                                                        "cover.generic.disabled").get())
                                                 .color(Color.WHITE.main).shadow(false))
                                         .tooltip(tooltip -> tooltip
                                                 .addLine(IKey.lang("cover.filter.allow_flow.tooltip")))

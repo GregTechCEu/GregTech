@@ -5,7 +5,11 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.ItemFilterContainer;
@@ -35,10 +39,9 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
 
     private static final int DEFAULT_MIN = 64;
     private static final int DEFAULT_MAX = 512;
-
+    protected ItemFilterContainer itemFilter;
     private int min = DEFAULT_MIN, max = DEFAULT_MAX, outputAmount;
     private boolean isLatched = false;
-    protected ItemFilterContainer itemFilter;
 
     public CoverDetectorItemAdvanced(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                      @NotNull EnumFacing attachedSide) {
@@ -62,16 +65,16 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         group.addWidget(new ImageWidget(98 - 4, (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
         group.addWidget(new TextFieldWidget2(98, 5 + (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMinValue, this::setMinValue)
-                        .setMaxLength(10)
-                        .setAllowedChars(TextFieldWidget2.WHOLE_NUMS));
+                .setMaxLength(10)
+                .setAllowedChars(TextFieldWidget2.WHOLE_NUMS));
 
         // set max fluid amount
         group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_item_detector.max"));
         group.addWidget(new ImageWidget(98 - 4, 2 * (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
         group.addWidget(new TextFieldWidget2(98, 5 + 2 * (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMaxValue, this::setMaxValue)
-                        .setMaxLength(10)
-                        .setAllowedChars(TextFieldWidget2.WHOLE_NUMS));
+                .setMaxLength(10)
+                .setAllowedChars(TextFieldWidget2.WHOLE_NUMS));
 
         // invert logic button
         // group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING),
@@ -79,13 +82,13 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         group.addWidget(
                 new CycleButtonWidget(10, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
                         "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
-                                .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip"));
+                        .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip"));
         // group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING),
         // "cover.generic.advanced_detector.latch_label"));
         group.addWidget(
                 new CycleButtonWidget(94, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
                         "cover.generic.advanced_detector.continuous", "cover.generic.advanced_detector.latched")
-                                .setTooltipHoverString("cover.generic.advanced_detector.latch_tooltip"));
+                        .setTooltipHoverString("cover.generic.advanced_detector.latch_tooltip"));
 
         this.itemFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
 
@@ -99,10 +102,6 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         return String.valueOf(min);
     }
 
-    private String getMaxValue() {
-        return String.valueOf(max);
-    }
-
     private void setMinValue(String val) {
         int parsedValue;
         try {
@@ -111,6 +110,10 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
             parsedValue = DEFAULT_MIN;
         }
         this.min = Math.min(max - 1, Math.max(0, parsedValue));
+    }
+
+    private String getMaxValue() {
+        return String.valueOf(max);
     }
 
     private void setMaxValue(String val) {
@@ -123,12 +126,12 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         max = Math.max(min + 1, parsedValue);
     }
 
-    private void setLatched(boolean isLatched) {
-        this.isLatched = isLatched;
-    }
-
     public boolean isLatched() {
         return this.isLatched;
+    }
+
+    private void setLatched(boolean isLatched) {
+        this.isLatched = isLatched;
     }
 
     @Override

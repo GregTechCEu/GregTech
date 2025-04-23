@@ -29,28 +29,28 @@ class BranchNode extends OreGlobNode {
             case 0 -> this.type == BranchType.AND ? MatchDescription.EVERYTHING : MatchDescription.NOTHING;
             case 1 -> this.expressions.get(0).getMatchDescription();
             default -> switch (this.type) {
-                    case OR -> {
-                        MatchDescription union = MatchDescription.NOTHING;
-                        for (OreGlobNode node : this.expressions) {
-                            union = union.or(node.getMatchDescription());
-                        }
-                        yield union;
+                case OR -> {
+                    MatchDescription union = MatchDescription.NOTHING;
+                    for (OreGlobNode node : this.expressions) {
+                        union = union.or(node.getMatchDescription());
                     }
-                    case AND -> {
-                        MatchDescription intersection = MatchDescription.EVERYTHING;
-                        for (OreGlobNode node : this.expressions) {
-                            intersection = intersection.and(node.getMatchDescription());
-                        }
-                        yield intersection;
+                    yield union;
+                }
+                case AND -> {
+                    MatchDescription intersection = MatchDescription.EVERYTHING;
+                    for (OreGlobNode node : this.expressions) {
+                        intersection = intersection.and(node.getMatchDescription());
                     }
-                    case XOR -> {
-                        MatchDescription disjunction = MatchDescription.NOTHING;
-                        for (OreGlobNode node : this.expressions) {
-                            disjunction = disjunction.xor(node.getMatchDescription());
-                        }
-                        yield disjunction;
+                    yield intersection;
+                }
+                case XOR -> {
+                    MatchDescription disjunction = MatchDescription.NOTHING;
+                    for (OreGlobNode node : this.expressions) {
+                        disjunction = disjunction.xor(node.getMatchDescription());
                     }
-                };
+                    yield disjunction;
+                }
+            };
         };
         return isNegated() ? description.complement() : description;
     }

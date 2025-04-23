@@ -66,10 +66,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected ManualImportExportMode manualImportExportMode = ManualImportExportMode.DISABLED;
     protected DistributionMode distributionMode = DistributionMode.INSERT_FIRST;
     protected int fluidLeftToTransferLastSecond;
-    private CoverableFluidHandlerWrapper fluidHandlerWrapper;
     protected boolean isWorkingAllowed = true;
     protected FluidFilterContainer fluidFilterContainer;
     protected BucketMode bucketMode = BucketMode.MILLI_BUCKET;
+    private int updateTime = 5;
+    private CoverableFluidHandlerWrapper fluidHandlerWrapper;
 
     public CoverPump(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                      @NotNull EnumFacing attachedSide, int tier, int mbPerTick) {
@@ -81,6 +82,12 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.fluidFilterContainer = new FluidFilterContainer(this);
     }
 
+    public String getStringTransferRate() {
+        return String.valueOf(getBucketMode() == BucketMode.MILLI_BUCKET ?
+                this.fluidFilterContainer.getTransferSize() :
+                this.fluidFilterContainer.getTransferSize() / 1000);
+    }
+
     public void setStringTransferRate(String s) {
         this.fluidFilterContainer.setTransferSize(
                 getBucketMode() == BucketMode.MILLI_BUCKET ?
@@ -88,10 +95,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                         Integer.parseInt(s) * 1000);
     }
 
-    public String getStringTransferRate() {
-        return String.valueOf(getBucketMode() == BucketMode.MILLI_BUCKET ?
-                this.fluidFilterContainer.getTransferSize() :
-                this.fluidFilterContainer.getTransferSize() / 1000);
+    public int getTransferRate() {
+        return bucketMode == BucketMode.BUCKET ? transferRate / 1000 : transferRate;
     }
 
     public void setTransferRate(int transferRate) {
@@ -100,13 +105,13 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         markDirty();
     }
 
-    public int getTransferRate() {
-        return bucketMode == BucketMode.BUCKET ? transferRate / 1000 : transferRate;
-    }
-
     protected void adjustTransferRate(int amount) {
         amount *= this.bucketMode == BucketMode.BUCKET ? 1000 : 1;
         setTransferRate(this.transferRate + amount);
+    }
+
+    public PumpMode getPumpMode() {
+        return pumpMode;
     }
 
     public void setPumpMode(PumpMode pumpMode) {
@@ -115,8 +120,16 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         markDirty();
     }
 
-    public PumpMode getPumpMode() {
-        return pumpMode;
+    public int getUpdateTime() {
+        return this.updateTime;
+    }
+
+    private void setUpdateTime(int i) {
+        this.updateTime = i;
+    }
+
+    public BucketMode getBucketMode() {
+        return bucketMode;
     }
 
     public void setBucketMode(BucketMode bucketMode) {
@@ -124,10 +137,6 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         if (this.bucketMode == BucketMode.BUCKET)
             setTransferRate(transferRate / 1000 * 1000);
         markDirty();
-    }
-
-    public BucketMode getBucketMode() {
-        return bucketMode;
     }
 
     public ManualImportExportMode getManualImportExportMode() {
@@ -149,7 +158,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         if (isWorkingAllowed && fluidLeftToTransferLastSecond > 0) {
             this.fluidLeftToTransferLastSecond -= doTransferFluids(fluidLeftToTransferLastSecond);
         }
-        if (timer % 20 == 0) {
+        if (timer % updateTime == 0) {
             this.fluidLeftToTransferLastSecond = transferRate;
         }
     }
@@ -189,7 +198,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
-        var panel = GTGuis.createPanel(this, 176, 192);
+        var panel = GTGuis.createPanel(this, 176, 210 + 18);
 
         getFluidFilterContainer().setMaxTransferSize(getMaxTransferRate());
 
@@ -209,9 +218,14 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
         var pumpMode = new EnumSyncValue<>(PumpMode.class, this::getPumpMode, this::setPumpMode);
 
+        IntSyncValue updateTime = new IntSyncValue(this::getUpdateTime, this::setUpdateTime);
+        StringSyncValue formattedUpdateTime = new StringSyncValue(updateTime::getStringValue,
+                updateTime::setStringValue);
+
         syncManager.syncValue("manual_io", manualIOmode);
         syncManager.syncValue("pump_mode", pumpMode);
         syncManager.syncValue("throughput", throughput);
+        syncManager.syncValue("update_time", updateTime);
 
         var column = Flow.column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight();
@@ -238,6 +252,34 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
                                 throughput.setValue(val);
+                                return true;
+                            })
+                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
+
+        if (createUpdateTimeRow())
+            column.child(Flow.row().coverChildrenHeight()
+                    .marginBottom(2).widthRel(1f)
+                    .child(new ButtonWidget<>()
+                            .left(0).width(18)
+                            .onMousePressed(mouseButton -> {
+                                updateTime.setValue(MathHelper.clamp(
+                                        updateTime.getValue() - getIncrementValue(MouseData.create(mouseButton)), 1,
+                                        100));
+                                return true;
+                            })
+                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
+                    .child(new TextFieldWidget()
+                            .left(18).right(18)
+                            .setTextColor(Color.WHITE.darker(1))
+                            .setNumbers(1, 100)
+                            .value(formattedUpdateTime)
+                            .background(GTGuiTextures.DISPLAY))
+                    .child(new ButtonWidget<>()
+                            .right(0).width(18)
+                            .onMousePressed(mouseButton -> {
+                                updateTime.setValue(MathHelper.clamp(
+                                        updateTime.getValue() + getIncrementValue(MouseData.create(mouseButton)), 1,
+                                        100));
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
@@ -270,6 +312,10 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     protected boolean createThroughputRow() {
+        return true;
+    }
+
+    protected boolean createUpdateTimeRow() {
         return true;
     }
 
@@ -378,6 +424,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferRate", transferRate);
+        tagCompound.setInteger("UpdateTime", updateTime);
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
         tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
@@ -390,6 +437,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
+        this.updateTime = tagCompound.getInteger("UpdateTime");
         this.pumpMode = PumpMode.VALUES[tagCompound.getInteger("PumpMode")];
         this.distributionMode = DistributionMode.VALUES[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");

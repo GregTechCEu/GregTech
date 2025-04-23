@@ -89,7 +89,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
-        return super.buildUI(guiData, guiSyncManager).height(192 + 18);
+        return super.buildUI(guiData, guiSyncManager).height(210 + 18);
     }
 
     @Override
@@ -131,14 +131,14 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         Textures.ITEM_VOIDING_ADVANCED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
+    public VoidingMode getVoidingMode() {
+        return voidingMode;
+    }
+
     public void setVoidingMode(VoidingMode voidingMode) {
         this.voidingMode = voidingMode;
         this.itemFilterContainer.setMaxTransferSize(getMaxStackSize());
         this.getCoverableView().markDirty();
-    }
-
-    public VoidingMode getVoidingMode() {
-        return voidingMode;
     }
 
     @Override

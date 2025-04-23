@@ -18,13 +18,16 @@ public abstract class OreGlobNode {
     // package-private constructor to prevent inheritance from outside
     OreGlobNode() {}
 
+    public static boolean isStructurallyEqualTo(@Nullable OreGlobNode node1, @Nullable OreGlobNode node2) {
+        if (node1 == node2) return true;
+        if (node1 == null) return node2.is(MatchDescription.EMPTY);
+        if (node2 == null) return node1.is(MatchDescription.EMPTY);
+        return node1.isStructurallyEqualTo(node2);
+    }
+
     @Nullable
     public final OreGlobNode getNext() {
         return next;
-    }
-
-    public final boolean hasNext() {
-        return next != null;
     }
 
     final void setNext(@Nullable OreGlobNode next) {
@@ -32,6 +35,10 @@ public abstract class OreGlobNode {
             this.next = next;
             clearMatchDescriptionCache();
         }
+    }
+
+    public final boolean hasNext() {
+        return next != null;
     }
 
     public final boolean isNegated() {
@@ -53,12 +60,10 @@ public abstract class OreGlobNode {
     public abstract void visit(NodeVisitor visitor);
 
     /**
-     * Whether this node shares same structure and content with given node.
-     * The check includes types, type specific states, negation flag and
-     * the next node's structural equality.
+     * Whether this node shares same structure and content with given node. The check includes types, type specific
+     * states, negation flag and the next node's structural equality.
      * <p>
-     * Note that this check does not account for logical equivalency outside
-     * structural equality.
+     * Note that this check does not account for logical equivalency outside structural equality.
      *
      * @param node The node to check
      * @return Whether this node shares same structure and content with given node
@@ -84,8 +89,8 @@ public abstract class OreGlobNode {
     }
 
     /**
-     * Whether this node has same type and property with given node. The check includes types and
-     * type specific states. Other properties such as negation and next node are ignored.
+     * Whether this node has same type and property with given node. The check includes types and type specific states.
+     * Other properties such as negation and next node are ignored.
      *
      * @param node The node to check
      * @return Whether this node has same type and property with given node
@@ -99,12 +104,5 @@ public abstract class OreGlobNode {
 
     final void clearMatchDescriptionCache() {
         this.descriptionCache = null;
-    }
-
-    public static boolean isStructurallyEqualTo(@Nullable OreGlobNode node1, @Nullable OreGlobNode node2) {
-        if (node1 == node2) return true;
-        if (node1 == null) return node2.is(MatchDescription.EMPTY);
-        if (node2 == null) return node1.is(MatchDescription.EMPTY);
-        return node1.isStructurallyEqualTo(node2);
     }
 }

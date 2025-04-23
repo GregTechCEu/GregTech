@@ -27,11 +27,11 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseFilterContainer extends ItemStackHandler {
 
+    private final IDirtyNotifiable dirtyNotifiable;
     private int maxTransferSize = 1;
     private int transferSize;
     private @Nullable BaseFilter currentFilter;
     private @Nullable Runnable onFilterInstanceChange;
-    private final IDirtyNotifiable dirtyNotifiable;
 
     protected BaseFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super();
@@ -76,6 +76,10 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         return this.getStackInSlot(0);
     }
 
+    public final void setFilterStack(ItemStack stack) {
+        setStackInSlot(0, stack);
+    }
+
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         if (ItemStack.areItemStacksEqual(stack, getFilterStack()))
@@ -116,10 +120,6 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         return extracted;
     }
 
-    public final void setFilterStack(ItemStack stack) {
-        setStackInSlot(0, stack);
-    }
-
     public int getMaxTransferSize() {
         return !showGlobalTransferLimitSlider() && hasFilter() ? currentFilter.getMaxTransferSize() :
                 this.maxTransferSize;
@@ -154,13 +154,13 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         return this.maxTransferSize > 0 && (!hasFilter() || getFilter().showGlobalTransferLimitSlider());
     }
 
+    public final boolean isBlacklistFilter() {
+        return hasFilter() && getFilter().isBlacklistFilter();
+    }
+
     public void setBlacklistFilter(boolean blacklistFilter) {
         if (hasFilter()) getFilter().setBlacklistFilter(blacklistFilter);
         onFilterInstanceChange();
-    }
-
-    public final boolean isBlacklistFilter() {
-        return hasFilter() && getFilter().isBlacklistFilter();
     }
 
     public int getTransferSize() {
@@ -170,16 +170,16 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         return this.transferSize;
     }
 
+    public void setTransferSize(int transferSize) {
+        this.transferSize = MathHelper.clamp(transferSize, 1, getMaxTransferSize());
+        onFilterInstanceChange();
+    }
+
     public int getTransferLimit(int slotIndex) {
         if (isBlacklistFilter() || !hasFilter()) {
             return getTransferSize();
         }
         return this.currentFilter.getTransferLimit(slotIndex, getTransferSize());
-    }
-
-    public void setTransferSize(int transferSize) {
-        this.transferSize = MathHelper.clamp(transferSize, 1, getMaxTransferSize());
-        onFilterInstanceChange();
     }
 
     @Override

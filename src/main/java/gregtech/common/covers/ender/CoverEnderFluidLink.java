@@ -35,13 +35,12 @@ import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 
 public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
-                                 implements CoverWithUI, ITickable, IControllable {
+        implements CoverWithUI, ITickable, IControllable {
 
     public static final int TRANSFER_RATE = 8000; // mB/t
-
-    protected PumpMode pumpMode = PumpMode.IMPORT;
-    private final FluidTankSwitchShim linkedTank;
     protected final FluidFilterContainer fluidFilter;
+    private final FluidTankSwitchShim linkedTank;
+    protected PumpMode pumpMode = PumpMode.IMPORT;
 
     public CoverEnderFluidLink(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                @NotNull EnumFacing attachedSide) {
@@ -105,13 +104,13 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
         }
     }
 
+    public PumpMode getPumpMode() {
+        return pumpMode;
+    }
+
     public void setPumpMode(PumpMode pumpMode) {
         this.pumpMode = pumpMode;
         markDirty();
-    }
-
-    public PumpMode getPumpMode() {
-        return pumpMode;
     }
 
     @Override

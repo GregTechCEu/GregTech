@@ -2,7 +2,11 @@ package gregtech.common.covers;
 
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
-import gregtech.api.cover.*;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverBase;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverWithUI;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
@@ -12,7 +16,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.text.TextFormatting;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
@@ -55,19 +63,19 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         return controllerMode;
     }
 
+    public void setControllerMode(ControllerMode controllerMode) {
+        resetCurrentControllable();
+        this.controllerMode = controllerMode;
+        updateRedstoneStatus();
+        getCoverableView().markDirty();
+    }
+
     public boolean isInverted() {
         return isInverted;
     }
 
     public void setInverted(boolean inverted) {
         isInverted = inverted;
-        updateRedstoneStatus();
-        getCoverableView().markDirty();
-    }
-
-    public void setControllerMode(ControllerMode controllerMode) {
-        resetCurrentControllable();
-        this.controllerMode = controllerMode;
         updateRedstoneStatus();
         getCoverableView().markDirty();
     }
@@ -330,10 +338,9 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         COVER_EAST("cover.machine_controller.mode.cover_east", EnumFacing.EAST),
         COVER_WEST("cover.machine_controller.mode.cover_west", EnumFacing.WEST);
 
+        public static final ControllerMode[] VALUES = values();
         public final String localeName;
         public final EnumFacing side;
-
-        public static final ControllerMode[] VALUES = values();
 
         ControllerMode(String localeName, EnumFacing side) {
             this.localeName = localeName;

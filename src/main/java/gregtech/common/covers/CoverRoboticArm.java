@@ -179,6 +179,10 @@ public class CoverRoboticArm extends CoverConveyor {
         itemsTransferBuffered = 0;
     }
 
+    public TransferMode getTransferMode() {
+        return transferMode;
+    }
+
     public void setTransferMode(TransferMode transferMode) {
         if (this.transferMode != transferMode) {
             this.transferMode = transferMode;
@@ -187,10 +191,6 @@ public class CoverRoboticArm extends CoverConveyor {
             writeCustomData(GregtechDataCodes.UPDATE_TRANSFER_MODE,
                     buffer -> buffer.writeByte(this.transferMode.ordinal()));
         }
-    }
-
-    public TransferMode getTransferMode() {
-        return transferMode;
     }
 
     private boolean shouldDisplayAmountSlider() {
@@ -202,7 +202,7 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
-        return super.buildUI(guiData, guiSyncManager).height(192 + 36 + 18 + 2);
+        return super.buildUI(guiData, guiSyncManager).height(192 + 54 + 18 + 2);
     }
 
     @Override

@@ -11,10 +11,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class SimpleFluidFilterReader extends BaseFilterReader {
 
-    protected WritableFluidTank[] fluidTanks;
     protected static final String CAPACITY = "Capacity";
-
     protected static final String LEGACY_FLUIDFILTER_KEY = "FluidFilter";
+    protected WritableFluidTank[] fluidTanks;
 
     public SimpleFluidFilterReader(ItemStack container, int slots) {
         super(container, slots);
@@ -34,13 +33,13 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
         return getFluidTank(i).getFluid();
     }
 
+    public int getCapacity() {
+        return getStackTag().getInteger(CAPACITY);
+    }
+
     public void setCapacity(int capacity) {
         getStackTag().setInteger(CAPACITY, capacity);
         markDirty();
-    }
-
-    public int getCapacity() {
-        return getStackTag().getInteger(CAPACITY);
     }
 
     public WritableFluidTank getFluidTank(int i) {
@@ -80,27 +79,16 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
 
     public class WritableFluidTank extends FluidTank {
 
-        private final NBTTagCompound fluidTank;
-        private final SimpleFluidFilterReader filterReader;
         protected static final String FLUID_AMOUNT = "Amount";
         protected static final String FLUID = "Fluid";
         protected static final String EMPTY = "Empty";
+        private final NBTTagCompound fluidTank;
+        private final SimpleFluidFilterReader filterReader;
 
         protected WritableFluidTank(SimpleFluidFilterReader filterReader, NBTTagCompound fluidTank) {
             super(0);
             this.filterReader = filterReader;
             this.fluidTank = fluidTank;
-        }
-
-        public void setFluidAmount(int amount) {
-            if (amount <= 0) {
-                setFluid(null);
-            } else if (this.fluidTank.hasKey(FLUID)) {
-                this.fluidTank
-                        .getCompoundTag(FLUID)
-                        .setInteger(FLUID_AMOUNT, amount);
-                markDirty();
-            }
         }
 
         public boolean isEmpty() {
@@ -139,6 +127,17 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
             return this.fluidTank
                     .getCompoundTag(FLUID)
                     .getInteger(FLUID_AMOUNT);
+        }
+
+        public void setFluidAmount(int amount) {
+            if (amount <= 0) {
+                setFluid(null);
+            } else if (this.fluidTank.hasKey(FLUID)) {
+                this.fluidTank
+                        .getCompoundTag(FLUID)
+                        .setInteger(FLUID_AMOUNT, amount);
+                markDirty();
+            }
         }
 
         @Override

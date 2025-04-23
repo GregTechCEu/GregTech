@@ -45,7 +45,7 @@ public class FluidFilterContainer extends BaseFilterContainer {
         blacklistButton.addWidget(new gregtech.api.gui.widgets.ToggleButtonWidget(144, y, 18, 18,
                 gregtech.api.gui.GuiTextures.BUTTON_BLACKLIST,
                 this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
-                        .setTooltipText("cover.filter.blacklist"));
+                .setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(blacklistButton);
     }
 

@@ -22,6 +22,10 @@ public class OreDictFilterReader extends SimpleItemFilterReader {
         super(container, 0);
     }
 
+    public String getExpression() {
+        return getStackTag().getString(EXPRESSION);
+    }
+
     public void setExpression(String expression) {
         if (getStackTag().getString(EXPRESSION).equals(expression))
             return;
@@ -31,8 +35,8 @@ public class OreDictFilterReader extends SimpleItemFilterReader {
         markDirty();
     }
 
-    public String getExpression() {
-        return getStackTag().getString(EXPRESSION);
+    public boolean isCaseSensitive() {
+        return !getStackTag().hasKey(CASE_SENSITIVE);
     }
 
     public void setCaseSensitive(boolean caseSensitive) {
@@ -45,10 +49,6 @@ public class OreDictFilterReader extends SimpleItemFilterReader {
             getStackTag().removeTag(CASE_SENSITIVE);
         recompile();
         markDirty();
-    }
-
-    public boolean isCaseSensitive() {
-        return !getStackTag().hasKey(CASE_SENSITIVE);
     }
 
     public void setMatchAll(boolean matchAll) {
@@ -64,8 +64,7 @@ public class OreDictFilterReader extends SimpleItemFilterReader {
     }
 
     /**
-     * {@code false} requires any of the entry to be match in order for the match to be success, {@code true}
-     * requires
+     * {@code false} requires any of the entry to be match in order for the match to be success, {@code true} requires
      * all entries to match
      */
     public boolean shouldMatchAll() {

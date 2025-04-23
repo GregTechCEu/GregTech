@@ -41,6 +41,29 @@ public class SimpleItemFilter extends BaseFilter {
         filterReader = new SimpleItemFilterReader(stack, MAX_MATCH_SLOTS);
     }
 
+    public static int itemFilterMatch(IItemHandler filterSlots, boolean ignoreDamage,
+                                      boolean ignoreNBTData, ItemStack itemStack) {
+        for (int i = 0; i < filterSlots.getSlots(); i++) {
+            ItemStack filterStack = filterSlots.getStackInSlot(i);
+            if (!filterStack.isEmpty() && areItemsEqual(ignoreDamage, ignoreNBTData, filterStack, itemStack)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static boolean areItemsEqual(boolean ignoreDamage, boolean ignoreNBTData,
+                                         ItemStack filterStack, ItemStack itemStack) {
+        if (ignoreDamage) {
+            if (!filterStack.isItemEqualIgnoreDurability(itemStack)) {
+                return false;
+            }
+        } else if (!filterStack.isItemEqual(itemStack)) {
+            return false;
+        }
+        return ignoreNBTData || ItemStack.areItemStackTagsEqual(filterStack, itemStack);
+    }
+
     @Override
     public SimpleItemFilterReader getFilterReader() {
         return filterReader;
@@ -87,7 +110,7 @@ public class SimpleItemFilter extends BaseFilter {
         }
         widgetGroup.accept(new ToggleButtonWidget(74, 0, 20, 20, GuiTextures.BUTTON_FILTER_DAMAGE,
                 filterReader::isIgnoreDamage, filterReader::setIgnoreDamage)
-                        .setTooltipText("cover.item_filter.ignore_damage"));
+                .setTooltipText("cover.item_filter.ignore_damage"));
         widgetGroup.accept(new ToggleButtonWidget(99, 0, 20, 20, GuiTextures.BUTTON_FILTER_NBT,
                 filterReader::isIgnoreNBT, filterReader::setIgnoreNBT).setTooltipText("cover.item_filter.ignore_nbt"));
     }
@@ -159,28 +182,5 @@ public class SimpleItemFilter extends BaseFilter {
                                 .stateBackground(1, GTGuiTextures.BUTTON_IGNORE_NBT[1])
                                 .addTooltip(0, IKey.lang("cover.item_filter.ignore_nbt.disabled"))
                                 .addTooltip(1, IKey.lang("cover.item_filter.ignore_nbt.enabled"))));
-    }
-
-    public static int itemFilterMatch(IItemHandler filterSlots, boolean ignoreDamage,
-                                      boolean ignoreNBTData, ItemStack itemStack) {
-        for (int i = 0; i < filterSlots.getSlots(); i++) {
-            ItemStack filterStack = filterSlots.getStackInSlot(i);
-            if (!filterStack.isEmpty() && areItemsEqual(ignoreDamage, ignoreNBTData, filterStack, itemStack)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private static boolean areItemsEqual(boolean ignoreDamage, boolean ignoreNBTData,
-                                         ItemStack filterStack, ItemStack itemStack) {
-        if (ignoreDamage) {
-            if (!filterStack.isItemEqualIgnoreDurability(itemStack)) {
-                return false;
-            }
-        } else if (!filterStack.isItemEqual(itemStack)) {
-            return false;
-        }
-        return ignoreNBTData || ItemStack.areItemStackTagsEqual(filterStack, itemStack);
     }
 }

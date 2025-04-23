@@ -5,7 +5,11 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -37,11 +41,9 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
 
     private static final int DEFAULT_MIN = 1000; // 1 Bucket
     private static final int DEFAULT_MAX = 16000; // 16 Buckets
-
+    protected FluidFilterContainer fluidFilter;
     private int min = DEFAULT_MIN, max = DEFAULT_MAX, outputAmount;
     private boolean isLatched = false;
-
-    protected FluidFilterContainer fluidFilter;
 
     public CoverDetectorFluidAdvanced(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                       @NotNull EnumFacing attachedSide) {
@@ -74,18 +76,18 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         group.addWidget(new ImageWidget(98 - 4, (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
         group.addWidget(new TextFieldWidget2(98, 5 + (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMinValue, this::setMinValue)
-                        .setMaxLength(10)
-                        .setAllowedChars(TextFieldWidget2.WHOLE_NUMS)
-                        .setPostFix("L"));
+                .setMaxLength(10)
+                .setAllowedChars(TextFieldWidget2.WHOLE_NUMS)
+                .setPostFix("L"));
 
         // set max fluid amount
         group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_fluid_detector.max"));
         group.addWidget(new ImageWidget(98 - 4, 2 * (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
         group.addWidget(new TextFieldWidget2(98, 5 + 2 * (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMaxValue, this::setMaxValue)
-                        .setMaxLength(10)
-                        .setAllowedChars(TextFieldWidget2.WHOLE_NUMS)
-                        .setPostFix("L"));
+                .setMaxLength(10)
+                .setAllowedChars(TextFieldWidget2.WHOLE_NUMS)
+                .setPostFix("L"));
 
         // invert logic button
         // group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING),
@@ -93,11 +95,11 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         group.addWidget(
                 new CycleButtonWidget(10, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
                         "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
-                                .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip"));
+                        .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip"));
         group.addWidget(
                 new CycleButtonWidget(94, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
                         "cover.generic.advanced_detector.continuous", "cover.generic.advanced_detector.latched")
-                                .setTooltipHoverString("cover.generic.advanced_detector.latch_tooltip"));
+                        .setTooltipHoverString("cover.generic.advanced_detector.latch_tooltip"));
 
         this.fluidFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
 
@@ -111,24 +113,24 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         return String.valueOf(min);
     }
 
-    private String getMaxValue() {
-        return String.valueOf(max);
-    }
-
     private void setMinValue(String val) {
         this.min = CoverDetectorBase.parseCapped(val, 0, max - 1, DEFAULT_MIN);
+    }
+
+    private String getMaxValue() {
+        return String.valueOf(max);
     }
 
     private void setMaxValue(String val) {
         this.max = CoverDetectorBase.parseCapped(val, min + 1, Integer.MAX_VALUE, DEFAULT_MAX);
     }
 
-    private void setLatched(boolean isLatched) {
-        this.isLatched = isLatched;
-    }
-
     public boolean isLatched() {
         return this.isLatched;
+    }
+
+    private void setLatched(boolean isLatched) {
+        this.isLatched = isLatched;
     }
 
     @Override

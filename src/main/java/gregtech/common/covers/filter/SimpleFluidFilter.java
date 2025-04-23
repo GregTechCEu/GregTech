@@ -96,7 +96,7 @@ public class SimpleFluidFilter extends BaseFilter {
         for (int i = 0; i < 9; ++i) {
             widgetGroup.accept((new gregtech.api.gui.widgets.PhantomFluidWidget(10 + 18 * (i % 3), 18 * (i / 3), 18, 18,
                     filterReader.getFluidTank(i)))
-                            .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT));
+                    .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT));
         }
     }
 

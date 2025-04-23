@@ -16,6 +16,11 @@ import java.util.function.Consumer;
 
 public interface IFilter {
 
+    // this only exists so i can pass in the constructor reference as a metaitem componant
+    static Factory factory(Factory factory) {
+        return factory;
+    }
+
     @Deprecated
     default void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {}
 
@@ -61,11 +66,6 @@ public interface IFilter {
     enum FilterType {
         ITEM,
         FLUID
-    }
-
-    // this only exists so i can pass in the constructor reference as a metaitem componant
-    static Factory factory(Factory factory) {
-        return factory;
     }
 
     @FunctionalInterface

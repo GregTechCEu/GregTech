@@ -1,14 +1,28 @@
 package gregtech.common.covers;
 
-import gregtech.api.capability.*;
-import gregtech.api.capability.impl.*;
+import gregtech.api.capability.FeCompat;
+import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IWorkable;
+import gregtech.api.capability.impl.EnergyContainerList;
+import gregtech.api.capability.impl.FluidHandlerProxy;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.ItemHandlerList;
+import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.ClickButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.SimpleTextWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -32,7 +46,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -73,26 +91,21 @@ import java.util.UUID;
 
 public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaTileEntity, ITickable, CoverWithUI {
 
-    public CoverDigitalInterface(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
-                                 @NotNull EnumFacing attachedSide) {
-        super(definition, coverableView, attachedSide);
-    }
-
-    public enum MODE {
-
-        FLUID,
-        ITEM,
-        ENERGY,
-        MACHINE,
-        PROXY;
-
-        public static MODE[] VALUES;
-
-        static {
-            VALUES = MODE.values();
-        }
-    }
-
+    static String[][] units = {
+            { "", "mB", "", "EU" },
+            { "", "B", "K", "KEU" },
+            { "", "KB", "M", "MEU" },
+            { "", "MB", "G", "GEU" },
+            { "", "GB", "T", "TEU" },
+            { "", "TB", "P", "PEU" },
+    };
+    protected final int[] proxyMode = new int[] { 0, 0, 0, 0 }; // server-only
+    private final List<Long> inputEnergyList = new LinkedList<>();
+    private final List<Long> outputEnergyList = new LinkedList<>();
+    // persistent data
+    protected int slot = 0;
+    protected MODE mode = MODE.PROXY;
+    protected EnumFacing spin = EnumFacing.NORTH;
     // run-time data
     private FluidTankProperties[] fluids = new FluidTankProperties[0];
     private ItemStack[] items = new ItemStack[0];
@@ -101,22 +114,57 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     private long energyCapability = 0;
     private long energyInputPerDur = 0;
     private long energyOutputPerDur = 0;
-    private final List<Long> inputEnergyList = new LinkedList<>();
-    private final List<Long> outputEnergyList = new LinkedList<>();
     private int progress = 0;
     private int maxProgress = 0;
     private boolean isActive = true;
     private boolean isWorkingEnabled = false;
     private long lastClickTime;
     private UUID lastClickUUID;
-    // persistent data
-    protected int slot = 0;
-    protected MODE mode = MODE.PROXY;
-    protected EnumFacing spin = EnumFacing.NORTH;
-    protected final int[] proxyMode = new int[] { 0, 0, 0, 0 }; // server-only
+    public CoverDigitalInterface(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                                 @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
+    }
+
+    public static NBTTagCompound fixItemStackSer(ItemStack itemStack) {
+        NBTTagCompound nbt = itemStack.serializeNBT();
+        nbt.setInteger("count", itemStack.getCount());
+        return nbt;
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static String readAmountOrCountOrEnergy(long number, MODE mode) {
+        int unit = mode == MODE.FLUID ? 1 : mode == MODE.ITEM ? 2 : mode == MODE.ENERGY ? 3 : 0;
+        if (mode == MODE.MACHINE) {
+            return number + "%";
+        }
+
+        if (number / 1000 == 0) {
+            return number + units[0][unit];
+        }
+        int i = 1;
+
+        while (number / 10000000 != 0 && i < units.length) {
+            number = number / 1000;
+            ++i;
+        }
+
+        return new DecimalFormat("#.#").format(number * 1.0f / 1000) + units[i][unit];
+    }
 
     public MODE getMode() {
         return mode;
+    }
+
+    public void setMode(EnumFacing spin) {
+        this.setMode(this.mode, this.slot, spin);
+    }
+
+    public void setMode(int slot) {
+        this.setMode(this.mode, slot, this.spin);
+    }
+
+    public void setMode(MODE mode) {
+        this.setMode(mode, this.slot, this.spin);
     }
 
     public boolean isProxy() {
@@ -150,18 +198,6 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
             this.slot = slot;
             this.spin = spin;
         }
-    }
-
-    public void setMode(EnumFacing spin) {
-        this.setMode(this.mode, this.slot, spin);
-    }
-
-    public void setMode(int slot) {
-        this.setMode(this.mode, slot, this.spin);
-    }
-
-    public void setMode(MODE mode) {
-        this.setMode(mode, this.slot, this.spin);
     }
 
     public boolean subProxyMode(MODE mode) {
@@ -469,12 +505,12 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
                 }).setTooltipText("metaitem.cover.digital.mode.energy");
         buttons[3] = new ToggleButtonWidget(100, 20, 20, 20, GuiTextures.BUTTON_MACHINE,
                 () -> this.mode == MODE.MACHINE, (pressed) -> {
-                    if (pressed) setMode(MODE.MACHINE);
-                }).setTooltipText("metaitem.cover.digital.mode.machine");
+            if (pressed) setMode(MODE.MACHINE);
+        }).setTooltipText("metaitem.cover.digital.mode.machine");
         buttons[4] = new ToggleButtonWidget(140, 20, 20, 20, GuiTextures.BUTTON_INTERFACE,
                 () -> this.mode == MODE.PROXY, (pressed) -> {
-                    if (pressed) setMode(MODE.PROXY);
-                }).setTooltipText("metaitem.cover.digital.mode.proxy");
+            if (pressed) setMode(MODE.PROXY);
+        }).setTooltipText("metaitem.cover.digital.mode.proxy");
         primaryGroup.addWidget(new LabelWidget(10, 25, "metaitem.cover.digital.title.mode", 0));
         primaryGroup.addWidget(buttons[0]);
         primaryGroup.addWidget(buttons[1]);
@@ -524,12 +560,12 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
                     } else if (content != null && (fluids[i] != null && fluids[i].getContents() != null &&
                             (content.amount != fluids[i].getContents().amount ||
                                     !content.isFluidEqual(fluids[i].getContents())))) {
-                                        syncFlag = true;
-                                        fluids[i] = new FluidTankProperties(content,
-                                                fluidTankProperties[i].getCapacity(), fluidTankProperties[i].canFill(),
-                                                fluidTankProperties[i].canDrain());
-                                        toUpdate.add(i);
-                                    }
+                        syncFlag = true;
+                        fluids[i] = new FluidTankProperties(content,
+                                fluidTankProperties[i].getCapacity(), fluidTankProperties[i].canFill(),
+                                fluidTankProperties[i].canDrain());
+                        toUpdate.add(i);
+                    }
                 }
                 if (syncFlag) writeCustomData(GregtechDataCodes.UPDATE_FLUID, packetBuffer -> {
                     packetBuffer.writeVarInt(fluids.length);
@@ -749,12 +785,6 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
         } catch (IOException e) {
             GTLog.logger.error("Could not read items from NBT buffer", e);
         }
-    }
-
-    public static NBTTagCompound fixItemStackSer(ItemStack itemStack) {
-        NBTTagCompound nbt = itemStack.serializeNBT();
-        nbt.setInteger("count", itemStack.getCount());
-        return nbt;
     }
 
     public IFluidHandler getFluidCapability() {
@@ -1132,32 +1162,18 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
                 readAmountOrCountOrEnergy(fluidStack.amount, MODE.FLUID), true);
     }
 
-    static String[][] units = {
-            { "", "mB", "", "EU" },
-            { "", "B", "K", "KEU" },
-            { "", "KB", "M", "MEU" },
-            { "", "MB", "G", "GEU" },
-            { "", "GB", "T", "TEU" },
-            { "", "TB", "P", "PEU" },
-    };
+    public enum MODE {
 
-    @SideOnly(Side.CLIENT)
-    private static String readAmountOrCountOrEnergy(long number, MODE mode) {
-        int unit = mode == MODE.FLUID ? 1 : mode == MODE.ITEM ? 2 : mode == MODE.ENERGY ? 3 : 0;
-        if (mode == MODE.MACHINE) {
-            return number + "%";
+        FLUID,
+        ITEM,
+        ENERGY,
+        MACHINE,
+        PROXY;
+
+        public static MODE[] VALUES;
+
+        static {
+            VALUES = MODE.values();
         }
-
-        if (number / 1000 == 0) {
-            return number + units[0][unit];
-        }
-        int i = 1;
-
-        while (number / 10000000 != 0 && i < units.length) {
-            number = number / 1000;
-            ++i;
-        }
-
-        return new DecimalFormat("#.#").format(number * 1.0f / 1000) + units[i][unit];
     }
 }

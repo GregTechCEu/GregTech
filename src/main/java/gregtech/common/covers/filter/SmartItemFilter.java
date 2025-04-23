@@ -93,7 +93,7 @@ public class SmartItemFilter extends BaseFilter {
     public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new CycleButtonWidget(10, 0, 75, 20,
                 SmartFilteringMode.class, filterReader::getFilteringMode, filterReader::setFilteringMode)
-                        .setTooltipHoverString("cover.smart_item_filter.filtering_mode.description"));
+                .setTooltipHoverString("cover.smart_item_filter.filtering_mode.description"));
     }
 
     @Override
@@ -140,6 +140,29 @@ public class SmartItemFilter extends BaseFilter {
         return true;
     }
 
+    public enum SmartFilteringMode implements IStringSerializable {
+
+        ELECTROLYZER("cover.smart_item_filter.filtering_mode.electrolyzer", RecipeMaps.ELECTROLYZER_RECIPES),
+        CENTRIFUGE("cover.smart_item_filter.filtering_mode.centrifuge", RecipeMaps.CENTRIFUGE_RECIPES),
+        SIFTER("cover.smart_item_filter.filtering_mode.sifter", RecipeMaps.SIFTER_RECIPES);
+
+        public static final SmartFilteringMode[] VALUES = values();
+        public final String localeName;
+        public final RecipeMap<?> recipeMap;
+        private final Object2IntOpenHashMap<ItemAndMetadata> transferStackSizesCache = new Object2IntOpenHashMap<>();
+
+        SmartFilteringMode(String localeName, RecipeMap<?> recipeMap) {
+            this.localeName = localeName;
+            this.recipeMap = recipeMap;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return localeName;
+        }
+    }
+
     private static class ItemAndMetadataAndStackSize {
 
         public final ItemAndMetadata itemAndMetadata;
@@ -153,37 +176,13 @@ public class SmartItemFilter extends BaseFilter {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof ItemAndMetadataAndStackSize)) return false;
-            ItemAndMetadataAndStackSize that = (ItemAndMetadataAndStackSize) o;
+            if (!(o instanceof ItemAndMetadataAndStackSize that)) return false;
             return itemAndMetadata.equals(that.itemAndMetadata);
         }
 
         @Override
         public int hashCode() {
             return itemAndMetadata.hashCode();
-        }
-    }
-
-    public enum SmartFilteringMode implements IStringSerializable {
-
-        ELECTROLYZER("cover.smart_item_filter.filtering_mode.electrolyzer", RecipeMaps.ELECTROLYZER_RECIPES),
-        CENTRIFUGE("cover.smart_item_filter.filtering_mode.centrifuge", RecipeMaps.CENTRIFUGE_RECIPES),
-        SIFTER("cover.smart_item_filter.filtering_mode.sifter", RecipeMaps.SIFTER_RECIPES);
-
-        public static final SmartFilteringMode[] VALUES = values();
-        private final Object2IntOpenHashMap<ItemAndMetadata> transferStackSizesCache = new Object2IntOpenHashMap<>();
-        public final String localeName;
-        public final RecipeMap<?> recipeMap;
-
-        SmartFilteringMode(String localeName, RecipeMap<?> recipeMap) {
-            this.localeName = localeName;
-            this.recipeMap = recipeMap;
-        }
-
-        @NotNull
-        @Override
-        public String getName() {
-            return localeName;
         }
     }
 }

@@ -6,7 +6,11 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 
@@ -103,14 +107,14 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         group.addWidget(
                 new CycleButtonWidget(72, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isUsePercent, this::setUsePercent,
                         "cover.advanced_energy_detector.mode_eu", "cover.advanced_energy_detector.mode_percent")
-                                .setTooltipHoverString("cover.advanced_energy_detector.modes_tooltip"));
+                        .setTooltipHoverString("cover.advanced_energy_detector.modes_tooltip"));
 
         // invert logic button
         group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING), "cover.generic.advanced_detector.invert_label"));
         group.addWidget(
                 new CycleButtonWidget(72, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
                         "cover.machine_controller.normal", "cover.machine_controller.inverted")
-                                .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip"));
+                        .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip"));
 
         return ModularUI.builder(GuiTextures.BACKGROUND, 176 + (3 * SIZE), 108 + (SIZE))
                 .widget(group)
@@ -138,15 +142,15 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         return String.valueOf(minValue);
     }
 
-    private String getMaxValue() {
-        return String.valueOf(maxValue);
-    }
-
     private void setMinValue(String val) {
         this.minValue = CoverDetectorBase.parseCapped(val,
                 0,
                 this.maxValue - 1,
                 usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU);
+    }
+
+    private String getMaxValue() {
+        return String.valueOf(maxValue);
     }
 
     private void setMaxValue(String val) {

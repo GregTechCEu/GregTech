@@ -4,22 +4,24 @@ import gregtech.common.covers.filter.oreglob.node.BranchType;
 import gregtech.common.covers.filter.oreglob.node.NodeVisitor;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 
-import it.unimi.dsi.fastutil.ints.*;
+import it.unimi.dsi.fastutil.ints.IntCollection;
+import it.unimi.dsi.fastutil.ints.IntIterator;
+import it.unimi.dsi.fastutil.ints.IntLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 
 import java.util.List;
 
 /**
  * Node-based, state-based evaluator for oreGlob.
  * <p>
- * OreGlob nodes are evaluated by simulating match for each possible branch of states.
- * Each state corresponds to index of character the next match will start. All matches
- * start with {@code [ 0 ]} as input state, and match is considered success if output
- * state contains length of the input string after evaluating all possible branch of
- * the expression.
+ * OreGlob nodes are evaluated by simulating match for each possible branch of states. Each state corresponds to index
+ * of character the next match will start. All matches start with {@code [ 0 ]} as input state, and match is considered
+ * success if output state contains length of the input string after evaluating all possible branch of the expression.
  * <p>
- * For example, matching the input {@code "ingotIron"} with string {@code "i"} and
- * input state of {@code [ 0, 1, 2, 3, 4, 5 ]} would each produce these output states.
- * 
+ * For example, matching the input {@code "ingotIron"} with string {@code "i"} and input state of
+ * {@code [ 0, 1, 2, 3, 4, 5 ]} would each produce these output states.
+ *
  * <pre>
  *     0  =>  [ 1 ]  (the first "i" matches the string match node "i")
  *     1  =>  [ ]    (no match; "n" does not match the string match node "i")
@@ -28,14 +30,12 @@ import java.util.List;
  *     4  =>  [ ]    (no match; "t" does not match the string match node "i")
  *     5  =>  [ 6 ]  (the "I" matches the string match node "i"; oreglob is by default case insensitive.)
  * </pre>
- * 
- * When the next node gets evaluated, the input state will be the last evaluation result
- * from the last node; in the example above, input state for the node after {@code "i"}
- * will be {@code [ 1, 6 ]}.
+ *
+ * When the next node gets evaluated, the input state will be the last evaluation result from the last node; in the
+ * example above, input state for the node after {@code "i"} will be {@code [ 1, 6 ]}.
  * <p>
- * Note that this implementation assumes both the input and match string consists of character
- * no bigger than {@code 0xFFFF} as their codepoint value; i.e. characters that UTF-16 can express
- * without using surrogate pairs.
+ * Note that this implementation assumes both the input and match string consists of character no bigger than
+ * {@code 0xFFFF} as their codepoint value; i.e. characters that UTF-16 can express without using surrogate pairs.
  */
 class NodeInterpreter implements NodeVisitor {
 
@@ -176,7 +176,7 @@ class NodeInterpreter implements NodeVisitor {
                     out2.removeAll(this.outputStates); // out2 = { x in out2 AND x !in out }
                     this.outputStates.removeAll(branchState.outputStates); // out = { x in out AND x !in out2 }
                     this.outputStates.addAll(out2); // out = { ( x in out AND x !in out2 ) OR ( x in out2 AND x !in out
-                                                    // ) }
+                    // ) }
                 }
             }
             default -> throw new IllegalStateException("Unknown BranchType '" + type + "'");

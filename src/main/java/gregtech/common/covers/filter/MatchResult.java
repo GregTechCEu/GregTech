@@ -20,6 +20,10 @@ public final class MatchResult {
         this.filterIndex = filterIndex;
     }
 
+    public static MatchResult create(boolean matched, Object matchedStack, int filterIndex) {
+        return new MatchResult(matched, matchedStack, filterIndex);
+    }
+
     public boolean isMatched() {
         return matched;
     }
@@ -38,9 +42,5 @@ public final class MatchResult {
 
     public int getFilterIndex() {
         return filterIndex;
-    }
-
-    public static MatchResult create(boolean matched, Object matchedStack, int filterIndex) {
-        return new MatchResult(matched, matchedStack, filterIndex);
     }
 }
