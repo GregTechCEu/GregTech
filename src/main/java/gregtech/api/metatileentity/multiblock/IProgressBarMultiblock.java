@@ -2,14 +2,10 @@ package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.mui.GTGuiTextures;
 
 import net.minecraft.util.text.ITextComponent;
 
-import com.cleanroommc.modularui.drawable.UITexture;
-import com.cleanroommc.modularui.screen.Tooltip;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -37,10 +33,6 @@ public interface IProgressBarMultiblock {
         return GuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW;
     }
 
-    default UITexture getProgressBarTexture2(int index) {
-        return GTGuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW;
-    }
-
     default int getProgressBarTextureHeight(int index) {
         return 18;
     }
@@ -52,6 +44,4 @@ public interface IProgressBarMultiblock {
      */
     @Deprecated
     default void addBarHoverText(List<ITextComponent> hoverList, int index) {}
-
-    default void addBarHoverText2(@NotNull Tooltip tooltip, int index) {}
 }

@@ -2,6 +2,7 @@ package gregtech.api.mui.drawable;
 
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
+import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -17,7 +18,6 @@ import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.utils.NumberFormat;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +54,7 @@ public class GTObjectDrawable implements IDrawable, JeiIngredientProvider {
         drawObject(object, modularGuiContext, x, y, width, height);
         if (amount > 0) {
             renderer.setPos(x + 1, y + 1);
-            String amount = NumberFormat.formatWithMaxDigits(this.amount, 3);
+            String amount = TextFormattingUtil.formatLongToCompactString(this.amount, 3);
             if (object instanceof FluidStack) amount += "L";
             renderer.draw(amount);
         }

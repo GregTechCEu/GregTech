@@ -5,10 +5,10 @@ import gregtech.api.GTValues;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.UITexture;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.theme.WidgetTheme;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * GT MUI textures.<br>
@@ -59,10 +59,10 @@ public class GTGuiTextures {
     public static final UITexture GREGTECH_LOGO_DARK = fullImage("textures/gui/icon/gregtech_logo_dark.png");
     public static final IDrawable GREGTECH_LOGO_BLINKING_YELLOW = animated(
             "textures/gui/icon/gregtech_logo_blinking_yellow.png",
-            17, 34, true, 60);
+            17, 34, false, 60);
     public static final IDrawable GREGTECH_LOGO_BLINKING_RED = animated(
             "textures/gui/icon/gregtech_logo_blinking_red.png",
-            17, 34, true, 36);
+            17, 34, false, 36);
 
     public static final UITexture INDICATOR_NO_ENERGY = fullImage("textures/gui/base/indicator_no_energy.png");
     public static final UITexture INDICATOR_NO_STEAM_BRONZE = fullImage(
@@ -716,15 +716,17 @@ public class GTGuiTextures {
     }
 
     public static IDrawable dynamic(UITexture[] textures, int rate) {
-        AtomicInteger index = new AtomicInteger();
-        AtomicInteger tick = new AtomicInteger();
-        // todo something is wrong with this
-        // also this method is client only so that could cause problems too
-        return (context, x, y, width, height, widgetTheme) -> {
-            int a = tick.getAndIncrement() % rate; // this makes rate per frame ?
-            int i = a == 0 ? index.incrementAndGet() : index.get();
-            index.set(i % textures.length);
-            textures[index.get()].draw(context, x, y, width, height, widgetTheme);
+        return new IDrawable() {
+
+            int tick = 0;
+            int index = 0;
+
+            @Override
+            public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
+                int a = tick++ % rate; // this makes rate per frame ?
+                if (a == 0) index++;
+                textures[index % textures.length].draw(context, x, y, width, height, widgetTheme);
+            }
         };
     }
 }
