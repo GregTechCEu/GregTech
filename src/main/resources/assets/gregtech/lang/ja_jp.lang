@@ -2781,9 +2781,6 @@ gregtech.machine.gas_turbine.hv.name=ターボガスタービン
 
 gregtech.machine.magic_energy_absorber.name=魔力吸収機
 gregtech.machine.magic_energy_absorber.tooltip=出力: §a2048 §7(§5EV§7)/n64ブロック以内の自然生成された黒曜石柱のエンドクリスタルからエネルギーを集める。エンドクリスタル1つ当たり32 EU/tを出力。ドラゴンの卵を上に置くと出力が増幅。/n/n増幅時:/nエンドクリスタル1つ当たり128 EU/tを出力。
-
-# Machines
-
 # Block Breaker
 gregtech.machine.block_breaker.lv.name=基本型ブロック破壊機
 gregtech.machine.block_breaker.mv.name=発展型ブロック破壊機
