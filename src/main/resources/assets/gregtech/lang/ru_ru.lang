@@ -5511,7 +5511,7 @@ cover.generic.advanced_detector.continuous=Непрерывный
 cover.generic.advanced_detector.latched=Замкнутый
 cover.ore_dictionary_filter.compile.error.unexpected_compilation_flag=Флаги компиляции в середине выражения
 cover.generic.advanced_detector.invert_label=Вывод редстоуна:
-cover.generic.advanced_detector.latch_tooltip=Измените поведение редстоуна этого Улучшения. /n§eНепрерывный§7 - По умолчанию; Значения ниже минимума — сигнал 0; выше максимума — сигнал 15; Промежуточные значения — пропорционально от 0 до 15. /n§eФиксированный§7 - выдаёт сигнал 15, пока значение выше макс; затем переключается на 0, пока не опустится ниже мин
+cover.generic.advanced_detector.latch_tooltip=Изменить режим работы редстоуна для этого улучшения. /n§eНепрерывный§7 - По умолчанию; Значения ниже минимума — сигнал 0; выше максимума — сигнал 15; Промежуточные значения — пропорционально от 0 до 15. /n§eФиксированный§7 - выдаёт сигнал 15, пока значение выше макс; затем переключается на 0, пока не опустится ниже мин
 
 # Decorative Metal Sheets
 tile.metal_sheet.white.name=Белый лист металла
