@@ -4771,7 +4771,6 @@ gregtech.universal.tooltip.fluid_transfer_rate=§bСкорость переда�
 gregtech.universal.tooltip.parallel=§dПараллелей: §f%d
 gregtech.universal.tooltip.working_area=§bРабочая область: §f%,dx%,d
 gregtech.universal.tooltip.working_area_max=§bМакс. рабочая область: §f%,dx%,d
-gregtech.universal.tooltip.working_area_chunks_max=
 gregtech.universal.tooltip.uses_per_tick=Потребляет §f%,d EU/т §7когда работает
 gregtech.universal.tooltip.uses_per_tick_steam=Потребляет §f%,d Л/т §7 Пара когда работает
 gregtech.universal.tooltip.uses_per_hour_lubricant=Использует §f%,d Л/ч §7Смазки когда работает
