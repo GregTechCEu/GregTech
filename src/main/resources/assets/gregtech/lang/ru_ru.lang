@@ -2426,7 +2426,7 @@ itemGroup.gregtech.machines=Машина (GT)
 itemGroup.gregtech.cables=Провода (GT)
 itemGroup.gregtech.pipes=Трубы (GT)
 itemGroup.gregtech.tools=Инструменты (GT)
-itemGroup.gregtech.materials=Материалы (GTC)
+itemGroup.gregtech.materials=Материалы (GT)
 itemGroup.gregtech.ores=Руды (GTCEu)
 itemGroup.gregtech.decorations=Декорации (GT)
 
