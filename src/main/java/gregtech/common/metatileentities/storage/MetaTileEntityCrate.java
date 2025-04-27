@@ -33,17 +33,16 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IGuiAction;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
@@ -207,7 +206,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
                 .height(24 * 3);
 
         int numCovers = 0;
-        List<PanelSyncHandler> coverPanels = new ArrayList<>();
+        List<IPanelHandler> coverPanels = new ArrayList<>();
         for (EnumFacing side : EnumFacing.VALUES) {
             if (getCoverAtSide(side) instanceof CoverWithUI cover) {
                 if (!cover.shouldShowSmallUI()) continue;
@@ -216,7 +215,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
                         data.getY(), data.getZ(), side);
 
                 // todo better key for this?
-                var panel = (PanelSyncHandler) manager.panel("cover at side: " + side.getName(),
+                var panel = manager.panel("cover at side: " + side.getName(),
                         (syncManager, syncHandler) -> cover.getSmallGUI(sideData, syncManager), true);
                 coverPanels.add(panel);
 
@@ -229,7 +228,6 @@ public class MetaTileEntityCrate extends MetaTileEntity {
                     } else {
                         panel.closePanel();
                     }
-                    Interactable.playButtonClickSound();
                     return true;
                 };
 
