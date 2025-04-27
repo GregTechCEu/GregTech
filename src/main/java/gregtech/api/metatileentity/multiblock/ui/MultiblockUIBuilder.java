@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.ComputationRecipeLogic;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.GTByteBufAdapters;
 import gregtech.api.mui.drawable.GTObjectDrawable;
 import gregtech.api.recipes.Recipe;
@@ -566,11 +567,16 @@ public class MultiblockUIBuilder {
         RecipeMap<?> map = arl.getRecipeMap();
         if (getSyncer().syncBoolean(map == null)) return this;
 
+        Recipe trimmed = null;
+        if (isServer()) {
+            MetaTileEntity mte = arl.getMetaTileEntity();
+            trimmed = Recipe.trimRecipeOutputs(recipe, map, mte.getItemOutputLimit(), mte.getFluidOutputLimit());
+        }
+
         int p = getSyncer().syncInt(arl.getParallelRecipesPerformed());
         if (p == 0) p = 1;
 
-        // noinspection DataFlowIssue
-        long eut = getSyncer().syncLong(() -> recipe.getEUt());
+        long eut = getSyncer().syncLong(trimmed == null ? 0 : trimmed.getEUt());
         long maxVoltage = getSyncer().syncLong(arl.getMaximumOverclockVoltage());
         int maxProgress = getSyncer().syncInt(arl.getMaxProgress());
 
@@ -583,11 +589,10 @@ public class MultiblockUIBuilder {
 
         if (isServer()) {
             // recipe searching has to be done server only
-            // noinspection DataFlowIssue
-            itemOutputs.addAll(recipe.getOutputs());
-            chancedItemOutputs.addAll(recipe.getChancedOutputs().getChancedEntries());
-            fluidOutputs.addAll(recipe.getFluidOutputs());
-            chancedFluidOutputs.addAll(recipe.getChancedFluidOutputs().getChancedEntries());
+            itemOutputs.addAll(trimmed.getOutputs());
+            chancedItemOutputs.addAll(trimmed.getChancedOutputs().getChancedEntries());
+            fluidOutputs.addAll(trimmed.getFluidOutputs());
+            chancedFluidOutputs.addAll(trimmed.getChancedFluidOutputs().getChancedEntries());
         }
 
         itemOutputs = getSyncer().syncCollection(itemOutputs, ByteBufAdapters.ITEM_STACK);
