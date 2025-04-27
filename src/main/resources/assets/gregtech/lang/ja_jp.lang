@@ -62,18 +62,18 @@ gregtech.multiblock.steam_oven.description=蒸気時代のマルチスメルタ�
 gregtech.multiblock.require_steam_parts=蒸気用ハッチとバスが必要
 gregtech.multiblock.steam_.duration_modifier=アイテム数に関係なく加工時間が基本の§f1.5 倍§7になる。
 
-gregtech.top.quantum_status.label=Status:
-gregtech.top.quantum_status.powered=§bOnline
-gregtech.top.quantum_status.connected=§cNo Power
-gregtech.top.quantum_status.disconnected=Not connected
-gregtech.top.quantum_controller.no_hatches=§cNo Energy Hatches Connected
-gregtech.top.quantum_controller.no_power=§cNo Power
+gregtech.top.quantum_status.label=状態:
+gregtech.top.quantum_status.powered=§bオンライン
+gregtech.top.quantum_status.connected=§cエネルギーなし
+gregtech.top.quantum_status.disconnected=接続されていない
+gregtech.top.quantum_controller.no_hatches=§cエナジーハッチが接続されていない
+gregtech.top.quantum_controller.no_power=§cエネルギーなし
 
 gregtech.top.working_disabled=停止中
 
 gregtech.top.energy_consumption=使用量:
 gregtech.top.energy_production=発電量:
-gregtech.top.energy_required=Requires
+gregtech.top.energy_required=要求量:
 
 gregtech.top.transform_up=昇圧
 gregtech.top.transform_down=降圧
@@ -1048,15 +1048,15 @@ item.gt.tool.plunger.tooltip=§8機械から液体を撤去
 item.gt.tool.wire_cutter_lv.name=LVの%s製カッター
 item.gt.tool.wire_cutter_hv.name=HVの%s製カッター
 item.gt.tool.wire_cutter_iv.name=IVの%s製カッター
-item.gt.tool.toolbelt.name=%s Toolbelt
-item.gt.tool.toolbelt.name.select=%s Toolbelt (%s)
-item.gt.tool.toolbelt.size=§a%s Tool Slots
-item.gt.tool.toolbelt.tooltip=Holds GT or vanilla-esque tools that can be manually selected for in-world use, automatically selected for crafting, or stored for maintenance repair.
-item.gt.tool.toolbelt.paint=Also supports Spray Cans.
-item.gt.tool.toolbelt.dye=Can be dyed like leather equipment, and the dye can be removed via water cauldron, also like leather equipment.
-item.gt.tool.toolbelt.maintenance=Repairs maintenance problems with only inserted tools upon interacting with a maintenance hatch in-world.
-item.gt.tool.toolbelt.tool=§aSlot %s: §f%s
-item.gt.tool.toolbelt.selected=- §aSlot %s: §f%s
+item.gt.tool.toolbelt.name=%s製ツールベルト
+item.gt.tool.toolbelt.name.select=%s製ツールベルト (%s)
+item.gt.tool.toolbelt.size=§a%sスロット
+item.gt.tool.toolbelt.tooltip=Gregtechまたはバニラ的なツールを収納できる。収納したツールは、ワールドで利用する場合は手動で、クラフトで利用するためには自動で選択される。また、メンテナンスにも利用できる。
+item.gt.tool.toolbelt.paint=スプレー缶にも対応。
+item.gt.tool.toolbelt.dye=革防具のように染色/脱色できる。
+item.gt.tool.toolbelt.maintenance=修理は収納したツールに関連する問題のみ可能。
+item.gt.tool.toolbelt.tool=§aスロット %s: §f%s
+item.gt.tool.toolbelt.selected=- §aスロット %s: §f%s
 
 item.gt.tool.tooltip.crafting_uses=§aあと§l%s§r§a回クラフトに利用できる
 item.gt.tool.tooltip.general_uses=§bあと§l%s§r§b回使用可能
@@ -1296,8 +1296,8 @@ cover.filter.mode.title=Filter Mode
 cover.filter.mode.filter_insert=搬入フィルター
 cover.filter.mode.filter_extract=搬出フィルター
 cover.filter.mode.filter_both=搬入/搬出フィルター
-cover.filter.allow_flow.label=Allow Flow
-cover.filter.allow_flow.tooltip=By default, Items/Fluids can only move in the direction\nof the filter with respect to the filter's setting.\n\nIf Enabled, Items/Fluids are allowed to pass unfiltered\nthrough the opposite direction of this filter.
+cover.filter.allow_flow.label=流れの制御
+cover.filter.allow_flow.tooltip=デフォルトでは、アイテム/液体はフィルターの設定に\n従った方向のみに移動できる。\n\n有効の場合、フィルターの逆方向に対しては、フィルタリングを\n行わずにアイテム/液体を通過させることができる。
 cover.item_filter.ignore_damage.enabled=ダメージ値を無視
 cover.item_filter.ignore_damage.disabled=ダメージ値を無視しない
 cover.item_filter.ignore_nbt.enabled=NBTを無視
@@ -1327,8 +1327,8 @@ cover.smart_item_filter.filtering_mode.centrifuge=遠心分離機
 cover.smart_item_filter.filtering_mode.sifter=選別機
 cover.smart_item_filter.filtering_mode.description=このスマートフィルターがフィルタに使用する機械を選択します。/nロボットアームが適切な数のアイテムを自動的に選択するようになります。
 
-cover.generic.disabled=Disabled
-cover.generic.enabled=Enabled
+cover.generic.disabled=無効
+cover.generic.enabled=有効
 cover.generic.transfer_mode=Transfer Mode
 cover.generic.manual_io=Manual IO Mode
 cover.generic.io=IO Mode
@@ -2511,10 +2511,10 @@ behavior.tricorder.debug_lag_count=サーバーで %s 件のラグスパイク�
 behavior.tricorder.mte_owner=オーナー: %s
 behavior.tricorder.mte_owner_offline=オーナーはオフラインかワールドに参加していません！
 behavior.tricorder.mte_owner_null=これはプレーヤーによって設置されていません！
-behavior.tricorder.quantum_controller.usage=Using %s EU/t (%s)
-behavior.tricorder.quantum_controller.connected_items=Connected item storages: %s
-behavior.tricorder.quantum_controller.connected_fluids=Connected fluid storages: %s
-behavior.tricorder.quantum_storage.usage=Contributing %s EU/t to Quantum Controller
+behavior.tricorder.quantum_controller.usage=使用量: %s EU/t (%s)
+behavior.tricorder.quantum_controller.connected_items=接続されているアイテムストレージ: %s
+behavior.tricorder.quantum_controller.connected_fluids=接続されている液体ストレージ: %s
+behavior.tricorder.quantum_storage.usage=%s EU/tをクァンタムコントローラに分配中
 
 metaitem.item_magnet.lv.name=LV磁石
 metaitem.item_magnet.hv.name=HV磁石
@@ -4391,7 +4391,7 @@ gregtech.machine.alarm.tooltip=赤石信号が入力されているときに音�
 
 #Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Storage Drawersよりも良い
-gregtech.machine.super_chest.ulv.name=Primitive Chest I
+gregtech.machine.super_chest.ulv.name=初歩的なチェスト I
 gregtech.machine.super_chest.lv.name=スーパーチェスト I
 gregtech.machine.super_chest.mv.name=スーパーチェスト II
 gregtech.machine.super_chest.hv.name=スーパーチェスト III
@@ -4407,7 +4407,7 @@ gregtech.machine.quantum_chest.items_stored=アイテム量:
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=大量の液体を保管するコンパクトな空間
 gregtech.machine.quantum_tank.tooltip.voiding_enabled=超過分の廃棄が§a有効
-gregtech.machine.super_tank.ulv.name=Primitive Tank I
+gregtech.machine.super_tank.ulv.name=初歩的なタンク I
 gregtech.machine.super_tank.lv.name=スーパータンク I
 gregtech.machine.super_tank.mv.name=スーパータンク II
 gregtech.machine.super_tank.hv.name=スーパータンク III
@@ -4420,14 +4420,14 @@ gregtech.machine.quantum_tank.uv.name=クァンタムタンク IV
 gregtech.machine.quantum_tank.uhv.name=クァンタムタンク V
 
 #Quantum Storage Controller
-gregtech.machine.quantum_storage_controller.name=Quantum Storage Controller
-gregtech.machine.quantum_storage_controller.tooltip=Heart of the Quantum Storage Network/nConnect Energy Hatches to power the Quantum Storage Network
-gregtech.machine.quantum_storage_proxy.name=Quantum Storage Proxy
-gregtech.machine.quantum_storage_proxy.tooltip=Proxies the Quantum Storage Network's inventory
-gregtech.machine.quantum_storage_extender.name=Quantum Storage Extender
-gregtech.machine.quantum_storage_extender.tooltip=Extends the Quantum Storage Network to other chests/tanks
-gregtech.machine.quantum_storage.connected=Connected to Quantum Controller at [%d, %d, %d]/n/nClick to highlight the controller
-gregtech.machine.quantum_storage.disconnected=Not Connected
+gregtech.machine.quantum_storage_controller.name=クァンタムストレージコントローラ
+gregtech.machine.quantum_storage_controller.tooltip=クァンタムストレージネットワークの心臓部/nネットワークにエネルギーを供給するためにエナジーハッチを接続
+gregtech.machine.quantum_storage_proxy.name=クァンタムストレージプロキシ
+gregtech.machine.quantum_storage_proxy.tooltip=クァンタムストレージネットワークのインベントリプロキシ
+gregtech.machine.quantum_storage_extender.name=クァンタムストレージ拡張器
+gregtech.machine.quantum_storage_extender.tooltip=クァンタムストレージネットワークを他のチェスト/タンクに拡張する
+gregtech.machine.quantum_storage.connected=[%d, %d, %d]のクァンタムストレージコントローラに接続/n/nクリックでコントローラをハイライト表示
+gregtech.machine.quantum_storage.disconnected=接続されていない
 
 #Buffers
 gregtech.machine.buffer.tooltip=アイテムと液体を補完する小さなバッファー
@@ -5468,7 +5468,7 @@ gregtech.machine.me.item_import.data_stick.name=§oME 搬入バス設定デー�
 gregtech.machine.me.fluid_import.data_stick.name=§oME 搬出バス設定データ
 gregtech.machine.me.extra_connections.enabled=全ての面で接続
 gregtech.machine.me.extra_connections.disabled=前面でのみ接続
-gregtech.machine.me.extra_connections.tooltip=ワイヤーカットで右クリックすると、全ての面でAE2のケーブルと接続できるようになる。
+gregtech.machine.me.extra_connections.tooltip=ワイヤーカッターで右クリックすると、全ての面でAE2のケーブルと接続できるようになる。
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§a入力電圧: §f%,d EU/t (%s§f)
@@ -5618,10 +5618,10 @@ gregtech.gui.config_slot.auto_pull_managed=§4無効化：§7 自動搬出によ
 gregtech.gui.me_bus.extra_slot=追加スロット/n§7レシピの追加アイテムを置くスロット。例えば型やレンズなど
 gregtech.gui.me_bus.auto_pull_button=MEからの自動アイテム引き出しを切り替えるためにクリック
 gregtech.gui.alarm.radius=半径:
-gregtech.gui.item_passthrough.enabled=Item Passthough Enabled
-gregtech.gui.item_passthrough.disabled=Item Passthough Disabled
-gregtech.gui.fluid_passthrough.enabled=Fluid Passthough Enabled
-gregtech.gui.fluid_passthrough.disabled=Fluid Passthough Disabled
+gregtech.gui.item_passthrough.enabled=アイテムの通過を無効化 (現在は有効)
+gregtech.gui.item_passthrough.disabled=アイテムの通過を有効化 (現在は無効)
+gregtech.gui.fluid_passthrough.enabled=液体の通過を無効化 (現在は有効)
+gregtech.gui.fluid_passthrough.disabled=液体の通過を有効化 (現在は無効)
 
 
 ore.spawnlocation.name=鉱脈情報
@@ -6251,8 +6251,8 @@ gregtech.subtitle.entity.portal_opening=ポータルが開く
 gregtech.subtitle.entity.portal_closing=ポータルが閉じる
 gregtech.subtitle.maintenance.electrical=電気的故障
 gregtech.subtitle.maintenance.mechanical=技術的故障
-gregtech.subtitle.alarm=Alarm Whines
-gregtech.subtitle.click=Something Clicks
+gregtech.subtitle.alarm=アラーム音
+gregtech.subtitle.click=何かのクリック音
 
 # Debug messaging
 gregtech.debug.f3_h.enabled=GregTechがデバッグ情報を修正しました! 開発者向け: GregTech.cfgのmisc:debug設定オプションを有効にすることでより多くの情報を見ることができます。
