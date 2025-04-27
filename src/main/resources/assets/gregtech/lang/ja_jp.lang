@@ -1058,6 +1058,7 @@ item.gt.tool.toolbelt.maintenance=修理は収納したツールに関連する�
 item.gt.tool.toolbelt.tool=§aスロット %s: §f%s
 item.gt.tool.toolbelt.selected=- §aスロット %s: §f%s
 
+
 item.gt.tool.tooltip.crafting_uses=§aあと§l%s§r§a回クラフトに利用できる
 item.gt.tool.tooltip.general_uses=§bあと§l%s§r§b回使用可能
 item.gt.tool.tooltip.attack_damage=§c攻撃力 %s
@@ -5234,6 +5235,7 @@ gregtech.machine.energy_hatch.output.uiv.name=UIV ダイナモハッチ
 gregtech.machine.energy_hatch.output.uxv.name=UXV ダイナモハッチ
 gregtech.machine.energy_hatch.output.opv.name=OpV ダイナモハッチ
 gregtech.machine.energy_hatch.output.max.name=MAX ダイナモハッチ
+
 gregtech.machine.energy_hatch.output_hi_amp.tooltip=マルチブロックからの複数アンペアでのエネルギー出力
 
 gregtech.machine.energy_hatch.output_4a.ev.name=EV 4A ダイナモハッチ
@@ -5586,6 +5588,8 @@ gregtech.gui.overclock.off=X
 gregtech.gui.sort=ソート
 gregtech.gui.fluid_auto_output.tooltip.enabled=液体自動搬出を無効化 (現在は有効)
 gregtech.gui.fluid_auto_output.tooltip.disabled=液体自動搬出を有効化 (現在は無効)
+gregtech.gui.item_auto_input.tooltip.enabled=アイテム自動搬入を有効化 (現在は有効)
+gregtech.gui.item_auto_input.tooltip.disabled=アイテム自動搬入を有効化 (現在は無効)
 gregtech.gui.item_auto_output.tooltip.enabled=アイテム自動搬出を無効化 (現在は有効)
 gregtech.gui.item_auto_output.tooltip.disabled=アイテム自動搬出を有効化 (現在は無効)
 gregtech.gui.item_auto_collapse.tooltip.enabled=アイテムの整頓を有効化 (現在は無効)
@@ -5610,7 +5614,6 @@ gregtech.gui.me_network.offline=ネットワーク状態: §4オフライン§r
 gregtech.gui.waiting_list=送信待:
 gregtech.gui.config_slot=§f設定スロット§r
 gregtech.gui.config_slot.set=§7クリックで設定スロットを§b設定/選択§7。§r
-gregtech.gui.config_slot.set_only=§7Click to §bset§7 config slot.§r
 gregtech.gui.config_slot.set_only=§7クリックして§b設定§7スロットをセット§r
 gregtech.gui.config_slot.scroll=§7スクロールで設定量を§a変更§7§r
 gregtech.gui.config_slot.remove=§7右クリックで設定スロットを§4初期化§7§r
