@@ -110,15 +110,6 @@ public class PartsRecipeHandler {
         ModHandler.addShapedRecipe(String.format("screw_%s", material),
                 screwStack, "fX", "X ",
                 'X', new UnificationEntry(OrePrefix.bolt, material));
-
-        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
-            RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                    .notConsumable(MetaItems.SHAPE_MOLD_SCREW)
-                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 8))
-                    .output(screwPrefix, material)
-                    .EUt(VA[ULV]).duration(7)
-                    .buildAndRegister();
-        }
     }
 
     public static void processFoil(OrePrefix foilPrefix, Material material, IngotProperty property) {
@@ -593,15 +584,6 @@ public class PartsRecipeHandler {
                     "PPP", "SPS", "fPd",
                     'P', new UnificationEntry(OrePrefix.plateDouble, material),
                     'S', new UnificationEntry(OrePrefix.screw, material));
-        }
-
-        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
-            RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                    .notConsumable(MetaItems.SHAPE_MOLD_TURBINE_BLADE)
-                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L * 10 + L / 4))
-                    .output(toolPrefix, material)
-                    .EUt(VA[ULV]).duration(50)
-                    .buildAndRegister();
         }
     }
 

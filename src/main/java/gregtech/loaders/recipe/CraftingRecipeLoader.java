@@ -308,19 +308,9 @@ public class CraftingRecipeLoader {
                 "   ",
                 "S  ",
                 'S', SHAPE_EMPTY.getStackForm());
-        ModHandler.addShapedRecipe("shape_mold_screw", SHAPE_MOLD_SCREW.getStackForm(),
-                "   ",
-                "h  ",
-                "S  ",
-                'S', SHAPE_EMPTY.getStackForm());
         ModHandler.addShapedRecipe("shape_mold_round", SHAPE_MOLD_ROUND.getStackForm(),
                 "   ",
                 " h ",
-                "S  ",
-                'S', SHAPE_EMPTY.getStackForm());
-        ModHandler.addShapedRecipe("shape_mold_turbine_blade", SHAPE_MOLD_TURBINE_BLADE.getStackForm(),
-                "   ",
-                "  h",
                 "S  ",
                 'S', SHAPE_EMPTY.getStackForm());
         ModHandler.addShapedRecipe("shape_mold_pipe_tiny", SHAPE_MOLD_PIPE_TINY.getStackForm(),
@@ -344,21 +334,6 @@ public class CraftingRecipeLoader {
                 "hS ",
                 'S', SHAPE_EMPTY.getStackForm());
         ModHandler.addShapedRecipe("shape_mold_pipe_huge", SHAPE_MOLD_PIPE_HUGE.getStackForm(),
-                "   ",
-                "  h",
-                " S ",
-                'S', SHAPE_EMPTY.getStackForm());
-        ModHandler.addShapedRecipe("shape_mold_bun", SHAPE_MOLD_BUN.getStackForm(),
-                "   ",
-                "h  ",
-                " S ",
-                'S', SHAPE_EMPTY.getStackForm());
-        ModHandler.addShapedRecipe("shape_mold_bread", SHAPE_MOLD_BREAD.getStackForm(),
-                "h  ",
-                "   ",
-                " S ",
-                'S', SHAPE_EMPTY.getStackForm());
-        ModHandler.addShapedRecipe("shape_mold_baguette", SHAPE_MOLD_BAGUETTE.getStackForm(),
                 "   ",
                 "  h",
                 " S ",

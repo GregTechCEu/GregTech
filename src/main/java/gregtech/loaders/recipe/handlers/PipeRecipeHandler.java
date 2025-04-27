@@ -124,7 +124,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_PIPE_TINY)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 2))
                     .output(pipePrefix, material)
-                    .EUt(VA[ULV]).duration(4)
+                    .EUt(6 * getVoltageMultiplier(material)).duration((int) material.getMass() / 2)
                     .buildAndRegister();
         }
     }
@@ -175,7 +175,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_PIPE_SMALL)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L))
                     .output(pipePrefix, material)
-                    .EUt(VA[ULV]).duration(8)
+                    .EUt(6 * getVoltageMultiplier(material)).duration((int) material.getMass() / 2)
                     .buildAndRegister();
         }
     }
@@ -226,7 +226,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_PIPE_NORMAL)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L * 3))
                     .output(pipePrefix, material)
-                    .EUt(VA[ULV]).duration(24)
+                    .EUt(6 * getVoltageMultiplier(material)).duration((int) material.getMass() / 2)
                     .buildAndRegister();
         }
     }
@@ -276,7 +276,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_PIPE_LARGE)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L * 6))
                     .output(pipePrefix, material)
-                    .EUt(VA[ULV]).duration(48)
+                    .EUt(6 * getVoltageMultiplier(material)).duration((int) material.getMass() / 2)
                     .buildAndRegister();
         }
     }
@@ -326,7 +326,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_PIPE_HUGE)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L * 12))
                     .output(pipePrefix, material)
-                    .EUt(VA[ULV]).duration(96)
+                    .EUt(6 * getVoltageMultiplier(material)).duration((int) material.getMass() / 2)
                     .buildAndRegister();
         }
     }

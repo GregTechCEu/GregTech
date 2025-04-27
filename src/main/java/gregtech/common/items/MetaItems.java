@@ -57,7 +57,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem SHAPE_EMPTY;
 
-    public static final MetaItem<?>.MetaValueItem[] SHAPE_MOLDS = new MetaValueItem[28];
+    public static final MetaItem<?>.MetaValueItem[] SHAPE_MOLDS = new MetaValueItem[22];
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_CREDIT;
@@ -75,17 +75,12 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_BOLT;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROD;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROD_LONG;
-    public static MetaItem<?>.MetaValueItem SHAPE_MOLD_SCREW;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROUND;
-    public static MetaItem<?>.MetaValueItem SHAPE_MOLD_TURBINE_BLADE;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_PIPE_TINY;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_PIPE_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_PIPE_NORMAL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_PIPE_LARGE;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_PIPE_HUGE;
-    public static MetaItem<?>.MetaValueItem SHAPE_MOLD_BUN;
-    public static MetaItem<?>.MetaValueItem SHAPE_MOLD_BREAD;
-    public static MetaItem<?>.MetaValueItem SHAPE_MOLD_BAGUETTE;
 
     public static final MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[27];
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PLATE;
