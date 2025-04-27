@@ -23,11 +23,13 @@ public class CTMHooks {
     private static Field layers;
 
     static {
-        try {
-            layers = ModelCTM.class.getDeclaredField("layers");
-            layers.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            GTLog.logger.error("CTMModHooks no such field");
+        if (Mods.CTM.isModLoaded()) {
+            try {
+                layers = ModelCTM.class.getDeclaredField("layers");
+                layers.setAccessible(true);
+            } catch (NoSuchFieldException e) {
+                GTLog.logger.error("CTMHooks no such field");
+            }
         }
     }
 
