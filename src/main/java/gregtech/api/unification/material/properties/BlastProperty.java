@@ -2,8 +2,11 @@ package gregtech.api.unification.material.properties;
 
 import gregtech.integration.groovy.GroovyScriptModule;
 
+import net.minecraftforge.fluids.FluidStack;
+
 import crafttweaker.CraftTweakerAPI;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BlastProperty implements IMaterialProperty {
 
@@ -51,6 +54,24 @@ public class BlastProperty implements IMaterialProperty {
      */
     private int vacuumEUtOverride = -1;
 
+    /**
+     * A {@link FluidStack} to use as the input when auto-generating the freezer recipe.
+     * Default: null, meaning to either use none or liquid helium if the blast temperature > 4999k.
+     */
+    private FluidStack freezerFluidInput = null;
+
+    /**
+     * A {@link FluidStack} to use as the output when auto-generating the freezer recipe.
+     * Default: null, meaning to either use none or liquid helium if the blast temperature > 4999k.
+     */
+    private FluidStack freezerFluidOutput = null;
+
+    /**
+     * Whether to automatically generate a vacuum freezer recipe.
+     * Default: true
+     */
+    private boolean generateFreezerRecipe = true;
+
     public BlastProperty(int blastTemperature) {
         this.blastTemperature = blastTemperature;
     }
@@ -61,13 +82,17 @@ public class BlastProperty implements IMaterialProperty {
     }
 
     private BlastProperty(int blastTemperature, GasTier gasTier, int eutOverride, int durationOverride,
-                          int vacuumEUtOverride, int vacuumDurationOverride) {
+                          int vacuumEUtOverride, int vacuumDurationOverride, @Nullable FluidStack freezerFluidInput,
+                          @Nullable FluidStack freezerFluidOutput, boolean generateFreezerRecipe) {
         this.blastTemperature = blastTemperature;
         this.gasTier = gasTier;
         this.eutOverride = eutOverride;
         this.durationOverride = durationOverride;
         this.vacuumEUtOverride = vacuumEUtOverride;
         this.vacuumDurationOverride = vacuumDurationOverride;
+        this.freezerFluidInput = freezerFluidInput;
+        this.freezerFluidOutput = freezerFluidOutput;
+        this.generateFreezerRecipe = generateFreezerRecipe;
     }
 
     /**
@@ -126,6 +151,30 @@ public class BlastProperty implements IMaterialProperty {
         this.vacuumEUtOverride = eut;
     }
 
+    public @Nullable FluidStack getFreezerFluidInput() {
+        return this.freezerFluidInput;
+    }
+
+    public void setFreezerFluidInput(FluidStack freezerFluidInput) {
+        this.freezerFluidInput = freezerFluidInput;
+    }
+
+    public @Nullable FluidStack getFreezerFluidOutput() {
+        return this.freezerFluidOutput;
+    }
+
+    public void setFreezerFluidOutput(FluidStack freezerFluidOutput) {
+        this.freezerFluidInput = freezerFluidOutput;
+    }
+
+    public boolean generatesFreezerRecipe() {
+        return this.generateFreezerRecipe;
+    }
+
+    public void generatesFreezerRecipe(boolean generateFreezerRecipe) {
+        this.generateFreezerRecipe = generateFreezerRecipe;
+    }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.INGOT, true);
@@ -171,6 +220,8 @@ public class BlastProperty implements IMaterialProperty {
         private int durationOverride = -1;
         private int vacuumEUtOverride = -1;
         private int vacuumDurationOverride = -1;
+        private FluidStack freezerFluidInput, freezerFluidOutput = null;
+        private boolean generateFreezerRecipe = true;
 
         public Builder() {}
 
@@ -207,9 +258,30 @@ public class BlastProperty implements IMaterialProperty {
             return this;
         }
 
+        public Builder freezerFluidOverride(@Nullable FluidStack input, @Nullable FluidStack output) {
+            this.freezerFluidInput = input;
+            this.freezerFluidOutput = output;
+            return this;
+        }
+
+        public Builder freezerFluidInputOverride(@NotNull FluidStack input) {
+            this.freezerFluidInput = input;
+            return this;
+        }
+
+        public Builder freezerFluidOutputOverride(@NotNull FluidStack output) {
+            this.freezerFluidOutput = output;
+            return this;
+        }
+
+        public Builder disableFreezerRecipe() {
+            this.generateFreezerRecipe = false;
+            return this;
+        }
+
         public BlastProperty build() {
             return new BlastProperty(temp, gasTier, eutOverride, durationOverride, vacuumEUtOverride,
-                    vacuumDurationOverride);
+                    vacuumDurationOverride, freezerFluidInput, freezerFluidOutput, generateFreezerRecipe);
         }
     }
 }

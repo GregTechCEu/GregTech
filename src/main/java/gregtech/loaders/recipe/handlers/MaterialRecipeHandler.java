@@ -4,6 +4,7 @@ import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
+import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
@@ -227,28 +228,34 @@ public class MaterialRecipeHandler {
         }
 
         // Add Vacuum Freezer recipe if required.
-        if (ingotHot.doGenerateItem(material)) {
-            int vacuumEUt = property.getVacuumEUtOverride() != -1 ? property.getVacuumEUtOverride() : VA[MV];
-            int vacuumDuration = property.getVacuumDurationOverride() != -1 ? property.getVacuumDurationOverride() :
-                    (int) material.getMass() * 3;
+        if (property.generatesFreezerRecipe() && ingotHot.doGenerateItem(material)) {
+            SimpleRecipeBuilder freezerBuilder = RecipeMaps.VACUUM_RECIPES.recipeBuilder()
+                    .input(ingotHot, material)
+                    .output(ingot, material)
+                    .duration(property.getVacuumDurationOverride() != -1 ? property.getVacuumDurationOverride() :
+                            (int) material.getMass() * 3)
+                    .EUt(property.getVacuumEUtOverride() != -1 ? property.getVacuumEUtOverride() : VA[MV]);
 
-            if (blastTemp < 5000) {
-                RecipeMaps.VACUUM_RECIPES.recipeBuilder()
-                        .input(ingotHot, material)
-                        .output(ingot, material)
-                        .duration(vacuumDuration)
-                        .EUt(vacuumEUt)
-                        .buildAndRegister();
-            } else {
-                RecipeMaps.VACUUM_RECIPES.recipeBuilder()
-                        .input(ingotHot, material)
-                        .fluidInputs(Materials.Helium.getFluid(FluidStorageKeys.LIQUID, 500))
-                        .output(ingot, material)
-                        .fluidOutputs(Materials.Helium.getFluid(250))
-                        .duration(vacuumDuration)
-                        .EUt(vacuumEUt)
-                        .buildAndRegister();
+            FluidStack fluidInput = null;
+            FluidStack fluidOutput = null;
+
+            if (property.getFreezerFluidInput() != null || property.getFreezerFluidOutput() != null) {
+                fluidInput = property.getFreezerFluidInput();
+                fluidOutput = property.getFreezerFluidOutput();
+            } else if (blastTemp > 5000) {
+                fluidInput = Materials.Helium.getFluid(FluidStorageKeys.LIQUID, 500);
+                fluidOutput = Materials.Helium.getFluid(FluidStorageKeys.GAS, 250);
             }
+
+            if (fluidInput != null) {
+                freezerBuilder.fluidInputs(fluidInput);
+            }
+
+            if (fluidOutput != null) {
+                freezerBuilder.fluidOutputs(fluidOutput);
+            }
+
+            freezerBuilder.buildAndRegister();
         }
     }
 
