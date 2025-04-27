@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & GTModpackTeam
 # 日本語ローカライズ担当： MrKo_no & GTModpackTeam
-# Corresponding Version: 2.8.8 - beta
-# 対応バージョン: 2.8.8 - beta
+# Corresponding Version: 2.8.10 - beta
+# 対応バージョン: 2.8.10 - beta
 
 death.attack.heat=%s は熱さを感じなくなった。
 death.attack.frost=%s のふとんがふっとんだ。
@@ -552,7 +552,7 @@ metaitem.tool.datamodule.tooltip=とても複雑なデータの保管に/n§cデ
 metaitem.circuit.integrated.name=プログラム回路
 metaitem.circuit.integrated.tooltip=使うと設定画面を開く/n/nプログラム回路スロットを持つ機械に/nシフト右クリックをすると/nこの回路の番号に設定される/n
 metaitem.circuit.integrated.gui=プログラム回路設定
-metaitem.circuit.integrated.jei_description=JEIでは設定した番号のレシピのみが表示されます。/n番号はプログラム回路の一覧タブで選択できます。
+metaitem.circuit.integrated.jei_description=JEIでは設定した番号のレシピのみが表示されます。\n番号はプログラム回路の一覧タブで選択できます。
 
 item.glass.lens=白いガラスレンズ
 metaitem.glass_lens.orange.name=橙色のガラスレンズ
@@ -3768,11 +3768,11 @@ gregtech.machine.packer.hv.tooltip=箱に物を出し入れ
 gregtech.machine.packer.ev.name=発展型梱包機 III
 gregtech.machine.packer.ev.tooltip=箱に物を出し入れ
 gregtech.machine.packer.iv.name=精鋭型梱包機
-gregtech.machine.packer.iv.tooltip=梱包装置r
+gregtech.machine.packer.iv.tooltip=梱包装置
 gregtech.machine.packer.luv.name=精鋭型梱包機 II
-gregtech.machine.packer.luv.tooltip=梱包装置r
+gregtech.machine.packer.luv.tooltip=梱包装置
 gregtech.machine.packer.zpm.name=精鋭型梱包機 III
-gregtech.machine.packer.zpm.tooltip=梱包装置r
+gregtech.machine.packer.zpm.tooltip=梱包装置
 gregtech.machine.packer.uv.name=究極型梱包機
 gregtech.machine.packer.uv.tooltip=Amazonの管理倉庫
 gregtech.machine.packer.uhv.name=史上最高の梱包機
@@ -5431,7 +5431,7 @@ gregtech.gui.item_auto_output.tooltip.disabled=アイテム自動搬出を有効
 gregtech.gui.item_auto_collapse.tooltip.enabled=アイテムの整頓を有効化 (現在は無効)
 gregtech.gui.item_auto_collapse.tooltip.disabled=アイテムの整頓を無効化 (現在は有効)
 gregtech.gui.charger_slot.tooltip=§f充電スロット§r/n%s§7バッテリーからエネルギーを吸い取る。§r/n%s§7の電動ツールとバッテリーを充電できる。
-gregtech.gui.configurator_slot.tooltip=§fプログラム回路スロット§r\n§a設定番号: §f%d§7\n\n§7右/左クリック/スクロールで値を変更する。\n§7シフト左クリックで選択画面を表示。\n§7シフト右クリックでやり直し。
+gregtech.gui.configurator_slot.tooltip=§fプログラム回路スロット§r/n§a設定番号: §f%d§7/n/n§7右/左クリック/スクロールで値を変更する。/n§7シフト右クリックでやり直し。
 gregtech.gui.configurator_slot.no_value=なし
 gregtech.gui.configurator_slot.unavailable.tooltip=プログラム回路スロットは使いません
 gregtech.gui.fluid_lock.tooltip.enabled=液体ロックを無効化 (現在は有効)
@@ -5696,7 +5696,7 @@ gregtech.multiblock.miner.drilling=採掘中
 gregtech.multiblock.pyrolyse_oven.speed=処理速度: %s
 gregtech.multiblock.pyrolyse_oven.speed_hover=組み込んだコイルによって処理速度に係数がかかります。
 
-gregtech.multiblock.cracking_unit.energy=エネルギー使用量: %s%
+gregtech.multiblock.cracking_unit.energy=エネルギー使用量: %s
 gregtech.multiblock.cracking_unit.energy_hover=組み込んだコイルによってエネルギー使用量に係数がかかります。
 
 gregtech.multiblock.energy_consumption=エネルギー使用量: %s EU/t (%s)
@@ -6281,3 +6281,6 @@ gregtech.scanner.forestry.larvae=§o解析済みの幼虫
 gregtech.scanner.forestry.serum=§o解析済みの漿液
 gregtech.scanner.forestry.caterpillar=§o解析済みの幼虫
 gregtech.scanner.forestry.pollen=§o解析済みの花粉
+
+# Mutation
+gregtech.mutation.block_of=%sブロック
