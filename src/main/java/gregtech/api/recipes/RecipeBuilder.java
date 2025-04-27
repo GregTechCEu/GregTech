@@ -608,7 +608,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             if (fluidStack != null && fluidStack.amount > 0) {
                 fluidIngredients.add(new GTRecipeFluidInput(fluidStack));
             } else if (fluidStack != null) {
-                GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", fluidStack.amount,
+                GTLog.logger.error("Fluid Input count cannot be less than 1. Actual: {}.", fluidStack.amount,
                         new Throwable());
             } else {
                 GTLog.logger.error("FluidStack cannot be null.");
