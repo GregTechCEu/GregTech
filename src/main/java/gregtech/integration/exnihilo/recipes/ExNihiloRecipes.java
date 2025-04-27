@@ -1,5 +1,6 @@
 package gregtech.integration.exnihilo.recipes;
 
+
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
@@ -29,8 +30,10 @@ import exnihilocreatio.registries.types.Siftable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import static gregtech.api.recipes.RecipeMaps.COMPRESSOR_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.EXTRACTOR_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.stick;
@@ -88,6 +91,55 @@ public class ExNihiloRecipes {
         ModHandler.addShapedRecipe("red_granite", OreDictUnifier.get(stone, GraniteRed, 1), "PP", "PP", 'P',
                 new ItemStack(ExNihiloModule.GTPebbles, 1, 3));
 
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(ModItems.pebbles, 4, 0))
+                .output(Blocks.COBBLESTONE)
+                .EUt(4)
+                .duration(40)
+                .buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(ModItems.pebbles, 4, 1))
+                .outputs(new ItemStack(Blocks.STONE, 1, 1))
+                .EUt(4)
+                .duration(40)
+                .buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(ModItems.pebbles, 4, 2))
+                .outputs(new ItemStack(Blocks.STONE, 1, 3))
+                .EUt(4)
+                .duration(40)
+                .buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(ModItems.pebbles, 4, 3))
+                .outputs(new ItemStack(Blocks.STONE, 1, 5))
+                .EUt(4)
+                .duration(40)
+                .buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(ExNihiloModule.GTPebbles, 4, 0))
+                .outputs(OreDictUnifier.get(stone, Basalt, 1))
+                .EUt(4)
+                .duration(40)
+                .buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(ExNihiloModule.GTPebbles, 4, 1))
+                .outputs(OreDictUnifier.get(stone, GraniteBlack, 1))
+                .EUt(4)
+                .duration(40)
+                .buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(ExNihiloModule.GTPebbles, 4, 2))
+                .outputs(OreDictUnifier.get(stone, Marble, 1))
+                .EUt(4)
+                .duration(40)
+                .buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(ExNihiloModule.GTPebbles, 4, 3))
+                .outputs(OreDictUnifier.get(stone, GraniteRed, 1))
+                .EUt(4)
+                .duration(40)
+                .buildAndRegister();
+
         // Meshes
         if (ExNihiloConfig.harderMeshes) {
             ModHandler.removeRecipeByName("exnihilocreatio:item_mesh_2");
@@ -103,6 +155,7 @@ public class ExNihiloRecipes {
                     'T', new UnificationEntry(stick, Aluminium),
                     'S', new ItemStack(Items.STRING));
         }
+
     }
 
     // Has to be done in init phase because of ExNi registering outside the Registry event
@@ -138,7 +191,7 @@ public class ExNihiloRecipes {
                 if (FluidUtil.getFluidContained(recipe.getFluid()) != null) {
                     for (List<ItemStack> listStack : recipe.getInputs()) {
                         for (ItemStack stack : listStack) {
-                            if (EXTRACTOR_RECIPES.findRecipe(4, Arrays.asList(stack), new ArrayList<>(), true) !=
+                            if (EXTRACTOR_RECIPES.findRecipe(4, Collections.singletonList(stack), new ArrayList<>(), true) !=
                                     null)
                                 continue;
                             EXTRACTOR_RECIPES.recipeBuilder()
