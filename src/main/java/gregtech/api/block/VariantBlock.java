@@ -26,14 +26,12 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
-public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block implements IWalkingSpeedBonus {
+public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block {
 
     protected PropertyEnum<T> VARIANT;
     protected T[] VALUES;
 
-    @SuppressWarnings("DataFlowIssue")
-    public VariantBlock(Material materialIn) {
+    public VariantBlock(@NotNull Material materialIn) {
         super(materialIn);
         if (VALUES.length > 0 && VALUES[0] instanceof IStateHarvestLevel) {
             for (T t : VALUES) {

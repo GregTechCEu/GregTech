@@ -1,36 +1,43 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IFilter;
+import gregtech.api.capability.IFilteredFluidContainer;
+import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.NotifiableFluidTank;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.*;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.util.GTUtility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -38,20 +45,35 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.RichTextWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart
-                                      implements IMultiblockAbilityPart<IFluidTank>, IControllable {
+                                      implements IMultiblockAbilityPart<IFluidTank>, IControllable,
+                                      IGhostSlotConfigurable {
 
     public static final int INITIAL_INVENTORY_SIZE = 8000;
 
     // only holding this for convenience
     protected final HatchFluidTank fluidTank;
     protected boolean workingEnabled;
+    private GhostCircuitItemStackHandler circuitInventory;
 
     // export hatch-only fields
     protected boolean locked;
@@ -61,8 +83,33 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     public MetaTileEntityFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
         this.fluidTank = new HatchFluidTank(getInventorySize(), this, isExportHatch);
+        initializeInventory(); // the fact that this has to be called three times is so dumb
         this.workingEnabled = true;
-        initializeInventory();
+    }
+
+    @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        if (this.hasGhostCircuitInventory()) {
+            this.circuitInventory = new GhostCircuitItemStackHandler(this);
+            this.circuitInventory.addNotifiableMetaTileEntity(this);
+        }
+    }
+
+    @Override
+    public boolean hasGhostCircuitInventory() {
+        return !isExportHatch;
+    }
+
+    @Override
+    public void setGhostCircuitConfig(int config) {
+        if (this.circuitInventory == null || this.circuitInventory.getCircuitValue() == config) {
+            return;
+        }
+        this.circuitInventory.setCircuitValue(config);
+        if (!getWorld().isRemote) {
+            markDirty();
+        }
     }
 
     @Override
@@ -79,6 +126,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             if (locked && lockedFluid != null) {
                 data.setTag("LockedFluid", lockedFluid.writeToNBT(new NBTTagCompound()));
             }
+        } else {
+            this.circuitInventory.write(data);
         }
         return data;
     }
@@ -97,6 +146,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             this.locked = data.getBoolean("IsLocked");
             this.lockedFluid = this.locked ? FluidStack.loadFluidStackFromNBT(data.getCompoundTag("LockedFluid")) :
                     null;
+        } else {
+            this.circuitInventory.read(data);
         }
     }
 
@@ -144,6 +195,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         buf.writeBoolean(workingEnabled);
         if (isExportHatch) {
             buf.writeBoolean(locked);
+        } else {
+            buf.writeVarInt(this.circuitInventory.getCircuitValue());
         }
     }
 
@@ -153,6 +206,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         this.workingEnabled = buf.readBoolean();
         if (isExportHatch) {
             this.locked = buf.readBoolean();
+        } else {
+            setGhostCircuitConfig(buf.readVarInt());
         }
     }
 
@@ -161,6 +216,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.workingEnabled = buf.readBoolean();
+        } else if (dataId == GregtechDataCodes.LOCK_FILL) {
+            this.lockedFluid = NetworkUtils.readFluidStack(buf);
         }
     }
 
@@ -177,7 +234,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     protected int getInventorySize() {
-        return INITIAL_INVENTORY_SIZE * (1 << Math.min(9, getTier()));
+        return INITIAL_INVENTORY_SIZE * Math.min(Integer.MAX_VALUE, 1 << getTier());
     }
 
     @Override
@@ -202,103 +259,118 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public MultiblockAbility<IFluidTank> getAbility() {
-        return isExportHatch ? MultiblockAbility.EXPORT_FLUIDS : MultiblockAbility.IMPORT_FLUIDS;
+    public @NotNull List<MultiblockAbility<?>> getAbilities() {
+        return isExportHatch ?
+                Collections.singletonList(MultiblockAbility.EXPORT_FLUIDS) :
+                Arrays.asList(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS);
     }
 
     @Override
-    public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.add(fluidTank);
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return createTankUI(fluidTank, getMetaFullName(), entityPlayer).build(getHolder(), entityPlayer);
-    }
-
-    public ModularUI.Builder createTankUI(IFluidTank fluidTank, String title, EntityPlayer entityPlayer) {
-        // Create base builder/widget references
-        Builder builder = ModularUI.defaultBuilder();
-        TankWidget tankWidget;
-
-        // Add input/output-specific widgets
-        if (isExportHatch) {
-            tankWidget = new PhantomTankWidget(fluidTank, 69, 43, 18, 18,
-                    () -> this.lockedFluid,
-                    f -> {
-                        if (this.fluidTank.getFluidAmount() != 0) {
-                            return;
-                        }
-                        if (f == null) {
-                            this.setLocked(false);
-                            this.lockedFluid = null;
-                        } else {
-                            this.setLocked(true);
-                            this.lockedFluid = f.copy();
-                            this.lockedFluid.amount = 1;
-                        }
-                    })
-                            .setAlwaysShowFull(true).setDrawHoveringText(false);
-
-            builder.image(7, 16, 81, 46, GuiTextures.DISPLAY)
-                    .widget(new SlotWidget(exportItems, 0, 90, 44, true, false)
-                            .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
-                    .widget(new ToggleButtonWidget(7, 64, 18, 18,
-                            GuiTextures.BUTTON_LOCK, this::isLocked, this::setLocked)
-                                    .setTooltipText("gregtech.gui.fluid_lock.tooltip")
-                                    .shouldUseBaseBackground());
-        } else {
-            tankWidget = new TankWidget(fluidTank, 69, 52, 18, 18)
-                    .setAlwaysShowFull(true).setDrawHoveringText(false);
-
-            builder.image(7, 16, 81, 55, GuiTextures.DISPLAY)
-                    .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
-                    .widget(new SlotWidget(exportItems, 0, 90, 53, true, false)
-                            .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY));
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        if (abilityInstances.isKey(MultiblockAbility.EXPORT_FLUIDS) ||
+                abilityInstances.isKey(MultiblockAbility.IMPORT_FLUIDS)) {
+            abilityInstances.add(this.fluidTank);
+        } else if (abilityInstances.isKey(MultiblockAbility.IMPORT_ITEMS)) {
+            abilityInstances.add(this.circuitInventory);
         }
-
-        // Add general widgets
-        return builder.label(6, 6, title)
-                .label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF)
-                .widget(new AdvancedTextWidget(11, 30, getFluidAmountText(tankWidget), 0xFFFFFF))
-                .widget(new AdvancedTextWidget(11, 40, getFluidNameText(tankWidget), 0xFFFFFF))
-                .widget(tankWidget)
-                .widget(new FluidContainerSlotWidget(importItems, 0, 90, 16, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
-                .bindPlayerInventory(entityPlayer.inventory);
     }
 
-    protected Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
-        return (list) -> {
-            TextComponentTranslation translation = tankWidget.getFluidTextComponent();
-            // If there is no fluid in the tank, but there is a locked fluid
-            if (translation == null) {
-                translation = GTUtility.getFluidTranslation(this.lockedFluid);
-            }
-
-            if (translation != null) {
-                list.add(translation);
-            }
-        };
+    @Override
+    public boolean usesMui2() {
+        return true;
     }
 
-    protected Consumer<List<ITextComponent>> getFluidAmountText(TankWidget tankWidget) {
-        return (list) -> {
-            String fluidAmount = "";
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
+                .showAmount(false)
+                .accessibility(true, !isExportHatch)
+                .handleLocking(() -> this.lockedFluid, fluidStack -> {
+                    setLocked(fluidStack != null);
+                    this.lockedFluid = fluidStack;
+                    this.fluidTank.onContentsChanged();
+                }, this::setLocked);
 
-            // Nothing in the tank
-            if (tankWidget.getFormattedFluidAmount().equals("0")) {
-                // Display Zero to show information about the locked fluid
-                if (this.lockedFluid != null) {
-                    fluidAmount = "0";
-                }
-            } else {
-                fluidAmount = tankWidget.getFormattedFluidAmount();
-            }
-            if (!fluidAmount.isEmpty()) {
-                list.add(new TextComponentString(fluidAmount));
-            }
-        };
+        return GTGuis.createPanel(this, 176, 166)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(6, 6))
+
+                // export specific
+                .childIf(isExportHatch, new ItemSlot()
+                        .pos(90, 44)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.OUT_SLOT_OVERLAY)
+                        .slot(new ModularSlot(exportItems, 0)
+                                .accessibility(false, true)))
+                .childIf(isExportHatch, new ToggleButton()
+                        .pos(7, 63)
+                        .overlay(GTGuiTextures.BUTTON_LOCK)
+                        .value(new BooleanSyncValue(this::isLocked, b -> fluidSyncHandler.lockFluid(b, false)))
+                        .addTooltip(true, IKey.lang("gregtech.gui.fluid_lock.tooltip.enabled"))
+                        .addTooltip(false, IKey.lang("gregtech.gui.fluid_lock.tooltip.disabled")))
+
+                // import specific
+                .childIf(!isExportHatch, GTGuiTextures.TANK_ICON.asWidget()
+                        .pos(91, 36)
+                        .size(14, 15))
+                .childIf(!isExportHatch, new ItemSlot()
+                        .pos(90, 53)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.OUT_SLOT_OVERLAY)
+                        .slot(new ModularSlot(exportItems, 0)
+                                .accessibility(false, true)))
+                .childIf(!isExportHatch, new GhostCircuitSlotWidget()
+                        .slot(circuitInventory, 0)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY)
+                        .pos(124, 62))
+
+                // common ui
+                .child(new RichTextWidget()
+                        .size(81 - 6, (isExportHatch ? 46 : 55) - 8)
+                        // .padding(3, 4)
+                        .background(GTGuiTextures.DISPLAY.asIcon().size(81, isExportHatch ? 46 : 55))
+                        .pos(7 + 3, 16 + 4)
+                        .textColor(Color.WHITE.main)
+                        .alignment(Alignment.TopLeft)
+                        .autoUpdate(true)
+                        .textBuilder(richText -> {
+                            richText.addLine(IKey.lang("gregtech.gui.fluid_amount"));
+                            String name = fluidSyncHandler.getFluidLocalizedName();
+                            if (name == null) return;
+                            if (name.length() > 25) name = name.substring(0, 25) + "...";
+
+                            richText.addLine(IKey.str(name));
+                            richText.addLine(IKey.str(fluidSyncHandler.getFormattedFluidAmount()));
+                        }))
+                .child(new GTFluidSlot()
+                        .disableBackground()
+                        .pos(69, isExportHatch ? 43 : 52)
+                        .size(18)
+                        .syncHandler(fluidSyncHandler))
+                .child(new ItemSlot()
+                        .pos(90, 16)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.IN_SLOT_OVERLAY)
+                        .slot(new ModularSlot(importItems, 0)
+                                .singletonSlotGroup()
+                                .filter(stack -> {
+                                    if (!isExportHatch) return true;
+                                    var h = FluidUtil.getFluidHandler(stack);
+                                    if (h == null) return false;
+                                    return h.getTankProperties()[0].getContents() == null;
+                                })
+                                .accessibility(true, true)))
+                .bindPlayerInventory();
+    }
+
+    @Override
+    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+        super.addToMultiBlock(controllerBase);
+        if (hasGhostCircuitInventory())
+            this.circuitInventory.addNotifiableMetaTileEntity(controllerBase);
+    }
+
+    @Override
+    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+        super.removeFromMultiBlock(controllerBase);
+        if (hasGhostCircuitInventory())
+            this.circuitInventory.removeNotifiableMetaTileEntity(controllerBase);
     }
 
     @Override
@@ -324,11 +396,10 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     private void setLocked(boolean locked) {
-        if (this.locked == locked) return;
+        if (!isExportHatch || this.locked == locked) return;
         this.locked = locked;
-        if (!getWorld().isRemote) {
-            markDirty();
-        }
+
+        if (!getWorld().isRemote) markDirty();
         if (locked && fluidTank.getFluid() != null) {
             this.lockedFluid = fluidTank.getFluid().copy();
             this.lockedFluid.amount = 1;
@@ -337,6 +408,21 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         }
         this.lockedFluid = null;
         fluidTank.onContentsChanged();
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
+        if (this == MetaTileEntities.FLUID_IMPORT_HATCH[0]) {
+            for (var hatch : MetaTileEntities.FLUID_IMPORT_HATCH) {
+                if (hatch != null) subItems.add(hatch.getStackForm());
+            }
+            for (var hatch : MetaTileEntities.FLUID_EXPORT_HATCH) {
+                if (hatch != null) subItems.add(hatch.getStackForm());
+            }
+        } else if (this.getClass() != MetaTileEntityFluidHatch.class) {
+            // let subclasses fall through this override
+            super.getSubItems(creativeTab, subItems);
+        }
     }
 
     protected class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
@@ -352,6 +438,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             if (doFill && locked && lockedFluid == null) {
                 lockedFluid = resource.copy();
                 lockedFluid.amount = 1;
+                writeCustomData(GregtechDataCodes.LOCK_FILL,
+                        buffer -> NetworkUtils.writeFluidStack(buffer, lockedFluid));
             }
             return accepted;
         }

@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
+import gregtech.api.items.OreDictNames;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
@@ -92,8 +93,6 @@ public class VanillaStandardRecipes {
 
         COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.ICE, 2, GTValues.W))
                 .outputs(new ItemStack(Blocks.PACKED_ICE)).buildAndRegister();
-        COMPRESSOR_RECIPES.recipeBuilder().input(OrePrefix.dust, Materials.Ice, 1).outputs(new ItemStack(Blocks.ICE))
-                .buildAndRegister();
 
         PACKER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.WHEAT, 9))
@@ -123,10 +122,10 @@ public class VanillaStandardRecipes {
                 "dustFlint");
 
         ModHandler.addShapedRecipe("quartz_sand", OreDictUnifier.get(OrePrefix.dust, Materials.QuartzSand), "S", "m",
-                'S', new ItemStack(Blocks.SAND));
+                'S', OreDictNames.sand);
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.SAND))
+                .input(OreDictNames.sand.name())
                 .output(OrePrefix.dust, Materials.QuartzSand)
                 .duration(30).buildAndRegister();
 
@@ -147,7 +146,7 @@ public class VanillaStandardRecipes {
                 .buildAndRegister();
 
         RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder().duration(20).EUt(VA[LV])
-                .inputs(new ItemStack(Blocks.SAND, 1))
+                .input(OreDictNames.sand.name())
                 .outputs(new ItemStack(Blocks.GLASS, 2))
                 .buildAndRegister();
 
@@ -1193,16 +1192,6 @@ public class VanillaStandardRecipes {
                 .fluidInputs(Materials.DistilledWater.getFluid(250))
                 .outputs(new ItemStack(Items.CLAY_BALL))
                 .duration(300).EUt(24).buildAndRegister();
-
-        COMPRESSOR_RECIPES.recipeBuilder()
-                .input(dust, Redstone, 9)
-                .output(block, Redstone)
-                .duration(300).EUt(2).buildAndRegister();
-
-        COMPRESSOR_RECIPES.recipeBuilder()
-                .input(dust, Bone, 9)
-                .output(block, Bone)
-                .duration(300).EUt(2).buildAndRegister();
 
         COMPRESSOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.CHORUS_FRUIT_POPPED, 4))

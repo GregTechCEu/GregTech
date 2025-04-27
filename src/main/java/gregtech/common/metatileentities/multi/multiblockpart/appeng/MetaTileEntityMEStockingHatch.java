@@ -44,7 +44,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     private Predicate<FluidStack> autoPullTest;
 
     public MetaTileEntityMEStockingHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.LuV);
+        super(metaTileEntityId, GTValues.IV);
         this.autoPullTest = $ -> false;
     }
 
@@ -64,9 +64,22 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && isWorkingEnabled() && autoPull && getOffsetTimer() % 100 == 0) {
-            refreshList();
-            syncME();
+        if (!getWorld().isRemote) {
+            if (isWorkingEnabled() && autoPull && getOffsetTimer() % 100 == 0) {
+                refreshList();
+                syncME();
+            }
+
+            // Immediately clear cached fluids if the status changed, to prevent running recipes while offline
+            if (this.meStatusChanged && !this.isOnline) {
+                if (autoPull) {
+                    this.getAEFluidHandler().clearConfig();
+                } else {
+                    for (int i = 0; i < CONFIG_SIZE; i++) {
+                        getAEFluidHandler().getInventory()[i].setStack(null);
+                    }
+                }
+            }
         }
     }
 

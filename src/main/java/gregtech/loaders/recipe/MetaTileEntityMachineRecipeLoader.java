@@ -340,7 +340,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(720))
                 .output(ENERGY_OUTPUT_HATCH[LuV])
                 .scannerResearch(b -> b
-                        .researchStack(ENERGY_OUTPUT_HATCH[IV].getStackForm())
+                        .researchStack(ENERGY_OUTPUT_HATCH[IV])
                         .EUt(VA[EV]))
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
 
@@ -354,7 +354,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(1440))
                 .output(ENERGY_OUTPUT_HATCH[ZPM])
                 .stationResearch(b -> b
-                        .researchStack(ENERGY_OUTPUT_HATCH[LuV].getStackForm())
+                        .researchStack(ENERGY_OUTPUT_HATCH[LuV])
                         .CWUt(8))
                 .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
@@ -368,7 +368,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(2880))
                 .output(ENERGY_OUTPUT_HATCH[UV])
                 .stationResearch(b -> b
-                        .researchStack(ENERGY_OUTPUT_HATCH[ZPM].getStackForm())
+                        .researchStack(ENERGY_OUTPUT_HATCH[ZPM])
                         .CWUt(64)
                         .EUt(VA[ZPM]))
                 .duration(800).EUt(VA[UV]).buildAndRegister();
@@ -383,7 +383,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(5760))
                 .output(ENERGY_OUTPUT_HATCH[UHV])
                 .stationResearch(b -> b
-                        .researchStack(ENERGY_OUTPUT_HATCH[UV].getStackForm())
+                        .researchStack(ENERGY_OUTPUT_HATCH[UV])
                         .CWUt(128)
                         .EUt(VA[UV]))
                 .duration(1000).EUt(VA[UHV]).buildAndRegister();
@@ -468,7 +468,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(720))
                 .output(ENERGY_INPUT_HATCH[LuV])
                 .scannerResearch(b -> b
-                        .researchStack(ENERGY_INPUT_HATCH[IV].getStackForm())
+                        .researchStack(ENERGY_INPUT_HATCH[IV])
                         .EUt(VA[EV]))
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
 
@@ -482,7 +482,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(1440))
                 .output(ENERGY_INPUT_HATCH[ZPM])
                 .stationResearch(b -> b
-                        .researchStack(ENERGY_INPUT_HATCH[LuV].getStackForm())
+                        .researchStack(ENERGY_INPUT_HATCH[LuV])
                         .CWUt(8))
                 .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
@@ -496,7 +496,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(2880))
                 .output(ENERGY_INPUT_HATCH[UV])
                 .stationResearch(b -> b
-                        .researchStack(ENERGY_INPUT_HATCH[ZPM].getStackForm())
+                        .researchStack(ENERGY_INPUT_HATCH[ZPM])
                         .CWUt(64)
                         .EUt(VA[ZPM]))
                 .duration(800).EUt(VA[UV]).buildAndRegister();
@@ -511,7 +511,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(5760))
                 .output(ENERGY_INPUT_HATCH[UHV])
                 .stationResearch(b -> b
-                        .researchStack(ENERGY_INPUT_HATCH[UV].getStackForm())
+                        .researchStack(ENERGY_INPUT_HATCH[UV])
                         .CWUt(128)
                         .EUt(VA[UV]))
                 .duration(1000).EUt(VA[UHV]).buildAndRegister();

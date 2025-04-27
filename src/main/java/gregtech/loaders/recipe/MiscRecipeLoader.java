@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
+import gregtech.api.items.OreDictNames;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.ModHandler;
@@ -253,7 +254,7 @@ public class MiscRecipeLoader {
                 .inputs(ELECTRIC_MOTOR_LuV.getStackForm(2))
                 .input(screw, HSSS, 8)
                 .outputs(QUANTUM_CHESTPLATE_ADVANCED.getStackForm())
-                .scannerResearch(GRAVITATION_ENGINE.getStackForm())
+                .scannerResearch(GRAVITATION_ENGINE)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(VA[HV])
@@ -417,7 +418,7 @@ public class MiscRecipeLoader {
         MIXER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.DIRT))
                 .input(dust, Wood, 2)
-                .inputs(new ItemStack(Blocks.SAND, 4))
+                .input(OreDictNames.sand.name(), 4)
                 .fluidInputs(Water.getFluid(1000))
                 .output(FERTILIZER, 4)
                 .duration(100).EUt(VA[LV]).buildAndRegister();
