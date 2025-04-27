@@ -61,6 +61,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -958,5 +959,10 @@ public class GTUtility {
 
         // Sanity check to make sure we don't accidentally create full-amp recipes.
         return Math.min(voltage, GTValues.VA[workingTier]);
+    }
+
+    public static int combineRGB(@Range(from = 0, to = 255) int r, @Range(from = 0, to = 255) int g,
+                                 @Range(from = 0, to = 255) int b) {
+        return (r << 16) | (g << 8) | b;
     }
 }

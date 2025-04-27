@@ -48,6 +48,7 @@ import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 import stanhebben.zenscript.annotations.OperatorType;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
@@ -890,6 +891,20 @@ public class Material implements Comparable<Material> {
         public Builder color(int color) {
             this.materialInfo.color = color;
             return this;
+        }
+
+        /**
+         * Set the color of this Material.
+         * Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called, where it will be a weighted average of
+         * the components of the Material.
+         *
+         * @param r the red component of the color
+         * @param g the green component of the color
+         * @param b the blue component of the color
+         */
+        public Builder color(@Range(from = 0, to = 255) int r, @Range(from = 0, to = 255) int g,
+                             @Range(from = 0, to = 255) int b) {
+            return color(GTUtility.combineRGB(r, g, b));
         }
 
         public Builder colorAverage() {
