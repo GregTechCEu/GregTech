@@ -5,7 +5,6 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 import org.jetbrains.annotations.Nullable;
 import zone.rong.mixinbooter.IEarlyMixinLoader;
@@ -16,7 +15,6 @@ import java.util.Map;
 
 @Name("GregTechMixinLoadingPlugin")
 @MCVersion(ForgeVersion.mcVersion)
-@TransformerExclusions("gregtech.mixins.")
 @SortingIndex(1001)
 public class GregTechMixinLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
