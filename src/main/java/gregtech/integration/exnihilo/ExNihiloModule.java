@@ -108,6 +108,7 @@ public class ExNihiloModule extends IntegrationSubmodule {
         IntegrationModule.logger.info("Registering Ex Nihilo Compat Recipes");
         ExNihiloRecipes.registerHandlers();
         ExNihiloRecipes.registerGTRecipes();
+        ExNihiloRecipes.registerCraftingRecipes();
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

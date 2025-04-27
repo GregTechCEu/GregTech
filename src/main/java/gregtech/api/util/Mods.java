@@ -39,6 +39,7 @@ public enum Mods {
     CraftTweaker(Names.CRAFT_TWEAKER),
     EnderCore(Names.ENDER_CORE),
     EnderIO(Names.ENDER_IO),
+    ExNihiloCreatio(Names.EX_NIHILO_CREATIO),
     ExtraBees(Names.EXTRA_BEES),
     ExtraTrees(Names.EXTRA_TREES),
     ExtraUtilities2(Names.EXTRA_UTILITIES2),
@@ -75,7 +76,6 @@ public enum Mods {
     XaerosMinimap(Names.XAEROS_MINIMAP),
     Vintagium(Names.VINTAGIUM),
     Alfheim(Names.ALFHEIM),
-    ExNihiloCreatio(Names.EX_NIHILO_CREATIO),
 
     // Special Optifine handler, but consolidated here for simplicity
     Optifine(null) {

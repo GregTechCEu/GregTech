@@ -75,7 +75,7 @@ public class ExNihiloPebble extends Item implements IHasModel {
             }
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
-        return new ActionResult<>(EnumActionResult.FAIL, stack);
+        return new ActionResult<>(EnumActionResult.PASS, stack);
     }
 
     @Override
