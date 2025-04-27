@@ -1872,14 +1872,14 @@ gregtech.material.enriched_naquadah_sulfate=濃縮ナクアダ硫酸塩
 gregtech.material.naquadria_sulfate=ナクアドリア硫酸塩
 gregtech.material.pyrochlore=パイロクロア
 gregtech.material.rtm_alloy=RTM合金
-gregtech.material.ilmenite_slag=Ilmenite Slag
-gregtech.material.zircon=Zircon
-gregtech.material.zirconia=Zirconia
-gregtech.material.zirconium_tetrachloride=Zirconium Tetrachloride
-gregtech.material.hafnia=Hafnia
-gregtech.material.hafnium_tetrachloride=Hafnium Tetrachloride
-gregtech.material.zircaloy_4=Zircaloy-4
-gregtech.material.inconel_718=Inconel-718
+gregtech.material.ilmenite_slag=チタン鉄鉱鉱滓
+gregtech.material.zircon=ジルコン
+gregtech.material.zirconia=ジルコニア
+gregtech.material.zirconium_tetrachloride=四塩化ジルコニウム
+gregtech.material.hafnia=ハフニア
+gregtech.material.hafnium_tetrachloride=四塩化ハフニウム
+gregtech.material.zircaloy_4=ジルカロイ-4
+gregtech.material.inconel_718=インコネル-718
 
 
 # Organic Chemistry Materials
@@ -2093,11 +2093,11 @@ gregtech.material.acidic_naquadria_solution=酸性ナクアドリア溶液
 gregtech.material.naquadria_waste=ナクアドリア残留物
 gregtech.material.lapotron=ラポトロン
 gregtech.material.uu_matter=UU-マター
-gregtech.material.bauxite_slurry=Bauxite Slurry
-gregtech.material.cracked_bauxite_slurry=Cracked Bauxite Slurry
-gregtech.material.bauxite_sludge=Bauxite Sludge
-gregtech.material.decalcified_bauxite_sludge=Decalcified Bauxite Sludge
-gregtech.material.bauxite_slag=Bauxite Slag
+gregtech.material.bauxite_slurry=ボーキサイト泥漿
+gregtech.material.cracked_bauxite_slurry=改質したボーキサイト泥漿
+gregtech.material.bauxite_sludge=ボーキサイト泥
+gregtech.material.decalcified_bauxite_sludge=脱灰したボーキサイト泥
+gregtech.material.bauxite_slag=ボーキサイト鉱滓
 
 
 # Second Degree Materials
@@ -2508,9 +2508,9 @@ behavior.tricorder.debug_machine_invalid_null=無効! MetaTileEntity == null!
 behavior.tricorder.debug_cpu_load=CPUの平均ロード時間は ~%sns (%s tickの間集計) 最長ロード時間は %sns。
 behavior.tricorder.debug_cpu_load_seconds=これは %s秒
 behavior.tricorder.debug_lag_count=サーバーで %s 件のラグスパイク警告が発生 (%smsを超過した全てのオブジェクトが対象)
-behavior.tricorder.mte_owner=Owner: %s
-behavior.tricorder.mte_owner_offline=Owner is Offline or Offworld!
-behavior.tricorder.mte_owner_null=This wasn't placed by a player!
+behavior.tricorder.mte_owner=オーナー: %s
+behavior.tricorder.mte_owner_offline=オーナーはオフラインかワールドに参加していません！
+behavior.tricorder.mte_owner_null=これはプレーヤーによって設置されていません！
 behavior.tricorder.quantum_controller.usage=Using %s EU/t (%s)
 behavior.tricorder.quantum_controller.connected_items=Connected item storages: %s
 behavior.tricorder.quantum_controller.connected_fluids=Connected fluid storages: %s
@@ -5937,12 +5937,12 @@ gregtech.command.copy.copied_and_click=をクリップボードにコピーし�
 gregtech.command.copy.click_to_copy=クリックでコピー
 gregtech.command.copy.copied_start=クリップボードに [
 gregtech.command.copy.copied_end=] をコピーしました
-gregtech.command.datafix.usage=Usage: /gregtech datafix <bqu>
-gregtech.command.datafix.bqu.usage=Usage: /gregtech datafix bqu [confirm]
-gregtech.command.datafix.bqu.backup=Backup your save and BQu config dir, then rerun with the 'confirm' arg
-gregtech.command.datafix.bqu.start=Started Migrating BQu Quest Database...
-gregtech.command.datafix.bqu.complete=Finished Migrating BQu Quest Database
-gregtech.command.datafix.bqu.failed=Failed Migrating BQu Quest Database. Restore your backups!
+gregtech.command.datafix.usage=使い方: /gregtech datafix <bqu>
+gregtech.command.datafix.bqu.usage=使い方: /gregtech datafix bqu [confirm]
+gregtech.command.datafix.bqu.backup=セーブデータとBQuのcfgをバックアップし、'confirm'を再実行してください。
+gregtech.command.datafix.bqu.start=BQu Questデータベースの移行を開始...
+gregtech.command.datafix.bqu.complete=BQu Questデータベースの移行が修了しました
+gregtech.command.datafix.bqu.failed=BQu Questデータベースの移行に失敗しました。バックアップから復元してください!
 
 gregtech.chat.cape=§5おめでとうございます: 新しいマントを解放できました! 使用するためにはターミナルのマントセレクタのアプリをご覧ください.§r
 
