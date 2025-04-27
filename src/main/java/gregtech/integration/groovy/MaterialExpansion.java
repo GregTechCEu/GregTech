@@ -142,7 +142,8 @@ public class MaterialExpansion {
         return addScaledToolEnchantment(m, enchantment, level, 0);
     }
 
-    public static Material addScaledToolEnchantment(Material m, Enchantment enchantment, int level, double levelGrowth) {
+    public static Material addScaledToolEnchantment(Material m, Enchantment enchantment, int level,
+                                                    double levelGrowth) {
         if (checkFrozen("add tool enchantment")) return m;
         MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
@@ -152,13 +153,14 @@ public class MaterialExpansion {
     }
 
     public static Material setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
-                                    boolean shouldIngoreCraftingTools) {
+                                        boolean shouldIngoreCraftingTools) {
         return setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, 0, 0, shouldIngoreCraftingTools);
     }
 
     public static Material setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
-                                    int enchantability, boolean shouldIngoreCraftingTools) {
-        return setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, enchantability, 0, shouldIngoreCraftingTools);
+                                        int enchantability, boolean shouldIngoreCraftingTools) {
+        return setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, enchantability, 0,
+                shouldIngoreCraftingTools);
     }
 
     public static Material setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability) {
@@ -166,18 +168,18 @@ public class MaterialExpansion {
     }
 
     public static Material setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
-                                    int enchantability) {
+                                        int enchantability) {
         return setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, enchantability, 0, false);
     }
 
     public static Material setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
-                                    int enchantability, int toolHarvestLevel) {
+                                        int enchantability, int toolHarvestLevel) {
         return setToolStats(m, toolSpeed, toolAttackDamage, toolDurability, enchantability, toolHarvestLevel, false);
     }
 
     public static Material setToolStats(Material m, float toolSpeed, float toolAttackDamage, int toolDurability,
-                                    int enchantability, int toolHarvestLevel,
-                                    boolean shouldIngoreCraftingTools) {
+                                        int enchantability, int toolHarvestLevel,
+                                        boolean shouldIngoreCraftingTools) {
         if (checkFrozen("set tool stats")) return m;
         MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
