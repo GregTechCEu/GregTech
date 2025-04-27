@@ -32,8 +32,8 @@ public class MetaTileEntitySieve extends SimpleMachineMetaTileEntity {
     protected ModularUI.Builder createGuiTemplate(@NotNull EntityPlayer player) {
         ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 176, 192)
                 .label(5, 5, this.getMetaFullName())
-                .slot(this.importItems, 0, 17, 25, GuiTextures.STRING_SLOT_OVERLAY)
-                .slot(this.importItems, 1, 35, 25, GuiTextures.SLOT)
+                .slot(this.importItems, 0, 17, 25, GuiTextures.SLOT)
+                .slot(this.importItems, 1, 35, 25, GuiTextures.SLOT, GuiTextures.STRING_SLOT_OVERLAY)
                 .progressBar(workable::getProgressPercent, 25, 50, 20, 20,
                         GuiTextures.PROGRESS_BAR_SIFT, ProgressWidget.MoveType.VERTICAL_INVERTED,
                         workable.getRecipeMap())

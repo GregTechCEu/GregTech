@@ -44,7 +44,7 @@ public class MetaTileEntitySteamSieve extends SteamMetaTileEntity {
                 192)
                         .label(6, 6, this.getMetaFullName()).shouldColor(false)
                         .slot(this.importItems, 0, 17, 43, GuiTextures.SLOT_STEAM.get(isHighPressure))
-                        .slot(this.importItems, 1, 35, 43, GuiTextures.SLOT_STEAM.get(isHighPressure))
+                        .slot(this.importItems, 1, 35, 43, GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.STRING_SLOT_OVERLAY)
                         .progressBar(workableHandler::getProgressPercent, 25, 68, 20, 20,
                                 ExNihiloModule.PROGRESS_BAR_SIFTER_STEAM.get(isHighPressure),
                                 ProgressWidget.MoveType.VERTICAL_INVERTED, workableHandler.getRecipeMap())
