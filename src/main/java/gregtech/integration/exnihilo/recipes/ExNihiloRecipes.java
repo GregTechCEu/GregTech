@@ -33,8 +33,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static gregtech.api.recipes.RecipeMaps.COMPRESSOR_RECIPES;
-import static gregtech.api.recipes.RecipeMaps.EXTRACTOR_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.stick;
 import static gregtech.api.unification.ore.OrePrefix.stone;
@@ -138,6 +137,44 @@ public class ExNihiloRecipes {
                 .outputs(OreDictUnifier.get(stone, GraniteRed, 1))
                 .EUt(4)
                 .duration(40)
+                .buildAndRegister();
+
+        // Crushed stones
+        FORGE_HAMMER_RECIPES.recipeBuilder()
+                .input(Blocks.SAND)
+                .output(ModBlocks.dust)
+                .EUt(16)
+                .duration(10)
+                .buildAndRegister();
+        FORGE_HAMMER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.STONE, 1, 1))
+                .output(ModBlocks.crushedGranite)
+                .EUt(16)
+                .duration(10)
+                .buildAndRegister();
+        FORGE_HAMMER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.STONE, 1, 3))
+                .output(ModBlocks.crushedDiorite)
+                .EUt(16)
+                .duration(10)
+                .buildAndRegister();
+        FORGE_HAMMER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.STONE, 1, 5))
+                .output(ModBlocks.crushedAndesite)
+                .EUt(16)
+                .duration(10)
+                .buildAndRegister();
+        FORGE_HAMMER_RECIPES.recipeBuilder()
+                .input(Blocks.NETHERRACK)
+                .output(ModBlocks.netherrackCrushed)
+                .EUt(16)
+                .duration(10)
+                .buildAndRegister();
+        FORGE_HAMMER_RECIPES.recipeBuilder()
+                .input(Blocks.END_STONE)
+                .output(ModBlocks.endstoneCrushed)
+                .EUt(16)
+                .duration(10)
                 .buildAndRegister();
 
         // Meshes
