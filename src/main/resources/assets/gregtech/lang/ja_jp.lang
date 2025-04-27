@@ -44,7 +44,7 @@ death.attack.screwdriver_lv=%s は %s に高速でねじられた。
 
 enchantment.disjunction=ディスジャンクション
 
-gregtech.jei.remove_recipe.tooltip=Copies a %s Snippet to Remove this Recipe
+gregtech.jei.remove_recipe.tooltip=このレシピを削除するための%s用スニペットをコピー
 gregtech.jei.ct_recipe.tooltip=CraftTweaker Recipe
 gregtech.jei.gs_recipe.tooltip=GroovyScript Recipe
 
@@ -79,8 +79,8 @@ gregtech.top.transform_up=昇圧
 gregtech.top.transform_down=降圧
 gregtech.top.transform_input=入力:
 gregtech.top.transform_output=出力:
-gregtech.top.steam_heating_up=Heating Up:
-gregtech.top.steam_cooling_down=Cooling Down
+gregtech.top.steam_heating_up=加熱:
+gregtech.top.steam_cooling_down=冷却中
 gregtech.top.steam_no_water=水がない
 
 gregtech.top.convert_eu=§eEU§rを§cFE§rに変換中
@@ -138,13 +138,13 @@ option.gregtech.transformer=変圧器
 option.gregtech.workable=進捗
 
 gregtech.waila.energy_stored=エネルギー: %s EU / %s EU
-gregtech.waila.energy_input=Input: %s EU/t
-gregtech.waila.energy_output=Output: %s EU/t
+gregtech.waila.energy_input=入力: %s EU/t
+gregtech.waila.energy_output=出力: %s EU/t
 gregtech.waila.progress_idle=停止中
 gregtech.waila.progress_tick=進捗: %d t / %d t
 gregtech.waila.progress_sec=進捗: %d s / %d s
 gregtech.waila.progress_computation=計算力: %s / %s
-gregtech.waila.active_transformer.average_io=Average I/O: %s EU/t
+gregtech.waila.active_transformer.average_io=平均入出力: %s EU/t
 
 gregtech.multiblock.title=マルチブロックの構造
 gregtech.multiblock.primitive_blast_furnace.bronze.description=初歩的な溶鉱炉(PBF)は序盤にスチールを得るためのマルチブロック機械です。 動作は遅いですが、最初の高圧蒸気機械を作るためのスチールを提供します。
@@ -1395,11 +1395,11 @@ cover.ender_fluid_link.private.tooltip.enabled=公開タンクモードに切り
 cover.ender_fluid_link.incomplete_hex=入力した色が不完全です!/n8桁の16進数すべてが入力されると反映されます。/nGUIを閉じると編集内容が失われます!
 cover.ender_fluid_link.transfer_unit=L/t
 
-cover.generic.ender.known_channels=Known Channels
-cover.generic.ender.open_selector=Open Entry Selector
-cover.generic.ender.set_description.tooltip=Set Description
-cover.generic.ender.set_description.title=Set Description [%s]
-cover.generic.ender.delete_entry=Delete Entry
+cover.generic.ender.known_channels=既知のチャンネル
+cover.generic.ender.open_selector=項目選択画面を開く
+cover.generic.ender.set_description.tooltip=説明を追加
+cover.generic.ender.set_description.title=説明 [%s]
+cover.generic.ender.delete_entry=項目を消去
 
 cover.generic.advanced_detector.latched=ラッチ
 cover.generic.advanced_detector.continuous=連続
@@ -4199,8 +4199,8 @@ gregtech.machine.battery_buffer.max.16.name=MAX-V 16スロット蓄電器
 
 gregtech.battery_buffer.average_input=入力平均: %s EU/t
 gregtech.battery_buffer.average_output=出力平均: %s EU/t
-gregtech.battery_buffer.average_input.top=Input: %s
-gregtech.battery_buffer.average_output.top=Output: %s
+gregtech.battery_buffer.average_input.top=入力: %s
+gregtech.battery_buffer.average_output.top=出力: %s
 
 # Transformers
 gregtech.machine.transformer.description=異なる電圧間でエネルギーを輸送する
@@ -4944,9 +4944,9 @@ gregtech.machine.active_transformer.tooltip3=
 gregtech.machine.active_transformer.tooltip3.5=レーザー§7を用いることで驚異の超距離電力輸送が可能。
 gregtech.multiblock.active_transformer.description=大型変圧器は任意の電圧及び任意の数のエナジーハッチとダイナモハッチを組み込むことができるマルチブロックです。レーザー照射ハッチとレーザー照準ハッチによって大型変圧器同士を連携させると、長距離の無損失電力輸送ができます。 レーザーは直線でなければならず、そうでなければ電力は輸送されません。
 gregtech.machine.active_transformer.routing=分配中
-gregtech.multiblock.active_transformer.max_in=Max Input: %s
-gregtech.multiblock.active_transformer.max_out=Max Output: %s
-gregtech.multiblock.active_transformer.average_io=Average I/O: %s
+gregtech.multiblock.active_transformer.max_in=最大入力: %s
+gregtech.multiblock.active_transformer.max_out=最大出力: %s
+gregtech.multiblock.active_transformer.average_io=平均入出力: %s
 
 gregtech.machine.research_station.name=研究ステーション
 gregtech.machine.research_station.tooltip.1=単なるマルチブロックスキャナーではない
@@ -5466,9 +5466,9 @@ gregtech.machine.me.import_copy_settings=設定をデータスティックに保
 gregtech.machine.me.import_paste_settings=データスティックの設定を反映しました
 gregtech.machine.me.item_import.data_stick.name=§oME 搬入バス設定データ
 gregtech.machine.me.fluid_import.data_stick.name=§oME 搬出バス設定データ
-gregtech.machine.me.extra_connections.enabled=Allow connections from all sides
-gregtech.machine.me.extra_connections.disabled=Allow connection only on front face
-gregtech.machine.me.extra_connections.tooltip=Right-click with wire cutters to allow connecting to AE2 on all sides
+gregtech.machine.me.extra_connections.enabled=全ての面で接続
+gregtech.machine.me.extra_connections.disabled=前面でのみ接続
+gregtech.machine.me.extra_connections.tooltip=ワイヤーカットで右クリックすると、全ての面でAE2のケーブルと接続できるようになる。
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§a入力電圧: §f%,d EU/t (%s§f)
