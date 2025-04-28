@@ -9,7 +9,6 @@ import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.FileUtility;
 import gregtech.api.util.Mods;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -27,7 +26,6 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -35,7 +33,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -93,8 +90,6 @@ public class ExNihiloModule extends IntegrationSubmodule {
         getLogger().info("Registering Ex Nihilo Compat Items, Blocks, and Machines");
         GTPebbles = new ExNihiloPebble();
         registerMetaTileEntities();
-        FileUtility.extractJarFiles(String.format("/assets/%s/%s/%s", GTValues.MODID, "integration", "exnihilo"),
-                new File(Loader.instance().getConfigDir(), "gregtech"), false);
     }
 
     @Override
@@ -106,9 +101,9 @@ public class ExNihiloModule extends IntegrationSubmodule {
     @SubscribeEvent()
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         IntegrationModule.logger.info("Registering Ex Nihilo Compat Recipes");
-        ExNihiloRecipes.registerHandlers();
         ExNihiloRecipes.registerGTRecipes();
         ExNihiloRecipes.registerCraftingRecipes();
+        SieveDrops.addRecipes();
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

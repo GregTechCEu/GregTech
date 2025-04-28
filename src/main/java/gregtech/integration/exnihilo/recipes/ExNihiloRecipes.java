@@ -1,14 +1,10 @@
 package gregtech.integration.exnihilo.recipes;
 
-
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.properties.OreProperty;
-import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.MetaBlocks;
@@ -42,28 +38,6 @@ import static gregtech.integration.exnihilo.ExNihiloModule.*;
 import static gregtech.loaders.recipe.CraftingComponent.*;
 
 public class ExNihiloRecipes {
-
-    public static void registerHandlers() {
-        ExNihiloModule.oreChunk.addProcessingHandler(PropertyKey.ORE, ExNihiloRecipes::processChunk);
-        ExNihiloModule.oreEnderChunk.addProcessingHandler(PropertyKey.ORE, ExNihiloRecipes::processChunk);
-        ExNihiloModule.oreNetherChunk.addProcessingHandler(PropertyKey.ORE, ExNihiloRecipes::processChunk);
-    }
-
-    private static void processChunk(OrePrefix orePrefix, Material material, OreProperty oreProperty) {
-        Material smeltingMaterial = material;
-        ItemStack smeltStack = ItemStack.EMPTY;
-        if (oreProperty.getDirectSmeltResult() != null) {
-            smeltingMaterial = oreProperty.getDirectSmeltResult();
-        }
-        if (smeltingMaterial.hasProperty(PropertyKey.INGOT)) {
-            smeltStack = OreDictUnifier.get(OrePrefix.ingot, smeltingMaterial);
-        } else if (smeltingMaterial.hasProperty(PropertyKey.GEM)) {
-            smeltStack = OreDictUnifier.get(OrePrefix.gem, smeltingMaterial);
-        }
-        if (!smeltStack.isEmpty() && !material.hasProperty(PropertyKey.BLAST)) {
-            ModHandler.addSmeltingRecipe(new UnificationEntry(orePrefix, material), smeltStack);
-        }
-    }
 
     public static void registerGTRecipes() {
         // Machine Recipes
@@ -192,7 +166,6 @@ public class ExNihiloRecipes {
                     'T', new UnificationEntry(stick, Aluminium),
                     'S', new ItemStack(Items.STRING));
         }
-
     }
 
     // Has to be done in init phase because of ExNi registering outside the Registry event
@@ -228,7 +201,8 @@ public class ExNihiloRecipes {
                 if (FluidUtil.getFluidContained(recipe.getFluid()) != null) {
                     for (List<ItemStack> listStack : recipe.getInputs()) {
                         for (ItemStack stack : listStack) {
-                            if (EXTRACTOR_RECIPES.findRecipe(4, Collections.singletonList(stack), new ArrayList<>(), true) !=
+                            if (EXTRACTOR_RECIPES.findRecipe(4, Collections.singletonList(stack), new ArrayList<>(),
+                                    true) !=
                                     null)
                                 continue;
                             EXTRACTOR_RECIPES.recipeBuilder()
