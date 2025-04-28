@@ -1,7 +1,7 @@
 package gregtech.client.model.customtexture;
 
 import gregtech.api.util.GTLog;
-import gregtech.asm.hooks.CTMHooks;
+import gregtech.client.utils.CTMHooks;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BlockPart;
@@ -26,7 +26,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 @SideOnly(Side.CLIENT)

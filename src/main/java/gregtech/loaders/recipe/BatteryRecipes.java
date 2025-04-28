@@ -360,7 +360,7 @@ public class BatteryRecipes {
                 .input(bolt, Naquadah, 16)
                 .fluidInputs(SolderingAlloy.getFluid(L * 5))
                 .output(ENERGY_LAPOTRONIC_ORB_CLUSTER)
-                .scannerResearch(ENERGY_LAPOTRONIC_ORB.getStackForm())
+                .scannerResearch(ENERGY_LAPOTRONIC_ORB)
                 .buildAndRegister();
 
         // Energy Module
@@ -381,7 +381,7 @@ public class BatteryRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 10))
                 .output(ENERGY_MODULE)
                 .stationResearch(b -> b
-                        .researchStack(ENERGY_LAPOTRONIC_ORB_CLUSTER.getStackForm())
+                        .researchStack(ENERGY_LAPOTRONIC_ORB_CLUSTER)
                         .CWUt(16))
                 .buildAndRegister();
 
@@ -404,7 +404,7 @@ public class BatteryRecipes {
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .output(ENERGY_CLUSTER)
                 .stationResearch(b -> b
-                        .researchStack(ENERGY_MODULE.getStackForm())
+                        .researchStack(ENERGY_MODULE)
                         .CWUt(96)
                         .EUt(VA[ZPM]))
                 .buildAndRegister();
@@ -429,7 +429,7 @@ public class BatteryRecipes {
                 .fluidInputs(Naquadria.getFluid(L * 18))
                 .output(ULTIMATE_BATTERY)
                 .stationResearch(b -> b
-                        .researchStack(ENERGY_CLUSTER.getStackForm())
+                        .researchStack(ENERGY_CLUSTER)
                         .CWUt(144)
                         .EUt(VA[UHV]))
                 .buildAndRegister();
