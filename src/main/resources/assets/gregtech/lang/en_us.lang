@@ -2141,7 +2141,7 @@ gregtech.material.cracked_bauxite_slurry=Cracked Bauxite Slurry
 gregtech.material.bauxite_sludge=Bauxite Sludge
 gregtech.material.decalcified_bauxite_sludge=Decalcified Bauxite Sludge
 gregtech.material.bauxite_slag=Bauxite Slag
-
+gregtech.material.sewage=Sewage
 
 # Second Degree Materials
 gregtech.material.glass=Glass

@@ -188,7 +188,6 @@ public class GTGuiTextures {
             18, 18 * 3, 18, 18, true);
     public static final UITexture[] CONVEYOR_MODE_OVERLAY = slice("textures/gui/overlay/conveyor_mode_overlay.png",
             18, 18 * 2, 18, 18, true);
-
     public static final UITexture[] TRANSFER_MODE_OVERLAY = slice("textures/gui/overlay/transfer_mode_overlay.png",
             18, 18 * 4, 18, 18, true);
 
@@ -287,6 +286,7 @@ public class GTGuiTextures {
     public static final UITexture IN_SLOT_OVERLAY_STEEL = fullImage("textures/gui/overlay/in_slot_overlay_steel.png");
     public static final UITexture INGOT_OVERLAY = fullImage("textures/gui/overlay/ingot_overlay.png", true);
     public static final UITexture INT_CIRCUIT_OVERLAY = fullImage("textures/gui/overlay/int_circuit_overlay.png", true);
+    public static final UITexture PATTERN_OVERLAY = fullImage("textures/gui/overlay/pattern_overlay.png", true);
     public static final UITexture LENS_OVERLAY = fullImage("textures/gui/overlay/lens_overlay.png", true);
     public static final UITexture LIGHTNING_OVERLAY_1 = fullImage("textures/gui/overlay/lightning_overlay_1.png", true);
     public static final UITexture LIGHTNING_OVERLAY_2 = fullImage("textures/gui/overlay/lightning_overlay_2.png", true);
@@ -350,6 +350,7 @@ public class GTGuiTextures {
             .build();
 
     // BUTTON OVERLAYS
+    public static final UITexture EXPORT_OVERLAY = fullImage("textures/gui/widget/pattern_export.png");
     public static final UITexture BUTTON_DUAL_OUTPUT = fullImage("textures/gui/widget/button_dual_output_overlay.png");
     public static final UITexture BUTTON_DUAL_COLLAPSE = fullImage("textures/gui/widget/button_dual_collapse_overlay.png");
 

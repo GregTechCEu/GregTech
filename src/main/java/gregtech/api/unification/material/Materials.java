@@ -700,6 +700,7 @@ public class Materials {
     public static Material BauxiteSludge;
     public static Material DecalcifiedBauxiteSludge;
     public static Material BauxiteSlag;
+    public static Material Sewage;
 
     /**
      * Second Degree Compounds

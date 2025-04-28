@@ -2138,7 +2138,7 @@ gregtech.material.cracked_bauxite_slurry=裂化铝土浆液
 gregtech.material.bauxite_sludge=铝土泥渣
 gregtech.material.decalcified_bauxite_sludge=脱钙铝土泥渣
 gregtech.material.bauxite_slag=铝土矿渣
-
+gregtech.material.sewage=污水
 
 # Second Degree Materials
 gregtech.material.glass=玻璃

@@ -12,6 +12,8 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 import gtqt.common.items.behaviors.ProgrammableCircuit;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityDualHatch;
+import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEPatternProvider;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -69,6 +71,33 @@ public class CoverProgrammableHatch extends CoverBase implements CoverWithUI, IT
                 }
             }
             else if (mte instanceof MetaTileEntityDualHatch itemBus)
+            {
+                IItemHandlerModifiable importItems = itemBus.getImportItems();
+
+                for(int i=0;i<importItems.getSlots();i++)
+                {
+                    ItemStack itemStack = importItems.getStackInSlot(i);
+                    if(itemStack!=ItemStack.EMPTY&&isItemValid(itemStack))
+                    {
+                        if(getProgrammableCircuit(itemStack).getName().equals("programmable_circuit")) {
+
+                            itemBus.setGhostCircuitConfig(getProgrammableCircuit(itemStack).getType());
+                            importItems.extractItem(i,itemStack.getCount(),false);
+                            if(itemBus.getController() instanceof RecipeMapMultiblockController controller)
+                            {
+                                if(controller.getOutputInventory()==null)return;
+                                for (int slot = 0; slot < controller.getOutputInventory().getSlots(); slot++) {
+                                    if (controller.getOutputInventory().getStackInSlot(slot).isEmpty()) {
+                                        controller.getOutputInventory().setStackInSlot(slot, itemStack);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (mte instanceof MetaTileEntityMEPatternProvider itemBus)
             {
                 IItemHandlerModifiable importItems = itemBus.getImportItems();
 

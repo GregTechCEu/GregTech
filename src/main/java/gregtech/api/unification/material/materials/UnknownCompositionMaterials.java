@@ -657,5 +657,11 @@ public class UnknownCompositionMaterials {
                 .dust(1)
                 .color(0x0C0550).iconSet(SAND)
                 .build();
+
+        //污水
+        Sewage = new Material.Builder(1656, gregtechId("sewage"))
+                .fluid()
+                .color(0x7D7D7D)
+                .build();
     }
 }

@@ -1198,6 +1198,7 @@ public final class RecipeMaps {
      * 				.input(OrePrefix.crushed, Materials.Aluminum)
      * 				.circuitMeta(2))
      * 				.fluidInputs(Materials.Water.getFluid(100))
+     * 			    .fluidOutputs(Materials.Sewage.getFluid(100))
      * 				.output(OrePrefix.crushedPurified, Materials.Aluminum)
      * 				.duration(8).EUt(4).buildAndRegister();
      * </pre>
@@ -1211,6 +1212,7 @@ public final class RecipeMaps {
                     .itemInputs(2)
                     .itemOutputs(3)
                     .fluidInputs(1)
+                    .fluidOutputs(1)
                     .itemSlotOverlay(GuiTextures.CRUSHED_ORE_OVERLAY, false)
                     .itemSlotOverlay(GuiTextures.DUST_OVERLAY, true)
                     .progressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.CIRCULAR)

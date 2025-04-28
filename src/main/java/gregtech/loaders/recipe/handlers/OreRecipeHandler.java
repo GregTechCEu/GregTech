@@ -24,6 +24,7 @@ import java.util.List;
 
 import static gregtech.api.GTValues.LV;
 import static gregtech.api.GTValues.VA;
+import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.HIGH_SIFTER_OUTPUT;
 
 public class OreRecipeHandler {
@@ -50,6 +51,18 @@ public class OreRecipeHandler {
         OrePrefix.crushedCentrifuged.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processCrushedCentrifuged);
         OrePrefix.dustImpure.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processDirtyDust);
         OrePrefix.dustPure.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processPureDust);
+
+        //污水离心
+        RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
+                .fluidInputs(Materials.Sewage.getFluid(4000))
+                .fluidOutputs(Materials.Water.getFluid(4000))
+                .output(OrePrefix.dust,Stone)
+                .chancedOutput(OrePrefix.dustTiny,Iron,5000,500)
+                .chancedOutput(OrePrefix.dustTiny,Tin,5000,500)
+                .chancedOutput(OrePrefix.dustTiny,Copper,5000,500)
+                .duration(100)
+                .EUt(VA[LV])
+                .buildAndRegister();
     }
 
     private static void processMetalSmelting(OrePrefix crushedPrefix, Material material, OreProperty property) {
@@ -155,24 +168,27 @@ public class OreRecipeHandler {
                 .input(crushedPrefix, material)
                 .circuitMeta(2)
                 .fluidInputs(Materials.Water.getFluid(100))
+                .fluidOutputs(Materials.Sewage.getFluid(100))
                 .outputs(crushedPurifiedOre)
                 .duration(8).EUt(4).buildAndRegister();
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
                 .fluidInputs(Materials.Water.getFluid(1000))
+                .fluidOutputs(Materials.Sewage.getFluid(1000))
                 .circuitMeta(1)
                 .outputs(crushedPurifiedOre)
                 .chancedOutput(OrePrefix.dust, byproductMaterial, 3333, 0)
-                .output(OrePrefix.dust, Materials.Stone)
+                .output(OrePrefix.dust, Stone)
                 .buildAndRegister();
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
                 .fluidInputs(Materials.DistilledWater.getFluid(100))
+                .fluidOutputs(Materials.Sewage.getFluid(100))
                 .outputs(crushedPurifiedOre)
                 .chancedOutput(OrePrefix.dust, byproductMaterial, 3333, 0)
-                .output(OrePrefix.dust, Materials.Stone)
+                .output(OrePrefix.dust, Stone)
                 .duration(200)
                 .buildAndRegister();
 
@@ -181,7 +197,7 @@ public class OreRecipeHandler {
                 .outputs(crushedCentrifugedOre)
                 .chancedOutput(OrePrefix.dust, property.getOreByProduct(1, material), property.getByProductMultiplier(),
                         3333, 0)
-                .output(OrePrefix.dust, Materials.Stone)
+                .output(OrePrefix.dust, Stone)
                 .buildAndRegister();
 
         if (property.getWashedIn().getKey() != null) {
@@ -194,7 +210,7 @@ public class OreRecipeHandler {
                     .chancedOutput(
                             OreDictUnifier.get(OrePrefix.dust, washingByproduct, property.getByProductMultiplier()),
                             7000, 580)
-                    .chancedOutput(OreDictUnifier.get(OrePrefix.dust, Materials.Stone), 4000, 650)
+                    .chancedOutput(OreDictUnifier.get(OrePrefix.dust, Stone), 4000, 650)
                     .duration(200).EUt(VA[LV])
                     .buildAndRegister();
         }
@@ -322,6 +338,7 @@ public class OreRecipeHandler {
                 .input(dustPrefix, material)
                 .circuitMeta(2)
                 .fluidInputs(Materials.Water.getFluid(100))
+                .fluidOutputs(Materials.Sewage.getFluid(100))
                 .outputs(dustStack)
                 .duration(8).EUt(4).buildAndRegister();
 
@@ -371,6 +388,7 @@ public class OreRecipeHandler {
                 .input(purePrefix, material)
                 .circuitMeta(2)
                 .fluidInputs(Materials.Water.getFluid(100))
+                .fluidOutputs(Materials.Sewage.getFluid(100))
                 .outputs(dustStack)
                 .duration(8).EUt(4).buildAndRegister();
 

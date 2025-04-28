@@ -128,6 +128,22 @@ gregtech.machine.dual_hatch.export.uxv.name=§eUXV§r输出总成
 gregtech.machine.dual_hatch.export.opv.name=§9OpV§r输出总成
 gregtech.machine.dual_hatch.export.max.name=§c§lMAX§r输出总成
 
+gregtech.machine.me_pattern_provider.ulv.name=§8ULV§r样板总成
+gregtech.machine.me_pattern_provider.lv.name=§7LV§r样板总成
+gregtech.machine.me_pattern_provider.mv.name=§bMV§r样板总成
+gregtech.machine.me_pattern_provider.hv.name=§6HV§r样板总成
+gregtech.machine.me_pattern_provider.ev.name=§5EV§r样板总成
+gregtech.machine.me_pattern_provider.iv.name=§1IV§r样板总成
+gregtech.machine.me_pattern_provider.luv.name=§dLuV§r样板总成
+gregtech.machine.me_pattern_provider.zpm.name=§cZPM§r样板总成
+gregtech.machine.me_pattern_provider.uv.name=§3UV§r样板总成
+gregtech.machine.me_pattern_provider.uhv.name=§4UHV§r样板总成
+gregtech.machine.me_pattern_provider.uev.name=§aUEV§r样板总成
+gregtech.machine.me_pattern_provider.uiv.name=§2UIV§r样板总成
+gregtech.machine.me_pattern_provider.uxv.name=§eUXV§r样板总成
+gregtech.machine.me_pattern_provider.opv.name=§9OpV§r样板总成
+gregtech.machine.me_pattern_provider.max.name=§c§lMAX§r样板总成
+
 gregtech.machine.me_dual_hatch.import.name=ME输入总成
 gregtech.machine.me_dual_hatch.export.name=ME输出总成
 #gui
@@ -142,5 +158,8 @@ gregtech.gui.dual_auto_output.tooltip.disabled=物品/流体自动输出已禁�
 gregtech.gui.dual_auto_collapse.tooltip.enabled=物品/流体堆叠自动合并已启用
 gregtech.gui.dual_auto_collapse.tooltip.disabled=物品/流体堆叠自动合并已禁用
 
+#tooltip
+gregtech.machine.me_pattern.tooltip.1=内置样板供应器，使用样板标记配方后可直接下单至机器
+gregtech.machine.me_pattern.tooltip.2=阻挡模式：只允许与总成缓存的相同配方物品流进入总成，其他配方的物品流将被阻挡
 #item group
 itemGroup.gtqt_programmable=量子跃迁 | 可编程舱室

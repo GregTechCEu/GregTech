@@ -229,7 +229,10 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                 .addTooltipLine(IKey.lang("gregtech.machine.workbench.tab.item_list"))
                                 .addTooltipLine(IKey.lang("gregtech.machine.workbench.storage_note")
                                         .style(TextFormatting.DARK_GRAY))
-                                .overlay(CHEST)))
+                                .overlay(CHEST))
+
+                )
+
                 .child(IKey.lang(getMetaFullName())
                         .asWidget()
                         .top(7).left(7))
