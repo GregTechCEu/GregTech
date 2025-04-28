@@ -26,6 +26,10 @@ public class PatternError {
         return worldState.getPos();
     }
 
+    public BlockWorldState getWorldState() {
+        return worldState;
+    }
+
     public List<List<ItemStack>> getCandidates() {
         TraceabilityPredicate predicate = worldState.predicate;
         List<List<ItemStack>> candidates = new ArrayList<>();
@@ -49,6 +53,9 @@ public class PatternError {
             }
         }
         builder.append("...");
-        return I18n.format("gregtech.multiblock.pattern.error", builder.toString(), worldState.pos);
+        return I18n.format("gregtech.multiblock.pattern.error", builder.toString(), getPosString(worldState.pos));
+    }
+    public String getPosString(BlockPos pos) {
+        return "[X:"+pos.getX()+" Y:"+pos.getY()+" Z:"+pos.getZ()+"]";
     }
 }

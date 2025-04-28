@@ -103,8 +103,6 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
         this.workingEnabled = true;
 
         this.numSlots = getTier();
-        // Quadruple: 1/4th the capacity of a fluid hatch of this tier
-        // Nonuple: 1/8th the capacity of a fluid hatch of this tier
         this.tankSize = BASE_TANK_SIZE * (1 << tier) / (numSlots == 4 ? 4 : 8);
         FluidTank[] fluidsHandlers = new FluidTank[numSlots];
         for (int i = 0; i < fluidsHandlers.length; i++) {

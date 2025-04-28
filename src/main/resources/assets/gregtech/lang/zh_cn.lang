@@ -6052,7 +6052,7 @@ gregtech.multiblock.preview.select=右击方块以查看其他可选方块
 
 gregtech.multiblock.pattern.error_message_header=潜在的结构错误：
 gregtech.multiblock.pattern.no_errors=没有发现结构错误！
-gregtech.multiblock.pattern.error=在%2$s处需要%1$s。
+gregtech.multiblock.pattern.error=在%2$s处存在空缺，可选填充方块：%1$s。
 gregtech.multiblock.pattern.error.limited_exact=§c精确：%d§r
 gregtech.multiblock.pattern.error.limited_within=§c最少%d个，最多%d个§r
 gregtech.multiblock.pattern.error.limited.0=§c最多：%d个§r

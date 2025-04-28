@@ -134,7 +134,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
             .asIcon().size(16);
     //fluid
     private static final int BASE_TANK_SIZE = 8000;
-    private final IDrawable WORKSTATION = new ItemDrawable(getStackForm())
+    private final IDrawable HATCH = new ItemDrawable(getStackForm())
             .asIcon().size(16);
     private final int numSlots;
     private final int tankSize;
@@ -162,8 +162,6 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         this.workingEnabled = true;
 
         this.numSlots = getTier();
-        // Quadruple: 1/4th the capacity of a fluid hatch of this tier
-        // Nonuple: 1/8th the capacity of a fluid hatch of this tier
         this.tankSize = BASE_TANK_SIZE * (1 << tier) / (numSlots == 4 ? 4 : 8);
         FluidTank[] fluidsHandlers = new FluidTank[numSlots];
         for (int i = 0; i < fluidsHandlers.length; i++) {
@@ -661,7 +659,11 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
 
             widgetsPattern.get(i)
                     .add(new ItemSlot()
-                            .slot(SyncHandlers.itemSlot(extraItem, i))
+                            .slot(SyncHandlers.itemSlot(extraItem, i)
+                                    .slotGroup("item_inv")
+                                    .accessibility(true, true)
+                            )
+                            .background(GTGuiTextures.SLOT, GTGuiTextures.EXTRA_SLOT_OVERLAY)
                     );
         }
 
@@ -689,7 +691,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
                         .child(new PageButton(0, controller)
                                 .tab(GuiTextures.TAB_TOP, 0)
                                 .addTooltipLine(IKey.lang("样板模式"))
-                                .overlay(WORKSTATION))
+                                .overlay(HATCH))
                         .child(new PageButton(1, controller)
                                 .tab(GuiTextures.TAB_TOP, 0)
                                 .addTooltipLine(IKey.lang("物品检索"))
@@ -867,12 +869,14 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
     public boolean pushPattern(ICraftingPatternDetails iCraftingPatternDetails, InventoryCrafting inventoryCrafting) {
         if (!isActive()) return false;
 
-        //以下逻辑为只要能填充就填充物品流体
-        //现需要追加模式：高级阻挡（使用isBlockedMode控制），需要判断发配的物品，即ItemStack itemStack = inventoryCrafting.getStackInSlot(i);
-        //当库存中有与itemStack相同的物品/流体时才接收，否则不接收
-        //例如发配A B C,库存仓中有A B C，则能填充，只要少一类（例如A B）则不填充
-        // 高级阻挡模式检查：所有配方物品/流体必须在库存中存在对应类型
-        if (isBlockedMode) {
+
+
+        if(!checkIfEmpty()||!checkIfFluidEmpty())
+        {
+            //如果均为空则直接进行实际插入
+            return false;
+        } else if (isBlockedMode) {
+            //如果不空 且开启智能阻挡，需要判断是否能插入
             for (int i = 0; i < inventoryCrafting.getSizeInventory(); ++i) {
                 ItemStack itemStack = inventoryCrafting.getStackInSlot(i);
                 if (itemStack.isEmpty()) continue;
