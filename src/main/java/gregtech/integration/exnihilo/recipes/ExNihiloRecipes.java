@@ -179,6 +179,21 @@ public class ExNihiloRecipes {
                 SimpleRecipeBuilder builder = SIEVE_RECIPES.recipeBuilder().notConsumable(recipe.getMesh())
                         .inputs(stack);
 
+                switch (recipe.getMesh().getMetadata()) {
+                    case 1:
+                        builder.EUt(8);
+                        break;
+                    case 2:
+                        builder.EUt(16);
+                        break;
+                    case 3:
+                        builder.EUt(32);
+                        break;
+                    case 4:
+                        builder.EUt(64);
+                        break;
+                }
+
                 for (Siftable siftable : ExNihiloRegistryManager.SIEVE_REGISTRY.getDrops(stack)) {
                     if (siftable.getDrop() == null) continue;
                     if (siftable.getMeshLevel() == recipe.getMesh().getMetadata()) {
