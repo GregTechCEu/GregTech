@@ -865,53 +865,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         return getProxy() != null && getProxy().isActive();
     }
 
-    @Override
-    public boolean pushPattern(ICraftingPatternDetails iCraftingPatternDetails, InventoryCrafting inventoryCrafting) {
-        if (!isActive()) return false;
-
-
-
-        if(!checkIfEmpty()||!checkIfFluidEmpty())
-        {
-            //如果均为空则直接进行实际插入
-            return false;
-        } else if (isBlockedMode) {
-            //如果不空 且开启智能阻挡，需要判断是否能插入
-            for (int i = 0; i < inventoryCrafting.getSizeInventory(); ++i) {
-                ItemStack itemStack = inventoryCrafting.getStackInSlot(i);
-                if (itemStack.isEmpty()) continue;
-
-                // 处理流体假物品
-                if (FakeFluids.isFluidFakeItem(itemStack)) {
-                    FluidStack fluid = FakeItemRegister.getStack(itemStack);
-                    if (fluid == null) return false; // 无效流体物品
-
-                    boolean fluidExists = false;
-                    for (IFluidTank tank : fluidTankList) {
-                        FluidStack tankFluid = tank.getFluid();
-                        if (tankFluid != null && tankFluid.isFluidEqual(fluid)) {
-                            fluidExists = true;
-                            break;
-                        }
-                    }
-                    if (!fluidExists) return false;
-                }
-                // 处理普通物品
-                else {
-                    boolean itemExists = false;
-                    for (int slot = 0; slot < importItems.getSlots(); slot++) {
-                        ItemStack slotStack = importItems.getStackInSlot(slot);
-                        if (!slotStack.isEmpty()
-                                && ItemStack.areItemsEqual(slotStack, itemStack)) {
-                            itemExists = true;
-                            break;
-                        }
-                    }
-                    if (!itemExists) return false;
-                }
-            }
-        }
-
+    public boolean addItemAndFluid(InventoryCrafting inventoryCrafting) {
         for (int i = 0; i < inventoryCrafting.getSizeInventory(); ++i) {
             ItemStack itemStack = inventoryCrafting.getStackInSlot(i);
             if (itemStack.isEmpty()) continue;
@@ -960,10 +914,58 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
 
         return true;
     }
+    @Override
+    public boolean pushPattern(ICraftingPatternDetails iCraftingPatternDetails, InventoryCrafting inventoryCrafting) {
+        if (!isActive()) return false;
+
+
+        if(checkIfEmpty()&&checkIfFluidEmpty())
+        {
+            return addItemAndFluid(inventoryCrafting);
+        }
+
+        if (isBlockedMode) {
+            //如果不空 且开启智能阻挡，需要判断是否能插入
+            for (int i = 0; i < inventoryCrafting.getSizeInventory(); ++i) {
+                ItemStack itemStack = inventoryCrafting.getStackInSlot(i);
+                if (itemStack.isEmpty()) continue;
+
+                // 处理流体假物品
+                if (FakeFluids.isFluidFakeItem(itemStack)) {
+                    FluidStack fluid = FakeItemRegister.getStack(itemStack);
+                    if (fluid == null) return false; // 无效流体物品
+
+                    boolean fluidExists = false;
+                    for (IFluidTank tank : fluidTankList) {
+                        FluidStack tankFluid = tank.getFluid();
+                        if (tankFluid != null && tankFluid.isFluidEqual(fluid)) {
+                            fluidExists = true;
+                            break;
+                        }
+                    }
+                    if (!fluidExists) return false;
+                }
+                // 处理普通物品
+                else {
+                    boolean itemExists = false;
+                    for (int slot = 0; slot < importItems.getSlots(); slot++) {
+                        ItemStack slotStack = importItems.getStackInSlot(slot);
+                        if (!slotStack.isEmpty() && slotStack.isItemEqual(itemStack)) {
+                            itemExists = true;
+                            break;
+                        }
+                    }
+                    if (!itemExists) return false;
+                }
+            }
+        }
+
+        return addItemAndFluid(inventoryCrafting);
+    }
 
     @Override
     public boolean isBusy() {
-        return isBlockedMode && !checkIfEmpty();
+        return export;
     }
 
     /**
