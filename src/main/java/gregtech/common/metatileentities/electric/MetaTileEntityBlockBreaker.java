@@ -101,6 +101,9 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
                         List<ItemStack> drops = attemptBreakBlockAndObtainDrops(blockPos, blockState, entityPlayer);
                         addToInventoryOrDropItems(drops);
                     }
+
+                    currentBlockHardness = 0.0f;
+                    energyContainer.removeEnergy(getEnergyPerBlockBreak());
                 }
             }
 
