@@ -1,4 +1,4 @@
-package gregtech.asm.hooks;
+package gregtech.client.utils;
 
 import gregtech.client.model.customtexture.CustomTextureBakedModel;
 
@@ -10,7 +10,6 @@ import net.minecraft.util.BlockRenderLayer;
 
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("unused")
 public class BlockHooks {
 
     public static boolean ENABLE = true;
