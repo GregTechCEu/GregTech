@@ -28,7 +28,7 @@ public class AssemblyLineLoader {
                 .fluidInputs(NiobiumTitanium.getFluid(L * 8))
                 .outputs(FUSION_REACTOR[0].getStackForm())
                 .scannerResearch(b -> b
-                        .researchStack(OreDictUnifier.get(wireGtSingle, IndiumTinBariumTitaniumCuprate))
+                        .researchStack(wireGtSingle, IndiumTinBariumTitaniumCuprate)
                         .duration(1200)
                         .EUt(VA[IV]))
                 .duration(800).EUt(VA[LuV]).buildAndRegister();

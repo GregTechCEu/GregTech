@@ -1,4 +1,4 @@
-//version: 1723428048
+//version: 1743737794
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -78,6 +78,7 @@ propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("stripForgeRequirements", false)
 propertyDefaultIfUnset("noPublishedSources", false)
+propertyDefaultIfUnset("mixinProviderSpec", "zone.rong:mixinbooter:10.6")
 propertyDefaultIfUnset("forceEnableMixins", false)
 propertyDefaultIfUnset("mixinConfigRefmap", "mixins.${project.modId}.refmap.json")
 propertyDefaultIfUnsetWithEnvVar("enableCoreModDebug", false, "CORE_MOD_DEBUG")
@@ -460,7 +461,6 @@ configurations {
     testRuntimeClasspath.extendsFrom(runtimeOnlyNonPublishable)
 }
 
-String mixinProviderSpec = 'zone.rong:mixinbooter:9.1'
 dependencies {
     if (usesMixins.toBoolean()) {
         annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
@@ -950,7 +950,7 @@ abstract class RunHotswappableMinecraftTask extends RunMinecraftTask {
 
         if (project.usesMixins.toBoolean()) {
             this.extraJvmArgs.addAll(project.provider(() -> {
-                def mixinCfg = project.configurations.detachedConfiguration(project.dependencies.create(project.mixinProviderSpec))
+                def mixinCfg = project.configurations.detachedConfiguration(project.dependencies.create(mixinProviderSpec))
                 mixinCfg.canBeConsumed = false
                 mixinCfg.canBeResolved = true
                 mixinCfg.transitive = false

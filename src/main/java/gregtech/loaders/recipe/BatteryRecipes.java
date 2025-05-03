@@ -360,7 +360,7 @@ public class BatteryRecipes {
                 .input(bolt, Naquadah, 16)
                 .fluidInputs(SolderingAlloy.getFluid(L * 5))
                 .output(ENERGY_LAPOTRONIC_ORB_CLUSTER)
-                .scannerResearch(ENERGY_LAPOTRONIC_ORB.getStackForm())
+                .scannerResearch(ENERGY_LAPOTRONIC_ORB)
                 .buildAndRegister();
 
         // Energy Module
