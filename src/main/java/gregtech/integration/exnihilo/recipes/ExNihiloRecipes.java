@@ -173,12 +173,8 @@ public class ExNihiloRecipes {
         // Mirror Ex Nihilo Sifter recipes to Sifter RecipeMap
         for (SieveRecipe recipe : ExNihiloRegistryManager.SIEVE_REGISTRY.getRecipeList()) {
             for (ItemStack stack : recipe.getSievables()) {
-                if (SIEVE_RECIPES.findRecipe(4, Arrays.asList(stack, recipe.getMesh()), new ArrayList<>(), true) !=
-                        null)
-                    continue;
                 SimpleRecipeBuilder builder = SIEVE_RECIPES.recipeBuilder().notConsumable(recipe.getMesh())
                         .inputs(stack);
-
                 switch (recipe.getMesh().getMetadata()) {
                     case 1:
                         builder.EUt(8);
@@ -193,7 +189,10 @@ public class ExNihiloRecipes {
                         builder.EUt(64);
                         break;
                 }
-
+                if (SIEVE_RECIPES.findRecipe(builder.getEUt(), Arrays.asList(stack, recipe.getMesh()),
+                        new ArrayList<>(), true) !=
+                        null)
+                    continue;
                 for (Siftable siftable : ExNihiloRegistryManager.SIEVE_REGISTRY.getDrops(stack)) {
                     if (siftable.getDrop() == null) continue;
                     if (siftable.getMeshLevel() == recipe.getMesh().getMetadata()) {
