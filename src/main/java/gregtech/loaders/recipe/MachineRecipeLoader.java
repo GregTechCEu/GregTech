@@ -111,7 +111,7 @@ public class MachineRecipeLoader {
             FORMING_PRESS_RECIPES.recipeBuilder()
                     .duration(120).EUt(22)
                     .notConsumable(shapeMold.getStackForm())
-                    .inputs(MetaItems.SHAPE_EMPTY.getStackForm())
+                    .input(MetaItems.SHAPE_EMPTY)
                     .outputs(shapeMold.getStackForm())
                     .buildAndRegister();
         }
