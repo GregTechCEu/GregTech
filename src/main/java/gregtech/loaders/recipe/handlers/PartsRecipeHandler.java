@@ -93,7 +93,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_BOLT)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 8))
                     .output(boltPrefix, material)
-                    .EUt(GTUtility.scaleVoltage(VA[MV], workingTier)).duration(12)
+                    .EUt(GTUtility.scaleVoltage(VA[MV], workingTier)).duration(2)
                     .buildAndRegister();
         }
     }
