@@ -93,7 +93,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_BOLT)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 8))
                     .output(boltPrefix, material)
-                    .EUt(GTUtility.scaleVoltage(VA[MV], workingTier)).duration(6)
+                    .EUt(GTUtility.scaleVoltage(VA[MV], workingTier)).duration(12)
                     .buildAndRegister();
         }
     }
@@ -409,7 +409,8 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_RING)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 4))
                     .output(ringPrefix, material)
-                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier)).duration(3)
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
+                    .duration((int) Math.max((material.getMass() / 2f) * 0.95f, 1f))
                     .buildAndRegister();
         }
     }
@@ -531,7 +532,8 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_ROD)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 2))
                     .output(stickPrefix, material)
-                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier)).duration(10)
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
+                    .duration((int) Math.max(material.getMass() * 0.95f, 1f))
                     .buildAndRegister();
         }
     }
@@ -604,7 +606,8 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_ROD_LONG)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L))
                     .output(longStickPrefix, material)
-                    .EUt(GTUtility.scaleVoltage(64, workingTier)).duration(20)
+                    .EUt(GTUtility.scaleVoltage(64, workingTier))
+                    .duration((int) Math.max(material.getMass() * 0.95f, 1f))
                     .buildAndRegister();
         }
     }
@@ -666,7 +669,8 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_ROUND)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 9))
                     .output(roundPrefix, material)
-                    .EUt(GTUtility.scaleVoltage(VA[ULV], workingTier)).duration(90)
+                    .EUt(GTUtility.scaleVoltage(VA[ULV], workingTier))
+                    .duration(90)
                     .buildAndRegister();
         }
     }
