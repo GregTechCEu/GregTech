@@ -93,7 +93,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_BOLT)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 8))
                     .output(boltPrefix, material)
-                    .EUt(VA[ULV]).duration(6)
+                    .EUt(GTUtility.scaleVoltage(VA[MV], workingTier)).duration(6)
                     .buildAndRegister();
         }
     }
@@ -409,7 +409,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_RING)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 4))
                     .output(ringPrefix, material)
-                    .EUt(VA[ULV]).duration(3)
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier)).duration(3)
                     .buildAndRegister();
         }
     }
@@ -531,7 +531,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_ROD)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 2))
                     .output(stickPrefix, material)
-                    .EUt(VA[ULV]).duration(10)
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier)).duration(10)
                     .buildAndRegister();
         }
     }
@@ -604,7 +604,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_ROD_LONG)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L))
                     .output(longStickPrefix, material)
-                    .EUt(VA[ULV]).duration(20)
+                    .EUt(GTUtility.scaleVoltage(64, workingTier)).duration(20)
                     .buildAndRegister();
         }
     }
@@ -666,7 +666,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_ROUND)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 9))
                     .output(roundPrefix, material)
-                    .EUt(VA[ULV]).duration(5)
+                    .EUt(GTUtility.scaleVoltage(VA[ULV], workingTier)).duration(90)
                     .buildAndRegister();
         }
     }
