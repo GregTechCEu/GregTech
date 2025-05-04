@@ -90,13 +90,13 @@ public class MetaItem1 extends StandardMetaItem {
             if (!item.isInCreativeTab(tab)) continue;
 
             int itemMetaData = item.getMetaValue();
-            if (itemMetaData >= 1004 && itemMetaData <= 1013) continue;
+            if (itemMetaData >= 1006 && itemMetaData <= 1010) continue;
 
             item.getSubItemHandler().getSubItems(item.getStackForm(), tab, subItems);
 
-            if (itemMetaData == 30) {
+            if (itemMetaData == 29) {
                 for (MetaItem<?>.MetaValueItem moldItem : SHAPE_MOLDS) {
-                    if (moldItem.getMetaValue() < 1005) continue;
+                    if (moldItem.getMetaValue() < 1006) continue;
                     moldItem.getSubItemHandler().getSubItems(moldItem.getStackForm(), tab, subItems);
                 }
             }
@@ -164,8 +164,10 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[16] = SHAPE_MOLD_ROD_LONG = addItem(28, "shape.mold.rod_long")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[17] = SHAPE_MOLD_ROUND = addItem(30, "shape.mold.round")
+        SHAPE_MOLDS[17] = SHAPE_MOLD_ROUND = addItem(29, "shape.mold.round")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+
+        // Free ID: 30
 
         // Extruder Shapes: ID 31-59
         SHAPE_EXTRUDERS[0] = SHAPE_EXTRUDER_PLATE = addItem(31, "shape.extruder.plate")
@@ -1185,15 +1187,15 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(1);
 
         // Extra molds 1006-1010
-        SHAPE_MOLDS[17] = SHAPE_MOLD_PIPE_TINY = addItem(1006, "shape.mold.pipe.tiny")
+        SHAPE_MOLDS[18] = SHAPE_MOLD_PIPE_TINY = addItem(1006, "shape.mold.pipe.tiny")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[18] = SHAPE_MOLD_PIPE_SMALL = addItem(1007, "shape.mold.pipe.small")
+        SHAPE_MOLDS[19] = SHAPE_MOLD_PIPE_SMALL = addItem(1007, "shape.mold.pipe.small")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[19] = SHAPE_MOLD_PIPE_NORMAL = addItem(1008, "shape.mold.pipe.normal")
+        SHAPE_MOLDS[20] = SHAPE_MOLD_PIPE_NORMAL = addItem(1008, "shape.mold.pipe.normal")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[20] = SHAPE_MOLD_PIPE_LARGE = addItem(1009, "shape.mold.pipe.large")
+        SHAPE_MOLDS[21] = SHAPE_MOLD_PIPE_LARGE = addItem(1009, "shape.mold.pipe.large")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[21] = SHAPE_MOLD_PIPE_HUGE = addItem(1010, "shape.mold.pipe.huge")
+        SHAPE_MOLDS[22] = SHAPE_MOLD_PIPE_HUGE = addItem(1010, "shape.mold.pipe.huge")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
     }
 }
