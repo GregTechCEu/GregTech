@@ -1,6 +1,6 @@
 package gregtech.mixins.ctm;
 
-import gregtech.asm.hooks.CTMHooks;
+import gregtech.client.utils.CTMHooks;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;

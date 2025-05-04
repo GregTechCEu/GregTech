@@ -1,6 +1,6 @@
 package gregtech.mixins.littletiles;
 
-import gregtech.asm.hooks.LittleTilesHooks;
+import gregtech.client.utils.LittleTilesHooks;
 
 import com.creativemd.littletiles.client.render.cache.LayeredRenderBoxCache;
 import com.creativemd.littletiles.client.render.world.TileEntityRenderManager;
