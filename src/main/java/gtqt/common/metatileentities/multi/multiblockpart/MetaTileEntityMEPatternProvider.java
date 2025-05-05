@@ -40,7 +40,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -109,7 +108,6 @@ import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
-import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.fake.FakeFluids;
 import com.glodblock.github.common.item.fake.FakeItemRegister;
 import gtqt.common.metatileentities.GTQTMetaTileEntities;
@@ -268,9 +266,11 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
                 MultiblockControllerBase controllerBase = getController();
                 if (controllerBase instanceof RecipeMapMultiblockController controller) {
                     if (controller.getRecipeMapWorkable().getParallelLimit() != 0) {
+
                         lastParallel = parallel;
                         parallel = controller.getRecipeMapWorkable().getParallelLimit();
-                        if(lastParallel!=1 && parallel!=1) {
+
+                        if(lastParallel!=1 || parallel!=1) {
                             for (int i = 0; i < patternSlot.getSlots(); i++) {
                                 ItemStack pattern = patternSlot.getStackInSlot(i);
                                 if (pattern.getItem() instanceof ICraftingPatternItem) {
@@ -395,13 +395,12 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         return false;
     }
 
-    public boolean updateMEStatus() {
+    public void updateMEStatus() {
         boolean isOnline = this.networkProxy != null && this.networkProxy.isActive() && this.networkProxy.isPowered();
         if (this.isOnline != isOnline) {
             writeCustomData(UPDATE_ONLINE_STATUS, buf -> buf.writeBoolean(isOnline));
             this.isOnline = isOnline;
         }
-        return this.isOnline;
     }
 
     @Override
