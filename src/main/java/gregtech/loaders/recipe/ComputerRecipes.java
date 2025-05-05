@@ -93,12 +93,12 @@ public class ComputerRecipes {
                 .duration(200).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(frameGt, StainlessSteel)
+                .input(frameGt, TungstenSteel)
                 .input(ELECTRIC_MOTOR_IV, 2)
                 .input(rotor, StainlessSteel, 2)
                 .input(pipeTinyFluid, StainlessSteel, 16)
                 .input(plate, Copper, 16)
-                .input(wireGtSingle, SamariumIronArsenicOxide)
+                .input(wireGtSingle, SamariumIronArsenicOxide,4)
                 .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_HEAT_VENT,
                         ConfigHolder.recipes.casingsPerCraft))
                 .duration(100).EUt(VA[EV]).buildAndRegister();
@@ -106,10 +106,27 @@ public class ComputerRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(wireFine, BorosilicateGlass, 8)
                 .input(foil, Silver, 8)
-                .fluidInputs(Polytetrafluoroethylene.getFluid(L))
-                .cleanroom(CleanroomType.CLEANROOM)
-                .output(OPTICAL_PIPES[0])
+                .input(plateDense, Aluminium, 1)
+                .fluidInputs(Polyethylene.getFluid(L))
+                .output(OPTICAL_PIPES[0],2)
                 .duration(100).EUt(VA[MV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(wireFine, BorosilicateGlass, 8)
+                .input(foil, Silver, 8)
+                .input(plateDense, Aluminium, 1)
+                .fluidInputs(Epoxy.getFluid(L))
+                .output(OPTICAL_PIPES[0], 8)
+                .duration(100).EUt(VA[MV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(wireFine, BorosilicateGlass, 8)
+                .input(foil, Silver, 8)
+                .input(plateDense, Aluminium, 1)
+                .fluidInputs(Polybenzimidazole.getFluid(L))
+                .output(OPTICAL_PIPES[0], 32)
+                .duration(100).EUt(VA[MV]).buildAndRegister();
+
 
         if (!Loader.isModLoaded(GTQT_CORE)) {
             ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -169,7 +186,8 @@ public class ComputerRecipes {
                 .inputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_CASING))
                 .input(EMITTER_ZPM, 4)
                 .input(SENSOR_ZPM, 4)
-                .input(circuit, Tier.UV, 4)
+                .input(circuit, Tier.UV, 8)
+                .input(circuit, Tier.ZPM, 16)
                 .input(wireGtDouble, EnrichedNaquadahTriniumEuropiumDuranide, 32)
                 .input(foil, Tritanium, 64)
                 .input(foil, Tritanium, 64)
@@ -185,8 +203,10 @@ public class ComputerRecipes {
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(DATA_BANK)
-                .input(circuit, Tier.ZPM, 4)
+                .input(circuit, Tier.UV, 8)
+                .input(circuit, Tier.ZPM, 16)
                 .input(FIELD_GENERATOR_LuV, 8)
+                .input(SENSOR_LuV, 8)
                 .inputNBT(TOOL_DATA_ORB, NBTMatcher.ANY, NBTCondition.ANY)
                 .input(COVER_SCREEN)
                 .input(wireGtDouble, UraniumRhodiumDinaquadide, 64)
