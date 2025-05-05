@@ -250,13 +250,13 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setPreviewCount(1));
             }
         }
-        if (checkItemIn && checkFluidIn) {
-            if (recipeMap.getMaxInputs() > 0 && recipeMap.getMaxFluidInputs() > 0) {
+        if (checkItemIn || checkFluidIn) {
+            if (recipeMap.getMaxInputs() > 0 || recipeMap.getMaxFluidInputs() > 0) {
                 predicate = predicate.or(abilities(MultiblockAbility.DUAL_IMPORT).setPreviewCount(1));
             }
         }
-        if (checkItemOut && checkFluidOut) {
-            if (recipeMap.getMaxOutputs() > 0 && recipeMap.getMaxFluidOutputs() > 0) {
+        if (checkItemOut || checkFluidOut) {
+            if (recipeMap.getMaxOutputs() > 0 || recipeMap.getMaxFluidOutputs() > 0) {
                 predicate = predicate.or(abilities(MultiblockAbility.DUAL_EXPORT).setPreviewCount(1));
             }
         }

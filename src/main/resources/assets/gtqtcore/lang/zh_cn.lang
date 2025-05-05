@@ -161,5 +161,6 @@ gregtech.gui.dual_auto_collapse.tooltip.disabled=物品/流体堆叠自动合并
 #tooltip
 gregtech.machine.me_pattern.tooltip.1=内置样板供应器，使用样板标记配方后可直接下单至机器
 gregtech.machine.me_pattern.tooltip.2=阻挡模式：只允许与总成缓存的相同配方物品流进入总成，其他配方的物品流将被阻挡
+gregtech.machine.me_pattern.tooltip.3=样板优化：将样板自动倍乘到当前并行数量，多方块并行变更也会导致样板倍乘自动变更
 #item group
 itemGroup.gtqt_programmable=量子跃迁 | 可编程舱室
