@@ -132,6 +132,7 @@ public class MetaBlocks {
     public static BlockGlassCasing TRANSPARENT_CASING;
     public static BlockWireCoil WIRE_COIL;
     public static BlockFusionCasing FUSION_CASING;
+    public static BlockFissionCasing FISSION_CASING;
     public static BlockWarningSign WARNING_SIGN;
     public static BlockWarningSign1 WARNING_SIGN_1;
     public static BlockHermeticCasing HERMETIC_CASING;
@@ -251,6 +252,8 @@ public class MetaBlocks {
         WIRE_COIL.setRegistryName("wire_coil");
         FUSION_CASING = new BlockFusionCasing();
         FUSION_CASING.setRegistryName("fusion_casing");
+        FISSION_CASING = new BlockFissionCasing();
+        FISSION_CASING.setRegistryName("fission_casing");
         WARNING_SIGN = new BlockWarningSign();
         WARNING_SIGN.setRegistryName("warning_sign");
         WARNING_SIGN_1 = new BlockWarningSign1();
@@ -505,6 +508,7 @@ public class MetaBlocks {
         BOILER_FIREBOX_CASING.onModelRegister();
         WIRE_COIL.onModelRegister();
         FUSION_CASING.onModelRegister();
+        FISSION_CASING.onModelRegister();
         MULTIBLOCK_CASING.onModelRegister();
         TRANSPARENT_CASING.onModelRegister();
 

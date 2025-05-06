@@ -62,6 +62,7 @@ public class MachineRecipeLoader {
         FuelRecipes.registerFuels();
         AssemblyLineLoader.init();
         FusionLoader.init();
+        FissionLoader.init();
         AssemblerRecipeLoader.init();
         ComponentRecipes.register();
         MiscRecipeLoader.init();

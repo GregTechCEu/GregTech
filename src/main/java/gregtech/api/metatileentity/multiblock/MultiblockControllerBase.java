@@ -354,6 +354,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     }
                 }
             }
+            if (!finalStructureCheck(context)) return;
+
             this.setFlipped(context.neededFlip());
             parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
             Map<MultiblockAbility<Object>, AbilityInstances> abilities = new HashMap<>();
@@ -384,6 +386,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 setFlipped(context.neededFlip());
             }
         }
+    }
+
+    /**
+     * The last authority on whether structure formation will proceed to {@link #formStructure(PatternMatchContext)} or not.
+     * @param matchContext the match context
+     * @return whether the structure should form or not.
+     */
+    protected boolean finalStructureCheck(@NotNull PatternMatchContext matchContext) {
+        return true;
     }
 
     /**

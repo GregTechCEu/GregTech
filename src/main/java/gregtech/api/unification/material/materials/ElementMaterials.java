@@ -108,6 +108,7 @@ public class ElementMaterials {
                 .build();
 
         Boron = new Material.Builder(13, gregtechId("boron"))
+                .liquid(new FluidBuilder().temperature(2076))
                 .dust()
                 .color(0xD2FAD2)
                 .element(Elements.B)
@@ -143,6 +144,7 @@ public class ElementMaterials {
                 .build();
 
         Cadmium = new Material.Builder(19, gregtechId("cadmium"))
+                .liquid(new FluidBuilder().temperature(321))
                 .dust()
                 .color(0x32323C).iconSet(SHINY)
                 .element(Elements.Cd)
@@ -306,6 +308,7 @@ public class ElementMaterials {
                 .build();
 
         Hafnium = new Material.Builder(42, gregtechId("hafnium"))
+                .liquid(new FluidBuilder().temperature(2227))
                 .ingot()
                 .color(0x99999A).iconSet(SHINY)
                 .element(Elements.Hf)
@@ -775,6 +778,7 @@ public class ElementMaterials {
                 .build();
 
         Technetium = new Material.Builder(105, gregtechId("technetium"))
+                .liquid(new FluidBuilder().temperature(2204))
                 .color(0x545455).iconSet(SHINY)
                 .element(Elements.Tc)
                 .build();

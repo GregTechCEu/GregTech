@@ -2396,6 +2396,8 @@ recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 recipemap.research_station.name=Research Station
+recipemap.fission.name=Fission Reactor
+recipemap.fission_cooling.name=Fission Reactor Cooling
 
 gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling
@@ -2772,6 +2774,12 @@ tile.fusion_casing.fusion_coil.name=Fusion Coil Block
 tile.fusion_casing.fusion_casing.name=Fusion Machine Casing
 tile.fusion_casing.fusion_casing_mk2.name=Fusion Machine Casing MK II
 tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
+
+# Fission casing blocks
+tile.fission_casing.interior_beam.name=Zircaloy Beam
+tile.fission_casing.interior_beam.tooltip=Connects two fission ports together in a straight line to form a fission rod.
+tile.fission_casing.thermal_void.name=Thermal Void
+tile.fission_casing.thermal_void.tooltip=Each side connected to an active fission rod voids §f8EU/t §7equivalent of heat for every §f1000K §7of reactor temperature.
 
 # Transparent casing blocks
 tile.transparent_casing.tempered_glass.name=Tempered Glass
@@ -4563,6 +4571,40 @@ gregtech.machine.hpca.component_type.computation_cooling=§cRequires up to: §f%
 gregtech.machine.hpca.component_type.bridge=Allows §fHPCA§7 to connect to §fNetwork Switches§7
 gregtech.machine.hpca.component_type.damaged=Can be damaged by HPCA overheating!
 
+# Fission components
+
+gregtech.machine.fission.instability=§4%s Instability per length
+gregtech.machine.fission.fragility=§3%s Fragility per length
+
+gregtech.machine.fission.fuel.zirconium.name=Zirconium Fission Fuel Rod Port
+gregtech.machine.fission.fuel.zirconium.tooltip=Not actually a port
+gregtech.machine.fission.fuel.bismuth.name=Bismuth Fission Fuel Rod Port
+gregtech.machine.fission.fuel.bismuth.tooltip=I hope you have enough control rods
+gregtech.machine.fission.fuel.desc=Provides §f%s §7parallel(s), adds §f%s §7fuel rod penalty
+
+gregtech.machine.fission.cooling.aluminium.name=Aluminium Fission Coolant Rod Port
+gregtech.machine.fission.cooling.aluminium.tooltip=Actually a port
+gregtech.machine.fission.cooling.cerium.name=Cerium Fission Coolant Rod Port
+gregtech.machine.fission.cooling.cerium.tooltip=Finally a use for cerium
+gregtech.machine.fission.cooling.desc.1=Has §f%s §7parallel(s) for every §f1000K §7above coolant minimum temperature.
+gregtech.machine.fission.cooling.desc.2=Shuts down if coolant is underprovided, does not restart until below coolant cutoff temperature.
+
+gregtech.machine.fission.moderator.beryllium.name=Beryllium Fission Moderator Rod Port
+gregtech.machine.fission.moderator.beryllium.tooltip=Transmutes Beryllium to Boron
+gregtech.machine.fission.moderator.graphite.name=Graphite Fission Moderator Rod Port
+gregtech.machine.fission.moderator.graphite.tooltip=Transmutes Carbon to Nitrogen
+gregtech.machine.fission.moderator.water.name=Water Fission Moderator Rod Port
+gregtech.machine.fission.moderator.water.tooltip=Transmutes Water to Heavy Water
+gregtech.machine.fission.moderator.desc=Increases base reaction speed by §f+%s§7, divided by cumulative fuel rod penalty
+
+gregtech.machine.fission.control.cadmium.name=Cadmium Fission Control Rod Port
+gregtech.machine.fission.control.cadmium.tooltip=Transmutes Cadmium to Indium
+gregtech.machine.fission.control.hafnium.name=Hafnium Fission Control Rod Port
+gregtech.machine.fission.control.hafnium.tooltip=Transmutes Hafnium to Tantalum
+gregtech.machine.fission.control.molybdenum.name=Molybdenum Fission Control Rod Port
+gregtech.machine.fission.control.molybdenum.tooltip=Transmutes Molybdenum to Technetium
+gregtech.machine.fission.control.desc=Increases reaction optimal temperature by §f+%s§7, divided by cumulative fuel rod penalty
+
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
@@ -4990,6 +5032,12 @@ metaitem.cover.digital.mode.fluid.disabled=Click to enable Fluid Mode
 metaitem.cover.digital.mode.fluid.enabled=Fluid Mode enabled
 
 gregtech.machine.monitor_screen.name=Monitor Screen
+
+gregtech.machine.fission_reactor.name=Fission Reactor
+gregtech.machine.fission_reactor.tooltip=Hot Rocks Box
+gregtech.machine.fission_reactor.tooltip.1=Accepts fuel ports front/back, coolant ports top/bottom, and moderator/control rod ports left/right.
+gregtech.machine.fission_reactor.tooltip.2=Each port must be connected with a straight line of Zircaloy Beams to another port of the same material to form a fission rod.
+gregtech.machine.fission_reactor.tooltip.3=Fission rods cannot intersect, and provide the listed bonuses and penalties once per rod.
 
 
 # Multiblock Tooltips
@@ -5534,6 +5582,13 @@ gregtech.recipe.scan_for_research=Scan for Assembly Line
 gregtech.recipe.computation_per_tick=Min. Computation: %,d CWU/t
 gregtech.recipe.total_computation=Computation: %,d CWU
 gregtech.recipe.research_result=Research result item, not produced by this recipe directly
+gregtech.recipe.heat=Heat Equivalent: %sEU/t
+gregtech.recipe.optimal_temperature=Optimal Temperature: %,dK
+gregtech.recipe.heat_penalty=Speed mult per K above: %s
+gregtech.recipe.heat_penalty.tooltip=Rate of fission is multiplied by this value for every Kelvin above the Optimal Temperature that the reactor temperature is.
+gregtech.recipe.minimum_temperature=Minimum Temperature: %,dK
+gregtech.recipe.cutoff_temperature=Cutoff Temperature: %,dK
+gregtech.recipe.cutoff_temperature.tooltip=Failure to provide sufficient coolant above this temperature will disable the coolant rod until reactor temperature drops.
 
 gregtech.fluid.click_to_fill=§7Left Click with a Fluid Container to §bfill §7the tank (Right Click to process 1 item per click).
 gregtech.fluid.click_combined=§7Left Click with a Fluid Container to §bfill §7or §cempty §7the tank (Right Click to process 1 item per click).
@@ -5907,6 +5962,16 @@ gregtech.multiblock.hpca.info_max_coolant_required=Coolant Needed: %s
 gregtech.multiblock.hpca.info_coolant_name=PCB Coolant
 gregtech.multiblock.hpca.info_bridging_enabled=Bridging Enabled
 gregtech.multiblock.hpca.info_bridging_disabled=Bridging Disabled
+
+gregtech.multiblock.fission.temperature=Temperature: %s / %s
+gregtech.multiblock.fission.rate=Reaction Rate: %s
+gregtech.multiblock.fission.unstable=Unstable reactor! Meltdown occurs at lower temperatures. Add more control rods or empty space.
+gregtech.multiblock.fission.fragile=Fragile reactor! Speed of reaction is reduced. Add more moderators or empty space.
+gregtech.multiblock.fission.structure.unmatched_port=An installed fission rod port is missing its opposing twin.
+gregtech.multiblock.fission.structure.missing_beam=An installed fission rod port is not properly connected with Zircaloy Beams.
+gregtech.multiblock.fission.structure.intersecting=An installed fission rod is intersecting another fission rod.
+gregtech.multiblock.fission.structure.no_fuel=No Fuel Rod is installed in the reactor.
+gregtech.multiblock.fission.structure.init_failure=Reactor failed to initialize structure.
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck/datafix>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>

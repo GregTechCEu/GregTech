@@ -218,11 +218,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 if (getMetaTileEntity().getOffsetTimer() % 20 == 0)
                     this.canRecipeProgress = canProgressRecipe();
 
-                if (progressTime > 0) {
+                if (getProgress() > 0) {
                     updateRecipeProgress();
                 }
                 // check everything that would make a recipe never start here.
-                if (progressTime == 0 && shouldSearchForRecipes()) {
+                if (getProgress() == 0 && shouldSearchForRecipes()) {
                     trySearchNewRecipe();
                 }
             }

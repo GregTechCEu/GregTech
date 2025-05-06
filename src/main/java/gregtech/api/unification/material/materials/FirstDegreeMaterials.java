@@ -771,6 +771,7 @@ public class FirstDegreeMaterials {
 
         Graphite = new Material.Builder(341, gregtechId("graphite"))
                 .ore()
+                .dust()
                 .color(0x808080)
                 .flags(NO_SMELTING, FLAMMABLE, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)

@@ -3,15 +3,18 @@ package gregtech.common.metatileentities;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.FeCompat;
+import gregtech.api.capability.IFissionRodPort;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
+import gregtech.api.metatileentity.multiblock.IFissionReactor;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
@@ -73,6 +76,10 @@ import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEn
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
+import gregtech.common.metatileentities.multi.fission.MetaTileEntityFissionCoolantHatch;
+import gregtech.common.metatileentities.multi.fission.MetaTileEntityFissionFuelRod;
+import gregtech.common.metatileentities.multi.fission.MetaTileEntityFissionReactor;
+import gregtech.common.metatileentities.multi.fission.MetaTileEntityFissionTransmutationHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityAutoMaintenanceHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCleaningMaintenanceHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityComputationHatch;
@@ -226,6 +233,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[6]; // HV, EV, IV, LuV, ZPM, UV
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UHV + 1]; // LV-UHV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
+    public static MetaTileEntityFissionReactor FISSION_REACTOR;
     public static MetaTileEntityQuantumStorageController QUANTUM_STORAGE_CONTROLLER;
     public static MetaTileEntityQuantumProxy QUANTUM_STORAGE_PROXY;
     public static MetaTileEntityQuantumExtender QUANTUM_STORAGE_EXTENDER;
@@ -261,6 +269,10 @@ public class MetaTileEntities {
     public static MetaTileEntityHPCACooler HPCA_HEAT_SINK_COMPONENT;
     public static MetaTileEntityHPCACooler HPCA_ACTIVE_COOLER_COMPONENT;
     public static MetaTileEntityHPCABridge HPCA_BRIDGE_COMPONENT;
+    public static final MetaTileEntityFissionFuelRod[] FISSION_FUEL_RODS = new MetaTileEntityFissionFuelRod[2];
+    public static final MetaTileEntityFissionCoolantHatch[] FISSION_COOLANT_RODS = new MetaTileEntityFissionCoolantHatch[2];
+    public static final MetaTileEntityFissionTransmutationHatch[] FISSION_MODERATOR_RODS = new MetaTileEntityFissionTransmutationHatch[3];
+    public static final MetaTileEntityFissionTransmutationHatch[] FISSION_CONTROL_RODS = new MetaTileEntityFissionTransmutationHatch[3];
 
     // Used for addons if they wish to disable certain tiers of machines
     private static final Map<String, Boolean> MID_TIER = new HashMap<>();
@@ -781,6 +793,7 @@ public class MetaTileEntities {
                 new MetaTileEntityPowerSubstation(gregtechId("power_substation")));
         ACTIVE_TRANSFORMER = registerMetaTileEntity(1042,
                 new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
+        FISSION_REACTOR = registerMetaTileEntity(1043, new MetaTileEntityFissionReactor(gregtechId("fission_reactor")));
 
         // MISC MTE's START: IDs 1150-2000
 
@@ -973,7 +986,250 @@ public class MetaTileEntities {
             LASER_OUTPUT_HATCH_4096[i] = registerMetaTileEntity(1465 + i,
                     new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_4096a." + voltageName), true, v, 4096));
         }
-        // Free Range: 1475-1509
+        FISSION_FUEL_RODS[0] = registerMetaTileEntity(1475,
+                new MetaTileEntityFissionFuelRod(gregtechId("fission.fuel.zirconium"), GTValues.EV,
+                new IFissionRodPort.RodType() {
+
+                    @Override
+                    public void onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
+                                              @NotNull IFissionRodPort opposingPort, int rodLength) {}
+
+                    @Override
+                    public int getFuelRodCount() {
+                        return 1;
+                    }
+
+                    @Override
+                    public int getFuelRodPenalty() {
+                        return 9;
+                    }
+
+                    @Override
+                    public int getInstabilityPerLength() {
+                        return 1;
+                    }
+                }));
+        FISSION_FUEL_RODS[1] = registerMetaTileEntity(1476,
+                new MetaTileEntityFissionFuelRod(gregtechId("fission.fuel.bismuth"), GTValues.IV,
+                        new IFissionRodPort.RodType() {
+
+                    @Override
+                    public void onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
+                                              @NotNull IFissionRodPort opposingPort, int rodLength) {}
+
+                    @Override
+                    public int getFuelRodCount() {
+                        return 1;
+                    }
+
+                    @Override
+                    public int getFuelRodPenalty() {
+                        return 6;
+                    }
+
+                    @Override
+                    public int getInstabilityPerLength() {
+                        return 3;
+                    }
+                }));
+        FISSION_COOLANT_RODS[0] = registerMetaTileEntity(1477,
+                new MetaTileEntityFissionCoolantHatch(gregtechId("fission.cooling.aluminium"), GTValues.EV,
+                new IFissionRodPort.RodType() {
+
+                    @Override
+                    public void onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
+                                              @NotNull IFissionRodPort opposingPort, int rodLength) {
+                        MetaTileEntityFissionCoolantHatch.onReactorTick(reactor, port, opposingPort);
+                    }
+
+                    @Override
+                    public int getCoolingParallelsPer1000K() {
+                        return 5;
+                    }
+
+                    @Override
+                    public int getFragilityPerLength() {
+                        return 1;
+                    }
+                }));
+        FISSION_COOLANT_RODS[1] = registerMetaTileEntity(1478,
+                new MetaTileEntityFissionCoolantHatch(gregtechId("fission.cooling.cerium"), GTValues.IV,
+                new IFissionRodPort.RodType() {
+
+                    @Override
+                    public void onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
+                                              @NotNull IFissionRodPort opposingPort, int rodLength) {
+                        MetaTileEntityFissionCoolantHatch.onReactorTick(reactor, port, opposingPort);
+                    }
+
+                    @Override
+                    public int getCoolingParallelsPer1000K() {
+                        return 12;
+                    }
+
+                    @Override
+                    public int getFragilityPerLength() {
+                        return 4;
+                    }
+                }));
+        FISSION_MODERATOR_RODS[0] = registerMetaTileEntity(1479,
+                new MetaTileEntityFissionTransmutationHatch(gregtechId("fission.moderator.beryllium"), GTValues.EV,
+                        new IFissionRodPort.RodType() {
+
+                            @Override
+                            public void onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
+                                                      @NotNull IFissionRodPort opposingPort, int rodLength) {
+                                MetaTileEntityFissionTransmutationHatch.onReactorTick(reactor, port, opposingPort);
+                            }
+
+                            @Override
+                            public boolean isOperational(@NotNull IFissionReactor reactor,
+                                                         @NotNull IFissionRodPort port,
+                                                         @NotNull IFissionRodPort opposingPort, int rodLength) {
+                                return MetaTileEntityFissionTransmutationHatch.isOperational(reactor, port, opposingPort);
+                            }
+
+                            @Override
+                            public int getFragilityPerLength() {
+                                return -3;
+                            }
+
+                            @Override
+                            public double getModeratorBonus() {
+                                return 0.04;
+                            }
+                        }, null, Materials.Beryllium.getFluid(16), Materials.Boron.getFluid(16)));
+        FISSION_MODERATOR_RODS[1] = registerMetaTileEntity(1480,
+                new MetaTileEntityFissionTransmutationHatch(gregtechId("fission.moderator.graphite"), GTValues.EV,
+                        new IFissionRodPort.RodType() {
+
+                            @Override
+                            public void onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
+                                                      @NotNull IFissionRodPort opposingPort, int rodLength) {
+                                MetaTileEntityFissionTransmutationHatch.onReactorTick(reactor, port, opposingPort);
+                            }
+
+                            @Override
+                            public boolean isOperational(@NotNull IFissionReactor reactor,
+                                                         @NotNull IFissionRodPort port,
+                                                         @NotNull IFissionRodPort opposingPort, int rodLength) {
+                                return MetaTileEntityFissionTransmutationHatch.isOperational(reactor, port, opposingPort);
+                            }
+
+                            @Override
+                            public int getFragilityPerLength() {
+                                return -1;
+                            }
+
+                            @Override
+                            public double getModeratorBonus() {
+                                return 0.07;
+                            }
+                        }, () -> Materials.Graphite.getItemForm(OrePrefix.dustTiny), null, Materials.Nitrogen.getFluid(16)));
+        FISSION_MODERATOR_RODS[2] = registerMetaTileEntity(1481,
+                new MetaTileEntityFissionTransmutationHatch(gregtechId("fission.moderator.water"), GTValues.IV,
+                        new IFissionRodPort.RodType() {
+
+                            @Override
+                            public void onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
+                                                      @NotNull IFissionRodPort opposingPort, int rodLength) {
+                                MetaTileEntityFissionTransmutationHatch.onReactorTick(reactor, port, opposingPort);
+                            }
+
+                            @Override
+                            public boolean isOperational(@NotNull IFissionReactor reactor,
+                                                         @NotNull IFissionRodPort port,
+                                                         @NotNull IFissionRodPort opposingPort, int rodLength) {
+                                return MetaTileEntityFissionTransmutationHatch.isOperational(reactor, port, opposingPort);
+                            }
+
+                            @Override
+                            public double getModeratorBonus() {
+                                return 0.05;
+                            }
+                        }, null, Materials.Water.getFluid(50), null)); // TODO Heavy Water
+        FISSION_CONTROL_RODS[0] = registerMetaTileEntity(1482,
+                new MetaTileEntityFissionTransmutationHatch(gregtechId("fission.control.cadmium"), GTValues.EV,
+                        new IFissionRodPort.RodType() {
+
+                            @Override
+                            public void onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
+                                                      @NotNull IFissionRodPort opposingPort, int rodLength) {
+                                MetaTileEntityFissionTransmutationHatch.onReactorTick(reactor, port, opposingPort);
+                            }
+
+                            @Override
+                            public boolean isOperational(@NotNull IFissionReactor reactor,
+                                                         @NotNull IFissionRodPort port,
+                                                         @NotNull IFissionRodPort opposingPort, int rodLength) {
+                                return MetaTileEntityFissionTransmutationHatch.isOperational(reactor, port, opposingPort);
+                            }
+
+                            @Override
+                            public int getInstabilityPerLength() {
+                                return -3;
+                            }
+
+                            @Override
+                            public int getControlRodBonus() {
+                                return 900;
+                            }
+                        }, null, Materials.Cadmium.getFluid(16), Materials.Indium.getFluid(16)));
+        FISSION_CONTROL_RODS[1] = registerMetaTileEntity(1483,
+                new MetaTileEntityFissionTransmutationHatch(gregtechId("fission.control.hafnium"), GTValues.EV,
+                        new IFissionRodPort.RodType() {
+
+                            @Override
+                            public void onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
+                                                      @NotNull IFissionRodPort opposingPort, int rodLength) {
+                                MetaTileEntityFissionTransmutationHatch.onReactorTick(reactor, port, opposingPort);
+                            }
+
+                            @Override
+                            public boolean isOperational(@NotNull IFissionReactor reactor,
+                                                         @NotNull IFissionRodPort port,
+                                                         @NotNull IFissionRodPort opposingPort, int rodLength) {
+                                return MetaTileEntityFissionTransmutationHatch.isOperational(reactor, port, opposingPort);
+                            }
+
+                            @Override
+                            public int getInstabilityPerLength() {
+                                return -2;
+                            }
+
+                            @Override
+                            public int getControlRodBonus() {
+                                return 1700;
+                            }
+                        }, null, Materials.Hafnium.getFluid(16), Materials.Tantalum.getFluid(16)));
+        FISSION_CONTROL_RODS[2] = registerMetaTileEntity(1484,
+                new MetaTileEntityFissionTransmutationHatch(gregtechId("fission.control.molybdenum"), GTValues.IV,
+                        new IFissionRodPort.RodType() {
+
+                            @Override
+                            public void onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
+                                                      @NotNull IFissionRodPort opposingPort, int rodLength) {
+                                MetaTileEntityFissionTransmutationHatch.onReactorTick(reactor, port, opposingPort);
+                            }
+
+                            @Override
+                            public boolean isOperational(@NotNull IFissionReactor reactor,
+                                                         @NotNull IFissionRodPort port,
+                                                         @NotNull IFissionRodPort opposingPort, int rodLength) {
+                                return MetaTileEntityFissionTransmutationHatch.isOperational(reactor, port, opposingPort);
+                            }
+
+                            @Override
+                            public int getInstabilityPerLength() {
+                                return -1;
+                            }
+
+                            @Override
+                            public int getControlRodBonus() {
+                                return 2900;
+                            }
+                        }, null, Materials.Molybdenum.getFluid(16), Materials.Technetium.getFluid(16)));
+        // Free Range: 1485-1509
 
         // Buffers, IDs 1510-1512
         BUFFER[0] = registerMetaTileEntity(1510, new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));
