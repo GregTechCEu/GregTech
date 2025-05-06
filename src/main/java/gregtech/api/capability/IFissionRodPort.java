@@ -5,7 +5,6 @@ import gregtech.api.metatileentity.multiblock.IFissionReactor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraft.world.World;
 
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +20,8 @@ public interface IFissionRodPort {
      * to determine if they are compatible. Then that RodType will be assigned to the two ports. If compatibility
      * fails for any pair of rod ports, then structure formation is cancelled.
      */
-    @NotNull RodType getRodType();
+    @NotNull
+    RodType getRodType();
 
     BlockPos getPos();
 
@@ -29,26 +29,30 @@ public interface IFissionRodPort {
 
         /**
          * Called every reactor tick for all rods.
-         * @param reactor the reactor that is ticking.
-         * @param port one of the fission rod ports forming a rod of this type.
+         * 
+         * @param reactor      the reactor that is ticking.
+         * @param port         one of the fission rod ports forming a rod of this type.
          * @param opposingPort the other fission rod port forming a rod of this type.
-         * @param rodLength the length of the rod formed by the two ports. Counts only the number of zircaloy beams
-         *                  between the two ports, not that plus the length of the ports.
+         * @param rodLength    the length of the rod formed by the two ports. Counts only the number of zircaloy beams
+         *                     between the two ports, not that plus the length of the ports.
          */
-        void onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port, @NotNull IFissionRodPort opposingPort, int rodLength);
+        void onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
+                           @NotNull IFissionRodPort opposingPort, int rodLength);
 
         /**
          * Called when reactor stats are computed, to determine if the stats of this rod should be included.
          * Useful for moderators or control rods that consume material to operate, for example.
-         * @param reactor the reactor that is ticking.
-         * @param port one of the fission rod ports forming a rod of this type.
+         * 
+         * @param reactor      the reactor that is ticking.
+         * @param port         one of the fission rod ports forming a rod of this type.
          * @param opposingPort the other fission rod port forming a rod of this type.
-         * @param rodLength the length of the rod formed by the two ports. Counts only the number of zircaloy beams
-         *                  between the two ports, not that plus the length of the ports.
+         * @param rodLength    the length of the rod formed by the two ports. Counts only the number of zircaloy beams
+         *                     between the two ports, not that plus the length of the ports.
          * @see IFissionReactor#recomputeRodStats()
          * @return whether this rod's stats should be included in the final totals.
          */
-        default boolean isOperational(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port, @NotNull IFissionRodPort opposingPort, int rodLength) {
+        default boolean isOperational(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
+                                      @NotNull IFissionRodPort opposingPort, int rodLength) {
             return true;
         }
 
@@ -62,6 +66,7 @@ public interface IFissionRodPort {
         /**
          * Fuel rod penalty is summed across all rods and 10 is added,
          * then the bonus effects of moderators and control rods are multiplied by ten and divided by the sum.
+         * 
          * @see #getModeratorBonus()
          * @see #getControlRodBonus()
          */
@@ -104,15 +109,18 @@ public interface IFissionRodPort {
         /**
          * Moderator bonus is summed across all rods, divided based on fuel rod penalty,
          * and then is added to the optimal temperature for the reaction.
+         * 
          * @see #getFuelRodPenalty()
          */
         default int getControlRodBonus() {
             return 0;
         }
 
-        default void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+        default void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                                    boolean advanced) {
             if (getFuelRodCount() != 0) {
-                tooltip.add(I18n.format("gregtech.machine.fission.fuel.desc", getFuelRodCount(), getFuelRodPenalty() / 10f));
+                tooltip.add(I18n.format("gregtech.machine.fission.fuel.desc", getFuelRodCount(),
+                        getFuelRodPenalty() / 10f));
             }
             if (getCoolingParallelsPer1000K() > 0) {
                 tooltip.add(I18n.format("gregtech.machine.fission.cooling.desc.1", getCoolingParallelsPer1000K()));
@@ -132,5 +140,4 @@ public interface IFissionRodPort {
             }
         }
     }
-
 }

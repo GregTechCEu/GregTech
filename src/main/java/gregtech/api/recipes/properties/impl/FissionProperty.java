@@ -3,12 +3,6 @@ package gregtech.api.recipes.properties.impl;
 import gregtech.api.GregTechAPI;
 import gregtech.api.recipes.properties.RecipeProperty;
 
-import gregtech.api.util.GTUtility;
-
-import gregtech.api.util.TextFormattingUtil;
-
-import mezz.jei.gui.TooltipRenderer;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTBase;
@@ -16,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import mezz.jei.gui.TooltipRenderer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -51,7 +46,8 @@ public final class FissionProperty extends RecipeProperty<FissionProperty.Fissio
     @Override
     public @NotNull Object deserialize(@NotNull NBTBase nbt) {
         NBTTagCompound tag = (NBTTagCompound) nbt;
-        return new FissionValues(tag.getLong("heatEquivalent"), tag.getInteger("optimalTemp"), tag.getDouble("penalty"));
+        return new FissionValues(tag.getLong("heatEquivalent"), tag.getInteger("optimalTemp"),
+                tag.getDouble("penalty"));
     }
 
     @Override
@@ -66,7 +62,8 @@ public final class FissionProperty extends RecipeProperty<FissionProperty.Fissio
         int width = minecraft.fontRenderer.getStringWidth(str);
         minecraft.fontRenderer.drawString(str, x, y, color);
         if (mouseX > x && mouseX < (x + width) && mouseY > y && mouseY < y + 10) {
-            TooltipRenderer.drawHoveringText(minecraft, I18n.format("gregtech.recipe.heat_penalty.tooltip"), mouseX, mouseY);
+            TooltipRenderer.drawHoveringText(minecraft, I18n.format("gregtech.recipe.heat_penalty.tooltip"), mouseX,
+                    mouseY);
         }
     }
 
@@ -142,6 +139,5 @@ public final class FissionProperty extends RecipeProperty<FissionProperty.Fissio
                     "optimalTemperature=" + optimalTemperature + ", " +
                     "speedMultiplierPerKelvin=" + speedMultiplierPerKelvin + ']';
         }
-
     }
 }

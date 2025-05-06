@@ -389,7 +389,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     * The last authority on whether structure formation will proceed to {@link #formStructure(PatternMatchContext)} or not.
+     * The last authority on whether structure formation will proceed to {@link #formStructure(PatternMatchContext)} or
+     * not.
+     * 
      * @param matchContext the match context
      * @return whether the structure should form or not.
      */

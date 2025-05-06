@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.multi.fission;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
-
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -29,9 +25,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,10 +37,11 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class MetaTileEntityFissionTransmutationHatch extends MetaTileEntityMultiblockPart
-                                      implements IMultiblockAbilityPart<IFissionRodPort>, IFissionRodPort,
-                                                 IControllable {
+                                                     implements IMultiblockAbilityPart<IFissionRodPort>,
+                                                     IFissionRodPort,
+                                                     IControllable {
 
-    public static final int AVERAGE_TICKS_PER_TRANSMUTATION = 20*60*5; // 5 minutes
+    public static final int AVERAGE_TICKS_PER_TRANSMUTATION = 20 * 60 * 5; // 5 minutes
 
     protected final @Nullable GTItemStackHandler inItem;
     protected final @Nullable FluidTank inFluid;
@@ -63,7 +62,8 @@ public class MetaTileEntityFissionTransmutationHatch extends MetaTileEntityMulti
                                                    @Nullable FluidStack transmute) {
         super(metaTileEntityId, tier);
         if ((moderatorItem == null) == (moderatorFluid == null))
-            throw new IllegalArgumentException("Transmutation hatches must consume either an item or a fluid to operate.");
+            throw new IllegalArgumentException(
+                    "Transmutation hatches must consume either an item or a fluid to operate.");
         if (moderatorItem != null) {
             inItem = new GTItemStackHandler(this, 1) {
 
@@ -115,7 +115,8 @@ public class MetaTileEntityFissionTransmutationHatch extends MetaTileEntityMulti
 
     public static boolean isOperational(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
                                         @NotNull IFissionRodPort opposingPort) {
-        if (port instanceof MetaTileEntityFissionTransmutationHatch a && opposingPort instanceof MetaTileEntityFissionTransmutationHatch b) {
+        if (port instanceof MetaTileEntityFissionTransmutationHatch a &&
+                opposingPort instanceof MetaTileEntityFissionTransmutationHatch b) {
             boolean ret = a.isOperational() || b.isOperational();
             a.operational = ret;
             b.operational = ret;
@@ -138,7 +139,8 @@ public class MetaTileEntityFissionTransmutationHatch extends MetaTileEntityMulti
         return false;
     }
 
-    private boolean doTransmutation(@NotNull IFissionReactor reactor, @NotNull MetaTileEntityFissionTransmutationHatch other) {
+    private boolean doTransmutation(@NotNull IFissionReactor reactor,
+                                    @NotNull MetaTileEntityFissionTransmutationHatch other) {
         if (moderatorFluid != null) {
             assert inFluid != null;
             FluidStack drain = inFluid.drain(moderatorFluid, false);
@@ -168,7 +170,8 @@ public class MetaTileEntityFissionTransmutationHatch extends MetaTileEntityMulti
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityFissionTransmutationHatch(metaTileEntityId, getTier(), type, moderatorItem, moderatorFluid, transmute);
+        return new MetaTileEntityFissionTransmutationHatch(metaTileEntityId, getTier(), type, moderatorItem,
+                moderatorFluid, transmute);
     }
 
     @Override
@@ -177,7 +180,8 @@ public class MetaTileEntityFissionTransmutationHatch extends MetaTileEntityMulti
         if (shouldRenderOverlay()) {
             Textures.PIPE_OUT_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
             Textures.PIPE_IN_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            Textures.FLUID_HATCH_OUTPUT_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
+            Textures.FLUID_HATCH_OUTPUT_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation,
+                    pipeline);
             if (inFluid != null) {
                 Textures.FLUID_HATCH_INPUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
             }

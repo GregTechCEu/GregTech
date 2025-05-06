@@ -4,8 +4,6 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.properties.impl.FissionCoolantProperty;
-import gregtech.api.recipes.properties.impl.FissionProperty;
-
 import gregtech.api.recipes.properties.impl.PrimitiveProperty;
 import gregtech.api.util.ValidationResult;
 

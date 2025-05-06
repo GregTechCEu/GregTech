@@ -1,10 +1,5 @@
 package gregtech.api.metatileentity.multiblock;
 
-import gregtech.api.capability.IFissionRodPort;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 public interface IFissionReactor {
 
     void recomputeRodStats();

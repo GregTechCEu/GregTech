@@ -1,11 +1,5 @@
 package gregtech.common.metatileentities.multi.fission;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
-
-import com.cleanroommc.modularui.network.NetworkUtils;
-
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -22,8 +16,6 @@ import gregtech.api.recipes.properties.impl.FissionCoolantProperty;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 
-import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
-
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,6 +27,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,8 +37,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityFissionCoolantHatch extends MetaTileEntityMultiblockPart
-                                      implements IMultiblockAbilityPart<IFissionRodPort>, IFissionRodPort,
-                                                 ICategoryOverride, IControllable {
+                                               implements IMultiblockAbilityPart<IFissionRodPort>, IFissionRodPort,
+                                               ICategoryOverride, IControllable {
 
     protected final FluidTank in;
     protected final FluidTank out;
@@ -54,7 +49,8 @@ public class MetaTileEntityFissionCoolantHatch extends MetaTileEntityMultiblockP
 
     protected boolean workingEnabled = true;
 
-    public MetaTileEntityFissionCoolantHatch(ResourceLocation metaTileEntityId, int tier, IFissionRodPort.RodType type) {
+    public MetaTileEntityFissionCoolantHatch(ResourceLocation metaTileEntityId, int tier,
+                                             IFissionRodPort.RodType type) {
         super(metaTileEntityId, tier);
         in = new FluidTank(type.getCoolingParallelsPer1000K() * 1000);
         out = new FluidTank(type.getCoolingParallelsPer1000K() * 1000);
@@ -68,8 +64,9 @@ public class MetaTileEntityFissionCoolantHatch extends MetaTileEntityMultiblockP
     }
 
     public static boolean onReactorTick(@NotNull IFissionReactor reactor, @NotNull IFissionRodPort port,
-                                     @NotNull IFissionRodPort opposingPort) {
-        if (port instanceof MetaTileEntityFissionCoolantHatch a && opposingPort instanceof MetaTileEntityFissionCoolantHatch b) {
+                                        @NotNull IFissionRodPort opposingPort) {
+        if (port instanceof MetaTileEntityFissionCoolantHatch a &&
+                opposingPort instanceof MetaTileEntityFissionCoolantHatch b) {
             if (a.doCooling(reactor, b) || b.doCooling(reactor, a)) {
                 a.dry = false;
                 b.dry = false;
@@ -84,7 +81,8 @@ public class MetaTileEntityFissionCoolantHatch extends MetaTileEntityMultiblockP
     private boolean doCooling(@NotNull IFissionReactor reactor, @NotNull MetaTileEntityFissionCoolantHatch other) {
         FluidStack drain = this.in.drain(Integer.MAX_VALUE, false);
         if (drain == null) return false;
-        Recipe r = RecipeMaps.FISSION_COOLANT_RECIPES.findRecipe(1, Collections.emptyList(), Collections.singletonList(drain));
+        Recipe r = RecipeMaps.FISSION_COOLANT_RECIPES.findRecipe(1, Collections.emptyList(),
+                Collections.singletonList(drain));
         if (r == null) return false;
         FissionCoolantProperty.FissionCoolantValues values = r.getProperty(FissionCoolantProperty.getInstance(), null);
         if (values == null) return false;
@@ -122,7 +120,8 @@ public class MetaTileEntityFissionCoolantHatch extends MetaTileEntityMultiblockP
         if (shouldRenderOverlay()) {
             Textures.PIPE_OUT_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
             Textures.PIPE_IN_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            Textures.FLUID_HATCH_OUTPUT_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
+            Textures.FLUID_HATCH_OUTPUT_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation,
+                    pipeline);
             Textures.FLUID_HATCH_INPUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }

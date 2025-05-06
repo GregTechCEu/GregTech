@@ -1476,24 +1476,26 @@ public final class RecipeMaps {
                     .build();
 
     public static final RecipeMap<FissionRecipeBuilder> FISSION_RECIPES = new RecipeMapBuilder<>("fission",
-            new FissionRecipeBuilder().duration(20*60*15 /*default 15 min duration*/).EUt(GTValues.VHA[GTValues.HV]))
-                    .itemInputs(4)
-                    .itemOutputs(4)
-                    .fluidInputs(2)
-                    .fluidOutputs(2)
-                    .itemSlotOverlay(GuiTextures.ATOMIC_OVERLAY_1, false)
-                    .itemSlotOverlay(GuiTextures.ATOMIC_OVERLAY_1, true)
-                    .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
+            new FissionRecipeBuilder().duration(20 * 60 * 15 /* default 15 min duration */)
+                    .EUt(GTValues.VHA[GTValues.HV]))
+                            .itemInputs(4)
+                            .itemOutputs(4)
+                            .fluidInputs(2)
+                            .fluidOutputs(2)
+                            .itemSlotOverlay(GuiTextures.ATOMIC_OVERLAY_1, false)
+                            .itemSlotOverlay(GuiTextures.ATOMIC_OVERLAY_1, true)
+                            .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
+                            .sound(GTSoundEvents.MOTOR)
+                            .build();
+
+    public static final RecipeMap<FissionCoolantRecipeBuilder> FISSION_COOLANT_RECIPES = new RecipeMapBuilder<>(
+            "fission_coolant",
+            new FissionCoolantRecipeBuilder())
+                    .fluidInputs(1)
+                    .fluidOutputs(1)
+                    .progressBar(GuiTextures.PROGRESS_BAR_ARROW)
                     .sound(GTSoundEvents.MOTOR)
                     .build();
-
-    public static final RecipeMap<FissionCoolantRecipeBuilder> FISSION_COOLANT_RECIPES = new RecipeMapBuilder<>("fission_coolant",
-            new FissionCoolantRecipeBuilder())
-            .fluidInputs(1)
-            .fluidOutputs(1)
-            .progressBar(GuiTextures.PROGRESS_BAR_ARROW)
-            .sound(GTSoundEvents.MOTOR)
-            .build();
 
     //////////////////////////////////////
     // Fuel Recipe Maps //

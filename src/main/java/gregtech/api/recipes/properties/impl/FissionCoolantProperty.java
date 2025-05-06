@@ -3,8 +3,6 @@ package gregtech.api.recipes.properties.impl;
 import gregtech.api.GregTechAPI;
 import gregtech.api.recipes.properties.RecipeProperty;
 
-import mezz.jei.gui.TooltipRenderer;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTBase;
@@ -12,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import mezz.jei.gui.TooltipRenderer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -47,7 +46,8 @@ public final class FissionCoolantProperty extends RecipeProperty<FissionCoolantP
     @Override
     public @NotNull Object deserialize(@NotNull NBTBase nbt) {
         NBTTagCompound tag = (NBTTagCompound) nbt;
-        return new FissionCoolantValues(tag.getLong("heatEquivalent"), tag.getInteger("minTemp"), tag.getInteger("cutoffTemp"));
+        return new FissionCoolantValues(tag.getLong("heatEquivalent"), tag.getInteger("minTemp"),
+                tag.getInteger("cutoffTemp"));
     }
 
     @Override
@@ -62,7 +62,8 @@ public final class FissionCoolantProperty extends RecipeProperty<FissionCoolantP
         int width = minecraft.fontRenderer.getStringWidth(str);
         minecraft.fontRenderer.drawString(str, x, y, color);
         if (mouseX > x && mouseX < (x + width) && mouseY > y && mouseY < y + 10) {
-            TooltipRenderer.drawHoveringText(minecraft, I18n.format("gregtech.recipe.cutoff_temperature.tooltip"), mouseX, mouseY);
+            TooltipRenderer.drawHoveringText(minecraft, I18n.format("gregtech.recipe.cutoff_temperature.tooltip"),
+                    mouseX, mouseY);
         }
     }
 
@@ -141,6 +142,5 @@ public final class FissionCoolantProperty extends RecipeProperty<FissionCoolantP
                     "optimalTemperature=" + minimumTemperature + ", " +
                     "speedMultiplierPerKelvin=" + cutoffTemperature + ']';
         }
-
     }
 }

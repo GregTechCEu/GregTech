@@ -1,7 +1,5 @@
 package gregtech.common.metatileentities.multi.fission;
 
-import com.github.bsideup.jabel.Desugar;
-
 import gregtech.api.capability.IFissionRodPort;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.fluids.FluidConstants;
@@ -26,20 +24,10 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
-
 import gregtech.client.renderer.texture.Textures;
-
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
-
-import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-
-import it.unimi.dsi.fastutil.longs.LongArraySet;
-import it.unimi.dsi.fastutil.longs.LongSet;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -47,20 +35,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.ITextComponent;
-
 import net.minecraft.util.text.TextFormatting;
-
 import net.minecraft.world.World;
 
+import com.github.bsideup.jabel.Desugar;
+import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -141,7 +129,8 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
     protected void updateFormedValid() {
         super.updateFormedValid();
         if (currentHeat > 0) {
-            currentHeat -= heatLossFromSurfaceArea + thermalVoidCooling * (getTemperature() - getBaseTemperature()) / 1000;
+            currentHeat -= heatLossFromSurfaceArea +
+                    thermalVoidCooling * (getTemperature() - getBaseTemperature()) / 1000;
             if (currentHeat < 0) {
                 currentHeat = 0;
             }
@@ -178,7 +167,8 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
                         "M#####M",
                         "M#####M",
                         "M#####M",
-                        "CVVVVVC").setRepeatable(5, 5)
+                        "CVVVVVC")
+                .setRepeatable(5, 5)
                 .aisle("CCCCCCC",
                         "CFFFFFC",
                         "CFFFFFC",
@@ -190,8 +180,11 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
                 .where('C', casing.or(autoAbilities()))
                 .where('F', casing.or(tilePredicate((s, t) -> t instanceof MetaTileEntityFissionFuelRod, null)))
                 .where('V', casing.or(tilePredicate((s, t) -> t instanceof MetaTileEntityFissionCoolantHatch, null)))
-                .where('M', casing.or(tilePredicate((s, t) -> t instanceof MetaTileEntityFissionTransmutationHatch, null)))
-                .where('#', air().or(states(MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.CasingType.INTERIOR_BEAM), MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.CasingType.THERMAL_VOID))))
+                .where('M',
+                        casing.or(tilePredicate((s, t) -> t instanceof MetaTileEntityFissionTransmutationHatch, null)))
+                .where('#',
+                        air().or(states(MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.CasingType.INTERIOR_BEAM),
+                                MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.CasingType.THERMAL_VOID))))
                 .build();
     }
 
@@ -216,7 +209,8 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
             sum += i;
         }
         heatCapacityFromVolume = structurePattern.thumbLength * structurePattern.palmLength * sum;
-        heatLossFromSurfaceArea = sum * structurePattern.thumbLength + sum * structurePattern.palmLength + structurePattern.thumbLength * structurePattern.palmLength;
+        heatLossFromSurfaceArea = sum * structurePattern.thumbLength + sum * structurePattern.palmLength +
+                structurePattern.thumbLength * structurePattern.palmLength;
         air = 0;
         thermalVoidCooling = 0;
         BlockPos.PooledMutableBlockPos mut = BlockPos.PooledMutableBlockPos.retain();
@@ -227,14 +221,14 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
                 air++;
             } else if (state.getBlock() == MetaBlocks.FISSION_CASING &&
                     MetaBlocks.FISSION_CASING.getState(state) == BlockFissionCasing.CasingType.THERMAL_VOID) {
-                // check adjacency to fission rods
-                for (EnumFacing facing : EnumFacing.VALUES) {
-                    mut.setPos(pos).move(facing);
-                    if (RodPos.checkOverlap(facing.getAxis(), mut, rods::containsKey)) {
-                        thermalVoidCooling += 8;
+                        // check adjacency to fission rods
+                        for (EnumFacing facing : EnumFacing.VALUES) {
+                            mut.setPos(pos).move(facing);
+                            if (RodPos.checkOverlap(facing.getAxis(), mut, rods::containsKey)) {
+                                thermalVoidCooling += 8;
+                            }
+                        }
                     }
-                }
-            }
         }
         mut.release();
         recomputeRodStats();
@@ -296,7 +290,9 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
                 BlockInfo cache = structurePattern.cache.get(mut.setPos(pos).move(facing).toLong());
                 if (cache == null) continue;
                 if (cache.getBlockState().getBlock() != MetaBlocks.FISSION_CASING) continue;
-                if (MetaBlocks.FISSION_CASING.getState(cache.getBlockState()) != BlockFissionCasing.CasingType.INTERIOR_BEAM) continue;
+                if (MetaBlocks.FISSION_CASING.getState(cache.getBlockState()) !=
+                        BlockFissionCasing.CasingType.INTERIOR_BEAM)
+                    continue;
                 Long2ObjectMap<IFissionRodPort> map;
                 long key = RodPos.key(facing.getAxis(), pos);
                 ToIntFunction<BlockPos> selector;
@@ -327,8 +323,8 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
                     }
                     while (selector.applyAsInt(mut) != target) {
                         if (cache.getBlockState().getBlock() != MetaBlocks.FISSION_CASING ||
-                                MetaBlocks.FISSION_CASING.getState(cache.getBlockState())
-                                        != BlockFissionCasing.CasingType.INTERIOR_BEAM)
+                                MetaBlocks.FISSION_CASING.getState(cache.getBlockState()) !=
+                                        BlockFissionCasing.CasingType.INTERIOR_BEAM)
                             break inner;
                         if (RodPos.checkOverlap(facing.getAxis(), mut, rods::containsKey)) {
                             mut.release();
@@ -373,7 +369,8 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
 
     @Override
     public int getTemperatureLimit() {
-        return Math.max(getBaseTemperature() + 500, (int) (STANDARD_TEMPERATURE_LIMIT * Math.pow(TEMPERATURE_LIMIT_MULTIPLIER_PER_INSTABILITY, instability)));
+        return Math.max(getBaseTemperature() + 500, (int) (STANDARD_TEMPERATURE_LIMIT *
+                Math.pow(TEMPERATURE_LIMIT_MULTIPLIER_PER_INSTABILITY, instability)));
     }
 
     @Override
@@ -390,7 +387,7 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
     public void applyHeat(long heat) {
         this.currentHeat += heat;
         if (getTemperature() > getTemperatureLimit()) {
-//            explodeMultiblock((float) Math.log(getTemperature()));
+            // explodeMultiblock((float) Math.log(getTemperature()));
         }
     }
 
@@ -452,22 +449,26 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
     protected void addWarningText(List<ITextComponent> textList) {
         super.addWarningText(textList);
         if (instability > 0) {
-            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.fission.unstable"));
+            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                    "gregtech.multiblock.fission.unstable"));
         }
         if (fragility > 0) {
-            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.fission.fragile"));
+            textList.add(
+                    TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.fission.fragile"));
         }
     }
 
     @Override
     protected void addErrorText(List<ITextComponent> textList) {
         if (isStructureFormed() && rods == null) {
-            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.fission.structure.init_failure"));
+            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                    "gregtech.multiblock.fission.structure.init_failure"));
             return;
         }
         super.addErrorText(textList);
         if (isStructureFormed() && getRecipeMapWorkable().getParallelLimit() == 0) {
-            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.fission.structure.no_fuel"));
+            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                    "gregtech.multiblock.fission.structure.no_fuel"));
         }
         if (!isStructureFormed() && structureIssue != null) {
             textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, structureIssue));
@@ -481,7 +482,6 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.3"));
-
     }
 
     @Override
@@ -540,7 +540,8 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
                 FissionProperty.FissionValues values = getValues();
                 double progress = speedFactor(values);
                 actualRecipeProgress += progress;
-                getMetaTileEntity().applyHeat((long) (values.getHeatEquivalentPerTick() * progress * parallelRecipesPerformed));
+                getMetaTileEntity()
+                        .applyHeat((long) (values.getHeatEquivalentPerTick() * progress * parallelRecipesPerformed));
                 if (actualRecipeProgress > maxProgressTime) {
                     completeRecipe();
                 }
@@ -561,7 +562,8 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
         protected void setupRecipe(@NotNull Recipe recipe) {
             super.setupRecipe(recipe);
             actualRecipeProgress = 1;
-            recipeValues = previousRecipe.getProperty(FissionProperty.getInstance(), FissionProperty.FissionValues.EMPTY);
+            recipeValues = previousRecipe.getProperty(FissionProperty.getInstance(),
+                    FissionProperty.FissionValues.EMPTY);
         }
 
         @Override
@@ -600,7 +602,8 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
     }
 
     @Desugar
-    protected record FissionRod(IFissionRodPort port, IFissionRodPort opposingPort, IFissionRodPort.RodType type, int length) {}
+    protected record FissionRod(IFissionRodPort port, IFissionRodPort opposingPort, IFissionRodPort.RodType type,
+                                int length) {}
 
     protected static final class RodPos {
 
@@ -614,7 +617,7 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
         }
 
         public RodPos(EnumFacing.@NotNull Axis axis, @NotNull BlockPos pos) {
-                this(axis, key(axis, pos));
+            this(axis, key(axis, pos));
         }
 
         public static long key(EnumFacing.@NotNull Axis axis, BlockPos pos) {
@@ -663,6 +666,5 @@ public class MetaTileEntityFissionReactor extends RecipeMapMultiblockController 
                     "axis=" + axis + ", " +
                     "pos=" + pos + ']';
         }
-
     }
 }
