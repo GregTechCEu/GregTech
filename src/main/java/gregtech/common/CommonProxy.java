@@ -7,6 +7,7 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
+import gregtech.api.metatileentity.registry.WirelessChargerManger;
 import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
@@ -406,6 +407,7 @@ public class CommonProxy {
 
     public void onLoad() {
         GTDataFixers.init();
+        MinecraftForge.EVENT_BUS.register(WirelessChargerManger.class);
     }
 
     public void onPostLoad() {

@@ -3,6 +3,9 @@ package gregtech.api.util;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.capability.FeCompat;
+import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.GTFluid;
@@ -25,6 +28,7 @@ import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
@@ -44,12 +48,15 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -964,5 +971,53 @@ public class GTUtility {
     public static int combineRGB(@Range(from = 0, to = 255) int r, @Range(from = 0, to = 255) int g,
                                  @Range(from = 0, to = 255) int b) {
         return (r << 16) | (g << 8) | b;
+    }
+
+    public static int max(int a, int b, int c) {
+        return Math.max(Math.max(a, b), c);
+    }
+
+    public static int taxicabDistance(int aX, int aY, int aZ, int bX, int bY, int bZ) {
+        return Math.abs(aX - bX) + Math.abs(aY - bY) + Math.abs(aZ - bZ);
+    }
+
+    public static double euclidianDistance(int aX, int aY, int aZ, int bX, int bY, int bZ) {
+        return Math.sqrt(Math.pow(aX - bX, 2) + Math.pow(aY - bY, 2) + Math.pow(aZ - bZ, 2));
+    }
+
+    public static int chebyshevDistance(int aX, int aY, int aZ, int bX, int bY, int bZ) {
+        return max(Math.abs(aX - bX), Math.abs(aY - bY), Math.abs(aZ - bZ));
+    }
+
+    public static List<EntityPlayerMP> getOnlinePlayers() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers();
+    }
+
+    public static boolean isItemFullyCharged(@NotNull ItemStack itemStack) {
+        if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
+            IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            if (electricItem == null || !electricItem.chargeable()) return true;
+            return electricItem.getCharge() >= electricItem.getMaxCharge();
+        } else if (itemStack.hasCapability(CapabilityEnergy.ENERGY, null)) {
+            IEnergyStorage energyStorage = itemStack.getCapability(CapabilityEnergy.ENERGY, null);
+            if (energyStorage == null || !energyStorage.canReceive()) return true;
+            return energyStorage.getEnergyStored() >= energyStorage.getMaxEnergyStored();
+        }
+
+        return true;
+    }
+
+    public static long chargeItem(@NotNull ItemStack itemStack, long toCharge, int chargeTier) {
+        if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
+            IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            if (electricItem == null) return 0;
+            return electricItem.charge(toCharge, chargeTier, true, false);
+        } else if (itemStack.hasCapability(CapabilityEnergy.ENERGY, null)) {
+            IEnergyStorage energyStorage = itemStack.getCapability(CapabilityEnergy.ENERGY, null);
+            if (energyStorage == null) return 0;
+            return FeCompat.insertEu(energyStorage, toCharge);
+        }
+
+        return 0;
     }
 }

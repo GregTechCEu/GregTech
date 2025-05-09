@@ -38,6 +38,7 @@ import gregtech.common.metatileentities.electric.MetaTileEntityRockBreaker;
 import gregtech.common.metatileentities.electric.MetaTileEntitySingleCombustion;
 import gregtech.common.metatileentities.electric.MetaTileEntitySingleTurbine;
 import gregtech.common.metatileentities.electric.MetaTileEntityTransformer;
+import gregtech.common.metatileentities.electric.MetaTileEntityWirelessCharger;
 import gregtech.common.metatileentities.electric.MetaTileEntityWorldAccelerator;
 import gregtech.common.metatileentities.electric.SimpleMachineMetaTileEntityResizable;
 import gregtech.common.metatileentities.multi.BoilerType;
@@ -378,6 +379,7 @@ public class MetaTileEntities {
     public static MetaTileEntityLDItemEndpoint LONG_DIST_ITEM_ENDPOINT;
     public static MetaTileEntityLDFluidEndpoint LONG_DIST_FLUID_ENDPOINT;
     public static MetaTileEntityAlarm ALARM;
+    public static MetaTileEntityWirelessCharger[] WIRELESS_CHARGER = new MetaTileEntityWirelessCharger[GTValues.V.length - 1];
 
     // todo
     public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[4][GTValues.V.length];
@@ -1218,6 +1220,14 @@ public class MetaTileEntities {
 
         // 1820-1849 are taken for UHV+ 4A/16A/64A Energy/Dynamo Hatches
         // 1850-1869 are taken for UHV+ Input/Output Buses/Hatches
+
+        // Dual Input Hatches 1879 + 1888
+        // Dual Output Hatches 1889 + 1898
+
+        for (int tier = GTValues.LV; tier <= (GregTechAPI.isHighTier() ? GTValues.OpV : GTValues.UV); tier++) {
+            WIRELESS_CHARGER[tier] = registerMetaTileEntity(1898 + tier, new MetaTileEntityWirelessCharger(
+                    gregtechId("wireless_charger." + GTValues.VN[tier].toLowerCase()), tier));
+        }
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,
