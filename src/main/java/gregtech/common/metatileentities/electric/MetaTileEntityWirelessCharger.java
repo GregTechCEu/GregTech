@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.registry.WirelessChargerManger;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,10 +32,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_ACTIVE;
 import static gregtech.api.capability.GregtechDataCodes.WORKING_ENABLED;
 
 public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implements IWirelessCharger {
 
+    private boolean lastActiveState = false;
     private boolean locked = false;
     private final int range;
     private final Set<EntityPlayer> playersInRange = new HashSet<>();
@@ -88,6 +91,12 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
                     player.sendMessage(new TextComponentString("Left range of wireless charger"));
                 }
             }
+        }
+
+        boolean hasPlayersInRange = !playersInRange.isEmpty();
+        if (lastActiveState != hasPlayersInRange) {
+            lastActiveState = hasPlayersInRange;
+            writeCustomData(UPDATE_ACTIVE, buf -> buf.writeBoolean(lastActiveState));
         }
     }
 
@@ -186,6 +195,8 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
 
         if (dataId == WORKING_ENABLED) {
             locked = buf.readBoolean();
+        } else if (dataId == UPDATE_ACTIVE) {
+            lastActiveState = buf.readBoolean();
         }
     }
 
@@ -206,6 +217,8 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
+
+        Textures.DISPLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 
     @Override
