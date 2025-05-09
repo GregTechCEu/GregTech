@@ -13,22 +13,31 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
+
+import static gregtech.api.capability.GregtechDataCodes.WORKING_ENABLED;
 
 public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implements IWirelessCharger {
 
     private boolean locked = false;
     private final int range;
-    private final Set<UUID> playersInRange = new HashSet<>();
+    private final Set<EntityPlayer> playersInRange = new HashSet<>();
 
     public MetaTileEntityWirelessCharger(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
@@ -58,39 +67,43 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
     @Override
     public void onLoad() {
         super.onLoad();
+
         if (!getWorld().isRemote) {
             WirelessChargerManger.addCharger(this);
         }
     }
 
-    private void detectPlayers() {
+    protected void detectPlayers() {
         for (EntityPlayer player : getWorld().playerEntities) {
             if (calculateDistance(player, getPos()) <= range) {
-                if (!playersInRange.contains(player.getUniqueID()) && isPlayerValid(player)) {
-                    playersInRange.add(player.getUniqueID());
+                if (!playersInRange.contains(player) && isPlayerValid(player)) {
+                    playersInRange.add(player);
                     // TODO: proper lang
-                    player.sendMessage(new TextComponentString("in range of wireless charger"));
+                    player.sendMessage(new TextComponentString("In range of wireless charger"));
                 }
             } else {
-                playersInRange.remove(player.getUniqueID());
-                // TODO: proper lang
-                player.sendMessage(new TextComponentString("left range of wireless charger"));
+                if (playersInRange.contains(player)) {
+                    playersInRange.remove(player);
+                    // TODO: proper lang
+                    player.sendMessage(new TextComponentString("Left range of wireless charger"));
+                }
             }
         }
     }
 
-    private static int calculateDistance(EntityPlayer player, BlockPos pos) {
-        return (int) GTUtility.euclidianDistance((int) player.posX, (int) player.posY, (int) player.posZ, pos.getX(),
-                pos.getY(), pos.getZ());
+    protected static int calculateDistance(@NotNull EntityPlayer player, @NotNull BlockPos pos) {
+        return (int) GTUtility.euclidianDistance((int) player.posX, (int) player.posY, (int) player.posZ + 1,
+                pos.getX(), pos.getY(), pos.getZ());
     }
 
-    private boolean isPlayerValid(EntityPlayer player) {
+    protected boolean isPlayerValid(@NotNull EntityPlayer player) {
         return !locked || player.getUniqueID().equals(getOwner());
     }
 
     @Override
     public void onPlacement(@Nullable EntityLivingBase placer) {
         super.onPlacement(placer);
+
         if (!getWorld().isRemote) {
             WirelessChargerManger.addCharger(this);
             detectPlayers();
@@ -100,31 +113,99 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
     @Override
     public void onRemoval() {
         super.onRemoval();
+
         if (!getWorld().isRemote) {
             WirelessChargerManger.removeCharger(this);
         }
     }
 
     @Override
-    public boolean canChargePlayerItems(EntityPlayer player) {
-        return playersInRange.contains(player.getUniqueID());
+    public boolean canChargePlayerItems(@NotNull EntityPlayer player) {
+        return playersInRange.contains(player);
     }
 
     @Override
     public void chargePlayerItems(List<ItemStack> stacksToCharge) {
         long usedEU = 0;
+
         for (ItemStack stack : stacksToCharge) {
             long availableEU = Math.min(energyContainer.getEnergyStored(), energyContainer.getInputVoltage() * 20);
             if (availableEU == 0) break;
             usedEU += GTUtility.chargeItem(stack, availableEU,
                     GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage()));
         }
+
         energyContainer.removeEnergy(usedEU);
     }
 
     @Override
     protected boolean openGUIOnRightClick() {
         return false;
+    }
+
+    @Override
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                CuboidRayTraceResult hitResult) {
+        super.onRightClick(playerIn, hand, facing, hitResult);
+
+        if (!getWorld().isRemote) {
+            playerIn.sendMessage(new TextComponentString("Players in range:"));
+            for (EntityPlayer player : playersInRange) {
+                playerIn.sendMessage(new TextComponentString("- ").appendSibling(player.getDisplayName()));
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                      CuboidRayTraceResult hitResult) {
+        if (!getWorld().isRemote) {
+            if (locked) {
+                locked = false;
+                // TODO: proper lang
+                playerIn.sendStatusMessage(new TextComponentString("Public"), true);
+            } else {
+                locked = true;
+                // TODO: proper lang
+                playerIn.sendStatusMessage(new TextComponentString("Locked to owner"), true);
+            }
+
+            writeCustomData(WORKING_ENABLED, buf -> buf.writeBoolean(locked));
+            playersInRange.clear();
+            detectPlayers();
+        }
+
+        return true;
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+
+        if (dataId == WORKING_ENABLED) {
+            locked = buf.readBoolean();
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+
+        buf.writeBoolean(locked);
+    }
+
+    @Override
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+
+        locked = buf.readBoolean();
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
     }
 
     @Override

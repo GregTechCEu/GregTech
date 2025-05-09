@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class WirelessChargerManger {
+public final class WirelessChargerManger {
 
     private static final Set<IWirelessCharger> wirelessChargers = new HashSet<>();
     private static int tickCounter = 0;
