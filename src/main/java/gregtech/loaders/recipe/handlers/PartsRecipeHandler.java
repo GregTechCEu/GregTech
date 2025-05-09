@@ -87,6 +87,15 @@ public class PartsRecipeHandler {
                         .buildAndRegister();
             }
         }
+
+        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
+            RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+                    .notConsumable(MetaItems.SHAPE_MOLD_BOLT)
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 8))
+                    .output(boltPrefix, material)
+                    .EUt(GTUtility.scaleVoltage(VA[MV], workingTier)).duration(2)
+                    .buildAndRegister();
+        }
     }
 
     public static void processScrew(OrePrefix screwPrefix, Material material, DustProperty property) {
@@ -394,6 +403,16 @@ public class PartsRecipeHandler {
                     .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         }
+
+        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
+            RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+                    .notConsumable(MetaItems.SHAPE_MOLD_RING)
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 4))
+                    .output(ringPrefix, material)
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
+                    .duration((int) Math.max((material.getMass() / 2f) * 0.95f, 1f))
+                    .buildAndRegister();
+        }
     }
 
     public static void processSpringSmall(OrePrefix springPrefix, Material material, IngotProperty property) {
@@ -507,6 +526,16 @@ public class PartsRecipeHandler {
                         'X', new UnificationEntry(OrePrefix.stick, material));
             }
         }
+
+        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
+            RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+                    .notConsumable(MetaItems.SHAPE_MOLD_ROD)
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 2))
+                    .output(stickPrefix, material)
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
+                    .duration((int) Math.max(material.getMass() * 0.95f, 1f))
+                    .buildAndRegister();
+        }
     }
 
     public static void processLongStick(OrePrefix longStickPrefix, Material material, DustProperty property) {
@@ -571,6 +600,16 @@ public class PartsRecipeHandler {
                         .buildAndRegister();
             }
         }
+
+        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
+            RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+                    .notConsumable(MetaItems.SHAPE_MOLD_ROD_LONG)
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L))
+                    .output(longStickPrefix, material)
+                    .EUt(GTUtility.scaleVoltage(64, workingTier))
+                    .duration((int) Math.max(material.getMass() * 0.95f, 1f))
+                    .buildAndRegister();
+        }
     }
 
     public static void processTurbine(OrePrefix toolPrefix, Material material, IngotProperty property) {
@@ -624,6 +663,16 @@ public class PartsRecipeHandler {
                 .duration(100)
                 .EUt(GTUtility.scaleVoltage(VA[ULV], workingTier))
                 .buildAndRegister();
+
+        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
+            RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+                    .notConsumable(MetaItems.SHAPE_MOLD_ROUND)
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 9))
+                    .output(roundPrefix, material)
+                    .EUt(GTUtility.scaleVoltage(VA[ULV], workingTier))
+                    .duration(90)
+                    .buildAndRegister();
+        }
     }
 
     private static long getVoltageMultiplier(Material material) {
