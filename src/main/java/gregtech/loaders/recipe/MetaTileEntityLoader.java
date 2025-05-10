@@ -1169,6 +1169,9 @@ public class MetaTileEntityLoader {
             registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[3], " WW", "RMC", " WW", 'C', CIRCUIT, 'M', HULL,
                     'W', CABLE_HEX, 'R', new UnificationEntry(OrePrefix.cableGtHex, Materials.RedAlloy));
         }
+
+        registerMachineRecipe(MetaTileEntities.WIRELESS_CHARGER, " F ", "EHE", "COC", 'F', FIELD_GENERATOR, 'E',
+                EMITTER, 'H', HULL, 'C', CIRCUIT, 'O', CABLE_OCT);
     }
 
     // Can only accept a subset of "Item" types:
