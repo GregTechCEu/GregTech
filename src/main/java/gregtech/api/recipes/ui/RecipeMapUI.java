@@ -1,6 +1,6 @@
 package gregtech.api.recipes.ui;
 
-import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
@@ -117,7 +117,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @return the populated builder
      */
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
-                                                 FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+                                                 MultipleTankHandler importFluids, MultipleTankHandler exportFluids,
+                                                 int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
         builder.widget(new RecipeProgressWidget(200, 78, 23 + yOffset, 20, 20, progressBarTexture,
                 moveType, recipeMap));
@@ -141,8 +142,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @return the populated builder
      */
     public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems,
-                                              IItemHandlerModifiable exportItems, FluidTankList importFluids,
-                                              FluidTankList exportFluids, int yOffset) {
+                                              IItemHandlerModifiable exportItems, MultipleTankHandler importFluids,
+                                              MultipleTankHandler exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
         builder.widget(
                 new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture,
@@ -168,8 +169,9 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      */
     public ModularUI.Builder createUITemplateNoOutputs(DoubleSupplier progressSupplier,
                                                        IItemHandlerModifiable importItems,
-                                                       IItemHandlerModifiable exportItems, FluidTankList importFluids,
-                                                       FluidTankList exportFluids, int yOffset) {
+                                                       IItemHandlerModifiable exportItems,
+                                                       MultipleTankHandler importFluids,
+                                                       MultipleTankHandler exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
         builder.widget(
                 new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture,
@@ -190,9 +192,9 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      */
     protected void addInventorySlotGroup(@NotNull ModularUI.Builder builder,
                                          @NotNull IItemHandlerModifiable itemHandler,
-                                         @NotNull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
+                                         @NotNull MultipleTankHandler fluidHandler, boolean isOutputs, int yOffset) {
         int itemInputsCount = itemHandler.getSlots();
-        int fluidInputsCount = fluidHandler.getTanks();
+        int fluidInputsCount = fluidHandler.size();
         boolean invertFluids = false;
         if (itemInputsCount == 0) {
             int tmp = itemInputsCount;
@@ -205,9 +207,9 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         int itemSlotsToDown = inputSlotGrid[1];
         int startInputsX = isOutputs ? 106 : 70 - itemSlotsToLeft * 18;
         int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
-        boolean wasGroup = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
+        boolean wasGroup = itemHandler.getSlots() + fluidHandler.size() == 12;
         if (wasGroup) startInputsY -= 9;
-        else if (itemHandler.getSlots() >= 6 && fluidHandler.getTanks() >= 2 && !isOutputs) startInputsY -= 9;
+        else if (itemHandler.getSlots() >= 6 && fluidHandler.size() >= 2 && !isOutputs) startInputsY -= 9;
         for (int i = 0; i < itemSlotsToDown; i++) {
             for (int j = 0; j < itemSlotsToLeft; j++) {
                 int slotIndex = i * itemSlotsToLeft + j;
@@ -250,13 +252,13 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param isOutputs    if slots should be output slots
      */
     protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
-                           FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
+                           MultipleTankHandler fluidHandler, boolean isFluid, boolean isOutputs) {
         if (!isFluid) {
             builder.widget(new SlotWidget(itemHandler, slotIndex, x, y, true, !isOutputs).setBackgroundTexture(
                     getOverlaysForSlot(isOutputs, false, slotIndex == itemHandler.getSlots() - 1)));
         } else {
             builder.widget(new TankWidget(fluidHandler.getTankAt(slotIndex), x, y, 18, 18).setAlwaysShowFull(true)
-                    .setBackgroundTexture(getOverlaysForSlot(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1))
+                    .setBackgroundTexture(getOverlaysForSlot(isOutputs, true, slotIndex == fluidHandler.size() - 1))
                     .setContainerClicking(true, !isOutputs));
         }
     }

@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.steam.boiler;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
@@ -314,13 +315,13 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     }
 
     @Override
-    protected FluidTankList createImportFluidHandler() {
+    protected MultipleTankHandler createImportFluidHandler() {
         this.waterFluidTank = new FilteredFluidHandler(16000).setFilter(CommonFluidFilters.BOILER_FLUID);
         return new FluidTankList(false, waterFluidTank);
     }
 
     @Override
-    protected FluidTankList createExportFluidHandler() {
+    protected MultipleTankHandler createExportFluidHandler() {
         this.steamFluidTank = new FluidTank(16000);
         return new FluidTankList(false, steamFluidTank);
     }

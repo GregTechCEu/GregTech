@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
@@ -122,7 +123,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     }
 
     @Override
-    public FluidTankList createImportFluidHandler() {
+    public MultipleTankHandler createImportFluidHandler() {
         this.steamFluidTank = new FilteredFluidHandler(STEAM_CAPACITY).setFilter(CommonFluidFilters.STEAM);
         return new FluidTankList(false, steamFluidTank);
     }

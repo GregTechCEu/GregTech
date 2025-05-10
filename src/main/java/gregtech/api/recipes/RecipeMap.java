@@ -2,7 +2,7 @@ package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
@@ -533,7 +533,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @Nullable
-    public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
+    public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, MultipleTankHandler fluidInputs) {
         return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs));
     }
 
@@ -892,7 +892,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * @deprecated {@link RecipeMapUI#createJeiUITemplate(IItemHandlerModifiable, IItemHandlerModifiable, FluidTankList, FluidTankList, int)}
+     * @deprecated {@link RecipeMapUI#createJeiUITemplate(IItemHandlerModifiable, IItemHandlerModifiable, MultipleTankHandler, MultipleTankHandler, int)}
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Deprecated

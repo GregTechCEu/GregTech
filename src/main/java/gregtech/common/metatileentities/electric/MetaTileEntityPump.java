@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.electric;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -120,7 +121,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     }
 
     @Override
-    protected FluidTankList createExportFluidHandler() {
+    protected MultipleTankHandler createExportFluidHandler() {
         return new FluidTankList(false, new FluidTank(16000 * Math.max(1, getTier())));
     }
 

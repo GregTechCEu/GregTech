@@ -1,8 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.INotifiableHandler;
-import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 
@@ -38,8 +37,8 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
         return notifiables;
     }
 
-    private FluidTankList getFluidHandlers() {
-        FluidTankList handler = null;
+    private MultipleTankHandler getFluidHandlers() {
+        MultipleTankHandler handler = null;
         if (isExportHatch && getExportFluids().getFluidTanks().size() > 0) {
             handler = getExportFluids();
         } else if (!isExportHatch && getImportFluids().getFluidTanks().size() > 0) {
@@ -58,10 +57,10 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
         }
 
         if (this.fluidInventory.getTankProperties().length > 0) {
-            FluidTankList fluidTankList = getFluidHandlers();
+            MultipleTankHandler fluidTankList = getFluidHandlers();
             if (fluidTankList != null) {
                 for (IFluidTank fluidTank : fluidTankList) {
-                    if (fluidTank instanceof IMultipleTankHandler.ITankEntry entry) {
+                    if (fluidTank instanceof MultipleTankHandler.Entry entry) {
                         fluidTank = entry.getDelegate();
                     }
                     if (fluidTank instanceof INotifiableHandler) {
