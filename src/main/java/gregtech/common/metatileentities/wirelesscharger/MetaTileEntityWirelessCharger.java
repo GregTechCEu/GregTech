@@ -44,7 +44,7 @@ import static gregtech.api.capability.GregtechDataCodes.UPDATE_ACTIVE;
 
 public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implements IWirelessCharger, IDataInfoProvider {
 
-    private boolean lastActiveState = false;
+    private boolean lastActiveState = true;
     private boolean locked = false;
     private final int range;
     private final Set<EntityPlayer> playersInRange = new HashSet<>();
