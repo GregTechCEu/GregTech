@@ -27,6 +27,7 @@ public class TheOneProbeModule extends IntegrationSubmodule {
         getLogger().info("TheOneProbe found. Enabling integration...");
         ITheOneProbe oneProbe = TheOneProbe.theOneProbeImp;
         oneProbe.registerProvider(new ElectricContainerInfoProvider());
+        oneProbe.registerProvider(new MultiblockCoreProvider());
         oneProbe.registerProvider(new WorkableInfoProvider());
         oneProbe.registerProvider(new ControllableInfoProvider());
         oneProbe.registerProvider(new TransformerInfoProvider());

@@ -100,6 +100,9 @@ gregtech.top.maintenance.hard_hammer=Plating is dented
 gregtech.top.maintenance.wire_cutter=Wires burned out
 gregtech.top.maintenance.crowbar=That doesn't belong there
 
+gregtech.top.tread=线程：
+gregtech.top.parallel=并行：
+
 gregtech.top.primitive_pump_production=Production:
 
 gregtech.top.filter.label=Filter:

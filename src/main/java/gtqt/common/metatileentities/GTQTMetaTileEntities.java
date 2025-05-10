@@ -3,6 +3,8 @@ package gtqt.common.metatileentities;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 
+import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityThreadHatch;
+
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityDualHatch;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEDualHatch;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEPatternProvider;
@@ -15,7 +17,7 @@ public class GTQTMetaTileEntities {
     public static final MetaTileEntityDualHatch[] DUAL_IMPORT_HATCH = new MetaTileEntityDualHatch[GTValues.V.length - 1]; // All tiers but MAX
     public static final MetaTileEntityDualHatch[] DUAL_EXPORT_HATCH = new MetaTileEntityDualHatch[GTValues.V.length - 1];
     public static final MetaTileEntityMEPatternProvider[] ME_PATTERN_PROVIDER = new MetaTileEntityMEPatternProvider[GTValues.V.length - 1];
-
+    public static MetaTileEntityThreadHatch[] TREAD_HATCH = new MetaTileEntityThreadHatch[GTValues.V.length-1];
     public static MetaTileEntityMEDualHatch ME_DUAL_IMPORT_HATCH;
     public static MetaTileEntityMEDualHatch ME_DUAL_EXPORT_HATCH;
     //从2500开始写 与gtceu本体共用一个注册表
@@ -36,6 +38,11 @@ public class GTQTMetaTileEntities {
             registerMetaTileEntity(2530 + i, ME_PATTERN_PROVIDER[i]);
 
 
+        }
+        for (int i = 0; i < TREAD_HATCH.length; i++) {
+            int tier = i+1;
+            TREAD_HATCH[i] = registerMetaTileEntity(2600 + i, new MetaTileEntityThreadHatch(
+                    gregtechId(String.format("thread_hatch.%s", GTValues.VN[tier])), tier));
         }
 
         ME_DUAL_IMPORT_HATCH = new MetaTileEntityMEDualHatch(gregtechId("me_dual_hatch.import"), false);

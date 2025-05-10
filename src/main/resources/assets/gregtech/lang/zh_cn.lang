@@ -100,6 +100,9 @@ gregtech.top.maintenance.hard_hammer=外壳有些凹痕（锻造锤）
 gregtech.top.maintenance.wire_cutter=有几根线烧焦了（剪线钳）
 gregtech.top.maintenance.crowbar=这东西不属于这儿（撬棍）
 
+gregtech.top.tread=线程：
+gregtech.top.parallel=并行：
+
 gregtech.top.primitive_pump_production=产出：
 
 gregtech.top.filter.label=过滤：
