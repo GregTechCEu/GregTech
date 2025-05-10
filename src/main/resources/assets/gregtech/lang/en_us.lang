@@ -4598,6 +4598,28 @@ gregtech.machine.endpoint.tooltip.1=Connect with §fLong Distance Pipe§7 blocks
 gregtech.machine.endpoint.tooltip.2=Pipelines must have exactly §f1 Input§7 and §f1 Output§7 endpoint.
 gregtech.machine.endpoint.tooltip.3=Only pipeline endpoints need to be §fchunk-loaded§7.
 
+# Wireless Chargers
+gregtech.machine.wireless_charger.lv.name=LV Wireless Charger
+gregtech.machine.wireless_charger.mv.name=MV Wireless Charger
+gregtech.machine.wireless_charger.hv.name=HV Wireless Charger
+gregtech.machine.wireless_charger.ev.name=EV Wireless Charger
+gregtech.machine.wireless_charger.iv.name=IV Wireless Charger
+gregtech.machine.wireless_charger.luv.name=LuV Wireless Charger
+gregtech.machine.wireless_charger.zpm.name=ZPM Wireless Charger
+gregtech.machine.wireless_charger.uv.name=UV Wireless Charger
+gregtech.machine.wireless_charger.uhv.name=UHV Wireless Charger
+gregtech.machine.wireless_charger.uev.name=UEV Wireless Charger
+gregtech.machine.wireless_charger.uiv.name=UIV Wireless Charger
+gregtech.machine.wireless_charger.uxv.name=UXV Wireless Charger
+gregtech.machine.wireless_charger.opv.name=OpV Wireless Charger
+gregtech.machine.wireless_charger.tooltip.generic=Wirelessly charges items in player inventories who are in range.
+gregtech.machine.wireless_charger.tooltip.range=Range: %s
+gregtech.machine.wireless_charger.players=Players in range:
+gregtech.machine.wireless_charger.public=Public
+gregtech.machine.wireless_charger.private=Locked to owner
+gregtech.machine.wireless_charger.in_range=Entered range of %s wireless charger
+gregtech.machine.wireless_charger.left_range=Left range of %s wireless charger
+
 # Advancements
 gregtech.advancement.root_steam.name=Steam Age
 gregtech.advancement.root_steam.desc=Welcome to GregTech! Everything begins with your first copper ingots.

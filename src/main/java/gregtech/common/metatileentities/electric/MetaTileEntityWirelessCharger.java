@@ -2,14 +2,17 @@ package gregtech.common.metatileentities.electric;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.EnergyContainerHandler;
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.IWirelessCharger;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.registry.WirelessChargerManger;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,7 +22,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -28,6 +36,7 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +44,7 @@ import java.util.Set;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_ACTIVE;
 import static gregtech.api.capability.GregtechDataCodes.WORKING_ENABLED;
 
-public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implements IWirelessCharger {
+public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implements IWirelessCharger, IDataInfoProvider {
 
     private boolean lastActiveState = false;
     private boolean locked = false;
@@ -81,14 +90,14 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
             if (calculateDistance(player, getPos()) <= range) {
                 if (!playersInRange.contains(player) && isPlayerValid(player)) {
                     playersInRange.add(player);
-                    // TODO: proper lang
-                    player.sendMessage(new TextComponentString("In range of wireless charger"));
+                    player.sendMessage(new TextComponentTranslation("gregtech.machine.wireless_charger.in_range",
+                            GTValues.VN[getTier()]));
                 }
             } else {
                 if (playersInRange.contains(player)) {
                     playersInRange.remove(player);
-                    // TODO: proper lang
-                    player.sendMessage(new TextComponentString("Left range of wireless charger"));
+                    player.sendMessage(new TextComponentTranslation("gregtech.machine.wireless_charger.left_range",
+                            GTValues.VN[getTier()]));
                 }
             }
         }
@@ -158,7 +167,7 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
         super.onRightClick(playerIn, hand, facing, hitResult);
 
         if (!getWorld().isRemote) {
-            playerIn.sendMessage(new TextComponentString("Players in range:"));
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.wireless_charger.players"));
             for (EntityPlayer player : playersInRange) {
                 playerIn.sendMessage(new TextComponentString("- ").appendSibling(player.getDisplayName()));
             }
@@ -173,12 +182,12 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
         if (!getWorld().isRemote) {
             if (locked) {
                 locked = false;
-                // TODO: proper lang
-                playerIn.sendStatusMessage(new TextComponentString("Public"), true);
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.wireless_charger.public"),
+                        true);
             } else {
                 locked = true;
-                // TODO: proper lang
-                playerIn.sendStatusMessage(new TextComponentString("Locked to owner"), true);
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.wireless_charger.private"),
+                        true);
             }
 
             writeCustomData(WORKING_ENABLED, buf -> buf.writeBoolean(locked));
@@ -219,6 +228,26 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
         super.renderMetaTileEntity(renderState, translation, pipeline);
 
         Textures.DISPLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+    }
+
+    @Override
+    public @NotNull List<ITextComponent> getDataInfo() {
+        List<ITextComponent> playerList = new ArrayList<>();
+        playerList.add(new TextComponentTranslation("gregtech.machine.wireless_charger.players"));
+        for (EntityPlayer player : playersInRange) {
+            playerList.add(new TextComponentString("- ").appendSibling(player.getDisplayName()));
+        }
+        return playerList;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
+        super.addInformation(stack, world, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.wireless_charger.tooltip.generic"));
+        tooltip.add(I18n.format("gregtech.machine.wireless_charger.tooltip.range",
+                TextFormattingUtil.formatNumbers(range)));
     }
 
     @Override
