@@ -1,4 +1,4 @@
-package gregtech.api.metatileentity.registry;
+package gregtech.common.metatileentities.wirelesscharger;
 
 import gregtech.api.metatileentity.IWirelessCharger;
 import gregtech.api.util.GTUtility;

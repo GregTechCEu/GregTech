@@ -1,4 +1,4 @@
-package gregtech.common.metatileentities.electric;
+package gregtech.common.metatileentities.wirelesscharger;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.EnergyContainerHandler;
@@ -7,8 +7,6 @@ import gregtech.api.metatileentity.IWirelessCharger;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.registry.WirelessChargerManger;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
@@ -50,8 +48,6 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
     private boolean locked = false;
     private final int range;
     private final Set<EntityPlayer> playersInRange = new HashSet<>();
-
-    private long renderCounter = 0;
 
     public MetaTileEntityWirelessCharger(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
@@ -108,7 +104,6 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
         if (lastActiveState != hasPlayersInRange) {
             lastActiveState = hasPlayersInRange;
             writeCustomData(UPDATE_ACTIVE, buf -> buf.writeBoolean(lastActiveState));
-            GTLog.logger.info("Sent active packet: {}", lastActiveState);
         }
     }
 
@@ -146,7 +141,7 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
     }
 
     @Override
-    public void chargePlayerItems(List<ItemStack> stacksToCharge) {
+    public void chargePlayerItems(@NotNull List<ItemStack> stacksToCharge) {
         long usedEU = 0;
 
         for (ItemStack stack : stacksToCharge) {
@@ -206,7 +201,7 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
 
         if (dataId == UPDATE_ACTIVE) {
             lastActiveState = buf.readBoolean();
-            GTLog.logger.info("Received active packet: {}", lastActiveState);
+            scheduleRenderUpdate();
         }
     }
 
@@ -214,14 +209,14 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
 
-        buf.writeBoolean(locked);
+        buf.writeBoolean(lastActiveState);
     }
 
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
 
-        locked = buf.readBoolean();
+        lastActiveState = buf.readBoolean();
     }
 
     @SideOnly(Side.CLIENT)
@@ -231,10 +226,6 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
 
         Textures.WIRELESS_CHARGER_DISPLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
                 lastActiveState, true);
-
-        if (++renderCounter % 120 == 0) {
-            GTLog.logger.info("Rendering front face: {}", lastActiveState);
-        }
     }
 
     @Override
