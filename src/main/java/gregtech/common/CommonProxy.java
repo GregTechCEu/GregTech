@@ -88,7 +88,9 @@ public class CommonProxy {
         IForgeRegistry<Block> registry = event.getRegistry();
 
         for (MTERegistry r : GregTechAPI.mteManager.getRegistries()) {
-            registry.register(r.getBlock());
+            if (!registry.getKeys().isEmpty()) {
+                registry.register(r.getBlock());
+            }
         }
 
         StoneType.init();
@@ -122,9 +124,21 @@ public class CommonProxy {
                 }
             }
 
-            for (BlockCable cable : CABLES.get(materialRegistry.getModid())) registry.register(cable);
-            for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid())) registry.register(pipe);
-            for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid())) registry.register(pipe);
+            for (BlockCable cable : CABLES.get(materialRegistry.getModid())) {
+                if (!cable.getEnabledMaterials().isEmpty()) {
+                    registry.register(cable);
+                }
+            }
+            for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid())) {
+                if (!pipe.getEnabledMaterials().isEmpty()) {
+                    registry.register(pipe);
+                }
+            }
+            for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid())) {
+                if (!pipe.getEnabledMaterials().isEmpty()) {
+                    registry.register(pipe);
+                }
+            }
         }
         for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(pipe);
         for (BlockLaserPipe pipe : LASER_PIPES) registry.register(pipe);
@@ -235,16 +249,27 @@ public class CommonProxy {
         GTRecipeManager.preLoad();
 
         for (MTERegistry r : GregTechAPI.mteManager.getRegistries()) {
-            registry.register(createItemBlock(r.getBlock(), MachineItemBlock::new));
+            if (!r.getKeys().isEmpty()) {
+                registry.register(createItemBlock(r.getBlock(), MachineItemBlock::new));
+            }
         }
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
-            for (BlockCable cable : CABLES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(cable, ItemBlockCable::new));
-            for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
-            for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
+            for (BlockCable cable : CABLES.get(materialRegistry.getModid())) {
+                if (!cable.getEnabledMaterials().isEmpty()) {
+                    registry.register(createItemBlock(cable, ItemBlockCable::new));
+                }
+            }
+            for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid())) {
+                if (!pipe.getEnabledMaterials().isEmpty()) {
+                    registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
+                }
+            }
+            for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid())) {
+                if (!pipe.getEnabledMaterials().isEmpty()) {
+                    registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
+                }
+            }
         }
         for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemBlockOpticalPipe::new));
         for (BlockLaserPipe pipe : LASER_PIPES) registry.register(createItemBlock(pipe, ItemBlockLaserPipe::new));
