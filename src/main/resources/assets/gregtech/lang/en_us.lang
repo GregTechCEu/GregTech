@@ -4614,9 +4614,11 @@ gregtech.machine.wireless_charger.uxv.name=UXV Wireless Charger
 gregtech.machine.wireless_charger.opv.name=OpV Wireless Charger
 gregtech.machine.wireless_charger.tooltip.generic=Wirelessly charges items in player inventories who are in range.
 gregtech.machine.wireless_charger.tooltip.range=Range: §f%s§7 blocks
+gregtech.machine.wireless_charger.tooltip.lock=Right click with a screwdriver to lock the charger to the owner. If it is locked, only the owner can unlock it!
 gregtech.machine.wireless_charger.players=Players in range:
 gregtech.machine.wireless_charger.public=Public
 gregtech.machine.wireless_charger.private=Locked to owner
+gregtech.machine.wireless_charger.not_owner=Can't unlock as you're not the owner of this wireless charger.
 gregtech.machine.wireless_charger.in_range=Entered range of %s wireless charger
 gregtech.machine.wireless_charger.left_range=Left range of %s wireless charger
 

@@ -1515,6 +1515,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return owner;
     }
 
+    protected void setOwner(@NotNull UUID owner) {
+        this.owner = owner;
+    }
+
     public final void toggleMuffled() {
         muffled = !muffled;
         if (!getWorld().isRemote) {

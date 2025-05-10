@@ -179,21 +179,45 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                       CuboidRayTraceResult hitResult) {
         if (!getWorld().isRemote) {
-            if (locked) {
-                locked = false;
-                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.wireless_charger.public"),
-                        true);
+            boolean preCheck = locked;
+
+            if (getOwner() == null) {
+                if (locked) {
+                    unlock(playerIn);
+                } else {
+                    setOwner(playerIn.getUniqueID());
+                    lock(playerIn);
+                }
             } else {
-                locked = true;
-                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.wireless_charger.private"),
-                        true);
+                if (locked) {
+                    if (playerIn.getUniqueID().equals(getOwner())) {
+                        unlock(playerIn);
+                    } else {
+                        playerIn.sendMessage(
+                                new TextComponentTranslation("gregtech.machine.wireless_charger.not_owner"));
+                    }
+                } else {
+                    lock(playerIn);
+                }
             }
 
-            playersInRange.clear();
-            detectPlayers();
+            if (preCheck != locked) {
+                playersInRange.clear();
+                detectPlayers();
+            }
         }
 
         return true;
+    }
+
+    private void lock(EntityPlayer player) {
+        locked = true;
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.wireless_charger.private"), true);
+    }
+
+    private void unlock(EntityPlayer player) {
+        locked = false;
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.wireless_charger.public"), true);
     }
 
     @Override
@@ -245,6 +269,7 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
                                boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.wireless_charger.tooltip.generic"));
+        tooltip.add(I18n.format("gregtech.machine.wireless_charger.tooltip.lock"));
         tooltip.add(I18n.format("gregtech.machine.wireless_charger.tooltip.range",
                 TextFormattingUtil.formatNumbers(range)));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in",
