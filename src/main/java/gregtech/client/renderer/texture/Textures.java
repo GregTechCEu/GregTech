@@ -290,6 +290,8 @@ public class Textures {
             "machines/world_accelerator");
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_TE_OVERLAY = new OrientedOverlayRenderer(
             "machines/world_accelerator_te");
+    public static final OrientedOverlayRenderer WIRELESS_CHARGER_DISPLAY = new OrientedOverlayRenderer(
+            "machines/wireless_charger");
 
     // Simple Overlay Renderers
     public static final SimpleOverlayRenderer SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_screen");

@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.registry.WirelessChargerManger;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
@@ -42,7 +43,6 @@ import java.util.List;
 import java.util.Set;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_ACTIVE;
-import static gregtech.api.capability.GregtechDataCodes.WORKING_ENABLED;
 
 public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implements IWirelessCharger, IDataInfoProvider {
 
@@ -50,6 +50,8 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
     private boolean locked = false;
     private final int range;
     private final Set<EntityPlayer> playersInRange = new HashSet<>();
+
+    private long renderCounter = 0;
 
     public MetaTileEntityWirelessCharger(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
@@ -106,6 +108,7 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
         if (lastActiveState != hasPlayersInRange) {
             lastActiveState = hasPlayersInRange;
             writeCustomData(UPDATE_ACTIVE, buf -> buf.writeBoolean(lastActiveState));
+            GTLog.logger.info("Sent active packet: {}", lastActiveState);
         }
     }
 
@@ -190,7 +193,6 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
                         true);
             }
 
-            writeCustomData(WORKING_ENABLED, buf -> buf.writeBoolean(locked));
             playersInRange.clear();
             detectPlayers();
         }
@@ -202,10 +204,9 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
 
-        if (dataId == WORKING_ENABLED) {
-            locked = buf.readBoolean();
-        } else if (dataId == UPDATE_ACTIVE) {
+        if (dataId == UPDATE_ACTIVE) {
             lastActiveState = buf.readBoolean();
+            GTLog.logger.info("Received active packet: {}", lastActiveState);
         }
     }
 
@@ -223,11 +224,17 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
         locked = buf.readBoolean();
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
 
-        Textures.DISPLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        Textures.WIRELESS_CHARGER_DISPLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
+                lastActiveState, true);
+
+        if (++renderCounter % 120 == 0) {
+            GTLog.logger.info("Rendering front face: {}", lastActiveState);
+        }
     }
 
     @Override
@@ -248,6 +255,12 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
         tooltip.add(I18n.format("gregtech.machine.wireless_charger.tooltip.generic"));
         tooltip.add(I18n.format("gregtech.machine.wireless_charger.tooltip.range",
                 TextFormattingUtil.formatNumbers(range)));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in",
+                energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till",
+                energyContainer.getInputAmperage()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity",
+                energyContainer.getEnergyCapacity()));
     }
 
     @Override
