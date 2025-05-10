@@ -993,7 +993,7 @@ public class GTUtility {
         return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers();
     }
 
-    public static boolean isItemFullyCharged(@NotNull ItemStack itemStack) {
+    public static boolean isItemChargable(@NotNull ItemStack itemStack) {
         if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
             IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
             if (electricItem == null || !electricItem.chargeable()) return true;

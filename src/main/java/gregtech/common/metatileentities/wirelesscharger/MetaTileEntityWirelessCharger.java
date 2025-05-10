@@ -146,9 +146,10 @@ public class MetaTileEntityWirelessCharger extends TieredMetaTileEntity implemen
 
         for (ItemStack stack : stacksToCharge) {
             long availableEU = Math.min(energyContainer.getEnergyStored(), energyContainer.getInputVoltage() * 20);
-            if (availableEU == 0) break;
-            usedEU += GTUtility.chargeItem(stack, availableEU,
-                    GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage()));
+            if (availableEU == 0 || GTUtility.isItemChargable(stack)) {
+                usedEU += GTUtility.chargeItem(stack, availableEU,
+                        GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage()));
+            }
         }
 
         energyContainer.removeEnergy(usedEU);
