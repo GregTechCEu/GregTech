@@ -68,6 +68,11 @@ public class MetaTileEntityPassthroughHatchLaser extends MetaTileEntityMultibloc
     }
 
     @Override
+    protected boolean openGUIOnRightClick() {
+        return false;
+    }
+
+    @Override
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
                                boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.laser_hatch.tooltip2"));
