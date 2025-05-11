@@ -5,7 +5,7 @@
   "version": "${version}",
   "mcversion": "${mcversion}",
   "logoFile": "assets/gregtech/textures/gt_logo_long.png",
-  "url": "https://www.curseforge.com/minecraft/mc-mods/gregtech-ce-unofficial",
+  "url": "https://github.com/GTQT/GregTech",
   "authorList": [
     "MeowmelMuku",
     "serenibyss",
