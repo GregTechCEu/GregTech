@@ -2,7 +2,6 @@ package gregtech.integration.groovy;
 
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.ClipboardUtil;
@@ -42,10 +41,10 @@ public class GroovyHandCommand {
         // material info
         MaterialStack ms = OreDictUnifier.getMaterial(stackInHand);
         if (ms != null) {
-            Material material = ms.material;
-            String copyText = "material('" + RecipeCompatUtil.getRLPrefix(material) + material + "')";
+            String materialString = RecipeCompatUtil.getRLPrefix(ms.material) + ms.material;
+            String copyText = "material('" + materialString + "')";
             event.messages.add(TextCopyable.translation(copyText, "gregtech.command.hand.material").build()
-                    .appendSibling(new TextComponentString(" " + material)
+                    .appendSibling(new TextComponentString(" " + materialString)
                             .setStyle(new Style().setColor(TextFormatting.GREEN))));
         }
         // ore prefix info
