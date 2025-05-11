@@ -2,6 +2,7 @@ package gregtech.integration.groovy;
 
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.ClipboardUtil;
@@ -33,18 +34,18 @@ public class GroovyHandCommand {
         }
 
         // tool info
-        if (stackInHand.getItem() instanceof IGTTool) {
-            IGTTool tool = (IGTTool) stackInHand.getItem();
+        if (stackInHand.getItem() instanceof IGTTool tool) {
             event.messages.add(
                     new TextComponentTranslation("gregtech.command.hand.tool_stats", tool.getToolClasses(stackInHand)));
         }
 
         // material info
-        MaterialStack material = OreDictUnifier.getMaterial(stackInHand);
-        if (material != null) {
-            String copyText = "material('" + material.material + "')";
+        MaterialStack ms = OreDictUnifier.getMaterial(stackInHand);
+        if (ms != null) {
+            Material material = ms.material;
+            String copyText = "material('" + RecipeCompatUtil.getRLPrefix(material) + material + "')";
             event.messages.add(TextCopyable.translation(copyText, "gregtech.command.hand.material").build()
-                    .appendSibling(new TextComponentString(" " + material.material)
+                    .appendSibling(new TextComponentString(" " + material)
                             .setStyle(new Style().setColor(TextFormatting.GREEN))));
         }
         // ore prefix info
