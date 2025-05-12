@@ -17,7 +17,7 @@ public class GTQTMetaTileEntities {
     public static final MetaTileEntityDualHatch[] DUAL_IMPORT_HATCH = new MetaTileEntityDualHatch[GTValues.V.length - 1]; // All tiers but MAX
     public static final MetaTileEntityDualHatch[] DUAL_EXPORT_HATCH = new MetaTileEntityDualHatch[GTValues.V.length - 1];
     public static final MetaTileEntityMEPatternProvider[] ME_PATTERN_PROVIDER = new MetaTileEntityMEPatternProvider[GTValues.V.length - 1];
-    public static MetaTileEntityThreadHatch[] TREAD_HATCH = new MetaTileEntityThreadHatch[GTValues.V.length-1];
+    public static MetaTileEntityThreadHatch[] THREAD_HATCH = new MetaTileEntityThreadHatch[GTValues.V.length-1];
     public static MetaTileEntityMEDualHatch ME_DUAL_IMPORT_HATCH;
     public static MetaTileEntityMEDualHatch ME_DUAL_EXPORT_HATCH;
     //从2500开始写 与gtceu本体共用一个注册表
@@ -39,9 +39,9 @@ public class GTQTMetaTileEntities {
 
 
         }
-        for (int i = 0; i < TREAD_HATCH.length; i++) {
+        for (int i = 0; i < THREAD_HATCH.length; i++) {
             int tier = i+1;
-            TREAD_HATCH[i] = registerMetaTileEntity(2600 + i, new MetaTileEntityThreadHatch(
+            THREAD_HATCH[i] = registerMetaTileEntity(2600 + i, new MetaTileEntityThreadHatch(
                     gregtechId(String.format("thread_hatch.%s", GTValues.VN[tier])), tier));
         }
 

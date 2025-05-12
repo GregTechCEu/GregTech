@@ -158,9 +158,9 @@ public abstract class AdvanceMultiMapMultiblockController extends AdvanceRecipeM
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
         if (recipeMaps.length == 1) return;
         tooltip.add(I18n.format("gregtech.multiblock.multiple_recipemaps_recipes.tooltip", this.recipeMapsToString()));
+        super.addInformation(stack, player, tooltip, advanced);
     }
 
     @SideOnly(Side.CLIENT)
