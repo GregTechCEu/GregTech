@@ -18,8 +18,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
-import com.google.common.base.CaseFormat;
-
 import static gregtech.api.GTValues.M;
 import static gregtech.api.GTValues.W;
 
@@ -120,8 +118,7 @@ public class OreDictionaryLoader {
             OreDictUnifier.registerOre(smoothType, type.getOrePrefix(), type.getMaterial());
             ItemStack cobbleType = MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.COBBLE)
                     .getItemVariant(type);
-            OreDictUnifier.registerOre(cobbleType,
-                    CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, "cobble_" + type.getName()));
+            OreDictUnifier.registerOre(cobbleType, "cobble", type.getMaterial());
         }
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.ANVIL), "craftingAnvil");
