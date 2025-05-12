@@ -7,6 +7,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.Mods;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.integration.exnihilo.ExNihiloConfig;
 import gregtech.integration.exnihilo.ExNihiloModule;
@@ -21,6 +22,7 @@ import exnihilocreatio.ModBlocks;
 import exnihilocreatio.ModItems;
 import exnihilocreatio.compatibility.jei.crucible.CrucibleRecipe;
 import exnihilocreatio.compatibility.jei.sieve.SieveRecipe;
+import exnihilocreatio.modules.AppliedEnergistics2;
 import exnihilocreatio.registries.manager.ExNihiloRegistryManager;
 import exnihilocreatio.registries.types.Siftable;
 
@@ -31,8 +33,7 @@ import java.util.List;
 
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.stick;
-import static gregtech.api.unification.ore.OrePrefix.stone;
+import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.blocks.BlockSteamCasing.SteamCasingType.BRONZE_HULL;
 import static gregtech.integration.exnihilo.ExNihiloModule.*;
 import static gregtech.loaders.recipe.CraftingComponent.*;
@@ -55,13 +56,14 @@ public class ExNihiloRecipes {
 
     public static void registerCraftingRecipes() {
         // Pebbles
-        ModHandler.addShapedRecipe("basalt", OreDictUnifier.get(stone, Basalt, 1), "PP", "PP", 'P',
+
+        ModHandler.addShapedRecipe("basalt", OreDictUnifier.get(cobble, Basalt, 1), "PP", "PP", 'P',
                 new ItemStack(ExNihiloModule.GTPebbles, 1, 0));
-        ModHandler.addShapedRecipe("black_granite", OreDictUnifier.get(stone, GraniteBlack, 1), "PP", "PP", 'P',
+        ModHandler.addShapedRecipe("black_granite", OreDictUnifier.get(cobble, GraniteBlack, 1), "PP", "PP", 'P',
                 new ItemStack(ExNihiloModule.GTPebbles, 1, 1));
-        ModHandler.addShapedRecipe("marble", OreDictUnifier.get(stone, Marble, 1), "PP", "PP", 'P',
+        ModHandler.addShapedRecipe("marble", OreDictUnifier.get(cobble, Marble, 1), "PP", "PP", 'P',
                 new ItemStack(ExNihiloModule.GTPebbles, 1, 2));
-        ModHandler.addShapedRecipe("red_granite", OreDictUnifier.get(stone, GraniteRed, 1), "PP", "PP", 'P',
+        ModHandler.addShapedRecipe("red_granite", OreDictUnifier.get(cobble, GraniteRed, 1), "PP", "PP", 'P',
                 new ItemStack(ExNihiloModule.GTPebbles, 1, 3));
 
         COMPRESSOR_RECIPES.recipeBuilder()
@@ -90,30 +92,38 @@ public class ExNihiloRecipes {
                 .buildAndRegister();
         COMPRESSOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(ExNihiloModule.GTPebbles, 4, 0))
-                .outputs(OreDictUnifier.get(stone, Basalt, 1))
+                .outputs(OreDictUnifier.get(cobble, Basalt, 1))
                 .EUt(4)
                 .duration(40)
                 .buildAndRegister();
         COMPRESSOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(ExNihiloModule.GTPebbles, 4, 1))
-                .outputs(OreDictUnifier.get(stone, GraniteBlack, 1))
+                .outputs(OreDictUnifier.get(cobble, GraniteBlack, 1))
                 .EUt(4)
                 .duration(40)
                 .buildAndRegister();
         COMPRESSOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(ExNihiloModule.GTPebbles, 4, 2))
-                .outputs(OreDictUnifier.get(stone, Marble, 1))
+                .outputs(OreDictUnifier.get(cobble, Marble, 1))
                 .EUt(4)
                 .duration(40)
                 .buildAndRegister();
         COMPRESSOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(ExNihiloModule.GTPebbles, 4, 3))
-                .outputs(OreDictUnifier.get(stone, GraniteRed, 1))
+                .outputs(OreDictUnifier.get(cobble, GraniteRed, 1))
                 .EUt(4)
                 .duration(40)
                 .buildAndRegister();
 
         // Crushed stones
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
+            FORGE_HAMMER_RECIPES.recipeBuilder()
+                    .inputs(Mods.AppliedEnergistics2.getItem("sky_stone_block"))
+                    .output(AppliedEnergistics2.skystoneCrushed)
+                    .EUt(16)
+                    .duration(10)
+                    .buildAndRegister();
+        }
         FORGE_HAMMER_RECIPES.recipeBuilder()
                 .input(Blocks.SAND)
                 .output(ModBlocks.dust)
@@ -154,15 +164,19 @@ public class ExNihiloRecipes {
         // Meshes
         if (ExNihiloConfig.harderMeshes) {
             ModHandler.removeRecipeByName("exnihilocreatio:item_mesh_2");
-            ModHandler.addShapedRecipe("bronze_mesh", new ItemStack(ModItems.mesh, 1, 2), "TST", "STS", "TST",
-                    'T', new UnificationEntry(stick, Materials.Bronze),
+            ModHandler.addShapedRecipe("bronze_mesh", new ItemStack(ModItems.mesh, 1, 2), "TFT", "SRS", "TST",
+                    'R', new UnificationEntry(ring, Bronze),
+                    'T', new UnificationEntry(stick, Bronze),
+                    'F', new ItemStack(Items.FLINT),
                     'S', new ItemStack(Items.STRING));
             ModHandler.removeRecipeByName("exnihilocreatio:item_mesh_3");
-            ModHandler.addShapedRecipe("steel_mesh", new ItemStack(ModItems.mesh, 1, 3), "TST", "STS", "TST",
+            ModHandler.addShapedRecipe("steel_mesh", new ItemStack(ModItems.mesh, 1, 3), "TST", "SRS", "TST",
+                    'R', new UnificationEntry(ring, Steel),
                     'T', new UnificationEntry(stick, Steel),
                     'S', new ItemStack(Items.STRING));
             ModHandler.removeRecipeByName("exnihilocreatio:item_mesh_4");
-            ModHandler.addShapedRecipe("aluminium_mesh", new ItemStack(ModItems.mesh, 1, 4), "TST", "STS", "TST",
+            ModHandler.addShapedRecipe("aluminium_mesh", new ItemStack(ModItems.mesh, 1, 4), "TST", "SRS", "TST",
+                    'R', new UnificationEntry(ring, Aluminium),
                     'T', new UnificationEntry(stick, Aluminium),
                     'S', new ItemStack(Items.STRING));
         }

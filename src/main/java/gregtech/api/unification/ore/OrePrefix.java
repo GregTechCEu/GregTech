@@ -256,7 +256,6 @@ public class OrePrefix {
 
     public static final OrePrefix cobble = new OrePrefix("cobble", -1, Materials.Stone, null, SELF_REFERENCING, null);
 
-
     public static final OrePrefix frameGt = new OrePrefix("frameGt", M * 2, null, null, ENABLE_UNIFICATION,
             material -> material.hasFlag(GENERATE_FRAME));
 
