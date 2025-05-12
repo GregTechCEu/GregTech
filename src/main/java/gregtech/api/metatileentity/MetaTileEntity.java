@@ -1326,8 +1326,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
         data.setBoolean(TAG_KEY_MUFFLED, muffled);
 
-        if (owner != null)
-            data.setUniqueId("Owner", owner);
+        if (owner != null) {
+            NBTTagCompound ownerTag = new NBTTagCompound();
+            ownerTag.setUniqueId("UUID", owner);
+            data.setTag("Owner", ownerTag);
+        }
 
         return data;
     }
@@ -1355,8 +1358,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         CoverSaveHandler.readCoverNBT(data, this, covers::put);
         this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
 
-        if (data.hasKey("Owner"))
-            this.owner = data.getUniqueId("Owner");
+        if (data.hasKey("Owner", 10)) {
+            this.owner = data.getCompoundTag("Owner").getUniqueId("UUID");
+        }
     }
 
     @Override
