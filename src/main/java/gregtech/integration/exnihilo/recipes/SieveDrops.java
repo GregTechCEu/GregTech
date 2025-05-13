@@ -188,7 +188,6 @@ public class SieveDrops {
         addDrop("gravel", OreDictUnifier.get(ExNihiloModule.oreChunk, Materials.Pollucite), 4, 0.001F);
 
         // Sand
-        addDrop("sand", OreDictUnifier.get(ExNihiloModule.oreChunk, Materials.Asbestos), 2, 0.001F);
         addDrop("sand", OreDictUnifier.get(ExNihiloModule.oreChunk, Materials.BasalticMineralSand), 2, 0.1F);
         addDrop("sand", OreDictUnifier.get(ExNihiloModule.oreChunk, Materials.CassiteriteSand), 2, 0.12F);
         addDrop("sand", OreDictUnifier.get(ExNihiloModule.oreChunk, Materials.Diatomite), 2, 0.001F);
