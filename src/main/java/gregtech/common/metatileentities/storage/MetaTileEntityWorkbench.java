@@ -135,7 +135,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             craftingGrid.setStackInSlot(i, NetworkUtils.readItemStack(buf));
         }
         this.recipeMemory.receiveInitialSyncData(buf);
-        this.connectedInventory = new ItemHandlerList(Collections.singletonList(new GTItemStackHandler(this, buf.readVarInt())));
+        this.connectedInventory = new ItemHandlerList(
+                Collections.singletonList(new GTItemStackHandler(this, buf.readVarInt())));
     }
 
     @Override
