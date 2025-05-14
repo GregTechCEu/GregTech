@@ -4757,6 +4757,7 @@ gregtech.universal.tooltip.amperage_out=§eСила генерируемого �
 gregtech.universal.tooltip.amperage_out_till=§eГенерирует ток до: §f%,dА
 gregtech.universal.tooltip.amperage_in_out=§eСила тока: §f%,dA
 gregtech.universal.tooltip.amperage_in_out_till=§eСила тока до: §f%,dA
+gregtech.universal.tooltip.throughput=§bПропускная способность: §f%,d EU/t
 gregtech.universal.tooltip.energy_storage_capacity=§cЭнергоемкость: §f%,d EU
 gregtech.universal.tooltip.item_storage_total=§6Вместимость: §f%,d предметов
 gregtech.universal.tooltip.item_stored=§dХранит: §f%s, %,d штук
