@@ -184,5 +184,11 @@ gregtech.machine.me_pattern.tooltip.3=样板优化：将样板自动倍乘到当
 gregtech.machine.thread_multiblock.tooltip.1=本设备支持使用线程仓进行核心拓展，支持在不同批次处理不同种类的配方
 gregtech.machine.thread_multiblock.tooltip.2=每个核心都拥有完整且独立的配方调度系统，各核心的耗电，超频，并行等计算相互独立
 gregtech.machine.thread_multiblock.tooltip.3=只能在机器不工作时调整线程数量，线程数量过多会导致极其严重的性能损耗
+
+gregtech.machine.budget_crib_proxy.tooltip=Shares the inventory of the linked Budget CRIB
+
+gregtech.machine.budget_crib.data_stick_use=Wrote location to data stick
+gregtech.machine.budget_crib.data_stick_name=Budget CRIB Location Data
+gregtech.machine.budget_crib_proxy.data_stick_use=Linked to Budget CRIB at X: %s, Y: %s, Z: %s
 #item group
 itemGroup.gtqt_programmable=量子跃迁 | 可编程舱室

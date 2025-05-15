@@ -185,5 +185,11 @@ gregtech.machine.me_pattern.tooltip.3=Pattern Optimization: Automatically multip
 gregtech.machine.thread_multiblock.tooltip.1=Supports core expansion via thread hatches for processing different recipe types across batches
 gregtech.machine.thread_multiblock.tooltip.2=Each core has complete independent recipe scheduling system with separate power/overclocking/parallel calculations
 gregtech.machine.thread_multiblock.tooltip.3=Core adjustments only allowed when idle. Excessive threads may cause severe performance impact
+
+gregtech.machine.budget_crib_proxy.tooltip=Shares the inventory of the linked Budget CRIB
+
+gregtech.machine.budget_crib.data_stick_use=Wrote location to data stick
+gregtech.machine.budget_crib.data_stick_name=Budget CRIB Location Data
+gregtech.machine.budget_crib_proxy.data_stick_use=Linked to Budget CRIB at X: %s, Y: %s, Z: %s
 #item group
 itemGroup.gtqt_programmable=GTQT | Programmable Hatch

@@ -20,16 +20,16 @@ public class HatchHandlers {
         //Dual Hatch
         for (int i = 0; i < DUAL_IMPORT_HATCH.length; i++) {
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(ITEM_IMPORT_BUS[i])
-                    .input(FLUID_IMPORT_HATCH[i])
-                    .input(circuit, MarkerMaterial.create(GTValues.VN[i].toLowerCase()), 4)
+                    .input(ITEM_IMPORT_BUS[i+1])
+                    .input(FLUID_IMPORT_HATCH[i+1])
+                    .input(circuit, MarkerMaterial.create(GTValues.VN[i+1].toLowerCase()), 4)
                     .output(DUAL_IMPORT_HATCH[i])
                     .duration(100).EUt(VA[ULV + i]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(ITEM_EXPORT_BUS[i])
-                    .input(FLUID_EXPORT_HATCH[i])
-                    .input(circuit, MarkerMaterial.create(GTValues.VN[i].toLowerCase()), 4)
+                    .input(ITEM_EXPORT_BUS[i+1])
+                    .input(FLUID_EXPORT_HATCH[i+1])
+                    .input(circuit, MarkerMaterial.create(GTValues.VN[i+1].toLowerCase()), 4)
                     .output(DUAL_EXPORT_HATCH[i])
                     .duration(100).EUt(VA[ULV + i]).buildAndRegister();
 
@@ -37,7 +37,7 @@ public class HatchHandlers {
                     .input(DUAL_IMPORT_HATCH[i])
                     .inputs(normalInterface)
                     .inputs(fluidInterface)
-                    .input(circuit, MarkerMaterial.create(GTValues.VN[i].toLowerCase()), 4)
+                    .input(circuit, MarkerMaterial.create(GTValues.VN[i+1].toLowerCase()), 4)
                     .output(ME_PATTERN_PROVIDER[i])
                     .duration(100).EUt(VA[ULV + i]).buildAndRegister();
         }

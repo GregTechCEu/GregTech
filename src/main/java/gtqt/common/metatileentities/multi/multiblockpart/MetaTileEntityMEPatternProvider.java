@@ -1,9 +1,10 @@
 package gtqt.common.metatileentities.multi.multiblockpart;
-import gtqt.api.util.PatternUtils;
+
 import gregtech.api.capability.DualHandler;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
@@ -110,6 +111,7 @@ import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.glodblock.github.common.item.fake.FakeFluids;
 import com.glodblock.github.common.item.fake.FakeItemRegister;
+import gtqt.api.util.PatternUtils;
 import gtqt.common.metatileentities.GTQTMetaTileEntities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -128,7 +130,7 @@ import static gtqt.api.util.GTQTUtility.isInventoryEmpty;
 
 public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNotifiablePart
         implements IMultiblockAbilityPart<DualHandler>, IControllable, IGhostSlotConfigurable,
-                   ICraftingProvider, IAEFluidInventory, IGridProxyable, IPowerChannelState {
+                   ICraftingProvider, IAEFluidInventory, IGridProxyable, IPowerChannelState, IDataStickIntractable {
 
     private static final IDrawable CHEST = new ItemDrawable(new ItemStack(Blocks.CHEST))
             .asIcon().size(16);
@@ -233,6 +235,10 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         return this.actualImportItems == null ? super.getImportItems() : this.actualImportItems;
     }
 
+    public IItemHandlerModifiable getActualImportItems() {
+        return actualImportItems;
+    }
+
     @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
@@ -270,7 +276,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
                         lastParallel = parallel;
                         parallel = controller.getRecipeMapWorkable().getParallelLimit();
 
-                        if(lastParallel!=1 || parallel!=1) {
+                        if (lastParallel != 1 || parallel != 1) {
                             for (int i = 0; i < patternSlot.getSlots(); i++) {
                                 ItemStack pattern = patternSlot.getStackInSlot(i);
                                 if (pattern.getItem() instanceof ICraftingPatternItem) {
@@ -783,11 +789,11 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
                                         .addLine(IKey.lang("自动整理"))))
 
                         .childIf(hasGhostCircuit, new GhostCircuitSlotWidget()
-                                .top(-18-10)
+                                .top(-18 - 10)
                                 .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
                         .childIf(!hasGhostCircuit, new Widget<>()
-                                .top(-18-10)
+                                .top(-18 - 10)
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.BUTTON_X)
                                 .tooltip(t -> t.addLine(
                                         IKey.lang("gregtech.gui.configurator_slot.unavailable.tooltip")))
@@ -1044,4 +1050,30 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", numSlots, tankSize));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
+
+    @Override
+    public void onDataStickLeftClick(EntityPlayer player, ItemStack dataStick) {
+        NBTTagCompound tag = new NBTTagCompound();
+
+        tag.setTag("BudgetCRIB", writeLocationToTag());
+        dataStick.setTagCompound(tag);
+        dataStick.setTranslatableName("gregtech.machine.budget_crib.data_stick_name");
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.budget_crib.data_stick_use"), true);
+    }
+
+    private NBTTagCompound writeLocationToTag() {
+        NBTTagCompound tag = new NBTTagCompound();
+
+        tag.setInteger("MainX", getPos().getX());
+        tag.setInteger("MainY", getPos().getY());
+        tag.setInteger("MainZ", getPos().getZ());
+
+        return tag;
+    }
+
+    @Override
+    public boolean onDataStickRightClick(EntityPlayer player, ItemStack dataStick) {
+        return false;
+    }
+
 }
