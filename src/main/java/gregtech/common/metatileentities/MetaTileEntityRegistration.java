@@ -131,8 +131,11 @@ final class MetaTileEntityRegistration {
     private MetaTileEntityRegistration() {}
 
     static void register() {
-        // Singleblocks: 1-9999
-        singleblocks();
+        // Standard Singleblocks: 1-4999
+        standardSingleblocks();
+
+        // Misc Singleblocks: 5000-9999
+        miscSingleblocks();
 
         // Multiblocks: 10000-10999
         multiblocks();
@@ -142,9 +145,9 @@ final class MetaTileEntityRegistration {
     }
 
     /**
-     * 1-9999 (incl)
+     * 1-4999 (incl)
      */
-    private static void singleblocks() {
+    private static void standardSingleblocks() {
         // Steam Machines: 1-49
         MetaTileEntities.STEAM_BOILER_COAL_BRONZE = MetaTileEntities.registerMetaTileEntity(1,
                 new SteamCoalBoiler(gregtechId("steam_boiler_coal_bronze"), false));
@@ -417,15 +420,6 @@ final class MetaTileEntityRegistration {
 
         // Other single block machines
 
-        // Chunk Miner, IDs 920-934
-
-        MetaTileEntities.MINER[0] = MetaTileEntities.registerMetaTileEntity(920,
-                new MetaTileEntityMiner(gregtechId("miner.lv"), 1, 160, 8, 1));
-        MetaTileEntities.MINER[1] = MetaTileEntities.registerMetaTileEntity(921,
-                new MetaTileEntityMiner(gregtechId("miner.mv"), 2, 80, 16, 2));
-        MetaTileEntities.MINER[2] = MetaTileEntities.registerMetaTileEntity(922,
-                new MetaTileEntityMiner(gregtechId("miner.hv"), 3, 40, 24, 3));
-
         // Diesel Generator, IDs 935-949
         MetaTileEntities.COMBUSTION_GENERATOR[0] = MetaTileEntities.registerMetaTileEntity(935,
                 new MetaTileEntitySingleCombustion(gregtechId("combustion_generator.lv"),
@@ -462,15 +456,7 @@ final class MetaTileEntityRegistration {
                 new MetaTileEntitySingleTurbine(gregtechId("gas_turbine.hv"), RecipeMaps.GAS_TURBINE_FUELS,
                         Textures.GAS_TURBINE_OVERLAY, 3, GTUtility.genericGeneratorTankSizeFunction));
 
-        // Item Collector, IDs 980-984
-        MetaTileEntities.ITEM_COLLECTOR[0] = MetaTileEntities.registerMetaTileEntity(980,
-                new MetaTileEntityItemCollector(gregtechId("item_collector.lv"), 1, 8));
-        MetaTileEntities.ITEM_COLLECTOR[1] = MetaTileEntities.registerMetaTileEntity(981,
-                new MetaTileEntityItemCollector(gregtechId("item_collector.mv"), 2, 16));
-        MetaTileEntities.ITEM_COLLECTOR[2] = MetaTileEntities.registerMetaTileEntity(982,
-                new MetaTileEntityItemCollector(gregtechId("item_collector.hv"), 3, 32));
-        MetaTileEntities.ITEM_COLLECTOR[3] = MetaTileEntities.registerMetaTileEntity(983,
-                new MetaTileEntityItemCollector(gregtechId("item_collector.ev"), 4, 64));
+        // Free Range, IDs 980-984
 
         // Hulls, IDs 985-999
         int endPos = GregTechAPI.isHighTier() ? MetaTileEntities.HULL.length : GTValues.UHV + 1;
@@ -478,13 +464,16 @@ final class MetaTileEntityRegistration {
             MetaTileEntities.HULL[i] = new MetaTileEntityHull(gregtechId("hull." + GTValues.VN[i].toLowerCase()), i);
             MetaTileEntities.registerMetaTileEntity(985 + i, MetaTileEntities.HULL[i]);
         }
+    }
 
-        // Misc Machines: 1000-2000
-
-        // Transformer, IDs 1000-1014
-        // Hi-Amp Transformer, IDs 1015-1029
-        // Power Transformer, IDs 1030-1044
-        endPos = GregTechAPI.isHighTier() ? MetaTileEntities.TRANSFORMER.length - 1 : GTValues.UV;
+    /**
+     * 5000-9999 (incl)
+     */
+    private static void miscSingleblocks() {
+        // Transformer, IDs 5000-5014
+        // Hi-Amp Transformer, IDs 5015-5029
+        // Power Transformer, IDs 5030-5044
+        int endPos = GregTechAPI.isHighTier() ? MetaTileEntities.TRANSFORMER.length - 1 : GTValues.UV;
         for (int i = 0; i <= endPos; i++) {
             // 1A <-> 4A
             MetaTileEntityTransformer transformer = new MetaTileEntityTransformer(
@@ -502,9 +491,25 @@ final class MetaTileEntityRegistration {
                     adjustableTransformer);
         }
 
-        // Free range: 1045-1074
+        // Chunk Miner, IDs 5045-5059
+        MetaTileEntities.MINER[0] = MetaTileEntities.registerMetaTileEntity(5045,
+                new MetaTileEntityMiner(gregtechId("miner.lv"), GTValues.LV, 160, 8, 1));
+        MetaTileEntities.MINER[1] = MetaTileEntities.registerMetaTileEntity(5046,
+                new MetaTileEntityMiner(gregtechId("miner.mv"), GTValues.MV, 80, 16, 2));
+        MetaTileEntities.MINER[2] = MetaTileEntities.registerMetaTileEntity(5047,
+                new MetaTileEntityMiner(gregtechId("miner.hv"), GTValues.HV, 40, 24, 3));
 
-        // Quantum Storage Network 1075-1089
+        // Item Collector: 5060-5074
+        MetaTileEntities.ITEM_COLLECTOR[0] = MetaTileEntities.registerMetaTileEntity(5060,
+                new MetaTileEntityItemCollector(gregtechId("item_collector.lv"), GTValues.LV, 8));
+        MetaTileEntities.ITEM_COLLECTOR[1] = MetaTileEntities.registerMetaTileEntity(5061,
+                new MetaTileEntityItemCollector(gregtechId("item_collector.mv"), GTValues.MV, 16));
+        MetaTileEntities.ITEM_COLLECTOR[2] = MetaTileEntities.registerMetaTileEntity(5062,
+                new MetaTileEntityItemCollector(gregtechId("item_collector.hv"), GTValues.HV, 32));
+        MetaTileEntities.ITEM_COLLECTOR[3] = MetaTileEntities.registerMetaTileEntity(5063,
+                new MetaTileEntityItemCollector(gregtechId("item_collector.ev"), GTValues.EV, 64));
+
+        // Quantum Storage Network 5075-5089
         MetaTileEntities.QUANTUM_STORAGE_CONTROLLER = MetaTileEntities.registerMetaTileEntity(1075,
                 new MetaTileEntityQuantumStorageController(gregtechId("quantum_storage_controller")));
         MetaTileEntities.QUANTUM_STORAGE_PROXY = MetaTileEntities.registerMetaTileEntity(1076,
@@ -512,42 +517,42 @@ final class MetaTileEntityRegistration {
         MetaTileEntities.QUANTUM_STORAGE_EXTENDER = MetaTileEntities.registerMetaTileEntity(1077,
                 new MetaTileEntityQuantumExtender(gregtechId("quantum_storage_extender")));
 
-        // Free range: 1090-1299
+        // Free range: 5090-5299
 
-        // Diode, IDs 1300-1314
+        // Diode, IDs 5300-5314
         endPos = GregTechAPI.isHighTier() ? MetaTileEntities.DIODES.length - 1 : GTValues.UHV + 1;
         for (int i = 0; i < endPos; i++) {
             String diodeId = "diode." + GTValues.VN[i].toLowerCase();
             MetaTileEntityDiode diode = new MetaTileEntityDiode(gregtechId(diodeId), i, 16);
-            MetaTileEntities.DIODES[i] = MetaTileEntities.registerMetaTileEntity(1300 + i, diode);
+            MetaTileEntities.DIODES[i] = MetaTileEntities.registerMetaTileEntity(5300 + i, diode);
         }
 
-        // Battery Buffer, IDs 1315-1369
+        // Battery Buffer, IDs 5315-5369
         endPos = GregTechAPI.isHighTier() ? MetaTileEntities.BATTERY_BUFFER[0].length : GTValues.UHV + 1;
         MetaTileEntities.BATTERY_BUFFER[0] = new MetaTileEntityBatteryBuffer[endPos];
         MetaTileEntities.BATTERY_BUFFER[1] = new MetaTileEntityBatteryBuffer[endPos];
         MetaTileEntities.BATTERY_BUFFER[2] = new MetaTileEntityBatteryBuffer[endPos];
         for (int i = 0; i < endPos; i++) {
             String bufferIdBase = "battery_buffer." + GTValues.VN[i].toLowerCase() + ".";
-            MetaTileEntities.BATTERY_BUFFER[0][i] = MetaTileEntities.registerMetaTileEntity(1315 + i,
+            MetaTileEntities.BATTERY_BUFFER[0][i] = MetaTileEntities.registerMetaTileEntity(5315 + i,
                     new MetaTileEntityBatteryBuffer(gregtechId(bufferIdBase + 4), i, 4));
-            MetaTileEntities.BATTERY_BUFFER[1][i] = MetaTileEntities.registerMetaTileEntity(1330 + i,
+            MetaTileEntities.BATTERY_BUFFER[1][i] = MetaTileEntities.registerMetaTileEntity(5330 + i,
                     new MetaTileEntityBatteryBuffer(gregtechId(bufferIdBase + 8), i, 8));
-            MetaTileEntities.BATTERY_BUFFER[2][i] = MetaTileEntities.registerMetaTileEntity(1345 + i,
+            MetaTileEntities.BATTERY_BUFFER[2][i] = MetaTileEntities.registerMetaTileEntity(5345 + i,
                     new MetaTileEntityBatteryBuffer(gregtechId(bufferIdBase + 16), i, 16));
         }
 
-        // Free range: 1370-1374
+        // Free range: 5370-5374
 
-        // Charger, IDs 1375-1089
+        // Charger, IDs 5375-5089
         endPos = GregTechAPI.isHighTier() ? MetaTileEntities.CHARGER.length : GTValues.UHV + 1;
         for (int i = 0; i < endPos; i++) {
             String chargerId = "charger." + GTValues.VN[i].toLowerCase();
             MetaTileEntityCharger charger = new MetaTileEntityCharger(gregtechId(chargerId), i, 4);
-            MetaTileEntities.CHARGER[i] = MetaTileEntities.registerMetaTileEntity(1375 + i, charger);
+            MetaTileEntities.CHARGER[i] = MetaTileEntities.registerMetaTileEntity(5375 + i, charger);
         }
 
-        // World Accelerators, IDs 1390-1404
+        // World Accelerators, IDs 5390-5404
         if (ConfigHolder.machines.enableWorldAccelerators) {
             endPos = GTValues.UV + 1;
             for (int i = 1; i < endPos; i++) {
@@ -557,45 +562,45 @@ final class MetaTileEntityRegistration {
             }
         }
 
-        // Free range: 1405-1509
+        // Free range: 5405-5509
 
         // Buffers, IDs 1510-1512
-        MetaTileEntities.BUFFER[0] = MetaTileEntities.registerMetaTileEntity(1510,
-                new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));
-        MetaTileEntities.BUFFER[1] = MetaTileEntities.registerMetaTileEntity(1511,
-                new MetaTileEntityBuffer(gregtechId("buffer.mv"), 2));
-        MetaTileEntities.BUFFER[2] = MetaTileEntities.registerMetaTileEntity(1512,
-                new MetaTileEntityBuffer(gregtechId("buffer.hv"), 3));
+        MetaTileEntities.BUFFER[0] = MetaTileEntities.registerMetaTileEntity(5510,
+                new MetaTileEntityBuffer(gregtechId("buffer.lv"), GTValues.LV));
+        MetaTileEntities.BUFFER[1] = MetaTileEntities.registerMetaTileEntity(5511,
+                new MetaTileEntityBuffer(gregtechId("buffer.mv"), GTValues.MV));
+        MetaTileEntities.BUFFER[2] = MetaTileEntities.registerMetaTileEntity(5512,
+                new MetaTileEntityBuffer(gregtechId("buffer.hv"), GTValues.HV));
 
-        // Free Range: 1513-1514
+        // Free Range: 5513-5514
 
-        // Fishers, IDs 1515-1529
-        MetaTileEntities.FISHER[0] = MetaTileEntities.registerMetaTileEntity(1515,
-                new MetaTileEntityFisher(gregtechId("fisher.lv"), 1));
-        MetaTileEntities.FISHER[1] = MetaTileEntities.registerMetaTileEntity(1516,
-                new MetaTileEntityFisher(gregtechId("fisher.mv"), 2));
-        MetaTileEntities.FISHER[2] = MetaTileEntities.registerMetaTileEntity(1517,
-                new MetaTileEntityFisher(gregtechId("fisher.hv"), 3));
-        MetaTileEntities.FISHER[3] = MetaTileEntities.registerMetaTileEntity(1518,
-                new MetaTileEntityFisher(gregtechId("fisher.ev"), 4));
+        // Fishers, IDs 5515-5529
+        MetaTileEntities.FISHER[0] = MetaTileEntities.registerMetaTileEntity(5515,
+                new MetaTileEntityFisher(gregtechId("fisher.lv"), GTValues.LV));
+        MetaTileEntities.FISHER[1] = MetaTileEntities.registerMetaTileEntity(5516,
+                new MetaTileEntityFisher(gregtechId("fisher.mv"), GTValues.MV));
+        MetaTileEntities.FISHER[2] = MetaTileEntities.registerMetaTileEntity(5517,
+                new MetaTileEntityFisher(gregtechId("fisher.hv"), GTValues.HV));
+        MetaTileEntities.FISHER[3] = MetaTileEntities.registerMetaTileEntity(5518,
+                new MetaTileEntityFisher(gregtechId("fisher.ev"), GTValues.EV));
 
-        // Pumps, IDs 1530-1544
+        // Pumps, IDs 5530-5544
         MetaTileEntities.PUMP[0] = MetaTileEntities.registerMetaTileEntity(1530,
-                new MetaTileEntityPump(gregtechId("pump.lv"), 1));
+                new MetaTileEntityPump(gregtechId("pump.lv"), GTValues.LV));
         MetaTileEntities.PUMP[1] = MetaTileEntities.registerMetaTileEntity(1531,
-                new MetaTileEntityPump(gregtechId("pump.mv"), 2));
+                new MetaTileEntityPump(gregtechId("pump.mv"), GTValues.MV));
         MetaTileEntities.PUMP[2] = MetaTileEntities.registerMetaTileEntity(1532,
-                new MetaTileEntityPump(gregtechId("pump.hv"), 3));
+                new MetaTileEntityPump(gregtechId("pump.hv"), GTValues.HV));
         MetaTileEntities.PUMP[3] = MetaTileEntities.registerMetaTileEntity(1533,
-                new MetaTileEntityPump(gregtechId("pump.ev"), 4));
+                new MetaTileEntityPump(gregtechId("pump.ev"), GTValues.EV));
 
-        // Super / Quantum Chests, IDs 1560-1574
+        // Super / Quantum Chests, IDs 5560-5574
         for (int i = 0; i < GTValues.IV; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
             MetaTileEntities.QUANTUM_CHEST[i] = new MetaTileEntityQuantumChest(gregtechId("super_chest." + voltageName),
                     i + 1,
                     4000000L * (int) Math.pow(2, i));
-            MetaTileEntities.registerMetaTileEntity(1560 + i, MetaTileEntities.QUANTUM_CHEST[i]);
+            MetaTileEntities.registerMetaTileEntity(5560 + i, MetaTileEntities.QUANTUM_CHEST[i]);
         }
 
         for (int i = GTValues.IV; i < MetaTileEntities.QUANTUM_CHEST.length; i++) {
@@ -603,16 +608,16 @@ final class MetaTileEntityRegistration {
             long capacity = i == GTValues.UHV ? Integer.MAX_VALUE : 4000000L * (int) Math.pow(2, i);
             MetaTileEntities.QUANTUM_CHEST[i] = new MetaTileEntityQuantumChest(
                     gregtechId("quantum_chest." + voltageName), i, capacity);
-            MetaTileEntities.registerMetaTileEntity(1565 + i, MetaTileEntities.QUANTUM_CHEST[i]);
+            MetaTileEntities.registerMetaTileEntity(5565 + i, MetaTileEntities.QUANTUM_CHEST[i]);
         }
 
-        // Super / Quantum Tanks, IDs 1575-1589
+        // Super / Quantum Tanks, IDs 5575-5589
         for (int i = 0; i < GTValues.IV; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
             MetaTileEntities.QUANTUM_TANK[i] = new MetaTileEntityQuantumTank(gregtechId("super_tank." + voltageName),
                     i + 1,
                     4000000 * (int) Math.pow(2, i));
-            MetaTileEntities.registerMetaTileEntity(1575 + i, MetaTileEntities.QUANTUM_TANK[i]);
+            MetaTileEntities.registerMetaTileEntity(5575 + i, MetaTileEntities.QUANTUM_TANK[i]);
         }
 
         for (int i = GTValues.IV; i < MetaTileEntities.QUANTUM_TANK.length; i++) {
@@ -620,76 +625,75 @@ final class MetaTileEntityRegistration {
             int capacity = i == GTValues.UHV ? Integer.MAX_VALUE : 4000000 * (int) Math.pow(2, i);
             MetaTileEntities.QUANTUM_TANK[i] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank." + voltageName),
                     i, capacity);
-            MetaTileEntities.registerMetaTileEntity(1580 + i, MetaTileEntities.QUANTUM_TANK[i]);
+            MetaTileEntities.registerMetaTileEntity(5580 + i, MetaTileEntities.QUANTUM_TANK[i]);
         }
 
-        // Block Breakers, IDs 1590-1594
+        // Block Breakers, IDs 5590-5594
         for (int i = 0; i < MetaTileEntities.BLOCK_BREAKER.length; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
             MetaTileEntities.BLOCK_BREAKER[i] = new MetaTileEntityBlockBreaker(
                     gregtechId("block_breaker." + voltageName), i + 1);
-            MetaTileEntities.registerMetaTileEntity(1590 + i, MetaTileEntities.BLOCK_BREAKER[i]);
+            MetaTileEntities.registerMetaTileEntity(5590 + i, MetaTileEntities.BLOCK_BREAKER[i]);
         }
 
-        // Drums, IDs 1610-1624
-        MetaTileEntities.WOODEN_DRUM = MetaTileEntities.registerMetaTileEntity(1610,
+        // Drums, IDs 5610-5624
+        MetaTileEntities.WOODEN_DRUM = MetaTileEntities.registerMetaTileEntity(5610,
                 new MetaTileEntityDrum(gregtechId("drum.wood"), Materials.Wood, 16000));
-        MetaTileEntities.BRONZE_DRUM = MetaTileEntities.registerMetaTileEntity(1611,
+        MetaTileEntities.BRONZE_DRUM = MetaTileEntities.registerMetaTileEntity(5611,
                 new MetaTileEntityDrum(gregtechId("drum.bronze"), Materials.Bronze, 32000));
-        MetaTileEntities.STEEL_DRUM = MetaTileEntities.registerMetaTileEntity(1612,
+        MetaTileEntities.STEEL_DRUM = MetaTileEntities.registerMetaTileEntity(5612,
                 new MetaTileEntityDrum(gregtechId("drum.steel"), Materials.Steel, 64000));
-        MetaTileEntities.ALUMINIUM_DRUM = MetaTileEntities.registerMetaTileEntity(1613,
+        MetaTileEntities.ALUMINIUM_DRUM = MetaTileEntities.registerMetaTileEntity(5613,
                 new MetaTileEntityDrum(gregtechId("drum.aluminium"), Materials.Aluminium, 128000));
-        MetaTileEntities.STAINLESS_STEEL_DRUM = MetaTileEntities.registerMetaTileEntity(1614,
+        MetaTileEntities.STAINLESS_STEEL_DRUM = MetaTileEntities.registerMetaTileEntity(5614,
                 new MetaTileEntityDrum(gregtechId("drum.stainless_steel"), Materials.StainlessSteel, 256000));
-        MetaTileEntities.TITANIUM_DRUM = MetaTileEntities.registerMetaTileEntity(1615,
+        MetaTileEntities.TITANIUM_DRUM = MetaTileEntities.registerMetaTileEntity(5615,
                 new MetaTileEntityDrum(gregtechId("drum.titanium"), Materials.Titanium, 512000));
-        MetaTileEntities.TUNGSTENSTEEL_DRUM = MetaTileEntities.registerMetaTileEntity(1616,
+        MetaTileEntities.TUNGSTENSTEEL_DRUM = MetaTileEntities.registerMetaTileEntity(5616,
                 new MetaTileEntityDrum(gregtechId("drum.tungstensteel"), Materials.TungstenSteel, 1024000));
-        MetaTileEntities.GOLD_DRUM = MetaTileEntities.registerMetaTileEntity(1617,
+        MetaTileEntities.GOLD_DRUM = MetaTileEntities.registerMetaTileEntity(5617,
                 new MetaTileEntityDrum(gregtechId("drum.gold"), Materials.Gold, 32000));
 
-        // Crates, IDs 1625-1639
-        MetaTileEntities.WOODEN_CRATE = MetaTileEntities.registerMetaTileEntity(1625,
+        // Crates, IDs 5625-5639
+        MetaTileEntities.WOODEN_CRATE = MetaTileEntities.registerMetaTileEntity(5625,
                 new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27, 9));
-        MetaTileEntities.BRONZE_CRATE = MetaTileEntities.registerMetaTileEntity(1626,
+        MetaTileEntities.BRONZE_CRATE = MetaTileEntities.registerMetaTileEntity(5626,
                 new MetaTileEntityCrate(gregtechId("crate.bronze"), Materials.Bronze, 54, 9));
-        MetaTileEntities.STEEL_CRATE = MetaTileEntities.registerMetaTileEntity(1627,
+        MetaTileEntities.STEEL_CRATE = MetaTileEntities.registerMetaTileEntity(5627,
                 new MetaTileEntityCrate(gregtechId("crate.steel"), Materials.Steel, 72, 9));
-        MetaTileEntities.ALUMINIUM_CRATE = MetaTileEntities.registerMetaTileEntity(1628,
+        MetaTileEntities.ALUMINIUM_CRATE = MetaTileEntities.registerMetaTileEntity(5628,
                 new MetaTileEntityCrate(gregtechId("crate.aluminium"), Materials.Aluminium, 90, 10));
-        MetaTileEntities.STAINLESS_STEEL_CRATE = MetaTileEntities.registerMetaTileEntity(1629,
+        MetaTileEntities.STAINLESS_STEEL_CRATE = MetaTileEntities.registerMetaTileEntity(5629,
                 new MetaTileEntityCrate(gregtechId("crate.stainless_steel"), Materials.StainlessSteel, 108, 12));
-        MetaTileEntities.TITANIUM_CRATE = MetaTileEntities.registerMetaTileEntity(1630,
+        MetaTileEntities.TITANIUM_CRATE = MetaTileEntities.registerMetaTileEntity(5630,
                 new MetaTileEntityCrate(gregtechId("crate.titanium"), Materials.Titanium, 126, 14));
-        MetaTileEntities.TUNGSTENSTEEL_CRATE = MetaTileEntities.registerMetaTileEntity(1631,
+        MetaTileEntities.TUNGSTENSTEEL_CRATE = MetaTileEntities.registerMetaTileEntity(5631,
                 new MetaTileEntityCrate(gregtechId("crate.tungstensteel"), Materials.TungstenSteel, 144, 16));
 
-        // Misc, IDs 1646-1999
-        MetaTileEntities.WORKBENCH = MetaTileEntities.registerMetaTileEntity(1647,
-                new MetaTileEntityWorkbench(gregtechId("workbench")));
-        MetaTileEntities.PRIMITIVE_WATER_PUMP = MetaTileEntities.registerMetaTileEntity(1648,
-                new MetaTileEntityPrimitiveWaterPump(gregtechId("primitive_water_pump")));
-
-        MetaTileEntities.CREATIVE_ENERGY = MetaTileEntities.registerMetaTileEntity(1650,
-                new MetaTileEntityCreativeEnergy());
-        MetaTileEntities.CLIPBOARD_TILE = MetaTileEntities.registerMetaTileEntity(1666,
+        // Misc, IDs 5646-5999
+        MetaTileEntities.CLIPBOARD_TILE = MetaTileEntities.registerMetaTileEntity(5646,
                 new MetaTileEntityClipboard(gregtechId("clipboard")));
 
-        MetaTileEntities.MONITOR_SCREEN = MetaTileEntities.registerMetaTileEntity(1667,
+        MetaTileEntities.WORKBENCH = MetaTileEntities.registerMetaTileEntity(5647,
+                new MetaTileEntityWorkbench(gregtechId("workbench")));
+
+        MetaTileEntities.MONITOR_SCREEN = MetaTileEntities.registerMetaTileEntity(5648,
                 new MetaTileEntityMonitorScreen(gregtechId("monitor_screen")));
 
-        // Creative Chest and Tank, IDs 1668-1669
-        MetaTileEntities.CREATIVE_CHEST = MetaTileEntities.registerMetaTileEntity(1668,
+        // creative machines 5650-5659
+        MetaTileEntities.CREATIVE_ENERGY = MetaTileEntities.registerMetaTileEntity(5650,
+                new MetaTileEntityCreativeEnergy());
+        MetaTileEntities.CREATIVE_CHEST = MetaTileEntities.registerMetaTileEntity(5651,
                 new MetaTileEntityCreativeChest(gregtechId("creative_chest")));
-        MetaTileEntities.CREATIVE_TANK = MetaTileEntities.registerMetaTileEntity(1669,
+        MetaTileEntities.CREATIVE_TANK = MetaTileEntities.registerMetaTileEntity(5652,
                 new MetaTileEntityCreativeTank(gregtechId("creative_tank")));
 
-        // Energy Converter, IDs 1670-1729
+        // Energy Converter, IDs 5670-5729
         endPos = GregTechAPI.isHighTier() ? MetaTileEntities.ENERGY_CONVERTER[0].length : GTValues.UHV + 1;
         int[] amps = { 1, 4, 8, 16 };
-        for (int i = 0; i < endPos; i++) {
-            for (int j = 0; j < amps.length; j++) {
+        for (int j = 0; j < amps.length; j++) {
+            int offset = j * MetaTileEntities.ENERGY_CONVERTER[0].length;
+            for (int i = 0; i < endPos; i++) {
                 // Check to make sure this is a valid amount of power to be able to convert.
                 // Tests if both:
                 // - The maximum amount of EU/t of this converter can turn into FE without overflowing
@@ -702,23 +706,24 @@ final class MetaTileEntityRegistration {
 
                 String id = "energy_converter." + GTValues.VN[i].toLowerCase() + "." + amps[j];
                 MetaTileEntityConverter converter = new MetaTileEntityConverter(gregtechId(id), i, amps[j]);
-                MetaTileEntities.ENERGY_CONVERTER[j][i] = MetaTileEntities.registerMetaTileEntity(1670 + j + i * 4,
+                MetaTileEntities.ENERGY_CONVERTER[j][i] = MetaTileEntities.registerMetaTileEntity(5670 + offset + i,
                         converter);
             }
         }
 
-        // Free Range: 1730-1748
+        // Free Range: 5730-5748
 
-        MetaTileEntities.LONG_DIST_ITEM_ENDPOINT = MetaTileEntities.registerMetaTileEntity(1749,
+        MetaTileEntities.LONG_DIST_ITEM_ENDPOINT = MetaTileEntities.registerMetaTileEntity(5749,
                 new MetaTileEntityLDItemEndpoint(gregtechId("ld_item_endpoint")));
-        MetaTileEntities.LONG_DIST_FLUID_ENDPOINT = MetaTileEntities.registerMetaTileEntity(1750,
+        MetaTileEntities.LONG_DIST_FLUID_ENDPOINT = MetaTileEntities.registerMetaTileEntity(5750,
                 new MetaTileEntityLDFluidEndpoint(gregtechId("ld_fluid_endpoint")));
 
-        // Alarm, ID 1751
-        MetaTileEntities.ALARM = MetaTileEntities.registerMetaTileEntity(1751,
+        // Free Range: 5751-5759
+
+        MetaTileEntities.ALARM = MetaTileEntities.registerMetaTileEntity(5760,
                 new MetaTileEntityAlarm(gregtechId("alarm")));
 
-        MetaTileEntities.MAGIC_ENERGY_ABSORBER = MetaTileEntities.registerMetaTileEntity(1752,
+        MetaTileEntities.MAGIC_ENERGY_ABSORBER = MetaTileEntities.registerMetaTileEntity(5761,
                 new MetaTileEntityMagicEnergyAbsorber(gregtechId("magic_energy_absorber")));
     }
 
@@ -846,6 +851,9 @@ final class MetaTileEntityRegistration {
                 new MetaTileEntityMultiblockTank(gregtechId("tank.wood"), false, 250 * 1000));
         MetaTileEntities.STEEL_TANK = MetaTileEntities.registerMetaTileEntity(10044,
                 new MetaTileEntityMultiblockTank(gregtechId("tank.steel"), true, 1000 * 1000));
+
+        MetaTileEntities.PRIMITIVE_WATER_PUMP = MetaTileEntities.registerMetaTileEntity(10045,
+                new MetaTileEntityPrimitiveWaterPump(gregtechId("primitive_water_pump")));
     }
 
     /**
