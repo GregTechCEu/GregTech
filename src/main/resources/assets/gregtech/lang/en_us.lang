@@ -5387,8 +5387,6 @@ gregtech.machine.muffler_hatch.uxv.name=UXV Muffler Hatch
 gregtech.machine.muffler_hatch.opv.name=OpV Muffler Hatch
 gregtech.machine.muffler_hatch.max.name=MAX Muffler Hatch
 
-gregtech.muffler.recovery_tooltip=§bRecovery Chance: §f%d%%
-
 gregtech.machine.pump_hatch.name=Pump Output Hatch
 gregtech.machine.pump_hatch.tooltip=Primitive Fluid Output for Water Pump
 

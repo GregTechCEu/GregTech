@@ -248,29 +248,21 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     /**
-     * Outputs the recovery items into the muffler hatch
-     */
-    public void outputRecoveryItems() {
-        IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
-        muffler.recoverItemsTable(recoveryItems);
-    }
-
-    public void outputRecoveryItems(int parallel) {
-        IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
-        for (int i = 0; i < parallel; i++) {
-            muffler.recoverItemsTable(recoveryItems);
-        }
-    }
-
-    /**
      * @return whether the muffler hatch's front face is free
      */
     public boolean isMufflerFaceFree() {
-        if (hasMufflerMechanics() && getAbilities(MultiblockAbility.MUFFLER_HATCH).size() == 0)
+        if (!isStructureFormed()) {
             return false;
+        }
+        if (!hasMufflerMechanics()) {
+            return false;
+        }
 
-        return isStructureFormed() && hasMufflerMechanics() &&
-                getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0).isFrontFaceFree();
+        var mufflers = getAbilities(MultiblockAbility.MUFFLER_HATCH);
+        if (mufflers.isEmpty()) {
+            return false;
+        }
+        return mufflers.get(0).isFrontFaceFree();
     }
 
     @SideOnly(Side.CLIENT)
