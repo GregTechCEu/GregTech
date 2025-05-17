@@ -463,37 +463,37 @@ public class MultiblockUIBuilder {
 
             // Wrench
             if ((maintenanceProblems & 1) == 0) {
-                addKey(KeyUtil.lang(TextFormatting.GRAY,
+                addKey(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.universal.problem.wrench"));
             }
 
             // Screwdriver
             if (((maintenanceProblems >> 1) & 1) == 0) {
-                addKey(KeyUtil.lang(TextFormatting.GRAY,
+                addKey(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.universal.problem.screwdriver"));
             }
 
             // Soft Mallet
             if (((maintenanceProblems >> 2) & 1) == 0) {
-                addKey(KeyUtil.lang(TextFormatting.GRAY,
+                addKey(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.universal.problem.soft_mallet"));
             }
 
             // Hammer
             if (((maintenanceProblems >> 3) & 1) == 0) {
-                addKey(KeyUtil.lang(TextFormatting.GRAY,
+                addKey(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.universal.problem.hard_hammer"));
             }
 
             // Wire Cutters
             if (((maintenanceProblems >> 4) & 1) == 0) {
-                addKey(KeyUtil.lang(TextFormatting.GRAY,
+                addKey(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.universal.problem.wire_cutter"));
             }
 
             // Crowbar
             if (((maintenanceProblems >> 5) & 1) == 0) {
-                addKey(KeyUtil.lang(TextFormatting.GRAY,
+                addKey(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.universal.problem.crowbar"));
             }
         }
