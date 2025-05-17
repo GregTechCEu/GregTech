@@ -99,6 +99,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
     @Override
     protected void configureErrorText(MultiblockUIBuilder builder) {
+        super.configureErrorText(builder);
         var recipeLogic = (LargeCombustionEngineWorkableHandler) recipeMapWorkable;
 
         builder.addCustom((keyList, syncer) -> {

@@ -297,6 +297,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
 
     @Override
     protected void configureErrorText(MultiblockUIBuilder builder) {
+        super.configureErrorText(builder);
         builder.addCustom((list, syncer) -> {
             if (isStructureFormed() && syncer.syncBoolean(() -> !drainFluid(false))) {
                 list.add(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.miner.multi.needsfluid"));
@@ -316,6 +317,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
                         list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.machine.miner.invfull"));
                     }
                 });
+        super.configureWarningText(builder);
     }
 
     public IBlockState getCasingState() {

@@ -161,6 +161,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
 
     @Override
     protected void configureErrorText(MultiblockUIBuilder builder) {
+        super.configureErrorText(builder);
         builder.addCustom((keyList, syncer) -> {
             if (!isStructureFormed() || syncer.syncBoolean(() -> getRotorHolder() == null))
                 return;

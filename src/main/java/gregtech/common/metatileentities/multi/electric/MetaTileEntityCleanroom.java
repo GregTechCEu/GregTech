@@ -527,8 +527,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                         list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.multiblock.cleanroom.low_tier",
                                 energyNeeded));
                     }
-                })
-                .addMaintenanceProblemLines(getMaintenanceProblems());
+                });
+        super.configureWarningText(builder);
     }
 
     @Override
