@@ -527,8 +527,8 @@ final class MetaTileEntityRegistration {
             MetaTileEntities.DIODES[i] = MetaTileEntities.registerMetaTileEntity(5300 + i, diode);
         }
 
-        // Battery Buffer, IDs 5315-5369
-        endPos = GregTechAPI.isHighTier() ? MetaTileEntities.BATTERY_BUFFER[0].length : GTValues.UHV + 1;
+        // Battery Buffer, IDs 5315-5359
+        endPos = GregTechAPI.isHighTier() ? GTValues.V.length : GTValues.UHV + 1;
         MetaTileEntities.BATTERY_BUFFER[0] = new MetaTileEntityBatteryBuffer[endPos];
         MetaTileEntities.BATTERY_BUFFER[1] = new MetaTileEntityBatteryBuffer[endPos];
         MetaTileEntities.BATTERY_BUFFER[2] = new MetaTileEntityBatteryBuffer[endPos];
@@ -542,7 +542,7 @@ final class MetaTileEntityRegistration {
                     new MetaTileEntityBatteryBuffer(gregtechId(bufferIdBase + 16), i, 16));
         }
 
-        // Free range: 5370-5374
+        // Free range: 5360-5374
 
         // Charger, IDs 5375-5089
         endPos = GregTechAPI.isHighTier() ? MetaTileEntities.CHARGER.length : GTValues.UHV + 1;
