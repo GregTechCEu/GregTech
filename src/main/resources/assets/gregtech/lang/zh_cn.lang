@@ -5500,7 +5500,6 @@ gregtech.universal.tooltip.amperage_out=§e输出电流：§f%,dA
 gregtech.universal.tooltip.amperage_out_till=§e输出电流上限：§f%,dA
 gregtech.universal.tooltip.amperage_in_out=§e输入/输出电流：§f%,dA
 gregtech.universal.tooltip.amperage_in_out_till=§e输入/输出电流上限：§f%,dA
-gregtech.universal.tooltip.throughput=§b吞吐量: §f%,d EU/t
 gregtech.universal.tooltip.energy_storage_capacity=§c能量缓存：§f%,d EU
 gregtech.universal.tooltip.energy_tier_range=§a适配电压等级：§f%s §f- %s
 gregtech.universal.tooltip.item_storage_capacity=§6物品槽位数量：§f%,d
