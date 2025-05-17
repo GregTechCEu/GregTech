@@ -78,7 +78,6 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityOptic
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchFluid;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchItem;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchLaser;
-import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchLaser;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityReservoirHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityRotorHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntitySubstationEnergyHatch;

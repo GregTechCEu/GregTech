@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -79,8 +80,8 @@ public class MetaTileEntityPassthroughHatchLaser extends MetaTileEntityMultibloc
     }
 
     @Override
-    public void registerAbilities(@NotNull List<IPassthroughHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(this);
     }
 
     @Override
