@@ -102,6 +102,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
             tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", V[tier], VNF[tier]));
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", amperage));
         }
+        tooltip.add(I18n.format("gregtech.universal.tooltip.throughput", V[tier] * amperage));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", buffer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
