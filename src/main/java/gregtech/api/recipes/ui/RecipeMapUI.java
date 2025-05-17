@@ -10,6 +10,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.widget.RecipeProgressWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -19,9 +20,7 @@ import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.sizer.Area;
-import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
@@ -522,22 +521,22 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                                        IItemHandlerModifiable exportItems, FluidTankList importFluids,
                                        FluidTankList exportFluids, int yOffset, PanelSyncManager syncManager) {
         DoubleSyncValue progressValue = new DoubleSyncValue(progressSupplier);
-        syncManager.syncValue("recipe_progress", progressValue);
 
         ParentWidget<?> group = new ParentWidget<>().size(176, 166 + yOffset);
         group.child(new RecipeProgressWidget()
                 .recipeMap(recipeMap)
                 .size(20)
                 .alignX(0.5f).top(23 + yOffset)
-                .progress(progressValue::getDoubleValue)
+                .value(progressValue)
                 .texture(progressTexture, 20)
                 .direction(progressDirection));
         addInventorySlotGroup(group, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(group, exportItems, exportFluids, true, yOffset);
         if (specialTextureNew != null) {
-            group.child(new Widget<>()
-                    .flex(flex -> flex.getArea().set(specialTexturePosition))
-                    .background(specialTextureNew));
+            group.child(specialTextureNew.asWidget()
+                    .debugName("special_texture")
+                    .pos(specialTexturePosition.x(), specialTexturePosition.y())
+                    .size(specialTexturePosition.w(), specialTexturePosition.h()));
         }
         return group;
     }
@@ -616,23 +615,23 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 .background(getOverlaysForSlotNew(isOutputs, false, slotIndex == itemHandler.getSlots() - 1));
     }
 
-    protected FluidSlot makeFluidSlot(int x, int y, int slotIndex, FluidTankList fluidHandler, boolean isOutputs) {
-        return new FluidSlot()
-                .syncHandler(SyncHandlers.fluidSlot(fluidHandler.getTankAt(slotIndex))
-                        .canFillSlot(!isOutputs))
-                .alwaysShowFull(true)
+    protected GTFluidSlot makeFluidSlot(int x, int y, int slotIndex, FluidTankList fluidHandler, boolean isOutputs) {
+        return new GTFluidSlot()
+                .syncHandler(GTFluidSlot.sync(fluidHandler.getTankAt(slotIndex))
+                        .accessibility(true, !isOutputs))
+                // todo show always full, should be implemented with mui2 multis
                 .pos(x, y)
                 .background(getOverlaysForSlotNew(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1));
     }
 
     @ApiStatus.Experimental
-    protected IDrawable[] getOverlaysForSlotNew(boolean isOutput, boolean isFluid, boolean isLast) {
+    protected IDrawable getOverlaysForSlotNew(boolean isOutput, boolean isFluid, boolean isLast) {
         UITexture base = isFluid ? GTGuiTextures.FLUID_SLOT : GTGuiTextures.SLOT;
         byte overlayKey = computeOverlayKey(isOutput, isFluid, isLast);
         if (slotTextureOverlays.containsKey(overlayKey)) {
-            return new UITexture[] { base, slotTextureOverlays.get(overlayKey) };
+            return IDrawable.of(base, slotTextureOverlays.get(overlayKey));
         }
-        return new UITexture[] { base };
+        return IDrawable.of(base);
     }
 
     /** Marked experimental as this method will be removed when all GTCEu UIs are ported to MUI2. */
