@@ -351,27 +351,33 @@ public class MetaTileEntityLoader {
                 MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID),
                 MetaBlocks.WARNING_SIGN.getItemVariant(NOISE_HAZARD));
 
-        ModHandler.addShapedRecipe(true, "rotor_holder_hv", MetaTileEntities.ROTOR_HOLDER[0].getStackForm(), "SGS",
+        ModHandler.addShapedRecipe(true, "rotor_holder_hv", MetaTileEntities.ROTOR_HOLDER[GTValues.HV].getStackForm(),
+                "SGS",
                 "GHG", "SGS", 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'G',
                 new UnificationEntry(OrePrefix.gear, Materials.BlackSteel), 'S',
                 new UnificationEntry(OrePrefix.gearSmall, Materials.StainlessSteel));
-        ModHandler.addShapedRecipe(true, "rotor_holder_ev", MetaTileEntities.ROTOR_HOLDER[1].getStackForm(), "SGS",
+        ModHandler.addShapedRecipe(true, "rotor_holder_ev", MetaTileEntities.ROTOR_HOLDER[GTValues.EV].getStackForm(),
+                "SGS",
                 "GHG", "SGS", 'H', MetaTileEntities.HULL[GTValues.EV].getStackForm(), 'G',
                 new UnificationEntry(OrePrefix.gear, Materials.Ultimet), 'S',
                 new UnificationEntry(OrePrefix.gearSmall, Materials.Titanium));
-        ModHandler.addShapedRecipe(true, "rotor_holder_iv", MetaTileEntities.ROTOR_HOLDER[2].getStackForm(), "SGS",
+        ModHandler.addShapedRecipe(true, "rotor_holder_iv", MetaTileEntities.ROTOR_HOLDER[GTValues.IV].getStackForm(),
+                "SGS",
                 "GHG", "SGS", 'H', MetaTileEntities.HULL[GTValues.IV].getStackForm(), 'G',
                 new UnificationEntry(OrePrefix.gear, Materials.HSSG), 'S',
                 new UnificationEntry(OrePrefix.gearSmall, Materials.TungstenSteel));
-        ModHandler.addShapedRecipe(true, "rotor_holder_luv", MetaTileEntities.ROTOR_HOLDER[3].getStackForm(), "SGS",
+        ModHandler.addShapedRecipe(true, "rotor_holder_luv", MetaTileEntities.ROTOR_HOLDER[GTValues.LuV].getStackForm(),
+                "SGS",
                 "GHG", "SGS", 'H', MetaTileEntities.HULL[GTValues.LuV].getStackForm(), 'G',
                 new UnificationEntry(OrePrefix.gear, Materials.Ruthenium), 'S',
                 new UnificationEntry(OrePrefix.gearSmall, Materials.RhodiumPlatedPalladium));
-        ModHandler.addShapedRecipe(true, "rotor_holder_zpm", MetaTileEntities.ROTOR_HOLDER[4].getStackForm(), "SGS",
+        ModHandler.addShapedRecipe(true, "rotor_holder_zpm", MetaTileEntities.ROTOR_HOLDER[GTValues.ZPM].getStackForm(),
+                "SGS",
                 "GHG", "SGS", 'H', MetaTileEntities.HULL[GTValues.ZPM].getStackForm(), 'G',
                 new UnificationEntry(OrePrefix.gear, Materials.Trinium), 'S',
                 new UnificationEntry(OrePrefix.gearSmall, Materials.NaquadahAlloy));
-        ModHandler.addShapedRecipe(true, "rotor_holder_uv", MetaTileEntities.ROTOR_HOLDER[5].getStackForm(), "SGS",
+        ModHandler.addShapedRecipe(true, "rotor_holder_uv", MetaTileEntities.ROTOR_HOLDER[GTValues.UV].getStackForm(),
+                "SGS",
                 "GHG", "SGS", 'H', MetaTileEntities.HULL[GTValues.UV].getStackForm(), 'G',
                 new UnificationEntry(OrePrefix.gear, Materials.Tritanium), 'S',
                 new UnificationEntry(OrePrefix.gearSmall, Materials.Darmstadtium));
