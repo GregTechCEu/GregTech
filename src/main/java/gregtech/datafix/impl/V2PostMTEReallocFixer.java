@@ -147,7 +147,7 @@ public final class V2PostMTEReallocFixer {
             dataMigrator.migrateMTEMeta(MODID, 1375 + i, 5375 + i);
         }
         // world accelerators
-        for (int i = 0; i < WORLD_ACCELERATOR.length; i++) {
+        for (int i = 0; i < 8; i++) {
             dataMigrator.migrateMTEMeta(MODID, 1390 + i, 5390 + i);
         }
         // buffers
