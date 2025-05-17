@@ -31,10 +31,8 @@ public class OreRecipeHandler {
 
     public static void register() {
         OrePrefix.ore.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
-        OrePrefix.oreEndstone.addProcessingHandler(PropertyKey.ORE,
-                ((prefix, material, property) -> processOre(prefix, material, property, 2)));
-        OrePrefix.oreNetherrack.addProcessingHandler(PropertyKey.ORE,
-                ((prefix, material, property) -> processOre(prefix, material, property, 2)));
+        OrePrefix.oreEndstone.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOreDouble);
+        OrePrefix.oreNetherrack.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOreDouble);
         if (ConfigHolder.worldgen.allUniqueStoneTypes) {
             OrePrefix.oreGranite.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
             OrePrefix.oreDiorite.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
@@ -67,7 +65,11 @@ public class OreRecipeHandler {
     }
 
     public static void processOre(OrePrefix orePrefix, Material material, OreProperty property) {
-        processOre(OrePrefix.ore, material, property, 1);
+        processOre(orePrefix, material, property, 1);
+    }
+
+    public static void processOreDouble(OrePrefix orePrefix, Material material, OreProperty property) {
+        processOre(orePrefix, material, property, 2);
     }
 
     public static void processOre(OrePrefix orePrefix, Material material, OreProperty property, int oreTypeMultiplier) {
