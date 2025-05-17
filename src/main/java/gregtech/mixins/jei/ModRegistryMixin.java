@@ -22,8 +22,8 @@ public abstract class ModRegistryMixin {
     private List<IRecipeCategory<?>> recipeCategories;
 
     /**
-     * @reason Sort recipe categories according to a list created and managed by GroovyScript
-     *         to allow a custom order for JEI category tabs.
+     * @reason Sort recipe categories according to rules defined by GTCEu to allow a custom order for its JEI category
+     *         tabs.
      * @see JustEnoughItemsModule#getRecipeCategoryComparator()
      */
     @Inject(method = "createRecipeRegistry", at = @At("HEAD"), order = 100)
