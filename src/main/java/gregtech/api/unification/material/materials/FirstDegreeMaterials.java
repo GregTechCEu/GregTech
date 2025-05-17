@@ -398,12 +398,7 @@ public class FirstDegreeMaterials {
                 .components(Magnesium, 1, Iron, 1, Silicon, 2, Oxygen, 4)
                 .build();
 
-        Phosphate = new Material.Builder(298, gregtechId("phosphate"))
-                .dust(1)
-                .color(0xFFFF00)
-                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE)
-                .components(Phosphorus, 1, Oxygen, 4)
-                .build();
+        // Free ID: 298
 
         PlatinumRaw = new Material.Builder(299, gregtechId("platinum_raw"))
                 .dust()
@@ -904,7 +899,7 @@ public class FirstDegreeMaterials {
         PhosphorusPentoxide = new Material.Builder(359, gregtechId("phosphorus_pentoxide"))
                 .dust(1)
                 .color(0xDCDC00)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Phosphorus, 4, Oxygen, 10)
                 .build();
 
