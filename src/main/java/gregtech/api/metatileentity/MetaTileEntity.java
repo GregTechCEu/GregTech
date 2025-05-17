@@ -8,6 +8,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
@@ -70,6 +71,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.Optional.Method;
@@ -134,8 +136,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     protected IItemHandler itemInventory;
 
-    protected FluidTankList importFluids;
-    protected FluidTankList exportFluids;
+    protected MultipleTankHandler importFluids;
+    protected MultipleTankHandler exportFluids;
 
     protected IFluidHandler fluidInventory;
 
@@ -155,8 +157,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     protected List<IItemHandlerModifiable> notifiedItemOutputList = new ArrayList<>();
     protected List<IItemHandlerModifiable> notifiedItemInputList = new ArrayList<>();
-    protected List<IFluidHandler> notifiedFluidInputList = new ArrayList<>();
-    protected List<IFluidHandler> notifiedFluidOutputList = new ArrayList<>();
+    protected List<IFluidTank> notifiedFluidInputList = new ArrayList<>();
+    protected List<IFluidTank> notifiedFluidOutputList = new ArrayList<>();
 
     protected boolean muffled = false;
 
@@ -392,27 +394,27 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void addNotifiedInput(Object input) {
-        if (input instanceof IItemHandlerModifiable) {
-            if (!notifiedItemInputList.contains(input)) {
-                this.notifiedItemInputList.add((IItemHandlerModifiable) input);
+        if (input instanceof IItemHandlerModifiable handlerModifiable) {
+            if (!notifiedItemInputList.contains(handlerModifiable)) {
+                this.notifiedItemInputList.add(handlerModifiable);
             }
         }
-        if (input instanceof IFluidHandler) {
-            if (!notifiedFluidInputList.contains(input)) {
-                this.notifiedFluidInputList.add((IFluidHandler) input);
+        if (input instanceof IFluidTank tank) {
+            if (!notifiedFluidInputList.contains(tank)) {
+                this.notifiedFluidInputList.add(tank);
             }
         }
     }
 
     public void addNotifiedOutput(Object output) {
-        if (output instanceof IItemHandlerModifiable) {
-            if (!notifiedItemOutputList.contains(output)) {
-                this.notifiedItemOutputList.add((IItemHandlerModifiable) output);
+        if (output instanceof IItemHandlerModifiable item) {
+            if (!notifiedItemOutputList.contains(item)) {
+                this.notifiedItemOutputList.add(item);
             }
         }
-        if (output instanceof IFluidHandler) {
-            if (!notifiedFluidOutputList.contains(output)) {
-                this.notifiedFluidOutputList.add((IFluidHandler) output);
+        if (output instanceof IFluidTank tank) {
+            if (!notifiedFluidOutputList.contains(tank)) {
+                this.notifiedFluidOutputList.add(tank);
             }
         }
     }
@@ -448,11 +450,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return new GTItemStackHandler(this, 0);
     }
 
-    protected FluidTankList createImportFluidHandler() {
+    protected MultipleTankHandler createImportFluidHandler() {
         return new FluidTankList(false);
     }
 
-    protected FluidTankList createExportFluidHandler() {
+    protected MultipleTankHandler createExportFluidHandler() {
         return new FluidTankList(false);
     }
 
@@ -1458,11 +1460,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return exportItems;
     }
 
-    public FluidTankList getImportFluids() {
+    public MultipleTankHandler getImportFluids() {
         return importFluids;
     }
 
-    public FluidTankList getExportFluids() {
+    public MultipleTankHandler getExportFluids() {
         return exportFluids;
     }
 
@@ -1474,11 +1476,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return notifiedItemInputList;
     }
 
-    public List<IFluidHandler> getNotifiedFluidInputList() {
+    public List<IFluidTank> getNotifiedFluidInputList() {
         return notifiedFluidInputList;
     }
 
-    public List<IFluidHandler> getNotifiedFluidOutputList() {
+    public List<IFluidTank> getNotifiedFluidOutputList() {
         return notifiedFluidOutputList;
     }
 

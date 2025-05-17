@@ -100,7 +100,7 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
         }
 
         List<List<IWidget>> tankWidgets = new ArrayList<>();
-        for (int i = 0; i < this.fluidTankList.getTanks(); i++) {
+        for (int i = 0; i < this.fluidTankList.size(); i++) {
             tankWidgets.add(new ArrayList<>());
             tankWidgets.get(i).add(new GTFluidSlot().syncHandler(this.fluidTankList.getTankAt(i)));
         }

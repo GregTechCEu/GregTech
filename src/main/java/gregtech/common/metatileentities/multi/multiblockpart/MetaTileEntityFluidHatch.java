@@ -4,8 +4,8 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IFilter;
-import gregtech.api.capability.IFilteredFluidContainer;
 import gregtech.api.capability.IGhostSlotConfigurable;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
@@ -238,12 +238,12 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    protected FluidTankList createImportFluidHandler() {
+    protected MultipleTankHandler createImportFluidHandler() {
         return isExportHatch ? new FluidTankList(false) : new FluidTankList(false, fluidTank);
     }
 
     @Override
-    protected FluidTankList createExportFluidHandler() {
+    protected MultipleTankHandler createExportFluidHandler() {
         return isExportHatch ? new FluidTankList(false, fluidTank) : new FluidTankList(false);
     }
 
@@ -425,10 +425,11 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         }
     }
 
-    protected class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
+    protected class HatchFluidTank extends NotifiableFluidTank implements IFilter<FluidStack> {
 
         public HatchFluidTank(int capacity, MetaTileEntity entityToNotify, boolean isExport) {
             super(capacity, entityToNotify, isExport);
+            setFilter(this);
         }
 
         @Override
@@ -444,21 +445,10 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             return accepted;
         }
 
-        @Override
-        public boolean canFillFluidType(FluidStack fluid) {
-            return test(fluid);
-        }
-
         // override for visibility
         @Override
         public void onContentsChanged() {
             super.onContentsChanged();
-        }
-
-        @Nullable
-        @Override
-        public IFilter<FluidStack> getFilter() {
-            return this;
         }
 
         @Override
@@ -470,7 +460,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         @Override
         public int getPriority() {
             if (!isExportHatch) return IFilter.noPriority();
-            return !locked || lockedFluid == null ? IFilter.noPriority() : IFilter.whitelistPriority(1);
+            return !locked || lockedFluid == null ? IFilter.noPriority() :
+                    IFilter.whitelistPriority(1);
         }
     }
 }

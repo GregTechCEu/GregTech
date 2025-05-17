@@ -36,8 +36,8 @@ public interface INotifiableHandler {
     default int size() {
         if (this instanceof IItemHandler handler)
             return handler.getSlots();
-        else if (this instanceof IMultipleTankHandler tankHandler)
-            return tankHandler.getTanks();
+        else if (this instanceof MultipleTankHandler tankHandler)
+            return tankHandler.size();
         return 1;
     }
 }

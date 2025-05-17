@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.FluidTankList;
@@ -116,7 +117,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
     }
 
     @Override
-    protected FluidTankList createImportFluidHandler() {
+    protected MultipleTankHandler createImportFluidHandler() {
         if (workable == null) return new FluidTankList(false);
         NotifiableFluidTank[] fluidImports = new NotifiableFluidTank[workable.getRecipeMap().getMaxFluidInputs()];
         for (int i = 0; i < fluidImports.length; i++) {
@@ -128,7 +129,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
     }
 
     @Override
-    protected FluidTankList createExportFluidHandler() {
+    protected MultipleTankHandler createExportFluidHandler() {
         if (workable == null) return new FluidTankList(false);
         FluidTank[] fluidExports = new FluidTank[workable.getRecipeMap().getMaxFluidOutputs()];
         for (int i = 0; i < fluidExports.length; i++) {

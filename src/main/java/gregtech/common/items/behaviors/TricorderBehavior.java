@@ -8,7 +8,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.capability.IWorkable;
-import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -170,7 +170,7 @@ public class TricorderBehavior implements IItemBehaviour {
             list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
             // fluid tanks
-            FluidTankList tanks = metaTileEntity.getImportFluids();
+            MultipleTankHandler tanks = metaTileEntity.getImportFluids();
             int tankIndex = 0;
             boolean allTanksEmpty = true;
             if (tanks != null && !tanks.getFluidTanks().isEmpty()) {
@@ -298,7 +298,7 @@ public class TricorderBehavior implements IItemBehaviour {
                 list.add(new TextComponentTranslation("behavior.tricorder.quantum_controller.connected_items",
                         TextFormatting.RED.toString() + handler.getItemDelegate().getSlots()));
                 list.add(new TextComponentTranslation("behavior.tricorder.quantum_controller.connected_fluids",
-                        TextFormatting.RED.toString() + handler.getFluidDelegate().getTanks()));
+                        TextFormatting.RED.toString() + handler.getFluidDelegate().size()));
             } else if (metaTileEntity instanceof IQuantumStorage<?>storage) {
                 var qcontrollor = storage.getQuantumController();
                 if (qcontrollor != null) {
