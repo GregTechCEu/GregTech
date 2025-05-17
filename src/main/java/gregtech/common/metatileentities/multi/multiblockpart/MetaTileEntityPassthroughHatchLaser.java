@@ -8,12 +8,15 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
+import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
@@ -45,6 +48,24 @@ public class MetaTileEntityPassthroughHatchLaser extends MetaTileEntityMultibloc
             }
         }
         return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void setFrontFacing(EnumFacing frontFacing) {
+        super.setFrontFacing(frontFacing);
+        var worldNet = WorldLaserPipeNet.getWorldPipeNet(getWorld());
+        var pos = new BlockPos.MutableBlockPos();
+        for (var facing : EnumFacing.VALUES) {
+            TileEntity te = getNeighbor(facing);
+            if (te instanceof TileEntityLaserPipe) {
+                pos.setPos(getPos());
+                pos.move(facing);
+                var net = worldNet.getNetFromPos(pos);
+                if (net != null) {
+                    net.onPipeConnectionsUpdate();
+                }
+            }
+        }
     }
 
     @Override
