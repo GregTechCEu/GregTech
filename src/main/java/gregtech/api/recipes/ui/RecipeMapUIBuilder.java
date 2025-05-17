@@ -14,6 +14,7 @@ public class RecipeMapUIBuilder {
 
     public RecipeMapUIBuilder(RecipeMapUI<?> mapUI) {
         this.mapUI = mapUI;
+        this.mapUI.setUsesMui2();
     }
 
     /**
