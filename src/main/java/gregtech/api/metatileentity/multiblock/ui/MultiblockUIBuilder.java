@@ -455,7 +455,9 @@ public class MultiblockUIBuilder {
     public MultiblockUIBuilder addMaintenanceProblemLines(byte maintenanceProblems, boolean warning) {
         if (!isStructureFormed || !ConfigHolder.machines.enableMaintenance) return this;
         maintenanceProblems = getSyncer().syncByte(maintenanceProblems);
-        if (maintenanceProblems < 63) {
+
+        if (warning && maintenanceProblems < 0b111111 && maintenanceProblems > 0b000000 ||
+                !warning && maintenanceProblems == 0b000000) {
             addKey(KeyUtil.lang(TextFormatting.YELLOW,
                     "gregtech.multiblock.universal.has_problems"));
 
