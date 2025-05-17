@@ -969,8 +969,9 @@ final class MetaTileEntityRegistration {
         // space intended for more energy or laser hatches
 
         // Rotor Holder, IDs 11450-11464
-        for (int i = GTValues.HV; i <= GTValues.UV; i++) {
-            MetaTileEntities.ROTOR_HOLDER[i - GTValues.HV] = MetaTileEntities.registerMetaTileEntity(11450 + i,
+        endPos = GregTechAPI.isHighTier() ? MetaTileEntities.ROTOR_HOLDER.length : GTValues.UV + 1;
+        for (int i = GTValues.HV; i < endPos; i++) {
+            MetaTileEntities.ROTOR_HOLDER[i] = MetaTileEntities.registerMetaTileEntity(11450 + i,
                     new MetaTileEntityRotorHolder(gregtechId("rotor_holder." + GTValues.VN[i].toLowerCase()), i));
         }
 
