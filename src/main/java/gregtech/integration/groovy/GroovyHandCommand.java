@@ -33,18 +33,18 @@ public class GroovyHandCommand {
         }
 
         // tool info
-        if (stackInHand.getItem() instanceof IGTTool) {
-            IGTTool tool = (IGTTool) stackInHand.getItem();
+        if (stackInHand.getItem() instanceof IGTTool tool) {
             event.messages.add(
                     new TextComponentTranslation("gregtech.command.hand.tool_stats", tool.getToolClasses(stackInHand)));
         }
 
         // material info
-        MaterialStack material = OreDictUnifier.getMaterial(stackInHand);
-        if (material != null) {
-            String copyText = "material('" + material.material + "')";
+        MaterialStack ms = OreDictUnifier.getMaterial(stackInHand);
+        if (ms != null) {
+            String materialString = RecipeCompatUtil.getRLPrefix(ms.material) + ms.material;
+            String copyText = "material('" + materialString + "')";
             event.messages.add(TextCopyable.translation(copyText, "gregtech.command.hand.material").build()
-                    .appendSibling(new TextComponentString(" " + material.material)
+                    .appendSibling(new TextComponentString(" " + materialString)
                             .setStyle(new Style().setColor(TextFormatting.GREEN))));
         }
         // ore prefix info
