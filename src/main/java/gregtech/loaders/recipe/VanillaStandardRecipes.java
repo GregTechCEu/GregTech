@@ -86,11 +86,6 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.CLAY))
                 .buildAndRegister();
 
-        COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2)
-                .inputs(new ItemStack(Items.GLOWSTONE_DUST, 4))
-                .outputs(new ItemStack(Blocks.GLOWSTONE))
-                .buildAndRegister();
-
         COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.ICE, 2, GTValues.W))
                 .outputs(new ItemStack(Blocks.PACKED_ICE)).buildAndRegister();
 
