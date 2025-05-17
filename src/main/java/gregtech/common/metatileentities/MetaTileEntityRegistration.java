@@ -688,6 +688,8 @@ final class MetaTileEntityRegistration {
         MetaTileEntities.CREATIVE_TANK = MetaTileEntities.registerMetaTileEntity(5652,
                 new MetaTileEntityCreativeTank(gregtechId("creative_tank")));
 
+        // Free IDs: 5660-5669
+
         // Energy Converter, IDs 5670-5729
         endPos = GregTechAPI.isHighTier() ? MetaTileEntities.ENERGY_CONVERTER[0].length : GTValues.UHV + 1;
         int[] amps = { 1, 4, 8, 16 };
@@ -962,6 +964,9 @@ final class MetaTileEntityRegistration {
             MetaTileEntities.LASER_OUTPUT_HATCH_4096[i] = MetaTileEntities.registerMetaTileEntity(11315 + i,
                     new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_4096a." + voltageName), true, i, 4096));
         }
+
+        // Free IDs: 11330-11449
+        // space intended for more energy or laser hatches
 
         // Rotor Holder, IDs 11450-11464
         for (int i = GTValues.HV; i <= GTValues.UV; i++) {
