@@ -5544,6 +5544,7 @@ gregtech.universal.tooltip.amperage_out=§eAmperage OUT: §f%,dA
 gregtech.universal.tooltip.amperage_out_till=§eAmperage OUT up to: §f%,dA
 gregtech.universal.tooltip.amperage_in_out=§eAmperage IN/OUT: §f%,dA
 gregtech.universal.tooltip.amperage_in_out_till=§eAmperage IN/OUT up to: §f%,dA
+gregtech.universal.tooltip.throughput=§bThroughput: §f%,d EU/t
 gregtech.universal.tooltip.energy_storage_capacity=§cEnergy Capacity: §f%,d EU
 gregtech.universal.tooltip.energy_tier_range=§aAllowed Voltage Tiers: §f%s §f- %s
 gregtech.universal.tooltip.item_storage_capacity=§6Item Slots: §f%,d
