@@ -77,7 +77,7 @@ public class MultiblockUIBuilder {
     private Runnable onRebuild;
 
     @NotNull
-    private InternalSyncer getSyncer() {
+    InternalSyncer getSyncer() {
         if (this.syncer == null) {
             this.syncer = new InternalSyncer(isServer());
         }
