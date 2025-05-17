@@ -452,7 +452,7 @@ public class MultiblockUIBuilder {
      * Will check the config
      * setting for if maintenance is enabled automatically.
      */
-    public MultiblockUIBuilder addMaintenanceProblemLines(byte maintenanceProblems) {
+    public MultiblockUIBuilder addMaintenanceProblemLines(byte maintenanceProblems, boolean warning) {
         if (!isStructureFormed || !ConfigHolder.machines.enableMaintenance) return this;
         maintenanceProblems = getSyncer().syncByte(maintenanceProblems);
         if (maintenanceProblems < 63) {

@@ -212,6 +212,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                         list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.machine.miner.invfull"));
                     }
                 });
+        super.configureWarningText(builder);
     }
 
     @Override

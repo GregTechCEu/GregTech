@@ -26,6 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -373,9 +374,20 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     protected void configureDisplayText(MultiblockUIBuilder builder) {}
 
-    protected void configureErrorText(MultiblockUIBuilder builder) {}
+    @MustBeInvokedByOverriders
+    protected void configureErrorText(MultiblockUIBuilder builder) {
+        builder.structureFormed(isStructureFormed());
+        if (hasMufflerMechanics())
+            builder.addMufflerObstructedLine(!isMufflerFaceFree());
+        if (hasMaintenanceMechanics())
+            builder.addMaintenanceProblemLines(getMaintenanceProblems(), false);
+    }
 
-    protected void configureWarningText(MultiblockUIBuilder builder) {}
+    @MustBeInvokedByOverriders
+    protected void configureWarningText(MultiblockUIBuilder builder) {
+        if (hasMaintenanceMechanics())
+            builder.addMaintenanceProblemLines(getMaintenanceProblems(), true);
+    }
 
     protected MultiblockUIFactory createUIFactory() {
         return new MultiblockUIFactory(this)

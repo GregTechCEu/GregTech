@@ -251,9 +251,8 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
 
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
-        builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
-                .addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation())
-                .addMaintenanceProblemLines(getMaintenanceProblems());
+        builder.addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation());
+        super.configureWarningText(builder);
     }
 
     private void researchingLine(KeyManager manager, UISyncer syncer) {

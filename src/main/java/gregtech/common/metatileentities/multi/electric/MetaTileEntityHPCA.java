@@ -443,12 +443,13 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
                     // Structure warnings
                     hpcaHandler.addWarnings(manager, syncer);
-                })
-                .addMaintenanceProblemLines(getMaintenanceProblems());
+                });
+        super.configureWarningText(builder);
     }
 
     @Override
     protected void configureErrorText(MultiblockUIBuilder builder) {
+        super.configureErrorText(builder);
         builder.addCustom((manager, syncer) -> {
             if (!isStructureFormed()) return;
 

@@ -124,7 +124,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
             if (isStructureFormed() && noEnergy) {
                 list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.multiblock.steam.low_steam"));
             }
-        }).addMaintenanceProblemLines(getMaintenanceProblems());
+        });
+        super.configureWarningText(builder);
     }
 
     @Override

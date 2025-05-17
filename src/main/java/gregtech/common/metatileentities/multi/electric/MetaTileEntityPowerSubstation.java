@@ -420,12 +420,12 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                             timeToDrain));
                 }
             }
-        });
-        builder.addWorkingStatusLine();
+        }).addWorkingStatusLine();
     }
 
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
+        super.configureWarningText(builder);
         builder.addCustom((list, syncer) -> {
             if (isStructureFormed() && averageInLastSec < averageOutLastSec) {
                 BigInteger timeToDrainSeconds = energyBank.getStored()

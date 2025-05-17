@@ -260,8 +260,8 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
-        builder.addLowPowerLine(hasNotEnoughEnergy)
-                .addMaintenanceProblemLines(getMaintenanceProblems());
+        builder.addLowPowerLine(hasNotEnoughEnergy);
+        super.configureWarningText(builder);
     }
 
     @Override
