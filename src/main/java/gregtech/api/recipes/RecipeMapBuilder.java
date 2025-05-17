@@ -288,6 +288,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
         RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, modifyItemInputs, modifyItemOutputs, modifyFluidInputs,
                 modifyFluidOutputs, isGenerator);
         if (usesMui2) {
+            // if "usesMui2" is true, then "mapUIBuilder" is not null
             // noinspection DataFlowIssue
             this.mapUIBuilder.accept(new RecipeMapUIBuilder(ui));
         } else {
