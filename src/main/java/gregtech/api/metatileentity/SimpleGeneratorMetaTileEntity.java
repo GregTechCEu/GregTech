@@ -128,6 +128,8 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
                 workable.isWorkingEnabled());
     }
 
+    // todo mui2 check
+
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return createGuiTemplate(entityPlayer).build(getHolder(), entityPlayer);
