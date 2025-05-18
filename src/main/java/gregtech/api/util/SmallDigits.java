@@ -9,39 +9,53 @@ public final class SmallDigits {
     @SuppressWarnings("UnnecessaryUnicodeEscape")
     private static final int SMALL_UP_NUMBER_BASE = '\u2080';
     private static final int NUMBER_BASE = '0';
+    @SuppressWarnings("UnnecessaryUnicodeEscape")
+    private static final int FORMATTING_SYMBOL = '\u00a7';
 
     private SmallDigits() {}
 
-    @NotNull
-    public static String toSmallUpNumbers(String string) {
+    public static @NotNull String toSmallUpNumbers(String string) {
         return convert(string, SMALL_UP_NUMBER_BASE);
     }
 
-    @NotNull
-    public static String toSmallDownNumbers(String string) {
+    public static @NotNull String toSmallDownNumbers(String string) {
         return convert(string, SMALL_DOWN_NUMBER_BASE);
     }
 
-    @NotNull
-    private static String convert(@NotNull String string, int base) {
-        boolean hasPrecedingDash = false;
-        char[] charArray = string.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            char c = charArray[i];
-            boolean isDash = c == '-';
-            if (isDash) hasPrecedingDash = true;
+    private static @NotNull String convert(@NotNull String string, int base) {
+        char[] chars = string.toCharArray();
+        boolean hasPrefix = false;
+        boolean hasFormat = false;
+        for (int i = 0; i < chars.length; i++) {
+            if (hasFormat) {
+                // skip over the next character once the format flag is set
+                hasFormat = false;
+                continue;
+            }
 
-            int relativeIndex = c - NUMBER_BASE;
-            if (relativeIndex >= 0 && relativeIndex <= 9) {
-                if (!hasPrecedingDash) {
-                    // no preceding dash, so convert the char
-                    charArray[i] = (char) (base + relativeIndex);
+            char c = chars[i];
+            if (c == '-') {
+                hasPrefix = true;
+                continue;
+            }
+            if (c == FORMATTING_SYMBOL) {
+                hasFormat = true;
+                continue;
+            }
+
+            if (Character.isDigit(c)) {
+                if (!hasPrefix) {
+                    chars[i] = convertToBase(c, base);
                 }
-            } else if (!isDash && hasPrecedingDash) {
-                // was a non-number, so invalidate the previously seen dash
-                hasPrecedingDash = false;
+            } else {
+                // reset prefix as soon as a non-digit is encountered
+                hasPrefix = false;
             }
         }
-        return new String(charArray);
+        return new String(chars);
+    }
+
+    private static char convertToBase(char c, int base) {
+        return (char) (base + (c - NUMBER_BASE));
     }
 }
