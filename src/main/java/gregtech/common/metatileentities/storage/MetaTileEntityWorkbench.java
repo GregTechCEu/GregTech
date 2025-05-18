@@ -81,11 +81,9 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
     private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
-
+    private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9, this.craftingGrid);
     private ItemHandlerList combinedInventory;
     private ItemHandlerList connectedInventory;
-
-    private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9, this.craftingGrid);
     private CraftingRecipeLogic recipeLogic = null;
     private int itemsCrafted = 0;
 
@@ -124,6 +122,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             NetworkUtils.writeItemStack(buf, craftingGrid.getStackInSlot(i));
         }
         this.recipeMemory.writeInitialSyncData(buf);
+        buf.writeVarInt(computeConnectedInventory().getSlots());
     }
 
     @Override
@@ -134,6 +133,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             craftingGrid.setStackInSlot(i, NetworkUtils.readItemStack(buf));
         }
         this.recipeMemory.receiveInitialSyncData(buf);
+        this.connectedInventory = new ItemHandlerList(
+                Collections.singletonList(new GTItemStackHandler(this, buf.readVarInt())));
     }
 
     @Override
@@ -158,28 +159,39 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     public IItemHandlerModifiable getAvailableHandlers() {
-        var handlers = new ArrayList<IItemHandler>();
+        ArrayList<IItemHandler> handlers = new ArrayList<>();
+        handlers.add(this.internalInventory);
+        handlers.add(this.toolInventory);
+        if (getWorld().isRemote) {
+            // this might be called on client, so just return the existing inventory instead
+            handlers.add(this.connectedInventory);
+        } else {
+            handlers.add(computeConnectedInventory());
+        }
+        return this.combinedInventory = new ItemHandlerList(handlers);
+    }
+
+    // this should only be called server-side
+    private ItemHandlerList computeConnectedInventory() {
+        ArrayList<IItemHandler> handlers = new ArrayList<>();
         for (var facing : EnumFacing.VALUES) {
             var neighbor = getNeighbor(facing);
             if (neighbor == null) continue;
             var handler = neighbor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
             if (handler != null) handlers.add(handler);
         }
-        this.connectedInventory = new ItemHandlerList(handlers);
-        handlers.clear();
-
-        handlers.add(this.internalInventory);
-        handlers.add(this.toolInventory);
-        handlers.add(this.connectedInventory);
-        return this.combinedInventory = new ItemHandlerList(handlers);
+        return this.connectedInventory = new ItemHandlerList(handlers);
     }
 
     @Override
     public void onNeighborChanged() {
         getCraftingRecipeLogic().updateInventory(getAvailableHandlers());
-        writeCustomData(GregtechDataCodes.UPDATE_CLIENT_HANDLER, this::sendHandlerToClient);
+        if (!getWorld().isRemote) {
+            writeCustomData(GregtechDataCodes.UPDATE_CLIENT_HANDLER, this::sendHandlerToClient);
+        }
     }
 
+    // this is called on client and server
     public @NotNull CraftingRecipeLogic getCraftingRecipeLogic() {
         Preconditions.checkState(getWorld() != null, "getRecipeResolver called too early");
         if (this.recipeLogic == null) {
@@ -229,10 +241,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                 .addTooltipLine(IKey.lang("gregtech.machine.workbench.tab.item_list"))
                                 .addTooltipLine(IKey.lang("gregtech.machine.workbench.storage_note")
                                         .style(TextFormatting.DARK_GRAY))
-                                .overlay(CHEST))
-
-                )
-
+                                .overlay(CHEST)))
                 .child(IKey.lang(getMetaFullName())
                         .asWidget()
                         .top(7).left(7))
