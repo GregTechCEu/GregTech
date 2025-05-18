@@ -92,7 +92,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .where('Y', states(getCasingState())
                         .or(abilities(MultiblockAbility.INPUT_ENERGY)
                                 .setMinGlobalLimited(1)
-                                .setMaxGlobalLimited(3)))
+                                .setMaxGlobalLimited(1)))
                 .where('I', metaTileEntities(MetaTileEntities.ITEM_IMPORT_BUS[GTValues.ULV]))
                 .where('G', states(getGrateState()))
                 .where('A',

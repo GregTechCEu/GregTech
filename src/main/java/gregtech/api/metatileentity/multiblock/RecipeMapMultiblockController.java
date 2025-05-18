@@ -203,8 +203,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
         if (checkEnergyIn) {
             predicate = predicate.or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)
-                    .setMaxGlobalLimited(2)
-                    .setPreviewCount(1));
+                    .setMaxGlobalLimited(1).setPreviewCount(1));
         }
 
         if (checkItemIn) {

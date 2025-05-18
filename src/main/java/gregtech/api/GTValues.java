@@ -201,4 +201,7 @@ public class GTValues {
         return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("12") &&
                 (yearMonthDay[2].equals("24") || yearMonthDay[2].equals("25"));
     };
+
+    // todo temp
+    public static double LOG_4 = Math.log(4);
 }
