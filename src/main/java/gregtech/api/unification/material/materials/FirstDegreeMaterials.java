@@ -904,7 +904,7 @@ public class FirstDegreeMaterials {
         PhosphorusPentoxide = new Material.Builder(359, gregtechId("phosphorus_pentoxide"))
                 .dust(1)
                 .color(0xDCDC00)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Phosphorus, 4, Oxygen, 10)
                 .build();
 
