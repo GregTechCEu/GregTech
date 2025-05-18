@@ -315,10 +315,10 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(Lazurite, Sodalite, Pyrite);
 
         oreProp = Apatite.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(TricalciumPhosphate, Phosphate, Pyrochlore);
+        oreProp.setOreByProducts(TricalciumPhosphate, Phosphorus, Pyrochlore);
 
         oreProp = TricalciumPhosphate.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Apatite, Phosphate, Pyrochlore);
+        oreProp.setOreByProducts(Apatite, Phosphorus, Pyrochlore);
 
         oreProp = GarnetRed.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Spessartine, Pyrope, Almandine);

@@ -382,25 +382,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected void completeRecipe() {
-        performMufflerOperations();
-        super.completeRecipe();
-    }
-
-    protected void performMufflerOperations() {
-        if (metaTileEntity instanceof MultiblockWithDisplayBase controller) {
-            // output muffler items
-            if (controller.hasMufflerMechanics()) {
-                if (parallelRecipesPerformed > 1) {
-                    controller.outputRecoveryItems(parallelRecipesPerformed);
-                } else {
-                    controller.outputRecoveryItems();
-                }
-            }
-        }
-    }
-
-    @Override
     public long getMaxVoltage() {
         IEnergyContainer energyContainer = getEnergyContainer();
         if (!consumesEnergy()) {
