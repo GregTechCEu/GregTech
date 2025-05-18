@@ -170,10 +170,10 @@ gregtech.multiblock.advanced_processing_array.description=The Processing Array c
 item.invalid.name=Invalid item
 fluid.empty=Empty
 
-gregtech.tooltip.hold_shift=Hold SHIFT for more info
-gregtech.tooltip.hold_ctrl=Hold CTRL for more info
-gregtech.tooltip.fluid_pipe_hold_shift=Hold SHIFT to show Fluid Containment Info
-gregtech.tooltip.tool_fluid_hold_shift=Hold SHIFT to show Fluid Containment and Tool Info
+gregtech.tooltip.hold_shift=Hold §fSHIFT§7 for more info
+gregtech.tooltip.hold_ctrl=Hold §fCTRL§7 for more info
+gregtech.tooltip.fluid_pipe_hold_shift=Hold §fSHIFT§7 to show Fluid Containment Info
+gregtech.tooltip.tool_fluid_hold_shift=Hold §fSHIFT§7 to show Fluid Containment and Tool Info
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
@@ -764,106 +764,106 @@ metaitem.plate.simple_system_on_chip.tooltip=Simple System on Chip
 
 # T1: Electronic
 metaitem.circuit.electronic.name=Electronic Circuit
-metaitem.circuit.electronic.tooltip=Your First Circuit/n§cLV-Tier Circuit
+metaitem.circuit.electronic.tooltip=§bYour First Circuit/n§cLV-Tier Circuit
 metaitem.circuit.good_electronic.name=Good Electronic Circuit
-metaitem.circuit.good_electronic.tooltip=Your Second Circuit/n§cMV-Tier Circuit
+metaitem.circuit.good_electronic.tooltip=§bYour Second Circuit/n§cMV-Tier Circuit
 
 # T2: Integrated
 metaitem.circuit.basic_integrated.name=Integrated Logic Circuit
-metaitem.circuit.basic_integrated.tooltip=Smaller and more powerful/n§6LV-Tier Circuit
+metaitem.circuit.basic_integrated.tooltip=§bSmaller and more powerful/n§6LV-Tier Circuit
 metaitem.circuit.good_integrated.name=Good Integrated Circuit
-metaitem.circuit.good_integrated.tooltip=Smaller and more powerful/n§6MV-Tier Circuit
+metaitem.circuit.good_integrated.tooltip=§bSmaller and more powerful/n§6MV-Tier Circuit
 metaitem.circuit.advanced_integrated.name=Advanced Integrated Circuit
-metaitem.circuit.advanced_integrated.tooltip=Smaller and more powerful/n§6HV-Tier Circuit
+metaitem.circuit.advanced_integrated.tooltip=§bSmaller and more powerful/n§6HV-Tier Circuit
 
 # Misc
 metaitem.circuit.nand_chip.name=NAND Chip
-metaitem.circuit.nand_chip.tooltip=A Superior Simple Circuit/n§6ULV-Tier Circuit
+metaitem.circuit.nand_chip.tooltip=§bA Superior Simple Circuit/n§6ULV-Tier Circuit
 metaitem.circuit.microprocessor.name=Microprocessor
-metaitem.circuit.microprocessor.tooltip=A Superior Basic Circuit/n§eLV-Tier Circuit
+metaitem.circuit.microprocessor.tooltip=§bA Superior Basic Circuit/n§eLV-Tier Circuit
 
 # T3: Processor
 metaitem.circuit.processor.name=Integrated Processor
-metaitem.circuit.processor.tooltip=Amazing Computation Speed!/n§eMV-Tier Circuit
+metaitem.circuit.processor.tooltip=§bAmazing Computation Speed!/n§eMV-Tier Circuit
 metaitem.circuit.assembly.name=Processor Assembly
-metaitem.circuit.assembly.tooltip=Amazing Computation Speed!/n§eHV-Tier Circuit
+metaitem.circuit.assembly.tooltip=§bAmazing Computation Speed!/n§eHV-Tier Circuit
 metaitem.circuit.workstation.name=Workstation
-metaitem.circuit.workstation.tooltip=Amazing Computation Speed!/n§eEV-Tier Circuit
+metaitem.circuit.workstation.tooltip=§bAmazing Computation Speed!/n§eEV-Tier Circuit
 metaitem.circuit.mainframe.name=Mainframe
-metaitem.circuit.mainframe.tooltip=Amazing Computation Speed!/n§eIV-Tier Circuit
+metaitem.circuit.mainframe.tooltip=§bAmazing Computation Speed!/n§eIV-Tier Circuit
 
 # T4: Nano
 metaitem.circuit.nano_processor.name=Nanoprocessor
-metaitem.circuit.nano_processor.tooltip=Smaller than ever/n§bHV-Tier Circuit
+metaitem.circuit.nano_processor.tooltip=§bSmaller than ever/n§bHV-Tier Circuit
 metaitem.circuit.nano_assembly.name=Nanoprocessor Assembly
-metaitem.circuit.nano_assembly.tooltip=Smaller than ever/n§bEV-Tier Circuit
+metaitem.circuit.nano_assembly.tooltip=§bSmaller than ever/n§bEV-Tier Circuit
 metaitem.circuit.nano_computer.name=Nano Supercomputer
-metaitem.circuit.nano_computer.tooltip=Smaller than ever/n§bIV-Tier Circuit
+metaitem.circuit.nano_computer.tooltip=§bSmaller than ever/n§bIV-Tier Circuit
 metaitem.circuit.nano_mainframe.name=Nanoprocessor Mainframe
-metaitem.circuit.nano_mainframe.tooltip=Smaller than ever/n§bLuV-Tier Circuit
+metaitem.circuit.nano_mainframe.tooltip=§bSmaller than ever/n§bLuV-Tier Circuit
 
 # T5: Quantum
 metaitem.circuit.quantum_processor.name=Quantumprocessor
-metaitem.circuit.quantum_processor.tooltip=Quantum Computing comes to life!/n§aEV-Tier Circuit
+metaitem.circuit.quantum_processor.tooltip=§bQuantum Computing comes to life!/n§aEV-Tier Circuit
 metaitem.circuit.quantum_assembly.name=Quantumprocessor Assembly
-metaitem.circuit.quantum_assembly.tooltip=Quantum Computing comes to life!/n§aIV-Tier Circuit
+metaitem.circuit.quantum_assembly.tooltip=§bQuantum Computing comes to life!/n§aIV-Tier Circuit
 metaitem.circuit.quantum_computer.name=Quantum Supercomputer
-metaitem.circuit.quantum_computer.tooltip=Quantum Computing comes to life!/n§aLuV-Tier Circuit
+metaitem.circuit.quantum_computer.tooltip=§bQuantum Computing comes to life!/n§aLuV-Tier Circuit
 metaitem.circuit.quantum_mainframe.name=Quantumprocessor Mainframe
-metaitem.circuit.quantum_mainframe.tooltip=Quantum Computing comes to life!/n§aZPM-Tier Circuit
+metaitem.circuit.quantum_mainframe.tooltip=§bQuantum Computing comes to life!/n§aZPM-Tier Circuit
 
 # T6: Crystal
 metaitem.circuit.crystal_processor.name=Crystal Processor
-metaitem.circuit.crystal_processor.tooltip=Taking Advantage of Crystal Engraving/n§9IV-Tier Circuit
+metaitem.circuit.crystal_processor.tooltip=§bTaking Advantage of Crystal Engraving/n§9IV-Tier Circuit
 metaitem.circuit.crystal_assembly.name=Crystal Processor Assembly
-metaitem.circuit.crystal_assembly.tooltip=Taking Advantage of Crystal Engraving/n§9LuV-Tier Circuit
+metaitem.circuit.crystal_assembly.tooltip=§bTaking Advantage of Crystal Engraving/n§9LuV-Tier Circuit
 metaitem.circuit.crystal_computer.name=Crystal Supercomputer
-metaitem.circuit.crystal_computer.tooltip=Taking Advantage of Crystal Engraving/n§9ZPM-Tier Circuit
+metaitem.circuit.crystal_computer.tooltip=§bTaking Advantage of Crystal Engraving/n§9ZPM-Tier Circuit
 metaitem.circuit.crystal_mainframe.name=Crystal Processor Mainframe
-metaitem.circuit.crystal_mainframe.tooltip=Taking Advantage of Crystal Engraving/n§9UV-Tier Circuit
+metaitem.circuit.crystal_mainframe.tooltip=§bTaking Advantage of Crystal Engraving/n§9UV-Tier Circuit
 
 # T7: Wetware
 metaitem.circuit.wetware_processor.name=Wetware Processor
-metaitem.circuit.wetware_processor.tooltip=You have a feeling like it's watching you/n§4LuV-Tier Circuit
+metaitem.circuit.wetware_processor.tooltip=§bYou have a feeling like it's watching you/n§4LuV-Tier Circuit
 metaitem.circuit.wetware_assembly.name=Wetware Assembly
-metaitem.circuit.wetware_assembly.tooltip=Can run Minecraft/n§4ZPM-tier Circuit
+metaitem.circuit.wetware_assembly.tooltip=§bCan run Minecraft/n§4ZPM-tier Circuit
 metaitem.circuit.wetware_computer.name=Wetware Supercomputer
-metaitem.circuit.wetware_computer.tooltip=Ultimate fusion of Flesh and Machine/n§4UV-Tier Circuit
+metaitem.circuit.wetware_computer.tooltip=§bUltimate fusion of Flesh and Machine/n§4UV-Tier Circuit
 metaitem.circuit.wetware_mainframe.name=Wetware Mainframe
-metaitem.circuit.wetware_mainframe.tooltip=The best Man has ever seen/n§4UHV-Tier Circuit
+metaitem.circuit.wetware_mainframe.tooltip=§bThe best Man has ever seen/n§4UHV-Tier Circuit
 
 metaitem.stem_cells.name=Stem Cells
-metaitem.stem_cells.tooltip=Raw Intelligence
+metaitem.stem_cells.tooltip=§bRaw Intelligence
 metaitem.processor.neuro.name=Neuro Processing Unit
-metaitem.processor.neuro.tooltip=Neuro CPU
+metaitem.processor.neuro.tooltip=§bNeuro CPU
 metaitem.petri_dish.name=Petri Dish
-metaitem.petri_dish.tooltip=For cultivating Cells
+metaitem.petri_dish.tooltip=§bFor cultivating Cells
 metaitem.bio_chaff.name=Bio Chaff
 
 metaitem.carbon.fibers.name=Raw Carbon Fibers
 metaitem.carbon.mesh.name=Carbon Fiber Mesh
 metaitem.carbon.plate.name=Carbon Fiber Plate
 metaitem.neutron_reflector.name=Iridium Neutron Reflector
-metaitem.neutron_reflector.tooltip=Indestructible
+metaitem.neutron_reflector.tooltip=§bIndestructible
 metaitem.duct_tape.name=BrainTech Aerospace Advanced Reinforced Duct Tape FAL-84
-metaitem.duct_tape.tooltip=If you can't fix it with this, use more of it!
+metaitem.duct_tape.tooltip=§bIf you can't fix it with this, use more of it!
 metaitem.basic_tape.name=Tape
-metaitem.basic_tape.tooltip=Not strong enough for mechanical issues
+metaitem.basic_tape.tooltip=§bNot strong enough for mechanical issues
 
 metaitem.component.grinder.diamond.name=Diamond Grinding Head
 metaitem.component.grinder.tungsten.name=Tungsten Grinding Head
 
 metaitem.minecart_wheels.iron.name=Iron Minecart Wheels
-metaitem.minecart_wheels.iron.tooltip=To get things rolling
+metaitem.minecart_wheels.iron.tooltip=§bTo get things rolling
 metaitem.minecart_wheels.steel.name=Steel Minecart Wheels
-metaitem.minecart_wheels.steel.tooltip=To get things rolling
+metaitem.minecart_wheels.steel.tooltip=§bTo get things rolling
 
 metaitem.quantumeye.name=Quantum Eye
-metaitem.quantumeye.tooltip=Improved Ender Eye
+metaitem.quantumeye.tooltip=§bImproved Ender Eye
 metaitem.quantumstar.name=Quantum Star
-metaitem.quantumstar.tooltip=Improved Nether Star
+metaitem.quantumstar.tooltip=§bImproved Nether Star
 metaitem.gravistar.name=Gravi Star
-metaitem.gravistar.tooltip=Ultimate Nether Star
+metaitem.gravistar.tooltip=§bUltimate Nether Star
 
 metaitem.item_filter.name=Item Filter
 metaitem.item_filter.tooltip=Filters §fItem§7 I/O as §fCover§7./nCan be used as a §fConveyor Module§7 and §fRobotic Arm§7 upgrade.
@@ -927,7 +927,7 @@ metaitem.cover.solar.panel.luv.name=Ludicrous Voltage Solar Panel
 metaitem.cover.solar.panel.zpm.name=Zero Point Module Solar Panel
 metaitem.cover.solar.panel.uv.name=Ultimate Voltage Solar Panel
 
-metaitem.cover.solar.panel.tooltip.1=May the Sun be with you.
+metaitem.cover.solar.panel.tooltip.1=§bMay the Sun be with you.
 metaitem.cover.solar.panel.tooltip.2=Produces §fEnergy§7 from the §eSun§7 as §fCover§7.
 
 metaitem.cover.infinite_water.name=Infinite Water Cover
@@ -1090,7 +1090,7 @@ item.gt.tool.harvest_level.4=§dUltimet
 item.gt.tool.harvest_level.5=§9Duranium
 item.gt.tool.harvest_level.6=§cNeutronium
 
-item.gt.tool.tooltip.repair_info=Hold SHIFT to show Repair Info
+item.gt.tool.tooltip.repair_info=Hold §fSHIFT§7 to show Repair Info
 item.gt.tool.tooltip.repair_material=Repair with: §a%s
 
 item.gt.tool.aoe.rows=Rows
@@ -1229,7 +1229,7 @@ metaitem.fertilizer.name=Fertilizer
 metaitem.blacklight.name=Blacklight
 metaitem.blacklight.tooltip=Long-Wave §dUltraviolet§7 light source
 
-gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
+gui.widget.incrementButton.default_tooltip=Hold §fSHIFT§7, §fCTRL§7 or both to change the amount
 gui.widget.recipeProgressWidget.default_tooltip=Show Recipes
 
 gregtech.recipe_memory_widget.tooltip.0=Times used: %d
@@ -1302,7 +1302,7 @@ cover.ore_dictionary_filter.compile.warn.nested_negation=Nested negations can be
 cover.ore_dictionary_filter.compile.warn.consecutive_negation=Consecutive negations can be unintuitive. Please check if the evaluation result is desirable.
 
 cover.fluid_filter.title=Fluid Filter
-cover.fluid_filter.config_amount=Scroll wheel up increases amount, down decreases./nShift[§6x10§r],Ctrl[§ex100§r],Shift+Ctrl[§ax1000§r]/nRight click increases amount, left click decreases./nHold shift to double/halve./nMiddle click to clear
+cover.fluid_filter.config_amount=Scroll wheel up increases amount, down decreases./n§fSHIFT§7[§6x10§r],§fCTRL§7[§ex100§r],§fSHIFT§7+§fCTRL§7[§ax1000§r]/nRight click increases amount, left click decreases./nHold §fSHIFT§7 to double/halve./nMiddle click to clear
 cover.fluid_filter.mode.filter_fill=Filter Fill
 cover.fluid_filter.mode.filter_drain=Filter Drain
 cover.fluid_filter.mode.filter_both=Filter Fill & Drain
@@ -2575,7 +2575,7 @@ tile.casing.ev=EV Machine Casing
 tile.casing.iv=IV Machine Casing
 
 # Wire coil blocks
-tile.wire_coil.tooltip_extended_info=Hold SHIFT to show Coil Bonus Info
+tile.wire_coil.tooltip_extended_info=Hold §fSHIFT§7 to show Coil Bonus Info
 tile.wire_coil.tooltip_heat=§cBase Heat Capacity: §f%,d K
 tile.wire_coil.tooltip_smelter=§8Multi Smelter:
 tile.wire_coil.tooltip_parallel_smelter=  §5Max Parallel: §f%s
@@ -4833,9 +4833,10 @@ behaviour.prospecting=Usable for Prospecting
 gregtech.machine.primitive_water_pump.name=Primitive Water Pump
 gregtech.machine.primitive_blast_furnace.bronze.name=Primitive Blast Furnace
 gregtech.machine.electric_blast_furnace.name=Electric Blast Furnace
-gregtech.machine.electric_blast_furnace.tooltip.1=For every §f900K§7 above the recipe temperature, a multiplicative §f95%%§7 energy multiplier is applied pre-overclocking.
-gregtech.machine.electric_blast_furnace.tooltip.2=For every §f1800K§7 above the recipe temperature, one overclock becomes §f100%% efficient§7 (perfect overclock).
-gregtech.machine.electric_blast_furnace.tooltip.3=For every voltage tier above §bMV§7, temperature is increased by §f100K§7.
+gregtech.machine.electric_blast_furnace.tooltip.1=Recipes require a certain §eTemperature§7 be met
+gregtech.machine.electric_blast_furnace.tooltip.2=Temperature is supplied by tiered §aCoils§7, and increased by §f100K§7 for every voltage tier above §bMV
+gregtech.machine.electric_blast_furnace.tooltip.3=For every §f900K§7 above the recipe temperature, a multiplicative §f95%%§7 energy multiplier is applied pre-overclocking
+gregtech.machine.electric_blast_furnace.tooltip.4=For every §f1800K§7 above the recipe temperature, one overclock becomes §f100%% efficient§7 (perfect overclock)
 gregtech.machine.vacuum_freezer.name=Vacuum Freezer
 gregtech.machine.implosion_compressor.name=Implosion Compressor
 gregtech.machine.pyrolyse_oven.name=Pyrolyse Oven
@@ -4910,18 +4911,17 @@ gregtech.machine.fluid_drilling_rig.depletion=§bDepletion Rate: §f%s%%
 gregtech.machine.fluid_drilling_rig.shows_depletion=Shows fluid vein depletion info
 
 gregtech.machine.cleanroom.name=Cleanroom
-gregtech.machine.cleanroom.tooltip.1=Place machines inside to run cleanroom recipes.
-gregtech.machine.cleanroom.tooltip.2=Uses §f30 EU/t§7 when dirty, §f4 EU/t§7 when clean.
-gregtech.machine.cleanroom.tooltip.3=Overclocking increases cleaning per cycle.
-gregtech.machine.cleanroom.tooltip.4=§bSize: §f5x5x5 to 15x15x15
-gregtech.machine.cleanroom.tooltip.hold_ctrl=Hold CTRL to show additional Structure Information
-gregtech.machine.cleanroom.tooltip.5=Requires §fFilter Casings §7in the ceiling, excluding the edges.
-gregtech.machine.cleanroom.tooltip.6=Accepts up to §f4 Doors§7! Remains clean when the door is open.
-gregtech.machine.cleanroom.tooltip.7=Generators, Mufflers, Drills, and Primitive Machines are too dirty for the cleanroom!
-gregtech.machine.cleanroom.tooltip.8=Send power through §fHulls §7or §fDiodes §7in the walls.
-gregtech.machine.cleanroom.tooltip.9=Send items and fluids with §fPassthrough Hatches §7in the walls.
-gregtech.machine.cleanroom.tooltip.ae2.channels=Send up to §f8 AE2 Channels §7through §fHulls§7 in the walls.
-gregtech.machine.cleanroom.tooltip.ae2.no_channels=Send §aAE2 Networks§7 through §fHulls§7 in the walls.
+gregtech.machine.cleanroom.tooltip.1=Machines inside can run §eCleanroom§7 recipes
+gregtech.machine.cleanroom.tooltip.2=Uses §f30 EU/t§7 when dirty and §f4 EU/t§7 when clean. Overclocking increases cleaning per cycle
+gregtech.machine.cleanroom.tooltip.3=Size can be §f5§7x§f5§7x§f5§7 to §f15§7x§f15§7x§f15§7
+gregtech.machine.cleanroom.tooltip.hold_ctrl=Hold §fCTRL§7 to show additional Structure Information
+gregtech.machine.cleanroom.tooltip.5=Requires §aFilter Casings §7in the ceiling, excluding the edges
+gregtech.machine.cleanroom.tooltip.6=Accepts up to §f4 §aDoors§7! Remains clean when the door is open
+gregtech.machine.cleanroom.tooltip.7=§aGenerators§7, §aMufflers§7, §aDrills§7, and §aPrimitive Machines§7 are too dirty for the cleanroom!
+gregtech.machine.cleanroom.tooltip.8=Send power through §aHulls §7or §aDiodes §7in the walls
+gregtech.machine.cleanroom.tooltip.9=Send items and fluids with §aPassthrough Hatches §7in the walls
+gregtech.machine.cleanroom.tooltip.ae2.channels=Send up to §f8 §dAE2 Channels §7through §aHulls§7 in the walls
+gregtech.machine.cleanroom.tooltip.ae2.no_channels=Send §dAE2 Networks§7 through §aHulls§7 in the walls
 gregtech.multiblock.cleanroom.clean_status=Status: %s
 gregtech.multiblock.cleanroom.clean_state=Clean (%s%%)
 gregtech.multiblock.cleanroom.dirty_state=Contaminated (%s%%)
@@ -5011,45 +5011,53 @@ metaitem.cover.digital.mode.fluid.enabled=Fluid Mode enabled
 
 gregtech.machine.monitor_screen.name=Monitor Screen
 
+gregtech.machine.energy.16a=Accepts §f1§7 Energy Hatch up to §f16A
+gregtech.machine.energy.64a=Accepts §f1§7 Energy or §dSubstation§7 Hatch up to §f64A
+gregtech.machine.energy.laser=Accepts §f1§7 Energy, §dSubstation§7, or §dLaser§7 Hatch of any Amperage
+
+gregtech.machine.tierskip=Recipe tier is limited to Energy Hatch tier + §f%s§7
+gregtech.machine.tierskip.none=Recipe tier is limited to Energy Hatch tier
+gregtech.machine.tierskip.unlimited=Recipe tier is not limited
+
 
 # Multiblock Tooltips
-gregtech.machine.primitive_water_pump.tooltip=Endervoir at Home
-gregtech.machine.primitive_blast_furnace.bronze.tooltip=Making your first Steel
-gregtech.machine.electric_blast_furnace.tooltip=Where's the electric smoker?
-gregtech.machine.vacuum_freezer.tooltip=Aluminium Ice Box
-gregtech.machine.implosion_compressor.tooltip=The only Machine you want to go Boom
-gregtech.machine.pyrolyse_oven.tooltip=Electric Coke Oven
-gregtech.machine.distillation_tower.tooltip=Fluid Refinery
-gregtech.machine.multi_furnace.tooltip=Just like the Oven at Home
-gregtech.machine.large_combustion_engine.tooltip=Fuel Ignition Chamber
-gregtech.machine.extreme_combustion_engine.tooltip=Extreme Chemical Energy Releaser
-gregtech.machine.cracker.tooltip=Makes Oil useful
-gregtech.machine.large_turbine.steam.tooltip=Do not put your Head in it
-gregtech.machine.large_turbine.gas.tooltip=Not a Jet Engine
-gregtech.machine.large_turbine.plasma.tooltip=Plasma Energy Siphon
-gregtech.machine.large_boiler.bronze.tooltip=We need more Steam!
-gregtech.machine.large_boiler.steel.tooltip=Charcoal Incinerator
-gregtech.machine.large_boiler.titanium.tooltip=Where's the Magic Super Fuel?
-gregtech.machine.large_boiler.tungstensteel.tooltip=How do you even fuel this thing?
-gregtech.machine.coke_oven.tooltip=Making better fuels for Steel and Power
-gregtech.machine.assembly_line.tooltip=Not a multiblock Assembling Machine!
-gregtech.machine.fusion_reactor.luv.tooltip=Atomic Alloy Smelter
-gregtech.machine.fusion_reactor.zpm.tooltip=A SUN DOWN ON EARTH
-gregtech.machine.fusion_reactor.uv.tooltip=A WHITE DWARF DOWN ON YOUR BASE
-gregtech.machine.large_chemical_reactor.tooltip=Black Box Reactor
-gregtech.machine.steam_oven.tooltip=Not to be confused with Multi-Smelter
-gregtech.machine.steam_grinder.tooltip=A multiblock Macerator without the Byproducts
-gregtech.machine.large_miner.ev.tooltip=Digging Ore instead of You
-gregtech.machine.large_miner.iv.tooltip=Biome Excavator
-gregtech.machine.large_miner.luv.tooltip=Terrestrial Harvester
-gregtech.machine.central_monitor.tooltip=But can it run Doom?
-gregtech.machine.processing_array.tooltip=When a few Machines just doesn't cut it
-gregtech.machine.advanced_processing_array.tooltip=Parallelize the World
-gregtech.machine.fluid_drilling_rig.mv.tooltip=Oil Extraction Pump
-gregtech.machine.fluid_drilling_rig.hv.tooltip=Does not perform Fracking
-gregtech.machine.fluid_drilling_rig.ev.tooltip=Well Drainer
-gregtech.machine.cleanroom.tooltip=Keeping those pesky particles out
-gregtech.machine.charcoal_pile.tooltip=Underground fuel bakery
+gregtech.machine.primitive_water_pump.tooltip=§bEndervoir at Home
+gregtech.machine.primitive_blast_furnace.bronze.tooltip=§bMaking your first Steel
+gregtech.machine.electric_blast_furnace.tooltip=§bWhere's the electric smoker?
+gregtech.machine.vacuum_freezer.tooltip=§bAluminium Ice Box
+gregtech.machine.implosion_compressor.tooltip=§bThe only Machine you want to go Boom
+gregtech.machine.pyrolyse_oven.tooltip=§bElectric Coke Oven
+gregtech.machine.distillation_tower.tooltip=§bFluid Refinery
+gregtech.machine.multi_furnace.tooltip=§bJust like the Oven at Home
+gregtech.machine.large_combustion_engine.tooltip=§bFuel Ignition Chamber
+gregtech.machine.extreme_combustion_engine.tooltip=§bExtreme Chemical Energy Releaser
+gregtech.machine.cracker.tooltip=§bMakes Oil useful
+gregtech.machine.large_turbine.steam.tooltip=§bDo not put your Head in it
+gregtech.machine.large_turbine.gas.tooltip=§bNot a Jet Engine
+gregtech.machine.large_turbine.plasma.tooltip=§bPlasma Energy Siphon
+gregtech.machine.large_boiler.bronze.tooltip=§bWe need more Steam!
+gregtech.machine.large_boiler.steel.tooltip=§bCharcoal Incinerator
+gregtech.machine.large_boiler.titanium.tooltip=§bWhere's the Magic Super Fuel?
+gregtech.machine.large_boiler.tungstensteel.tooltip=§bHow do you even fuel this thing?
+gregtech.machine.coke_oven.tooltip=§bMaking better fuels for Steel and Power
+gregtech.machine.assembly_line.tooltip=§bNot a multiblock Assembling Machine!
+gregtech.machine.fusion_reactor.luv.tooltip=§bAtomic Alloy Smelter
+gregtech.machine.fusion_reactor.zpm.tooltip=§bA SUN DOWN ON EARTH
+gregtech.machine.fusion_reactor.uv.tooltip=§bA WHITE DWARF DOWN ON YOUR BASE
+gregtech.machine.large_chemical_reactor.tooltip=§bBlack Box Reactor
+gregtech.machine.steam_oven.tooltip=§bNot to be confused with Multi-Smelter
+gregtech.machine.steam_grinder.tooltip=§bA multiblock Macerator without the Byproducts
+gregtech.machine.large_miner.ev.tooltip=§bDigging Ore instead of You
+gregtech.machine.large_miner.iv.tooltip=§bBiome Excavator
+gregtech.machine.large_miner.luv.tooltip=§bTerrestrial Harvester
+gregtech.machine.central_monitor.tooltip=§bBut can it run Doom?
+gregtech.machine.processing_array.tooltip=§bWhen a few Machines just doesn't cut it
+gregtech.machine.advanced_processing_array.tooltip=§bParallelize the World
+gregtech.machine.fluid_drilling_rig.mv.tooltip=§bOil Extraction Pump
+gregtech.machine.fluid_drilling_rig.hv.tooltip=§bDoes not perform Fracking
+gregtech.machine.fluid_drilling_rig.ev.tooltip=§bWell Drainer
+gregtech.machine.cleanroom.tooltip=§bKeeping those pesky particles out
+gregtech.machine.charcoal_pile.tooltip=§bUnderground fuel bakery
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks
@@ -5364,7 +5372,7 @@ gregtech.maintenance.configurable_time.unchanged_description=Maintenance problem
 gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur at %fx the normal rate.
 
 gregtech.maintenance.configurable.tooltip_basic=Speeds up machine processing time at the cost of more frequent maintenance problems
-gregtech.maintenance.configurable.tooltip_more_info=Hold SHIFT for special interactions
+gregtech.maintenance.configurable.tooltip_more_info=Hold §fSHIFT§7 for special interactions
 gregtech.maintenance.configurable.tooltip_pss_header=§8Power Substation:
 gregtech.maintenance.configurable.tooltip_pss_info=  §fReduces passive EU drain
 
@@ -5602,7 +5610,7 @@ gregtech.fluid.click_to_fill=§7Left Click with a Fluid Container to §bfill §7
 gregtech.fluid.click_combined=§7Left Click with a Fluid Container to §bfill §7or §cempty §7the tank (Right Click to process 1 item per click).
 gregtech.fluid.click_to_empty=§7Left Click with a Fluid Container to §cempty §7the tank (Right Click to process 1 item per click).
 
-gregtech.tool_action.show_tooltips=Hold SHIFT to show Tool Info
+gregtech.tool_action.show_tooltips=Hold §fSHIFT§7 to show Tool Info
 gregtech.tool_action.screwdriver.auto_output_covers=§8Use Screwdriver to Allow Input from Output Side or access Covers
 gregtech.tool_action.screwdriver.toggle_mode_covers=§8Use Screwdriver to toggle Modes or access Covers
 gregtech.tool_action.screwdriver.access_covers=§8Use Screwdriver to access Covers
