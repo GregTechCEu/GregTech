@@ -4,6 +4,8 @@ import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.materials.*;
 import gregtech.api.unification.ore.OrePrefix;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -302,6 +304,10 @@ public class Materials {
     public static Material NiobiumNitride;
     public static Material NiobiumTitanium;
     public static Material Obsidian;
+    @ApiStatus.Obsolete
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
+    @Deprecated
+    public static Material Phosphate;
     public static Material SterlingSilver;
     public static Material RoseGold;
     public static Material BlackBronze;
