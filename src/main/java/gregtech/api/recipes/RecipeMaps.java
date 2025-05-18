@@ -511,6 +511,7 @@ public final class RecipeMaps {
                     .fluidOutputs(1)
                     .ui(CokeOvenUI::new)
                     .sound(GTSoundEvents.FIRE)
+                    .disableJeiOverclockButton()
                     .build();
 
     /**
@@ -1274,6 +1275,7 @@ public final class RecipeMaps {
                     .modifyFluidInputs(false)
                     .modifyFluidOutputs(false)
                     .sound(GTSoundEvents.FIRE)
+                    .disableJeiOverclockButton()
                     .build();
 
     /**
@@ -1323,7 +1325,7 @@ public final class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<ComputationRecipeBuilder> RESEARCH_STATION_RECIPES = new RecipeMapResearchStation<>(
-            "research_station", new ComputationRecipeBuilder(), ResearchStationUI::new);
+            "research_station", new ComputationRecipeBuilder(), ResearchStationUI::new).disableJeiOverclockButton();
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ROCK_BREAKER_RECIPES = new RecipeMapBuilder<>("rock_breaker",
@@ -1471,6 +1473,7 @@ public final class RecipeMaps {
                     .sound(GTSoundEvents.COMBUSTION)
                     .allowEmptyOutputs()
                     .generator()
+                    .disableJeiOverclockButton()
                     .build();
 
     @ZenProperty
@@ -1482,6 +1485,7 @@ public final class RecipeMaps {
                     .sound(GTSoundEvents.TURBINE)
                     .allowEmptyOutputs()
                     .generator()
+                    .disableJeiOverclockButton()
                     .build();
 
     @ZenProperty
@@ -1494,6 +1498,7 @@ public final class RecipeMaps {
                     .sound(GTSoundEvents.TURBINE)
                     .allowEmptyOutputs()
                     .generator()
+                    .disableJeiOverclockButton()
                     .build();
 
     @ZenProperty
@@ -1505,6 +1510,7 @@ public final class RecipeMaps {
                     .sound(GTSoundEvents.COMBUSTION)
                     .allowEmptyOutputs()
                     .generator()
+                    .disableJeiOverclockButton()
                     .build();
 
     @ZenProperty
@@ -1517,6 +1523,7 @@ public final class RecipeMaps {
                     .sound(GTSoundEvents.TURBINE)
                     .allowEmptyOutputs()
                     .generator()
+                    .disableJeiOverclockButton()
                     .build();
 
     private RecipeMaps() {}
