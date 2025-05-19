@@ -36,7 +36,8 @@ public class CapesRegistry {
 
     private static final Map<UUID, List<ResourceLocation>> UNLOCKED_CAPES = new HashMap<>();
     private static final Map<UUID, ResourceLocation> WORN_CAPES = new HashMap<>();
-    private static final Map<Advancement, ResourceLocation> CAPE_ADVANCEMENTS = new LinkedHashMap<>();
+    private static final Map<Advancement, ResourceLocation> CAPE_ADVANCEMENTS = new HashMap<>();
+    private static final Set<ResourceLocation> ADVANCEMENT_CAPES = new LinkedHashSet<>();
     private static final Set<ResourceLocation> FREE_CAPES = new LinkedHashSet<>();
 
     public static void registerDevCapes() {
@@ -199,6 +200,7 @@ public class CapesRegistry {
                 CAPE_ADVANCEMENTS.put(advObject, cape);
             }
         }
+        ADVANCEMENT_CAPES.add(cape);
     }
 
     /**
@@ -256,7 +258,7 @@ public class CapesRegistry {
      */
     public static List<ResourceLocation> allCapes() {
         List<ResourceLocation> result = new ArrayList<>();
-        result.addAll(CAPE_ADVANCEMENTS.values());
+        result.addAll(ADVANCEMENT_CAPES);
         result.addAll(FREE_CAPES);
         return result;
     }
