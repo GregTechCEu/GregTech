@@ -1,18 +1,21 @@
 package gregtech.api.mui;
 
 import gregtech.api.cover.CoverWithUI;
+import gregtech.api.GTValues;
+import com.cleanroommc.modularui.api.ITheme;
+import com.cleanroommc.modularui.drawable.UITexture;
+
+import gregtech.api.GTValues;
+import gregtech.api.cover.CoverWithUI;
 import gregtech.common.ConfigHolder;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.IThemeApi;
-import com.cleanroommc.modularui.drawable.UITexture;
-import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.theme.ReloadThemeEvent;
 import com.cleanroommc.modularui.utils.JsonBuilder;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,7 @@ public class GTGuiTheme {
             .simpleToggleButton(GTGuiTextures.IDs.STANDARD_BUTTON,
                     GTGuiTextures.IDs.STANDARD_SLOT,
                     ConfigHolder.client.defaultUIColor)
+            .logo(() -> GTValues.XMAS.get() ? GTGuiTextures.GREGTECH_LOGO_XMAS : GTGuiTextures.GREGTECH_LOGO)
             .build();
 
     public static final GTGuiTheme COVER = templateBuilder("gregtech_cover")
@@ -81,7 +85,7 @@ public class GTGuiTheme {
         return IThemeApi.get().getTheme(themeId);
     }
 
-    public @Nullable UITexture getLogo() {
+    public UITexture getLogo() {
         if (logo == null) return null;
         return logo.get();
     }
@@ -108,7 +112,7 @@ public class GTGuiTheme {
     public static Builder templateBuilder(String themeId) {
         Builder builder = new Builder(themeId);
         builder.openCloseAnimation(0);
-        builder.tooltipPos(RichTooltip.Pos.NEXT_TO_MOUSE);
+        builder.tooltipPos(Tooltip.Pos.NEXT_TO_MOUSE);
         builder.smoothProgressBar(true);
         return builder;
     }
@@ -163,7 +167,7 @@ public class GTGuiTheme {
         }
 
         /** Set the tooltip pos for this theme. Overrides global cfg. */
-        public Builder tooltipPos(RichTooltip.Pos tooltipPos) {
+        public Builder tooltipPos(Tooltip.Pos tooltipPos) {
             theme.elementBuilder.add(b -> b.add("tooltipPos", tooltipPos.name()));
             return this;
         }
