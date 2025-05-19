@@ -11,18 +11,16 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
@@ -53,7 +51,10 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -195,11 +196,24 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        guiSyncManager.registerSlotGroup("extra_slot", 1);
+
         return GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
                 .child(IKey.dynamic(() -> isOnline ? I18n.format("gregtech.gui.me_network.online") :
-                        I18n.format("gregtech.gui.me_network.offline")).asWidget().pos(5, 15));
+                        I18n.format("gregtech.gui.me_network.offline")).asWidget().pos(5, 15))
+                .child(Flow.column()
+                        .pos(7 + 18 * 4, 25 + 18)
+                        .size(18, 18 * 4)
+                        .child(GTGuiTextures.ARROW_DOUBLE.asWidget())
+                        .child(new gregtech.api.mui.widget.GhostCircuitSlotWidget()
+                                .slot(SyncHandlers.itemSlot(circuitInventory, 0))
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
+                        .child(new ItemSlot()
+                                .slot(SyncHandlers.itemSlot(extraSlotInventory, 0)
+                                        .slotGroup("extra_slot"))
+                                .addTooltipLine(IKey.lang("gregtech.gui.me_bus.extra_slot"))));
     }
 
     @Override
@@ -212,35 +226,6 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
         ModularUI.Builder builder = ModularUI
                 .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
                 .label(10, 5, getMetaFullName());
-        // ME Network status
-        builder.dynamicLabel(10, 15, () -> this.isOnline ?
-                I18n.format("gregtech.gui.me_network.online") :
-                I18n.format("gregtech.gui.me_network.offline"),
-                0x404040);
-
-        // Config slots
-        builder.widget(new AEItemConfigWidget(7, 25, this.getAEItemHandler()));
-
-        // Ghost circuit slot
-        SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 7 + 18 * 4, 25 + 18 * 3)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY);
-        builder.widget(circuitSlot.setConsumer(w -> {
-            String configString;
-            if (circuitInventory == null ||
-                    circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
-                configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value")
-                        .getFormattedText();
-            } else {
-                configString = String.valueOf(circuitInventory.getCircuitValue());
-            }
-
-            w.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
-        }));
-
-        // Extra slot
-        builder.widget(new SlotWidget(extraSlotInventory, 0, 7 + 18 * 4, 25 + 18 * 2)
-                .setBackgroundTexture(GuiTextures.SLOT)
-                .setTooltipText("gregtech.gui.me_bus.extra_slot"));
 
         // Arrow image
         builder.image(7 + 18 * 4, 25 + 18, 18, 18, GuiTextures.ARROW_DOUBLE);

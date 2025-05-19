@@ -512,6 +512,14 @@ public class GTGuiTextures {
 
     // MISC
 
+    // ME hatch/bus
+    public static final UITexture NUMBER_BACKGROUND = fullImage("textures/gui/widget/number_background.png");
+    public static final UITexture CONFIG_ARROW = fullImage("textures/gui/widget/config_arrow.png");
+    public static final UITexture CONFIG_ARROW_DARK = fullImage("textures/gui/widget/config_arrow_dark.png");
+    public static final UITexture SELECT_BOX = fullImage("textures/gui/widget/select_box.png");
+    public static final UITexture BUTTON_AUTO_PULL = fullImage("textures/gui/widget/button_me_auto_pull.png");
+    public static final UITexture ARROW_DOUBLE = fullImage("textures/gui/widget/arrow_double.png");
+
     public static void init() {/**/}
 
     private static UITexture fullImage(String path) {
