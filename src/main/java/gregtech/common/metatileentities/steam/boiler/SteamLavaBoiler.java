@@ -10,10 +10,12 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.unification.material.Materials;
 import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -26,6 +28,9 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -118,6 +123,19 @@ public class SteamLavaBoiler extends SteamBoiler {
     @Override
     protected int getCoolDownRate() {
         return 1;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        return super.buildUI(guiData, guiSyncManager)
+                .child(new GTFluidSlot()
+                        .syncHandler(GTFluidSlot.sync(fuelFluidTank)
+                                .showAmount(true))
+                        .pos(119, 26)
+                        .size(10, 54)
+                        .overlay(isHighPressure ?
+                                GTGuiTextures.PROGRESS_BAR_BOILER_EMPTY_STEEL :
+                                GTGuiTextures.PROGRESS_BAR_BOILER_EMPTY_BRONZE));
     }
 
     @Override
