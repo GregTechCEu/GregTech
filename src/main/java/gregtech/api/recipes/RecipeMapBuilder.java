@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static gregtech.api.recipes.ui.RecipeMapUI.computeOverlayKey;
@@ -276,7 +277,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
 
     public @NotNull RecipeMapBuilder<B> uiBuilder(@NotNull Consumer<RecipeMapUIBuilder> mapUIBuilder) {
         this.usesMui2 = true;
-        this.mapUIBuilder = mapUIBuilder;
+        this.mapUIBuilder = Objects.requireNonNull(mapUIBuilder, "ui builder is null");
         return this;
     }
 
@@ -287,10 +288,8 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private @NotNull RecipeMapUI<?> buildUI(@NotNull RecipeMap<?> recipeMap) {
         RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, modifyItemInputs, modifyItemOutputs, modifyFluidInputs,
                 modifyFluidOutputs, isGenerator);
-        if (usesMui2) {
-            // if "usesMui2" is true, then "mapUIBuilder" is not null
-            // noinspection DataFlowIssue
-            this.mapUIBuilder.accept(new RecipeMapUIBuilder(ui));
+        if (usesMui2 && this.mapUIBuilder != null) {
+            ui.buildMui2(this.mapUIBuilder);
         } else {
             if (progressBar != null) {
                 ui.setProgressBarTexture(progressBar);

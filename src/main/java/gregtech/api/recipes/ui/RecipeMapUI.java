@@ -665,7 +665,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     // todo this is a quick and dirty method, find a better way
     /** Marked experimental as this method will be removed when all GTCEu UIs are ported to MUI2. */
     @ApiStatus.Experimental
-    public RecipeMapUI<R> buildMui2(Consumer<RecipeMapUIBuilder> builderConsumer) {
+    public RecipeMapUI<R> buildMui2(@NotNull Consumer<RecipeMapUIBuilder> builderConsumer) {
         builderConsumer.accept(new RecipeMapUIBuilder(this));
         return this;
     }
