@@ -1526,11 +1526,9 @@ gregtech.material.potassium_dichromate=Дихромат калия
 gregtech.material.chromium_trioxide=Триоксид хрома
 gregtech.material.antimony_trioxide=Триоксид сурьмы
 gregtech.material.zincite=Цинкит
-gregtech.material.cupric_oxide=Оксид меди
 gregtech.material.cobalt_oxide=Оксид кобальта
 gregtech.material.arsenic_trioxide=Триоксид мышьяка
 gregtech.material.massicot=Массикот
-gregtech.material.ferrosilite=Ферросилит
 gregtech.material.metal_mixture=Металлическая смесь
 gregtech.material.sodium_hydroxide=Гидроксид натрия
 gregtech.material.sodium_persulfate=Персульфат натрия
@@ -1816,7 +1814,6 @@ gregtech.material.uu_matter=UU-материя
 
 # Second Degree Materials
 gregtech.material.glass=Стекло
-gregtech.material.perlite=Перлит
 gregtech.material.borax=Бура
 gregtech.material.olivine=Оливин
 gregtech.material.opal=Опал
