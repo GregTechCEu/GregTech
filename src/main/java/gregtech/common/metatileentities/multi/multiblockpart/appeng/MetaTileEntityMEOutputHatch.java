@@ -42,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart<IAEFluidStack>
+public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostableChannelPart<IAEFluidStack>
                                          implements IMultiblockAbilityPart<IFluidTank> {
 
     public final static String FLUID_BUFFER_TAG = "FluidBuffer";

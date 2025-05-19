@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEItemStack>
+public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostableChannelPart<IAEItemStack>
                                        implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
     public final static String ITEM_BUFFER_TAG = "ItemBuffer";

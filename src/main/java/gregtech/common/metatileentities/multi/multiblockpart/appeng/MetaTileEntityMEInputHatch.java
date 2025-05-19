@@ -13,6 +13,8 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEFluidConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
@@ -40,13 +42,19 @@ import appeng.api.storage.data.IAEFluidStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAEFluidStack>
+public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelPart<IAEFluidStack>
                                         implements IMultiblockAbilityPart<IFluidTank>, IDataStickIntractable {
 
     public final static String FLUID_BUFFER_TAG = "FluidTanks";
@@ -142,6 +150,24 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
         return new MetaTileEntityMEInputHatch(this.metaTileEntityId);
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        return GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(IKey.dynamic(() -> isOnline ? I18n.format("gregtech.gui.me_network.online") :
+                        I18n.format("gregtech.gui.me_network.offline")).asWidget().pos(5, 15))
+                .child(Flow.column()
+                        .pos(7 + 18 * 4, 25 + 18)
+                        .size(18, 18 * 4)
+                        .child(GTGuiTextures.ARROW_DOUBLE.asWidget()));
     }
 
     @Override

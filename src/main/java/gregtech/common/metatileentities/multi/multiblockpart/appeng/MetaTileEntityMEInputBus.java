@@ -61,7 +61,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEItemStack>
+public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPart<IAEItemStack>
                                       implements IMultiblockAbilityPart<IItemHandlerModifiable>,
                                       IGhostSlotConfigurable, IDataStickIntractable {
 
