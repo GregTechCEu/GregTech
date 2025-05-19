@@ -380,11 +380,9 @@ public class Materials {
     public static Material ChromiumTrioxide;
     public static Material AntimonyTrioxide;
     public static Material Zincite;
-    public static Material CupricOxide;
     public static Material CobaltOxide;
     public static Material ArsenicTrioxide;
     public static Material Massicot;
-    public static Material Ferrosilite;
     public static Material MetalMixture;
     public static Material SodiumHydroxide;
     public static Material SodiumPersulfate;
@@ -690,7 +688,6 @@ public class Materials {
      * Second Degree Compounds
      */
     public static Material Glass;
-    public static Material Perlite;
     public static Material Borax;
     public static Material Olivine;
     public static Material Opal;
