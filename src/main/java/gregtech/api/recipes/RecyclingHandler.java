@@ -1,5 +1,6 @@
 package gregtech.api.recipes;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -99,8 +100,8 @@ public class RecyclingHandler {
     private static void addItemStackToMaterialStacks(@NotNull ItemStack itemStack,
                                                      @NotNull Object2LongMap<Material> materialStacksExploded,
                                                      int inputCount) {
-        // First try to get ItemMaterialInfo
-        ItemMaterialInfo info = OreDictUnifier.getMaterialInfo(itemStack);
+        // First try to get Recycling Data
+        ItemMaterialInfo info = GregTechAPI.RECYCLING_MANAGER.getRecyclingData(itemStack);
         if (info != null) {
             for (MaterialStack ms : info.getMaterials()) {
                 if (!(ms.material instanceof MarkerMaterial)) {

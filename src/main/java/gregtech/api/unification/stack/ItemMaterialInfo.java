@@ -1,44 +1,47 @@
 package gregtech.api.unification.stack;
 
-import com.google.common.collect.ImmutableList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class ItemMaterialInfo {
+public final class ItemMaterialInfo {
 
-    private final List<MaterialStack> materials = new ArrayList<>();
+    private final List<MaterialStack> materials;
 
-    public ItemMaterialInfo(MaterialStack... materials) {
-        this.materials.addAll(Arrays.asList(materials));
+    public ItemMaterialInfo(@NotNull MaterialStack @NotNull... materials) {
+        this(Arrays.asList(materials));
     }
 
-    public ItemMaterialInfo(List<MaterialStack> materials) {
-        this.materials.addAll(materials);
-    }
-
-    /**
-     * Returns the first MaterialStack in the "materials" list
-     */
-    public MaterialStack getMaterial() {
-        return materials.size() == 0 ? null : materials.get(0);
+    public ItemMaterialInfo(@NotNull List<MaterialStack> materials) {
+        if (materials.isEmpty()) {
+            throw new IllegalArgumentException("materials cannot be empty");
+        }
+        this.materials = materials;
     }
 
     /**
-     * Returns all MaterialStacks associated with this Object.
+     * @return the first composition data entry
      */
-    public ImmutableList<MaterialStack> getMaterials() {
-        return ImmutableList.copyOf(materials);
+    public @NotNull MaterialStack getFirstMaterial() {
+        return materials.get(0);
+    }
+
+    /**
+     * @return all of the composition data
+     */
+    public @UnmodifiableView @NotNull List<MaterialStack> getMaterials() {
+        return Collections.unmodifiableList(materials);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ItemMaterialInfo that = (ItemMaterialInfo) o;
-        return materials.equals(that.materials);
+        if (!(o instanceof ItemMaterialInfo info)) {
+            return false;
+        }
+        return materials.equals(info.materials);
     }
 
     @Override
@@ -48,6 +51,8 @@ public class ItemMaterialInfo {
 
     @Override
     public String toString() {
-        return materials.size() == 0 ? "" : materials.get(0).material.toCamelCaseString();
+        return "ItemMaterialInfo{" +
+                "materials=" + materials +
+                '}';
     }
 }
