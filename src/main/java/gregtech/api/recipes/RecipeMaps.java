@@ -3,7 +3,6 @@ package gregtech.api.recipes;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
 import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.recipes.builders.CircuitAssemblerRecipeBuilder;
