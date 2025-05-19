@@ -1,40 +1,39 @@
 package gregtech.api.recipes.ui;
 
-import com.cleanroommc.modularui.utils.math.Direction;
-
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.mui.GTGuiTextures;
-
+import gregtech.api.mui.widget.RecipeProgressWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.FluidSlot;
+import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
 
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
 @ApiStatus.Experimental
@@ -48,10 +47,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
     private final boolean isGenerator;
 
-    private TextureArea progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
-    private ProgressWidget.MoveType moveType = ProgressWidget.MoveType.HORIZONTAL;
-    private @Nullable TextureArea specialTexture;
-    private int @Nullable [] specialTexturePosition;
+    private @NotNull Area specialTexturePosition = new Area();
     private boolean isJEIVisible = true;
 
     /* *********************** MUI 1 *********************** */
@@ -59,18 +55,27 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     @Deprecated
     private final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectOpenHashMap<>();
 
+    @Deprecated
+    private TextureArea progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
+    @Deprecated
+    private gregtech.api.gui.widgets.ProgressWidget.MoveType moveType = gregtech.api.gui.widgets.ProgressWidget.MoveType.HORIZONTAL;
+    @Deprecated
+    private @Nullable TextureArea specialTexture;
 
     /* *********************** MUI 2 *********************** */
 
     // todo try to store this better
-    private final Byte2ObjectMap<UITexture> slotTextureOverlays = new Byte2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<IDrawable> itemInputOverlays = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<IDrawable> itemOutputOverlays = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<IDrawable> fluidInputOverlays = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<IDrawable> fluidOutputOverlays = new Int2ObjectOpenHashMap<>();
 
     @ApiStatus.Experimental
     private boolean usesMui2 = false;
     private UITexture progressTexture = GTGuiTextures.PROGRESS_BAR_ARROW;
-    private Direction progressDirection = ProgressWidget.Direction.RIGHT;
+    private ProgressWidget.Direction progressDirection = ProgressWidget.Direction.RIGHT;
     // todo sus name
-    private @Nullable UITexture specialTextureNew;
+    private @Nullable IDrawable specialTextureNew;
 
     /**
      * @param recipeMap          the recipemap corresponding to this ui
@@ -156,7 +161,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 progressBarTexture, moveType, recipeMap));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
-        if (specialTexture != null && specialTexturePosition != null) {
+        if (specialTexture != null) {
             addSpecialTexture(builder);
         }
         return builder;
@@ -184,7 +189,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                         progressBarTexture, moveType, recipeMap));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
-        if (specialTexture != null && specialTexturePosition != null) {
+        if (specialTexture != null) {
             addSpecialTexture(builder);
         }
         return builder;
@@ -212,7 +217,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 new gregtech.api.gui.widgets.RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20,
                         progressBarTexture, moveType, recipeMap));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
-        if (specialTexture != null && specialTexturePosition != null) {
+        if (specialTexture != null) {
             addSpecialTexture(builder);
         }
         return builder;
@@ -262,7 +267,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 int startSpecX = isOutputs ? startInputsX + itemSlotsToLeft * 18 : startInputsX - 18;
                 for (int i = 0; i < fluidInputsCount; i++) {
                     int y = startInputsY + 18 * i;
-                    addSlot(builder, startSpecX, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                    addSlot(builder, startSpecX, y, i, itemHandler, fluidHandler, true, isOutputs);
                 }
             } else {
                 int startSpecY = startInputsY + itemSlotsToDown * 18;
@@ -270,7 +275,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                     int x = isOutputs ? startInputsX + 18 * (i % 3) :
                             startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
                     int y = startSpecY + (i / 3) * 18;
-                    addSlot(builder, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                    addSlot(builder, x, y, i, itemHandler, fluidHandler, true, isOutputs);
                 }
             }
         }
@@ -416,7 +421,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setSpecialTexture(@NotNull TextureArea specialTexture, int @NotNull [] position) {
         this.specialTexture = specialTexture;
-        this.specialTexturePosition = position;
+        this.specialTexturePosition.set(
+                position[0],
+                position[1],
+                position[2],
+                position[3]);
     }
 
     /**
@@ -431,7 +440,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @return the special texture's position
      */
-    public int @Nullable @UnmodifiableView [] specialTexturePosition() {
+    public Area specialTexturePosition() {
         return this.specialTexturePosition;
     }
 
@@ -444,54 +453,10 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull ModularUI.Builder addSpecialTexture(@NotNull ModularUI.Builder builder) {
-        if (specialTexturePosition != null) {
-            builder.image(specialTexturePosition[0], specialTexturePosition[1],
-                    specialTexturePosition[2],
-                    specialTexturePosition[3], specialTexture);
-        }
+        builder.image(specialTexturePosition.x(), specialTexturePosition.y(),
+                specialTexturePosition.w(),
+                specialTexturePosition.h(), specialTexture);
         return builder;
-    }
-
-    /**
-     * @return if this ui should be visible in JEI
-     */
-    public boolean isJEIVisible() {
-        return isJEIVisible;
-    }
-
-    /**
-     * @param isJEIVisible if the ui should be visible in JEI
-     */
-    public void setJEIVisible(boolean isJEIVisible) {
-        this.isJEIVisible = isJEIVisible;
-    }
-
-    /**
-     * @return if item input slot amounts can be modified
-     */
-    public boolean canModifyItemInputs() {
-        return modifyItemInputs;
-    }
-
-    /**
-     * @return if item output slot amounts can be modified
-     */
-    public boolean canModifyItemOutputs() {
-        return modifyItemOutputs;
-    }
-
-    /**
-     * @return if fluid input slot amounts can be modified
-     */
-    public boolean canModifyFluidInputs() {
-        return modifyFluidInputs;
-    }
-
-    /**
-     * @return if fluid output slot amounts can be modified
-     */
-    public boolean canModifyFluidOutputs() {
-        return modifyFluidOutputs;
     }
 
     /**
@@ -560,25 +525,24 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
     public ParentWidget<?> buildWidget(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems,
                                        IItemHandlerModifiable exportItems, FluidTankList importFluids,
-                                       FluidTankList exportFluids, int yOffset, GuiSyncManager syncManager) {
-        DoubleSyncValue progressValue = new DoubleSyncValue(progressSupplier, null);
-        syncManager.syncValue("recipe_progress", progressValue);
+                                       FluidTankList exportFluids, int yOffset, PanelSyncManager syncManager) {
+        DoubleSyncValue progressValue = new DoubleSyncValue(progressSupplier);
 
         ParentWidget<?> group = new ParentWidget<>().size(176, 166 + yOffset);
         group.child(new RecipeProgressWidget()
                 .recipeMap(recipeMap)
                 .size(20)
                 .alignX(0.5f).top(23 + yOffset)
-                .progress(progressValue::getDoubleValue)
+                .value(progressValue)
                 .texture(progressTexture, 20)
                 .direction(progressDirection));
         addInventorySlotGroup(group, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(group, exportItems, exportFluids, true, yOffset);
-        if (specialTextureNew != null && specialTexturePosition != null) {
-            group.child(new Widget<>()
-                    .pos(specialTexturePosition[0], specialTexturePosition[1])
-                    .size(specialTexturePosition[2], specialTexturePosition[3])
-                    .background(specialTextureNew));
+        if (specialTextureNew != null) {
+            group.child(specialTextureNew.asWidget()
+                    .debugName("special_texture")
+                    .pos(specialTexturePosition.x(), specialTexturePosition.y())
+                    .size(specialTexturePosition.w(), specialTexturePosition.h()));
         }
         return group;
     }
@@ -613,9 +577,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 int x = startInputsX + 18 * j;
                 int y = startInputsY + 18 * i;
                 if (invertFluids) {
-                    group.child(makeFluidSlot(x, y, slotIndex, fluidHandler, isOutputs));
+                    group.child(makeFluidSlot(slotIndex, fluidHandler, isOutputs)
+                            .pos(x, y));
                 } else {
-                    group.child(makeItemSlot(slotGroup, x, y, slotIndex, itemHandler, isOutputs));
+                    group.child(makeItemSlot(slotGroup, slotIndex, itemHandler, isOutputs)
+                            .pos(x, y));
                 }
             }
         }
@@ -626,9 +592,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 for (int i = 0; i < fluidInputsCount; i++) {
                     int y = startInputsY + 18 * i;
                     if (!invertFluids) {
-                        group.child(makeFluidSlot(startSpecX, y, i, fluidHandler, isOutputs));
+                        group.child(makeFluidSlot(i, fluidHandler, isOutputs)
+                                .pos(startSpecX, y));
                     } else {
-                        group.child(makeItemSlot(slotGroup, startSpecX, y, i, itemHandler, isOutputs));
+                        group.child(makeItemSlot(slotGroup, i, itemHandler, isOutputs)
+                                .pos(startSpecX, y));
                     }
                 }
             } else {
@@ -638,42 +606,47 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                             startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
                     int y = startSpecY + (i / 3) * 18;
                     if (!invertFluids) {
-                        group.child(makeFluidSlot(x, y, i, fluidHandler, isOutputs));
+                        group.child(makeFluidSlot(i, fluidHandler, isOutputs)
+                                .pos(x, y));
                     } else {
-                        group.child(makeItemSlot(slotGroup, x, y, i, itemHandler, isOutputs));
+                        group.child(makeItemSlot(slotGroup, i, itemHandler, isOutputs)
+                                .pos(x, y));
                     }
                 }
             }
         }
     }
 
-    protected ItemSlot makeItemSlot(SlotGroup group, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
+    protected ItemSlot makeItemSlot(SlotGroup group, int slotIndex, IItemHandlerModifiable itemHandler,
                                     boolean isOutputs) {
         return new ItemSlot()
                 .slot(SyncHandlers.itemSlot(itemHandler, slotIndex)
                         .slotGroup(group)
                         .accessibility(!isOutputs, true))
-                .pos(x, y)
-                .background(getOverlaysForSlotNew(isOutputs, false, slotIndex == itemHandler.getSlots() - 1));
+                .background(getOverlaysForSlotNew(isOutputs, false, slotIndex));
     }
 
-    protected FluidSlot makeFluidSlot(int x, int y, int slotIndex, FluidTankList fluidHandler, boolean isOutputs) {
-        return new FluidSlot()
-                .syncHandler(SyncHandlers.fluidSlot(fluidHandler.getTankAt(slotIndex))
-                        .canFillSlot(!isOutputs))
-                .alwaysShowFull(true)
-                .pos(x, y)
-                .background(getOverlaysForSlotNew(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1));
+    protected GTFluidSlot makeFluidSlot(int slotIndex, FluidTankList fluidHandler, boolean isOutputs) {
+        return new GTFluidSlot()
+                .syncHandler(GTFluidSlot.sync(fluidHandler.getTankAt(slotIndex))
+                        .accessibility(true, !isOutputs))
+                // todo show always full, should be implemented with mui2 multis
+                .background(getOverlaysForSlotNew(isOutputs, true, slotIndex));
     }
 
     @ApiStatus.Experimental
-    protected IDrawable[] getOverlaysForSlotNew(boolean isOutput, boolean isFluid, boolean isLast) {
+    protected IDrawable getOverlaysForSlotNew(boolean isOutput, boolean isFluid, int index) {
         UITexture base = isFluid ? GTGuiTextures.FLUID_SLOT : GTGuiTextures.SLOT;
-        byte overlayKey = computeOverlayKey(isOutput, isFluid, isLast);
-        if (slotTextureOverlays.containsKey(overlayKey)) {
-            return new UITexture[] { base, slotTextureOverlays.get(overlayKey) };
+        var overlays = getOverlayMap(isOutput, isFluid);
+        if (overlays.containsKey(index)) {
+            return IDrawable.of(base, overlays.get(index));
         }
-        return new UITexture[] { base };
+        return IDrawable.of(base);
+    }
+
+    protected Int2ObjectMap<IDrawable> getOverlayMap(boolean isOutput, boolean isFluid) {
+        if (isOutput) return isFluid ? fluidOutputOverlays : itemOutputOverlays;
+        else return isFluid ? fluidInputOverlays : itemInputOverlays;
     }
 
     /** Marked experimental as this method will be removed when all GTCEu UIs are ported to MUI2. */
@@ -689,6 +662,14 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         return usesMui2;
     }
 
+    // todo this is a quick and dirty method, find a better way
+    /** Marked experimental as this method will be removed when all GTCEu UIs are ported to MUI2. */
+    @ApiStatus.Experimental
+    public RecipeMapUI<R> buildMui2(Consumer<RecipeMapUIBuilder> builderConsumer) {
+        builderConsumer.accept(new RecipeMapUIBuilder(this));
+        return this;
+    }
+
     /**
      * @param progressTexture the new progress bar texture
      */
@@ -699,7 +680,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @param direction the new progress bar move type
      */
-    public void setProgressBarDirection(@NotNull Direction direction) {
+    public void setProgressBarDirection(@NotNull ProgressWidget.Direction direction) {
         this.progressDirection = direction;
     }
 
@@ -707,18 +688,62 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param specialTexture the special texture to set
      * @param position       the position of the texture: [x, y, width, height]
      */
-    public void setSpecialTexture(@NotNull UITexture specialTexture, int @NotNull [] position) {
+    public void setSpecialTexture(@NotNull IDrawable specialTexture, @NotNull Area position) {
         this.specialTextureNew = specialTexture;
         this.specialTexturePosition = position;
     }
 
     /**
-     * @param key     the key to store the slot's texture with
-     * @param texture the texture to store
+     * @param texture  the texture to store
+     * @param index    the key to store the slot's texture with
+     * @param isFluid  if the slot is fluid
+     * @param isOutput if the slot is an output
      */
     @ApiStatus.Internal
-    public void setSlotOverlay(byte key, @NotNull UITexture texture) {
-        this.slotTextureOverlays.put(key, texture);
+    public void setSlotOverlay(@NotNull IDrawable texture, int index, boolean isFluid, boolean isOutput) {
+        getOverlayMap(isOutput, isFluid).put(index, texture);
+    }
+
+    /**
+     * @return if this ui should be visible in JEI
+     */
+    public boolean isJEIVisible() {
+        return isJEIVisible;
+    }
+
+    /**
+     * @param isJEIVisible if the ui should be visible in JEI
+     */
+    public void setJEIVisible(boolean isJEIVisible) {
+        this.isJEIVisible = isJEIVisible;
+    }
+
+    /**
+     * @return if item input slot amounts can be modified
+     */
+    public boolean canModifyItemInputs() {
+        return modifyItemInputs;
+    }
+
+    /**
+     * @return if item output slot amounts can be modified
+     */
+    public boolean canModifyItemOutputs() {
+        return modifyItemOutputs;
+    }
+
+    /**
+     * @return if fluid input slot amounts can be modified
+     */
+    public boolean canModifyFluidInputs() {
+        return modifyFluidInputs;
+    }
+
+    /**
+     * @return if fluid output slot amounts can be modified
+     */
+    public boolean canModifyFluidOutputs() {
+        return modifyFluidOutputs;
     }
 
     /**
