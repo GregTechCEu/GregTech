@@ -27,7 +27,7 @@ public abstract class ModRegistryMixin {
      * @see JustEnoughItemsModule#getRecipeCategoryComparator()
      */
     @Inject(method = "createRecipeRegistry", at = @At("HEAD"), order = 100)
-    private void grs$sortRecipeCategories(CallbackInfoReturnable<RecipeRegistry> ci) {
+    private void gregtech$sortRecipeCategories(CallbackInfoReturnable<RecipeRegistry> ci) {
         recipeCategories.sort(JustEnoughItemsModule.getRecipeCategoryComparator());
     }
 }
