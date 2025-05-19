@@ -2,7 +2,6 @@ package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
 import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
@@ -36,6 +35,7 @@ import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.init.SoundEvents;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.widgets.ProgressWidget.Direction;
 import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -323,16 +323,14 @@ public final class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> CANNER_RECIPES = new RecipeMapFluidCanner("canner",
             new SimpleRecipeBuilder(), recipeMap -> {
-
                 RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true, false);
-                // todo update canner to mui2
-                ui.setItemSlotOverlay(GuiTextures.CANNER_OVERLAY, false, false);
-                ui.setItemSlotOverlay(GuiTextures.CANISTER_OVERLAY, false, true);
-                ui.setItemSlotOverlay(GuiTextures.CANISTER_OVERLAY, true);
-                ui.setFluidSlotOverlay(GuiTextures.DARK_CANISTER_OVERLAY, false);
-                ui.setFluidSlotOverlay(GuiTextures.DARK_CANISTER_OVERLAY, true);
-                ui.setProgressBar(GuiTextures.PROGRESS_BAR_CANNER, ProgressWidget.MoveType.HORIZONTAL);
-                return ui;
+                return ui.buildMui2(b -> b
+                        .itemSlotOverlay(GTGuiTextures.CANNER_OVERLAY, false, false)
+                        .itemSlotOverlay(GTGuiTextures.CANISTER_OVERLAY, false, true)
+                        .itemSlotOverlay(GTGuiTextures.CANISTER_OVERLAY, true)
+                        .fluidSlotOverlay(GTGuiTextures.DARK_CANISTER_OVERLAY, false)
+                        .fluidSlotOverlay(GTGuiTextures.DARK_CANISTER_OVERLAY, true)
+                        .progressBar(GTGuiTextures.PROGRESS_BAR_CANNER, Direction.RIGHT));
             });
 
     /**
@@ -364,7 +362,7 @@ public final class RecipeMaps {
                     .uiBuilder(b -> b
                             .itemSlotOverlay(GTGuiTextures.EXTRACTOR_OVERLAY, false, false)
                             .itemSlotOverlay(GTGuiTextures.CANISTER_OVERLAY, false, true)
-                            .fluidSlotOverlay(GTGuiTextures.CENTRIFUGE_OVERLAY, false, true)
+                            .fluidSlotOverlay(GTGuiTextures.CENTRIFUGE_OVERLAY, false)
                             .progressBar(GTGuiTextures.PROGRESS_BAR_EXTRACT))
                     .sound(GTSoundEvents.CENTRIFUGE)
                     .build();
@@ -429,8 +427,8 @@ public final class RecipeMaps {
                             .itemSlotOverlay(GTGuiTextures.MOLECULAR_OVERLAY_1, false, false)
                             .itemSlotOverlay(GTGuiTextures.MOLECULAR_OVERLAY_2, false, true)
                             .itemSlotOverlay(GTGuiTextures.VIAL_OVERLAY_1, true)
-                            .fluidSlotOverlay(GTGuiTextures.MOLECULAR_OVERLAY_3, false, false)
-                            .fluidSlotOverlay(GTGuiTextures.MOLECULAR_OVERLAY_4, false, true)
+                            .fluidSlotOverlay(GTGuiTextures.MOLECULAR_OVERLAY_3, false)
+                            .fluidSlotOverlay(GTGuiTextures.MOLECULAR_OVERLAY_4, false)
                             .fluidSlotOverlay(GTGuiTextures.VIAL_OVERLAY_2, true)
                             .progressBar(GTGuiTextures.PROGRESS_BAR_ARROW_MULTIPLE))
                     .sound(GTValues.FOOLS.get() ? GTSoundEvents.SCIENCE : GTSoundEvents.CHEMICAL_REACTOR)
@@ -923,8 +921,17 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FORMING_PRESS_RECIPES = new RecipeMapFormingPress(
-            "forming_press", new SimpleRecipeBuilder(), FormingPressUI::new);
-    // todo update forming press to mui2
+            "forming_press", new SimpleRecipeBuilder(), recipeMap -> new FormingPressUI<>(recipeMap)
+                    .buildMui2(b -> {
+                        IDrawable[] overlays = { GTGuiTextures.PRESS_OVERLAY_2, GTGuiTextures.PRESS_OVERLAY_4,
+                                GTGuiTextures.PRESS_OVERLAY_1 };
+                        for (int i = 0; i < 3; i++) {
+                            b.itemSlotOverlay(overlays[i], i, false);
+                            b.itemSlotOverlay(overlays[i], i + 3, false);
+                        }
+                        b.itemSlotOverlay(GTGuiTextures.PRESS_OVERLAY_3, true);
+                        b.progressBar(GTGuiTextures.PROGRESS_BAR_COMPRESS, Direction.RIGHT);
+                    }));
 
     /**
      *
@@ -950,11 +957,10 @@ public final class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> FURNACE_RECIPES = new RecipeMapFurnace("electric_furnace",
             new SimpleRecipeBuilder(), recipeMap -> {
                 RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true, false);
-                ui.setItemSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false);
-                ui.setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressWidget.MoveType.HORIZONTAL);
-                return ui;
+                return ui.buildMui2(b -> b
+                        .itemSlotOverlay(GTGuiTextures.FURNACE_OVERLAY_1, false)
+                        .progressBar(GTGuiTextures.PROGRESS_BAR_ARROW, Direction.RIGHT));
             });
-    // todo update electric furnace to mui2
 
     /**
      * Example:
@@ -1175,7 +1181,7 @@ public final class RecipeMaps {
                             .itemSlotOverlay(GTGuiTextures.ATOMIC_OVERLAY_1, false)
                             .fluidSlotOverlay(GTGuiTextures.ATOMIC_OVERLAY_2, false)
                             .fluidSlotOverlay(GTGuiTextures.POSITIVE_MATTER_OVERLAY, true)
-                            .fluidSlotOverlay(GTGuiTextures.NEUTRAL_MATTER_OVERLAY, true, true)
+                            .fluidSlotOverlay(GTGuiTextures.NEUTRAL_MATTER_OVERLAY, true)
                             .progressBar(GTGuiTextures.PROGRESS_BAR_MASS_FAB))
                     .sound(GTSoundEvents.REPLICATOR)
                     .build();
@@ -1352,7 +1358,7 @@ public final class RecipeMaps {
                             .itemSlotOverlay(GTGuiTextures.DATA_ORB_OVERLAY, false)
                             .itemSlotOverlay(GTGuiTextures.ATOMIC_OVERLAY_1, true)
                             .fluidSlotOverlay(GTGuiTextures.NEUTRAL_MATTER_OVERLAY, false)
-                            .fluidSlotOverlay(GTGuiTextures.POSITIVE_MATTER_OVERLAY, false, true)
+                            .fluidSlotOverlay(GTGuiTextures.POSITIVE_MATTER_OVERLAY, false)
                             .fluidSlotOverlay(GTGuiTextures.ATOMIC_OVERLAY_2, true)
                             .progressBar(GTGuiTextures.PROGRESS_BAR_REPLICATOR))
                     .sound(GTSoundEvents.REPLICATOR)
@@ -1391,12 +1397,11 @@ public final class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> SCANNER_RECIPES = new RecipeMapScanner("scanner",
             new SimpleRecipeBuilder(), recipeMap -> {
                 RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true, false);
-                ui.setItemSlotOverlay(GuiTextures.DATA_ORB_OVERLAY, false, false);
-                ui.setItemSlotOverlay(GuiTextures.SCANNER_OVERLAY, false, true);
-                ui.setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressWidget.MoveType.HORIZONTAL);
-                return ui;
+                return ui.buildMui2(b -> b
+                        .itemSlotOverlay(GTGuiTextures.DATA_ORB_OVERLAY, false, false)
+                        .itemSlotOverlay(GTGuiTextures.SCANNER_OVERLAY, false, true)
+                        .progressBar(GTGuiTextures.PROGRESS_BAR_ARROW, Direction.RIGHT));
             });
-    // todo update scanner to mui2
 
     /**
      * Example:
