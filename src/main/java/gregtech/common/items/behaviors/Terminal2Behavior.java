@@ -6,6 +6,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
+import gregtech.api.terminal2.ITerminalApp;
 import gregtech.api.terminal2.Terminal2;
 import gregtech.api.terminal2.Terminal2Theme;
 import gregtech.common.mui.widget.IDPagedWidget;
@@ -71,11 +72,13 @@ public class Terminal2Behavior implements IItemBehaviour, ItemUIFactory {
                 .minElementMargin(6)
                 .nextRow();
 
-        for (ResourceLocation appID : Terminal2.appMap.keySet()) {
+        for (var appEntry : Terminal2.appMap.entrySet()) {
+            ResourceLocation appID = appEntry.getKey();
+            ITerminalApp app = appEntry.getValue();
             if (appID == Terminal2.HOME_ID) continue;
 
             appGrid.child(new ButtonWidget<>()
-                    .overlay(Terminal2.appMap.get(appID).getIcon())
+                    .overlay(app.getIcon())
                     .background(Terminal2Theme.COLOR_BACKGROUND_2.getCircle())
                     .hoverBackground(Terminal2Theme.COLOR_BACKGROUND_2.getCircle(),
                             Terminal2Theme.COLOR_BRIGHT_2.getRing())
@@ -83,6 +86,7 @@ public class Terminal2Behavior implements IItemBehaviour, ItemUIFactory {
                     .addTooltipLine(IKey.lang("terminal.app." + appID.getNamespace() + "." + appID.getPath() + ".name"))
                     .onMousePressed(i -> {
                         appPages.setPage(appID);
+                        app.onOpen();
                         return true;
                     }));
 

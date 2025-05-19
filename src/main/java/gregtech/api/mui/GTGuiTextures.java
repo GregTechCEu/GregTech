@@ -293,6 +293,7 @@ public class GTGuiTextures {
     public static final UITexture TERMINAL_FRAME = fullImage("textures/gui/terminal/terminal_frame.png");
     public static final UITexture HOME_BUTTON = fullImage("textures/gui/terminal/home_button.png");
     public static final UITexture HOME_BUTTON_HOVER = fullImage("textures/gui/terminal/home_button_hover.png");
+    public static final UITexture CAPES_APP_ICON = fullImage("textures/gui/terminal/capes/icon.png");
 
     // todo bronze/steel/primitive fluid slots?
 
