@@ -14,7 +14,6 @@ import gregtech.api.cover.Cover;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
@@ -62,7 +61,7 @@ import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
@@ -72,12 +71,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
-                                         implements IActiveOutputSide, IGhostSlotConfigurable {
+        implements IActiveOutputSide, IGhostSlotConfigurable {
 
     private final boolean hasFrontFacing;
 
@@ -493,14 +493,13 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
 
     @Override
     public boolean usesMui2() {
-        RecipeMap<?> recipeMap = getRecipeMap();
-        if (recipeMap == null) return false;
-        return recipeMap.getRecipeMapUI().usesMui2();
+        RecipeMap<?> map = getRecipeMap();
+        return map != null && map.getRecipeMapUI().usesMui2();
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
-        RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        RecipeMap<?> workableRecipeMap = Objects.requireNonNull(workable.getRecipeMap(), "recipe map is null");
         int yOffset = 0;
         if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
                 workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
@@ -511,53 +510,47 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         Widget<?> widget = workableRecipeMap.getRecipeMapUI().buildWidget(workable::getProgressPercent, importItems,
                 exportItems, importFluids, exportFluids, yOffset, guiSyncManager);
 
+        BooleanSyncValue hasEnergy = new BooleanSyncValue(workable::isHasNotEnoughEnergy);
+
         panel.child(widget)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(chargerInventory, 0))
                         .pos(79, 62 + yOffset)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
-                        .tooltip(t -> t.addLine(IKey.lang("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
-                                GTValues.VNF[getTier()]))))
+                        .addTooltipLine(IKey.lang("gregtech.gui.charger_slot.tooltip",
+                                GTValues.VNF[getTier()], GTValues.VNF[getTier()])))
                 .child(new Widget<>()
                         .size(18, 18)
                         .pos(79, 42 + yOffset)
                         .background(GTGuiTextures.INDICATOR_NO_ENERGY)
-                        // todo this isnt synced, and flicker appears on ui open even when it has enough energy
-                        .setEnabledIf($ -> workable.isHasNotEnoughEnergy()))
+                        // todo flicker appears on ui open even when it has enough energy
+                        // will need to test this
+                        .setEnabledIf($ -> hasEnergy.getBoolValue()))
                 .bindPlayerInventory();
 
         int leftButtonStartX = 7;
 
         if (exportItems.getSlots() > 0) {
-            BooleanSyncValue outputValue = new BooleanSyncValue(() -> autoOutputItems, val -> autoOutputItems = val);
-            guiSyncManager.syncValue("item_auto_output", outputValue);
 
             panel.child(new ToggleButton()
                     .pos(leftButtonStartX, 62 + yOffset)
-                    .value(new BoolValue.Dynamic(outputValue::getBoolValue, outputValue::setBoolValue))
                     .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
-                    .tooltipBuilder(t -> t
-                            .setAutoUpdate(true)
-                            .addLine(outputValue.getBoolValue() ?
-                                    IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
-                                    IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled"))));
+                    .value(new BooleanSyncValue(() -> autoOutputItems, val -> autoOutputItems = val))
+                    .addTooltip(true, IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled"))
+                    .addTooltip(false, IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")));
+
             leftButtonStartX += 18;
         }
 
         if (exportFluids.getTanks() > 0) {
-            BooleanSyncValue outputValue = new BooleanSyncValue(() -> autoOutputFluids, val -> autoOutputFluids = val);
-            guiSyncManager.syncValue("fluid_auto_output", outputValue);
 
             panel.child(new ToggleButton()
                     .pos(leftButtonStartX, 62 + yOffset)
-                    .value(new BoolValue.Dynamic(outputValue::getBoolValue, outputValue::setBoolValue))
                     .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
-                    .tooltipBuilder(t -> t
-                            .setAutoUpdate(true)
-                            .addLine(outputValue.getBoolValue() ?
-                                    IKey.lang("gregtech.gui.fluid_auto_output.tooltip.enabled") :
-                                    IKey.lang("gregtech.gui.fluid_auto_output.tooltip.disabled"))));
+                    .value(new BooleanSyncValue(() -> autoOutputFluids, val -> autoOutputFluids = val))
+                    .addTooltip(true, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.enabled"))
+                    .addTooltip(false, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.disabled")));
         }
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
@@ -607,22 +600,16 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         if (exportItems.getSlots() > 0) {
             builder.widget(new ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
                     GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
-                            .setTooltipText("gregtech.gui.item_auto_output.tooltip")
-                            .shouldUseBaseBackground());
+                    .setTooltipText("gregtech.gui.item_auto_output.tooltip")
+                    .shouldUseBaseBackground());
             leftButtonStartX += 18;
         }
         if (exportFluids.getTanks() > 0) {
             builder.widget(new ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
                     GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
-                            .setTooltipText("gregtech.gui.fluid_auto_output.tooltip")
-                            .shouldUseBaseBackground());
-            leftButtonStartX += 18;
+                    .setTooltipText("gregtech.gui.fluid_auto_output.tooltip")
+                    .shouldUseBaseBackground());
         }
-
-        builder.widget(new CycleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
-                workable.getAvailableOverclockingTiers(), workable::getOverclockTier, workable::setOverclockTier)
-                        .setTooltipHoverString("gregtech.gui.overclock.description")
-                        .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
             ImageWidget logo = new ImageWidget(152, 63 + yOffset, 17, 17,
