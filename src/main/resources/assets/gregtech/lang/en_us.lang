@@ -6039,6 +6039,9 @@ terminal.settings.background_select=Select Background
 terminal.settings.color=Set color %s
 terminal.settings.reset_color=Reset to default color
 
+terminal.capes.locked=Unlock this cape by progressing through GregTech's advancements
+terminal.capes.selected=Equipped
+
 # old terminal
 # currently indirectly used in alarm
 terminal.component.searching=searching

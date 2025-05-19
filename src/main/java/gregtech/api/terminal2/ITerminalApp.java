@@ -15,5 +15,7 @@ public interface ITerminalApp {
         return GuiTextures.IMAGE;
     }
 
+    default void onOpen() {}
+
     default void dispose() {}
 }
