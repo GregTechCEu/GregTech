@@ -71,7 +71,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
             }
 
             // Immediately clear cached fluids if the status changed, to prevent running recipes while offline
-            if (this.meStatusChanged && !this.isOnline) {
+            if (this.meStatusChanged && !isOnline()) {
                 if (autoPull) {
                     this.getAEFluidHandler().clearConfig();
                 } else {

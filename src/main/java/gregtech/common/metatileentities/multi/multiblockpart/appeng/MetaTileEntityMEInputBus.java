@@ -201,7 +201,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
         return GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
-                .child(IKey.dynamic(() -> isOnline ? I18n.format("gregtech.gui.me_network.online") :
+                .child(IKey.dynamic(() -> isOnline() ? I18n.format("gregtech.gui.me_network.online") :
                         I18n.format("gregtech.gui.me_network.offline")).asWidget().pos(5, 15))
                 .child(Flow.column()
                         .pos(7 + 18 * 4, 25 + 18)
@@ -310,7 +310,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            if (isOnline) {
+            if (isOnline()) {
                 Textures.ME_INPUT_BUS_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
             } else {
                 Textures.ME_INPUT_BUS.renderSided(getFrontFacing(), renderState, translation, pipeline);

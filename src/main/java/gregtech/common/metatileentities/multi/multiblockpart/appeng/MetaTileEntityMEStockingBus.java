@@ -71,7 +71,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
             }
 
             // Immediately clear cached items if the status changed, to prevent running recipes while offline
-            if (this.meStatusChanged && !this.isOnline) {
+            if (this.meStatusChanged && !isOnline()) {
                 if (autoPull) {
                     clearInventory(0);
                 } else {

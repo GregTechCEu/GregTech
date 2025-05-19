@@ -102,7 +102,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostableChannel
                 .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
                 .label(10, 5, getMetaFullName());
         // ME Network status
-        builder.dynamicLabel(10, 15, () -> this.isOnline ?
+        builder.dynamicLabel(10, 15, () -> isOnline() ?
                 I18n.format("gregtech.gui.me_network.online") :
                 I18n.format("gregtech.gui.me_network.offline"),
                 0x404040);
@@ -170,7 +170,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostableChannel
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            if (isOnline) {
+            if (isOnline()) {
                 Textures.ME_OUTPUT_HATCH_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
             } else {
                 Textures.ME_OUTPUT_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);

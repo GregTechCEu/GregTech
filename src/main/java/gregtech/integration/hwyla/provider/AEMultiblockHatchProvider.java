@@ -36,7 +36,7 @@ public class AEMultiblockHatchProvider implements IWailaDataProvider {
     public @NotNull NBTTagCompound getNBTData(EntityPlayerMP player, TileEntity te, NBTTagCompound tag, World world,
                                               BlockPos pos) {
         if (te instanceof IGregTechTileEntity gtte &&
-                gtte.getMetaTileEntity() instanceof MetaTileEntityAEHostableChannelPart<?> aeHostablePart) {
+                gtte.getMetaTileEntity() instanceof MetaTileEntityAEHostableChannelPart<?>aeHostablePart) {
             tag.setBoolean(NBT_KEY, aeHostablePart.isOnline());
         }
 

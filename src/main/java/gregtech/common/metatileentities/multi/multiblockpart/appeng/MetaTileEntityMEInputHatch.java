@@ -162,7 +162,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
         return GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
-                .child(IKey.dynamic(() -> isOnline ? I18n.format("gregtech.gui.me_network.online") :
+                .child(IKey.dynamic(() -> isOnline() ? I18n.format("gregtech.gui.me_network.online") :
                         I18n.format("gregtech.gui.me_network.offline")).asWidget().pos(5, 15))
                 .child(Flow.column()
                         .pos(7 + 18 * 4, 25 + 18)
@@ -181,7 +181,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                 .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
                 .label(10, 5, getMetaFullName());
         // ME Network status
-        builder.dynamicLabel(10, 15, () -> this.isOnline ?
+        builder.dynamicLabel(10, 15, () -> isOnline() ?
                 I18n.format("gregtech.gui.me_network.online") :
                 I18n.format("gregtech.gui.me_network.offline"),
                 0x404040);
@@ -271,7 +271,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            if (isOnline) {
+            if (isOnline()) {
                 Textures.ME_INPUT_HATCH_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
             } else {
                 Textures.ME_INPUT_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);

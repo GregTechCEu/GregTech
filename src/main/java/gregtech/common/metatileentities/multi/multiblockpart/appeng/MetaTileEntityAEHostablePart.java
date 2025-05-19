@@ -1,20 +1,31 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import appeng.api.util.AECableType;
-import appeng.api.util.AEPartLocation;
-import appeng.me.helpers.AENetworkProxy;
-
+import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockNotifiablePart;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 
+import appeng.api.networking.GridFlags;
+import appeng.api.networking.security.IActionHost;
+import appeng.api.networking.security.IActionSource;
+import appeng.api.util.AECableType;
+import appeng.api.util.AEPartLocation;
+import appeng.me.helpers.AENetworkProxy;
+import appeng.me.helpers.BaseActionSource;
+import appeng.me.helpers.IGridProxyable;
+import appeng.me.helpers.MachineSource;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.EnumSet;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_ONLINE_STATUS;
 
@@ -23,7 +34,8 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     private AENetworkProxy aeProxy;
     private int meUpdateTick = 0;
     protected boolean isOnline;
-    private boolean allowExtraConnections = false;
+    protected boolean allowExtraConnections = false;
+    protected boolean meStatusChanged = false;
 
     public MetaTileEntityAEHostablePart(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
@@ -35,6 +47,14 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         if (!this.getWorld().isRemote) {
             this.meUpdateTick++;
         }
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public int getMeUpdateTick() {
+        return meUpdateTick;
     }
 
     @Override
@@ -54,7 +74,6 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         buf.writeBoolean(this.isOnline);
         buf.writeBoolean(this.allowExtraConnections);
     }
-
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
@@ -78,6 +97,18 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         this.allowExtraConnections = buf.readBoolean();
     }
 
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == UPDATE_ONLINE_STATUS) {
+            boolean isOnline = buf.readBoolean();
+            if (this.isOnline != isOnline) {
+                this.isOnline = isOnline;
+                scheduleRenderUpdate();
+            }
+        }
+    }
+
     @NotNull
     @Override
     public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
@@ -85,6 +116,49 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
             return AECableType.NONE;
         }
         return AECableType.SMART;
+    }
+
+    public EnumSet<EnumFacing> getConnectableSides() {
+        return this.allowExtraConnections ? EnumSet.allOf(EnumFacing.class) : EnumSet.of(getFrontFacing());
+    }
+
+    public void updateConnectableSides() {
+        if (this.aeProxy != null) {
+            this.aeProxy.setValidSides(getConnectableSides());
+        }
+    }
+
+    @Override
+    public boolean onWireCutterClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                     CuboidRayTraceResult hitResult) {
+        this.allowExtraConnections = !this.allowExtraConnections;
+        updateConnectableSides();
+
+        if (!getWorld().isRemote) {
+            playerIn.sendStatusMessage(new TextComponentTranslation(this.allowExtraConnections ?
+                    "gregtech.machine.me.extra_connections.enabled" : "gregtech.machine.me.extra_connections.disabled"),
+                    true);
+        }
+
+        return true;
+    }
+
+    @Override
+    public void setFrontFacing(EnumFacing frontFacing) {
+        super.setFrontFacing(frontFacing);
+        updateConnectableSides();
+    }
+
+    @Nullable
+    private AENetworkProxy createProxy() {
+        if (this.getHolder() instanceof IGridProxyable holder) {
+            AENetworkProxy proxy = new AENetworkProxy(holder, "mte_proxy", this.getStackForm(), true);
+            proxy.setFlags(GridFlags.REQUIRE_CHANNEL);
+            proxy.setIdlePowerUsage(ConfigHolder.compat.ae2.meHatchEnergyUsage);
+            proxy.setValidSides(getConnectableSides());
+            return proxy;
+        }
+        return null;
     }
 
     @Nullable
@@ -99,10 +173,11 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         return this.aeProxy;
     }
 
-    @Override
-    public void setFrontFacing(EnumFacing frontFacing) {
-        super.setFrontFacing(frontFacing);
-        updateConnectableSides();
+    protected IActionSource getActionSource() {
+        if (this.getHolder() instanceof IActionHost holder) {
+            return new MachineSource(holder);
+        }
+        return new BaseActionSource();
     }
 
     @Override
@@ -125,5 +200,18 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
             }
         }
         return this.isOnline;
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setBoolean("AllowExtraConnections", this.allowExtraConnections);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.allowExtraConnections = data.getBoolean("AllowExtraConnections");
     }
 }
