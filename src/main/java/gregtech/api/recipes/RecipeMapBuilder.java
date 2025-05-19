@@ -43,6 +43,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
 
     private @Nullable Map<ResourceLocation, RecipeBuildAction<B>> buildActions;
 
+    private boolean sortToBack;
     /* *********************** MUI 1 *********************** */
 
     @Deprecated
@@ -357,6 +358,19 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
         if (buildActions != null) {
             recipeMap.onRecipeBuild(buildActions);
         }
+        recipeMap.getPrimaryRecipeCategory().jeiSortToBack(sortToBack);
         return recipeMap;
+    }
+
+    /**
+     * Have the primary {@link gregtech.api.recipes.category.GTRecipeCategory} for the RecipeMap be sorted to the end
+     * of the JEI recipe category list.
+     *
+     * @param sortToBack if it should be sorted to the back
+     * @return this
+     */
+    public @NotNull RecipeMapBuilder<B> jeiSortToBack(boolean sortToBack) {
+        this.sortToBack = sortToBack;
+        return this;
     }
 }

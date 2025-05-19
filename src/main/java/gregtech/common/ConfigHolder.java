@@ -465,6 +465,9 @@ public class ConfigHolder {
                 "Default: true" })
         public boolean enableFancyChestRender = true;
 
+        @Config.Comment({ "Whether to prefer the Material Tree over other categories in JEI", "Default: false" })
+        public boolean preferMaterialTreeInJEI = false;
+
         public static class GuiConfig {
 
             @Config.Comment({ "The scrolling speed of widgets", "Default: 13" })

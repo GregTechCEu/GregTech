@@ -27,6 +27,7 @@ public class RecipeMapScanner extends RecipeMap<SimpleRecipeBuilder> implements 
                             @NotNull RecipeMapUIFunction recipeMapUI) {
         super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 2, 1, 1, 0);
         setSound(GTSoundEvents.ELECTROLYZER);
+        getPrimaryRecipeCategory().jeiSortToBack(true);
     }
 
     @Override

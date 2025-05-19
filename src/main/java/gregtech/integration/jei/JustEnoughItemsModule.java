@@ -27,6 +27,7 @@ import gregtech.api.util.Mods;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
@@ -70,16 +71,20 @@ import mezz.jei.api.ISubtypeRegistry;
 import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.ingredients.IIngredientRegistry;
 import mezz.jei.api.ingredients.VanillaTypes;
+import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.config.Constants;
 import mezz.jei.input.IShowsRecipeFocuses;
 import mezz.jei.input.InputHandler;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -90,11 +95,11 @@ import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_RING
 
 @JEIPlugin
 @GregTechModule(
-                moduleID = GregTechModules.MODULE_JEI,
-                containerID = GTValues.MODID,
-                modDependencies = Mods.Names.JUST_ENOUGH_ITEMS,
-                name = "GregTech JEI Integration",
-                description = "JustEnoughItems Integration Module")
+        moduleID = GregTechModules.MODULE_JEI,
+        containerID = GTValues.MODID,
+        modDependencies = Mods.Names.JUST_ENOUGH_ITEMS,
+        name = "GregTech JEI Integration",
+        description = "JustEnoughItems Integration Module")
 public class JustEnoughItemsModule extends IntegrationSubmodule implements IModPlugin {
 
     public static IIngredientRegistry ingredientRegistry;
@@ -156,7 +161,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         ModularUIGuiHandler modularUIGuiHandler = new ModularUIGuiHandler(jeiHelpers.recipeTransferHandlerHelper());
         modularUIGuiHandler.blacklistCategory(
                 IntCircuitCategory.UID,
-                GTValues.MODID + ":material_tree",
+                MaterialTreeCategory.UID,
                 VanillaRecipeCategoryUid.INFORMATION,
                 VanillaRecipeCategoryUid.FUEL);
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler,
@@ -190,7 +195,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                     }
 
                     registry.addRecipes(recipeStream.map(r -> new GTRecipeWrapper(recipeMap, r))
-                            .collect(Collectors.toList()),
+                                    .collect(Collectors.toList()),
                             entry.getKey().getUniqueID());
                 }
             }
@@ -255,8 +260,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             }
         }
 
-        String oreByProductId = GTValues.MODID + ":" + "ore_by_product";
-        registry.addRecipes(oreByproductList, oreByProductId);
+        registry.addRecipes(oreByproductList, OreByProductCategory.UID);
         MetaTileEntity[][] machineLists = {
                 MetaTileEntities.MACERATOR,
                 MetaTileEntities.ORE_WASHER,
@@ -268,11 +272,11 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         };
         for (MetaTileEntity[] machine : machineLists) {
             if (machine.length < GTValues.LV + 1 || machine[GTValues.LV] == null) continue;
-            registry.addRecipeCatalyst(machine[GTValues.LV].getStackForm(), oreByProductId);
+            registry.addRecipeCatalyst(machine[GTValues.LV].getStackForm(), OreByProductCategory.UID);
         }
 
         // Material Tree
-        registry.addRecipes(materialTreeList, GTValues.MODID + ":" + "material_tree");
+        registry.addRecipes(materialTreeList, MaterialTreeCategory.UID);
 
         // Ore Veins
         List<OreDepositDefinition> oreVeins = WorldGenRegistry.getOreDeposits();
@@ -281,7 +285,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             oreInfoList.add(new GTOreInfo(vein));
         }
 
-        String oreSpawnID = GTValues.MODID + ":" + "ore_spawn_location";
+        String oreSpawnID = GTOreCategory.UID;
         registry.addRecipes(oreInfoList, oreSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LV.getStackForm(), oreSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_HV.getStackForm(), oreSpawnID);
@@ -295,7 +299,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             fluidVeinInfos.add(new GTFluidVeinInfo(fluidVein));
         }
 
-        String fluidVeinSpawnID = GTValues.MODID + ":" + "fluid_spawn_location";
+        String fluidVeinSpawnID = GTFluidVeinCategory.UID;
         registry.addRecipes(fluidVeinInfos, fluidVeinSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_HV.getStackForm(), fluidVeinSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LUV.getStackForm(), fluidVeinSpawnID);
@@ -378,5 +382,43 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                 jeiCategory.setIcon(icon);
             }
         }
+    }
+
+    /**
+     * Comparator to sort certain GT categories to the front or back of the JEI category list.
+     *
+     * @return the comparator
+     */
+    @ApiStatus.Internal
+    public static @NotNull Comparator<IRecipeCategory<?>> getRecipeCategoryComparator() {
+        List<String> backIds = GTRecipeCategory.getCategories().stream()
+                .filter(GTRecipeCategory::shouldSortToBackJEI)
+                .map(GTRecipeCategory::getUniqueID)
+                .collect(Collectors.toCollection(ArrayList::new));
+        backIds.add(IntCircuitCategory.UID);
+        backIds.add(MultiblockInfoCategory.UID);
+        backIds.add(OreByProductCategory.UID);
+        backIds.add(GTOreCategory.UID);
+        backIds.add(GTFluidVeinCategory.UID);
+        List<String> frontIds;
+        if (ConfigHolder.client.preferMaterialTreeInJEI) {
+            frontIds = Collections.singletonList(MaterialTreeCategory.UID);
+        } else {
+            frontIds = Collections.emptyList();
+        }
+
+        return Comparator.<IRecipeCategory<?>>comparingInt(category -> {
+            int index = backIds.indexOf(category.getUid());
+            if (index >= 0) {
+                return index;
+            }
+            return Integer.MIN_VALUE;
+        }).thenComparingInt(category -> {
+            int index = frontIds.indexOf(category.getUid());
+            if (index >= 0) {
+                return index;
+            }
+            return Integer.MAX_VALUE;
+        });
     }
 }

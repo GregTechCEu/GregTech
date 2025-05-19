@@ -1,5 +1,6 @@
 package gregtech.integration.jei.basic;
 
+import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.GTStringUtils;
 import gregtech.api.worldgen.config.OreDepositDefinition;
@@ -19,7 +20,7 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import org.jetbrains.annotations.NotNull;
 
 public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
-
+    public static final String UID = String.format("%s.ore_spawn_location", GTValues.MODID);
     private static final int NUM_OF_SLOTS = 5;
     private static final int SLOT_WIDTH = 18;
     private static final int SLOT_HEIGHT = 18;
