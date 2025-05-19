@@ -8,6 +8,8 @@ import gregtech.api.capability.impl.RecipeLogicSteam;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.mui.GTGuiTheme;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.client.particle.VanillaParticleEffects;
@@ -34,6 +36,11 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +50,8 @@ import java.util.Objects;
 
 public abstract class SteamMetaTileEntity extends MetaTileEntity {
 
+    // todo quick and dirty fix to not show input tank in ui, find better solution
+    protected static final FluidTankList EMPTY = new FluidTankList(false);
     protected static final int STEAM_CAPACITY = 16000;
 
     protected final boolean isHighPressure;
@@ -125,6 +134,33 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     public FluidTankList createImportFluidHandler() {
         this.steamFluidTank = new FilteredFluidHandler(STEAM_CAPACITY).setFilter(CommonFluidFilters.STEAM);
         return new FluidTankList(false, steamFluidTank);
+    }
+
+    @Override
+    public boolean usesMui2() {
+        RecipeMap<?> map = getRecipeMap();
+        return map != null && map.getRecipeMapUI().usesMui2();
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        RecipeMap<?> map = Objects.requireNonNull(getRecipeMap());
+
+        ModularPanel modularPanel = GTGuis.defaultPanel(this);
+
+        Widget<?> widget = map.getRecipeMapUI().buildWidget(workableHandler::getProgressPercent, importItems,
+                exportItems, EMPTY, exportFluids, 0, guiSyncManager);
+
+        modularPanel.child(widget)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .bindPlayerInventory();
+
+        return modularPanel;
+    }
+
+    @Override
+    public GTGuiTheme getUITheme() {
+        return isHighPressure ? GTGuiTheme.STEEL : GTGuiTheme.BRONZE;
     }
 
     public ModularUI.Builder createUITemplate(EntityPlayer player) {

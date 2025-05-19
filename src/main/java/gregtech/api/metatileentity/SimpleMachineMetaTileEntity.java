@@ -492,9 +492,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
 
     @Override
     public boolean usesMui2() {
-        RecipeMap<?> recipeMap = getRecipeMap();
-        if (recipeMap == null) return false;
-        return recipeMap.getRecipeMapUI().usesMui2();
+        RecipeMap<?> map = getRecipeMap();
+        return map != null && map.getRecipeMapUI().usesMui2();
     }
 
     @Override
