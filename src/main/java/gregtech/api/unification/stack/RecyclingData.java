@@ -7,15 +7,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public final class ItemMaterialInfo {
+public final class RecyclingData {
 
     private final List<MaterialStack> materials;
 
-    public ItemMaterialInfo(@NotNull MaterialStack @NotNull... materials) {
+    public RecyclingData(@NotNull MaterialStack @NotNull... materials) {
         this(Arrays.asList(materials));
     }
 
-    public ItemMaterialInfo(@NotNull List<MaterialStack> materials) {
+    public RecyclingData(@NotNull List<MaterialStack> materials) {
         if (materials.isEmpty()) {
             throw new IllegalArgumentException("materials cannot be empty");
         }
@@ -31,10 +31,10 @@ public final class ItemMaterialInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ItemMaterialInfo info)) {
+        if (!(o instanceof RecyclingData data)) {
             return false;
         }
-        return materials.equals(info.materials);
+        return materials.equals(data.materials);
     }
 
     @Override
@@ -44,7 +44,7 @@ public final class ItemMaterialInfo {
 
     @Override
     public String toString() {
-        return "ItemMaterialInfo{" +
+        return "RecyclingData{" +
                 "materials=" + materials +
                 '}';
     }

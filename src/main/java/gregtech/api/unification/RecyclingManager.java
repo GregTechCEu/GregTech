@@ -1,7 +1,7 @@
 package gregtech.api.unification;
 
 import gregtech.api.unification.stack.ItemAndMetadata;
-import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.item.ItemStack;
@@ -15,33 +15,33 @@ import java.util.function.BiConsumer;
 
 public final class RecyclingManager {
 
-    private final Map<ItemAndMetadata, ItemMaterialInfo> recyclingData = new Object2ObjectOpenHashMap<>();
+    private final Map<ItemAndMetadata, RecyclingData> map = new Object2ObjectOpenHashMap<>();
 
     /**
-     * @param stack        the stack to give recycling data
-     * @param materialInfo the recycling data
+     * @param stack the stack to give recycling data
+     * @param data  the recycling data
      */
-    public void registerRecyclingData(@NotNull ItemStack stack, @NotNull ItemMaterialInfo materialInfo) {
+    public void registerRecyclingData(@NotNull ItemStack stack, @NotNull RecyclingData data) {
         if (stack.isEmpty()) {
             return;
         }
-        registerRecyclingData(new ItemAndMetadata(stack), materialInfo);
+        registerRecyclingData(new ItemAndMetadata(stack), data);
     }
 
     /**
-     * @param key          the key to give recycling data
-     * @param materialInfo the recycling data
+     * @param key  the key to give recycling data
+     * @param data the recycling data
      */
     public void registerRecyclingData(@NotNull ItemAndMetadata key,
-                                      @NotNull ItemMaterialInfo materialInfo) {
-        recyclingData.put(key, materialInfo);
+                                      @NotNull RecyclingData data) {
+        map.put(key, data);
     }
 
     /**
      * @param stack the stack
      * @return the recycling data associated with the stack
      */
-    public @Nullable ItemMaterialInfo getRecyclingData(@NotNull ItemStack stack) {
+    public @Nullable RecyclingData getRecyclingData(@NotNull ItemStack stack) {
         if (stack.isEmpty()) {
             return null;
         }
@@ -52,8 +52,8 @@ public final class RecyclingManager {
      * @param key the key
      * @return the recycling data associated with the key
      */
-    public @Nullable ItemMaterialInfo getRecyclingData(@NotNull ItemAndMetadata key) {
-        return GTUtility.getOrWildcardMeta(recyclingData, key);
+    public @Nullable RecyclingData getRecyclingData(@NotNull ItemAndMetadata key) {
+        return GTUtility.getOrWildcardMeta(map, key);
     }
 
     /**
@@ -70,7 +70,7 @@ public final class RecyclingManager {
      * @param key the key whose data should be removed
      */
     public void removeRecyclingData(@NotNull ItemAndMetadata key) {
-        recyclingData.remove(key);
+        map.remove(key);
     }
 
     /**
@@ -78,7 +78,7 @@ public final class RecyclingManager {
      *
      * @param action the action to apply to each entry
      */
-    public void iterate(@NotNull BiConsumer<ItemAndMetadata, ItemMaterialInfo> action) {
-        recyclingData.forEach(action);
+    public void iterate(@NotNull BiConsumer<ItemAndMetadata, RecyclingData> action) {
+        map.forEach(action);
     }
 }

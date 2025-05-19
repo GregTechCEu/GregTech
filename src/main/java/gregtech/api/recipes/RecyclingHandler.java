@@ -8,8 +8,8 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.unification.stack.UnificationEntry;
 
 import net.minecraft.block.Block;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class RecyclingHandler {
 
-    public static @Nullable ItemMaterialInfo getRecyclingIngredients(int outputCount, @NotNull Object... recipe) {
+    public static @Nullable RecyclingData getRecyclingIngredients(int outputCount, @NotNull Object... recipe) {
         Char2IntOpenHashMap inputCountMap = new Char2IntOpenHashMap();
         Object2LongMap<Material> materialStacksExploded = new Object2LongOpenHashMap<>();
 
@@ -75,13 +75,13 @@ public class RecyclingHandler {
             addItemStackToMaterialStacks(stack, materialStacksExploded, inputCountMap.get(lastChar));
         }
 
-        return new ItemMaterialInfo(materialStacksExploded.entrySet().stream()
+        return new RecyclingData(materialStacksExploded.entrySet().stream()
                 .map(e -> new MaterialStack(e.getKey(), e.getValue() / outputCount))
                 .sorted(Comparator.comparingLong(m -> -m.amount))
                 .collect(Collectors.toList()));
     }
 
-    public static @Nullable ItemMaterialInfo getRecyclingIngredients(List<GTRecipeInput> inputs, int outputCount) {
+    public static @Nullable RecyclingData getRecyclingIngredients(List<GTRecipeInput> inputs, int outputCount) {
         Object2LongMap<Material> materialStacksExploded = new Object2LongOpenHashMap<>();
         for (GTRecipeInput input : inputs) {
             if (input == null || input.isNonConsumable()) continue;
@@ -91,7 +91,7 @@ public class RecyclingHandler {
             addItemStackToMaterialStacks(inputStack, materialStacksExploded, inputStack.getCount());
         }
 
-        return new ItemMaterialInfo(materialStacksExploded.entrySet().stream()
+        return new RecyclingData(materialStacksExploded.entrySet().stream()
                 .map(e -> new MaterialStack(e.getKey(), e.getValue() / outputCount))
                 .sorted(Comparator.comparingLong(m -> -m.amount))
                 .collect(Collectors.toList()));
@@ -101,9 +101,9 @@ public class RecyclingHandler {
                                                      @NotNull Object2LongMap<Material> materialStacksExploded,
                                                      int inputCount) {
         // First try to get Recycling Data
-        ItemMaterialInfo info = GregTechAPI.RECYCLING_MANAGER.getRecyclingData(itemStack);
-        if (info != null) {
-            for (MaterialStack ms : info.getMaterials()) {
+        RecyclingData data = GregTechAPI.RECYCLING_MANAGER.getRecyclingData(itemStack);
+        if (data != null) {
+            for (MaterialStack ms : data.getMaterials()) {
                 if (!(ms.material instanceof MarkerMaterial)) {
                     addMaterialStack(materialStacksExploded, inputCount, ms);
                 }

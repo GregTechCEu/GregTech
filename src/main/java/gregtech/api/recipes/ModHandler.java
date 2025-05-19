@@ -11,8 +11,8 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTLog;
@@ -268,9 +268,9 @@ public final class ModHandler {
         addRecipe(regName, result, isNBTClearing, isMirrored, recipe);
 
         if (withUnificationData) {
-            ItemMaterialInfo info = RecyclingHandler.getRecyclingIngredients(result.getCount(), recipe);
-            if (info != null) {
-                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(result, info);
+            RecyclingData data = RecyclingHandler.getRecyclingIngredients(result.getCount(), recipe);
+            if (data != null) {
+                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(result, data);
             }
         }
     }

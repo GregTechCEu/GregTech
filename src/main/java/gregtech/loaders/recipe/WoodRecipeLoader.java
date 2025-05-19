@@ -6,8 +6,8 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -172,7 +172,8 @@ public class WoodRecipeLoader {
             OreDictUnifier.registerOre(entry.planks, plank, entry.material);
         }
         if (entry.addPlanksUnificationInfo) {
-            GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(entry.planks, new ItemMaterialInfo(new MaterialStack(entry.material, M)));
+            GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(entry.planks,
+                    new RecyclingData(new MaterialStack(entry.material, M)));
         }
 
         if (!entry.door.isEmpty()) {
@@ -181,9 +182,9 @@ public class WoodRecipeLoader {
             }
             if (entry.addDoorsUnificationInfo) {
                 GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(entry.door, ConfigHolder.recipes.hardWoodRecipes ?
-                        new ItemMaterialInfo(new MaterialStack(entry.material, M * 2),
+                        new RecyclingData(new MaterialStack(entry.material, M * 2),
                                 new MaterialStack(Materials.Iron, M / 9)) : // screw
-                        new ItemMaterialInfo(new MaterialStack(entry.material, M * 2)));
+                        new RecyclingData(new MaterialStack(entry.material, M * 2)));
             }
         }
 
@@ -192,7 +193,8 @@ public class WoodRecipeLoader {
                 OreDictUnifier.registerOre(entry.slab, slab, entry.material);
             }
             if (entry.addSlabsUnificationInfo) {
-                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(entry.slab, new ItemMaterialInfo(new MaterialStack(entry.material, M / 2)));
+                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(entry.slab,
+                        new RecyclingData(new MaterialStack(entry.material, M / 2)));
             }
         }
 
@@ -201,7 +203,8 @@ public class WoodRecipeLoader {
                 OreDictUnifier.registerOre(entry.fence, fence, entry.material);
             }
             if (entry.addFencesUnificationInfo) {
-                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(entry.fence, new ItemMaterialInfo(new MaterialStack(entry.material, M)));
+                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(entry.fence,
+                        new RecyclingData(new MaterialStack(entry.material, M)));
             }
         }
 
@@ -211,7 +214,7 @@ public class WoodRecipeLoader {
             }
             if (entry.addFenceGatesUnificationInfo) {
                 GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(entry.fenceGate,
-                        new ItemMaterialInfo(new MaterialStack(entry.material, M * 3)));
+                        new RecyclingData(new MaterialStack(entry.material, M * 3)));
             }
         }
 
@@ -221,12 +224,13 @@ public class WoodRecipeLoader {
             }
             if (entry.addStairsUnificationInfo) {
                 GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(entry.stairs,
-                        new ItemMaterialInfo(new MaterialStack(entry.material, (3 * M) / 2)));
+                        new RecyclingData(new MaterialStack(entry.material, (3 * M) / 2)));
             }
         }
 
         if (!entry.boat.isEmpty() && entry.addBoatsUnificationInfo) {
-            GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(entry.boat, new ItemMaterialInfo(new MaterialStack(entry.material, M * 5)));
+            GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(entry.boat,
+                    new RecyclingData(new MaterialStack(entry.material, M * 5)));
         }
     }
 

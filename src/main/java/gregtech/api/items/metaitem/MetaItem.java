@@ -28,7 +28,7 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Mods;
@@ -801,11 +801,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             this.unlocalizedName = unlocalizedName;
         }
 
-        public MetaValueItem setMaterialInfo(ItemMaterialInfo materialInfo) {
-            if (materialInfo == null) {
-                throw new IllegalArgumentException("Cannot add null ItemMaterialInfo.");
+        public MetaValueItem setRecyclingData(RecyclingData data) {
+            if (data == null) {
+                throw new IllegalArgumentException("Cannot add null RecyclingData.");
             }
-            GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(getStackForm(), materialInfo);
+            GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(getStackForm(), data);
             return this;
         }
 
