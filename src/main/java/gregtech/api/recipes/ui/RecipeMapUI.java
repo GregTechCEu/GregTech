@@ -26,11 +26,14 @@ import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
 @ApiStatus.Experimental
@@ -62,14 +65,17 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /* *********************** MUI 2 *********************** */
 
     // todo try to store this better
-    private final Byte2ObjectMap<UITexture> slotTextureOverlays = new Byte2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<IDrawable> itemInputOverlays = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<IDrawable> itemOutputOverlays = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<IDrawable> fluidInputOverlays = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<IDrawable> fluidOutputOverlays = new Int2ObjectOpenHashMap<>();
 
     @ApiStatus.Experimental
     private boolean usesMui2 = false;
     private UITexture progressTexture = GTGuiTextures.PROGRESS_BAR_ARROW;
     private ProgressWidget.Direction progressDirection = ProgressWidget.Direction.RIGHT;
     // todo sus name
-    private @Nullable UITexture specialTextureNew;
+    private @Nullable IDrawable specialTextureNew;
 
     /**
      * @param recipeMap          the recipemap corresponding to this ui
@@ -571,9 +577,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 int x = startInputsX + 18 * j;
                 int y = startInputsY + 18 * i;
                 if (invertFluids) {
-                    group.child(makeFluidSlot(x, y, slotIndex, fluidHandler, isOutputs));
+                    group.child(makeFluidSlot(slotIndex, fluidHandler, isOutputs)
+                            .pos(x, y));
                 } else {
-                    group.child(makeItemSlot(slotGroup, x, y, slotIndex, itemHandler, isOutputs));
+                    group.child(makeItemSlot(slotGroup, slotIndex, itemHandler, isOutputs)
+                            .pos(x, y));
                 }
             }
         }
@@ -584,9 +592,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 for (int i = 0; i < fluidInputsCount; i++) {
                     int y = startInputsY + 18 * i;
                     if (!invertFluids) {
-                        group.child(makeFluidSlot(startSpecX, y, i, fluidHandler, isOutputs));
+                        group.child(makeFluidSlot(i, fluidHandler, isOutputs)
+                                .pos(startSpecX, y));
                     } else {
-                        group.child(makeItemSlot(slotGroup, startSpecX, y, i, itemHandler, isOutputs));
+                        group.child(makeItemSlot(slotGroup, i, itemHandler, isOutputs)
+                                .pos(startSpecX, y));
                     }
                 }
             } else {
@@ -596,42 +606,47 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                             startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
                     int y = startSpecY + (i / 3) * 18;
                     if (!invertFluids) {
-                        group.child(makeFluidSlot(x, y, i, fluidHandler, isOutputs));
+                        group.child(makeFluidSlot(i, fluidHandler, isOutputs)
+                                .pos(x, y));
                     } else {
-                        group.child(makeItemSlot(slotGroup, x, y, i, itemHandler, isOutputs));
+                        group.child(makeItemSlot(slotGroup, i, itemHandler, isOutputs)
+                                .pos(x, y));
                     }
                 }
             }
         }
     }
 
-    protected ItemSlot makeItemSlot(SlotGroup group, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
+    protected ItemSlot makeItemSlot(SlotGroup group, int slotIndex, IItemHandlerModifiable itemHandler,
                                     boolean isOutputs) {
         return new ItemSlot()
                 .slot(SyncHandlers.itemSlot(itemHandler, slotIndex)
                         .slotGroup(group)
                         .accessibility(!isOutputs, true))
-                .pos(x, y)
-                .background(getOverlaysForSlotNew(isOutputs, false, slotIndex == itemHandler.getSlots() - 1));
+                .background(getOverlaysForSlotNew(isOutputs, false, slotIndex));
     }
 
-    protected GTFluidSlot makeFluidSlot(int x, int y, int slotIndex, FluidTankList fluidHandler, boolean isOutputs) {
+    protected GTFluidSlot makeFluidSlot(int slotIndex, FluidTankList fluidHandler, boolean isOutputs) {
         return new GTFluidSlot()
                 .syncHandler(GTFluidSlot.sync(fluidHandler.getTankAt(slotIndex))
                         .accessibility(true, !isOutputs))
                 // todo show always full, should be implemented with mui2 multis
-                .pos(x, y)
-                .background(getOverlaysForSlotNew(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1));
+                .background(getOverlaysForSlotNew(isOutputs, true, slotIndex));
     }
 
     @ApiStatus.Experimental
-    protected IDrawable getOverlaysForSlotNew(boolean isOutput, boolean isFluid, boolean isLast) {
+    protected IDrawable getOverlaysForSlotNew(boolean isOutput, boolean isFluid, int index) {
         UITexture base = isFluid ? GTGuiTextures.FLUID_SLOT : GTGuiTextures.SLOT;
-        byte overlayKey = computeOverlayKey(isOutput, isFluid, isLast);
-        if (slotTextureOverlays.containsKey(overlayKey)) {
-            return IDrawable.of(base, slotTextureOverlays.get(overlayKey));
+        var overlays = getOverlayMap(isOutput, isFluid);
+        if (overlays.containsKey(index)) {
+            return IDrawable.of(base, overlays.get(index));
         }
         return IDrawable.of(base);
+    }
+
+    protected Int2ObjectMap<IDrawable> getOverlayMap(boolean isOutput, boolean isFluid) {
+        if (isOutput) return isFluid ? fluidOutputOverlays : itemOutputOverlays;
+        else return isFluid ? fluidInputOverlays : itemInputOverlays;
     }
 
     /** Marked experimental as this method will be removed when all GTCEu UIs are ported to MUI2. */
@@ -645,6 +660,14 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     @ApiStatus.Experimental
     public boolean usesMui2() {
         return usesMui2;
+    }
+
+    // todo this is a quick and dirty method, find a better way
+    /** Marked experimental as this method will be removed when all GTCEu UIs are ported to MUI2. */
+    @ApiStatus.Experimental
+    public RecipeMapUI<R> buildMui2(Consumer<RecipeMapUIBuilder> builderConsumer) {
+        builderConsumer.accept(new RecipeMapUIBuilder(this));
+        return this;
     }
 
     /**
@@ -665,18 +688,20 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param specialTexture the special texture to set
      * @param position       the position of the texture: [x, y, width, height]
      */
-    public void setSpecialTexture(@NotNull UITexture specialTexture, @NotNull Area position) {
+    public void setSpecialTexture(@NotNull IDrawable specialTexture, @NotNull Area position) {
         this.specialTextureNew = specialTexture;
         this.specialTexturePosition = position;
     }
 
     /**
-     * @param key     the key to store the slot's texture with
-     * @param texture the texture to store
+     * @param texture  the texture to store
+     * @param index    the key to store the slot's texture with
+     * @param isFluid  if the slot is fluid
+     * @param isOutput if the slot is an output
      */
     @ApiStatus.Internal
-    public void setSlotOverlay(byte key, @NotNull UITexture texture) {
-        this.slotTextureOverlays.put(key, texture);
+    public void setSlotOverlay(@NotNull IDrawable texture, int index, boolean isFluid, boolean isOutput) {
+        getOverlayMap(isOutput, isFluid).put(index, texture);
     }
 
     /**
