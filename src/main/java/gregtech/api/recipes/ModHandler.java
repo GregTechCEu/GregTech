@@ -1,6 +1,7 @@
 package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -10,6 +11,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.DummyContainer;
@@ -266,7 +268,10 @@ public final class ModHandler {
         addRecipe(regName, result, isNBTClearing, isMirrored, recipe);
 
         if (withUnificationData) {
-            OreDictUnifier.registerOre(result, RecyclingHandler.getRecyclingIngredients(result.getCount(), recipe));
+            ItemMaterialInfo info = RecyclingHandler.getRecyclingIngredients(result.getCount(), recipe);
+            if (info != null) {
+                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(result, info);
+            }
         }
     }
 

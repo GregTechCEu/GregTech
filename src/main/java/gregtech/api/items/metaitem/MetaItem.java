@@ -1,6 +1,7 @@
 package gregtech.api.items.metaitem;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IFilteredFluidContainer;
@@ -804,7 +805,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             if (materialInfo == null) {
                 throw new IllegalArgumentException("Cannot add null ItemMaterialInfo.");
             }
-            OreDictUnifier.registerOre(getStackForm(), materialInfo);
+            GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(getStackForm(), materialInfo);
             return this;
         }
 

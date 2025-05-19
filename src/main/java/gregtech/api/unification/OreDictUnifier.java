@@ -62,14 +62,6 @@ public class OreDictUnifier {
         return (first, second) -> comparator.compare(new ItemAndMetadata(first), new ItemAndMetadata(second));
     }
 
-    /**
-     * @deprecated {@link RecyclingManager#registerRecyclingData(ItemStack, ItemMaterialInfo)}
-     */
-    @Deprecated
-    public static void registerOre(ItemStack itemStack, ItemMaterialInfo materialInfo) {
-        GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(itemStack, materialInfo);
-    }
-
     public static void registerOre(ItemStack itemStack, OrePrefix orePrefix, @Nullable Material material) {
         registerOre(itemStack, orePrefix.name(), material);
     }

@@ -1,6 +1,7 @@
 package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -1088,7 +1089,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             ItemStack outputStack = getOutputs().get(0);
             ItemMaterialInfo info = RecyclingHandler.getRecyclingIngredients(getInputs(), outputStack.getCount());
             if (info != null) {
-                OreDictUnifier.registerOre(outputStack, info);
+                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(outputStack, info);
             }
         }
 
