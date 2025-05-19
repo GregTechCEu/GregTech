@@ -36,7 +36,7 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     private AENetworkProxy aeProxy;
     private int meUpdateTick = 0;
     protected boolean isOnline;
-    protected boolean allowExtraConnections = false;
+    protected boolean allowsExtraConnections = false;
     protected boolean meStatusChanged = false;
 
     public MetaTileEntityAEHostablePart(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
@@ -60,21 +60,26 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public boolean allowsExtraConnections() {
+        return allowsExtraConnections;
+    }
 
-        if (this.aeProxy != null) {
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+
+        if (aeProxy != null) {
             buf.writeBoolean(true);
             NBTTagCompound proxy = new NBTTagCompound();
-            this.aeProxy.writeToNBT(proxy);
+            aeProxy.writeToNBT(proxy);
             buf.writeCompoundTag(proxy);
         } else {
             buf.writeBoolean(false);
         }
 
-        buf.writeInt(this.meUpdateTick);
-        buf.writeBoolean(this.isOnline);
-        buf.writeBoolean(this.allowExtraConnections);
+        buf.writeInt(meUpdateTick);
+        buf.writeBoolean(isOnline);
+        buf.writeBoolean(allowsExtraConnections);
     }
 
     @Override
@@ -89,14 +94,14 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
                 nbtTagCompound = null;
             }
 
-            if (this.aeProxy != null && nbtTagCompound != null) {
-                this.aeProxy.readFromNBT(nbtTagCompound);
+            if (aeProxy != null && nbtTagCompound != null) {
+                aeProxy.readFromNBT(nbtTagCompound);
             }
         }
 
-        this.meUpdateTick = buf.readInt();
-        this.isOnline = buf.readBoolean();
-        this.allowExtraConnections = buf.readBoolean();
+        meUpdateTick = buf.readInt();
+        isOnline = buf.readBoolean();
+        allowsExtraConnections = buf.readBoolean();
     }
 
     @Override
@@ -114,30 +119,30 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     @NotNull
     @Override
     public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
-        if (part.getFacing() != this.frontFacing && !this.allowExtraConnections) {
+        if (part.getFacing() != frontFacing && !allowsExtraConnections) {
             return AECableType.NONE;
         }
         return AECableType.SMART;
     }
 
     public EnumSet<EnumFacing> getConnectableSides() {
-        return this.allowExtraConnections ? EnumSet.allOf(EnumFacing.class) : EnumSet.of(getFrontFacing());
+        return allowsExtraConnections ? EnumSet.allOf(EnumFacing.class) : EnumSet.of(getFrontFacing());
     }
 
     public void updateConnectableSides() {
-        if (this.aeProxy != null) {
-            this.aeProxy.setValidSides(getConnectableSides());
+        if (aeProxy != null) {
+            aeProxy.setValidSides(getConnectableSides());
         }
     }
 
     @Override
     public boolean onWireCutterClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                      CuboidRayTraceResult hitResult) {
-        this.allowExtraConnections = !this.allowExtraConnections;
+        allowsExtraConnections = !allowsExtraConnections;
         updateConnectableSides();
 
         if (!getWorld().isRemote) {
-            playerIn.sendStatusMessage(new TextComponentTranslation(this.allowExtraConnections ?
+            playerIn.sendStatusMessage(new TextComponentTranslation(allowsExtraConnections ?
                     "gregtech.machine.me.extra_connections.enabled" : "gregtech.machine.me.extra_connections.disabled"),
                     true);
         }
@@ -153,8 +158,8 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
 
     @Nullable
     private AENetworkProxy createProxy() {
-        if (this.getHolder() instanceof IGridProxyable holder) {
-            AENetworkProxy proxy = new AENetworkProxy(holder, "mte_proxy", this.getStackForm(), true);
+        if (getHolder() instanceof IGridProxyable holder) {
+            AENetworkProxy proxy = new AENetworkProxy(holder, "mte_proxy", getStackForm(), true);
             proxy.setFlags(GridFlags.REQUIRE_CHANNEL);
             proxy.setIdlePowerUsage(ConfigHolder.compat.ae2.meHatchEnergyUsage);
             proxy.setValidSides(getConnectableSides());
@@ -166,13 +171,13 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     @Nullable
     @Override
     public AENetworkProxy getProxy() {
-        if (this.aeProxy == null) {
-            return this.aeProxy = this.createProxy();
+        if (aeProxy == null) {
+            return aeProxy = createProxy();
         }
-        if (!this.aeProxy.isReady() && this.getWorld() != null) {
-            this.aeProxy.onReady();
+        if (!aeProxy.isReady() && getWorld() != null) {
+            aeProxy.onReady();
         }
-        return this.aeProxy;
+        return aeProxy;
     }
 
     protected IActionSource getActionSource() {
@@ -196,24 +201,24 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
             if (this.isOnline != isOnline) {
                 writeCustomData(UPDATE_ONLINE_STATUS, buf -> buf.writeBoolean(isOnline));
                 this.isOnline = isOnline;
-                this.meStatusChanged = true;
+                meStatusChanged = true;
             } else {
-                this.meStatusChanged = false;
+                meStatusChanged = false;
             }
         }
-        return this.isOnline;
+        return isOnline;
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setBoolean("AllowExtraConnections", this.allowExtraConnections);
+        data.setBoolean("AllowExtraConnections", allowsExtraConnections);
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.allowExtraConnections = data.getBoolean("AllowExtraConnections");
+        allowsExtraConnections = data.getBoolean("AllowExtraConnections");
     }
 }
