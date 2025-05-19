@@ -96,6 +96,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected Map<ResourceLocation, RecipeBuildAction<R>> ignoredBuildActions;
 
     private boolean withItemRecycling;
+    private boolean withFullRecycling;
 
     protected RecipeBuilder() {
         this.inputs = new ArrayList<>();
@@ -142,6 +143,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             this.ignoredBuildActions = new Object2ObjectOpenHashMap<>(recipeBuilder.ignoredBuildActions);
         }
         this.withItemRecycling = recipeBuilder.hasItemRecycling();
+        this.withFullRecycling = recipeBuilder.hasFullRecycling();
     }
 
     public R cleanroom(@Nullable CleanroomType cleanroom) {
@@ -977,6 +979,14 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    /**
+     * Generate Recycling Data based on this recipe's Items and Fluids
+     */
+    public R withFullRecycling() {
+        this.withFullRecycling = true;
+        return (R) this;
+    }
+
     public ValidationResult<Recipe> build() {
         EnumValidationResult result = recipePropertyStorageErrored ? EnumValidationResult.INVALID : validate();
         return ValidationResult.newResult(result, new Recipe(inputs, outputs,
@@ -1084,10 +1094,17 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 buildAction.getValue().accept((R) this);
             }
         }
-        if (hasItemRecycling()) {
+        if (hasFullRecycling()) {
+            ItemStack outputStack = getOutputs().get(0);
+            RecyclingData data = RecyclingHandler.getRecyclingIngredients(outputStack.getCount(), getInputs(),
+                    getFluidInputs());
+            if (data != null) {
+                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(outputStack, data);
+            }
+        } else if (hasItemRecycling()) {
             // ignore input fluids for item-only recycling
             ItemStack outputStack = getOutputs().get(0);
-            RecyclingData data = RecyclingHandler.getRecyclingIngredients(getInputs(), outputStack.getCount());
+            RecyclingData data = RecyclingHandler.getRecyclingIngredients(outputStack.getCount(), getInputs(), null);
             if (data != null) {
                 GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(outputStack, data);
             }
@@ -1175,6 +1192,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public boolean hasItemRecycling() {
         return withItemRecycling;
+    }
+
+    public boolean hasFullRecycling() {
+        return withFullRecycling;
     }
 
     @Override
