@@ -23,13 +23,6 @@ public final class ItemMaterialInfo {
     }
 
     /**
-     * @return the first composition data entry
-     */
-    public @NotNull MaterialStack getFirstMaterial() {
-        return materials.get(0);
-    }
-
-    /**
      * @return all of the composition data
      */
     public @UnmodifiableView @NotNull List<MaterialStack> getMaterials() {

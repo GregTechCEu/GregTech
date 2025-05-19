@@ -242,8 +242,7 @@ public class OreDictUnifier {
                 return new MaterialStack(entryMaterial, entry.orePrefix.getMaterialAmount(entryMaterial));
             }
         }
-        ItemMaterialInfo info = GregTechAPI.RECYCLING_MANAGER.getRecyclingData(key);
-        return info == null ? null : info.getFirstMaterial().copy();
+        return null;
     }
 
     public static @Nullable OrePrefix getPrefix(ItemStack itemStack) {
