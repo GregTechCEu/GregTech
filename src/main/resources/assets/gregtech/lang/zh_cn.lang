@@ -170,6 +170,7 @@ gregtech.multiblock.fusion_reactor.zpm.description=核聚变反应堆MK-II是台
 gregtech.multiblock.fusion_reactor.uv.description=核聚变反应堆MK-III是台大型多方块结构，用于融合元素形成更重的元素。它仅可使用UV等级的能源仓。每个能源仓可增加40MEU的能量缓存，最大能量缓存为640MEU。
 gregtech.multiblock.fusion_reactor.heat=热量：%s
 gregtech.multiblock.large_chemical_reactor.description=大型化学反应釜能够以100%%的能效进行化学反应。每次超频将使处理速度与能耗均提升4倍。该多方块结构需要在中心位置的聚四氟乙烯管道外壳旁放置一个白铜线圈方块。
+gregtech.multiblock.large_chemical_reactor.description.0=执行所有 §eChemical Reactor§7 和 §eLarge Chemical Reactor§7 配方
 gregtech.multiblock.primitive_water_pump.description=原始水泵是台前蒸汽时代的多方块结构。它每秒收集一次水资源，基础收集量取决于其所处的生物群系。水泵输出仓以及ULV和LV的输出仓都可以使用，输出仓的等级越高，水资源收集量也会越多。收集量的公式为：生物群系系数*输出仓倍数。
 gregtech.multiblock.primitive_water_pump.extra1=生物群系系数：/n  海洋（Ocean）、河流（River）：1000 L/s/n  沼泽（Swamp）：800 L/s/n  丛林（Jungle）：350 L/s/n  积雪的（Snowy）：300 L/s/n  平原（Plains）、森林（Forest）：250 L/s/n  针叶林（Taiga）：175 L/s/n  沙滩（Beach）：170 L/s/n  其他：100 L/s
 gregtech.multiblock.primitive_water_pump.extra2=输出仓倍数：/n水泵输出仓：1x/nULV输出仓：2x/nLV输出仓：4x
