@@ -1042,61 +1042,12 @@ public class MachineRecipeLoader {
     }
 
     private static void registerBlastFurnaceMetallurgyRecipes() {
-        createSulfurDioxideRecipe(Stibnite, AntimonyTrioxide, 1500);
-        createSulfurDioxideRecipe(Sphalerite, Zincite, 1000);
-        createSulfurDioxideRecipe(Pyrite, BandedIron, 2000);
-        createSulfurDioxideRecipe(Pentlandite, Garnierite, 1000);
-
-        BLAST_RECIPES.recipeBuilder().duration(120).EUt(VA[MV]).blastFurnaceTemp(1200)
-                .input(dust, Tetrahedrite)
-                .fluidInputs(Oxygen.getFluid(3000))
-                .output(dust, CupricOxide)
-                .output(dustTiny, AntimonyTrioxide, 3)
-                .fluidOutputs(SulfurDioxide.getFluid(2000))
-                .buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder().duration(120).EUt(VA[MV]).blastFurnaceTemp(1200)
-                .input(dust, Cobaltite)
-                .fluidInputs(Oxygen.getFluid(3000))
-                .output(dust, CobaltOxide)
-                .output(dust, ArsenicTrioxide)
-                .fluidOutputs(SulfurDioxide.getFluid(1000))
-                .buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder().duration(120).EUt(VA[MV]).blastFurnaceTemp(1200)
-                .input(dust, Galena)
-                .fluidInputs(Oxygen.getFluid(3000))
-                .output(dust, Massicot)
-                .output(nugget, Silver, 6)
-                .fluidOutputs(SulfurDioxide.getFluid(1000))
-                .buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder().duration(120).EUt(VA[MV]).blastFurnaceTemp(1200)
-                .input(dust, Chalcopyrite)
-                .input(dust, SiliconDioxide)
-                .fluidInputs(Oxygen.getFluid(3000))
-                .output(dust, CupricOxide)
-                .output(dust, Ferrosilite)
-                .fluidOutputs(SulfurDioxide.getFluid(2000))
-                .buildAndRegister();
-
         BLAST_RECIPES.recipeBuilder().duration(240).EUt(VA[MV]).blastFurnaceTemp(2273)
                 .input(dust, SiliconDioxide, 3)
                 .input(dust, Carbon, 2)
                 .output(ingotHot, Silicon)
                 .chancedOutput(dust, Ash, 1111, 0)
                 .fluidOutputs(CarbonMonoxide.getFluid(2000))
-                .buildAndRegister();
-    }
-
-    private static void createSulfurDioxideRecipe(Material inputMaterial, Material outputMaterial,
-                                                  int sulfurDioxideAmount) {
-        BLAST_RECIPES.recipeBuilder().duration(120).EUt(VA[MV]).blastFurnaceTemp(1200)
-                .input(dust, inputMaterial)
-                .fluidInputs(Oxygen.getFluid(3000))
-                .output(dust, outputMaterial)
-                .chancedOutput(dust, Ash, 1111, 0)
-                .fluidOutputs(SulfurDioxide.getFluid(sulfurDioxideAmount))
                 .buildAndRegister();
     }
 

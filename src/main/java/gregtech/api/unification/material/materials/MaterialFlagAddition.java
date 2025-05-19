@@ -15,10 +15,6 @@ public class MaterialFlagAddition {
         oreProp = Beryllium.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Emerald, Emerald, Thorium);
 
-        oreProp = Cobalt.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(CobaltOxide, Cobaltite);
-        oreProp.setWashedIn(SodiumPersulfate);
-
         oreProp = Copper.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Cobalt, Gold, Nickel, Gold);
         oreProp.setWashedIn(Mercury);
