@@ -41,7 +41,7 @@ import java.util.stream.Stream;
 @MethodsReturnNonnullByDefault
 public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapper> {
 
-    public static final String UID = GTValues.MODID + ":" + MetaItems.INTEGRATED_CIRCUIT.unlocalizedName;
+    public static final String UID = GTValues.MODID + "." + MetaItems.INTEGRATED_CIRCUIT.unlocalizedName;
     private static final int SLOT_SIZE = 18;
     private static final int ROW_LENGTH = 6;
     private static final int FIRST_SLOT_SCALE = 2;

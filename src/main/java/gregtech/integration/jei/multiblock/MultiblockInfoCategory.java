@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 
 public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRecipeWrapper> {
 
+    public static final String UID = String.format("%s.multiblock_info", GTValues.MODID);
+
     private final IDrawable background;
     private final IDrawable icon;
     private final IGuiHelper guiHelper;
@@ -40,14 +42,13 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
     }
 
     public static void registerRecipes(IModRegistry registry) {
-        registry.addRecipes(REGISTER.stream().map(MultiblockInfoRecipeWrapper::new).collect(Collectors.toList()),
-                "gregtech:multiblock_info");
+        registry.addRecipes(REGISTER.stream().map(MultiblockInfoRecipeWrapper::new).collect(Collectors.toList()), UID);
     }
 
     @NotNull
     @Override
     public String getUid() {
-        return "gregtech:multiblock_info";
+        return UID;
     }
 
     @NotNull
