@@ -71,6 +71,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -498,7 +499,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
-        RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
+        RecipeMap<?> workableRecipeMap = Objects.requireNonNull(workable.getRecipeMap(), "recipe map is null");
         int yOffset = 0;
         if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
                 workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
@@ -509,53 +510,47 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         Widget<?> widget = workableRecipeMap.getRecipeMapUI().buildWidget(workable::getProgressPercent, importItems,
                 exportItems, importFluids, exportFluids, yOffset, guiSyncManager);
 
+        BooleanSyncValue hasEnergy = new BooleanSyncValue(workable::isHasNotEnoughEnergy);
+
         panel.child(widget)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(chargerInventory, 0))
                         .pos(79, 62 + yOffset)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
-                        .tooltip(t -> t.addLine(IKey.lang("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
-                                GTValues.VNF[getTier()]))))
+                        .addTooltipLine(IKey.lang("gregtech.gui.charger_slot.tooltip",
+                                GTValues.VNF[getTier()], GTValues.VNF[getTier()])))
                 .child(new Widget<>()
                         .size(18, 18)
                         .pos(79, 42 + yOffset)
                         .background(GTGuiTextures.INDICATOR_NO_ENERGY)
-                        // todo this isnt synced, and flicker appears on ui open even when it has enough energy
-                        .setEnabledIf($ -> workable.isHasNotEnoughEnergy()))
+                        // todo flicker appears on ui open even when it has enough energy
+                        // will need to test this
+                        .setEnabledIf($ -> hasEnergy.getBoolValue()))
                 .bindPlayerInventory();
 
         int leftButtonStartX = 7;
 
         if (exportItems.getSlots() > 0) {
-            BooleanSyncValue outputValue = new BooleanSyncValue(() -> autoOutputItems, val -> autoOutputItems = val);
-            guiSyncManager.syncValue("item_auto_output", outputValue);
 
             panel.child(new ToggleButton()
                     .pos(leftButtonStartX, 62 + yOffset)
-                    .value(new BoolValue.Dynamic(outputValue::getBoolValue, outputValue::setBoolValue))
                     .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
-                    .tooltipBuilder(t -> t
-                            .setAutoUpdate(true)
-                            .addLine(outputValue.getBoolValue() ?
-                                    IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
-                                    IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled"))));
+                    .value(new BooleanSyncValue(() -> autoOutputItems, val -> autoOutputItems = val))
+                    .addTooltip(true, IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled"))
+                    .addTooltip(false, IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")));
+
             leftButtonStartX += 18;
         }
 
         if (exportFluids.getTanks() > 0) {
-            BooleanSyncValue outputValue = new BooleanSyncValue(() -> autoOutputFluids, val -> autoOutputFluids = val);
-            guiSyncManager.syncValue("fluid_auto_output", outputValue);
 
             panel.child(new ToggleButton()
                     .pos(leftButtonStartX, 62 + yOffset)
-                    .value(new BoolValue.Dynamic(outputValue::getBoolValue, outputValue::setBoolValue))
                     .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
-                    .tooltipBuilder(t -> t
-                            .setAutoUpdate(true)
-                            .addLine(outputValue.getBoolValue() ?
-                                    IKey.lang("gregtech.gui.fluid_auto_output.tooltip.enabled") :
-                                    IKey.lang("gregtech.gui.fluid_auto_output.tooltip.disabled"))));
+                    .value(new BooleanSyncValue(() -> autoOutputFluids, val -> autoOutputFluids = val))
+                    .addTooltip(true, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.enabled"))
+                    .addTooltip(false, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.disabled")));
         }
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
