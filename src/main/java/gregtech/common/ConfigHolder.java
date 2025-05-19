@@ -357,7 +357,7 @@ public class ConfigHolder {
         @Config.Comment({
                 "Setting this to true makes GTCEu ignore error and invalid recipes that would otherwise cause crash.",
                 "Default: true" })
-        public boolean ignoreErrorOrInvalidRecipes = true;
+        public boolean ignoreErrorOrInvalidRecipes = false;
 
         @Config.Comment({ "Whether to enable a login message to players when they join the world.", "Default: true" })
         public boolean loginMessage = true;

@@ -2,9 +2,7 @@ package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.gui.widgets.ProgressWidget.MoveType;
-import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.recipes.builders.CircuitAssemblerRecipeBuilder;
@@ -144,36 +142,26 @@ public final class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<AssemblerRecipeBuilder> ASSEMBLER_RECIPES = new RecipeMapBuilder<>("assembler",
-            new AssemblerRecipeBuilder())
-                    .itemInputs(9)
-                    .itemOutputs(1)
-                    .fluidInputs(1)
-                    .itemSlotOverlay(GuiTextures.CIRCUIT_OVERLAY, false)
-                    .progressBar(GuiTextures.PROGRESS_BAR_CIRCUIT)
-                    .sound(GTSoundEvents.ASSEMBLER)
-                    .onBuild(gregtechId("assembler_solder"), recipeBuilder -> {
-                        var fluidInputs = recipeBuilder.getFluidInputs();
-                        if (fluidInputs.size() == 1 && fluidInputs.get(0).getInputFluidStack().getFluid() ==
-                                Materials.SolderingAlloy.getFluid()) {
-                            int amount = fluidInputs.get(0).getInputFluidStack().amount;
+    public static final RecipeMap<SimpleRecipeBuilder> ASSEMBLER_RECIPES = new RecipeMapBuilder<>("assembler",
+            new SimpleRecipeBuilder())
+            .itemInputs(9)
+            .itemOutputs(1)
+            .fluidInputs(1)
+            .uiBuilder(builder -> builder
+                    .itemSlotOverlay(GTGuiTextures.CIRCUIT_OVERLAY, false)
+                    .progressBar(GTGuiTextures.PROGRESS_BAR_CIRCUIT))
+            .sound(GTSoundEvents.ASSEMBLER)
+            .onBuild(gregtechId("assembler_solder"), recipeBuilder -> {
+                var fluidInputs = recipeBuilder.getFluidInputs();
+                if (fluidInputs.size() == 1 && fluidInputs.get(0).getInputFluidStack().getFluid() ==
+                        Materials.SolderingAlloy.getFluid()) {
+                    int amount = fluidInputs.get(0).getInputFluidStack().amount;
 
-                            recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.Tin.getFluid(amount * 2))
-                                    .buildAndRegister();
-                        }
-                    })
-                    .onBuild(gregtechId("assembler_recycling"), recipeBuilder -> {
-                        if (recipeBuilder.isWithRecycling()) {
-                            // ignore input fluids for recycling
-                            ItemStack outputStack = recipeBuilder.getOutputs().get(0);
-                            ItemMaterialInfo info = RecyclingHandler.getRecyclingIngredients(recipeBuilder.getInputs(),
-                                    outputStack.getCount());
-                            if (info != null) {
-                                OreDictUnifier.registerOre(outputStack, info);
-                            }
-                        }
-                    })
-                    .build();
+                    recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.Tin.getFluid(amount * 2))
+                            .buildAndRegister();
+                }
+            })
+            .build();
 
     /**
      * Example:
@@ -1245,6 +1233,7 @@ public final class RecipeMaps {
             .itemInputs(2)
             .itemOutputs(3)
             .fluidInputs(1)
+            .fluidOutputs(1)
             .uiBuilder(b -> b
                     .itemSlotOverlay(GTGuiTextures.CRUSHED_ORE_OVERLAY, false)
                     .itemSlotOverlay(GTGuiTextures.DUST_OVERLAY, true)
