@@ -39,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide {
@@ -135,8 +136,6 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
                 workable.isWorkingEnabled());
     }
 
-    // todo mui2 check
-
     @Override
     public boolean usesMui2() {
         RecipeMap<?> map = getRecipeMap();
@@ -145,7 +144,7 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
-        RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
+        RecipeMap<?> workableRecipeMap = Objects.requireNonNull(workable.getRecipeMap(), "recipe map is null");
         int yOffset = 0;
         if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
                 workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
