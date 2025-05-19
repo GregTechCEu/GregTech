@@ -144,6 +144,24 @@ gregtech.machine.me_pattern_provider.uxv.name=§eUXV§r样板总成
 gregtech.machine.me_pattern_provider.opv.name=§9OpV§r样板总成
 gregtech.machine.me_pattern_provider.max.name=§c§lMAX§r样板总成
 
+gregtech.machine.thread_hatch.lv.name=线程控制仓(LV)
+gregtech.machine.thread_hatch.mv.name=线程控制仓(MV)
+gregtech.machine.thread_hatch.hv.name=线程控制仓(HV)
+gregtech.machine.thread_hatch.ev.name=线程控制仓(EV)
+gregtech.machine.thread_hatch.iv.name=线程控制仓(IV)
+gregtech.machine.thread_hatch.luv.name=线程控制仓(LuV)
+gregtech.machine.thread_hatch.zpm.name=线程控制仓(ZPM)
+gregtech.machine.thread_hatch.uv.name=线程控制仓(UV)
+gregtech.machine.thread_hatch.uhv.name=线程控制仓(UHV)
+gregtech.machine.thread_hatch.uev.name=线程控制仓(UEV)
+gregtech.machine.thread_hatch.uiv.name=线程控制仓(UIV)
+gregtech.machine.thread_hatch.uxv.name=线程控制仓(UXV)
+gregtech.machine.thread_hatch.opv.name=线程控制仓(OPV)
+gregtech.machine.thread_hatch.max.name=线程控制仓(Max)
+
+gregtech.machine.thread_hatch.tooltip=最多可同时处理§b%s§7个核心的任务。
+gregtech.machine.thread_hatch.display=调整多方块的独立核心数量。
+
 gregtech.machine.me_dual_hatch.import.name=ME输入总成
 gregtech.machine.me_dual_hatch.export.name=ME输出总成
 #gui
@@ -161,5 +179,16 @@ gregtech.gui.dual_auto_collapse.tooltip.disabled=物品/流体堆叠自动合并
 #tooltip
 gregtech.machine.me_pattern.tooltip.1=内置样板供应器，使用样板标记配方后可直接下单至机器
 gregtech.machine.me_pattern.tooltip.2=阻挡模式：只允许与总成缓存的相同配方物品流进入总成，其他配方的物品流将被阻挡
+gregtech.machine.me_pattern.tooltip.3=样板优化：将样板自动倍乘到当前并行数量，多方块并行变更也会导致样板倍乘自动变更
+
+gregtech.machine.thread_multiblock.tooltip.1=本设备支持使用线程仓进行核心拓展，支持在不同批次处理不同种类的配方
+gregtech.machine.thread_multiblock.tooltip.2=每个核心都拥有完整且独立的配方调度系统，各核心的耗电，超频，并行等计算相互独立
+gregtech.machine.thread_multiblock.tooltip.3=只能在机器不工作时调整线程数量，线程数量过多会导致极其严重的性能损耗
+
+gregtech.machine.budget_crib_proxy.tooltip=Shares the inventory of the linked Budget CRIB
+
+gregtech.machine.budget_crib.data_stick_use=Wrote location to data stick
+gregtech.machine.budget_crib.data_stick_name=Budget CRIB Location Data
+gregtech.machine.budget_crib_proxy.data_stick_use=Linked to Budget CRIB at X: %s, Y: %s, Z: %s
 #item group
 itemGroup.gtqt_programmable=量子跃迁 | 可编程舱室

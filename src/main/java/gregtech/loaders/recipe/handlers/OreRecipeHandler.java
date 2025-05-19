@@ -32,8 +32,8 @@ public class OreRecipeHandler {
 
     public static void register() {
         OrePrefix.ore.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
-        OrePrefix.oreEndstone.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
-        OrePrefix.oreNetherrack.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
+        OrePrefix.oreEndstone.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOreDouble);
+        OrePrefix.oreNetherrack.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOreDouble);
         if (ConfigHolder.worldgen.allUniqueStoneTypes) {
             OrePrefix.oreGranite.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
             OrePrefix.oreDiorite.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
@@ -78,6 +78,14 @@ public class OreRecipeHandler {
     }
 
     public static void processOre(OrePrefix orePrefix, Material material, OreProperty property) {
+        processOre(orePrefix, material, property, 1);
+    }
+
+    public static void processOreDouble(OrePrefix orePrefix, Material material, OreProperty property) {
+        processOre(orePrefix, material, property, 2);
+    }
+
+    public static void processOre(OrePrefix orePrefix, Material material, OreProperty property, int oreTypeMultiplier) {
         Material byproductMaterial = property.getOreByProduct(0, material);
         ItemStack byproductStack = OreDictUnifier.get(OrePrefix.gem, byproductMaterial);
         if (byproductStack.isEmpty()) byproductStack = OreDictUnifier.get(OrePrefix.dust, byproductMaterial);
@@ -93,7 +101,7 @@ public class OreRecipeHandler {
         } else {
             ingotStack = OreDictUnifier.get(OrePrefix.dust, smeltingMaterial);
         }
-        int oreTypeMultiplier = orePrefix == OrePrefix.oreNetherrack || orePrefix == OrePrefix.oreEndstone ? 2 : 1;
+
         ingotStack.setCount(ingotStack.getCount() * property.getOreMultiplier() * oreTypeMultiplier);
         crushedStack.setCount(crushedStack.getCount() * property.getOreMultiplier());
 

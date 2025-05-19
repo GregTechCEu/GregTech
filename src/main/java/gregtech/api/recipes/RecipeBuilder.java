@@ -25,6 +25,7 @@ import gregtech.api.recipes.properties.impl.DimensionProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -93,6 +94,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected boolean ignoreAllBuildActions = false;
     protected Map<ResourceLocation, RecipeBuildAction<R>> ignoredBuildActions;
 
+    private boolean withItemRecycling;
+
     protected RecipeBuilder() {
         this.inputs = new ArrayList<>();
         this.outputs = new ArrayList<>();
@@ -137,8 +140,15 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (recipeBuilder.ignoredBuildActions != null) {
             this.ignoredBuildActions = new Object2ObjectOpenHashMap<>(recipeBuilder.ignoredBuildActions);
         }
+        this.withItemRecycling = recipeBuilder.hasItemRecycling();
     }
-
+    /**
+     * Generate Recycling Data based on this recipe's Items
+     */
+    public R withRecycling() {
+        this.withItemRecycling = true;
+        return (R) this;
+    }
     public R cleanroom(@Nullable CleanroomType cleanroom) {
         if (ConfigHolder.machines.enableCleanroom && cleanroom != null) {
             this.applyProperty(CleanroomProperty.getInstance(), cleanroom);
@@ -1071,10 +1081,21 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 buildAction.getValue().accept((R) this);
             }
         }
+        if (hasItemRecycling()) {
+            // ignore input fluids for item-only recycling
+            ItemStack outputStack = getOutputs().get(0);
+            ItemMaterialInfo info = RecyclingHandler.getRecyclingIngredients(getInputs(), outputStack.getCount());
+            if (info != null) {
+                OreDictUnifier.registerOre(outputStack, info);
+            }
+        }
+
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);
     }
-
+    public boolean hasItemRecycling() {
+        return withItemRecycling;
+    }
     ///////////////////
     // Getters //
     ///////////////////

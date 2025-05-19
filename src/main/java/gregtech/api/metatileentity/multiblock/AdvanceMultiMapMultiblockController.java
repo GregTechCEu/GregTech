@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class MultiMapMultiblockController extends RecipeMapMultiblockController
+public abstract class AdvanceMultiMapMultiblockController extends AdvanceRecipeMapMultiblockController
         implements IMultipleRecipeMaps {
 
     // array of possible recipes, specific to each multi - used when the multi has multiple RecipeMaps
@@ -40,7 +40,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     // index of the current selected recipe - used when the multi has multiple RecipeMaps
     private int recipeMapIndex = 0;
 
-    public MultiMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?>[] recipeMaps) {
+    public AdvanceMultiMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?>[] recipeMaps) {
         super(metaTileEntityId, recipeMaps[0]);
         this.recipeMaps = recipeMaps;
     }
@@ -50,7 +50,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
                                       CuboidRayTraceResult hitResult) {
         if (recipeMaps.length == 1) return true;
         if (!getWorld().isRemote) {
-            if (!this.recipeMapWorkable.isActive()) {
+            if (!checkActive()) {
                 int index;
                 RecipeMap<?>[] recipeMaps = getAvailableRecipeMaps();
                 if (playerIn.isSneaking()) // cycle recipemaps backwards
@@ -83,7 +83,8 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
         this.recipeMapIndex = index;
         if (!getWorld().isRemote) {
             writeCustomData(GregtechDataCodes.RECIPE_MAP_INDEX, buf -> buf.writeByte(index));
-            recipeMapWorkable.forceRecipeRecheck();
+            for (MultiblockRecipeLogic multiblockRecipeLogic : recipeMapWorkable)
+                multiblockRecipeLogic.forceRecipeRecheck();
             markDirty();
         }
     }
@@ -135,6 +136,9 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
                 predicate = predicate.or(abilities(MultiblockAbility.DUAL_EXPORT).setPreviewCount(1));
             }
         }
+
+        predicate = predicate
+                .or(abilities(MultiblockAbility.THREAD_HATCH).setMaxGlobalLimited(1).setPreviewCount(1));
         return predicate;
     }
 
@@ -154,9 +158,9 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
         if (recipeMaps.length == 1) return;
         tooltip.add(I18n.format("gregtech.multiblock.multiple_recipemaps_recipes.tooltip", this.recipeMapsToString()));
+        super.addInformation(stack, player, tooltip, advanced);
     }
 
     @SideOnly(Side.CLIENT)

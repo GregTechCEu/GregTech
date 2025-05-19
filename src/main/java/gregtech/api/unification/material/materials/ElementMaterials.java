@@ -194,7 +194,7 @@ public class ElementMaterials {
                 .ore()
                 .color(0xFF6400).iconSet(SHINY)
                 .flags(EXT_METAL, MORTAR_GRINDABLE, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE,
-                        GENERATE_DOUBLE_PLATE)
+                        GENERATE_DOUBLE_PLATE,GENERATE_RING)
                 .element(Elements.Cu)
                 .cableProperties(V[MV], 1, 2)
                 .fluidPipeProperties(1696, 6, true)

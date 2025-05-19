@@ -1,12 +1,10 @@
 package gtqt.common.metatileentities.multi.multiblockpart;
 
-import appeng.api.storage.channels.IFluidStorageChannel;
-import appeng.api.storage.data.IAEFluidStack;
-
 import gregtech.api.capability.DualHandler;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
@@ -23,6 +21,7 @@ import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.PagedWidgetSyncHandler;
@@ -71,7 +70,9 @@ import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.IStorageChannel;
+import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.channels.IItemStorageChannel;
+import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.util.AECableType;
 import appeng.api.util.AEPartLocation;
@@ -110,6 +111,7 @@ import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.glodblock.github.common.item.fake.FakeFluids;
 import com.glodblock.github.common.item.fake.FakeItemRegister;
+import gtqt.api.util.PatternUtils;
 import gtqt.common.metatileentities.GTQTMetaTileEntities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -128,7 +130,7 @@ import static gtqt.api.util.GTQTUtility.isInventoryEmpty;
 
 public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNotifiablePart
         implements IMultiblockAbilityPart<DualHandler>, IControllable, IGhostSlotConfigurable,
-                   ICraftingProvider, IAEFluidInventory, IGridProxyable, IPowerChannelState {
+                   ICraftingProvider, IAEFluidInventory, IGridProxyable, IPowerChannelState, IDataStickIntractable {
 
     private static final IDrawable CHEST = new ItemDrawable(new ItemStack(Blocks.CHEST))
             .asIcon().size(16);
@@ -156,6 +158,10 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
     private IItemHandlerModifiable extraItem;
     // Controls blocking
     private boolean isBlockedMode = true;
+
+    private boolean patternDeal = false;
+    private int parallel;
+    private int lastParallel;
 
     public MetaTileEntityMEPatternProvider(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false);
@@ -229,6 +235,10 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         return this.actualImportItems == null ? super.getImportItems() : this.actualImportItems;
     }
 
+    public IItemHandlerModifiable getActualImportItems() {
+        return actualImportItems;
+    }
+
     @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
@@ -257,7 +267,27 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
     @Override
     public void update() {
         super.update();
+        if (patternDeal && getOffsetTimer() % 20 == 0) {
+            if (isAttachedToMultiBlock()) {
+                MultiblockControllerBase controllerBase = getController();
+                if (controllerBase instanceof RecipeMapMultiblockController controller) {
+                    if (controller.getRecipeMapWorkable().getParallelLimit() != 0) {
 
+                        lastParallel = parallel;
+                        parallel = controller.getRecipeMapWorkable().getParallelLimit();
+
+                        if (lastParallel != 1 || parallel != 1) {
+                            for (int i = 0; i < patternSlot.getSlots(); i++) {
+                                ItemStack pattern = patternSlot.getStackInSlot(i);
+                                if (pattern.getItem() instanceof ICraftingPatternItem) {
+                                    PatternUtils.adjustPatternMultipliers(pattern, lastParallel, parallel);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         if (!getWorld().isRemote) {
             updateMEStatus();
 
@@ -309,6 +339,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
             }
         }
     }
+
     private void returnItems() {
         if (checkIfEmpty()) return;
 
@@ -329,11 +360,13 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
             }
         }
     }
+
     private IMEMonitor<IAEFluidStack> getFluidMonitor() {
         AENetworkProxy proxy = getProxy();
         if (proxy == null) return null;
 
-        IStorageChannel<IAEFluidStack> channel = AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class);
+        IStorageChannel<IAEFluidStack> channel = AEApi.instance().storage()
+                .getStorageChannel(IFluidStorageChannel.class);
 
         try {
             return proxy.getStorage().getInventory(channel);
@@ -341,6 +374,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
             return null;
         }
     }
+
     private IMEMonitor<IAEItemStack> getItemMonitor() {
         AENetworkProxy proxy = getProxy();
         if (proxy == null) return null;
@@ -367,13 +401,12 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         return false;
     }
 
-    public boolean updateMEStatus() {
+    public void updateMEStatus() {
         boolean isOnline = this.networkProxy != null && this.networkProxy.isActive() && this.networkProxy.isPowered();
         if (this.isOnline != isOnline) {
             writeCustomData(UPDATE_ONLINE_STATUS, buf -> buf.writeBoolean(isOnline));
             this.isOnline = isOnline;
         }
-        return this.isOnline;
     }
 
     @Override
@@ -465,7 +498,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         }
         this.isOnline = buf.readBoolean();
         this.isBlockedMode = buf.readBoolean();
-        this.export=buf.readBoolean();
+        this.export = buf.readBoolean();
     }
 
     @Override
@@ -476,6 +509,9 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         data.setBoolean("workingEnabled", workingEnabled);
         data.setBoolean("BlockingEnabled", this.isBlockedMode);
         data.setBoolean("Export", this.export);
+        data.setBoolean("patternDeal", this.patternDeal);
+        data.setInteger("parallel", this.parallel);
+        data.setInteger("lastParallel", this.lastParallel);
 
         if (this.circuitInventory != null) {
             this.circuitInventory.write(data);
@@ -491,8 +527,11 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         setPatternDetails();
 
         this.workingEnabled = data.getBoolean("workingEnabled");
-        this.isBlockedMode= data.getBoolean("BlockingEnabled");
+        this.isBlockedMode = data.getBoolean("BlockingEnabled");
         this.export = data.getBoolean("Export");
+        this.patternDeal = data.getBoolean("patternDeal");
+        this.parallel = data.getInteger("parallel");
+        this.lastParallel = data.getInteger("lastParallel");
 
         if (this.circuitInventory != null) {
             this.circuitInventory.read(data);
@@ -675,6 +714,9 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         BooleanSyncValue exportStateValue = new BooleanSyncValue(() -> export, val -> export = val);
         guiSyncManager.syncValue("export_state", exportStateValue);
 
+        BooleanSyncValue patternStateValue = new BooleanSyncValue(() -> patternDeal, val -> patternDeal = val);
+        guiSyncManager.syncValue("pattern_state", patternStateValue);
+
         boolean hasGhostCircuit = hasGhostCircuitInventory() && this.circuitInventory != null;
 
         var controller = new PagedWidget.Controller();
@@ -726,30 +768,43 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
                         .width(18).height(18 * 4 + 5)
                         .child(new ToggleButton()
                                 .top(18 * 3 + 5)
-                                .value(new BoolValue.Dynamic(exportStateValue::getBoolValue, exportStateValue::setBoolValue))
+                                .value(new BoolValue.Dynamic(exportStateValue::getBoolValue,
+                                        exportStateValue::setBoolValue))
                                 .overlay(GTGuiTextures.EXPORT_OVERLAY)
                                 .tooltipBuilder(t -> t.setAutoUpdate(true)
                                         .addLine(IKey.lang("返回模式"))))
                         .child(new ToggleButton()
                                 .top(18 * 2)
-                                .value(new BoolValue.Dynamic(blockStateValue::getBoolValue, blockStateValue::setBoolValue))
+                                .value(new BoolValue.Dynamic(blockStateValue::getBoolValue,
+                                        blockStateValue::setBoolValue))
                                 .overlay(GTGuiTextures.BUTTON_DUAL_OUTPUT)
                                 .tooltipBuilder(t -> t.setAutoUpdate(true)
                                         .addLine(IKey.lang("阻挡模式"))))
                         .child(new ToggleButton()
                                 .top(18)
-                                .value(new BoolValue.Dynamic(collapseStateValue::getBoolValue, collapseStateValue::setBoolValue))
+                                .value(new BoolValue.Dynamic(collapseStateValue::getBoolValue,
+                                        collapseStateValue::setBoolValue))
                                 .overlay(GTGuiTextures.BUTTON_DUAL_COLLAPSE)
                                 .tooltipBuilder(t -> t.setAutoUpdate(true)
                                         .addLine(IKey.lang("自动整理"))))
+
                         .childIf(hasGhostCircuit, new GhostCircuitSlotWidget()
+                                .top(-18 - 10)
                                 .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
                         .childIf(!hasGhostCircuit, new Widget<>()
+                                .top(-18 - 10)
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.BUTTON_X)
                                 .tooltip(t -> t.addLine(
                                         IKey.lang("gregtech.gui.configurator_slot.unavailable.tooltip")))
                         )
+
+                        .child(new ToggleButton()
+                                .value(new BoolValue.Dynamic(patternStateValue::getBoolValue,
+                                        patternStateValue::setBoolValue))
+                                .overlay(GTGuiTextures.PATTERN_OVERLAY)
+                                .tooltipBuilder(t -> t.setAutoUpdate(true)
+                                        .addLine(IKey.lang("样板优化"))))
                 );
     }
 
@@ -914,13 +969,12 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
 
         return true;
     }
+
     @Override
     public boolean pushPattern(ICraftingPatternDetails iCraftingPatternDetails, InventoryCrafting inventoryCrafting) {
         if (!isActive()) return false;
 
-
-        if(checkIfEmpty()&&checkIfFluidEmpty())
-        {
+        if (checkIfEmpty() && checkIfFluidEmpty()) {
             return addItemAndFluid(inventoryCrafting);
         }
 
@@ -974,9 +1028,11 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
     private boolean checkIfEmpty() {
         return isInventoryEmpty(importItems);
     }
+
     private boolean checkIfFluidEmpty() {
         return isFluidTankListEmpty(fluidTankList);
     }
+
     @Override
     public void onFluidInventoryChanged(IAEFluidTank iaeFluidTank, int i) {
         markDirty();
@@ -987,10 +1043,37 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
                                boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.2"));
+        tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.3"));
         tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.fluid_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getSlotByTier()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", numSlots, tankSize));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
+
+    @Override
+    public void onDataStickLeftClick(EntityPlayer player, ItemStack dataStick) {
+        NBTTagCompound tag = new NBTTagCompound();
+
+        tag.setTag("BudgetCRIB", writeLocationToTag());
+        dataStick.setTagCompound(tag);
+        dataStick.setTranslatableName("gregtech.machine.budget_crib.data_stick_name");
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.budget_crib.data_stick_use"), true);
+    }
+
+    private NBTTagCompound writeLocationToTag() {
+        NBTTagCompound tag = new NBTTagCompound();
+
+        tag.setInteger("MainX", getPos().getX());
+        tag.setInteger("MainY", getPos().getY());
+        tag.setInteger("MainZ", getPos().getZ());
+
+        return tag;
+    }
+
+    @Override
+    public boolean onDataStickRightClick(EntityPlayer player, ItemStack dataStick) {
+        return false;
+    }
+
 }

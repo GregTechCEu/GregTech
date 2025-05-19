@@ -1,5 +1,7 @@
 package gregtech.loaders;
 
+import com.google.common.base.CaseFormat;
+
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Color;
@@ -113,8 +115,13 @@ public class OreDictionaryLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONE, 1, 4), OrePrefix.stone, Materials.Diorite);
 
         for (StoneVariantBlock.StoneType type : StoneVariantBlock.StoneType.values()) {
-            ItemStack item = MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH).getItemVariant(type);
-            OreDictUnifier.registerOre(item, type.getOrePrefix(), type.getMaterial());
+            ItemStack smoothType = MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH)
+                    .getItemVariant(type);
+            OreDictUnifier.registerOre(smoothType, type.getOrePrefix(), type.getMaterial());
+            ItemStack cobbleType = MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.COBBLE)
+                    .getItemVariant(type);
+            OreDictUnifier.registerOre(cobbleType,
+                    CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, "cobble_" + type.getName()));
         }
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.ANVIL), "craftingAnvil");

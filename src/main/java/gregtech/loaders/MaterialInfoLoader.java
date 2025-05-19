@@ -136,7 +136,8 @@ public class MaterialInfoLoader {
 
         OreDictUnifier.registerOre(MetaTileEntities.ENERGY_INPUT_HATCH[5].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.TungstenSteel, M * 8), // plate
-                new MaterialStack(Materials.Tungsten, M * 2), // single cable
+                new MaterialStack(Materials.Platinum, M), // single cable
+                new MaterialStack(Materials.Tungsten, M), // single cable
                 new MaterialStack(Materials.Rubber, M * 4), // plate
                 new MaterialStack(Materials.Iridium, M * 2), // fine wire
                 new MaterialStack(Materials.NeodymiumMagnetic, M / 2) // rod
@@ -160,7 +161,8 @@ public class MaterialInfoLoader {
 
         OreDictUnifier.registerOre(MetaTileEntities.ENERGY_OUTPUT_HATCH[5].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.TungstenSteel, M * 8), // plate
-                new MaterialStack(Materials.Tungsten, 3 * M), // single cable + spring
+                new MaterialStack(Materials.Platinum, M), // single cable
+                new MaterialStack(Materials.Tungsten, M * 2), // spring
                 new MaterialStack(Materials.Rubber, M * 2), // plate
                 new MaterialStack(Materials.Iridium, M * 2), // fine wire
                 new MaterialStack(Materials.NeodymiumMagnetic, M / 2) // rod

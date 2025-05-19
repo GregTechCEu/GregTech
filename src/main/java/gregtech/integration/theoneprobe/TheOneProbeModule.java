@@ -27,6 +27,7 @@ public class TheOneProbeModule extends IntegrationSubmodule {
         getLogger().info("TheOneProbe found. Enabling integration...");
         ITheOneProbe oneProbe = TheOneProbe.theOneProbeImp;
         oneProbe.registerProvider(new ElectricContainerInfoProvider());
+        oneProbe.registerProvider(new MultiblockCoreProvider());
         oneProbe.registerProvider(new WorkableInfoProvider());
         oneProbe.registerProvider(new ControllableInfoProvider());
         oneProbe.registerProvider(new TransformerInfoProvider());
@@ -46,6 +47,7 @@ public class TheOneProbeModule extends IntegrationSubmodule {
         oneProbe.registerProvider(new QuantumStorageProvider());
         oneProbe.registerProvider(new ActiveTransformerInfoProvider());
         oneProbe.registerProvider(new BatteryBufferInfoProvider());
+        oneProbe.registerProvider(new AEMultiblockHatchProvider());
 
         // Dev environment debug providers
         oneProbe.registerProvider(new DebugPipeNetInfoProvider());

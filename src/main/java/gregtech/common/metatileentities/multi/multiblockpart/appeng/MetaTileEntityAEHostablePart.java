@@ -38,14 +38,14 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_ONLINE_STATUS;
 
 public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extends MetaTileEntityMultiblockNotifiablePart
-                                                  implements IControllable {
+        implements IControllable {
 
     private final Class<? extends IStorageChannel<T>> storageChannel;
+    protected boolean isOnline;
+    protected boolean meStatusChanged = false;
     private AENetworkProxy aeProxy;
     private int meUpdateTick;
-    protected boolean isOnline;
     private boolean allowExtraConnections;
-    protected boolean meStatusChanged = false;
 
     public MetaTileEntityAEHostablePart(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch,
                                         Class<? extends IStorageChannel<T>> storageChannel) {
@@ -63,9 +63,12 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
         }
     }
 
+    public boolean isOnline() {
+        return isOnline;
+    }
+
     /**
-     * ME hatch will try to put its buffer back to me system when removal.
-     * So there is no need to drop them.
+     * ME hatch will try to put its buffer back to me system when removal. So there is no need to drop them.
      */
     @Override
     public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {}
@@ -150,7 +153,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
 
     /**
      * Get the me network connection status, updating it if on serverside.
-     * 
+     *
      * @return the updated status.
      */
     public boolean updateMEStatus() {
@@ -227,7 +230,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
 
         if (!getWorld().isRemote) {
             playerIn.sendStatusMessage(new TextComponentTranslation(this.allowExtraConnections ?
-                    "gregtech.machine.me.extra_connections.enabled" : "gregtech.machine.me.extra_connections.disabled"),
+                            "gregtech.machine.me.extra_connections.enabled" : "gregtech.machine.me.extra_connections.disabled"),
                     true);
         }
 

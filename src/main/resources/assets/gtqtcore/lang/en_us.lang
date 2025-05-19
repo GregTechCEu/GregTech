@@ -96,67 +96,100 @@ metaitem.endless_spray.can.dyes.green.name=Endless Spray Can (Green)
 metaitem.endless_spray.can.dyes.red.name=Endless Spray Can (Red)
 metaitem.endless_spray.can.dyes.black.name=Endless Spray Can (Black)
 #hatch
-gregtech.machine.dual_hatch.import.ulv.name=§8ULV§r输入总成
-gregtech.machine.dual_hatch.import.lv.name=§7LV§r输入总成
-gregtech.machine.dual_hatch.import.mv.name=§bMV§r输入总成
-gregtech.machine.dual_hatch.import.hv.name=§6HV§r输入总成
-gregtech.machine.dual_hatch.import.ev.name=§5EV§r输入总成
-gregtech.machine.dual_hatch.import.iv.name=§1IV§r输入总成
-gregtech.machine.dual_hatch.import.luv.name=§dLuV§r输入总成
-gregtech.machine.dual_hatch.import.zpm.name=§cZPM§r输入总成
-gregtech.machine.dual_hatch.import.uv.name=§3UV§r输入总成
-gregtech.machine.dual_hatch.import.uhv.name=§4UHV§r输入总成
-gregtech.machine.dual_hatch.import.uev.name=§aUEV§r输入总成
-gregtech.machine.dual_hatch.import.uiv.name=§2UIV§r输入总成
-gregtech.machine.dual_hatch.import.uxv.name=§eUXV§r输入总成
-gregtech.machine.dual_hatch.import.opv.name=§9OpV§r输入总成
-gregtech.machine.dual_hatch.import.max.name=§c§lMAX§r输入总成
+gregtech.machine.dual_hatch.import.ulv.name=§8ULV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.lv.name=§7LV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.mv.name=§bMV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.hv.name=§6HV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.ev.name=§5EV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.iv.name=§1IV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.luv.name=§dLuV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.zpm.name=§cZPM§rDual Input Hatch
+gregtech.machine.dual_hatch.import.uv.name=§3UV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.uhv.name=§4UHV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.uev.name=§aUEV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.uiv.name=§2UIV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.uxv.name=§eUXV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.opv.name=§9OpV§rDual Input Hatch
+gregtech.machine.dual_hatch.import.max.name=§c§lMAX§rDual Input Hatch
 
-gregtech.machine.dual_hatch.export.ulv.name=§8ULV§r输出总成
-gregtech.machine.dual_hatch.export.lv.name=§7LV§r输出总成
-gregtech.machine.dual_hatch.export.mv.name=§bMV§r输出总成
-gregtech.machine.dual_hatch.export.hv.name=§6HV§r输出总成
-gregtech.machine.dual_hatch.export.ev.name=§5EV§r输出总成
-gregtech.machine.dual_hatch.export.iv.name=§1IV§r输出总成
-gregtech.machine.dual_hatch.export.luv.name=§dLuV§r输出总成
-gregtech.machine.dual_hatch.export.zpm.name=§cZPM§r输出总成
-gregtech.machine.dual_hatch.export.uv.name=§3UV§r输出总成
-gregtech.machine.dual_hatch.export.uhv.name=§4UHV§r输出总成
-gregtech.machine.dual_hatch.export.uev.name=§aUEV§r§aUEV§r输出总成
-gregtech.machine.dual_hatch.export.uiv.name=§2UIV§r输出总成
-gregtech.machine.dual_hatch.export.uxv.name=§eUXV§r输出总成
-gregtech.machine.dual_hatch.export.opv.name=§9OpV§r输出总成
-gregtech.machine.dual_hatch.export.max.name=§c§lMAX§r输出总成
+gregtech.machine.dual_hatch.export.ulv.name=§8ULV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.lv.name=§7LV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.mv.name=§bMV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.hv.name=§6HV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.ev.name=§5EV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.iv.name=§1IV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.luv.name=§dLuV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.zpm.name=§cZPM§rDual Output Hatch
+gregtech.machine.dual_hatch.export.uv.name=§3UV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.uhv.name=§4UHV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.uev.name=§aUEV§r§aUEV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.uiv.name=§2UIV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.uxv.name=§eUXV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.opv.name=§9OpV§rDual Output Hatch
+gregtech.machine.dual_hatch.export.max.name=§c§lMAX§rDual Output Hatch
 
-gregtech.machine.me_pattern_provider.ulv.name=§8ULV§r样板总成
-gregtech.machine.me_pattern_provider.lv.name=§7LV§r样板总成
-gregtech.machine.me_pattern_provider.mv.name=§bMV§r样板总成
-gregtech.machine.me_pattern_provider.hv.name=§6HV§r样板总成
-gregtech.machine.me_pattern_provider.ev.name=§5EV§r样板总成
-gregtech.machine.me_pattern_provider.iv.name=§1IV§r样板总成
-gregtech.machine.me_pattern_provider.luv.name=§dLuV§r样板总成
-gregtech.machine.me_pattern_provider.zpm.name=§cZPM§r样板总成
-gregtech.machine.me_pattern_provider.uv.name=§3UV§r样板总成
-gregtech.machine.me_pattern_provider.uhv.name=§4UHV§r样板总成
-gregtech.machine.me_pattern_provider.uev.name=§aUEV§r样板总成
-gregtech.machine.me_pattern_provider.uiv.name=§2UIV§r样板总成
-gregtech.machine.me_pattern_provider.uxv.name=§eUXV§r样板总成
-gregtech.machine.me_pattern_provider.opv.name=§9OpV§r样板总成
-gregtech.machine.me_pattern_provider.max.name=§c§lMAX§r样板总成
+gregtech.machine.me_pattern_provider.ulv.name=§8ULV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.lv.name=§7LV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.mv.name=§bMV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.hv.name=§6HV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.ev.name=§5EV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.iv.name=§1IV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.luv.name=§dLuV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.zpm.name=§cZPM§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.uv.name=§3UV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.uhv.name=§4UHV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.uev.name=§aUEV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.uiv.name=§2UIV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.uxv.name=§eUXV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.opv.name=§9OpV§rDual Pattern Hatch
+gregtech.machine.me_pattern_provider.max.name=§c§lMAX§rDual Pattern Hatch
 
-gregtech.machine.me_dual_hatch.import.name=ME输入总成
-gregtech.machine.me_dual_hatch.export.name=ME输出总成
-#gui
-gregtech.gui.output_item.tooltip.enabled=排出灰烬（是）
-gregtech.gui.output_item.tooltip.disabled=排出灰烬（否）
+gregtech.machine.thread_hatch.lv.name=Thread Hatch(LV)
+gregtech.machine.thread_hatch.mv.name=Thread Hatch(MV)
+gregtech.machine.thread_hatch.hv.name=Thread Hatch(HV)
+gregtech.machine.thread_hatch.ev.name=Thread Hatch(EV)
+gregtech.machine.thread_hatch.iv.name=Thread Hatch(IV)
+gregtech.machine.thread_hatch.luv.name=Thread Hatch(LuV)
+gregtech.machine.thread_hatch.zpm.name=Thread Hatch(ZPM)
+gregtech.machine.thread_hatch.uv.name=Thread Hatch(UV)
+gregtech.machine.thread_hatch.uhv.name=Thread Hatch(UHV)
+gregtech.machine.thread_hatch.uev.name=Thread Hatch(UEV)
+gregtech.machine.thread_hatch.uiv.name=Thread Hatch(UIV)
+gregtech.machine.thread_hatch.uxv.name=Thread Hatch(UXV)
+gregtech.machine.thread_hatch.opv.name=Thread Hatch(OPV)
+gregtech.machine.thread_hatch.max.name=Thread Hatch(Max)
 
-gregtech.gui.dual_auto_input.tooltip.enabled=物品/流体自动输入已启用
-gregtech.gui.dual_auto_input.tooltip.disabled=物品/流体自动输入已禁用
-gregtech.gui.dual_auto_output.tooltip.enabled=物品/流体自动输出已启用
-gregtech.gui.dual_auto_output.tooltip.disabled=物品/流体自动输出已禁用
+gregtech.machine.thread_hatch.tooltip=Can simultaneously process tasks for §b%s§7 cores at maximum.
+gregtech.machine.thread_hatch.display=Adjust independent core count for multiblocks.
 
-gregtech.gui.dual_auto_collapse.tooltip.enabled=物品/流体堆叠自动合并已启用
-gregtech.gui.dual_auto_collapse.tooltip.disabled=物品/流体堆叠自动合并已禁用
+gregtech.machine.me_dual_hatch.import.name=ME Input Bus
+gregtech.machine.me_dual_hatch.export.name=ME Output Bus
 
+# GUI
+gregtech.gui.output_item.tooltip.enabled=Ash Auto-Eject (Enabled)
+gregtech.gui.output_item.tooltip.disabled=Ash Auto-Eject (Disabled)
+
+gregtech.gui.dual_auto_input.tooltip.enabled=Item/Fluid Auto-Input (Enabled)
+gregtech.gui.dual_auto_input.tooltip.disabled=Item/Fluid Auto-Input (Disabled)
+gregtech.gui.dual_auto_output.tooltip.enabled=Item/Fluid Auto-Output (Enabled)
+gregtech.gui.dual_auto_output.tooltip.disabled=Item/Fluid Auto-Output (Disabled)
+
+gregtech.gui.dual_auto_collapse.tooltip.enabled=Item/Fluid Stack Auto-Collapse (Enabled)
+gregtech.gui.dual_auto_collapse.tooltip.disabled=Item/Fluid Stack Auto-Collapse (Disabled)
+
+# Tooltips
+gregtech.machine.me_pattern.tooltip.1=Built-in pattern provider: Directly orders machines after marking recipes with patterns
+gregtech.machine.me_pattern.tooltip.2=Blocking Mode: Only allows item flows matching cached recipes in bus, blocks other recipe items
+gregtech.machine.me_pattern.tooltip.3=Pattern Optimization: Automatically multiplies patterns according to current thread count, adjusts dynamically with multiblock parallel changes
+
+gregtech.machine.thread_multiblock.tooltip.1=Supports core expansion via thread hatches for processing different recipe types across batches
+gregtech.machine.thread_multiblock.tooltip.2=Each core has complete independent recipe scheduling system with separate power/overclocking/parallel calculations
+gregtech.machine.thread_multiblock.tooltip.3=Core adjustments only allowed when idle. Excessive threads may cause severe performance impact
+
+gregtech.machine.budget_crib_proxy.tooltip=Shares the inventory of the linked Budget CRIB
+
+gregtech.machine.budget_crib.data_stick_use=Wrote location to data stick
+gregtech.machine.budget_crib.data_stick_name=Budget CRIB Location Data
+gregtech.machine.budget_crib_proxy.data_stick_use=Linked to Budget CRIB at X: %s, Y: %s, Z: %s
 #item group
-itemGroup.gtqt_programmable=量子跃迁 | 可编程舱室
+itemGroup.gtqt_programmable=GTQT | Programmable Hatch

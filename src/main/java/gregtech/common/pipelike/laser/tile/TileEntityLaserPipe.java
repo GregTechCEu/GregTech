@@ -37,6 +37,10 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     private int activeDuration = 0;
     private boolean isActive = false;
 
+    public ILaserContainer getClientCapability()
+    {
+        return clientCapability;
+    }
     @Override
     public Class<LaserPipeType> getPipeTypeClass() {
         return LaserPipeType.class;
