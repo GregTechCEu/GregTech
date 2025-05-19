@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
+import gregtech.api.metatileentity.IAEStatusProvider;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockNotifiablePart;
 
@@ -29,7 +30,8 @@ import java.util.EnumSet;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_ONLINE_STATUS;
 
-public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultiblockNotifiablePart {
+public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultiblockNotifiablePart implements
+                                                   IAEStatusProvider {
 
     private AENetworkProxy aeProxy;
     private int meUpdateTick = 0;

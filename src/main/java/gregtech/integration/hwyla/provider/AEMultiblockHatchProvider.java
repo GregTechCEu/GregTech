@@ -1,8 +1,8 @@
 package gregtech.integration.hwyla.provider;
 
 import gregtech.api.GTValues;
+import gregtech.api.metatileentity.IAEStatusProvider;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityAEHostableChannelPart;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -36,7 +36,7 @@ public class AEMultiblockHatchProvider implements IWailaDataProvider {
     public @NotNull NBTTagCompound getNBTData(EntityPlayerMP player, TileEntity te, NBTTagCompound tag, World world,
                                               BlockPos pos) {
         if (te instanceof IGregTechTileEntity gtte &&
-                gtte.getMetaTileEntity() instanceof MetaTileEntityAEHostableChannelPart<?>aeHostablePart) {
+                gtte.getMetaTileEntity() instanceof IAEStatusProvider aeHostablePart) {
             tag.setBoolean(NBT_KEY, aeHostablePart.isOnline());
         }
 
