@@ -18,7 +18,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
-import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.BlockCompressed;
@@ -360,7 +360,7 @@ public class CommonProxy {
         MaterialInfoLoader.init();
 
         // post an event for addons to modify unification data before base GT registers recycling recipes
-        MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, ItemMaterialInfo.class));
+        MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, RecyclingData.class));
 
         GTLog.logger.info("Registering recipes...");
 
