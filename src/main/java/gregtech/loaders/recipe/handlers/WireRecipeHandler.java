@@ -2,7 +2,6 @@ package gregtech.loaders.recipe.handlers;
 
 import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -118,7 +117,7 @@ public class WireRecipeHandler {
 
         // Rubber Recipe (ULV-EV cables)
         if (voltageTier <= GTValues.EV) {
-            AssemblerRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
+            var builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
                     .input(wirePrefix, material)
                     .output(cablePrefix, material)
                     .fluidInputs(Rubber.getFluid(GTValues.L * insulationAmount));
@@ -130,7 +129,7 @@ public class WireRecipeHandler {
         }
 
         // Silicone Rubber Recipe (all cables)
-        AssemblerRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
+        var builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
                 .input(wirePrefix, material)
                 .output(cablePrefix, material);
 

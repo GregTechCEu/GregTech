@@ -117,7 +117,7 @@ public class CombRecipes {
 
         // Gem
         addProcessGT(GTCombType.STONE, new Material[] { Materials.Soapstone, Materials.Talc, Materials.Apatite,
-                Materials.Phosphate, Materials.TricalciumPhosphate }, Voltage.LV);
+                Materials.TricalciumPhosphate }, Voltage.LV);
         addProcessGT(GTCombType.CERTUS,
                 new Material[] { Materials.CertusQuartz, Materials.Quartzite, Materials.Barite }, Voltage.LV);
         addProcessGT(GTCombType.REDSTONE, new Material[] { Materials.Redstone, Materials.Cinnabar }, Voltage.LV);
