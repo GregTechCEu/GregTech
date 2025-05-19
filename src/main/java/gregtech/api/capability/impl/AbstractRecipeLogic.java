@@ -938,22 +938,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * Creates an array of Voltage Names that the machine/multiblock can overclock to.
-     * Since this is for use with the customizable overclock button, all tiers up to
-     * {@link AbstractRecipeLogic#getMaxVoltage()}
-     * are allowed, since the button is initialized to this value.
-     *
-     * @return a String array of the voltage names allowed to be used for overclocking
-     */
-    public String[] getAvailableOverclockingTiers() {
-        final int maxTier = getOverclockForTier(getMaxVoltage());
-        final String[] result = new String[maxTier + 1];
-        result[0] = "gregtech.gui.overclock.off";
-        if (maxTier >= 0) System.arraycopy(GTValues.VNF, 1, result, 1, maxTier);
-        return result;
-    }
-
-    /**
      * sets up the recipe to be run
      *
      * @param recipe the recipe to run
@@ -1131,9 +1115,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     public void setMaximumOverclockVoltage(final long overclockVoltage) {
         this.overclockVoltage = overclockVoltage;
-        // Overclocking is not allowed if the passed voltage is ULV
-        this.allowOverclocking = (overclockVoltage != GTValues.V[GTValues.ULV]);
-        metaTileEntity.markDirty();
+        // Overclocking is not allowed if the passed voltage is <= LV
+        this.allowOverclocking = (overclockVoltage <= GTValues.V[GTValues.LV]);
     }
 
     /**
@@ -1141,32 +1124,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     public long getMaximumOverclockVoltage() {
         return overclockVoltage;
-    }
-
-    /**
-     * This is needed as CycleButtonWidget requires an IntSupplier, without making an Enum of tiers.
-     *
-     * @return The current Tier for the voltage the machine is allowed to overclock to
-     */
-    public int getOverclockTier() {
-        // If we do not allow overclocking, return ULV tier
-        if (!isAllowOverclocking()) {
-            return GTValues.ULV;
-        }
-
-        // This will automatically handle ULV, and return 0
-        return getOverclockForTier(this.overclockVoltage);
-    }
-
-    /**
-     * Sets the maximum Tier that the machine/multiblock is allowed to overclock to.
-     * This is used for the Overclock button in Machine GUIs.
-     * This is needed as CycleButtonWidget requires an Int Supplier, without making an Enum of tiers.
-     *
-     * @param tier The maximum tier the multiblock/machine can overclock to
-     */
-    public void setOverclockTier(final int tier) {
-        setMaximumOverclockVoltage(GTValues.V[tier]);
     }
 
     /**
