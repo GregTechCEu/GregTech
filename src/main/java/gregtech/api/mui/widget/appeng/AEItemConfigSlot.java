@@ -22,6 +22,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Inte
 
     @Override
     public void onInit() {
+        super.onInit();
         size(18, 18);
         getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
     }

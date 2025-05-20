@@ -6,7 +6,7 @@ import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.widget.Widget;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfigSlot<T>> {
 
@@ -20,13 +20,11 @@ public class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfigSlot<T>>
     }
 
     @Override
-    public @Nullable RichTooltip getTooltip() {
-        if (backingSlot.getConfig() != null) {
-            return null;
-        }
+    public void onInit() {
+        tooltipBuilder(this::getSlotTooltip);
+    }
 
-        RichTooltip tooltip = new RichTooltip(this);
-
+    protected void getSlotTooltip(@NotNull RichTooltip tooltip) {
         tooltip.addLine(IKey.lang("gregtech.gui.config_slot"));
         if (isStocking) {
             tooltip.addLine(IKey.lang("gregtech.gui.config_slot.set_only"));
@@ -35,7 +33,5 @@ public class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfigSlot<T>>
             tooltip.addLine(IKey.lang("gregtech.gui.config_slot.scroll"));
         }
         tooltip.addLine(IKey.lang("gregtech.gui.config_slot.remove"));
-
-        return tooltip;
     }
 }
