@@ -1811,11 +1811,9 @@ gregtech.material.potassium_dichromate=Potassium Dichromate
 gregtech.material.chromium_trioxide=Chromium Trioxide
 gregtech.material.antimony_trioxide=Antimony Trioxide
 gregtech.material.zincite=Zincite
-gregtech.material.cupric_oxide=Cupric Oxide
 gregtech.material.cobalt_oxide=Cobalt Oxide
 gregtech.material.arsenic_trioxide=Arsenic Trioxide
 gregtech.material.massicot=Massicot
-gregtech.material.ferrosilite=Ferrosilite
 gregtech.material.metal_mixture=Metal Mixture
 gregtech.material.sodium_hydroxide=Sodium Hydroxide
 gregtech.material.sodium_persulfate=Sodium Persulfate
@@ -2118,7 +2116,6 @@ gregtech.material.bauxite_slag=Bauxite Slag
 
 # Second Degree Materials
 gregtech.material.glass=Glass
-gregtech.material.perlite=Perlite
 gregtech.material.borax=Borax
 gregtech.material.olivine=Olivine
 gregtech.material.opal=Opal

@@ -26,11 +26,7 @@ public class SecondDegreeMaterials {
                 .components(SiliconDioxide, 1)
                 .build();
 
-        Perlite = new Material.Builder(2001, gregtechId("perlite"))
-                .dust(1)
-                .color(0x1E141E)
-                .components(Obsidian, 2, Water, 1)
-                .build();
+        // FREE ID 2001
 
         Borax = new Material.Builder(2002, gregtechId("borax"))
                 .dust(1)
