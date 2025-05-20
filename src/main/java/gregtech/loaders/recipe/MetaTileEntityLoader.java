@@ -5,6 +5,7 @@ import gregtech.api.items.OreDictNames;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.crafting.CraftingComponent;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
@@ -41,7 +42,7 @@ import static gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType.*;
 import static gregtech.common.blocks.BlockWarningSign.SignType.*;
 import static gregtech.common.blocks.BlockWarningSign1.SignType.*;
 import static gregtech.common.blocks.BlockWireCoil.CoilType.CUPRONICKEL;
-import static gregtech.loaders.recipe.CraftingComponent.*;
+import static gregtech.loaders.recipe.CraftingComponents.*;
 
 public class MetaTileEntityLoader {
 
@@ -1211,8 +1212,8 @@ public class MetaTileEntityLoader {
 
     private static Object[] prepareRecipe(int tier, Object... recipe) {
         for (int i = 3; i < recipe.length; i++) {
-            if (recipe[i] instanceof Component) {
-                Object component = ((Component) recipe[i]).getIngredient(tier);
+            if (recipe[i] instanceof CraftingComponent craftingComponent) {
+                Object component = craftingComponent.getIngredient(tier);
                 if (component == null) {
                     return null;
                 }

@@ -2,6 +2,7 @@ package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.recipes.crafting.CraftingComponent;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.BlastProperty;
@@ -24,52 +25,52 @@ import java.util.stream.Stream;
 
 import static gregtech.api.GTValues.*;
 
-public class CraftingComponent {
+public class CraftingComponents {
 
-    public static Component CIRCUIT;
-    public static Component BETTER_CIRCUIT;
-    public static Component PUMP;
-    public static Component WIRE_ELECTRIC;
-    public static Component WIRE_QUAD;
-    public static Component WIRE_OCT;
-    public static Component WIRE_HEX;
-    public static Component CABLE;
-    public static Component CABLE_QUAD;
-    public static Component CABLE_OCT;
-    public static Component CABLE_HEX;
-    public static Component CABLE_TIER_UP;
-    public static Component CABLE_QUAD_TIER_UP;
-    public static Component CASING;
-    public static Component HULL;
-    public static Component TRANSFORMER;
-    public static Component PIPE_NORMAL;
-    public static Component PIPE_LARGE;
-    public static Component GLASS;
-    public static Component PLATE;
-    public static Component DOUBLE_PLATE;
-    public static Component HULL_PLATE;
-    public static Component MOTOR;
-    public static Component ROTOR;
-    public static Component SENSOR;
-    public static Component GRINDER;
-    public static Component SAWBLADE;
-    public static Component DIAMOND;
-    public static Component PISTON;
-    public static Component EMITTER;
-    public static Component CONVEYOR;
-    public static Component ROBOT_ARM;
-    public static Component COIL_HEATING;
-    public static Component COIL_HEATING_DOUBLE;
-    public static Component COIL_ELECTRIC;
-    public static Component STICK_MAGNETIC;
-    public static Component STICK_DISTILLATION;
-    public static Component FIELD_GENERATOR;
-    public static Component STICK_ELECTROMAGNETIC;
-    public static Component STICK_RADIOACTIVE;
-    public static Component PIPE_REACTOR;
-    public static Component POWER_COMPONENT;
-    public static Component VOLTAGE_COIL;
-    public static Component SPRING;
+    public static CraftingComponent CIRCUIT;
+    public static CraftingComponent BETTER_CIRCUIT;
+    public static CraftingComponent PUMP;
+    public static CraftingComponent WIRE_ELECTRIC;
+    public static CraftingComponent WIRE_QUAD;
+    public static CraftingComponent WIRE_OCT;
+    public static CraftingComponent WIRE_HEX;
+    public static CraftingComponent CABLE;
+    public static CraftingComponent CABLE_QUAD;
+    public static CraftingComponent CABLE_OCT;
+    public static CraftingComponent CABLE_HEX;
+    public static CraftingComponent CABLE_TIER_UP;
+    public static CraftingComponent CABLE_QUAD_TIER_UP;
+    public static CraftingComponent CASING;
+    public static CraftingComponent HULL;
+    public static CraftingComponent TRANSFORMER;
+    public static CraftingComponent PIPE_NORMAL;
+    public static CraftingComponent PIPE_LARGE;
+    public static CraftingComponent GLASS;
+    public static CraftingComponent PLATE;
+    public static CraftingComponent DOUBLE_PLATE;
+    public static CraftingComponent HULL_PLATE;
+    public static CraftingComponent MOTOR;
+    public static CraftingComponent ROTOR;
+    public static CraftingComponent SENSOR;
+    public static CraftingComponent GRINDER;
+    public static CraftingComponent SAWBLADE;
+    public static CraftingComponent DIAMOND;
+    public static CraftingComponent PISTON;
+    public static CraftingComponent EMITTER;
+    public static CraftingComponent CONVEYOR;
+    public static CraftingComponent ROBOT_ARM;
+    public static CraftingComponent COIL_HEATING;
+    public static CraftingComponent COIL_HEATING_DOUBLE;
+    public static CraftingComponent COIL_ELECTRIC;
+    public static CraftingComponent STICK_MAGNETIC;
+    public static CraftingComponent STICK_DISTILLATION;
+    public static CraftingComponent FIELD_GENERATOR;
+    public static CraftingComponent STICK_ELECTROMAGNETIC;
+    public static CraftingComponent STICK_RADIOACTIVE;
+    public static CraftingComponent PIPE_REACTOR;
+    public static CraftingComponent POWER_COMPONENT;
+    public static CraftingComponent VOLTAGE_COIL;
+    public static CraftingComponent SPRING;
 
     public static final Map<BlastProperty.GasTier, FluidStack> EBF_GASES = new EnumMap<>(BlastProperty.GasTier.class);
 
@@ -85,7 +86,7 @@ public class CraftingComponent {
         /*
          * GTCEu must supply values for at least tiers 1 through 8 (through UV)
          */
-        CIRCUIT = new Component(Stream.of(new Object[][] {
+        CIRCUIT = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.circuit, Tier.ULV) },
                 { 1, new UnificationEntry(OrePrefix.circuit, Tier.LV) },
@@ -105,7 +106,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        BETTER_CIRCUIT = new Component(Stream.of(new Object[][] {
+        BETTER_CIRCUIT = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.circuit, Tier.LV) },
                 { 1, new UnificationEntry(OrePrefix.circuit, Tier.MV) },
@@ -124,7 +125,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        PUMP = new Component(Stream.of(new Object[][] {
+        PUMP = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 1, MetaItems.ELECTRIC_PUMP_LV.getStackForm() },
                 { 2, MetaItems.ELECTRIC_PUMP_MV.getStackForm() },
@@ -138,7 +139,7 @@ public class CraftingComponent {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GregTechAPI.isHighTier()) {
-            PUMP.appendIngredients(Stream.of(new Object[][] {
+            PUMP.updateIngredients(Stream.of(new Object[][] {
                     { 9, MetaItems.ELECTRIC_PUMP_UHV.getStackForm() },
                     { 10, MetaItems.ELECTRIC_PUMP_UEV.getStackForm() },
                     { 11, MetaItems.ELECTRIC_PUMP_UIV.getStackForm() },
@@ -147,7 +148,7 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        WIRE_ELECTRIC = new Component(Stream.of(new Object[][] {
+        WIRE_ELECTRIC = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.wireGtSingle, Materials.Gold) },
                 { 1, new UnificationEntry(OrePrefix.wireGtSingle, Materials.Gold) },
@@ -161,7 +162,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        WIRE_QUAD = new Component(Stream.of(new Object[][] {
+        WIRE_QUAD = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Lead) },
                 { 1, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Tin) },
@@ -175,7 +176,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        WIRE_OCT = new Component(Stream.of(new Object[][] {
+        WIRE_OCT = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Lead) },
                 { 1, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Tin) },
@@ -189,7 +190,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        WIRE_HEX = new Component(Stream.of(new Object[][] {
+        WIRE_HEX = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.wireGtHex, Materials.Lead) },
                 { 1, new UnificationEntry(OrePrefix.wireGtHex, Materials.Tin) },
@@ -203,7 +204,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        CABLE = new Component(Stream.of(new Object[][] {
+        CABLE = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.cableGtSingle, Materials.RedAlloy) },
                 { 1, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin) },
@@ -218,7 +219,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        CABLE_QUAD = new Component(Stream.of(new Object[][] {
+        CABLE_QUAD = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.RedAlloy) },
                 { 1, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Tin) },
@@ -233,7 +234,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        CABLE_OCT = new Component(Stream.of(new Object[][] {
+        CABLE_OCT = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.cableGtOctal, Materials.RedAlloy) },
                 { 1, new UnificationEntry(OrePrefix.cableGtOctal, Materials.Tin) },
@@ -248,7 +249,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        CABLE_HEX = new Component(Stream.of(new Object[][] {
+        CABLE_HEX = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.cableGtHex, Materials.RedAlloy) },
                 { 1, new UnificationEntry(OrePrefix.cableGtHex, Materials.Tin) },
@@ -263,7 +264,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        CABLE_TIER_UP = new Component(Stream.of(new Object[][] {
+        CABLE_TIER_UP = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin) },
                 { 1, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper) },
@@ -278,7 +279,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        CABLE_QUAD_TIER_UP = new Component(Stream.of(new Object[][] {
+        CABLE_QUAD_TIER_UP = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Tin) },
                 { 1, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Copper) },
@@ -293,7 +294,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        HULL = new Component(Stream.of(new Object[][] {
+        HULL = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, MetaTileEntities.HULL[0].getStackForm() },
                 { 1, MetaTileEntities.HULL[1].getStackForm() },
@@ -309,7 +310,7 @@ public class CraftingComponent {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GregTechAPI.isHighTier()) {
-            HULL.appendIngredients(Stream.of(new Object[][] {
+            HULL.updateIngredients(Stream.of(new Object[][] {
                     { 10, MetaTileEntities.HULL[10].getStackForm() },
                     { 11, MetaTileEntities.HULL[11].getStackForm() },
                     { 12, MetaTileEntities.HULL[12].getStackForm() },
@@ -318,7 +319,7 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        TRANSFORMER = new Component(Stream.of(new Object[][] {
+        TRANSFORMER = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, MetaTileEntities.TRANSFORMER[0].getStackForm() },
                 { 1, MetaTileEntities.TRANSFORMER[1].getStackForm() },
@@ -333,7 +334,7 @@ public class CraftingComponent {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GregTechAPI.isHighTier()) {
-            TRANSFORMER.appendIngredients(Stream.of(new Object[][] {
+            TRANSFORMER.updateIngredients(Stream.of(new Object[][] {
                     { 9, MetaTileEntities.TRANSFORMER[9].getStackForm() },
                     { 10, MetaTileEntities.TRANSFORMER[10].getStackForm() },
                     { 11, MetaTileEntities.TRANSFORMER[11].getStackForm() },
@@ -342,7 +343,7 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        CASING = new Component(Stream.of(new Object[][] {
+        CASING = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.ULV) },
                 { 1, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.LV) },
@@ -358,7 +359,7 @@ public class CraftingComponent {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GregTechAPI.isHighTier()) {
-            CASING.appendIngredients(Stream.of(new Object[][] {
+            CASING.updateIngredients(Stream.of(new Object[][] {
                     { 10, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UEV) },
                     { 11, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UIV) },
                     { 12, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UXV) },
@@ -367,7 +368,7 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        PIPE_NORMAL = new Component(Stream.of(new Object[][] {
+        PIPE_NORMAL = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Bronze) },
                 { 1, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Bronze) },
@@ -381,7 +382,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        PIPE_LARGE = new Component(Stream.of(new Object[][] {
+        PIPE_LARGE = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Bronze) },
                 { 1, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Bronze) },
@@ -403,7 +404,7 @@ public class CraftingComponent {
          * Fusion: ZPM, UV
          * Some gregicality thing: UHV+
          */
-        GLASS = new Component(Stream.of(new Object[][] {
+        GLASS = new CraftingComponent(Stream.of(new Object[][] {
 
                 { GTValues.FALLBACK, new ItemStack(Blocks.GLASS, 1, GTValues.W) },
                 { ULV, Blocks.GLASS },
@@ -424,7 +425,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        PLATE = new Component(Stream.of(new Object[][] {
+        PLATE = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.plate, Materials.WroughtIron) },
                 { 1, new UnificationEntry(OrePrefix.plate, Materials.Steel) },
@@ -439,7 +440,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        DOUBLE_PLATE = new Component(Stream.of(new Object[][] {
+        DOUBLE_PLATE = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.plateDouble, Materials.WroughtIron) },
                 { 1, new UnificationEntry(OrePrefix.plateDouble, Materials.Steel) },
@@ -454,7 +455,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        HULL_PLATE = new Component(Stream.of(new Object[][] {
+        HULL_PLATE = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.plate, Materials.Wood) },
                 { 1, new UnificationEntry(OrePrefix.plate, Materials.WroughtIron) },
@@ -469,7 +470,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        MOTOR = new Component(Stream.of(new Object[][] {
+        MOTOR = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 1, MetaItems.ELECTRIC_MOTOR_LV.getStackForm() },
                 { 2, MetaItems.ELECTRIC_MOTOR_MV.getStackForm() },
@@ -483,7 +484,7 @@ public class CraftingComponent {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GregTechAPI.isHighTier()) {
-            MOTOR.appendIngredients(Stream.of(new Object[][] {
+            MOTOR.updateIngredients(Stream.of(new Object[][] {
                     { 9, MetaItems.ELECTRIC_MOTOR_UHV.getStackForm() },
                     { 10, MetaItems.ELECTRIC_MOTOR_UEV.getStackForm() },
                     { 11, MetaItems.ELECTRIC_MOTOR_UIV.getStackForm() },
@@ -492,7 +493,7 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        ROTOR = new Component(Stream.of(new Object[][] {
+        ROTOR = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.rotor, Materials.Tin) },
                 { 1, new UnificationEntry(OrePrefix.rotor, Materials.Tin) },
@@ -506,7 +507,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        SENSOR = new Component(Stream.of(new Object[][] {
+        SENSOR = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 1, MetaItems.SENSOR_LV.getStackForm() },
                 { 2, MetaItems.SENSOR_MV.getStackForm() },
@@ -520,7 +521,7 @@ public class CraftingComponent {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GregTechAPI.isHighTier()) {
-            SENSOR.appendIngredients(Stream.of(new Object[][] {
+            SENSOR.updateIngredients(Stream.of(new Object[][] {
                     { 9, MetaItems.SENSOR_UHV.getStackForm() },
                     { 10, MetaItems.SENSOR_UEV.getStackForm() },
                     { 11, MetaItems.SENSOR_UIV.getStackForm() },
@@ -529,7 +530,7 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        GRINDER = new Component(Stream.of(new Object[][] {
+        GRINDER = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.gem, Materials.Diamond) },
                 { 1, new UnificationEntry(OrePrefix.gem, Materials.Diamond) },
@@ -541,7 +542,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        SAWBLADE = new Component(Stream.of(new Object[][] {
+        SAWBLADE = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Bronze) },
                 { 1, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.CobaltBrass) },
@@ -556,13 +557,13 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        DIAMOND = new Component(Stream.of(new Object[][] {
+        DIAMOND = new CraftingComponent(Stream.of(new Object[][] {
 
                 { GTValues.FALLBACK, new UnificationEntry(OrePrefix.gem, Materials.Diamond) },
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        PISTON = new Component(Stream.of(new Object[][] {
+        PISTON = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 1, MetaItems.ELECTRIC_PISTON_LV.getStackForm() },
                 { 2, MetaItems.ELECTRIC_PISTON_MV.getStackForm() },
@@ -576,7 +577,7 @@ public class CraftingComponent {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GregTechAPI.isHighTier()) {
-            PISTON.appendIngredients(Stream.of(new Object[][] {
+            PISTON.updateIngredients(Stream.of(new Object[][] {
                     { 9, MetaItems.ELECTRIC_PISTON_UHV.getStackForm() },
                     { 10, MetaItems.ELECTRIC_PISTON_UEV.getStackForm() },
                     { 11, MetaItems.ELECTRIC_PISTON_UIV.getStackForm() },
@@ -585,7 +586,7 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        EMITTER = new Component(Stream.of(new Object[][] {
+        EMITTER = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 1, MetaItems.EMITTER_LV.getStackForm() },
                 { 2, MetaItems.EMITTER_MV.getStackForm() },
@@ -599,7 +600,7 @@ public class CraftingComponent {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GregTechAPI.isHighTier()) {
-            EMITTER.appendIngredients(Stream.of(new Object[][] {
+            EMITTER.updateIngredients(Stream.of(new Object[][] {
                     { 9, MetaItems.EMITTER_UHV.getStackForm() },
                     { 10, MetaItems.EMITTER_UEV.getStackForm() },
                     { 11, MetaItems.EMITTER_UIV.getStackForm() },
@@ -608,7 +609,7 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        CONVEYOR = new Component(Stream.of(new Object[][] {
+        CONVEYOR = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 1, MetaItems.CONVEYOR_MODULE_LV.getStackForm() },
                 { 2, MetaItems.CONVEYOR_MODULE_MV.getStackForm() },
@@ -622,7 +623,7 @@ public class CraftingComponent {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GregTechAPI.isHighTier()) {
-            CONVEYOR.appendIngredients(Stream.of(new Object[][] {
+            CONVEYOR.updateIngredients(Stream.of(new Object[][] {
                     { 9, MetaItems.CONVEYOR_MODULE_UHV.getStackForm() },
                     { 10, MetaItems.CONVEYOR_MODULE_UEV.getStackForm() },
                     { 11, MetaItems.CONVEYOR_MODULE_UIV.getStackForm() },
@@ -631,7 +632,7 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        ROBOT_ARM = new Component(Stream.of(new Object[][] {
+        ROBOT_ARM = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 1, MetaItems.ROBOT_ARM_LV.getStackForm() },
                 { 2, MetaItems.ROBOT_ARM_MV.getStackForm() },
@@ -645,7 +646,7 @@ public class CraftingComponent {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GregTechAPI.isHighTier()) {
-            ROBOT_ARM.appendIngredients(Stream.of(new Object[][] {
+            ROBOT_ARM.updateIngredients(Stream.of(new Object[][] {
                     { 9, MetaItems.ROBOT_ARM_UHV.getStackForm() },
                     { 10, MetaItems.ROBOT_ARM_UEV.getStackForm() },
                     { 11, MetaItems.ROBOT_ARM_UIV.getStackForm() },
@@ -654,7 +655,7 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        COIL_HEATING = new Component(Stream.of(new Object[][] {
+        COIL_HEATING = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.wireGtDouble, Materials.Copper) },
                 { 1, new UnificationEntry(OrePrefix.wireGtDouble, Materials.Copper) },
@@ -668,7 +669,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        COIL_HEATING_DOUBLE = new Component(Stream.of(new Object[][] {
+        COIL_HEATING_DOUBLE = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Copper) },
                 { 1, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Copper) },
@@ -682,7 +683,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        COIL_ELECTRIC = new Component(Stream.of(new Object[][] {
+        COIL_ELECTRIC = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.wireGtSingle, Materials.Tin) },
                 { 1, new UnificationEntry(OrePrefix.wireGtDouble, Materials.Tin) },
@@ -696,7 +697,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        STICK_MAGNETIC = new Component(Stream.of(new Object[][] {
+        STICK_MAGNETIC = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.stick, Materials.IronMagnetic) },
                 { 1, new UnificationEntry(OrePrefix.stick, Materials.IronMagnetic) },
@@ -710,7 +711,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        STICK_DISTILLATION = new Component(Stream.of(new Object[][] {
+        STICK_DISTILLATION = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.stick, Materials.Blaze) },
                 { 1, new UnificationEntry(OrePrefix.spring, Materials.Copper) },
@@ -725,7 +726,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        FIELD_GENERATOR = new Component(Stream.of(new Object[][] {
+        FIELD_GENERATOR = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 1, MetaItems.FIELD_GENERATOR_LV.getStackForm() },
                 { 2, MetaItems.FIELD_GENERATOR_MV.getStackForm() },
@@ -739,7 +740,7 @@ public class CraftingComponent {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GregTechAPI.isHighTier()) {
-            FIELD_GENERATOR.appendIngredients(Stream.of(new Object[][] {
+            FIELD_GENERATOR.updateIngredients(Stream.of(new Object[][] {
                     { 9, MetaItems.FIELD_GENERATOR_UHV.getStackForm() },
                     { 10, MetaItems.FIELD_GENERATOR_UEV.getStackForm() },
                     { 11, MetaItems.FIELD_GENERATOR_UIV.getStackForm() },
@@ -748,7 +749,7 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        STICK_ELECTROMAGNETIC = new Component(Stream.of(new Object[][] {
+        STICK_ELECTROMAGNETIC = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.stick, Materials.Iron) },
                 { 1, new UnificationEntry(OrePrefix.stick, Materials.Iron) },
@@ -759,7 +760,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        STICK_RADIOACTIVE = new Component(Stream.of(new Object[][] {
+        STICK_RADIOACTIVE = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 4, new UnificationEntry(OrePrefix.stick, Materials.Uranium235) },
                 { 5, new UnificationEntry(OrePrefix.stick, Materials.Plutonium241) },
@@ -769,7 +770,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        PIPE_REACTOR = new Component(Stream.of(new Object[][] {
+        PIPE_REACTOR = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new ItemStack(Blocks.GLASS, 1, GTValues.W) },
                 { 1, new ItemStack(Blocks.GLASS, 1, GTValues.W) },
@@ -784,7 +785,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        POWER_COMPONENT = new Component(Stream.of(new Object[][] {
+        POWER_COMPONENT = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 2, MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm() },
                 { 3, MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm() },
@@ -798,7 +799,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        VOLTAGE_COIL = new Component(Stream.of(new Object[][] {
+        VOLTAGE_COIL = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, MetaItems.VOLTAGE_COIL_ULV.getStackForm() },
                 { 1, MetaItems.VOLTAGE_COIL_LV.getStackForm() },
@@ -813,7 +814,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        SPRING = new Component(Stream.of(new Object[][] {
+        SPRING = new CraftingComponent(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.spring, Materials.Lead) },
                 { 1, new UnificationEntry(OrePrefix.spring, Materials.Tin) },
@@ -827,36 +828,5 @@ public class CraftingComponent {
                 { 9, new UnificationEntry(OrePrefix.spring, Materials.Europium) },
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-    }
-
-    public static class Component {
-
-        private final Map<Integer, Object> ingredients;
-
-        public Component(Map<Integer, Object> craftingComponents) {
-            ingredients = craftingComponents;
-        }
-
-        public Object getIngredient(int tier) {
-            Object ingredient = ingredients.get(tier);
-            return ingredient == null ? ingredients.get(GTValues.FALLBACK) : ingredient;
-        }
-
-        /**
-         * appendIngredients will add onto the default GTCEu map of Crafting Components with the
-         * ingredients that are passed into the method. If an Entry is passed in that overlaps
-         * with a default entry, the passed entry will override the default GTCEu entry.
-         * <p>
-         * An entry with the Key of "-1" will be the "fallback" value if no entry exists for the
-         * queried key. Any default value will be removed if ingredients are appended
-         * via this method.
-         *
-         * @param newIngredients Map of <tier, ingredient> to append to the component type.
-         */
-        @SuppressWarnings("unused")
-        public void appendIngredients(Map<Integer, Object> newIngredients) {
-            ingredients.remove(GTValues.FALLBACK);
-            newIngredients.forEach((key, value) -> ingredients.merge(key, value, (v1, v2) -> v2));
-        }
     }
 }

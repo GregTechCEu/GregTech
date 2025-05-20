@@ -187,7 +187,7 @@ public class GTValues {
 
     /**
      * Default fallback value used for Map keys.
-     * Currently only used in {@link gregtech.loaders.recipe.CraftingComponent}.
+     * Currently only used in {@link gregtech.api.recipes.crafting.CraftingComponent}.
      */
     public static final int FALLBACK = -1;
 

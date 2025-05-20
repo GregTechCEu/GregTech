@@ -1,4 +1,4 @@
-package gregtech.api.recipes.recipes;
+package gregtech.api.recipes.crafting;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
