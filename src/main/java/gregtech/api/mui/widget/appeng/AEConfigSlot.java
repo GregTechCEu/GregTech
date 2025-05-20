@@ -22,10 +22,10 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
 
     @Override
     public void onInit() {
-        tooltip(this::getSlotTooltip);
+        tooltipBuilder(this::buildTooltip);
     }
 
-    protected void getSlotTooltip(@NotNull RichTooltip tooltip) {
+    protected void buildTooltip(@NotNull RichTooltip tooltip) {
         tooltip.addLine(IKey.lang("gregtech.gui.config_slot"));
         if (isStocking) {
             tooltip.addLine(IKey.lang("gregtech.gui.config_slot.set_only"));
@@ -36,7 +36,7 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         tooltip.addLine(IKey.lang("gregtech.gui.config_slot.remove"));
     }
 
-    protected abstract static class AEConfigSyncHandler<T extends IAEStack<T>> extends SyncHandler {
+    protected abstract class AEConfigSyncHandler<T extends IAEStack<T>> extends SyncHandler {
 
         public static final int jeiDropSyncID = 0;
         public static final int configSyncID = 1;
@@ -75,6 +75,10 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
             }
 
             return false;
+        }
+
+        protected void setConfig(T config) {
+
         }
     }
 }

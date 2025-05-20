@@ -1,5 +1,7 @@
 package gregtech.api.mui.widget.appeng;
 
+import com.cleanroommc.modularui.screen.RichTooltip;
+
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
@@ -38,6 +40,16 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Inte
     public void onInit() {
         super.onInit();
         getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
+    }
+
+    @Override
+    protected void buildTooltip(@NotNull RichTooltip tooltip) {
+        IAEItemStack stack = backingSlot.getConfig();
+        if (stack == null) {
+            super.buildTooltip(tooltip);
+        } else {
+            tooltip.addFromItem(stack.createItemStack());
+        }
     }
 
     @Override
@@ -94,7 +106,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Inte
         return backingSlot.getConfig();
     }
 
-    public static class AEItemConfigSyncHandler extends AEConfigSyncHandler<IAEItemStack> {
+    public class AEItemConfigSyncHandler extends AEConfigSyncHandler<IAEItemStack> {
 
         public AEItemConfigSyncHandler(IConfigurableSlot<IAEItemStack> config) {
             super(config);
