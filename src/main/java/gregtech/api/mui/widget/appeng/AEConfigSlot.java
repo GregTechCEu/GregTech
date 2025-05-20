@@ -21,7 +21,7 @@ public class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfigSlot<T>>
 
     @Override
     public void onInit() {
-        tooltipBuilder(this::getSlotTooltip);
+        tooltip(this::getSlotTooltip);
     }
 
     protected void getSlotTooltip(@NotNull RichTooltip tooltip) {
