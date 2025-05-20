@@ -31,7 +31,11 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
     @Override
     public void initialiseSyncHandler(ModularSyncManager syncManager) {
         super.initialiseSyncHandler(syncManager);
-        ((AESyncHandler<?>) getSyncHandler()).setOnConfigChanged(this::markTooltipDirty);
+        if (getSyncHandler() instanceof AESyncHandler<?>aeSyncHandler) {
+            aeSyncHandler.setOnConfigChanged(this::markTooltipDirty);
+        } else {
+            throw new IllegalStateException("Sync handler for AEConfigSlot is not a AESyncHandler!");
+        }
     }
 
     protected void buildTooltip(@NotNull RichTooltip tooltip) {

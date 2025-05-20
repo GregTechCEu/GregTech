@@ -10,27 +10,32 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
 
     public static final int jeiDropSyncID = 0;
     public static final int configSyncID = 1;
+    public static final int stockSyncID = 2;
 
     protected final IConfigurableSlot<T> config;
     protected IConfigurableSlot<T> cache;
 
     @Nullable
-    private Runnable onConfigChanged;
+    protected Runnable onConfigChanged;
     @Nullable
-    private Runnable onStockChanged;
+    protected Runnable onStockChanged;
 
     public AESyncHandler(IConfigurableSlot<T> config) {
         this.config = config;
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public void detectAndSendChanges(boolean init) {
         T currentConfig = config.getConfig();
-        T currentStock = config.getStock();
         T cachedConfig = cache.getConfig();
-        T cachedStock = cache.getStock();
+        if (!areAEStackCountEquals(currentConfig, cachedConfig)) {
+            cache.setConfig(currentConfig);
 
-        if (!areAEStackCountEquals(currentConfig, cachedConfig) || !areAEStackCountEquals(currentStock, cachedStock)) {
+            if (onConfigChanged != null) {
+                onConfigChanged.run();
+            }
+
             syncToClient(configSyncID, buf -> {
                 if (currentConfig == null) {
                     buf.writeBoolean(false);
@@ -38,7 +43,19 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
                     buf.writeBoolean(true);
                     currentConfig.writeToPacket(buf);
                 }
+            });
+        }
 
+        T currentStock = config.getStock();
+        T cachedStock = cache.getStock();
+        if (!areAEStackCountEquals(currentStock, cachedStock)) {
+            cache.setStock(currentStock);
+
+            if (onStockChanged != null) {
+                onStockChanged.run();
+            }
+
+            syncToClient(stockSyncID, buf -> {
                 if (currentStock == null) {
                     buf.writeBoolean(false);
                 } else {
@@ -65,6 +82,14 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
 
     public void setOnStockChanged(@Nullable Runnable onStockChanged) {
         this.onStockChanged = onStockChanged;
+    }
+
+    public @Nullable Runnable getOnConfigChanged() {
+        return onConfigChanged;
+    }
+
+    public @Nullable Runnable getOnStockChanged() {
+        return onStockChanged;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

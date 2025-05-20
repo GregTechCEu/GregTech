@@ -26,6 +26,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Inte
     public AEItemConfigSlot(boolean isStocking, BooleanSupplier isAutoPull) {
         super(isStocking, isAutoPull);
         size(18, 18);
+        tooltipAutoUpdate(true);
     }
 
     @Override

@@ -19,6 +19,7 @@ public class AEItemDisplaySlot extends AEDisplaySlot<IAEItemStack> {
     public AEItemDisplaySlot() {
         super();
         size(18, 18);
+        tooltipAutoUpdate(true);
     }
 
     @Override
