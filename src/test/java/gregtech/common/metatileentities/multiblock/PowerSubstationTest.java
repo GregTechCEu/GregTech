@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multiblock;
 
 import gregtech.Bootstrap;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
+import gregtech.api.util.random.XoShiRo256PlusPlusRandom;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation.PowerStationEnergyBank;
 
 import org.hamcrest.Matcher;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Consumer;
 
 import static gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation.MAX_BATTERY_LAYERS;
@@ -257,7 +257,7 @@ public class PowerSubstationTest {
 
     @Test
     public void Test_Optimized_Big_Integer_Summarize() {
-        Consumer<Random> testRunner = r -> {
+        Consumer<XoShiRo256PlusPlusRandom> testRunner = r -> {
             BigInteger summation = BigInteger.ZERO;
             long[] storageValues = new long[9 * MAX_BATTERY_LAYERS];
             for (int i = 0; i < storageValues.length; i++) {
@@ -271,7 +271,7 @@ public class PowerSubstationTest {
         };
 
         for (int i = 0; i < 100; i++) {
-            testRunner.accept(new Random());
+            testRunner.accept(new XoShiRo256PlusPlusRandom());
         }
     }
 
@@ -282,15 +282,13 @@ public class PowerSubstationTest {
         MatcherAssert.assertThat(storage.getPassiveDrainPerTick(),
                 is(2 * PASSIVE_DRAIN_MAX_PER_STORAGE));
 
-        Consumer<Random> testRunner = r -> {
+        Consumer<XoShiRo256PlusPlusRandom> testRunner = r -> {
             int numTruncated = 0;
             BigInteger nonTruncated = BigInteger.ZERO;
 
             long[] storageValues = new long[9 * MAX_BATTERY_LAYERS];
             for (int i = 0; i < storageValues.length; i++) {
-                // hack around not having bounded long
-                // PASSIVE_DRAIN_MAX_PER_STORAGE * PASSIVE_DRAIN_DIVISOR * 2 is pretty close to 1 << 45
-                long randomLong = (long) Math.abs(r.nextInt()) << 14 | Math.abs(r.nextInt(1 << 14));
+                long randomLong = r.nextLong(PASSIVE_DRAIN_MAX_PER_STORAGE * PASSIVE_DRAIN_DIVISOR * 2);
                 storageValues[i] = randomLong;
                 if (randomLong / PASSIVE_DRAIN_DIVISOR >= PASSIVE_DRAIN_MAX_PER_STORAGE) {
                     numTruncated++;
@@ -307,13 +305,13 @@ public class PowerSubstationTest {
         };
 
         for (int i = 0; i < 100; i++) {
-            testRunner.accept(new Random());
+            testRunner.accept(new XoShiRo256PlusPlusRandom());
         }
     }
 
     @Test
     public void Test_Fill_Drain_Randomized() {
-        Consumer<Random> testRunner = r -> {
+        Consumer<XoShiRo256PlusPlusRandom> testRunner = r -> {
             BigInteger capacity = BigInteger.ZERO;
             long[] storageValues = new long[9 * MAX_BATTERY_LAYERS];
             for (int i = 0; i < storageValues.length; i++) {
@@ -329,7 +327,9 @@ public class PowerSubstationTest {
 
             BigInteger current = BigInteger.valueOf(Long.MAX_VALUE)
                     .multiply(BigInteger.valueOf(9 * MAX_BATTERY_LAYERS / 4));
-            for (int i = 0; i < 9 * MAX_BATTERY_LAYERS / 4; i++) storage.fill(Long.MAX_VALUE);
+            for (int i = 0; i < 9 * MAX_BATTERY_LAYERS / 4; i++) {
+                storage.fill(Long.MAX_VALUE);
+            }
 
             MatcherAssert.assertThat(storage.getStored(), is(current));
 
@@ -375,7 +375,7 @@ public class PowerSubstationTest {
         };
 
         for (int i = 0; i < 100; i++) {
-            testRunner.accept(new Random());
+            testRunner.accept(new XoShiRo256PlusPlusRandom());
         }
     }
 

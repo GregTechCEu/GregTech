@@ -604,9 +604,12 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         private static final String NBT_SIZE = "Size";
         private static final String NBT_STORED = "Stored";
         private static final String NBT_MAX = "Max";
-        private final long[] stored = new long[2], max = new long[2];
+        // the following two fields represent ((a[0] << 63) | a[1])
+        private final long[] stored = new long[2];
+        private final long[] max = new long[2];
         private BigInteger capacity;
-        private long drain, drainMod;
+        private long drain;
+        private long drainMod;
 
         public PowerStationEnergyBank(List<IBatteryData> batteries) {
             for (IBatteryData i : batteries) {
@@ -617,6 +620,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         }
 
         public PowerStationEnergyBank(NBTTagCompound storageTag) {
+            // legacy nbt handling
             if (storageTag.hasKey(NBT_SIZE, Constants.NBT.TAG_INT)) {
                 int size = storageTag.getInteger(NBT_SIZE);
                 for (int i = 0; i < size; i++) {
@@ -693,7 +697,9 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
             if (stored[1] + amount < 0) {
                 stored[0]++;
                 stored[1] += Long.MIN_VALUE;
-                if (max[0] == stored[0] && max[1] < stored[1] + amount) amount = max[1] - stored[1];
+                if (max[0] == stored[0] && max[1] < stored[1] + amount) {
+                    amount = max[1] - stored[1];
+                }
             }
             stored[1] += amount;
             return amount;
@@ -732,7 +738,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         }
 
         private static void add(long[] num, long val) {
-            if ((num[1] += val) < 0) {
+            num[1] += val;
+            if (num[1] < 0) {
                 num[0]++;
                 num[1] -= Long.MIN_VALUE;
             }
