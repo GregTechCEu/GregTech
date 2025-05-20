@@ -5,6 +5,7 @@ import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -21,7 +22,6 @@ import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
-import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
@@ -139,11 +139,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             GlStateManager.colorMask(true, true, true, true);
         }
 
-        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() || ModularUIJeiPlugin.hoveringOverIngredient(this)) {
-            GlStateManager.colorMask(true, true, true, false);
-            drawHighlight(getArea(), isHovering());
-            GlStateManager.colorMask(true, true, true, true);
-        }
+        RenderUtil.handleJeiGhostHighlight(this);
     }
 
     @Override

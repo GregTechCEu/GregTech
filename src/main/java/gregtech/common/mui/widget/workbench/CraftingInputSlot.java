@@ -4,7 +4,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -14,7 +13,6 @@ import com.cleanroommc.modularui.api.widget.IGuiAction;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
-import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
@@ -112,11 +110,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
         }
 
-        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() || ModularUIJeiPlugin.hoveringOverIngredient(this)) {
-            GlStateManager.colorMask(true, true, true, false);
-            drawHighlight(getArea(), isHovering());
-            GlStateManager.colorMask(true, true, true, true);
-        }
+        RenderUtil.handleJeiGhostHighlight(this);
     }
 
     @Override
