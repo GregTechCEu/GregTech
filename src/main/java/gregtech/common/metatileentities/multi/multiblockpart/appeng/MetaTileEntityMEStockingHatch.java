@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.client.resources.I18n;
@@ -324,7 +325,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         }
 
         @Override
-        public ExportOnlyAEFluidSlot copy() {
+        public @NotNull IConfigurableSlot<IAEFluidStack> copy() {
             return new ExportOnlyAEStockingFluidSlot(
                     this.getHolder(),
                     this.config == null ? null : this.config.copy(),

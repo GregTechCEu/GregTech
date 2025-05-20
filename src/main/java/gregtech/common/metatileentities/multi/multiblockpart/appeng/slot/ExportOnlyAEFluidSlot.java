@@ -13,6 +13,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import appeng.api.storage.data.IAEFluidStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -178,7 +179,7 @@ public class ExportOnlyAEFluidSlot extends ExportOnlyAESlot<IAEFluidStack>
     }
 
     @Override
-    public ExportOnlyAEFluidSlot copy() {
+    public @NotNull IConfigurableSlot<IAEFluidStack> copy() {
         return new ExportOnlyAEFluidSlot(
                 this.holder,
                 this.config == null ? null : this.config.copy(),

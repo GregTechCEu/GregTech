@@ -80,12 +80,12 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>>
     }
 
     @Override
-    public T getConfig() {
+    public @Nullable T getConfig() {
         return this.config;
     }
 
     @Override
-    public T getStock() {
+    public @Nullable T getStock() {
         return this.stock;
     }
 

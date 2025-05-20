@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.client.resources.I18n;
@@ -321,7 +322,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         }
 
         @Override
-        public ExportOnlyAEStockingItemSlot copy() {
+        public @NotNull IConfigurableSlot<IAEItemStack> copy() {
             return new ExportOnlyAEStockingItemSlot(
                     this.config == null ? null : this.config.copy(),
                     this.stock == null ? null : this.stock.copy(),
