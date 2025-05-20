@@ -19,6 +19,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.sync.AEItemSyncHandler;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.api.mui.widget.appeng.AEItemConfigSlot;
 import gregtech.api.mui.widget.appeng.AEItemDisplaySlot;
@@ -200,7 +201,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        final String syncHandlerName = "aeSlot";
+        final boolean isStocking = getAEItemHandler().isStocking();
         guiSyncManager.registerSlotGroup("extra_slot", 1);
+        for (int index = 0; index < CONFIG_SIZE; index++) {
+            guiSyncManager.syncValue(syncHandlerName, index,
+                    new AEItemSyncHandler(getAEItemHandler().getInventory()[index]));
+        }
 
         return GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
@@ -213,16 +220,18 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                         .minElementMargin(0, 0)
                         .minColWidth(18)
                         .minRowHeight(18)
-                        .matrix(Grid.mapToMatrix(4, 16, index -> new AEItemConfigSlot(getAEItemHandler(), index)
-                                .background(GTGuiTextures.SLOT, GTGuiTextures.CONFIG_ARROW_DARK))))
+                        .matrix(Grid.mapToMatrix(4, 16, index -> new AEItemConfigSlot(isStocking)
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.CONFIG_ARROW_DARK)
+                                .syncHandler(syncHandlerName, index))))
                 .child(new Grid()
                         .pos(7 + 18 * 5, 25)
                         .size(18 * 4, 18 * 4)
                         .minElementMargin(0, 0)
                         .minColWidth(18)
                         .minRowHeight(18)
-                        .matrix(Grid.mapToMatrix(4, 16, index -> new AEItemDisplaySlot(getAEItemHandler(), index)
-                                .background(GTGuiTextures.SLOT_DARK))))
+                        .matrix(Grid.mapToMatrix(4, 16, index -> new AEItemDisplaySlot()
+                                .background(GTGuiTextures.SLOT_DARK)
+                                .syncHandler(syncHandlerName, index))))
                 .child(Flow.column()
                         .pos(7 + 18 * 4, 25 + 18)
                         .size(18, 18 * 4)
