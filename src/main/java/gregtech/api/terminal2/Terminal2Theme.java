@@ -131,6 +131,10 @@ public class Terminal2Theme {
         setColor(color, defaultColors.get(color));
     }
 
+    public static boolean isDefaultColor(String color) {
+        return getColorRect(color).getColor() == defaultColors.get(color);
+    }
+
     public static void gcBoundRects() {
         for (String color : colors) {
             getColorRect(color).gc();
