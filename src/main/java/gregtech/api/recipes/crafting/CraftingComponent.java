@@ -15,18 +15,9 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-
 public final class CraftingComponent {
 
     private final Int2ObjectMap<Object> ingredients;
-
-    @Deprecated
-    public CraftingComponent(Map<Integer, Object> map) {
-        this.ingredients = new Int2ObjectOpenHashMap<>();
-        this.ingredients.putAll(map);
-        this.ingredients.defaultReturnValue(map.get(GTValues.FALLBACK));
-    }
 
     private CraftingComponent(@NotNull Int2ObjectMap<Object> craftingComponents) {
         this.ingredients = craftingComponents;
@@ -38,11 +29,6 @@ public final class CraftingComponent {
      */
     public @Nullable Object getIngredient(int tier) {
         return ingredients.get(tier);
-    }
-
-    @Deprecated
-    public void updateIngredients(@NotNull Map<Integer, Object> map) {
-        updateIngredients(new CraftingComponent(map), true);
     }
 
     /**
