@@ -8,11 +8,12 @@ import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 
-public class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfigSlot<T>> {
+public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfigSlot<T>> {
 
     protected final IConfigurableSlot<T> backingSlot;
-    private IConfigurableSlot<T> cached;
     protected final boolean isStocking;
+
+    protected static final int jeiDropSyncID = 1;
 
     public AEConfigSlot(IConfigurableSlot<T> backingSlot, boolean isStocking) {
         this.backingSlot = backingSlot;

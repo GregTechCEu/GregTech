@@ -5,7 +5,7 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfig
 import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.widget.Widget;
 
-public class AEDisplaySlot<T extends IAEStack<T>> extends Widget<AEDisplaySlot<T>> {
+public abstract class AEDisplaySlot<T extends IAEStack<T>> extends Widget<AEDisplaySlot<T>> {
 
     private final IConfigurableSlot<T> config;
     private IConfigurableSlot<T> cached;
