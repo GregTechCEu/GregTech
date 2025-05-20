@@ -185,12 +185,6 @@ public class GTValues {
         return isDeobf;
     }
 
-    /**
-     * Default fallback value used for Map keys.
-     * Currently only used in {@link gregtech.api.recipes.crafting.CraftingComponent}.
-     */
-    public static final int FALLBACK = -1;
-
     public static Supplier<Boolean> FOOLS = () -> {
         String[] yearMonthDay = LocalDate.now().toString().split("-");
         return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("04") && yearMonthDay[2].equals("01");
