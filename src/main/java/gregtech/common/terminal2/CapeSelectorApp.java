@@ -56,9 +56,10 @@ public class CapeSelectorApp implements ITerminalApp {
             IWidget capeButton = new ButtonWidget<>()
                     .size(40, 72)
                     .posRel(0.5F, 0.5F)
-                    .overlay(new UITexture(cape, 1f / 64, 1f / 32, 11f / 64, 17f / 32, false))
-                    .background(Terminal2Theme.COLOR_BACKGROUND_2)
+                    .background(new UITexture(cape, 1f / 64, 1f / 32, 11f / 64, 17f / 32, false))
+                    .overlay(new DynamicDrawable(capeForeground(cape)))
                     .disableHoverOverlay()
+                    .disableHoverBackground()
                     .onMousePressed(b -> {
                         syncHandler.syncToServer(SELECT_CAPE, buf -> buf.writeString(cape.toString()));
                         return true;
@@ -67,7 +68,6 @@ public class CapeSelectorApp implements ITerminalApp {
             capeGrid.child(new ParentWidget<>()
                     .size(46, 78)
                     .background(new DynamicDrawable(capeBackground(cape)))
-                    .overlay(new DynamicDrawable(capeForeground(cape)))
                     .child(capeButton)
                     .child(new DynamicDrawable(capeOverlay(cape)).asWidget()
                             .size(24)
@@ -108,7 +108,7 @@ public class CapeSelectorApp implements ITerminalApp {
     }
 
     private Supplier<IDrawable> capeOverlay(ResourceLocation cape) {
-        return () -> syncHandler.unlockedCapes.contains(cape) ? IDrawable.EMPTY : GTGuiTextures.RECIPE_LOCK;
+        return () -> syncHandler.unlockedCapes.contains(cape) ? IDrawable.EMPTY : GTGuiTextures.RECIPE_LOCK_WHITE;
     }
 
     private Supplier<IDrawable> capeForeground(ResourceLocation cape) {

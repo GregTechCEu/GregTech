@@ -77,6 +77,7 @@ public class SettingsApp implements ITerminalApp {
                             .left(276)
                             .topRelAnchor(0.5F, 0.5F)
                             .addTooltipLine(IKey.lang("terminal.settings.reset_color"))
+                            .setEnabledIf((w) -> !Terminal2Theme.isDefaultColor(color))
                             .onMousePressed(i -> {
                                 Terminal2Theme.resetToDefaultColor(color);
                                 Terminal2Theme.saveConfig();

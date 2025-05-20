@@ -63,7 +63,7 @@ public class Ring implements IDrawable {
         drawRing(x, y, width, height, ringWidth, color, segments, start, end);
     }
 
-    // modified from mui0 Widget#drawTorus to
+    // modified from mui0 Widget#drawTorus
     private static void drawRing(float x, float y, float w, float h, float ringWidth, int color, int segments, int from,
                                  int to) {
         float cx = x + w / 2f, cy = y + h / 2f;
