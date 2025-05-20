@@ -188,7 +188,7 @@ public final class ModularUI implements ISizeProvider {
         private final ImmutableBiMap.Builder<Integer, Widget> widgets = ImmutableBiMap.builder();
         private final ImmutableList.Builder<Runnable> openListeners = ImmutableList.builder();
         private final ImmutableList.Builder<Runnable> closeListeners = ImmutableList.builder();
-        private final IGuiTexture background;
+        private IGuiTexture background;
         private final int width;
         private final int height;
         private int nextFreeWidgetId = 0;
@@ -299,6 +299,11 @@ public final class ModularUI implements ISizeProvider {
                     width, height, holder, player);
             ui.shouldColor = this.shouldColor;
             return ui;
+        }
+
+        public Builder setBackground(IGuiTexture texture) {
+            background = texture;
+            return this;
         }
     }
 }
