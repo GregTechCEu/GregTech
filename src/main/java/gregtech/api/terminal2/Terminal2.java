@@ -5,7 +5,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.terminal2.CapeSelectorApp;
 import gregtech.common.terminal2.SettingsApp;
-import gregtech.common.terminal2.TestApp;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -34,11 +33,23 @@ public class Terminal2 {
         }
         registerApp(GTUtility.gregtechId("settings"), new SettingsApp());
         registerApp(GTUtility.gregtechId("capes"), new CapeSelectorApp());
-        for (int i = 0; i < 18; i++) {
-            registerApp(GTUtility.gregtechId("test" + i), new TestApp(i));
-        }
+
+        /*
+         * TODO potential apps to create/port:
+         * guide/tutorial app using mui2 rich text and markup files of some sort
+         * terminal games (minesweeper, pong, theseus' escape)
+         * recipe chart (if anyone actually wants to port it)
+         * teleporter (would require a system allowing gating apps behind some requirement, too powerful to be default)
+         */
     }
 
+    /**
+     * Register a terminal app. Call this during initialization.
+     * 
+     * @param id A unique identifier for your app. This is used to determine the lang key for the app name tooltip.
+     *           <p>
+     *           e.g. <code>gregtech:capes</code> -> <code>terminal.app.gregtech.capes</code>
+     */
     public static void registerApp(ResourceLocation id, ITerminalApp app) {
         if (appMap.containsKey(id) || HOME_ID.equals(id)) {
             throw new AssertionError("A terminal app with id " + id + " already exists!");

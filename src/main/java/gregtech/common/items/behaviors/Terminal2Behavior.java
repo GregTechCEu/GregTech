@@ -48,7 +48,7 @@ public class Terminal2Behavior implements IItemBehaviour, ItemUIFactory {
     public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
         ModularPanel panel = GTGuis.createPanel(guiData.getUsedItemStack(), 364, 248);
 
-        // to avoid tying the terminal bound rect gc logic to IDPagedWidget itself
+        // to avoid tying the custom disposal logic to IDPagedWidget itself
         @SuppressWarnings("rawtypes")
         IDPagedWidget<?> appPages = new IDPagedWidget() {
 

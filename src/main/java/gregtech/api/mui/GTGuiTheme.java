@@ -102,6 +102,7 @@ public class GTGuiTheme {
             // .fluidSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
             .build();
 
+    // TODO make this better
     public static final GTGuiTheme TERMINAL = templateBuilder("gregtech_terminal")
             .parent("gregtech_standard")
             .textColor(0xFFFDFDFD)
