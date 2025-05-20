@@ -1,5 +1,7 @@
 package gregtech.common.mui.widget;
 
+import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
+
 import gregtech.api.GTValues;
 import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.api.util.FluidTooltipUtil;
@@ -135,6 +137,12 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         if (isHovering()) {
             GlStateManager.colorMask(true, true, true, false);
             GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2, widgetTheme.getSlotHoverColor());
+            GlStateManager.colorMask(true, true, true, true);
+        }
+
+        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() || ModularUIJeiPlugin.hoveringOverIngredient(this)) {
+            GlStateManager.colorMask(true, true, true, false);
+            drawHighlight(getArea(), isHovering());
             GlStateManager.colorMask(true, true, true, true);
         }
     }

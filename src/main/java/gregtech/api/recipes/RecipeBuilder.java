@@ -1,6 +1,7 @@
 package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -25,7 +26,7 @@ import gregtech.api.recipes.properties.impl.DimensionProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -1084,9 +1085,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (hasItemRecycling()) {
             // ignore input fluids for item-only recycling
             ItemStack outputStack = getOutputs().get(0);
-            ItemMaterialInfo info = RecyclingHandler.getRecyclingIngredients(getInputs(), outputStack.getCount());
-            if (info != null) {
-                OreDictUnifier.registerOre(outputStack, info);
+            RecyclingData data = RecyclingHandler.getRecyclingIngredients(getInputs(), outputStack.getCount());
+            if (data != null) {
+                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(outputStack, data);
             }
         }
 

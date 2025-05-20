@@ -10,8 +10,8 @@ import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.behaviors.ColorSprayBehaviour;
 
@@ -24,7 +24,6 @@ import net.minecraft.item.EnumDyeColor;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.common.items.MetaItems.PROSPECTOR_LUV;
 import static gtqt.common.items.GTQTMetaItems.ENDLESS_SPRAY_EMPTY;
 
 public class GTQTMetaItem1 extends StandardMetaItem {
@@ -94,7 +93,7 @@ public class GTQTMetaItem1 extends StandardMetaItem {
                         .getMaxFluidTemperature(), true, false, false, false, true),
                         new ItemFluidContainer())
                 .setMaxStackSize(1)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Wood, M * 8))) // ingot * 8
+                .setRecyclingData(new RecyclingData(new MaterialStack(Wood, M * 8))) // ingot * 8
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         GTQTMetaItems.FLUID_CELL_CHROME = this.addItem(91, "large_fluid_cell.chrome")
@@ -102,7 +101,7 @@ public class GTQTMetaItem1 extends StandardMetaItem {
                         .getMaxFluidTemperature(), true, true, false, false, true),
                         new ItemFluidContainer())
                 .setMaxStackSize(32)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Chrome, M * 8))) // ingot * 8
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Chrome, M * 8))) // ingot * 8
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         GTQTMetaItems.FLUID_CELL_IRIDIUM = this.addItem(92, "large_fluid_cell.iridium")
@@ -110,7 +109,7 @@ public class GTQTMetaItem1 extends StandardMetaItem {
                         .getMaxFluidTemperature(), true, true, true, false, true),
                         new ItemFluidContainer())
                 .setMaxStackSize(32)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Iridium, M * 8))) // ingot * 8
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Iridium, M * 8))) // ingot * 8
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         GTQTMetaItems.FLUID_CELL_NAQUADAH_ALLOY = this.addItem(93, "large_fluid_cell.naquadah_alloy")
@@ -118,7 +117,7 @@ public class GTQTMetaItem1 extends StandardMetaItem {
                         .getMaxFluidTemperature(), true, true, true, true, true),
                         new ItemFluidContainer())
                 .setMaxStackSize(32)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.NaquadahAlloy, M * 8))) // ingot * 8
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.NaquadahAlloy, M * 8))) // ingot * 8
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         GTQTMetaItems.FLUID_CELL_NEUTRONIUM = this.addItem(94, "large_fluid_cell.neutronium")
@@ -126,7 +125,7 @@ public class GTQTMetaItem1 extends StandardMetaItem {
                         .getMaxFluidTemperature(), true, true, true, true, true),
                         new ItemFluidContainer())
                 .setMaxStackSize(32)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Neutronium, M * 8))) // ingot * 8
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Neutronium, M * 8))) // ingot * 8
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         GTQTMetaItems.PROSPECTOR_UV = addItem(95, "prospector.uv")

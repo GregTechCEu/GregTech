@@ -1485,6 +1485,17 @@ public class MachineRecipeLoader {
             }
         }
 
+        for (int i = 0; i < SIXTEEN_IMPORT_HATCH.length; i++) {
+            if (SIXTEEN_IMPORT_HATCH[i] != null && SIXTEEN_EXPORT_HATCH[i] != null) {
+                ModHandler.addShapedRecipe("sixteen_fluid_hatch_output_to_input_" + SIXTEEN_IMPORT_HATCH[i].getTier(),
+                        SIXTEEN_IMPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', NONUPLE_EXPORT_HATCH[i].getStackForm());
+                ModHandler.addShapedRecipe("sixteen_fluid_hatch_input_to_output_" + SIXTEEN_EXPORT_HATCH[i].getTier(),
+                        SIXTEEN_EXPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', SIXTEEN_IMPORT_HATCH[i].getStackForm());
+            }
+        }
+
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             ModHandler.addShapedRecipe("me_fluid_hatch_output_to_input", FLUID_IMPORT_HATCH_ME.getStackForm(), "d", "B",
                     'B', FLUID_EXPORT_HATCH_ME.getStackForm());

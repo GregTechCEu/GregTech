@@ -46,15 +46,14 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private boolean sortToBack;
     /* *********************** MUI 1 *********************** */
 
-    @Deprecated
     private final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectArrayMap<>();
-    @Deprecated
+
     private @Nullable TextureArea progressBar;
-    @Deprecated
+
     private @Nullable gregtech.api.gui.widgets.ProgressWidget.MoveType moveType;
-    @Deprecated
+
     private @Nullable TextureArea specialTexture;
-    @Deprecated
+
     private int @Nullable [] specialTextureLocation;
 
     /* *********************** MUI 2 *********************** */
@@ -156,25 +155,19 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
-     * @deprecated in favor of the MUI2 method.
      * @param progressBar the progress bar texture to use
      * @return this
      */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> progressBar(@Nullable TextureArea progressBar) {
         this.progressBar = progressBar;
         return this;
     }
 
     /**
-     * @deprecated in favor of the MUI2 method.
      * @param progressBar the progress bar texture to use
      * @param moveType    the progress bar move type to use
      * @return this
      */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> progressBar(@Nullable TextureArea progressBar,
                                                     @Nullable gregtech.api.gui.widgets.ProgressWidget.MoveType moveType) {
         this.progressBar = progressBar;
@@ -183,13 +176,10 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
-     * @deprecated in favor of the MUI2 method.
      * @param texture  the texture to use
      * @param isOutput if the slot is an output slot
      * @return this
      */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> itemSlotOverlay(@NotNull TextureArea texture, boolean isOutput) {
         this.slotOverlays.put(computeOverlayKey(isOutput, false, false), texture);
         this.slotOverlays.put(computeOverlayKey(isOutput, false, true), texture);
@@ -197,14 +187,11 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
-     * @deprecated in favor of the MUI2 method.
      * @param texture    the texture to use
      * @param isOutput   if the slot is an output slot
      * @param isLastSlot if the slot is the last slot
      * @return this
      */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> itemSlotOverlay(@NotNull TextureArea texture, boolean isOutput,
                                                         boolean isLastSlot) {
         this.slotOverlays.put(computeOverlayKey(isOutput, false, isLastSlot), texture);
@@ -212,13 +199,10 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
-     * @deprecated in favor of the MUI2 method.
      * @param texture  the texture to use
      * @param isOutput if the slot is an output slot
      * @return this
      */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> fluidSlotOverlay(@NotNull TextureArea texture, boolean isOutput) {
         this.slotOverlays.put(computeOverlayKey(isOutput, true, false), texture);
         this.slotOverlays.put(computeOverlayKey(isOutput, true, true), texture);
@@ -226,25 +210,17 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
-     * @deprecated in favor of the MUI2 method.
      * @param texture    the texture to use
      * @param isOutput   if the slot is an output slot
      * @param isLastSlot if the slot is the last slot
      * @return this
      */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> fluidSlotOverlay(@NotNull TextureArea texture, boolean isOutput,
                                                          boolean isLastSlot) {
         this.slotOverlays.put(computeOverlayKey(isOutput, true, isLastSlot), texture);
         return this;
     }
 
-    /**
-     * @deprecated in favor of the MUI2 method.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> specialTexture(@NotNull TextureArea texture, int x, int y, int width,
                                                        int height) {
         this.specialTexture = texture;

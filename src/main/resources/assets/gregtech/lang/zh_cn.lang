@@ -5183,7 +5183,11 @@ gregtech.machine.fluid_hatch.import.max.name=§c§lMAX§r输入仓
 
 gregtech.machine.fluid_hatch.export.tooltip=为多方块结构输出流体
 
-gregtech.machine.fluid_hatch.import_4x.name=§5EV§r四重输入仓
+gregtech.machine.fluid_hatch.import_4x.ulv.name=§8ULV§r四重输入仓
+gregtech.machine.fluid_hatch.import_4x.lv.name=§7LV§r四重输入仓
+gregtech.machine.fluid_hatch.import_4x.mv.name=§bMV§r四重输入仓
+gregtech.machine.fluid_hatch.import_4x.hv.name=§6HV§r四重输入仓
+gregtech.machine.fluid_hatch.import_4x.ev.name=§5EV§r四重输入仓
 gregtech.machine.fluid_hatch.import_4x.iv.name=§1IV§r四重输入仓
 gregtech.machine.fluid_hatch.import_4x.luv.name=§dLuV§r四重输入仓
 gregtech.machine.fluid_hatch.import_4x.zpm.name=§cZPM§r四重输入仓
@@ -5195,7 +5199,11 @@ gregtech.machine.fluid_hatch.import_4x.uxv.name=§eUXV§r四重输入仓
 gregtech.machine.fluid_hatch.import_4x.opv.name=§9OpV§r四重输入仓
 gregtech.machine.fluid_hatch.import_4x.max.name=§c§lMAX§r四重输入仓
 
-gregtech.machine.fluid_hatch.import_9x.name=§5EV§r九重输入仓
+gregtech.machine.fluid_hatch.import_9x.ulv.name=§8ULV§r九重输入仓
+gregtech.machine.fluid_hatch.import_9x.lv.name=§7LV§r九重输入仓
+gregtech.machine.fluid_hatch.import_9x.mv.name=§bMV§r九重输入仓
+gregtech.machine.fluid_hatch.import_9x.hv.name=§6HV§r九重输入仓
+gregtech.machine.fluid_hatch.import_9x.ev.name=§5EV§r九重输入仓
 gregtech.machine.fluid_hatch.import_9x.iv.name=§1IV§r九重输入仓
 gregtech.machine.fluid_hatch.import_9x.luv.name=§dLuV§r九重输入仓
 gregtech.machine.fluid_hatch.import_9x.zpm.name=§cZPM§r九重输入仓
@@ -5207,7 +5215,11 @@ gregtech.machine.fluid_hatch.import_9x.uxv.name=§eUXV§r九重输入仓
 gregtech.machine.fluid_hatch.import_9x.opv.name=§9OpV§r九重输入仓
 gregtech.machine.fluid_hatch.import_9x.max.name=§c§lMAX§r九重输入仓
 
-gregtech.machine.fluid_hatch.import_16x.name=§5EV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.ulv.name=§8ULV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.lv.name=§7LV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.mv.name=§bMV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.hv.name=§6HV§r十六重输入仓
+gregtech.machine.fluid_hatch.import_16x.ev.name=§5EV§r十六重输入仓
 gregtech.machine.fluid_hatch.import_16x.iv.name=§1IV§r十六重输入仓
 gregtech.machine.fluid_hatch.import_16x.luv.name=§dLuV§r十六重输入仓
 gregtech.machine.fluid_hatch.import_16x.zpm.name=§cZPM§r十六重输入仓
@@ -5219,7 +5231,11 @@ gregtech.machine.fluid_hatch.import_16x.uxv.name=§eUXV§r十六重输入仓
 gregtech.machine.fluid_hatch.import_16x.opv.name=§9OpV§r十六重输入仓
 gregtech.machine.fluid_hatch.import_16x.max.name=§c§lMAX§r十六重输入仓
 
-gregtech.machine.fluid_hatch.export_4x.name=§5EV§r四重输出仓
+gregtech.machine.fluid_hatch.export_4x.ulv.name=§8ULV§r四重输出仓
+gregtech.machine.fluid_hatch.export_4x.lv.name=§7LV§r四重输出仓
+gregtech.machine.fluid_hatch.export_4x.mv.name=§bMV§r四重输出仓
+gregtech.machine.fluid_hatch.export_4x.hv.name=§6HV§r四重输出仓
+gregtech.machine.fluid_hatch.export_4x.ev.name=§5EV§r四重输出仓
 gregtech.machine.fluid_hatch.export_4x.iv.name=§1IV§r四重输出仓
 gregtech.machine.fluid_hatch.export_4x.luv.name=§dLuV§r四重输出仓
 gregtech.machine.fluid_hatch.export_4x.zpm.name=§cZPM§r四重输出仓
@@ -5231,7 +5247,11 @@ gregtech.machine.fluid_hatch.export_4x.uxv.name=§eUXV§r四重输出仓
 gregtech.machine.fluid_hatch.export_4x.opv.name=§9OpV§r四重输出仓
 gregtech.machine.fluid_hatch.export_4x.max.name=§c§lMAX§r四重输出仓
 
-gregtech.machine.fluid_hatch.export_9x.name=§5EV§r九重输出仓
+gregtech.machine.fluid_hatch.export_9x.ulv.name=§8ULV§r九重输出仓
+gregtech.machine.fluid_hatch.export_9x.lv.name=§7LV§r九重输出仓
+gregtech.machine.fluid_hatch.export_9x.mv.name=§bMV§r九重输出仓
+gregtech.machine.fluid_hatch.export_9x.hv.name=§6HV§r九重输出仓
+gregtech.machine.fluid_hatch.export_9x.ev.name=§5EV§r九重输出仓
 gregtech.machine.fluid_hatch.export_9x.iv.name=§1IV§r九重输出仓
 gregtech.machine.fluid_hatch.export_9x.luv.name=§dLuV§r九重输出仓
 gregtech.machine.fluid_hatch.export_9x.zpm.name=§cZPM§r九重输出仓
@@ -5243,7 +5263,11 @@ gregtech.machine.fluid_hatch.export_9x.uxv.name=§eUXV§r九重输出仓
 gregtech.machine.fluid_hatch.export_9x.opv.name=§9OpV§r九重输出仓
 gregtech.machine.fluid_hatch.export_9x.max.name=§c§lMAX§r九重输出仓
 
-gregtech.machine.fluid_hatch.export_16x.name=§5EV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.ulv.name=§8ULV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.lv.name=§7LV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.mv.name=§bMV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.hv.name=§6HV§r十六重输出仓
+gregtech.machine.fluid_hatch.export_16x.ev.name=§5EV§r十六重输出仓
 gregtech.machine.fluid_hatch.export_16x.iv.name=§1IV§r十六重输出仓
 gregtech.machine.fluid_hatch.export_16x.luv.name=§dLuV§r十六重输出仓
 gregtech.machine.fluid_hatch.export_16x.zpm.name=§cZPM§r十六重输出仓

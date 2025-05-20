@@ -9,5 +9,7 @@ public class MaterialHelper {
     public static Material[]Pipe={Bronze,Bronze,Steel,StainlessSteel,Titanium,TungstenSteel,NiobiumTitanium,Iridium,Naquadah,Europium,Duranium,Neutronium};
     public static Material[]Wire={Lead,Tin,Copper,Gold,Aluminium,Tungsten,NiobiumTitanium,VanadiumGallium,YttriumBariumCuprate,NaquadahAlloy,Trinium};
     public static Material[]Cable={RedAlloy, Tin ,Copper ,Gold ,Aluminium ,Platinum ,NiobiumTitanium, VanadiumGallium ,YttriumBariumCuprate, Europium};
+    public static Material[]Plastic={Glue,Glue,Polyethylene,Polyethylene, Polytetrafluoroethylene,Polytetrafluoroethylene,Polytetrafluoroethylene,Polybenzimidazole,Polybenzimidazole,Polybenzimidazole};
+
 
 }
