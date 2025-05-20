@@ -28,9 +28,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.MCHelper;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
-import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -716,11 +716,13 @@ public class RenderUtil {
         return getTextureMap().getMissingSprite();
     }
 
-    public static <T extends Widget<?> & JeiGhostIngredientSlot<?>> void handleJeiGhostHighlight(T slot) {
+    public static void handleJeiGhostHighlight(IWidget slot) {
         if (!Mods.JustEnoughItems.isModLoaded()) return;
-        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() || ModularUIJeiPlugin.hoveringOverIngredient(slot)) {
+        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return;
+        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() ||
+                ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
             GlStateManager.colorMask(true, true, true, false);
-            slot.drawHighlight(slot.getArea(), slot.isHovering());
+            ingredientSlot.drawHighlight(slot.getArea(), slot.isHovering());
             GlStateManager.colorMask(true, true, true, true);
         }
     }
