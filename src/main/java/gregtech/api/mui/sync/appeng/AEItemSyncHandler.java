@@ -1,5 +1,6 @@
-package gregtech.api.mui.sync;
+package gregtech.api.mui.sync.appeng;
 
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
@@ -15,6 +16,7 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
 
     public AEItemSyncHandler(IConfigurableSlot<IAEItemStack> config) {
         super(config);
+        cache = new ExportOnlyAEItemSlot();
     }
 
     @Override
@@ -24,6 +26,12 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
                 config.setConfig(WrappedItemStack.fromPacket(buf));
             } else {
                 config.setConfig(null);
+            }
+
+            if (buf.readBoolean()) {
+                config.setStock(WrappedItemStack.fromPacket(buf));
+            } else {
+                config.setStock(null);
             }
         }
     }

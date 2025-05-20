@@ -19,7 +19,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.sync.AEItemSyncHandler;
+import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.api.mui.widget.appeng.AEItemConfigSlot;
 import gregtech.api.mui.widget.appeng.AEItemDisplaySlot;
@@ -220,9 +220,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                         .minElementMargin(0, 0)
                         .minColWidth(18)
                         .minRowHeight(18)
-                        .matrix(Grid.mapToMatrix(4, 16, index -> new AEItemConfigSlot(isStocking)
-                                .background(GTGuiTextures.SLOT, GTGuiTextures.CONFIG_ARROW_DARK)
-                                .syncHandler(syncHandlerName, index))))
+                        .matrix(Grid.mapToMatrix(4, 16,
+                                index -> new AEItemConfigSlot(isStocking, () -> getAEItemHandler().isAutoPull())
+                                        .background(GTGuiTextures.SLOT, GTGuiTextures.CONFIG_ARROW_DARK)
+                                        .syncHandler(syncHandlerName, index))))
                 .child(new Grid()
                         .pos(7 + 18 * 5, 25)
                         .size(18 * 4, 18 * 4)

@@ -1,4 +1,4 @@
-package gregtech.api.mui.sync;
+package gregtech.api.mui.sync.appeng;
 
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 
@@ -14,6 +14,11 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     protected final IConfigurableSlot<T> config;
     protected IConfigurableSlot<T> cache;
 
+    @Nullable
+    private Runnable onConfigChanged;
+    @Nullable
+    private Runnable onStockChanged;
+
     public AESyncHandler(IConfigurableSlot<T> config) {
         this.config = config;
     }
@@ -28,7 +33,17 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
         if (!areAEStackCountEquals(currentConfig, cachedConfig) || !areAEStackCountEquals(currentStock, cachedStock)) {
             syncToClient(configSyncID, buf -> {
                 if (currentConfig == null) {
+                    buf.writeBoolean(false);
+                } else {
+                    buf.writeBoolean(true);
+                    currentConfig.writeToPacket(buf);
+                }
 
+                if (currentStock == null) {
+                    buf.writeBoolean(false);
+                } else {
+                    buf.writeBoolean(true);
+                    currentStock.writeToPacket(buf);
                 }
             });
         }
@@ -44,6 +59,15 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
         return config.getStock();
     }
 
+    public void setOnConfigChanged(@Nullable Runnable onConfigChanged) {
+        this.onConfigChanged = onConfigChanged;
+    }
+
+    public void setOnStockChanged(@Nullable Runnable onStockChanged) {
+        this.onStockChanged = onStockChanged;
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public final boolean areAEStackCountEquals(T stack1, T stack2) {
         if (stack2 == stack1) {
             return true;

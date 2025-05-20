@@ -1,6 +1,6 @@
 package gregtech.api.mui.widget.appeng;
 
-import gregtech.api.mui.sync.AEItemSyncHandler;
+import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
 
@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import appeng.api.storage.data.IAEItemStack;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
-import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
@@ -19,12 +18,13 @@ import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Interactable,
-                              JeiGhostIngredientSlot<ItemStack>,
-                              JeiIngredientProvider {
+import java.util.function.BooleanSupplier;
 
-    public AEItemConfigSlot(boolean isStocking) {
-        super(isStocking);
+public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Interactable,
+                              JeiGhostIngredientSlot<ItemStack> {
+
+    public AEItemConfigSlot(boolean isStocking, BooleanSupplier isAutoPull) {
+        super(isStocking, isAutoPull);
         size(18, 18);
     }
 
@@ -95,7 +95,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Inte
 
     @Override
     public @Nullable Object getIngredient() {
-        IAEItemStack stack = getSyncHandler().getConfig();
-        return stack == null ? null : stack.createItemStack();
+        IAEItemStack config = getSyncHandler().getConfig();
+        return config == null ? null : config.createItemStack();
     }
 }
