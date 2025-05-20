@@ -28,6 +28,7 @@ public class GTGuiTextures {
         public static final String PRIMITIVE_BACKGROUND = "gregtech_primitive_bg";
 
         public static final String STANDARD_SLOT = "gregtech_standard_slot";
+        public static final String DARK_SLOT = "gregtech_dark_slot";
         public static final String BRONZE_SLOT = "gregtech_bronze_slot";
         public static final String STEEL_SLOT = "gregtech_steel_slot";
         public static final String PRIMITIVE_SLOT = "gregtech_primitive_slot";
@@ -123,6 +124,14 @@ public class GTGuiTextures {
             .imageSize(18, 18)
             .adaptable(1)
             .name(IDs.STANDARD_SLOT)
+            .canApplyTheme()
+            .build();
+
+    public static final UITexture SLOT_DARK = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/base/slot_dark.png")
+            .imageSize(18, 18)
+            .adaptable(1)
+            .name(IDs.DARK_SLOT)
             .canApplyTheme()
             .build();
 

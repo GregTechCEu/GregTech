@@ -19,6 +19,9 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.GhostCircuitSlotWidget;
+import gregtech.api.mui.widget.appeng.AEItemConfigSlot;
+import gregtech.api.mui.widget.appeng.AEItemDisplaySlot;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
@@ -55,6 +58,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -203,11 +207,27 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
                 .child(IKey.dynamic(() -> isOnline() ? I18n.format("gregtech.gui.me_network.online") :
                         I18n.format("gregtech.gui.me_network.offline")).asWidget().pos(5, 15))
+                .child(new Grid()
+                        .pos(7, 25)
+                        .size(18 * 4, 18 * 4)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18)
+                        .minRowHeight(18)
+                        .matrix(Grid.mapToMatrix(4, 16, index -> new AEItemConfigSlot(getAEItemHandler(), index)
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.CONFIG_ARROW_DARK))))
+                .child(new Grid()
+                        .pos(7 + 18 * 5, 25)
+                        .size(18 * 4, 18 * 4)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18)
+                        .minRowHeight(18)
+                        .matrix(Grid.mapToMatrix(4, 16, index -> new AEItemDisplaySlot(getAEItemHandler(), index)
+                                .background(GTGuiTextures.SLOT_DARK))))
                 .child(Flow.column()
                         .pos(7 + 18 * 4, 25 + 18)
                         .size(18, 18 * 4)
                         .child(GTGuiTextures.ARROW_DOUBLE.asWidget())
-                        .child(new gregtech.api.mui.widget.GhostCircuitSlotWidget()
+                        .child(new GhostCircuitSlotWidget()
                                 .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
                         .child(new ItemSlot()
