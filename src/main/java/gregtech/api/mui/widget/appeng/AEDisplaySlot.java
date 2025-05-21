@@ -11,6 +11,7 @@ public abstract class AEDisplaySlot<T extends IAEStack<T>> extends Widget<AEDisp
 
     public AEDisplaySlot() {
         super();
+        size(18);
     }
 
     @Override

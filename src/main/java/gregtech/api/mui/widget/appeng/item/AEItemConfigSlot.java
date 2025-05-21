@@ -1,6 +1,7 @@
-package gregtech.api.mui.widget.appeng;
+package gregtech.api.mui.widget.appeng.item;
 
 import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
+import gregtech.api.mui.widget.appeng.AEConfigSlot;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
 
@@ -26,7 +27,6 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Inte
 
     public AEItemConfigSlot(boolean isStocking, BooleanSupplier isAutoPull) {
         super(isStocking, isAutoPull);
-        size(18, 18);
         tooltipAutoUpdate(true);
     }
 

@@ -12,9 +12,9 @@ public interface IConfigurableSlot<T extends IAEStack<T>> {
     @Nullable
     T getStock();
 
-    void setConfig(T val);
+    void setConfig(@Nullable T val);
 
-    void setStock(T val);
+    void setStock(@Nullable T val);
 
     @NotNull
     IConfigurableSlot<T> copy();

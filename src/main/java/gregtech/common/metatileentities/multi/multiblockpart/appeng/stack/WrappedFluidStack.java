@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng.stack;
 
+import gregtech.api.util.NetworkUtil;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
@@ -13,7 +15,12 @@ import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.fluids.util.AEFluidStack;
 import io.netty.buffer.ByteBuf;
+
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 
@@ -30,24 +37,22 @@ public class WrappedFluidStack implements IAEFluidStack {
         this.delegate = stack;
     }
 
+    @Contract("null -> null; !null -> !null")
     public static WrappedFluidStack fromFluidStack(FluidStack fluidStack) {
         return fluidStack == null ? null : new WrappedFluidStack(fluidStack);
     }
 
+    @Contract("null -> null")
     public static WrappedFluidStack fromNBT(NBTTagCompound data) {
         FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(data);
         return fromFluidStack(fluidStack);
     }
 
-    public static WrappedFluidStack fromPacket(ByteBuf buffer) {
-        byte len = buffer.readByte();
-        byte[] name = new byte[len];
-        buffer.readBytes(name, 0, len);
-        int amt = buffer.readInt();
-        FluidStack fluidStack = FluidRegistry.getFluidStack(new String(name, StandardCharsets.UTF_8), amt);
-        return fromFluidStack(fluidStack);
+    public static WrappedFluidStack fromPacket(@NotNull ByteBuf buffer) {
+        return fromFluidStack(NetworkUtil.readFluidStack(buffer));
     }
 
+    @NotNull
     public AEFluidStack getAEStack() {
         return AEFluidStack.fromFluidStack(this.delegate);
     }
@@ -134,6 +139,12 @@ public class WrappedFluidStack implements IAEFluidStack {
         this.delegate.writeToNBT(nbtTagCompound);
     }
 
+    public NBTTagCompound serializeToNBT() {
+        NBTTagCompound tag = new NBTTagCompound();
+        writeToNBT(tag);
+        return tag;
+    }
+
     @Override
     public boolean fuzzyComparison(IAEFluidStack stack, FuzzyMode fuzzyMode) {
         return this.delegate.getFluid() == stack.getFluid();
@@ -141,10 +152,7 @@ public class WrappedFluidStack implements IAEFluidStack {
 
     @Override
     public void writeToPacket(ByteBuf buffer) {
-        byte[] name = this.delegate.getFluid().getName().getBytes(StandardCharsets.UTF_8);
-        buffer.writeByte((byte) name.length);
-        buffer.writeBytes(name);
-        buffer.writeInt(this.delegate.amount);
+        ByteBufUtils.writeTag(buffer, serializeToNBT());
     }
 
     @Override

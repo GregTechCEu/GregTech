@@ -28,6 +28,7 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
     public AEConfigSlot(boolean isStocking, BooleanSupplier isAutoPull) {
         this.isStocking = isStocking;
         this.isAutoPull = isAutoPull;
+        size(18);
     }
 
     @Override

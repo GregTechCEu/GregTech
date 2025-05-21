@@ -1,6 +1,7 @@
-package gregtech.api.mui.widget.appeng;
+package gregtech.api.mui.widget.appeng.item;
 
 import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
+import gregtech.api.mui.widget.appeng.AEDisplaySlot;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
 
@@ -18,15 +19,14 @@ public class AEItemDisplaySlot extends AEDisplaySlot<IAEItemStack> {
 
     public AEItemDisplaySlot() {
         super();
-        size(18, 18);
         tooltipAutoUpdate(true);
     }
 
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        IAEItemStack stack = getSyncHandler().getStock();
-        if (stack != null) {
-            tooltip.addFromItem(stack.createItemStack());
+        IAEItemStack stock = getSyncHandler().getStock();
+        if (stock != null) {
+            tooltip.addFromItem(stock.createItemStack());
         }
     }
 

@@ -33,7 +33,7 @@ public class WrappedItemStack implements IAEItemStack {
         return stack.isEmpty() ? null : new WrappedItemStack(stack);
     }
 
-    public static WrappedItemStack fromNBT(NBTTagCompound i) {
+    public static WrappedItemStack fromNBT(@Nullable NBTTagCompound i) {
         if (i == null) {
             return null;
         } else {
@@ -42,7 +42,7 @@ public class WrappedItemStack implements IAEItemStack {
         }
     }
 
-    public static WrappedItemStack fromPacket(ByteBuf data) {
+    public static WrappedItemStack fromPacket(@NotNull ByteBuf data) {
         return fromNBT(ByteBufUtils.readTag(data));
     }
 
