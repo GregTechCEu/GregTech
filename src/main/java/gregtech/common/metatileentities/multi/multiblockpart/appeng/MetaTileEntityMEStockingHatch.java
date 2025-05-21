@@ -229,7 +229,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         BooleanSyncValue autoPullSync = new BooleanSyncValue(() -> autoPull, this::setAutoPull);
 
         return new ToggleButton()
-                .size(18)
+                .size(16)
                 .value(autoPullSync)
                 .disableHoverBackground()
                 .overlay(false, GTGuiTextures.AUTO_PULL[0])
