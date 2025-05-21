@@ -51,11 +51,11 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
@@ -251,7 +251,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                                 .addTooltipLine(IKey.lang("gregtech.gui.me_bus.extra_slot"))));
     }
 
-    protected IWidget getExtraButton() {
+    protected Widget<?> getExtraButton() {
         return new EmptyWidget()
                 .size(18);
     }

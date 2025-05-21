@@ -43,10 +43,10 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
@@ -206,7 +206,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                         .child(GTGuiTextures.getLogo(getUITheme()).asWidget()));
     }
 
-    protected IWidget getExtraButton() {
+    protected Widget<?> getExtraButton() {
         return new EmptyWidget()
                 .size(18);
     }

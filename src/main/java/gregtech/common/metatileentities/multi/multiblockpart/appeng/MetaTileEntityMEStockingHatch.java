@@ -29,8 +29,8 @@ import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IItemList;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -225,11 +225,12 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     }
 
     @Override
-    protected IWidget getExtraButton() {
+    protected Widget<?> getExtraButton() {
         BooleanSyncValue autoPullSync = new BooleanSyncValue(() -> autoPull, this::setAutoPull);
 
         return new ToggleButton()
                 .size(16)
+                .margin(1)
                 .value(autoPullSync)
                 .disableHoverBackground()
                 .overlay(false, GTGuiTextures.AUTO_PULL[0])
