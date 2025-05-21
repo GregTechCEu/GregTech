@@ -101,7 +101,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Inte
 
     @Override
     public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int scrollAmount) {
-        if (!getSyncHandler().hasConfig() || isStocking) return false;
+        if (getSyncHandler().getConfig() == null || isStocking) return false;
 
         long newStackSize = getSyncHandler().getConfigAmount();
 

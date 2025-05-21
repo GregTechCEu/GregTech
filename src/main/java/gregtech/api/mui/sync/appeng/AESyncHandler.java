@@ -31,7 +31,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
         T currentConfig = config.getConfig();
         T cachedConfig = cache.getConfig();
         if (!areAEStackCountEquals(currentConfig, cachedConfig)) {
-            cache.setConfig(currentConfig);
+            cache.setConfig(currentConfig == null ? null : currentConfig.copy());
 
             syncToClient(configSyncID, buf -> {
                 if (currentConfig == null) {
@@ -46,7 +46,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
         T currentStock = config.getStock();
         T cachedStock = cache.getStock();
         if (!areAEStackCountEquals(currentStock, cachedStock)) {
-            cache.setStock(currentStock);
+            cache.setStock(currentStock == null ? null : currentStock.copy());
 
             syncToClient(stockSyncID, buf -> {
                 if (currentStock == null) {
@@ -64,9 +64,9 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
         if (id == clearConfigID) {
             config.setConfig(null);
         } else if (id == changeConfigID) {
-            if (hasConfig()) {
-                // noinspection DataFlowIssue
-                getConfig().setStackSize(buf.readInt());
+            T config = getConfig();
+            if (config != null) {
+                config.setStackSize(buf.readInt());
             }
         }
     }
@@ -86,10 +86,6 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
 
     public void setConfigAmount(int newAmount) {
         syncToServer(changeConfigID, buf -> buf.writeInt(newAmount));
-    }
-
-    public boolean hasConfig() {
-        return getConfig() != null;
     }
 
     @Nullable
