@@ -21,6 +21,7 @@ import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -75,6 +76,10 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         if (itemstack.isEmpty()) return;
 
         RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
+
+        if (isHovering() && widgetTheme instanceof WidgetSlotTheme slotTheme) {
+            RenderUtil.handleSlotOverlay(this, slotTheme);
+        }
     }
 
     @Override

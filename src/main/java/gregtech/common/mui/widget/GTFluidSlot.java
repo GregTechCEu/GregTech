@@ -8,7 +8,6 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
 
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
@@ -133,13 +132,9 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             this.textRenderer.draw(amount);
         }
 
-        if (isHovering()) {
-            GlStateManager.colorMask(true, true, true, false);
-            GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2, widgetTheme.getSlotHoverColor());
-            GlStateManager.colorMask(true, true, true, true);
+        if (!RenderUtil.handleJeiGhostHighlight(this) && isHovering()) {
+            RenderUtil.handleSlotOverlay(this, widgetTheme);
         }
-
-        RenderUtil.handleJeiGhostHighlight(this);
     }
 
     @Override

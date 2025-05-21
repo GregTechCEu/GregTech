@@ -29,8 +29,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.MCHelper;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
+import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -716,14 +718,35 @@ public class RenderUtil {
         return getTextureMap().getMissingSprite();
     }
 
-    public static void handleJeiGhostHighlight(IWidget slot) {
-        if (!Mods.JustEnoughItems.isModLoaded()) return;
-        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return;
-        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() ||
-                ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
+    /**
+     * Draws the green overlay when a valid ingredient for the slot is hovered over in JEI
+     * 
+     * @param slot the slot to draw the overlay on
+     * @return true if the overlay was drawn, false if not
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean handleJeiGhostHighlight(@NotNull IWidget slot) {
+        if (!Mods.JustEnoughItems.isModLoaded()) return false;
+        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return false;
+
+        if (ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
             GlStateManager.colorMask(true, true, true, false);
             ingredientSlot.drawHighlight(slot.getArea(), slot.isHovering());
             GlStateManager.colorMask(true, true, true, true);
+            return true;
         }
+
+        return false;
+    }
+
+    /**
+     * Draws the gray-ish overlay over a slot when moused over
+     * 
+     * @param slot the slot on which to draw the overlay
+     */
+    public static void handleSlotOverlay(@NotNull IWidget slot, @NotNull WidgetSlotTheme slotTheme) {
+        GlStateManager.colorMask(true, true, true, false);
+        GuiDraw.drawRect(1, 1, slot.getArea().w() - 2, slot.getArea().h() - 2, slotTheme.getSlotHoverColor());
+        GlStateManager.colorMask(true, true, true, true);
     }
 }

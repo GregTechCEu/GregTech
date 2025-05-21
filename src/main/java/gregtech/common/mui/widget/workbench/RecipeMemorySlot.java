@@ -13,6 +13,7 @@ import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.widget.Widget;
@@ -58,6 +59,10 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
             GlStateManager.disableDepth();
             GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
             GlStateManager.enableDepth();
+        }
+
+        if (isHovering() && widgetTheme instanceof WidgetSlotTheme slotTheme) {
+            RenderUtil.handleSlotOverlay(this, slotTheme);
         }
     }
 
