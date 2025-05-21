@@ -10,8 +10,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import appeng.api.storage.data.IAEItemStack;
 
-import java.io.IOException;
-
 public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
 
     public AEItemSyncHandler(IConfigurableSlot<IAEItemStack> config) {
@@ -20,22 +18,14 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
     }
 
     @Override
-    public void readOnClient(int id, PacketBuffer buf) throws IOException {
+    public void readOnClient(int id, PacketBuffer buf) {
         if (id == configSyncID) {
-            if (onConfigChanged != null) {
-                onConfigChanged.run();
-            }
-
             if (buf.readBoolean()) {
                 config.setConfig(WrappedItemStack.fromPacket(buf));
             } else {
                 config.setConfig(null);
             }
         } else if (id == stockSyncID) {
-            if (onStockChanged != null) {
-                onStockChanged.run();
-            }
-
             if (buf.readBoolean()) {
                 config.setStock(WrappedItemStack.fromPacket(buf));
             } else {
@@ -45,7 +35,7 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
     }
 
     @Override
-    public void readOnServer(int id, PacketBuffer buf) throws IOException {
+    public void readOnServer(int id, PacketBuffer buf) {
         super.readOnServer(id, buf);
         if (id == setConfigID) {
             config.setConfig(WrappedItemStack.fromPacket(buf));

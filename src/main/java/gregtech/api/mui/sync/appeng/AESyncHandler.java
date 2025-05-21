@@ -8,8 +8,6 @@ import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-
 public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
 
     private static int rollingID = 0;
@@ -18,14 +16,10 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     public static final int stockSyncID = rollingID++;
     public static final int setConfigID = rollingID++;
     public static final int clearConfigID = rollingID++;
+    public static final int changeConfigID = rollingID++;
 
     protected final IConfigurableSlot<T> config;
     protected IConfigurableSlot<T> cache;
-
-    @Nullable
-    protected Runnable onConfigChanged;
-    @Nullable
-    protected Runnable onStockChanged;
 
     public AESyncHandler(IConfigurableSlot<T> config) {
         this.config = config;
@@ -38,10 +32,6 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
         T cachedConfig = cache.getConfig();
         if (!areAEStackCountEquals(currentConfig, cachedConfig)) {
             cache.setConfig(currentConfig);
-
-            if (onConfigChanged != null) {
-                onConfigChanged.run();
-            }
 
             syncToClient(configSyncID, buf -> {
                 if (currentConfig == null) {
@@ -58,10 +48,6 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
         if (!areAEStackCountEquals(currentStock, cachedStock)) {
             cache.setStock(currentStock);
 
-            if (onStockChanged != null) {
-                onStockChanged.run();
-            }
-
             syncToClient(stockSyncID, buf -> {
                 if (currentStock == null) {
                     buf.writeBoolean(false);
@@ -74,9 +60,14 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     }
 
     @Override
-    public void readOnServer(int id, PacketBuffer buf) throws IOException {
+    public void readOnServer(int id, PacketBuffer buf) {
         if (id == clearConfigID) {
             config.setConfig(null);
+        } else if (id == changeConfigID) {
+            if (hasConfig()) {
+                // noinspection DataFlowIssue
+                getConfig().setStackSize(buf.readInt());
+            }
         }
     }
 
@@ -89,25 +80,21 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
         return config.getConfig();
     }
 
+    public long getConfigAmount() {
+        return getConfig() == null ? 0 : getConfig().getStackSize();
+    }
+
+    public void setConfigAmount(int newAmount) {
+        syncToServer(changeConfigID, buf -> buf.writeInt(newAmount));
+    }
+
+    public boolean hasConfig() {
+        return getConfig() != null;
+    }
+
     @Nullable
     public T getStock() {
         return config.getStock();
-    }
-
-    public void setOnConfigChanged(@Nullable Runnable onConfigChanged) {
-        this.onConfigChanged = onConfigChanged;
-    }
-
-    public void setOnStockChanged(@Nullable Runnable onStockChanged) {
-        this.onStockChanged = onStockChanged;
-    }
-
-    public @Nullable Runnable getOnConfigChanged() {
-        return onConfigChanged;
-    }
-
-    public @Nullable Runnable getOnStockChanged() {
-        return onStockChanged;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

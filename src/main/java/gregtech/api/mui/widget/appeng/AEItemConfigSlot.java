@@ -11,6 +11,7 @@ import appeng.api.storage.data.IAEItemStack;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -96,6 +97,33 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Inte
         }
 
         return Result.SUCCESS;
+    }
+
+    @Override
+    public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int scrollAmount) {
+        if (!getSyncHandler().hasConfig() || isStocking) return false;
+
+        long newStackSize = getSyncHandler().getConfigAmount();
+
+        if (Interactable.hasControlDown()) {
+            switch (scrollDirection) {
+                case UP -> newStackSize *= 2;
+                case DOWN -> newStackSize /= 2;
+            }
+        } else {
+            switch (scrollDirection) {
+                case UP -> newStackSize += 1;
+                case DOWN -> newStackSize -= 1;
+            }
+        }
+
+        if (newStackSize > 0 && newStackSize < Integer.MAX_VALUE + 1L) {
+            int scaledStackSize = (int) newStackSize;
+            getSyncHandler().setConfigAmount(scaledStackSize);
+            return true;
+        }
+
+        return false;
     }
 
     @Override
