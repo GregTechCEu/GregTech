@@ -77,6 +77,8 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Inte
             GlStateManager.colorMask(true, true, true, false);
             drawHighlight(getArea(), isHovering());
             GlStateManager.colorMask(true, true, true, true);
+        } else if (isHovering()) {
+            drawSlotOverlay();
         }
     }
 

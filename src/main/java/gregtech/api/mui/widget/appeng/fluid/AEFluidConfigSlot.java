@@ -88,6 +88,8 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
             GlStateManager.colorMask(true, true, true, false);
             drawHighlight(getArea(), isHovering());
             GlStateManager.colorMask(true, true, true, true);
+        } else if (isHovering()) {
+            drawSlotOverlay();
         }
     }
 
