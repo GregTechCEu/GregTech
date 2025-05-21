@@ -36,6 +36,7 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         tooltipBuilder(this::buildTooltip);
     }
 
+    //TODO: change tooltip when autopull is on
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
         tooltip.addLine(IKey.lang("gregtech.gui.config_slot"));
         if (isStocking) {
