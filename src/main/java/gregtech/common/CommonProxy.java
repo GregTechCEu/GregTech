@@ -47,7 +47,7 @@ import gregtech.datafix.GTDataFixers;
 import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
-import gregtech.loaders.recipe.CraftingComponent;
+import gregtech.loaders.recipe.CraftingComponents;
 import gregtech.loaders.recipe.GTRecipeManager;
 import gregtech.modules.GregTechModules;
 
@@ -335,8 +335,8 @@ public class CommonProxy {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void initComponents(RegistryEvent.Register<IRecipe> event) {
         GTRecipeInputCache.enableCache();
-        CraftingComponent.initializeComponents();
-        MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, CraftingComponent.class));
+        CraftingComponents.initializeComponents();
+        MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, CraftingComponents.class));
     }
 
     // this is called with normal priority, so most mods working with
