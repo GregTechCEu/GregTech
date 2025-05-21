@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
+import com.cleanroommc.modularui.api.widget.IWidget;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -18,6 +20,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
+import gregtech.api.mui.widget.EmptyWidget;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.api.mui.widget.appeng.AEItemConfigSlot;
 import gregtech.api.mui.widget.appeng.AEItemDisplaySlot;
@@ -220,7 +223,6 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                         .minRowHeight(18)
                         .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
                                 index -> new AEItemConfigSlot(isStocking, () -> getAEItemHandler().isAutoPull())
-                                        .background(GTGuiTextures.SLOT, GTGuiTextures.CONFIG_ARROW_DARK)
                                         .syncHandler(syncHandlerName, index))))
                 .child(new Grid()
                         .pos(7 + 18 * 5, 25)
@@ -233,8 +235,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                                         .background(GTGuiTextures.SLOT_DARK)
                                         .syncHandler(syncHandlerName, index))))
                 .child(Flow.column()
-                        .pos(7 + 18 * 4, 25 + 18)
+                        .pos(7 + 18 * 4, 25)
                         .size(18, 18 * 4)
+                        .child(getExtraButton())
                         .child(GTGuiTextures.ARROW_DOUBLE.asWidget())
                         .child(new GhostCircuitSlotWidget()
                                 .slot(SyncHandlers.itemSlot(circuitInventory, 0))
@@ -243,6 +246,11 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                                 .slot(SyncHandlers.itemSlot(extraSlotInventory, 0)
                                         .slotGroup("extra_slot"))
                                 .addTooltipLine(IKey.lang("gregtech.gui.me_bus.extra_slot"))));
+    }
+
+    protected IWidget getExtraButton() {
+        return new EmptyWidget()
+                .size(18);
     }
 
     @Override

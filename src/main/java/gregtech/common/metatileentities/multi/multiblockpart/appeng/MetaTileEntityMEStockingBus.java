@@ -1,11 +1,18 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
@@ -252,6 +259,20 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         if (dataId == UPDATE_AUTO_PULL) {
             this.autoPull = buf.readBoolean();
         }
+    }
+
+    @Override
+    protected IWidget getExtraButton() {
+        BooleanSyncValue autoPullSync = new BooleanSyncValue(() -> autoPull, this::setAutoPull);
+
+        return new ToggleButton()
+                .size(18)
+                .value(autoPullSync)
+                .disableHoverBackground()
+                .overlay(false, GTGuiTextures.AUTO_PULL[0])
+                .overlay(true, GTGuiTextures.AUTO_PULL[1])
+                .addTooltip(false, IKey.lang("gregtech.machine.me.stocking_auto_pull_disabled"))
+                .addTooltip(true, IKey.lang("gregtech.machine.me.stocking_auto_pull_enabled"));
     }
 
     @Override
