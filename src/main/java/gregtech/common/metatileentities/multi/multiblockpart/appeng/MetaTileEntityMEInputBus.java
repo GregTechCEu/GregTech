@@ -95,6 +95,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
         return aeItemHandler;
     }
 
+    public boolean isAutoPull() {
+        return getAEItemHandler().isAutoPull();
+    }
+
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
@@ -160,8 +164,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
 
         for (ExportOnlyAEItemSlot aeSlot : this.getAEItemHandler().getInventory()) {
             IAEItemStack stock = aeSlot.getStock();
-            if (stock instanceof WrappedItemStack) {
-                stock = ((WrappedItemStack) stock).getAEStack();
+            if (stock instanceof WrappedItemStack wrappedItemStack) {
+                stock = wrappedItemStack.getAEStack();
             }
             if (stock != null) {
                 monitor.injectItems(stock, Actionable.MODULATE, this.getActionSource());
@@ -217,21 +221,21 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                         I18n.format("gregtech.gui.me_network.offline")).asWidget().pos(5, 15))
                 .child(new Grid()
                         .pos(7, 25)
-                        .size(18 * 4, 18 * 4)
+                        .size(18 * 4)
                         .minElementMargin(0, 0)
                         .minColWidth(18)
                         .minRowHeight(18)
-                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
-                                index -> new AEItemConfigSlot(isStocking, () -> getAEItemHandler().isAutoPull())
+                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE, index ->
+                                new AEItemConfigSlot(isStocking, this::isAutoPull)
                                         .syncHandler(syncHandlerName, index))))
                 .child(new Grid()
                         .pos(7 + 18 * 5, 25)
-                        .size(18 * 4, 18 * 4)
+                        .size(18 * 4)
                         .minElementMargin(0, 0)
                         .minColWidth(18)
                         .minRowHeight(18)
-                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
-                                index -> new AEItemDisplaySlot()
+                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE, index ->
+                                new AEItemDisplaySlot()
                                         .background(GTGuiTextures.SLOT_DARK)
                                         .syncHandler(syncHandlerName, index))))
                 .child(Flow.column()

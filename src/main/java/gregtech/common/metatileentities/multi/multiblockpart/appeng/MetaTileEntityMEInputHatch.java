@@ -1,5 +1,9 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
+import com.cleanroommc.modularui.api.widget.IWidget;
+
+import com.cleanroommc.modularui.widgets.layout.Grid;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -15,6 +19,10 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
+import gregtech.api.mui.widget.EmptyWidget;
+import gregtech.api.mui.widget.appeng.fluid.AEFluidConfigSlot;
+import gregtech.api.mui.widget.appeng.fluid.AEFluidDisplaySlot;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEFluidConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
@@ -78,6 +86,10 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
         return aeFluidHandler;
     }
 
+    public boolean isAutoPull() {
+        return getAEFluidHandler().isAutoPull();
+    }
+
     @Override
     protected void initializeInventory() {
         getAEFluidHandler(); // initialize it
@@ -138,8 +150,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
 
         for (ExportOnlyAEFluidSlot aeTank : this.getAEFluidHandler().getInventory()) {
             IAEFluidStack stock = aeTank.getStock();
-            if (stock instanceof WrappedFluidStack) {
-                stock = ((WrappedFluidStack) stock).getAEStack();
+            if (stock instanceof WrappedFluidStack wrappedFluidStack) {
+                stock = wrappedFluidStack.getAEStack();
             }
             if (stock != null) {
                 monitor.injectItems(stock, Actionable.MODULATE, this.getActionSource());
@@ -159,46 +171,51 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        final String syncHandlerName = "aeSlot";
+        final boolean isStocking = getAEFluidHandler().isStocking();
+        for (int index = 0; index < CONFIG_SIZE; index++) {
+            guiSyncManager.syncValue(syncHandlerName, index, new AEFluidSyncHandler(getAEFluidHandler().getInventory()[index]));
+        }
+
         return GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
                 .child(IKey.dynamic(() -> isOnline() ? I18n.format("gregtech.gui.me_network.online") :
                         I18n.format("gregtech.gui.me_network.offline")).asWidget().pos(5, 15))
+                .child(new Grid()
+                        .pos(7, 25)
+                        .size(18 * 4)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18)
+                        .minRowHeight(18)
+                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE, index ->
+                                new AEFluidConfigSlot(isStocking, this::isAutoPull)
+                                        .syncHandler(syncHandlerName, index)
+                        )))
+                .child(new Grid()
+                        .pos(7 + 18 * 5, 25)
+                        .size(18 * 4)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18)
+                        .minRowHeight(18)
+                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE, index ->
+                                new AEFluidDisplaySlot()
+                                        .background(GTGuiTextures.SLOT_DARK)
+                                        .syncHandler(syncHandlerName, index)
+                        ))
                 .child(Flow.column()
-                        .pos(7 + 18 * 4, 25 + 18)
+                        .pos(7 + 18 * 4, 25)
                         .size(18, 18 * 4)
-                        .child(GTGuiTextures.ARROW_DOUBLE.asWidget()));
+                        .child(getExtraButton())
+                        .child(GTGuiTextures.ARROW_DOUBLE.asWidget())
+                        .child(new EmptyWidget()
+                                .size(18))
+                        .child(GTGuiTextures.getLogo(getUITheme()).asWidget())));
     }
 
-    @Override
-    protected final ModularUI createUI(EntityPlayer player) {
-        ModularUI.Builder builder = createUITemplate(player);
-        return builder.build(this.getHolder(), player);
-    }
-
-    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
-        ModularUI.Builder builder = ModularUI
-                .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
-                .label(10, 5, getMetaFullName());
-        // ME Network status
-        builder.dynamicLabel(10, 15, () -> isOnline() ?
-                I18n.format("gregtech.gui.me_network.online") :
-                I18n.format("gregtech.gui.me_network.offline"),
-                0x404040);
-
-        // Config slots
-        builder.widget(new AEFluidConfigWidget(7, 25, this.getAEFluidHandler()));
-
-        // Arrow image
-        builder.image(7 + 18 * 4, 25 + 18, 18, 18, GuiTextures.ARROW_DOUBLE);
-
-        // GT Logo, cause there's some free real estate
-        builder.widget(new ImageWidget(7 + 18 * 4, 25 + 18 * 3, 17, 17,
-                GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
-                        .setIgnoreColor(true));
-
-        builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
-        return builder;
+    protected IWidget getExtraButton() {
+        return new EmptyWidget()
+                .size(18);
     }
 
     @Override

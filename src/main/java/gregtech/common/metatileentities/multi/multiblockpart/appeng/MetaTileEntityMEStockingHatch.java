@@ -1,5 +1,11 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -8,6 +14,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
@@ -223,11 +230,17 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     }
 
     @Override
-    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
-        ModularUI.Builder builder = super.createUITemplate(player);
-        builder.widget(new ImageCycleButtonWidget(7 + 18 * 4 + 1, 26, 16, 16, GuiTextures.BUTTON_AUTO_PULL,
-                () -> autoPull, this::setAutoPull).setTooltipHoverString("gregtech.gui.me_bus.auto_pull_button"));
-        return builder;
+    protected IWidget getExtraButton() {
+        BooleanSyncValue autoPullSync = new BooleanSyncValue(() -> autoPull, this::setAutoPull);
+
+        return new ToggleButton()
+                .size(18)
+                .value(autoPullSync)
+                .disableHoverBackground()
+                .overlay(false, GTGuiTextures.AUTO_PULL[0])
+                .overlay(true, GTGuiTextures.AUTO_PULL[1])
+                .addTooltip(false, IKey.lang("gregtech.machine.me.stocking_auto_pull_disabled"))
+                .addTooltip(true, IKey.lang("gregtech.machine.me.stocking_auto_pull_enabled"));
     }
 
     @Override
@@ -385,6 +398,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
             this.inventory = new ExportOnlyAEStockingFluidSlot[size];
             for (int i = 0; i < size; i++) {
                 this.inventory[i] = new ExportOnlyAEStockingFluidSlot(stocking, entityToNotify);
+                this.inventory[i].setDirtyNotifier(holder::markDirty);
             }
         }
 
