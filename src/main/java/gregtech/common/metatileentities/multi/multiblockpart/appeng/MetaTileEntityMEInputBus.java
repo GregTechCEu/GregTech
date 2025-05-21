@@ -1,7 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import com.cleanroommc.modularui.api.widget.IWidget;
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -53,6 +51,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -225,8 +224,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                         .minElementMargin(0, 0)
                         .minColWidth(18)
                         .minRowHeight(18)
-                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE, index ->
-                                new AEItemConfigSlot(isStocking, this::isAutoPull)
+                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
+                                index -> new AEItemConfigSlot(isStocking, this::isAutoPull)
                                         .syncHandler(syncHandlerName, index))))
                 .child(new Grid()
                         .pos(7 + 18 * 5, 25)
@@ -234,8 +233,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                         .minElementMargin(0, 0)
                         .minColWidth(18)
                         .minRowHeight(18)
-                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE, index ->
-                                new AEItemDisplaySlot()
+                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
+                                index -> new AEItemDisplaySlot()
                                         .background(GTGuiTextures.SLOT_DARK)
                                         .syncHandler(syncHandlerName, index))))
                 .child(Flow.column()

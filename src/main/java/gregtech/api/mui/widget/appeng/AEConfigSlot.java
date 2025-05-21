@@ -1,16 +1,13 @@
 package gregtech.api.mui.widget.appeng;
 
+import gregtech.api.mui.GTGuiTextures;
+
 import appeng.api.storage.data.IAEStack;
-import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.RichTooltip;
-import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.widget.Widget;
-
-import gregtech.api.mui.GTGuiTextures;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +20,8 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
     protected final BooleanSupplier isAutoPull;
 
     private static final IDrawable normalBackground = IDrawable.of(GTGuiTextures.SLOT, GTGuiTextures.CONFIG_ARROW_DARK);
-    private static final IDrawable autoPullBackground = IDrawable.of(GTGuiTextures.SLOT_DARK, GTGuiTextures.CONFIG_ARROW);
+    private static final IDrawable autoPullBackground = IDrawable.of(GTGuiTextures.SLOT_DARK,
+            GTGuiTextures.CONFIG_ARROW);
 
     public AEConfigSlot(boolean isStocking, BooleanSupplier isAutoPull) {
         this.isStocking = isStocking;
@@ -36,7 +34,7 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         tooltipBuilder(this::buildTooltip);
     }
 
-    //TODO: change tooltip when autopull is on
+    // TODO: change tooltip when autopull is on
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
         tooltip.addLine(IKey.lang("gregtech.gui.config_slot"));
         if (isStocking) {

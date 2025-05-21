@@ -1,11 +1,10 @@
 package gregtech.api.util;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
 
+import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +14,8 @@ public class NetworkUtil {
 
     /**
      * Write the NBT of a {@link FluidStack} to a {@link PacketBuffer}.
-     * @param to the buffer to write to
+     * 
+     * @param to    the buffer to write to
      * @param stack the stack to write
      */
     public static void writeFluidStack(@NotNull PacketBuffer to, @NotNull FluidStack stack) {
@@ -23,9 +23,11 @@ public class NetworkUtil {
         stack.writeToNBT(tag);
         to.writeCompoundTag(tag);
     }
+
     /**
      * {@link #writeFluidStack(PacketBuffer, FluidStack)} but with a netty {@link ByteBuf}
-     * @param to the buffer to write to
+     * 
+     * @param to    the buffer to write to
      * @param stack the stack to write
      */
     public static void writeFluidStack(@NotNull ByteBuf to, @NotNull FluidStack stack) {
@@ -34,6 +36,7 @@ public class NetworkUtil {
 
     /**
      * Read a {@link FluidStack} from a {@link PacketBuffer}
+     * 
      * @param from the packet buffer to read from
      * @return the decoded fluid stack
      */
@@ -50,6 +53,7 @@ public class NetworkUtil {
 
     /**
      * {@link #readFluidStack(PacketBuffer)} but with a netty {@link ByteBuf}
+     * 
      * @param from the packet buffer to read from
      * @return the decoded fluid stack
      */

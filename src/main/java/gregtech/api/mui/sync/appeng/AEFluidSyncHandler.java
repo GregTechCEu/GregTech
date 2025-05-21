@@ -1,17 +1,14 @@
 package gregtech.api.mui.sync.appeng;
 
-import appeng.api.storage.data.IAEFluidStack;
-
 import gregtech.api.util.NetworkUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
-
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+
+import appeng.api.storage.data.IAEFluidStack;
 
 import java.io.IOException;
 

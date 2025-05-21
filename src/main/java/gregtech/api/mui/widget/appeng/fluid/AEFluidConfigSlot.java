@@ -1,23 +1,7 @@
 package gregtech.api.mui.widget.appeng.fluid;
 
-import appeng.api.storage.data.IAEFluidStack;
-
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.Interactable;
-
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
-
-import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
-import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.screen.RichTooltip;
-
-import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
-import com.cleanroommc.modularui.value.sync.SyncHandler;
-
 import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
 import gregtech.api.mui.widget.appeng.AEConfigSlot;
-
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
@@ -26,15 +10,25 @@ import gregtech.common.mui.widget.GTFluidSlot;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-
 import net.minecraftforge.fluids.FluidUtil;
 
+import appeng.api.storage.data.IAEFluidStack;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
+import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
 
-public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> implements Interactable, JeiGhostIngredientSlot<FluidStack> {
+public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
+                               implements Interactable, JeiGhostIngredientSlot<FluidStack> {
 
     public AEFluidConfigSlot(boolean isStocking, BooleanSupplier isAutoPull) {
         super(isStocking, isAutoPull);
@@ -99,7 +93,6 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> implements In
 
     @Override
     public @NotNull Result onMousePressed(int mouseButton) {
-
         if (isAutoPull.getAsBoolean()) return Result.IGNORE;
 
         if (mouseButton == 1) {

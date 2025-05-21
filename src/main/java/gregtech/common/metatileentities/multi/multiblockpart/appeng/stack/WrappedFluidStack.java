@@ -5,8 +5,8 @@ import gregtech.api.util.NetworkUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import appeng.api.AEApi;
 import appeng.api.config.FuzzyMode;
@@ -15,14 +15,8 @@ import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.fluids.util.AEFluidStack;
 import io.netty.buffer.ByteBuf;
-
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * @Author GlodBlock

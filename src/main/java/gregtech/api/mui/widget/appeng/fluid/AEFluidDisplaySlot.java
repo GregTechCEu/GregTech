@@ -1,27 +1,20 @@
 package gregtech.api.mui.widget.appeng.fluid;
 
-import appeng.api.storage.data.IAEFluidStack;
-
-import appeng.api.storage.data.IAEItemStack;
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.screen.RichTooltip;
-
-import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
-import com.cleanroommc.modularui.value.sync.SyncHandler;
-
 import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
 import gregtech.api.mui.widget.appeng.AEDisplaySlot;
-
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
-
 import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraftforge.fluids.FluidStack;
 
+import appeng.api.storage.data.IAEFluidStack;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

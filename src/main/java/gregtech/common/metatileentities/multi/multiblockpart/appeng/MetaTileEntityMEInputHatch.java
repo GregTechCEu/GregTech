@@ -1,17 +1,10 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import com.cleanroommc.modularui.api.widget.IWidget;
-
-import com.cleanroommc.modularui.widgets.layout.Grid;
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
@@ -24,7 +17,6 @@ import gregtech.api.mui.widget.EmptyWidget;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidConfigSlot;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidDisplaySlot;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.gui.widget.appeng.AEFluidConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
@@ -51,11 +43,13 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -174,7 +168,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
         final String syncHandlerName = "aeSlot";
         final boolean isStocking = getAEFluidHandler().isStocking();
         for (int index = 0; index < CONFIG_SIZE; index++) {
-            guiSyncManager.syncValue(syncHandlerName, index, new AEFluidSyncHandler(getAEFluidHandler().getInventory()[index]));
+            guiSyncManager.syncValue(syncHandlerName, index,
+                    new AEFluidSyncHandler(getAEFluidHandler().getInventory()[index]));
         }
 
         return GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94)
@@ -188,29 +183,27 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                         .minElementMargin(0, 0)
                         .minColWidth(18)
                         .minRowHeight(18)
-                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE, index ->
-                                new AEFluidConfigSlot(isStocking, this::isAutoPull)
-                                        .syncHandler(syncHandlerName, index)
-                        )))
+                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
+                                index -> new AEFluidConfigSlot(isStocking, this::isAutoPull)
+                                        .syncHandler(syncHandlerName, index))))
                 .child(new Grid()
                         .pos(7 + 18 * 5, 25)
                         .size(18 * 4)
                         .minElementMargin(0, 0)
                         .minColWidth(18)
                         .minRowHeight(18)
-                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE, index ->
-                                new AEFluidDisplaySlot()
+                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
+                                index -> new AEFluidDisplaySlot()
                                         .background(GTGuiTextures.SLOT_DARK)
-                                        .syncHandler(syncHandlerName, index)
-                        ))
-                .child(Flow.column()
-                        .pos(7 + 18 * 4, 25)
-                        .size(18, 18 * 4)
-                        .child(getExtraButton())
-                        .child(GTGuiTextures.ARROW_DOUBLE.asWidget())
-                        .child(new EmptyWidget()
-                                .size(18))
-                        .child(GTGuiTextures.getLogo(getUITheme()).asWidget())));
+                                        .syncHandler(syncHandlerName, index)))
+                        .child(Flow.column()
+                                .pos(7 + 18 * 4, 25)
+                                .size(18, 18 * 4)
+                                .child(getExtraButton())
+                                .child(GTGuiTextures.ARROW_DOUBLE.asWidget())
+                                .child(new EmptyWidget()
+                                        .size(18))
+                                .child(GTGuiTextures.getLogo(getUITheme()).asWidget())));
     }
 
     protected IWidget getExtraButton() {
