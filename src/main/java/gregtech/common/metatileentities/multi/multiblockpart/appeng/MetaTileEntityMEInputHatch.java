@@ -195,15 +195,15 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                         .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
                                 index -> new AEFluidDisplaySlot()
                                         .background(GTGuiTextures.SLOT_DARK)
-                                        .syncHandler(syncHandlerName, index)))
-                        .child(Flow.column()
-                                .pos(7 + 18 * 4, 25)
-                                .size(18, 18 * 4)
-                                .child(getExtraButton())
-                                .child(GTGuiTextures.ARROW_DOUBLE.asWidget())
-                                .child(new EmptyWidget()
-                                        .size(18))
-                                .child(GTGuiTextures.getLogo(getUITheme()).asWidget())));
+                                        .syncHandler(syncHandlerName, index))))
+                .child(Flow.column()
+                        .pos(7 + 18 * 4, 25)
+                        .size(18, 18 * 4)
+                        .child(getExtraButton())
+                        .child(GTGuiTextures.ARROW_DOUBLE.asWidget())
+                        .child(new EmptyWidget()
+                                .size(18))
+                        .child(GTGuiTextures.getLogo(getUITheme()).asWidget()));
     }
 
     protected IWidget getExtraButton() {
