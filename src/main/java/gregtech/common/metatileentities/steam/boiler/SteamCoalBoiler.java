@@ -32,7 +32,7 @@ public class SteamCoalBoiler extends SteamBoiler implements ICategoryOverride {
 
     @Override
     protected int getBaseSteamOutput() {
-        return isHighPressure ? 300 : 120;
+        return isHighPressure ? 320 : 160;
     }
 
     @Override
