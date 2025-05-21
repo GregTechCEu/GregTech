@@ -151,7 +151,7 @@ public class TricorderBehavior implements IItemBehaviour {
                                     metaTileEntity.getRegistry().getIdByObjectName(metaTileEntity.metaTileEntityId)))
                                             .setStyle(new Style().setColor(TextFormatting.BLUE))));
 
-            UUID owner = metaTileEntity.getOwner();
+            UUID owner = metaTileEntity.getOwnerGT();
             if (owner != null) {
                 EntityPlayer ownerEntity = metaTileEntity.getWorld().getPlayerEntityByUUID(owner);
                 if (ownerEntity != null) {
