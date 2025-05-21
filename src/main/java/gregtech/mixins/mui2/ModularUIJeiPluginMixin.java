@@ -17,7 +17,6 @@ public class ModularUIJeiPluginMixin {
                                          CallbackInfoReturnable<Boolean> cir) {
         if (Config.isCheatItemsEnabled()) {
             cir.setReturnValue(false);
-            cir.cancel();
         }
     }
 }
