@@ -82,6 +82,11 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         return insulation.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
     }
 
+    @Override
+    public boolean isFluidloggable(IBlockState state, World world, BlockPos pos) {
+        return pipeType.thickness < 1.0f;
+    }
+
     @SideOnly(Side.CLIENT)
     @NotNull
     @Override
