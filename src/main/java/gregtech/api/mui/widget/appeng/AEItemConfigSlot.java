@@ -71,7 +71,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Inte
             }
         }
 
-        // replace with RenderUtil.handleJeiGhostHighlight(this); when 2812 merges (thx ghz)
+        // TODO: replace with RenderUtil.handleJeiGhostHighlight(this); when 2812 merges (thx ghz)
         if (ModularUIJeiPlugin.hasDraggingGhostIngredient() || ModularUIJeiPlugin.hoveringOverIngredient(this)) {
             GlStateManager.colorMask(true, true, true, false);
             drawHighlight(getArea(), isHovering());
@@ -81,17 +81,31 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Inte
 
     @Override
     public @NotNull Result onMousePressed(int mouseButton) {
-        return Result.ACCEPT;
+        if (isAutoPull.getAsBoolean()) return Result.IGNORE;
+
+        if (mouseButton == 1) {
+            // Right click to clear
+            getSyncHandler().clearConfig();
+        } else if (mouseButton == 0) {
+            // Left click to set item/change amount
+            ItemStack heldItem = getSyncHandler().getSyncManager().getCursorItem();
+
+            if (!heldItem.isEmpty()) {
+                getSyncHandler().setConfig(heldItem);
+            }
+        }
+
+        return Result.SUCCESS;
     }
 
     @Override
     public void setGhostIngredient(@NotNull ItemStack ingredient) {
-        getSyncHandler().sendJEIDrop(ingredient);
+        getSyncHandler().setConfig(ingredient);
     }
 
     @Override
     public @Nullable ItemStack castGhostIngredientIfValid(@NotNull Object ingredient) {
-        return ingredient instanceof ItemStack stack ? stack : null;
+        return !isAutoPull.getAsBoolean() && ingredient instanceof ItemStack stack ? stack : null;
     }
 
     @Override

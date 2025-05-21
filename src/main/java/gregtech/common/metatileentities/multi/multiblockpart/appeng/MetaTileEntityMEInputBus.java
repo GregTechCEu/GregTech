@@ -9,8 +9,6 @@ import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
@@ -220,7 +218,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                         .minElementMargin(0, 0)
                         .minColWidth(18)
                         .minRowHeight(18)
-                        .matrix(Grid.mapToMatrix(4, 16,
+                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
                                 index -> new AEItemConfigSlot(isStocking, () -> getAEItemHandler().isAutoPull())
                                         .background(GTGuiTextures.SLOT, GTGuiTextures.CONFIG_ARROW_DARK)
                                         .syncHandler(syncHandlerName, index))))
@@ -230,9 +228,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                         .minElementMargin(0, 0)
                         .minColWidth(18)
                         .minRowHeight(18)
-                        .matrix(Grid.mapToMatrix(4, 16, index -> new AEItemDisplaySlot()
-                                .background(GTGuiTextures.SLOT_DARK)
-                                .syncHandler(syncHandlerName, index))))
+                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
+                                index -> new AEItemDisplaySlot()
+                                        .background(GTGuiTextures.SLOT_DARK)
+                                        .syncHandler(syncHandlerName, index))))
                 .child(Flow.column()
                         .pos(7 + 18 * 4, 25 + 18)
                         .size(18, 18 * 4)
@@ -244,24 +243,6 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                                 .slot(SyncHandlers.itemSlot(extraSlotInventory, 0)
                                         .slotGroup("extra_slot"))
                                 .addTooltipLine(IKey.lang("gregtech.gui.me_bus.extra_slot"))));
-    }
-
-    @Override
-    protected final ModularUI createUI(EntityPlayer player) {
-        ModularUI.Builder builder = createUITemplate(player);
-        return builder.build(this.getHolder(), player);
-    }
-
-    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
-        ModularUI.Builder builder = ModularUI
-                .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
-                .label(10, 5, getMetaFullName());
-
-        // Arrow image
-        builder.image(7 + 18 * 4, 25 + 18, 18, 18, GuiTextures.ARROW_DOUBLE);
-
-        builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
-        return builder;
     }
 
     @Override

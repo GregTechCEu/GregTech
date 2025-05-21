@@ -2,15 +2,22 @@ package gregtech.api.mui.sync.appeng;
 
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 
+import net.minecraft.network.PacketBuffer;
+
 import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+
 public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
 
-    public static final int jeiDropSyncID = 0;
-    public static final int configSyncID = 1;
-    public static final int stockSyncID = 2;
+    private static int rollingID = 0;
+
+    public static final int configSyncID = rollingID++;
+    public static final int stockSyncID = rollingID++;
+    public static final int setConfigID = rollingID++;
+    public static final int clearConfigID = rollingID++;
 
     protected final IConfigurableSlot<T> config;
     protected IConfigurableSlot<T> cache;
@@ -64,6 +71,17 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
                 }
             });
         }
+    }
+
+    @Override
+    public void readOnServer(int id, PacketBuffer buf) throws IOException {
+        if (id == clearConfigID) {
+            config.setConfig(null);
+        }
+    }
+
+    public void clearConfig() {
+        syncToServer(clearConfigID);
     }
 
     @Nullable

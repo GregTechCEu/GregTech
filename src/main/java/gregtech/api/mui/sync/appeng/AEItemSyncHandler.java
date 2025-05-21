@@ -46,12 +46,13 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
 
     @Override
     public void readOnServer(int id, PacketBuffer buf) throws IOException {
-        if (id == jeiDropSyncID) {
+        super.readOnServer(id, buf);
+        if (id == setConfigID) {
             config.setConfig(WrappedItemStack.fromPacket(buf));
         }
     }
 
-    public void sendJEIDrop(ItemStack stack) {
-        syncToServer(jeiDropSyncID, buf -> ByteBufUtils.writeTag(buf, stack.serializeNBT()));
+    public void setConfig(ItemStack stack) {
+        syncToServer(setConfigID, buf -> ByteBufUtils.writeTag(buf, stack.serializeNBT()));
     }
 }
