@@ -5,6 +5,7 @@ import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -137,6 +138,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2, widgetTheme.getSlotHoverColor());
             GlStateManager.colorMask(true, true, true, true);
         }
+
+        RenderUtil.handleJeiGhostHighlight(this);
     }
 
     @Override

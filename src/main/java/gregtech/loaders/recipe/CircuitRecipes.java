@@ -1019,7 +1019,7 @@ public class CircuitRecipes {
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(16).duration(300)
                 .input(GOOD_CIRCUIT_BOARD)
-                .input(circuit, Tier.LV, 2)
+                .input(ELECTRONIC_CIRCUIT_LV, 2)
                 .input(component, Component.Diode, 2)
                 .input(wireGtSingle, Copper, 2)
                 .output(ELECTRONIC_CIRCUIT_MV)

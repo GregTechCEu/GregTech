@@ -4,6 +4,8 @@ import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.materials.*;
 import gregtech.api.unification.ore.OrePrefix;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -302,6 +304,9 @@ public class Materials {
     public static Material NiobiumNitride;
     public static Material NiobiumTitanium;
     public static Material Obsidian;
+    @ApiStatus.Obsolete
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
+    @Deprecated
     public static Material Phosphate;
     public static Material SterlingSilver;
     public static Material RoseGold;
@@ -375,11 +380,9 @@ public class Materials {
     public static Material ChromiumTrioxide;
     public static Material AntimonyTrioxide;
     public static Material Zincite;
-    public static Material CupricOxide;
     public static Material CobaltOxide;
     public static Material ArsenicTrioxide;
     public static Material Massicot;
-    public static Material Ferrosilite;
     public static Material MetalMixture;
     public static Material SodiumHydroxide;
     public static Material SodiumPersulfate;
@@ -685,7 +688,6 @@ public class Materials {
      * Second Degree Compounds
      */
     public static Material Glass;
-    public static Material Perlite;
     public static Material Borax;
     public static Material Olivine;
     public static Material Opal;

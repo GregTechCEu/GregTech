@@ -16,6 +16,8 @@ jobs:
   update-cache:
     name: Update Grade Cache
     runs-on: ubuntu-latest
+    env:
+      DISABLE_BUILDSCRIPT_UPDATE_CHECK: true
 
     steps:
       - name: Checkout Repository

@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.util.Mods;
 import gregtech.integration.IntegrationSubmodule;
+import gregtech.integration.hwyla.provider.AEMultiblockHatchProvider;
 import gregtech.integration.hwyla.provider.ActiveTransformerDataProvider;
 import gregtech.integration.hwyla.provider.BatteryBufferDataProvider;
 import gregtech.integration.hwyla.provider.BlockOreDataProvider;
@@ -59,6 +60,7 @@ public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
         ActiveTransformerDataProvider.INSTANCE.register(registrar);
         BatteryBufferDataProvider.INSTANCE.register(registrar);
         QuantumStorageProvider.INSTANCE.register(registrar);
+        AEMultiblockHatchProvider.INSTANCE.register(registrar);
     }
 
     /** Render an ItemStack. */

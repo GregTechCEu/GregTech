@@ -414,13 +414,6 @@ public class SeparationRecipes {
                 .duration(64).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Apatite, 9)
-                .output(dust, Calcium, 5)
-                .output(dust, Phosphorus, 3)
-                .fluidOutputs(Chlorine.getFluid(1000))
-                .duration(288).EUt(60).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Propane.getFluid(1000))
                 .output(dust, Carbon, 3)
                 .fluidOutputs(Hydrogen.getFluid(8000))
