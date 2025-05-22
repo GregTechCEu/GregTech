@@ -111,10 +111,8 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
         }
 
-        if (!RenderUtil.handleJeiGhostHighlight(this) && isHovering()) {
-            if (widgetTheme instanceof WidgetSlotTheme slotTheme) {
-                RenderUtil.handleSlotOverlay(this, slotTheme);
-            }
+        if (widgetTheme instanceof WidgetSlotTheme slotTheme) {
+            RenderUtil.handleSlotOverlays(this, slotTheme);
         }
     }
 

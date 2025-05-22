@@ -62,7 +62,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
         }
 
         if (isHovering() && widgetTheme instanceof WidgetSlotTheme slotTheme) {
-            RenderUtil.handleSlotOverlay(this, slotTheme);
+            RenderUtil.drawSlotOverlay(this, slotTheme);
         }
     }
 

@@ -78,7 +78,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
 
         if (isHovering() && widgetTheme instanceof WidgetSlotTheme slotTheme) {
-            RenderUtil.handleSlotOverlay(this, slotTheme);
+            RenderUtil.drawSlotOverlay(this, slotTheme);
         }
     }
 

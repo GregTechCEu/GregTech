@@ -725,11 +725,13 @@ public class RenderUtil {
      * @return true if the overlay was drawn, false if not
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean handleJeiGhostHighlight(@NotNull IWidget slot) {
+    public static boolean handleJeiGhostOverlay(@NotNull IWidget slot) {
         if (!Mods.JustEnoughItems.isModLoaded()) return false;
         if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return false;
 
-        if (ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
+        // TODO: replace the first condition with draggingValidIngredient once MUI PR 146 makes it into a release we use
+        if (ingredientSlot.castGhostIngredientIfValid(ModularUIJeiPlugin.getGhostDrag()) != null ||
+                ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
             GlStateManager.colorMask(true, true, true, false);
             ingredientSlot.drawHighlight(slot.getArea(), slot.isHovering());
             GlStateManager.colorMask(true, true, true, true);
@@ -740,13 +742,26 @@ public class RenderUtil {
     }
 
     /**
-     * Draws the gray-ish overlay over a slot when moused over
+     * Draws a gray-ish overlay over the slot 1px inwards from each side. Intended for item slots.
      * 
-     * @param slot the slot on which to draw the overlay
+     * @param slot the slot to draw the overlay above
      */
-    public static void handleSlotOverlay(@NotNull IWidget slot, @NotNull WidgetSlotTheme slotTheme) {
+    public static void drawSlotOverlay(@NotNull IWidget slot, @NotNull WidgetSlotTheme slotTheme) {
         GlStateManager.colorMask(true, true, true, false);
         GuiDraw.drawRect(1, 1, slot.getArea().w() - 2, slot.getArea().h() - 2, slotTheme.getSlotHoverColor());
         GlStateManager.colorMask(true, true, true, true);
+    }
+
+    /**
+     * Handles drawing the green JEI overlay when dragging an item, and if no item is being dragged, the overlay when
+     * mousing over the slot.
+     * 
+     * @param slot      the slot to draw the overlay above
+     * @param slotTheme the theme to get the slot overlay color from
+     */
+    public static void handleSlotOverlays(@NotNull IWidget slot, @NotNull WidgetSlotTheme slotTheme) {
+        if (!handleJeiGhostOverlay(slot) && slot.isHovering()) {
+            drawSlotOverlay(slot, slotTheme);
+        }
     }
 }
