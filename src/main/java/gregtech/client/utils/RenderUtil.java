@@ -729,9 +729,7 @@ public class RenderUtil {
         if (!Mods.JustEnoughItems.isModLoaded()) return false;
         if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return false;
 
-        // TODO: replace the first condition with draggingValidIngredient once MUI PR 146 makes it into a release we use
-        if (ingredientSlot.castGhostIngredientIfValid(ModularUIJeiPlugin.getGhostDrag()) != null ||
-                ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
+        if (ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
             GlStateManager.colorMask(true, true, true, false);
             ingredientSlot.drawHighlight(slot.getArea(), slot.isHovering());
             GlStateManager.colorMask(true, true, true, true);
