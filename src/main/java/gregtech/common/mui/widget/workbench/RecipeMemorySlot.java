@@ -60,7 +60,11 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
             GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
             GlStateManager.enableDepth();
         }
+    }
 
+    @Override
+    public void drawOverlay(ModularGuiContext context, WidgetTheme widgetTheme) {
+        super.drawOverlay(context, widgetTheme);
         if (isHovering() && widgetTheme instanceof WidgetSlotTheme slotTheme) {
             RenderUtil.drawSlotOverlay(this, slotTheme);
         }

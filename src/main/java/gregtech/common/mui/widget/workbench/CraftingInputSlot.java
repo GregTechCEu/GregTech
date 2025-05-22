@@ -110,7 +110,11 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
             RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
         }
+    }
 
+    @Override
+    public void drawOverlay(ModularGuiContext context, WidgetTheme widgetTheme) {
+        super.drawOverlay(context, widgetTheme);
         if (widgetTheme instanceof WidgetSlotTheme slotTheme) {
             RenderUtil.handleSlotOverlays(this, slotTheme);
         }
