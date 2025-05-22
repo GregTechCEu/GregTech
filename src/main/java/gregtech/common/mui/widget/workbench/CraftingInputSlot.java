@@ -1,12 +1,9 @@
 package gregtech.common.mui.widget.workbench;
 
-import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
-
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -28,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Interactable,
-                               JeiGhostIngredientSlot<ItemStack>,
-                               JeiIngredientProvider {
+                                                                             JeiGhostIngredientSlot<ItemStack>,
+                                                                             JeiIngredientProvider {
 
     private final InputSyncHandler syncHandler;
     public boolean hasIngredients = true;
@@ -113,11 +110,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
         }
 
-        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() || ModularUIJeiPlugin.hoveringOverIngredient(this)) {
-            GlStateManager.colorMask(true, true, true, false);
-            drawHighlight(getArea(), isHovering());
-            GlStateManager.colorMask(true, true, true, true);
-        }
+        RenderUtil.handleJeiGhostHighlight(this);
     }
 
     @Override
@@ -214,7 +207,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
         /**
          * Sets the stack in this slot and calls the onChange listener.
-         * 
+         *
          * @param stack stack to put into this slot
          */
         public void setStack(ItemStack stack, boolean sync) {

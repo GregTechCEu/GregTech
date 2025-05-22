@@ -1,12 +1,11 @@
 package gregtech.common.mui.widget;
 
-import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
-
 import gregtech.api.GTValues;
 import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -39,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, JeiIngredientProvider,
-                               JeiGhostIngredientSlot<FluidStack> {
+                                                                      JeiGhostIngredientSlot<FluidStack> {
 
     private final TextRenderer textRenderer = new TextRenderer();
     private GTFluidSyncHandler syncHandler;
@@ -140,11 +139,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             GlStateManager.colorMask(true, true, true, true);
         }
 
-        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() || ModularUIJeiPlugin.hoveringOverIngredient(this)) {
-            GlStateManager.colorMask(true, true, true, false);
-            drawHighlight(getArea(), isHovering());
-            GlStateManager.colorMask(true, true, true, true);
-        }
+        RenderUtil.handleJeiGhostHighlight(this);
     }
 
     @Override
@@ -208,11 +203,11 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             return stack;
         } else if (ingredient instanceof ItemStack stack &&
                 stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-                    if (stack.getCount() > 1) stack = GTUtility.copy(1, stack);
+            if (stack.getCount() > 1) stack = GTUtility.copy(1, stack);
 
-                    var handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-                    return handler == null ? null : handler.drain(Integer.MAX_VALUE, true);
-                }
+            var handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            return handler == null ? null : handler.drain(Integer.MAX_VALUE, true);
+        }
         return null;
     }
 
