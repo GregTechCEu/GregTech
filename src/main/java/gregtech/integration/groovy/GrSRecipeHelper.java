@@ -37,11 +37,6 @@ public class GrSRecipeHelper {
             for (GTRecipeInput fluidIngredient : recipe.getFluidInputs()) {
                 builder.append(GroovyScriptCodeConverter.asGroovyCode(fluidIngredient.getInputFluidStack(), false));
 
-                if (fluidIngredient.getAmount() > 1) {
-                    builder.append(" * ")
-                            .append(fluidIngredient.getAmount());
-                }
-
                 builder.append(", ");
             }
             builder.delete(builder.length() - 2, builder.length())

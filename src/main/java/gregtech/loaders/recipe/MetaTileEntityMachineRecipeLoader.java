@@ -46,32 +46,32 @@ public class MetaTileEntityMachineRecipeLoader {
         for (int i = 0; i < 9; i++) {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(FLUID_IMPORT_HATCH[i])
-                    .input(pipeQuadrupleFluid, Pipe[i])
-                    .fluidInputs(Plastic[i].getFluid(L * 4))
+                    .input(pipeQuadrupleFluid, Pipe.get(i))
+                    .fluidInputs(Plastic.get(i).getFluid(L * 4))
                     .circuitMeta(4)
                     .output(QUADRUPLE_IMPORT_HATCH[i])
                     .duration(300).EUt(VA[i]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(FLUID_IMPORT_HATCH[i])
-                    .input(pipeQuadrupleFluid, Pipe[i])
-                    .fluidInputs(Plastic[i].getFluid(L * 9))
+                    .input(pipeQuadrupleFluid, Pipe.get(i))
+                    .fluidInputs(Plastic.get(i).getFluid(L * 9))
                     .circuitMeta(9)
                     .output(NONUPLE_IMPORT_HATCH[i])
                     .duration(600).EUt(VA[i]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(FLUID_IMPORT_HATCH[i])
-                    .input(pipeQuadrupleFluid, Pipe[i])
-                    .fluidInputs(Plastic[i].getFluid(L * 16))
+                    .input(pipeQuadrupleFluid, Pipe.get(i))
+                    .fluidInputs(Plastic.get(i).getFluid(L * 16))
                     .circuitMeta(16)
                     .output(SIXTEEN_IMPORT_HATCH[i])
                     .duration(1200).EUt(VA[i]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(FLUID_EXPORT_HATCH[i])
-                    .input(pipeQuadrupleFluid, Pipe[i])
-                    .fluidInputs(Plastic[i].getFluid(L * 4))
+                    .input(pipeQuadrupleFluid, Pipe.get(i))
+                    .fluidInputs(Plastic.get(i).getFluid(L * 4))
                     .circuitMeta(4)
                     .output(QUADRUPLE_EXPORT_HATCH[i])
                     .duration(300).EUt(VA[i]).buildAndRegister();
@@ -79,15 +79,15 @@ public class MetaTileEntityMachineRecipeLoader {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(FLUID_EXPORT_HATCH[i])
                     .input(pipeNonupleFluid, Titanium)
-                    .fluidInputs(Plastic[i].getFluid(L * 9))
+                    .fluidInputs(Plastic.get(i).getFluid(L * 9))
                     .circuitMeta(9)
                     .output(NONUPLE_EXPORT_HATCH[i])
                     .duration(600).EUt(VA[i]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(FLUID_EXPORT_HATCH[i])
-                    .input(pipeQuadrupleFluid, Pipe[i])
-                    .fluidInputs(Plastic[i].getFluid(L * 16))
+                    .input(pipeQuadrupleFluid, Pipe.get(i))
+                    .fluidInputs(Plastic.get(i).getFluid(L * 16))
                     .circuitMeta(16)
                     .output(SIXTEEN_EXPORT_HATCH[i])
                     .duration(1200).EUt(VA[i]).buildAndRegister();
@@ -476,8 +476,8 @@ public class MetaTileEntityMachineRecipeLoader {
         for (int i = 0; i < 10; i++) {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(ENERGY_INPUT_HATCH[i])
-                    .input(wireGtQuadruple, Cable[i], 2)
-                    .input(plate, Plate[i], 2)
+                    .input(wireGtQuadruple, Cable.get(i), 2)
+                    .input(plate, Plate.get(i), 2)
                     .output(ENERGY_INPUT_HATCH_4A[i])
                     .duration(100).EUt(VA[ULV + i]).buildAndRegister();
         }
@@ -487,8 +487,8 @@ public class MetaTileEntityMachineRecipeLoader {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(TRANSFORMER[i])
                     .input(ENERGY_INPUT_HATCH_4A[i])
-                    .input(wireGtOctal, Cable[i], 2)
-                    .input(plate, Plate[i], 4)
+                    .input(wireGtOctal, Cable.get(i), 2)
+                    .input(plate, Plate.get(i), 4)
                     .output(ENERGY_INPUT_HATCH_16A[i])
                     .duration(200).EUt(VA[ULV + i]).buildAndRegister();
         }
@@ -498,8 +498,8 @@ public class MetaTileEntityMachineRecipeLoader {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(POWER_TRANSFORMER[i])
                     .input(ENERGY_INPUT_HATCH_16A[i])
-                    .input(wireGtHex, Cable[i], 2)
-                    .input(plate, Plate[i], 6)
+                    .input(wireGtHex, Cable.get(i), 2)
+                    .input(plate, Plate.get(i), 6)
                     .output(SUBSTATION_ENERGY_INPUT_HATCH[i])
                     .duration(400).EUt(VA[ULV + i]).buildAndRegister();
         }
@@ -508,8 +508,8 @@ public class MetaTileEntityMachineRecipeLoader {
         for (int i = 0; i < 10; i++) {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(ENERGY_OUTPUT_HATCH[i])
-                    .input(wireGtQuadruple, Cable[i], 2)
-                    .input(plate, Plate[i], 2)
+                    .input(wireGtQuadruple, Cable.get(i), 2)
+                    .input(plate, Plate.get(i), 2)
                     .output(ENERGY_OUTPUT_HATCH_4A[i])
                     .duration(100).EUt(VA[ULV + i]).buildAndRegister();
         }
@@ -519,8 +519,8 @@ public class MetaTileEntityMachineRecipeLoader {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(TRANSFORMER[i])
                     .input(ENERGY_OUTPUT_HATCH_4A[i])
-                    .input(wireGtOctal, Cable[i], 2)
-                    .input(plate, Plate[i], 4)
+                    .input(wireGtOctal, Cable.get(i), 2)
+                    .input(plate, Plate.get(i), 4)
                     .output(ENERGY_OUTPUT_HATCH_16A[i])
                     .duration(200).EUt(VA[ULV + i]).buildAndRegister();
         }
@@ -530,8 +530,8 @@ public class MetaTileEntityMachineRecipeLoader {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(POWER_TRANSFORMER[i])
                     .input(ENERGY_OUTPUT_HATCH_16A[i])
-                    .input(wireGtHex, Cable[i], 2)
-                    .input(plate, Plate[i], 6)
+                    .input(wireGtHex, Cable.get(i), 2)
+                    .input(plate, Plate.get(i), 6)
                     .output(SUBSTATION_ENERGY_OUTPUT_HATCH[i])
                     .duration(400).EUt(VA[ULV + i]).buildAndRegister();
         }

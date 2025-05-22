@@ -11,6 +11,7 @@ import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.unification.material.Materials.Polytetrafluoroethylene;
 import static gregtech.api.unification.ore.OrePrefix.circuit;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
+import static gtqt.api.util.MaterialHelper.Plastic;
 import static gtqt.common.metatileentities.GTQTMetaTileEntities.*;
 
 public class HatchHandlers {
@@ -18,11 +19,12 @@ public class HatchHandlers {
     static ItemStack fluidInterface = Mods.AppliedEnergistics2.getItem("fluid_interface");
     public static void init() {
         //Dual Hatch
-        for (int i = 0; i < DUAL_IMPORT_HATCH.length; i++) {
+        for (int i = 0; i < 9; i++) {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(ITEM_IMPORT_BUS[i+1])
                     .input(FLUID_IMPORT_HATCH[i+1])
                     .input(circuit, MarkerMaterial.create(GTValues.VN[i+1].toLowerCase()), 4)
+                    .fluidInputs(Plastic.get(i).getFluid(L * 4))
                     .output(DUAL_IMPORT_HATCH[i])
                     .duration(100).EUt(VA[ULV + i]).buildAndRegister();
 
@@ -30,6 +32,7 @@ public class HatchHandlers {
                     .input(ITEM_EXPORT_BUS[i+1])
                     .input(FLUID_EXPORT_HATCH[i+1])
                     .input(circuit, MarkerMaterial.create(GTValues.VN[i+1].toLowerCase()), 4)
+                    .fluidInputs(Plastic.get(i).getFluid(L * 4))
                     .output(DUAL_EXPORT_HATCH[i])
                     .duration(100).EUt(VA[ULV + i]).buildAndRegister();
 
@@ -38,6 +41,7 @@ public class HatchHandlers {
                     .inputs(normalInterface)
                     .inputs(fluidInterface)
                     .input(circuit, MarkerMaterial.create(GTValues.VN[i+1].toLowerCase()), 4)
+                    .fluidInputs(Plastic.get(i).getFluid(L * 4))
                     .output(ME_PATTERN_PROVIDER[i])
                     .duration(100).EUt(VA[ULV + i]).buildAndRegister();
         }
