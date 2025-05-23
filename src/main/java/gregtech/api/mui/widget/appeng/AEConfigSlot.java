@@ -4,6 +4,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.appeng.AESyncHandler;
 
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 
 import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.api.ITheme;
@@ -44,16 +45,20 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         tooltipBuilder(this::buildTooltip);
     }
 
-    // TODO: change tooltip when autopull is on
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
         tooltip.addLine(IKey.lang("gregtech.gui.config_slot"));
-        if (isStocking) {
-            tooltip.addLine(IKey.lang("gregtech.gui.config_slot.set_only"));
+
+        if (isAutoPull.getAsBoolean()) {
+            tooltip.add(I18n.format("gregtech.gui.config_slot.auto_pull_managed"));
         } else {
-            tooltip.addLine(IKey.lang("gregtech.gui.config_slot.set"));
-            tooltip.addLine(IKey.lang("gregtech.gui.config_slot.scroll"));
+            if (isStocking) {
+                tooltip.addLine(IKey.lang("gregtech.gui.config_slot.set_only"));
+            } else {
+                tooltip.addLine(IKey.lang("gregtech.gui.config_slot.set"));
+                tooltip.addLine(IKey.lang("gregtech.gui.config_slot.scroll"));
+            }
+            tooltip.addLine(IKey.lang("gregtech.gui.config_slot.remove"));
         }
-        tooltip.addLine(IKey.lang("gregtech.gui.config_slot.remove"));
     }
 
     @SuppressWarnings("unchecked")
@@ -80,6 +85,11 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
             return slotTheme.getSlotHoverColor();
         }
         return ITheme.getDefault().getItemSlotTheme().getSlotHoverColor();
+    }
+
+    @Override
+    public @NotNull Result onMousePressed(int mouseButton) {
+        return Interactable.super.onMousePressed(mouseButton);
     }
 
     @Override

@@ -94,12 +94,11 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
 
             if (!heldItem.isEmpty()) {
                 getSyncHandler().setConfig(WrappedItemStack.fromItemStack(heldItem));
+                return Result.SUCCESS;
             }
-
-            return Result.SUCCESS;
         }
 
-        return Result.SUCCESS;
+        return super.onMousePressed(mouseButton);
     }
 
     @Override

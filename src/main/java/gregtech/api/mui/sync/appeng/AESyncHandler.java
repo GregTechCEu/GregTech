@@ -10,6 +10,7 @@ import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -38,7 +39,13 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     public void init(String key, PanelSyncManager syncManager) {
         super.init(key, syncManager);
         onClient = syncManager.isClient();
+        cache = initializeCache();
+        byteBufAdapter = initializeByteBufAdapter();
     }
+
+    protected abstract @NotNull IConfigurableSlot<T> initializeCache();
+
+    protected abstract @NotNull IByteBufAdapter<T> initializeByteBufAdapter();
 
     @SuppressWarnings("DuplicatedCode")
     @Override
