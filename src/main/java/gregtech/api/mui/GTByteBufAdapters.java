@@ -7,10 +7,10 @@ import net.minecraft.network.PacketBuffer;
 
 import com.cleanroommc.modularui.utils.serialization.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Objects;
 
 public class GTByteBufAdapters {
 
@@ -31,8 +31,8 @@ public class GTByteBufAdapters {
 
     public static <T> IByteBufAdapter<T> makeAdapter(@NotNull IByteBufDeserializer<T> deserializer,
                                                      @NotNull IByteBufSerializer<T> serializer,
-                                                     @Nullable IEquals<T> equals) {
-        final IEquals<T> tester = equals != null ? equals : IEquals.defaultTester();
+                                                     @NotNull IEquals<T> equals) {
+        final IEquals<T> tester = Objects.requireNonNull(equals);
         return new IByteBufAdapter<>() {
 
             @Override
