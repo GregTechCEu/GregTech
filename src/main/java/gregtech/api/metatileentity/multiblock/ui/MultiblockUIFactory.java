@@ -61,11 +61,6 @@ public class MultiblockUIFactory {
     private boolean disableIndicator = false;
     private boolean disableButtons = false;
 
-    static {
-        // register operations
-        Operation.init();
-    }
-
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
         configureDisplayText(builder -> builder.title(mte.getMetaFullName()).structureFormed(mte.isStructureFormed()));

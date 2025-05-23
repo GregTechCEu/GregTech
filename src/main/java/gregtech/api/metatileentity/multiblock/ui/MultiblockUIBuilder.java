@@ -46,6 +46,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
+import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
@@ -53,12 +54,11 @@ import java.util.function.Supplier;
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
 public class MultiblockUIBuilder {
 
-    private final List<IDrawable> textList = new ArrayList<>();
     private final List<Operation> operations = new ArrayList<>();
 
     private Consumer<MultiblockUIBuilder> action;
     private final InternalSyncHandler syncHandler = new InternalSyncHandler();
-    private final KeyManager manager = new InternalKeyManager();
+    private final KeyManager manager = this::addKey;
 
     private static final int DEFAULT_MAX_RECIPE_LINES = 25;
 
@@ -602,7 +602,8 @@ public class MultiblockUIBuilder {
         chancedItemOutputs = getSyncer().syncCollection(chancedItemOutputs, GTByteBufAdapters.CHANCED_ITEM_OUTPUT);
         chancedFluidOutputs = getSyncer().syncCollection(chancedFluidOutputs, GTByteBufAdapters.CHANCED_FLUID_OUTPUT);
 
-        addKey(KeyUtil.string(TextFormatting.GRAY, "Producing: "), Operation.NEW_LINE);
+        // todo lang
+        addKey(KeyUtil.string(TextFormatting.GRAY, "Producing: "), Operation::addLine);
 
         int recipeTier = GTUtility.getTierByVoltage(eut);
         int machineTier = GTUtility.getOCTierByVoltage(maxVoltage);
@@ -656,8 +657,7 @@ public class MultiblockUIBuilder {
         addKey(new GTObjectDrawable(stack, count)
                 .asIcon()
                 .asHoverable()
-                .addTooltipLine(formatRecipeData(name, amount, rate)), Operation.ADD);
-        // addKey(IKey.SPACE, Operation.ADD);
+                .addTooltipLine(formatRecipeData(name, amount, rate)), Operation::add);
     }
 
     /**
@@ -675,7 +675,7 @@ public class MultiblockUIBuilder {
         addKey(new GTObjectDrawable(stack, count)
                 .asIcon()
                 .asHoverable()
-                .addTooltipLine(formatRecipeData(name, amount, rate)), Operation.ADD);
+                .addTooltipLine(formatRecipeData(name, amount, rate)), Operation::add);
     }
 
     /**
@@ -693,7 +693,7 @@ public class MultiblockUIBuilder {
                 .setBoostFunction(entry -> chance)
                 .asIcon()
                 .asHoverable()
-                .addTooltipLine(formatRecipeData(name, amount, rate)), Operation.ADD);
+                .addTooltipLine(formatRecipeData(name, amount, rate)), Operation::add);
     }
 
     /**
@@ -712,7 +712,7 @@ public class MultiblockUIBuilder {
                 .setBoostFunction(entry -> chance)
                 .asIcon()
                 .asHoverable()
-                .addTooltipLine(formatRecipeData(name, amount, rate)), Operation.ADD);
+                .addTooltipLine(formatRecipeData(name, amount, rate)), Operation::add);
     }
 
     private static String formatRecipeRate(int recipeLength, long amount) {
@@ -745,11 +745,10 @@ public class MultiblockUIBuilder {
     }
 
     public boolean isEmpty() {
-        return this.textList.isEmpty();
+        return this.operations.isEmpty();
     }
 
     public void clear() {
-        this.textList.clear();
         this.operations.clear();
     }
 
@@ -775,8 +774,8 @@ public class MultiblockUIBuilder {
             runAction();
             dirty = false;
         }
-        for (int i = 0; i < operations.size(); i++) {
-            operations.get(i).apply(textList.get(i), richText);
+        for (Operation op : operations) {
+            op.accept(richText);
         }
     }
 
@@ -827,27 +826,15 @@ public class MultiblockUIBuilder {
     }
 
     private void addKey(IDrawable key) {
-        addKey(key, Operation.NEW_LINE_SPACE);
+        addKey(Operation.addLineSpace(key));
     }
 
-    private void addKey(@NotNull IDrawable key, @NotNull Operation op) {
-        if (isServer()) return;
-        if (textList.size() != operations.size()) {
-            throw new IllegalStateException("textList and operations must be the same size!");
-        }
-        this.textList.add(key);
-        Operation.checkOp(op);
-        this.operations.add(op);
+    private void addKey(IDrawable key, Function<IDrawable, Operation> function) {
+        addKey(function.apply(key));
     }
 
-    public class InternalKeyManager implements KeyManager {
-
-        private InternalKeyManager() {}
-
-        @Override
-        public void add(IDrawable drawable, Operation op) {
-            addKey(drawable, op);
-        }
+    private void addKey(@NotNull Operation op) {
+        if (!isServer()) this.operations.add(op);
     }
 
     public class InternalSyncer implements UISyncer {
