@@ -588,7 +588,7 @@ public class MultiblockUIBuilder {
      * @param maxLines the maximum number of lines to print until truncating with {@code ...}
      */
     public MultiblockUIBuilder addRecipeOutputLine(AbstractRecipeLogic arl, int maxLines) {
-        // todo recipe is null on first load, fix
+        // todo recipe is null on first load, fix in the future
         Recipe recipe = arl.getPreviousRecipe();
 
         if (getSyncer().syncBoolean(recipe == null)) return this;
