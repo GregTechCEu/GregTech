@@ -374,7 +374,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     protected void configureDisplayText(MultiblockUIBuilder builder) {}
 
-    @MustBeInvokedByOverriders
     protected void configureErrorText(MultiblockUIBuilder builder) {
         builder.structureFormed(isStructureFormed());
         if (hasMufflerMechanics())
@@ -383,7 +382,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             builder.addMaintenanceProblemLines(getMaintenanceProblems(), false);
     }
 
-    @MustBeInvokedByOverriders
     protected void configureWarningText(MultiblockUIBuilder builder) {
         if (hasMaintenanceMechanics())
             builder.addMaintenanceProblemLines(getMaintenanceProblems(), true);
