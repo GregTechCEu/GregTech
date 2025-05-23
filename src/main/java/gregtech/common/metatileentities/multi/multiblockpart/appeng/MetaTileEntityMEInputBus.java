@@ -50,6 +50,7 @@ import appeng.api.storage.data.IAEItemStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -205,16 +206,20 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        ModularPanel mainPanel = GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94);
+
         final String syncHandlerName = "aeSlot";
         final boolean isStocking = getAEItemHandler().isStocking();
+
         guiSyncManager.registerSlotGroup("extra_slot", 1);
         for (int index = 0; index < CONFIG_SIZE; index++) {
             guiSyncManager.syncValue(syncHandlerName, index,
                     new AEItemSyncHandler(getAEItemHandler().getInventory()[index]));
         }
 
-        return GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94)
-                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+        IPanelHandler amountPopup = IPanelHandler.simple(mainPanel, this::createAmountPopupPanel, true);
+
+        return mainPanel.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
                 .child(IKey.dynamic(() -> isOnline() ? I18n.format("gregtech.gui.me_network.online") :
                         I18n.format("gregtech.gui.me_network.offline")).asWidget().pos(5, 15))
@@ -254,6 +259,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
     protected Widget<?> getExtraButton() {
         return new EmptyWidget()
                 .size(18);
+    }
+
+    protected ModularPanel createAmountPopupPanel(ModularPanel mainPanel, EntityPlayer player) {
+        return GTGuis.createPopupPanel("amountPanel", 150, 50);
     }
 
     @Override

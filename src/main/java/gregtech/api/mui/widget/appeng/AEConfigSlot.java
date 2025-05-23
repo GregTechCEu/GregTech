@@ -1,6 +1,7 @@
 package gregtech.api.mui.widget.appeng;
 
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.sync.appeng.AESyncHandler;
 
 import net.minecraft.client.renderer.GlStateManager;
 
@@ -8,11 +9,14 @@ import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.BooleanSupplier;
 
 public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfigSlot<T>>
-                                  implements JeiIngredientProvider {
+                                  implements JeiIngredientProvider, Interactable {
 
     protected final boolean isStocking;
     protected final BooleanSupplier isAutoPull;
@@ -52,6 +56,18 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         tooltip.addLine(IKey.lang("gregtech.gui.config_slot.remove"));
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public @NotNull AESyncHandler<T> getSyncHandler() {
+        return (AESyncHandler<T>) super.getSyncHandler();
+    }
+
+    @Override
+    public boolean isValidSyncHandler(SyncHandler syncHandler) {
+        return syncHandler instanceof AESyncHandler<?>;
+    }
+
+    // TODO: get rid of these two methods when 2817 merges
     protected void drawSlotOverlay() {
         GlStateManager.colorMask(true, true, true, false);
         GuiDraw.drawRect(1, 1, 16, 16, getSlotHoverColor());
@@ -64,6 +80,33 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
             return slotTheme.getSlotHoverColor();
         }
         return ITheme.getDefault().getItemSlotTheme().getSlotHoverColor();
+    }
+
+    @Override
+    public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int scrollAmount) {
+        if (getSyncHandler().getConfig() == null || isStocking) return false;
+
+        long newStackSize = getSyncHandler().getConfigAmount();
+
+        if (Interactable.hasControlDown()) {
+            switch (scrollDirection) {
+                case UP -> newStackSize *= 2;
+                case DOWN -> newStackSize /= 2;
+            }
+        } else {
+            switch (scrollDirection) {
+                case UP -> newStackSize += 1;
+                case DOWN -> newStackSize -= 1;
+            }
+        }
+
+        if (newStackSize > 0 && newStackSize < Integer.MAX_VALUE + 1L) {
+            int scaledStackSize = (int) newStackSize;
+            getSyncHandler().setConfigAmount(scaledStackSize);
+            return true;
+        }
+
+        return false;
     }
 
     @Override

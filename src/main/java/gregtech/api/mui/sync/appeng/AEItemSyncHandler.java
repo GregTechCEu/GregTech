@@ -6,43 +6,46 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.Wrappe
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import appeng.api.storage.data.IAEItemStack;
+import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
+import com.cleanroommc.modularui.utils.serialization.IEquals;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
 
     public AEItemSyncHandler(IConfigurableSlot<IAEItemStack> config) {
         super(config);
         cache = new ExportOnlyAEItemSlot();
+        // TODO: when 2672 is merged, use GTByteBufAdapters.makeAdapter
+        byteBufAdapter = new WrappedItemStackByteBufAdapter();
     }
 
-    @Override
-    public void readOnClient(int id, PacketBuffer buf) {
-        if (id == configSyncID) {
-            if (buf.readBoolean()) {
-                config.setConfig(WrappedItemStack.fromPacket(buf));
+    public void setConfig(@Nullable ItemStack stack) {
+        setConfig(WrappedItemStack.fromItemStack(stack));
+    }
+
+    private static class WrappedItemStackByteBufAdapter implements IByteBufAdapter<IAEItemStack> {
+
+        @Override
+        public WrappedItemStack deserialize(PacketBuffer buffer) {
+            return WrappedItemStack.fromPacket(buffer);
+        }
+
+        @Override
+        public void serialize(PacketBuffer buffer, IAEItemStack u) {
+            if (u instanceof WrappedItemStack wrapped) {
+                wrapped.writeToPacket(buffer);
             } else {
-                config.setConfig(null);
-            }
-        } else if (id == stockSyncID) {
-            if (buf.readBoolean()) {
-                config.setStock(WrappedItemStack.fromPacket(buf));
-            } else {
-                config.setStock(null);
+                throw new IllegalArgumentException(
+                        "A non wrapped IAEItemStack was passed to the AEItemSyncHandler ByteBufAdapter!");
             }
         }
-    }
 
-    @Override
-    public void readOnServer(int id, PacketBuffer buf) {
-        super.readOnServer(id, buf);
-        if (id == setConfigID) {
-            config.setConfig(WrappedItemStack.fromPacket(buf));
+        @Override
+        public boolean areEqual(@NotNull IAEItemStack t1, @NotNull IAEItemStack t2) {
+            return IEquals.defaultTester().areEqual(t1, t2);
         }
-    }
-
-    public void setConfig(ItemStack stack) {
-        syncToServer(setConfigID, buf -> ByteBufUtils.writeTag(buf, stack.serializeNBT()));
     }
 }

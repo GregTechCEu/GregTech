@@ -5,6 +5,7 @@ import gregtech.api.mui.widget.appeng.AEConfigSlot;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -17,7 +18,6 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
-import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -106,40 +106,13 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
             FluidStack heldFluid = FluidUtil.getFluidContained(heldItem);
 
             if (heldFluid != null) {
-                getSyncHandler().setConfig(heldFluid);
+                getSyncHandler().setConfig(WrappedFluidStack.fromFluidStack(heldFluid));
             }
 
             return Result.SUCCESS;
         }
 
         return Result.IGNORE;
-    }
-
-    @Override
-    public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int scrollAmount) {
-        if (getSyncHandler().getConfig() == null || isStocking) return false;
-
-        long newStackSize = getSyncHandler().getConfigAmount();
-
-        if (Interactable.hasControlDown()) {
-            switch (scrollDirection) {
-                case UP -> newStackSize *= 2;
-                case DOWN -> newStackSize /= 2;
-            }
-        } else {
-            switch (scrollDirection) {
-                case UP -> newStackSize += 1;
-                case DOWN -> newStackSize -= 1;
-            }
-        }
-
-        if (newStackSize > 0 && newStackSize < Integer.MAX_VALUE + 1L) {
-            int scaledStackSize = (int) newStackSize;
-            getSyncHandler().setConfigAmount(scaledStackSize);
-            return true;
-        }
-
-        return false;
     }
 
     @Override
