@@ -61,7 +61,6 @@ public class MultiblockUIBuilder {
 
     private Consumer<MultiblockUIBuilder> action;
     private final InternalSyncHandler syncHandler = new InternalSyncHandler();
-    private final KeyManager manager = this::addKey;
 
     private static final int DEFAULT_MAX_RECIPE_LINES = 25;
 
@@ -101,7 +100,7 @@ public class MultiblockUIBuilder {
             var base = KeyUtil.lang(TextFormatting.RED, "gregtech.multiblock.invalid_structure");
             var hover = KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.invalid_structure.tooltip");
-            addKey(base, hover);
+            addHoverableKey(base, hover);
         }
         return this;
     }
@@ -162,7 +161,7 @@ public class MultiblockUIBuilder {
         var hoverText = KeyUtil.lang(TextFormatting.GRAY,
                 "gregtech.multiblock.max_energy_per_tick_hover");
 
-        addKey(bodyText, hoverText);
+        addHoverableKey(bodyText, hoverText);
         return this;
     }
 
@@ -180,7 +179,7 @@ public class MultiblockUIBuilder {
                 "gregtech.multiblock.max_recipe_tier", GTValues.VOCNF[tier]);
         var hoverText = KeyUtil.lang(TextFormatting.GRAY,
                 "gregtech.multiblock.max_recipe_tier_hover");
-        addKey(bodyText, hoverText);
+        addHoverableKey(bodyText, hoverText);
         return this;
     }
 
@@ -466,7 +465,7 @@ public class MultiblockUIBuilder {
 
             // Wrench
             if ((maintenanceProblems & 1) == 0) {
-                addKey(richText -> richText
+                addOperation(richText -> richText
                         .add(new ItemDrawable(ToolItems.WRENCH.get(Materials.Iron)))
                         .add(IKey.SPACE)
                         .add(KeyUtil.lang(TextFormatting.YELLOW,
@@ -476,7 +475,7 @@ public class MultiblockUIBuilder {
 
             // Screwdriver
             if (((maintenanceProblems >> 1) & 1) == 0) {
-                addKey(richText -> richText
+                addOperation(richText -> richText
                         .add(new ItemDrawable(ToolItems.SCREWDRIVER.get(Materials.Iron)))
                         .add(IKey.SPACE)
                         .add(KeyUtil.lang(TextFormatting.YELLOW,
@@ -486,7 +485,7 @@ public class MultiblockUIBuilder {
 
             // Soft Mallet
             if (((maintenanceProblems >> 2) & 1) == 0) {
-                addKey(richText -> richText
+                addOperation(richText -> richText
                         .add(new ItemDrawable(ToolItems.SOFT_MALLET.get(Materials.Wood)))
                         .add(IKey.SPACE)
                         .add(KeyUtil.lang(TextFormatting.YELLOW,
@@ -496,7 +495,7 @@ public class MultiblockUIBuilder {
 
             // Hammer
             if (((maintenanceProblems >> 3) & 1) == 0) {
-                addKey(richText -> richText
+                addOperation(richText -> richText
                         .add(new ItemDrawable(ToolItems.HARD_HAMMER.get(Materials.Iron)))
                         .add(IKey.SPACE)
                         .add(KeyUtil.lang(TextFormatting.YELLOW,
@@ -506,7 +505,7 @@ public class MultiblockUIBuilder {
 
             // Wire Cutters
             if (((maintenanceProblems >> 4) & 1) == 0) {
-                addKey(richText -> richText
+                addOperation(richText -> richText
                         .add(new ItemDrawable(ToolItems.WIRE_CUTTER.get(Materials.Iron)))
                         .add(IKey.SPACE)
                         .add(KeyUtil.lang(TextFormatting.YELLOW,
@@ -516,7 +515,7 @@ public class MultiblockUIBuilder {
 
             // Crowbar
             if (((maintenanceProblems >> 5) & 1) == 0) {
-                addKey(richText -> richText
+                addOperation(richText -> richText
                         .add(new ItemDrawable(ToolItems.CROWBAR.get(Materials.Iron)))
                         .add(IKey.SPACE)
                         .add(KeyUtil.lang(TextFormatting.YELLOW,
@@ -767,7 +766,7 @@ public class MultiblockUIBuilder {
 
     /** Add custom text dynamically, allowing for custom application logic. */
     public MultiblockUIBuilder addCustom(BiConsumer<KeyManager, UISyncer> customConsumer) {
-        customConsumer.accept(this.manager, getSyncer());
+        customConsumer.accept(this::addOperation, getSyncer());
         return this;
     }
 
@@ -847,20 +846,20 @@ public class MultiblockUIBuilder {
         this.onRebuild = onRebuild;
     }
 
-    private void addKey(IKey key, IDrawable... hover) {
+    private void addHoverableKey(IKey key, IDrawable... hover) {
         if (isServer()) return;
         addKey(KeyUtil.setHover(key, hover));
     }
 
     private void addKey(IDrawable key) {
-        addKey(Operation.addLineSpace(key));
+        addOperation(Operation.addLineSpace(key));
     }
 
     private void addKey(IDrawable key, Function<IDrawable, Operation> function) {
-        addKey(function.apply(key));
+        addOperation(function.apply(key));
     }
 
-    private void addKey(@NotNull Operation op) {
+    private void addOperation(@NotNull Operation op) {
         if (!isServer()) this.operations.add(op);
     }
 
