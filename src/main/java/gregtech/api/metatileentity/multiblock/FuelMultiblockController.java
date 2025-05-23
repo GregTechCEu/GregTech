@@ -57,6 +57,13 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                 .addWorkingStatusLine();
     }
 
+    @Override
+    protected void configureWarningText(MultiblockUIBuilder builder) {
+        builder.addLowDynamoTierLine(isDynamoTierTooLow());
+        if (hasMaintenanceMechanics())
+            builder.addMaintenanceProblemLines(getMaintenanceProblems(), true);
+    }
+
     protected long getMaxVoltage() {
         IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
         if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
