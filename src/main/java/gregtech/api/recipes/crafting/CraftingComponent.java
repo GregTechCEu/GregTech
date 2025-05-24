@@ -17,10 +17,16 @@ import org.jetbrains.annotations.Nullable;
 
 public final class CraftingComponent {
 
-    private final Int2ObjectMap<Object> ingredients;
+    private final @NotNull Int2ObjectMap<ItemStack> itemEntries;
+    private final @NotNull Int2ObjectMap<String> stringEntries;
+    private @Nullable Object fallbackValue;
 
-    private CraftingComponent(@NotNull Int2ObjectMap<Object> craftingComponents) {
-        this.ingredients = craftingComponents;
+    private CraftingComponent(@NotNull Int2ObjectMap<ItemStack> itemEntries,
+                              @NotNull Int2ObjectMap<String> stringEntries,
+                              @Nullable Object fallbackValue) {
+        this.itemEntries = itemEntries;
+        this.stringEntries = stringEntries;
+        this.fallbackValue = fallbackValue;
     }
 
     /**
@@ -28,7 +34,15 @@ public final class CraftingComponent {
      * @return the raw ingredient, which may be either an {@link ItemStack} or {@link String}
      */
     public @Nullable Object getIngredient(int tier) {
-        return ingredients.get(tier);
+        ItemStack stack = itemEntries.get(tier);
+        if (stack != null) {
+            return stack;
+        }
+        String string = stringEntries.get(tier);
+        if (string != null) {
+            return string;
+        }
+        return fallbackValue;
     }
 
     /**
@@ -50,19 +64,21 @@ public final class CraftingComponent {
      */
     @SuppressWarnings("unused")
     public void updateIngredients(@NotNull CraftingComponent other, boolean updateFallback) {
-        ingredients.putAll(other.ingredients);
+        itemEntries.putAll(other.itemEntries);
+        stringEntries.putAll(other.stringEntries);
         if (updateFallback) {
-            Object defaultReturnValue = other.ingredients.defaultReturnValue();
-            if (defaultReturnValue == null) {
+            if (other.fallbackValue == null) {
                 throw new IllegalArgumentException("Cannot update the fallback value to null");
             }
-            ingredients.defaultReturnValue(defaultReturnValue);
+            this.fallbackValue = other.fallbackValue;
         }
     }
 
     public static class Builder {
 
-        private final Int2ObjectMap<Object> ingredients = new Int2ObjectOpenHashMap<>();
+        private final @NotNull Int2ObjectMap<ItemStack> itemEntries = new Int2ObjectOpenHashMap<>();
+        private final @NotNull Int2ObjectMap<String> stringEntries = new Int2ObjectOpenHashMap<>();
+        private @Nullable Object fallbackValue;
 
         /**
          * Create a CraftingComponent without a fallback value.
@@ -73,7 +89,7 @@ public final class CraftingComponent {
          * @param fallback the fallback ingredient
          */
         public Builder(@NotNull ItemStack fallback) {
-            ingredients.defaultReturnValue(fallback);
+            this.fallbackValue = fallback;
         }
 
         /**
@@ -108,7 +124,7 @@ public final class CraftingComponent {
          * @param fallbackOreDict an OreDict string for the fallback ingredient
          */
         public Builder(@NotNull String fallbackOreDict) {
-            ingredients.defaultReturnValue(fallbackOreDict);
+            this.fallbackValue = fallbackOreDict;
         }
 
         /**
@@ -133,7 +149,7 @@ public final class CraftingComponent {
          * @return this
          */
         public @NotNull Builder entry(int tier, @NotNull ItemStack stack) {
-            ingredients.put(tier, stack);
+            itemEntries.put(tier, stack);
             return this;
         }
 
@@ -173,7 +189,7 @@ public final class CraftingComponent {
          * @return this
          */
         public @NotNull Builder entry(int tier, @NotNull String oreDict) {
-            ingredients.put(tier, oreDict);
+            stringEntries.put(tier, oreDict);
             return this;
         }
 
@@ -192,7 +208,7 @@ public final class CraftingComponent {
         }
 
         public @NotNull CraftingComponent build() {
-            return new CraftingComponent(ingredients);
+            return new CraftingComponent(itemEntries, stringEntries, fallbackValue);
         }
     }
 }
