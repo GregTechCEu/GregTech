@@ -150,6 +150,7 @@ public final class CraftingComponent {
          */
         public @NotNull Builder entry(int tier, @NotNull ItemStack stack) {
             itemEntries.put(tier, stack);
+            stringEntries.remove(tier);
             return this;
         }
 
@@ -190,6 +191,7 @@ public final class CraftingComponent {
          */
         public @NotNull Builder entry(int tier, @NotNull String oreDict) {
             stringEntries.put(tier, oreDict);
+            itemEntries.remove(tier);
             return this;
         }
 
