@@ -203,9 +203,9 @@ public class MultiblockUIFactory {
 
     /**
      * Add a custom third button to the Multiblock UI. By default, this is a placeholder stating that there is no
-     * additional functionality for this Multiblock.
-     * <br>
-     * Size will be 18x18.
+     * additional functionality for this Multiblock. <br/>
+     * Size will be 18x18. <br/>
+     * Return {@code null} in the function to indicate no flex button
      */
     public MultiblockUIFactory createFlexButton(BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton) {
         this.flexButton = flexButton;
@@ -240,8 +240,7 @@ public class MultiblockUIFactory {
                 .childIf(!disableDisplay, () -> createScreen(panelSyncManager));
 
         // TODO createExtras() hook for overrides?
-        if (mte instanceof ProgressBarMultiblock progressBarMultiblock &&
-                progressBarMultiblock.getProgressBarCount() > 0) {
+        if (mte instanceof ProgressBarMultiblock progressBarMultiblock && progressBarMultiblock.hasBars()) {
             panel.height(height + (Bars.HEIGHT * calculateRows(progressBarMultiblock.getProgressBarCount())) - 2);
             panel.child(createBars(progressBarMultiblock, panelSyncManager));
         }
@@ -490,8 +489,6 @@ public class MultiblockUIFactory {
     public static final class Bars {
 
         public static int FULL_WIDTH = Screen.WIDTH;
-        public static int HALF_WIDTH = 94;
-        public static int THIRD_WIDTH = 62;
         public static int HEIGHT = 7;
 
         private Bars() {}

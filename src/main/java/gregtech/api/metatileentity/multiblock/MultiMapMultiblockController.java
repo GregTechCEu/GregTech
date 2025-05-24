@@ -28,6 +28,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -136,25 +137,25 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
 
     @Override
     protected MultiblockUIFactory createUIFactory() {
-        IntSyncValue recipeMapValue = new IntSyncValue(this::getRecipeMapIndex, this::setRecipeMapIndex);
         return super.createUIFactory()
                 .createFlexButton((guiData, syncManager) -> {
-                    if (getAvailableRecipeMaps() == null || getAvailableRecipeMaps().length <= 1)
-                        return null;
+                    RecipeMap<?>[] recipeMaps = getAvailableRecipeMaps();
+                    if (ArrayUtils.isEmpty(recipeMaps)) return null;
+
+                    IntSyncValue activeMapIndex = new IntSyncValue(this::getRecipeMapIndex, this::setRecipeMapIndex);
 
                     return new CycleButtonWidget()
-                            // .textureGetter(i -> GTGuiTextures.BUTTON_MULTI_MAP)
                             .overlay(GTGuiTextures.BUTTON_MULTI_MAP)
                             .background(GTGuiTextures.BUTTON)
                             // TODO find out why this needs to be called
                             .disableHoverBackground()
-                            .value(recipeMapValue)
-                            .length(getAvailableRecipeMaps().length)
-                            .tooltipAutoUpdate(true)
-                            .tooltipBuilder(t -> t.addLine(IKey.comp(
-                                    IKey.lang("gregtech.multiblock.multiple_recipemaps.value",
-                                            IKey.lang(getAvailableRecipeMaps()[recipeMapValue.getIntValue()]
-                                                    .getTranslationKey())))));
+                            .value(activeMapIndex)
+                            .length(recipeMaps.length)
+                            .tooltipBuilder(t -> {
+                                RecipeMap<?> map = recipeMaps[activeMapIndex.getIntValue()];
+                                t.addLine(IKey.lang("gregtech.multiblock.multiple_recipemaps.value",
+                                        map.getTranslationKey()));
+                            });
                 });
     }
 
