@@ -9,6 +9,7 @@ import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.crafting.CraftingComponent;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
 import gregtech.api.unification.material.Material;
@@ -336,7 +337,7 @@ public class CommonProxy {
     public static void initComponents(RegistryEvent.Register<IRecipe> event) {
         GTRecipeInputCache.enableCache();
         CraftingComponents.initializeComponents();
-        MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, CraftingComponents.class));
+        MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, CraftingComponent.class));
     }
 
     // this is called with normal priority, so most mods working with
