@@ -435,7 +435,6 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
             }
             for (ExportOnlyAEItemSlot slot : this.inventory) {
                 slot.setTrigger(this::onContentsChanged);
-                slot.setDirtyNotifier(holder::markDirty);
             }
         }
 

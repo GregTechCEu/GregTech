@@ -15,8 +15,10 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AEDisplaySlot<T extends IAEStack<T>> extends Widget<AEDisplaySlot<T>>
                                    implements JeiIngredientProvider {
 
-    public AEDisplaySlot() {
-        super();
+    protected final int index;
+
+    public AEDisplaySlot(int index) {
+        this.index = index;
         size(18);
     }
 

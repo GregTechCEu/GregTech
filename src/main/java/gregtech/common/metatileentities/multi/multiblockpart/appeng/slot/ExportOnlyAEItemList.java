@@ -27,7 +27,6 @@ public class ExportOnlyAEItemList extends NotifiableItemStackHandler {
         }
         for (ExportOnlyAEItemSlot slot : this.inventory) {
             slot.setTrigger(this::onContentsChanged);
-            slot.setDirtyNotifier(holder::markDirty);
         }
     }
 

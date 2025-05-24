@@ -20,7 +20,6 @@ public class ExportOnlyAEFluidList {
         this.inventory = new ExportOnlyAEFluidSlot[size];
         for (int i = 0; i < size; i++) {
             this.inventory[i] = new ExportOnlyAEFluidSlot(holder, entityToNotify);
-            this.inventory[i].setDirtyNotifier(holder::markDirty);
         }
     }
 

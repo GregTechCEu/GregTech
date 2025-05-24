@@ -20,14 +20,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
 
-    public AEFluidDisplaySlot() {
-        super();
+    public AEFluidDisplaySlot(int index) {
+        super(index);
         tooltipAutoUpdate(true);
     }
 
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        IAEFluidStack stock = getSyncHandler().getStock();
+        IAEFluidStack stock = getSyncHandler().getStock(index);
         if (stock != null) {
             FluidStack stack = stock.getFluidStack();
             tooltip.addLine(IKey.str(stack.getLocalizedName()));
@@ -54,7 +54,7 @@ public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
 
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        IAEFluidStack stock = getSyncHandler().getStock();
+        IAEFluidStack stock = getSyncHandler().getStock(index);
         if (stock != null) {
             FluidStack stack = stock.getFluidStack();
             RenderUtil.drawFluidForGui(stack, stack.amount, 1, 1, 17, 17);
@@ -70,7 +70,7 @@ public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
 
     @Override
     public @Nullable Object getIngredient() {
-        IAEFluidStack stock = getSyncHandler().getStock();
+        IAEFluidStack stock = getSyncHandler().getStock(index);
         return stock == null ? null : stock.getFluidStack();
     }
 }

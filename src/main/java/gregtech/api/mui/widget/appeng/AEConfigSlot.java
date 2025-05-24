@@ -28,14 +28,16 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
                                   implements JeiIngredientProvider, Interactable {
 
     protected final boolean isStocking;
+    protected final int index;
     protected final BooleanSupplier isAutoPull;
 
     private static final IDrawable normalBackground = IDrawable.of(GTGuiTextures.SLOT, GTGuiTextures.CONFIG_ARROW_DARK);
     private static final IDrawable autoPullBackground = IDrawable.of(GTGuiTextures.SLOT_DARK,
             GTGuiTextures.CONFIG_ARROW);
 
-    public AEConfigSlot(boolean isStocking, BooleanSupplier isAutoPull) {
+    public AEConfigSlot(boolean isStocking, int index, BooleanSupplier isAutoPull) {
         this.isStocking = isStocking;
+        this.index = index;
         this.isAutoPull = isAutoPull;
         size(18);
     }
@@ -94,9 +96,9 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
 
     @Override
     public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int scrollAmount) {
-        if (getSyncHandler().getConfig() == null || isStocking) return false;
+        if (getSyncHandler().getConfig(index) == null || isStocking) return false;
 
-        long newStackSize = getSyncHandler().getConfigAmount();
+        long newStackSize = getSyncHandler().getConfigAmount(index);
 
         if (Interactable.hasControlDown()) {
             switch (scrollDirection) {
@@ -112,7 +114,7 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
 
         if (newStackSize > 0 && newStackSize < Integer.MAX_VALUE + 1L) {
             int scaledStackSize = (int) newStackSize;
-            getSyncHandler().setConfigAmount(scaledStackSize);
+            getSyncHandler().setConfigAmount(index, scaledStackSize);
             return true;
         }
 

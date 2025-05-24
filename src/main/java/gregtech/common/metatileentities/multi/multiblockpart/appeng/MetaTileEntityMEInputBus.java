@@ -208,14 +208,12 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         ModularPanel mainPanel = GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94);
 
-        final String syncHandlerName = "aeSlot";
         final boolean isStocking = getAEItemHandler().isStocking();
-
         guiSyncManager.registerSlotGroup("extra_slot", 1);
-        for (int index = 0; index < CONFIG_SIZE; index++) {
-            guiSyncManager.syncValue(syncHandlerName, index,
-                    new AEItemSyncHandler(getAEItemHandler().getInventory()[index]));
-        }
+
+        final String syncHandlerName = "aeSync";
+        guiSyncManager.syncValue(syncHandlerName,
+                new AEItemSyncHandler(getAEItemHandler().getInventory(), this::markDirty));
 
         IPanelHandler amountPopup = IPanelHandler.simple(mainPanel, this::createAmountPopupPanel, true);
 
@@ -230,8 +228,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                         .minColWidth(18)
                         .minRowHeight(18)
                         .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
-                                index -> new AEItemConfigSlot(isStocking, this::isAutoPull)
-                                        .syncHandler(syncHandlerName, index))))
+                                index -> new AEItemConfigSlot(isStocking, index, this::isAutoPull)
+                                        .syncHandler(syncHandlerName)
+                                        .debugName("Index " + index))))
                 .child(new Grid()
                         .pos(7 + 18 * 5, 25)
                         .size(18 * 4)
@@ -239,9 +238,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                         .minColWidth(18)
                         .minRowHeight(18)
                         .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
-                                index -> new AEItemDisplaySlot()
+                                index -> new AEItemDisplaySlot(index)
                                         .background(GTGuiTextures.SLOT_DARK)
-                                        .syncHandler(syncHandlerName, index))))
+                                        .syncHandler(syncHandlerName)
+                                        .debugName("Index " + index))))
                 .child(Flow.column()
                         .pos(7 + 18 * 4, 25)
                         .size(18, 18 * 4)

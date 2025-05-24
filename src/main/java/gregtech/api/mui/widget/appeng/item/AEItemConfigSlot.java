@@ -23,8 +23,8 @@ import java.util.function.BooleanSupplier;
 
 public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiGhostIngredientSlot<ItemStack> {
 
-    public AEItemConfigSlot(boolean isStocking, BooleanSupplier isAutoPull) {
-        super(isStocking, isAutoPull);
+    public AEItemConfigSlot(boolean isStocking, int index, BooleanSupplier isAutoPull) {
+        super(isStocking, index, isAutoPull);
         tooltipAutoUpdate(true);
     }
 
@@ -36,7 +36,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
 
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        IAEItemStack config = getSyncHandler().getConfig();
+        IAEItemStack config = getSyncHandler().getConfig(index);
         if (config == null) {
             super.buildTooltip(tooltip);
         } else {
@@ -56,7 +56,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
 
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        IAEItemStack config = getSyncHandler().getConfig();
+        IAEItemStack config = getSyncHandler().getConfig(index);
         if (config != null) {
             ItemStack stack = config.createItemStack();
             if (!stack.isEmpty()) {
@@ -86,14 +86,14 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
 
         if (mouseButton == 1) {
             // Right click to clear
-            getSyncHandler().clearConfig();
+            getSyncHandler().clearConfig(index);
             return Result.SUCCESS;
         } else if (mouseButton == 0) {
             // Left click to set item/change amount
             ItemStack heldItem = getSyncHandler().getSyncManager().getCursorItem();
 
             if (!heldItem.isEmpty()) {
-                getSyncHandler().setConfig(WrappedItemStack.fromItemStack(heldItem));
+                getSyncHandler().setConfig(index, WrappedItemStack.fromItemStack(heldItem));
                 return Result.SUCCESS;
             }
         }
@@ -103,7 +103,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
 
     @Override
     public void setGhostIngredient(@NotNull ItemStack ingredient) {
-        getSyncHandler().setConfig(ingredient);
+        getSyncHandler().setConfig(index, ingredient);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
 
     @Override
     public @Nullable Object getIngredient() {
-        IAEItemStack config = getSyncHandler().getConfig();
+        IAEItemStack config = getSyncHandler().getConfig(index);
         return config == null ? null : config.createItemStack();
     }
 }

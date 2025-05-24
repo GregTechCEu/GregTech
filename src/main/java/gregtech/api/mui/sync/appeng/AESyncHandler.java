@@ -10,6 +10,8 @@ import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,77 +22,99 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     protected boolean onClient;
     private static int rollingID = 0;
 
-    public static final int configSyncID = rollingID++;
-    public static final int stockSyncID = rollingID++;
+    public static final int slotSyncID = rollingID++;
     public static final int setConfigID = rollingID++;
     public static final int clearConfigID = rollingID++;
     public static final int changeConfigID = rollingID++;
 
-    protected final IConfigurableSlot<T> slot;
-    protected IConfigurableSlot<T> cache;
+    protected final IConfigurableSlot<T>[] slots;
 
-    protected IByteBufAdapter<T> byteBufAdapter;
+    private IConfigurableSlot<T>[] cached;
+    private final Int2ObjectMap<IConfigurableSlot<T>> changeMap = new Int2ObjectOpenHashMap<>();
 
-    public AESyncHandler(IConfigurableSlot<T> slot) {
-        this.slot = slot;
+    private IByteBufAdapter<T> byteBufAdapter;
+
+    @Nullable
+    private final Runnable dirtyNotifier;
+
+    public AESyncHandler(IConfigurableSlot<T>[] slots, @Nullable Runnable dirtyNotifier) {
+        this.slots = slots;
+        this.dirtyNotifier = dirtyNotifier;
     }
 
     @Override
     public void init(String key, PanelSyncManager syncManager) {
         super.init(key, syncManager);
         onClient = syncManager.isClient();
-        cache = initializeCache();
+        cached = initializeCache();
         byteBufAdapter = initializeByteBufAdapter();
     }
 
-    protected abstract @NotNull IConfigurableSlot<T> initializeCache();
+    protected abstract @NotNull IConfigurableSlot<T> @NotNull [] initializeCache();
 
     protected abstract @NotNull IByteBufAdapter<T> initializeByteBufAdapter();
 
     @SuppressWarnings("DuplicatedCode")
     @Override
     public void detectAndSendChanges(boolean init) {
-        T currentConfig = slot.getConfig();
-        T cachedConfig = cache.getConfig();
-        if (!areAEStackCountEquals(currentConfig, cachedConfig)) {
-            cache.setConfig(currentConfig == null ? null : currentConfig.copy());
+        for (int index = 0; index < slots.length; index++) {
+            IConfigurableSlot<T> slot = slots[index];
+            IConfigurableSlot<T> cache = cached[index];
 
-            syncToClient(configSyncID, buf -> {
-                if (currentConfig == null) {
-                    buf.writeBoolean(false);
-                } else {
-                    buf.writeBoolean(true);
-                    currentConfig.writeToPacket(buf);
-                }
-            });
+            T newConfig = slot.getConfig();
+            T cachedConfig = cache.getConfig();
+            T newStock = slot.getStock();
+            T cachedStock = cache.getStock();
+
+            if (!areAEStackCountEquals(newConfig, cachedConfig) || !areAEStackCountEquals(newStock, cachedStock)) {
+                cached[index] = slot.copy();
+                changeMap.put(index, slot.copy());
+                notifyChange();
+            }
         }
 
-        T currentStock = slot.getStock();
-        T cachedStock = cache.getStock();
-        if (!areAEStackCountEquals(currentStock, cachedStock)) {
-            cache.setStock(currentStock == null ? null : currentStock.copy());
+        if (!changeMap.isEmpty()) {
+            syncToClient(slotSyncID, buf -> {
+                buf.writeVarInt(changeMap.size());
+                for (int index : changeMap.keySet()) {
+                    buf.writeVarInt(index);
 
-            syncToClient(stockSyncID, buf -> {
-                if (currentStock == null) {
-                    buf.writeBoolean(false);
-                } else {
-                    buf.writeBoolean(true);
-                    currentStock.writeToPacket(buf);
+                    T syncConfig = changeMap.get(index).getConfig();
+                    if (syncConfig == null) {
+                        buf.writeBoolean(false);
+                    } else {
+                        buf.writeBoolean(true);
+                        syncConfig.writeToPacket(buf);
+                    }
+
+                    T syncStock = changeMap.get(index).getStock();
+                    if (syncStock == null) {
+                        buf.writeBoolean(false);
+                    } else {
+                        buf.writeBoolean(true);
+                        syncStock.writeToPacket(buf);
+                    }
                 }
             });
+
+            if (dirtyNotifier != null) {
+                dirtyNotifier.run();
+            }
+            changeMap.clear();
         }
     }
 
     @Override
     public void readOnServer(int id, PacketBuffer buf) throws IOException {
         if (id == clearConfigID) {
-            slot.setConfig(null);
+            slots[buf.readVarInt()].setConfig(null);
         } else if (id == changeConfigID) {
-            T config = getConfig();
+            T config = getConfig(buf.readVarInt());
             if (config != null) {
                 config.setStackSize(buf.readInt());
             }
         } else if (id == setConfigID) {
+            IConfigurableSlot<T> slot = slots[buf.readVarInt()];
             if (buf.readBoolean()) {
                 slot.setConfig(byteBufAdapter.deserialize(buf));
             } else {
@@ -101,32 +125,42 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
 
     @Override
     public void readOnClient(int id, PacketBuffer buf) throws IOException {
-        if (id == configSyncID) {
-            if (buf.readBoolean()) {
-                slot.setConfig(byteBufAdapter.deserialize(buf));
-            } else {
-                slot.setConfig(null);
-            }
-        } else if (id == stockSyncID) {
-            if (buf.readBoolean()) {
-                slot.setStock(byteBufAdapter.deserialize(buf));
-            } else {
-                slot.setStock(null);
+        if (id == slotSyncID) {
+            int size = buf.readVarInt();
+            for (int i = 0; i < size; i++) {
+                int index = buf.readVarInt();
+                IConfigurableSlot<T> slot = slots[index];
+
+                if (buf.readBoolean()) {
+                    slot.setConfig(byteBufAdapter.deserialize(buf));
+                } else {
+                    slot.setConfig(null);
+                }
+
+                if (buf.readBoolean()) {
+                    slot.setStock(byteBufAdapter.deserialize(buf));
+                } else {
+                    slot.setStock(null);
+                }
             }
         }
     }
 
     @SideOnly(Side.CLIENT)
-    public void clearConfig() {
-        syncToServer(clearConfigID);
+    public void clearConfig(int index) {
+        syncToServer(clearConfigID, buf -> buf.writeVarInt(index));
     }
 
     @SideOnly(Side.CLIENT)
-    public void setConfig(@Nullable T newConfig) {
+    public void setConfig(int index, @Nullable T newConfig) {
         if (newConfig == null) {
-            syncToServer(setConfigID, buf -> buf.writeBoolean(false));
+            syncToServer(setConfigID, buf -> {
+                buf.writeVarInt(index);
+                buf.writeBoolean(false);
+            });
         } else {
             syncToServer(setConfigID, buf -> {
+                buf.writeVarInt(index);
                 buf.writeBoolean(true);
                 newConfig.writeToPacket(buf);
             });
@@ -134,22 +168,32 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     }
 
     @Nullable
-    public T getConfig() {
-        return slot.getConfig();
+    public T getConfig(int index) {
+        return slots[index].getConfig();
     }
 
-    public long getConfigAmount() {
-        return getConfig() == null ? 0 : getConfig().getStackSize();
+    public long getConfigAmount(int index) {
+        T config = getConfig(index);
+        return config == null ? 0 : config.getStackSize();
     }
 
     @SideOnly(Side.CLIENT)
-    public void setConfigAmount(int newAmount) {
-        syncToServer(changeConfigID, buf -> buf.writeInt(newAmount));
+    public void setConfigAmount(int index, int newAmount) {
+        syncToServer(changeConfigID, buf -> {
+            buf.writeVarInt(index);
+            buf.writeInt(newAmount);
+        });
     }
 
     @Nullable
-    public T getStock() {
-        return slot.getStock();
+    public T getStock(int index) {
+        return slots[index].getStock();
+    }
+
+    protected void notifyChange() {
+        if (dirtyNotifier != null) {
+            dirtyNotifier.run();
+        }
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

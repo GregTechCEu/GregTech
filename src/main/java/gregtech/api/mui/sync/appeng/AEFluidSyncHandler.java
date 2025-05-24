@@ -15,13 +15,18 @@ import org.jetbrains.annotations.Nullable;
 
 public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
 
-    public AEFluidSyncHandler(IConfigurableSlot<IAEFluidStack> config) {
-        super(config);
+    public AEFluidSyncHandler(IConfigurableSlot<IAEFluidStack>[] config, @Nullable Runnable dirtyNotifier) {
+        super(config, dirtyNotifier);
     }
 
     @Override
-    protected @NotNull IConfigurableSlot<IAEFluidStack> initializeCache() {
-        return new ExportOnlyAEFluidSlot();
+    protected @NotNull IConfigurableSlot<IAEFluidStack> @NotNull [] initializeCache() {
+        // noinspection unchecked
+        IConfigurableSlot<IAEFluidStack>[] cache = new IConfigurableSlot[slots.length];
+        for (int index = 0; index < slots.length; index++) {
+            cache[index] = new ExportOnlyAEFluidSlot();
+        }
+        return cache;
     }
 
     @Override
@@ -30,7 +35,7 @@ public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
     }
 
     @SideOnly(Side.CLIENT)
-    public void setConfig(@Nullable FluidStack stack) {
-        setConfig(WrappedFluidStack.fromFluidStack(stack));
+    public void setConfig(int index, @Nullable FluidStack stack) {
+        setConfig(index, WrappedFluidStack.fromFluidStack(stack));
     }
 }

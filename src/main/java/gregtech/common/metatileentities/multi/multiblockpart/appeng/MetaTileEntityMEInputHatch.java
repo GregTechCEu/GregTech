@@ -42,6 +42,7 @@ import appeng.api.storage.data.IAEFluidStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -165,15 +166,17 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
-        final String syncHandlerName = "aeSlot";
-        final boolean isStocking = getAEFluidHandler().isStocking();
-        for (int index = 0; index < CONFIG_SIZE; index++) {
-            guiSyncManager.syncValue(syncHandlerName, index,
-                    new AEFluidSyncHandler(getAEFluidHandler().getInventory()[index]));
-        }
+        ModularPanel mainPanel = GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94);
 
-        return GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94)
-                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+        final boolean isStocking = getAEFluidHandler().isStocking();
+
+        final String syncHandlerName = "aeSync";
+        guiSyncManager.syncValue(syncHandlerName,
+                new AEFluidSyncHandler(getAEFluidHandler().getInventory(), this::markDirty));
+
+        IPanelHandler amountPopup = IPanelHandler.simple(mainPanel, this::createAmountPopupPanel, true);
+
+        return mainPanel.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
                 .child(IKey.dynamic(() -> isOnline() ? I18n.format("gregtech.gui.me_network.online") :
                         I18n.format("gregtech.gui.me_network.offline")).asWidget().pos(5, 15))
@@ -184,8 +187,9 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                         .minColWidth(18)
                         .minRowHeight(18)
                         .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
-                                index -> new AEFluidConfigSlot(isStocking, this::isAutoPull)
-                                        .syncHandler(syncHandlerName, index))))
+                                index -> new AEFluidConfigSlot(isStocking, index, this::isAutoPull)
+                                        .syncHandler(syncHandlerName)
+                                        .debugName("Index " + index))))
                 .child(new Grid()
                         .pos(7 + 18 * 5, 25)
                         .size(18 * 4)
@@ -193,9 +197,10 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                         .minColWidth(18)
                         .minRowHeight(18)
                         .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
-                                index -> new AEFluidDisplaySlot()
+                                index -> new AEFluidDisplaySlot(index)
                                         .background(GTGuiTextures.SLOT_DARK)
-                                        .syncHandler(syncHandlerName, index))))
+                                        .syncHandler(syncHandlerName)
+                                        .debugName("Index " + index))))
                 .child(Flow.column()
                         .pos(7 + 18 * 4, 25)
                         .size(18, 18 * 4)
@@ -209,6 +214,10 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
     protected Widget<?> getExtraButton() {
         return new EmptyWidget()
                 .size(18);
+    }
+
+    protected ModularPanel createAmountPopupPanel(ModularPanel mainPanel, EntityPlayer player) {
+        return GTGuis.createPopupPanel("amountPanel", 150, 50);
     }
 
     @Override

@@ -17,14 +17,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class AEItemDisplaySlot extends AEDisplaySlot<IAEItemStack> {
 
-    public AEItemDisplaySlot() {
-        super();
+    public AEItemDisplaySlot(int index) {
+        super(index);
         tooltipAutoUpdate(true);
     }
 
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        IAEItemStack stock = getSyncHandler().getStock();
+        IAEItemStack stock = getSyncHandler().getStock(index);
         if (stock != null) {
             tooltip.addFromItem(stock.createItemStack());
         }
@@ -42,7 +42,7 @@ public class AEItemDisplaySlot extends AEDisplaySlot<IAEItemStack> {
 
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        IAEItemStack stock = getSyncHandler().getStock();
+        IAEItemStack stock = getSyncHandler().getStock(index);
         if (stock != null) {
             ItemStack stack = stock.createItemStack();
             if (!stack.isEmpty()) {
@@ -61,7 +61,7 @@ public class AEItemDisplaySlot extends AEDisplaySlot<IAEItemStack> {
 
     @Override
     public @Nullable Object getIngredient() {
-        IAEItemStack stock = getSyncHandler().getStock();
+        IAEItemStack stock = getSyncHandler().getStock(index);
         return stock == null ? null : stock.createItemStack();
     }
 }

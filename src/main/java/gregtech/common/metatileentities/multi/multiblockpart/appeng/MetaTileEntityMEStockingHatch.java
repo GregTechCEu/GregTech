@@ -394,7 +394,6 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
             this.inventory = new ExportOnlyAEStockingFluidSlot[size];
             for (int i = 0; i < size; i++) {
                 this.inventory[i] = new ExportOnlyAEStockingFluidSlot(stocking, entityToNotify);
-                this.inventory[i].setDirtyNotifier(holder::markDirty);
             }
         }
 

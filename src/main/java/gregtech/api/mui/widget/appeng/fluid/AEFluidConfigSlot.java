@@ -30,8 +30,8 @@ import java.util.function.BooleanSupplier;
 public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
                                implements Interactable, JeiGhostIngredientSlot<FluidStack> {
 
-    public AEFluidConfigSlot(boolean isStocking, BooleanSupplier isAutoPull) {
-        super(isStocking, isAutoPull);
+    public AEFluidConfigSlot(boolean isStocking, int index, BooleanSupplier isAutoPull) {
+        super(isStocking, index, isAutoPull);
         tooltipAutoUpdate(true);
     }
 
@@ -43,7 +43,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
 
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        IAEFluidStack config = getSyncHandler().getConfig();
+        IAEFluidStack config = getSyncHandler().getConfig(index);
         if (config == null) {
             super.buildTooltip(tooltip);
         } else {
@@ -72,7 +72,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
 
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        IAEFluidStack config = getSyncHandler().getConfig();
+        IAEFluidStack config = getSyncHandler().getConfig(index);
         if (config != null) {
             FluidStack stack = config.getFluidStack();
             RenderUtil.drawFluidForGui(stack, stack.amount, 1, 1, 17, 17);
@@ -99,14 +99,14 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
 
         if (mouseButton == 1) {
             // Right click to clear
-            getSyncHandler().clearConfig();
+            getSyncHandler().clearConfig(index);
             return Result.SUCCESS;
         } else if (mouseButton == 0) {
             ItemStack heldItem = getSyncHandler().getSyncManager().getCursorItem();
             FluidStack heldFluid = FluidUtil.getFluidContained(heldItem);
 
             if (heldFluid != null) {
-                getSyncHandler().setConfig(WrappedFluidStack.fromFluidStack(heldFluid));
+                getSyncHandler().setConfig(index, WrappedFluidStack.fromFluidStack(heldFluid));
             }
 
             return Result.SUCCESS;
@@ -117,7 +117,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
 
     @Override
     public void setGhostIngredient(@NotNull FluidStack ingredient) {
-        getSyncHandler().setConfig(ingredient);
+        getSyncHandler().setConfig(index, ingredient);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
 
     @Override
     public @Nullable Object getIngredient() {
-        IAEFluidStack config = getSyncHandler().getConfig();
+        IAEFluidStack config = getSyncHandler().getConfig(index);
         return config == null ? null : config.getFluidStack();
     }
 }

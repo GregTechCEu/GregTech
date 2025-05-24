@@ -13,13 +13,18 @@ import org.jetbrains.annotations.Nullable;
 
 public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
 
-    public AEItemSyncHandler(IConfigurableSlot<IAEItemStack> config) {
-        super(config);
+    public AEItemSyncHandler(IConfigurableSlot<IAEItemStack>[] config, @Nullable Runnable dirtyNotifier) {
+        super(config, dirtyNotifier);
     }
 
     @Override
-    protected @NotNull IConfigurableSlot<IAEItemStack> initializeCache() {
-        return new ExportOnlyAEItemSlot();
+    protected @NotNull IConfigurableSlot<IAEItemStack> @NotNull [] initializeCache() {
+        // noinspection unchecked
+        IConfigurableSlot<IAEItemStack>[] cache = new IConfigurableSlot[slots.length];
+        for (int index = 0; index < slots.length; index++) {
+            cache[index] = new ExportOnlyAEItemSlot();
+        }
+        return cache;
     }
 
     @Override
@@ -27,7 +32,7 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
         return IAEStackByteBufAdapter.wrappedItemStackAdapter;
     }
 
-    public void setConfig(@Nullable ItemStack stack) {
-        setConfig(WrappedItemStack.fromItemStack(stack));
+    public void setConfig(int index, @Nullable ItemStack stack) {
+        setConfig(index, WrappedItemStack.fromItemStack(stack));
     }
 }

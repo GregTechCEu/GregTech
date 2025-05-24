@@ -16,9 +16,6 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>>
     @Nullable
     protected T stock;
 
-    @Nullable
-    private Runnable dirtyNotifier;
-
     public ExportOnlyAESlot(@Nullable T config, @Nullable T stock) {
         this.config = config;
         this.stock = stock;
@@ -26,10 +23,6 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>>
 
     public ExportOnlyAESlot() {
         this(null, null);
-    }
-
-    public void setDirtyNotifier(@Nullable Runnable dirtyNotifier) {
-        this.dirtyNotifier = dirtyNotifier;
     }
 
     @Nullable
@@ -101,10 +94,6 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>>
     @Override
     public void setConfig(@Nullable T val) {
         this.config = val;
-
-        if (dirtyNotifier != null) {
-            dirtyNotifier.run();
-        }
     }
 
     @Override
