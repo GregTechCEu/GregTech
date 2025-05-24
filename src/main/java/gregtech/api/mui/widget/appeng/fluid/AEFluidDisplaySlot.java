@@ -62,10 +62,6 @@ public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
             String amount = TextFormattingUtil.formatLongToCompactString(stack.amount, 4);
             RenderUtil.renderTextFixedCorner(amount, 17d, 18d, 0xFFFFFF, true, 0.5f);
         }
-
-        if (isHovering()) {
-            drawSlotOverlay();
-        }
     }
 
     @Override

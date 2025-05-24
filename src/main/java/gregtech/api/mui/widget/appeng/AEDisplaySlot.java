@@ -7,6 +7,7 @@ import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.widget.Widget;
@@ -28,6 +29,15 @@ public abstract class AEDisplaySlot<T extends IAEStack<T>> extends Widget<AEDisp
     }
 
     protected void buildTooltip(@NotNull RichTooltip tooltip) {}
+
+    @Override
+    public void drawOverlay(ModularGuiContext context, WidgetTheme widgetTheme) {
+        super.drawOverlay(context, widgetTheme);
+
+        if (isHovering()) {
+            drawSlotOverlay();
+        }
+    }
 
     protected void drawSlotOverlay() {
         GlStateManager.colorMask(true, true, true, false);

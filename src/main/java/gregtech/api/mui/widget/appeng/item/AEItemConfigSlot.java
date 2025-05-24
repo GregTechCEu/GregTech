@@ -69,9 +69,12 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
                 RenderUtil.renderTextFixedCorner(amount, 17d, 18d, 0xFFFFFF, true, 0.5f);
             }
         }
+    }
 
+    @Override
+    public void drawOverlay(ModularGuiContext context, WidgetTheme widgetTheme) {
         // TODO: replace with RenderUtil.handleJeiGhostHighlight(this); when 2812 merges (thx ghz)
-        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() || ModularUIJeiPlugin.hoveringOverIngredient(this)) {
+        if (ModularUIJeiPlugin.hoveringOverIngredient(this)) {
             GlStateManager.colorMask(true, true, true, false);
             drawHighlight(getArea(), isHovering());
             GlStateManager.colorMask(true, true, true, true);

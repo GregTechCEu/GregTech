@@ -28,7 +28,6 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     public static final int changeConfigID = rollingID++;
 
     protected final IConfigurableSlot<T>[] slots;
-
     private IConfigurableSlot<T>[] cached;
     private final Int2ObjectMap<IConfigurableSlot<T>> changeMap = new Int2ObjectOpenHashMap<>();
 
