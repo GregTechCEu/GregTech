@@ -140,7 +140,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
         return super.createUIFactory()
                 .createFlexButton((guiData, syncManager) -> {
                     RecipeMap<?>[] recipeMaps = getAvailableRecipeMaps();
-                    if (ArrayUtils.isEmpty(recipeMaps)) return null;
+                    if (ArrayUtils.getLength(recipeMaps) <= 1) return null;
 
                     IntSyncValue activeMapIndex = new IntSyncValue(this::getRecipeMapIndex, this::setRecipeMapIndex);
 
