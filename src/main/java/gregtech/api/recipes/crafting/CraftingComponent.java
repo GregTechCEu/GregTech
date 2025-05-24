@@ -52,7 +52,11 @@ public final class CraftingComponent {
     public void updateIngredients(@NotNull CraftingComponent other, boolean updateFallback) {
         ingredients.putAll(other.ingredients);
         if (updateFallback) {
-            ingredients.defaultReturnValue(other.ingredients.defaultReturnValue());
+            Object defaultReturnValue = other.ingredients.defaultReturnValue();
+            if (defaultReturnValue == null) {
+                throw new IllegalArgumentException("Cannot update the fallback value to null");
+            }
+            ingredients.defaultReturnValue(defaultReturnValue);
         }
     }
 
