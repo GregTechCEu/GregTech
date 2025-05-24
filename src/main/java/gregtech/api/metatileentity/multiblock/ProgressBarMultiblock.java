@@ -14,4 +14,8 @@ public interface ProgressBarMultiblock {
     // the bar only needs three things
     // progress, texture, and tooltip
     void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager);
+
+    default boolean hasBars() {
+        return getProgressBarCount() > 0;
+    }
 }

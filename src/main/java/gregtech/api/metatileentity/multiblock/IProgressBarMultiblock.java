@@ -9,7 +9,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 
-@ApiStatus.ScheduledForRemoval
+@ApiStatus.ScheduledForRemoval(inVersion = "2.10")
 @Deprecated
 public interface IProgressBarMultiblock {
 
@@ -31,10 +31,6 @@ public interface IProgressBarMultiblock {
     @Deprecated
     default TextureArea getProgressBarTexture(int index) {
         return GuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW;
-    }
-
-    default int getProgressBarTextureHeight(int index) {
-        return 18;
     }
 
     /**

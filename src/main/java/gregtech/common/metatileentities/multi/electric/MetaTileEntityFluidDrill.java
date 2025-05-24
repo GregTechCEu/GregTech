@@ -390,28 +390,32 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                 .progress(() -> operationsValue.getIntValue() * 1.0 / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS)
                 .texture(GTGuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION)
                 .tooltipBuilder(t -> {
-                    if (isStructureFormed()) {
-                        if (operationsValue.getIntValue() == 0) {
-                            t.addLine(IKey.lang("gregtech.multiblock.fluid_rig.vein_depleted"));
-                        } else {
-                            t.addLine(KeyUtil.string(() -> {
-                                int percent = (int) Math.round(100.0 * operationsValue.getIntValue() /
-                                        BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS);
-                                if (percent > 40) {
-                                    return TextFormatting.GREEN + IKey
-                                            .lang("gregtech.multiblock.fluid_rig.vein_depletion.high", percent).get();
-                                } else if (percent > 10) {
-                                    return TextFormatting.YELLOW + IKey
-                                            .lang("gregtech.multiblock.fluid_rig.vein_depletion.medium", percent).get();
-                                } else {
-                                    return TextFormatting.RED + IKey
-                                            .lang("gregtech.multiblock.fluid_rig.vein_depletion.low", percent).get();
-                                }
-                            }));
-                        }
-                    } else {
+                    if (!isStructureFormed()) {
                         t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                        return;
                     }
+
+                    if (operationsValue.getIntValue() == 0) {
+                        t.addLine(IKey.lang("gregtech.multiblock.fluid_rig.vein_depleted"));
+                        return;
+                    }
+
+                    t.addLine(KeyUtil.string(() -> getDepletionLang(operationsValue)));
                 }));
+    }
+
+    private static @NotNull String getDepletionLang(IntSyncValue operationsValue) {
+        int percent = (int) Math.round(100.0 * operationsValue.getIntValue() /
+                BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS);
+        if (percent > 40) {
+            return TextFormatting.GREEN + IKey
+                    .lang("gregtech.multiblock.fluid_rig.vein_depletion.high", percent).get();
+        } else if (percent > 10) {
+            return TextFormatting.YELLOW + IKey
+                    .lang("gregtech.multiblock.fluid_rig.vein_depletion.medium", percent).get();
+        } else {
+            return TextFormatting.RED + IKey
+                    .lang("gregtech.multiblock.fluid_rig.vein_depletion.low", percent).get();
+        }
     }
 }
