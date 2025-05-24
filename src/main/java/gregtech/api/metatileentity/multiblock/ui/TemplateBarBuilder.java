@@ -1,7 +1,9 @@
 package gregtech.api.metatileentity.multiblock.ui;
 
+import com.cleanroommc.modularui.api.value.IDoubleValue;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.value.DoubleValue;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 
 import java.util.function.Consumer;
@@ -14,7 +16,11 @@ public final class TemplateBarBuilder {
     TemplateBarBuilder() {}
 
     public TemplateBarBuilder progress(DoubleSupplier supplier) {
-        this.widget.progress(supplier);
+        return value(new DoubleValue.Dynamic(supplier, d -> {}));
+    }
+
+    public TemplateBarBuilder value(IDoubleValue<?> value) {
+        this.widget.value(value);
         return this;
     }
 
