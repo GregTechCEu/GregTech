@@ -974,7 +974,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     /**
      * Generate Recycling Data based on this recipe's Items
      */
-    public R withRecycling() {
+    public R withItemRecycling() {
         this.withItemRecycling = true;
         return (R) this;
     }
