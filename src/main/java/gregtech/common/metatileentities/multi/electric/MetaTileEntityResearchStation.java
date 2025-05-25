@@ -258,11 +258,14 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     private void researchingLine(KeyManager manager, UISyncer syncer) {
         var recipe = getRecipeMapWorkable().getPreviousRecipe();
         // todo fix recipe null on world load at some future point
-        if (recipe == null) return;
-        ObjectArrayList<ItemStack> outputs = new ObjectArrayList<>(recipe.getOutputs());
-        outputs = syncer.syncCollection(outputs, ByteBufAdapters.ITEM_STACK);
-        if (outputs.isEmpty()) return;
-        ItemStack stack = outputs.top();
+        if (syncer.syncBoolean(recipe == null)) return;
+        ItemStack stack = ItemStack.EMPTY;
+        if (recipe != null) {
+            List<ItemStack> outputs = recipe.getOutputs();
+            stack = outputs.get(outputs.size() - 1);
+        }
+        stack = syncer.syncObject(stack, ByteBufAdapters.ITEM_STACK);
+        if (stack.isEmpty()) return;
         String id = AssemblyLineManager.readResearchId(stack);
         if (id == null) return;
         List<String> stacks = new ArrayList<>();
