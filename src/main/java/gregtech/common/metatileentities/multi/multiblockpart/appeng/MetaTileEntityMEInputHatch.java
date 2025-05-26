@@ -14,6 +14,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
 import gregtech.api.mui.widget.EmptyWidget;
+import gregtech.api.mui.widget.appeng.AEConfigSlot;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidConfigSlot;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidDisplaySlot;
 import gregtech.client.renderer.texture.Textures;
@@ -39,11 +40,12 @@ import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IAEItemStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -174,22 +176,32 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
         guiSyncManager.syncValue(syncHandlerName,
                 new AEFluidSyncHandler(getAEFluidHandler().getInventory(), this::markDirty));
 
-        IPanelHandler amountPopup = IPanelHandler.simple(mainPanel, this::createAmountPopupPanel, true);
+        Grid configGrid = new Grid()
+                .pos(7, 25)
+                .size(18 * 4)
+                .minElementMargin(0, 0)
+                .minColWidth(18)
+                .minRowHeight(18)
+                .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
+                        index -> new AEFluidConfigSlot(isStocking, index, this::isAutoPull)
+                                .syncHandler(syncHandlerName)
+                                .debugName("Index " + index)));
+
+        for (IWidget aeWidget : configGrid.getChildren()) {
+            // noinspection unchecked
+            ((AEConfigSlot<IAEItemStack>) aeWidget).onSelect(() -> {
+                for (IWidget widget : configGrid.getChildren()) {
+                    // noinspection unchecked
+                    ((AEConfigSlot<IAEItemStack>) widget).deselect();
+                }
+            });
+        }
 
         return mainPanel.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
                 .child(IKey.dynamic(() -> isOnline() ? I18n.format("gregtech.gui.me_network.online") :
                         I18n.format("gregtech.gui.me_network.offline")).asWidget().pos(5, 15))
-                .child(new Grid()
-                        .pos(7, 25)
-                        .size(18 * 4)
-                        .minElementMargin(0, 0)
-                        .minColWidth(18)
-                        .minRowHeight(18)
-                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
-                                index -> new AEFluidConfigSlot(isStocking, index, this::isAutoPull)
-                                        .syncHandler(syncHandlerName)
-                                        .debugName("Index " + index))))
+                .child(configGrid)
                 .child(new Grid()
                         .pos(7 + 18 * 5, 25)
                         .size(18 * 4)
@@ -214,10 +226,6 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
     protected Widget<?> getExtraButton() {
         return new EmptyWidget()
                 .size(18);
-    }
-
-    protected ModularPanel createAmountPopupPanel(ModularPanel mainPanel, EntityPlayer player) {
-        return GTGuis.createPopupPanel("amountPanel", 150, 50);
     }
 
     @Override

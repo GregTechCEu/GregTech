@@ -1,12 +1,18 @@
 package gregtech.api.mui.widget.appeng;
 
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.appeng.AESyncHandler;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
+import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -15,10 +21,14 @@ import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +44,13 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
     private static final IDrawable normalBackground = IDrawable.of(GTGuiTextures.SLOT, GTGuiTextures.CONFIG_ARROW_DARK);
     private static final IDrawable autoPullBackground = IDrawable.of(GTGuiTextures.SLOT_DARK,
             GTGuiTextures.CONFIG_ARROW);
+
+    @Nullable
+    private IPanelHandler amountPanel;
+    protected boolean selected = false;
+
+    @Nullable
+    protected Runnable onSelect;
 
     public AEConfigSlot(boolean isStocking, int index, BooleanSupplier isAutoPull) {
         this.isStocking = isStocking;
@@ -74,6 +91,15 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         return syncHandler instanceof AESyncHandler<?>;
     }
 
+    @Override
+    public void drawOverlay(ModularGuiContext context, WidgetTheme widgetTheme) {
+        super.drawOverlay(context, widgetTheme);
+
+        if (selected) {
+            GTGuiTextures.SELECT_BOX.draw(0, 0, 18, 18);
+        }
+    }
+
     // TODO: get rid of these two methods when 2817 merges
     protected void drawSlotOverlay() {
         GlStateManager.colorMask(true, true, true, false);
@@ -91,7 +117,19 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
 
     @Override
     public @NotNull Result onMousePressed(int mouseButton) {
-        return Interactable.super.onMousePressed(mouseButton);
+        // If no stack was clicked in, open amount selector
+        if (mouseButton == 0 && !isAmountPanelOpen() && getSyncHandler().hasConfig(index)) {
+            if (onSelect != null) {
+                onSelect.run();
+            }
+
+            selected = true;
+            getAmountPanel().openPanel();
+
+            return Result.SUCCESS;
+        }
+
+        return Result.IGNORE;
     }
 
     @Override
@@ -124,5 +162,85 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
     @Override
     public @Nullable IDrawable getBackground() {
         return isAutoPull.getAsBoolean() ? autoPullBackground : normalBackground;
+    }
+
+    protected IPanelHandler getAmountPanel() {
+        if (amountPanel == null) {
+            amountPanel = IPanelHandler.simple(getPanel(), (parentPanel, player) -> {
+                AESyncHandler<T> syncHandler = getSyncHandler();
+                AEDynamicDrawable drawable = new AEDynamicDrawable(syncHandler.getConfig(index));
+                syncHandler.addSetConfigListener(index, () -> drawable.setToDraw(syncHandler.getConfig(index)));
+
+                return GTGuis.createPopupPanel("ae_slot_amount." + index, 100, 18 + 5 * 2)
+                        .closeListener(() -> {
+                            if (onSelect != null) {
+                                onSelect.run();
+                            }
+
+                            syncHandler.removeSetConfigListener(index);
+                        })
+                        .child(drawable.asWidget()
+                                .alignY(0.5f)
+                                .left(5))
+                        .child(new TextFieldWidget()
+                                .value(new StringValue.Dynamic(() -> String.valueOf(syncHandler.getConfigAmount(index)),
+                                        str -> {
+                                            try {
+                                                int newAmount = Integer.parseInt(str);
+                                                syncHandler.setConfigAmount(index, newAmount);
+                                            } catch (NumberFormatException ignored) {
+                                                // nuh uh
+                                            }
+                                        }))
+                                .size(50, 10)
+                                .alignY(0.5f)
+                                .left(18 + 5 * 2));
+            }, true);
+        }
+
+        return amountPanel;
+    }
+
+    public boolean isAmountPanelOpen() {
+        return getAmountPanel().isPanelOpen();
+    }
+
+    public void deselect() {
+        selected = false;
+        if (isAmountPanelOpen()) {
+            getAmountPanel().closePanel();
+        }
+    }
+
+    public void onSelect(@Nullable Runnable onSelect) {
+        this.onSelect = onSelect;
+    }
+
+    protected static class AEDynamicDrawable implements IDrawable {
+
+        Object toDraw;
+
+        public AEDynamicDrawable(Object toDraw) {
+            setToDraw(toDraw);
+        }
+
+        public void setToDraw(Object toDraw) {
+            if (toDraw instanceof IAEItemStack iaeItemStack) {
+                this.toDraw = iaeItemStack.createItemStack();
+            } else if (toDraw instanceof IAEFluidStack iaeFluidStack) {
+                this.toDraw = iaeFluidStack.getFluidStack();
+            } else {
+                this.toDraw = toDraw;
+            }
+        }
+
+        @Override
+        public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
+            if (toDraw instanceof ItemStack item) {
+                GuiDraw.drawItem(item, x, y, width, height);
+            } else if (toDraw instanceof FluidStack fluid) {
+                GuiDraw.drawFluidTexture(fluid, x, y, width, height, 0.0f);
+            }
+        }
     }
 }

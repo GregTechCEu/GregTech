@@ -86,8 +86,6 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
 
     @Override
     public void drawOverlay(ModularGuiContext context, WidgetTheme widgetTheme) {
-        super.drawOverlay(context, widgetTheme);
-
         // TODO: replace with RenderUtil.handleJeiGhostHighlight(this); when 2812 merges (thx ghz)
         if (ModularUIJeiPlugin.hoveringOverIngredient(this)) {
             GlStateManager.colorMask(true, true, true, false);
@@ -96,6 +94,8 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
         } else if (isHovering()) {
             drawSlotOverlay();
         }
+
+        super.drawOverlay(context, widgetTheme);
     }
 
     @Override
@@ -112,12 +112,11 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
 
             if (heldFluid != null) {
                 getSyncHandler().setConfig(index, WrappedFluidStack.fromFluidStack(heldFluid));
+                return Result.SUCCESS;
             }
-
-            return Result.SUCCESS;
         }
 
-        return Result.IGNORE;
+        return super.onMousePressed(mouseButton);
     }
 
     @Override

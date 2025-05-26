@@ -16,6 +16,7 @@ import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GTGuis {
 
@@ -100,6 +101,8 @@ public class GTGuis {
         private boolean disableBelow;
         private boolean closeOnOutsideClick;
         private boolean deleteCachedPanel;
+        @Nullable
+        private Runnable closeListener;
 
         private PopupPanel(@NotNull String name) {
             super(name);
@@ -120,6 +123,10 @@ public class GTGuis {
             super.onClose();
             if (deleteCachedPanel && isSynced() && getSyncHandler() instanceof IPanelHandler handler) {
                 handler.deleteCachedPanel();
+            }
+
+            if (closeListener != null) {
+                closeListener.run();
             }
         }
 
@@ -158,6 +165,11 @@ public class GTGuis {
         @Override
         public boolean closeOnOutOfBoundsClick() {
             return closeOnOutsideClick;
+        }
+
+        public PopupPanel closeListener(@Nullable Runnable closeListener) {
+            this.closeListener = closeListener;
+            return this;
         }
     }
 }

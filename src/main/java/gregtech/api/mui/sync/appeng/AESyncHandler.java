@@ -35,6 +35,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
 
     @Nullable
     private final Runnable dirtyNotifier;
+    private final Int2ObjectMap<Runnable> onConfigSetListener = new Int2ObjectOpenHashMap<>();
 
     public AESyncHandler(IConfigurableSlot<T>[] slots, @Nullable Runnable dirtyNotifier) {
         this.slots = slots;
@@ -141,6 +142,8 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
                 } else {
                     slot.setStock(null);
                 }
+
+                notifySetConfig(index);
             }
         }
     }
@@ -171,6 +174,10 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
         return slots[index].getConfig();
     }
 
+    public boolean hasConfig(int index) {
+        return getConfig(index) != null;
+    }
+
     public long getConfigAmount(int index) {
         T config = getConfig(index);
         return config == null ? 0 : config.getStackSize();
@@ -193,6 +200,18 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
         if (dirtyNotifier != null) {
             dirtyNotifier.run();
         }
+    }
+
+    public void addSetConfigListener(int id, @NotNull Runnable runnable) {
+        onConfigSetListener.put(id, runnable);
+    }
+
+    public void removeSetConfigListener(int id) {
+        onConfigSetListener.remove(id);
+    }
+
+    protected void notifySetConfig(int index) {
+        onConfigSetListener.get(index).run();
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

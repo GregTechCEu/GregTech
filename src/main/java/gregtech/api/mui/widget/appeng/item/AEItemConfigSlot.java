@@ -81,6 +81,8 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
         } else if (isHovering()) {
             drawSlotOverlay();
         }
+
+        super.drawOverlay(context, widgetTheme);
     }
 
     @Override
