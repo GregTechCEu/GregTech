@@ -6,8 +6,6 @@ import gregtech.api.mui.sync.appeng.AESyncHandler;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
@@ -33,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfigSlot<T>>
                                   implements JeiIngredientProvider, Interactable {
@@ -168,17 +167,10 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         if (amountPanel == null) {
             amountPanel = IPanelHandler.simple(getPanel(), (parentPanel, player) -> {
                 AESyncHandler<T> syncHandler = getSyncHandler();
-                AEDynamicDrawable drawable = new AEDynamicDrawable(syncHandler.getConfig(index));
-                syncHandler.addSetConfigListener(index, () -> drawable.setToDraw(syncHandler.getConfig(index)));
+                AEDynamicDrawable drawable = new AEDynamicDrawable(() -> syncHandler.getConfig(index));
 
                 return GTGuis.createPopupPanel("ae_slot_amount." + index, 100, 18 + 5 * 2)
-                        .closeListener(() -> {
-                            if (onSelect != null) {
-                                onSelect.run();
-                            }
-
-                            syncHandler.removeSetConfigListener(index);
-                        })
+                        .closeListener(onSelect)
                         .child(drawable.asWidget()
                                 .alignY(0.5f)
                                 .left(5))
@@ -218,28 +210,24 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
 
     protected static class AEDynamicDrawable implements IDrawable {
 
-        Object toDraw;
+        Supplier<IAEStack<?>> toDraw;
 
-        public AEDynamicDrawable(Object toDraw) {
-            setToDraw(toDraw);
+        public AEDynamicDrawable(Supplier<IAEStack<?>> toDraw) {
+            this.toDraw = toDraw;
         }
 
-        public void setToDraw(Object toDraw) {
-            if (toDraw instanceof IAEItemStack iaeItemStack) {
-                this.toDraw = iaeItemStack.createItemStack();
-            } else if (toDraw instanceof IAEFluidStack iaeFluidStack) {
-                this.toDraw = iaeFluidStack.getFluidStack();
-            } else {
-                this.toDraw = toDraw;
-            }
+        public void setToDraw(Supplier<IAEStack<?>> toDraw) {
+            this.toDraw = toDraw;
         }
 
         @Override
         public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
-            if (toDraw instanceof ItemStack item) {
-                GuiDraw.drawItem(item, x, y, width, height);
-            } else if (toDraw instanceof FluidStack fluid) {
-                GuiDraw.drawFluidTexture(fluid, x, y, width, height, 0.0f);
+            IAEStack<?> toDraw = this.toDraw.get();
+
+            if (toDraw instanceof IAEItemStack item) {
+                GuiDraw.drawItem(item.createItemStack(), x, y, width, height);
+            } else if (toDraw instanceof IAEFluidStack fluid) {
+                GuiDraw.drawFluidTexture(fluid.getFluidStack(), x, y, width, height, 0.0f);
             }
         }
     }

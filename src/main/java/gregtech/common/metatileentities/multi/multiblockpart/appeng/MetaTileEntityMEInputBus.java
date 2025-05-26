@@ -20,7 +20,6 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
 import gregtech.api.mui.widget.EmptyWidget;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
-import gregtech.api.mui.widget.appeng.AEConfigSlot;
 import gregtech.api.mui.widget.appeng.item.AEItemConfigSlot;
 import gregtech.api.mui.widget.appeng.item.AEItemDisplaySlot;
 import gregtech.api.util.GTUtility;
@@ -228,11 +227,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                                 .debugName("Index " + index)));
 
         for (IWidget aeWidget : configGrid.getChildren()) {
-            // noinspection unchecked
-            ((AEConfigSlot<IAEItemStack>) aeWidget).onSelect(() -> {
+            ((AEItemConfigSlot) aeWidget).onSelect(() -> {
                 for (IWidget widget : configGrid.getChildren()) {
-                    // noinspection unchecked
-                    ((AEConfigSlot<IAEItemStack>) widget).deselect();
+                    ((AEItemConfigSlot) widget).deselect();
                 }
             });
         }

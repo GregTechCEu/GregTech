@@ -14,7 +14,6 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
 import gregtech.api.mui.widget.EmptyWidget;
-import gregtech.api.mui.widget.appeng.AEConfigSlot;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidConfigSlot;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidDisplaySlot;
 import gregtech.client.renderer.texture.Textures;
@@ -40,7 +39,6 @@ import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
-import appeng.api.storage.data.IAEItemStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -188,11 +186,9 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                                 .debugName("Index " + index)));
 
         for (IWidget aeWidget : configGrid.getChildren()) {
-            // noinspection unchecked
-            ((AEConfigSlot<IAEItemStack>) aeWidget).onSelect(() -> {
+            ((AEFluidConfigSlot) aeWidget).onSelect(() -> {
                 for (IWidget widget : configGrid.getChildren()) {
-                    // noinspection unchecked
-                    ((AEConfigSlot<IAEItemStack>) widget).deselect();
+                    ((AEFluidConfigSlot) widget).deselect();
                 }
             });
         }
