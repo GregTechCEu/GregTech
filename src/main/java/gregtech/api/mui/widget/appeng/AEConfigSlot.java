@@ -17,6 +17,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
@@ -26,6 +27,7 @@ import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -116,8 +118,11 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
 
     @Override
     public @NotNull Result onMousePressed(int mouseButton) {
-        // If no stack was clicked in, open amount selector
-        if (mouseButton == 0 && !isAmountPanelOpen() && getSyncHandler().hasConfig(index)) {
+        if (mouseButton == 1) {
+            getSyncHandler().clearConfig(index);
+            deselect();
+            return Result.SUCCESS;
+        } else if (mouseButton == 0 && !isAmountPanelOpen() && getSyncHandler().hasConfig(index)) {
             if (onSelect != null) {
                 onSelect.run();
             }
@@ -169,7 +174,7 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
                 AESyncHandler<T> syncHandler = getSyncHandler();
                 AEDynamicDrawable drawable = new AEDynamicDrawable(() -> syncHandler.getConfig(index));
 
-                return GTGuis.createPopupPanel("ae_slot_amount." + index, 100, 18 + 5 * 2)
+                ModularPanel popupPanel = GTGuis.blankPopupPanel("ae_slot_amount." + index, 100, 18 + 5 * 2)
                         .closeListener(onSelect)
                         .child(drawable.asWidget()
                                 .alignY(0.5f)
@@ -187,8 +192,22 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
                                             }
                                         }))
                                 .size(50, 10)
-                                .alignY(0.5f)
+                                .top(7) // alignY didn't work :whar:
                                 .left(18 + 5 * 2));
+
+                popupPanel.child(ButtonWidget.panelCloseButton()
+                        .onMousePressed(button -> {
+                            if (button == 0 || button == 1) {
+                                popupPanel.closeIfOpen(true);
+                                return true;
+                            }
+
+                            return false;
+                        })
+                        .alignY(0.5f)
+                        .right(5));
+
+                return popupPanel;
             }, true);
         }
 

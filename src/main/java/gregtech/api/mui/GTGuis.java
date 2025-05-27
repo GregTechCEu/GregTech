@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class GTGuis {
 
-    public static final int DEFAULT_WIDTH = 176, DEFAULT_HIEGHT = 166;
+    public static final int DEFAULT_WIDTH = 176, DEFAULT_HEIGHT = 166;
 
     @ApiStatus.Internal
     public static void registerFactories() {
@@ -54,7 +54,7 @@ public class GTGuis {
     }
 
     public static ModularPanel createPanel(String name) {
-        return ModularPanel.defaultPanel(name, DEFAULT_WIDTH, DEFAULT_HIEGHT);
+        return ModularPanel.defaultPanel(name, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
     public static ModularPanel defaultPanel(MetaTileEntity mte) {
@@ -66,7 +66,7 @@ public class GTGuis {
     }
 
     public static ModularPanel defaultPanel(ItemStack stack) {
-        return createPanel(stack, DEFAULT_WIDTH, DEFAULT_HIEGHT);
+        return createPanel(stack, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
     public static ModularPanel defaultPanel(MetaItem<?>.MetaValueItem valueItem) {
@@ -84,8 +84,17 @@ public class GTGuis {
     }
 
     public static PopupPanel defaultPopupPanel(String name) {
-        return new PopupPanel(name)
-                .size(DEFAULT_WIDTH, DEFAULT_HIEGHT);
+        return new PopupPanel(name, true)
+                .size(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    }
+
+    public static PopupPanel blankPopupPanel(String name, int width, int height) {
+        return new PopupPanel(name, false)
+                .size(width, height);
+    }
+
+    public static PopupPanel blankPopupPanel(String name) {
+        return blankPopupPanel(name, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
     public static PopupPanel defaultPopupPanel(String name, boolean disableBelow,
@@ -104,18 +113,20 @@ public class GTGuis {
         @Nullable
         private Runnable closeListener;
 
-        private PopupPanel(@NotNull String name) {
+        private PopupPanel(@NotNull String name, boolean addCloseButton) {
             super(name);
             align(Alignment.Center);
             background(GTGuiTextures.BACKGROUND_POPUP);
-            child(ButtonWidget.panelCloseButton().top(5).right(5)
-                    .onMousePressed(mouseButton -> {
-                        if (mouseButton == 0 || mouseButton == 1) {
-                            this.closeIfOpen(true);
-                            return true;
-                        }
-                        return false;
-                    }));
+            if (addCloseButton) {
+                child(ButtonWidget.panelCloseButton().top(5).right(5)
+                        .onMousePressed(mouseButton -> {
+                            if (mouseButton == 0 || mouseButton == 1) {
+                                this.closeIfOpen(true);
+                                return true;
+                            }
+                            return false;
+                        }));
+            }
         }
 
         @Override

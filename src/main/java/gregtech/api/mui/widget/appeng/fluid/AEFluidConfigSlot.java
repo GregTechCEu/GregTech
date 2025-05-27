@@ -102,11 +102,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
     public @NotNull Result onMousePressed(int mouseButton) {
         if (isAutoPull.getAsBoolean()) return Result.IGNORE;
 
-        if (mouseButton == 1) {
-            // Right click to clear
-            getSyncHandler().clearConfig(index);
-            return Result.SUCCESS;
-        } else if (mouseButton == 0) {
+        if (mouseButton == 0) {
             ItemStack heldItem = getSyncHandler().getSyncManager().getCursorItem();
             FluidStack heldFluid = FluidUtil.getFluidContained(heldItem);
 
