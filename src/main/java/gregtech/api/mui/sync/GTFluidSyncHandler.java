@@ -142,6 +142,8 @@ public class GTFluidSyncHandler extends SyncHandler {
         return phantom;
     }
 
+    // todo decouple show amount from drawn amount and tooltip amount
+    // probably already done in the mui2 multis pr
     public GTFluidSyncHandler showAmount(boolean showAmount) {
         this.showAmount = () -> showAmount;
         return this;

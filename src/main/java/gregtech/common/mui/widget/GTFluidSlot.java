@@ -124,6 +124,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         if (content == null)
             content = this.syncHandler.getLockedFluid();
 
+        // todo add option for drawing partial fluid instead of always full
+        // probably already done in the mui2 multis pr
         GuiDraw.drawFluidTexture(content, 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
 
         if (content != null && this.syncHandler.showAmount()) {
