@@ -11,7 +11,9 @@
     "ModularPanelMixin"
   ],
   "client": [
-    "LangKeyMixin"
+    "LangKeyMixin",
+    "ModularUIJeiPluginMixin",
+    "ItemSlotMixin"
   ],
   "server": []
 }
