@@ -3,8 +3,6 @@ package gregtech.api.mui.widget.appeng;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.appeng.AESyncHandler;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -20,7 +18,6 @@ import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -33,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfigSlot<T>>
                                   implements JeiIngredientProvider, Interactable {
@@ -172,13 +168,13 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         if (amountPanel == null) {
             amountPanel = IPanelHandler.simple(getPanel(), (parentPanel, player) -> {
                 AESyncHandler<T> syncHandler = getSyncHandler();
-                AEDynamicDrawable drawable = new AEDynamicDrawable(() -> syncHandler.getConfig(index));
 
                 ModularPanel popupPanel = GTGuis.blankPopupPanel("ae_slot_amount." + index, 100, 18 + 5 * 2)
                         .closeListener(onSelect)
-                        .child(drawable.asWidget()
-                                .alignY(0.5f)
-                                .left(5))
+                        .child(createPopupDrawable()
+                                .size(18)
+                                .left(5)
+                                .top(5))
                         .child(new TextFieldWidget()
                                 .setNumbers(1, Integer.MAX_VALUE)
                                 .setDefaultNumber(1)
@@ -192,8 +188,8 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
                                             }
                                         }))
                                 .size(50, 10)
-                                .top(7) // alignY didn't work :whar:
-                                .left(18 + 5 * 2));
+                                .left(18 + 5 * 2)
+                                .top(7)); // alignY didn't work :whar:
 
                 popupPanel.child(ButtonWidget.panelCloseButton()
                         .onMousePressed(button -> {
@@ -204,8 +200,8 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
 
                             return false;
                         })
-                        .alignY(0.5f)
-                        .right(5));
+                        .right(5)
+                        .alignY(0.5f));
 
                 return popupPanel;
             }, true);
@@ -229,24 +225,5 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         this.onSelect = onSelect;
     }
 
-    protected static class AEDynamicDrawable implements IDrawable {
-
-        @NotNull
-        Supplier<IAEStack<?>> toDraw;
-
-        public AEDynamicDrawable(@NotNull Supplier<IAEStack<?>> toDraw) {
-            this.toDraw = toDraw;
-        }
-
-        @Override
-        public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
-            IAEStack<?> toDraw = this.toDraw.get();
-
-            if (toDraw instanceof WrappedItemStack item) {
-                GuiDraw.drawItem(item.getDefinition(), x, y, width, height);
-            } else if (toDraw instanceof WrappedFluidStack fluid) {
-                GuiDraw.drawFluidTexture(fluid.getDelegate(), x, y, width, height, 0.0f);
-            }
-        }
-    }
+    protected abstract @NotNull AEStackPreviewWidget createPopupDrawable();
 }

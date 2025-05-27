@@ -1,7 +1,9 @@
 package gregtech.api.mui.widget.appeng.item;
 
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
 import gregtech.api.mui.widget.appeng.AEConfigSlot;
+import gregtech.api.mui.widget.appeng.AEStackPreviewWidget;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
@@ -10,6 +12,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
 import appeng.api.storage.data.IAEItemStack;
+import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import com.cleanroommc.modularui.screen.RichTooltip;
@@ -116,5 +119,16 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
     public @Nullable Object getIngredient() {
         IAEItemStack config = getSyncHandler().getConfig(index);
         return config == null ? null : config.createItemStack();
+    }
+
+    @Override
+    protected @NotNull AEStackPreviewWidget createPopupDrawable() {
+        return new AEStackPreviewWidget((x, y, width, height) -> {
+            IAEItemStack stack = getSyncHandler().getConfig(index);
+            if (stack != null) {
+                GuiDraw.drawItem(stack.getDefinition(), x, y, width, height);
+            }
+        })
+                .background(GTGuiTextures.SLOT);
     }
 }
