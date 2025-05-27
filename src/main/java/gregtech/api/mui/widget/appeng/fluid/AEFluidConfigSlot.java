@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
                                implements Interactable, JeiGhostIngredientSlot<FluidStack> {
@@ -135,13 +136,28 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
     }
 
     @Override
-    protected @NotNull AEStackPreviewWidget createPopupDrawable() {
-        return new AEStackPreviewWidget((x, y, width, height) -> {
-            WrappedFluidStack stack = (WrappedFluidStack) getSyncHandler().getConfig(index);
-            if (stack != null) {
-                GuiDraw.drawFluidTexture(stack.getDelegate(), x, y, width, height, 0.0f);
-            }
-        })
+    protected @NotNull AEStackPreviewWidget<IAEFluidStack> createPopupDrawable() {
+        return new AEFluidStackPreviewWidget(() -> getSyncHandler().getConfig(index))
                 .background(GTGuiTextures.FLUID_SLOT);
+    }
+
+    private static class AEFluidStackPreviewWidget extends AEStackPreviewWidget<IAEFluidStack> {
+
+        public AEFluidStackPreviewWidget(@NotNull Supplier<IAEFluidStack> stackToDraw) {
+            super(stackToDraw);
+        }
+
+        @Override
+        public void draw(@Nullable IAEFluidStack stackToDraw, int x, int y, int width, int height) {
+            if (stackToDraw instanceof WrappedFluidStack wrappedFluidStack) {
+                GuiDraw.drawFluidTexture(wrappedFluidStack.getDelegate(), x, y, width, height, 0.0f);
+            }
+        }
+
+        @Override
+        public @Nullable Object getIngredient() {
+            IAEFluidStack stack = stackToDraw.get();
+            return stack == null ? null : stack.getFluidStack();
+        }
     }
 }

@@ -225,5 +225,5 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         this.onSelect = onSelect;
     }
 
-    protected abstract @NotNull AEStackPreviewWidget createPopupDrawable();
+    protected abstract @NotNull AEStackPreviewWidget<T> createPopupDrawable();
 }

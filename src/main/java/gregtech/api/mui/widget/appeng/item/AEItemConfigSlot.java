@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiGhostIngredientSlot<ItemStack> {
 
@@ -122,13 +123,28 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
     }
 
     @Override
-    protected @NotNull AEStackPreviewWidget createPopupDrawable() {
-        return new AEStackPreviewWidget((x, y, width, height) -> {
-            IAEItemStack stack = getSyncHandler().getConfig(index);
-            if (stack != null) {
-                GuiDraw.drawItem(stack.getDefinition(), x, y, width, height);
-            }
-        })
+    protected @NotNull AEStackPreviewWidget<IAEItemStack> createPopupDrawable() {
+        return new AEFluidStackPreviewWidget(() -> getSyncHandler().getConfig(index))
                 .background(GTGuiTextures.SLOT);
+    }
+
+    private static class AEFluidStackPreviewWidget extends AEStackPreviewWidget<IAEItemStack> {
+
+        public AEFluidStackPreviewWidget(@NotNull Supplier<IAEItemStack> stackToDraw) {
+            super(stackToDraw);
+        }
+
+        @Override
+        public void draw(@Nullable IAEItemStack stackToDraw, int x, int y, int width, int height) {
+            if (stackToDraw instanceof WrappedItemStack wrappedItemStack) {
+                GuiDraw.drawItem(wrappedItemStack.getDefinition(), x, y, width, height);
+            }
+        }
+
+        @Override
+        public @Nullable Object getIngredient() {
+            IAEItemStack stack = stackToDraw.get();
+            return stack == null ? null : stack.createItemStack();
+        }
     }
 }
