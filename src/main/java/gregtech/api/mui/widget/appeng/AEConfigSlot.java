@@ -3,12 +3,12 @@ package gregtech.api.mui.widget.appeng;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.appeng.AESyncHandler;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 
-import appeng.api.storage.data.IAEFluidStack;
-import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.ITheme;
@@ -175,6 +175,8 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
                                 .alignY(0.5f)
                                 .left(5))
                         .child(new TextFieldWidget()
+                                .setNumbers(1, Integer.MAX_VALUE)
+                                .setDefaultNumber(1)
                                 .value(new StringValue.Dynamic(() -> String.valueOf(syncHandler.getConfigAmount(index)),
                                         str -> {
                                             try {
@@ -210,13 +212,10 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
 
     protected static class AEDynamicDrawable implements IDrawable {
 
+        @NotNull
         Supplier<IAEStack<?>> toDraw;
 
-        public AEDynamicDrawable(Supplier<IAEStack<?>> toDraw) {
-            this.toDraw = toDraw;
-        }
-
-        public void setToDraw(Supplier<IAEStack<?>> toDraw) {
+        public AEDynamicDrawable(@NotNull Supplier<IAEStack<?>> toDraw) {
             this.toDraw = toDraw;
         }
 
@@ -224,10 +223,10 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
             IAEStack<?> toDraw = this.toDraw.get();
 
-            if (toDraw instanceof IAEItemStack item) {
-                GuiDraw.drawItem(item.createItemStack(), x, y, width, height);
-            } else if (toDraw instanceof IAEFluidStack fluid) {
-                GuiDraw.drawFluidTexture(fluid.getFluidStack(), x, y, width, height, 0.0f);
+            if (toDraw instanceof WrappedItemStack item) {
+                GuiDraw.drawItem(item.getDefinition(), x, y, width, height);
+            } else if (toDraw instanceof WrappedFluidStack fluid) {
+                GuiDraw.drawFluidTexture(fluid.getDelegate(), x, y, width, height, 0.0f);
             }
         }
     }

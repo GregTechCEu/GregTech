@@ -16,14 +16,10 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @Author GlodBlock
- * @Date 2023/4/22-21:02
- */
 public class WrappedItemStack implements IAEItemStack {
 
     @NotNull
-    ItemStack delegate;
+    private ItemStack delegate;
 
     private WrappedItemStack(@NotNull ItemStack itemStack) {
         this.delegate = itemStack;
@@ -35,6 +31,7 @@ public class WrappedItemStack implements IAEItemStack {
         return stack.isEmpty() ? null : new WrappedItemStack(stack);
     }
 
+    @Contract("null -> null")
     public static WrappedItemStack fromNBT(@Nullable NBTTagCompound i) {
         if (i == null) {
             return null;

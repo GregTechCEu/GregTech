@@ -17,22 +17,19 @@ import appeng.fluids.util.AEFluidStack;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * @Author GlodBlock
- * @Date 2023/4/22-19:25
- */
 public class WrappedFluidStack implements IAEFluidStack {
 
     @NotNull
-    FluidStack delegate;
+    private FluidStack delegate;
 
     private WrappedFluidStack(@NotNull FluidStack stack) {
         this.delegate = stack;
     }
 
     @Contract("null -> null; !null -> !null")
-    public static WrappedFluidStack fromFluidStack(FluidStack fluidStack) {
+    public static WrappedFluidStack fromFluidStack(@Nullable FluidStack fluidStack) {
         return fluidStack == null ? null : new WrappedFluidStack(fluidStack);
     }
 
