@@ -114,7 +114,7 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
             getSyncHandler().clearConfig(index);
             deselect();
             return Result.SUCCESS;
-        } else if (mouseButton == 0 && !isAmountPanelOpen() && getSyncHandler().hasConfig(index)) {
+        } else if (!isStocking && mouseButton == 0 && !isAmountPanelOpen() && getSyncHandler().hasConfig(index)) {
             if (onSelect != null) {
                 onSelect.run();
             }
