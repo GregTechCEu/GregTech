@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
@@ -15,7 +14,6 @@ import gregtech.client.utils.TooltipHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -32,6 +30,7 @@ import java.util.List;
 public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements
                                         IMultiblockAbilityPart<IMufflerHatch>, ITieredMetaTileEntity, IMufflerHatch {
 
+    // todo move to GregtechDataCodes
     private static final int MUFFLER_OBSTRUCTED = GregtechDataCodes.assignId();
 
     private boolean frontFaceFree;
@@ -53,8 +52,11 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
                 VanillaParticleEffects.mufflerEffect(this, controller.getMufflerParticle());
             }
         } else if (getOffsetTimer() % 10 == 0) {
-            this.frontFaceFree = checkFrontFaceFree();
-            writeCustomData(MUFFLER_OBSTRUCTED, buffer -> buffer.writeBoolean(this.frontFaceFree));
+            boolean frontFaceFree = checkFrontFaceFree();
+            if (frontFaceFree != this.frontFaceFree) {
+                this.frontFaceFree = frontFaceFree;
+                writeCustomData(MUFFLER_OBSTRUCTED, buffer -> buffer.writeBoolean(this.frontFaceFree));
+            }
         }
     }
 
