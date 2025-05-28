@@ -3100,19 +3100,24 @@ gregtech.machine.combustion_generator.tooltip=Requires flammable Liquids
 gregtech.machine.combustion_generator.lv.name=Basic Combustion Generator
 gregtech.machine.combustion_generator.mv.name=Advanced Combustion Generator
 gregtech.machine.combustion_generator.hv.name=Turbo Combustion Generator
+gregtech.machine.combustion_generator.ev.name=Burst Combustion Generator
+gregtech.machine.combustion_generator.iv.name=Detonation Combustion Generator
 
 gregtech.machine.steam_turbine.tooltip=Converts Steam into EU
 
 gregtech.machine.steam_turbine.lv.name=Basic Steam Turbine
 gregtech.machine.steam_turbine.mv.name=Advanced Steam Turbine
 gregtech.machine.steam_turbine.hv.name=Turbo Steam Turbine
+gregtech.machine.steam_turbine.ev.name=Burst Steam Turbine
+gregtech.machine.steam_turbine.iv.name=Detonation Steam Turbine
 
 gregtech.machine.gas_turbine.tooltip=Requires flammable Gases
 
 gregtech.machine.gas_turbine.lv.name=Basic Gas Turbine
 gregtech.machine.gas_turbine.mv.name=Advanced Gas Turbine
 gregtech.machine.gas_turbine.hv.name=Turbo Gas Turbine
-
+gregtech.machine.gas_turbine.ev.name=Burst Gas Turbine
+gregtech.machine.gas_turbine.iv.name=Detonation Gas Turbine
 
 gregtech.machine.magic_energy_absorber.name=Magic Energy Absorber
 gregtech.machine.magic_energy_absorber.tooltip=Max Voltage OUT: §a2048 §7(§5EV§7)/nCollects energy from end crystals on naturally generated obsidian pillars in the End within 64 blocks./nEach ender crystal adds 32 EU/t to output/nPlace Dragon Egg on top to amplify output/n/nWhen amplified:/nEach ender crystal adds 128 EU/t

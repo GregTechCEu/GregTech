@@ -355,6 +355,7 @@ public class ElementMaterials {
                 .ingot()
                 .liquid(new FluidBuilder().temperature(430))
                 .color(0x400080).iconSet(SHINY)
+                .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
                 .element(Elements.In)
                 .build();
 

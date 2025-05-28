@@ -44,6 +44,11 @@ public class ConfigHolder {
 
     public static class MachineOptions {
 
+        @Config.Comment({ "Specifies whether to enable multi-block delay detection",
+                "If detected, detection is delayed for multi-party blocks that mark the need for delayed detection.", "If it is not detected, it will be the same as the original",
+                "Default: false" })
+        public boolean delayStructureCheckSwitch = false;
+
         @Config.Comment({ "Whether insufficient energy supply should reset Machine recipe progress to zero.",
                 "If true, progress will reset.", "If false, progress will decrease to zero with 2x speed",
                 "Default: false" })

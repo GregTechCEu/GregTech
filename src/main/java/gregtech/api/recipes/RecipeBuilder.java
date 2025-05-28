@@ -917,7 +917,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R duration(int duration) {
-        this.duration = duration;
+        this.duration = Math.max(duration, 1);
         return (R) this;
     }
 
