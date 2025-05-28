@@ -19,7 +19,6 @@ import java.io.IOException;
 
 public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
 
-    protected boolean onClient;
     private static int rollingID = 0;
 
     public static final int slotSyncID = rollingID++;
@@ -46,7 +45,6 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     @Override
     public void init(String key, PanelSyncManager syncManager) {
         super.init(key, syncManager);
-        onClient = syncManager.isClient();
     }
 
     protected abstract @NotNull IConfigurableSlot<T> @NotNull [] initializeCache();
