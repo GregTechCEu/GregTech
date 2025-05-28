@@ -25,7 +25,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     public static final int slotSyncID = rollingID++;
     public static final int setConfigID = rollingID++;
     public static final int clearConfigID = rollingID++;
-    public static final int changeConfigID = rollingID++;
+    public static final int changeConfigAmountID = rollingID++;
 
     protected final IConfigurableSlot<T>[] slots;
     private IConfigurableSlot<T>[] cached;
@@ -107,7 +107,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     public void readOnServer(int id, PacketBuffer buf) throws IOException {
         if (id == clearConfigID) {
             slots[buf.readVarInt()].setConfig(null);
-        } else if (id == changeConfigID) {
+        } else if (id == changeConfigAmountID) {
             T config = getConfig(buf.readVarInt());
             if (config != null) {
                 config.setStackSize(buf.readInt());
@@ -182,7 +182,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
 
     @SideOnly(Side.CLIENT)
     public void setConfigAmount(int index, int newAmount) {
-        syncToServer(changeConfigID, buf -> {
+        syncToServer(changeConfigAmountID, buf -> {
             buf.writeVarInt(index);
             buf.writeInt(newAmount);
         });
