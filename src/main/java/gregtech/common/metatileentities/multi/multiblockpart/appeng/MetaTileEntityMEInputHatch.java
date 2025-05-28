@@ -216,7 +216,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                         .child(GTGuiTextures.ARROW_DOUBLE.asWidget())
                         .child(new EmptyWidget()
                                 .size(18))
-                        .child(GTGuiTextures.getLogo(getUITheme()).asWidget()));
+                        .child(GTGuiTextures.getLogo(getUITheme()).asWidget()
+                                .size(17)));
     }
 
     protected Widget<?> getExtraButton() {
