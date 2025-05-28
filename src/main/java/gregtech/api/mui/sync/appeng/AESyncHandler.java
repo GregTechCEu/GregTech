@@ -19,12 +19,10 @@ import java.io.IOException;
 
 public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
 
-    private static int rollingID = 0;
-
-    public static final int slotSyncID = rollingID++;
-    public static final int setConfigID = rollingID++;
-    public static final int clearConfigID = rollingID++;
-    public static final int changeConfigAmountID = rollingID++;
+    public static final int slotSyncID = 0;
+    public static final int setConfigID = 1;
+    public static final int clearConfigID = 2;
+    public static final int changeConfigAmountID = 3;
 
     protected final IConfigurableSlot<T>[] slots;
     private final IConfigurableSlot<T>[] cached;
