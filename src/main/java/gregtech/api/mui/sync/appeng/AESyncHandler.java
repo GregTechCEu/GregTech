@@ -28,10 +28,10 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     public static final int changeConfigAmountID = rollingID++;
 
     protected final IConfigurableSlot<T>[] slots;
-    private IConfigurableSlot<T>[] cached;
+    private final IConfigurableSlot<T>[] cached;
     private final Int2ObjectMap<IConfigurableSlot<T>> changeMap = new Int2ObjectOpenHashMap<>();
 
-    private IByteBufAdapter<T> byteBufAdapter;
+    private final IByteBufAdapter<T> byteBufAdapter;
 
     @Nullable
     private final Runnable dirtyNotifier;
@@ -39,14 +39,14 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     public AESyncHandler(IConfigurableSlot<T>[] slots, @Nullable Runnable dirtyNotifier) {
         this.slots = slots;
         this.dirtyNotifier = dirtyNotifier;
+        this.cached = initializeCache();
+        this.byteBufAdapter = initializeByteBufAdapter();
     }
 
     @Override
     public void init(String key, PanelSyncManager syncManager) {
         super.init(key, syncManager);
         onClient = syncManager.isClient();
-        cached = initializeCache();
-        byteBufAdapter = initializeByteBufAdapter();
     }
 
     protected abstract @NotNull IConfigurableSlot<T> @NotNull [] initializeCache();
