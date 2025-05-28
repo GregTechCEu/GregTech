@@ -4,11 +4,10 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
 import gregtech.api.mui.widget.appeng.AEConfigSlot;
 import gregtech.api.mui.widget.appeng.AEStackPreviewWidget;
-import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
-import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
@@ -16,7 +15,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
 import appeng.api.storage.data.IAEFluidStack;
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
@@ -51,16 +49,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
         if (config == null) {
             super.buildTooltip(tooltip);
         } else {
-            FluidStack stack = config.getFluidStack();
-            tooltip.addLine(IKey.str(stack.getLocalizedName()));
-            tooltip.addLine(IKey.str("%,d L", stack.amount));
-
-            for (String fluidTooltip : FluidTooltipUtil.getFluidTooltip(stack)) {
-                if (fluidTooltip.isEmpty()) continue;
-                tooltip.addLine(IKey.str(fluidTooltip));
-            }
-
-            GTFluidSlot.addIngotMolFluidTooltip(stack, tooltip);
+            KeyUtil.fluidInfo(((WrappedFluidStack) config).getDelegate(), tooltip, false, true, true);
         }
     }
 
@@ -145,6 +134,13 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
 
         public AEFluidStackPreviewWidget(@NotNull Supplier<IAEFluidStack> stackToDraw) {
             super(stackToDraw);
+        }
+
+        @Override
+        protected void buildTooltip(@NotNull RichTooltip tooltip) {
+            if (stackToDraw.get() instanceof WrappedFluidStack wrappedFluidStack) {
+                KeyUtil.fluidInfo(wrappedFluidStack.getDelegate(), tooltip, false, true, false);
+            }
         }
 
         @Override

@@ -124,14 +124,21 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
 
     @Override
     protected @NotNull AEStackPreviewWidget<IAEItemStack> createPopupDrawable() {
-        return new AEFluidStackPreviewWidget(() -> getSyncHandler().getConfig(index))
+        return new AEItemStackPreviewWidget(() -> getSyncHandler().getConfig(index))
                 .background(GTGuiTextures.SLOT);
     }
 
-    private static class AEFluidStackPreviewWidget extends AEStackPreviewWidget<IAEItemStack> {
+    private static class AEItemStackPreviewWidget extends AEStackPreviewWidget<IAEItemStack> {
 
-        public AEFluidStackPreviewWidget(@NotNull Supplier<IAEItemStack> stackToDraw) {
+        public AEItemStackPreviewWidget(@NotNull Supplier<IAEItemStack> stackToDraw) {
             super(stackToDraw);
+        }
+
+        @Override
+        protected void buildTooltip(@NotNull RichTooltip tooltip) {
+            if (stackToDraw.get() instanceof WrappedItemStack wrappedItemStack) {
+                tooltip.addFromItem(wrappedItemStack.getDefinition());
+            }
         }
 
         @Override

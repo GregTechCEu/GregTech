@@ -21,14 +21,10 @@ public abstract class AEDisplaySlot<T extends IAEStack<T>> extends Widget<AEDisp
     public AEDisplaySlot(int index) {
         this.index = index;
         size(18);
-    }
-
-    @Override
-    public void onInit() {
         tooltipBuilder(this::buildTooltip);
     }
 
-    protected void buildTooltip(@NotNull RichTooltip tooltip) {}
+    protected abstract void buildTooltip(@NotNull RichTooltip tooltip);
 
     @Override
     public void drawOverlay(ModularGuiContext context, WidgetTheme widgetTheme) {

@@ -54,10 +54,6 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         this.index = index;
         this.isAutoPull = isAutoPull;
         size(18);
-    }
-
-    @Override
-    public void onInit() {
         tooltipBuilder(this::buildTooltip);
     }
 

@@ -2,15 +2,14 @@ package gregtech.api.mui.widget.appeng.fluid;
 
 import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
 import gregtech.api.mui.widget.appeng.AEDisplaySlot;
-import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.mui.widget.GTFluidSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraftforge.fluids.FluidStack;
 
 import appeng.api.storage.data.IAEFluidStack;
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -29,16 +28,7 @@ public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
         IAEFluidStack stock = getSyncHandler().getStock(index);
         if (stock != null) {
-            FluidStack stack = stock.getFluidStack();
-            tooltip.addLine(IKey.str(stack.getLocalizedName()));
-            tooltip.addLine(IKey.str("%,d L", stack.amount));
-
-            for (String fluidTooltip : FluidTooltipUtil.getFluidTooltip(stack)) {
-                if (fluidTooltip.isEmpty()) continue;
-                tooltip.addLine(IKey.str(fluidTooltip));
-            }
-
-            GTFluidSlot.addIngotMolFluidTooltip(stack, tooltip);
+            KeyUtil.fluidInfo(((WrappedFluidStack) stock).getDelegate(), tooltip);
         }
     }
 
