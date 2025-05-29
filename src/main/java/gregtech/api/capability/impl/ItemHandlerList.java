@@ -1,7 +1,5 @@
 package gregtech.api.capability.impl;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -10,6 +8,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -22,10 +21,15 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
     private final Int2ObjectMap<IItemHandler> handlerBySlotIndex = new Int2ObjectOpenHashMap<>();
     private final Object2IntMap<IItemHandler> baseIndexOffset = new Object2IntArrayMap<>();
 
-    private final List<IItemHandler> handlerList = new ArrayList<>();
+    public ItemHandlerList() {}
 
-    public ItemHandlerList(List<? extends IItemHandler> itemHandlerList) {
+    public ItemHandlerList(Collection<? extends IItemHandler> itemHandlerList) {
         addAll(itemHandlerList);
+    }
+
+    public ItemHandlerList(ItemHandlerList parent, IItemHandler... additional) {
+        addAll(parent.getBackingHandlers());
+        Collections.addAll(this, additional);
     }
 
     public int getIndexOffset(IItemHandler handler) {
@@ -34,7 +38,7 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
 
     @Override
     public int getSlots() {
-        return size();
+        return handlerBySlotIndex.size();
     }
 
     @Override
@@ -81,14 +85,19 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
         return itemHandler.extractItem(slot - baseIndexOffset.getInt(itemHandler), amount, simulate);
     }
 
+    private boolean invalidSlot(int slot) {
+        if (handlerBySlotIndex.isEmpty()) return false;
+        return slot < 0 || slot >= handlerBySlotIndex.size();
+    }
+
     @NotNull
     public Collection<IItemHandler> getBackingHandlers() {
-        return Collections.unmodifiableCollection(handlerList);
+        return Collections.unmodifiableCollection(baseIndexOffset.keySet());
     }
 
     @Override
     public int size() {
-        return handlerList.size();
+        return baseIndexOffset.size();
     }
 
     @Override
@@ -99,12 +108,18 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
     }
 
     @Override
-    public void add(int index, IItemHandler element) {
-//        Objects.checkIndex(index, size());
-        if (handlerList.contains(element)) {
+    public void add(int unused, IItemHandler element) {
+        Objects.requireNonNull(element);
+        if (baseIndexOffset.containsKey(element)) {
             throw new IllegalArgumentException("Attempted to add item handler " + element + " twice");
         }
-        handlerList.add(index, element);
+        if (element instanceof ItemHandlerList list) {
+            // possible infinite recursion
+            // throw instead?
+            addAll(list);
+            return;
+        }
+
         int offset = handlerBySlotIndex.size();
         baseIndexOffset.put(element, offset);
         for (int slotIndex = 0; slotIndex < element.getSlots(); slotIndex++) {
@@ -114,33 +129,48 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
 
     @Override
     public IItemHandler get(int index) {
-        return handlerList.get(index);
+        if (invalidIndex(index)) throw new IndexOutOfBoundsException();
+        ObjectIterator<IItemHandler> itr = baseIndexOffset.keySet().iterator();
+        itr.skip(index); // skip n-1 elements
+        return itr.next(); // get nth element
     }
 
     @Override
     public IItemHandler remove(int index) {
-//        Objects.checkIndex(index, size());
-        var handler2 = get(index);
-        int offset2 = baseIndexOffset.getInt(handler2);
+        if (invalidIndex(index)) {
+            throw new IndexOutOfBoundsException();
+        }
 
-        for (int i = index; i < size(); i++) {
-            int offset = baseIndexOffset.removeInt(get(i));
-            for (int j = 0; j < get(i).getSlots(); j++) {
-                handlerBySlotIndex.remove(offset + j);
+        IItemHandler handler = get(index);
+
+        // remove handler
+        int lower = baseIndexOffset.removeInt(handler);
+
+        // remove slot indices
+        int upper = lower + handler.getSlots();
+        for (int i = lower; i < upper; i++) {
+            handlerBySlotIndex.remove(i);
+        }
+
+        // update slot indices ahead of the removed handler
+        for (int slot = upper; slot < getSlots() + handler.getSlots(); slot++) {
+            IItemHandler remove = handlerBySlotIndex.remove(slot);
+            handlerBySlotIndex.put(slot - upper, remove);
+        }
+
+        // update handlers ahead of the removed handler
+        for (IItemHandler h : baseIndexOffset.keySet()) {
+            int offset = baseIndexOffset.getInt(h);
+            if (offset > lower) {
+                baseIndexOffset.put(h, offset - handler.getSlots());
             }
         }
 
-        var removed = handlerList.remove(index);
-        for (var handler : handlerList) {
-            if (baseIndexOffset.containsKey(handler))
-                continue;
+        return handler;
+    }
 
-            int offset = handlerBySlotIndex.size();
-            baseIndexOffset.put(handler, offset);
-            for (int i = 0; i < handler.getSlots(); i++) {
-                handlerBySlotIndex.put(offset + i, handler);
-            }
-        }
-        return removed;
+    public boolean invalidIndex(int index) {
+        if (baseIndexOffset.isEmpty()) return false;
+        return index < 0 || index >= baseIndexOffset.size();
     }
 }
