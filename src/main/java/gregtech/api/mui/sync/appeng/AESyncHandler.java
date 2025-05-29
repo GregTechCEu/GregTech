@@ -24,6 +24,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     public static final int clearConfigID = 2;
     public static final int changeConfigAmountID = 3;
 
+    protected final boolean isStocking;
     protected final IConfigurableSlot<T>[] slots;
     private final IConfigurableSlot<T>[] cached;
     private final Int2ObjectMap<IConfigurableSlot<T>> changeMap = new Int2ObjectOpenHashMap<>();
@@ -33,8 +34,9 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     @Nullable
     private final Runnable dirtyNotifier;
 
-    public AESyncHandler(IConfigurableSlot<T>[] slots, @Nullable Runnable dirtyNotifier) {
+    public AESyncHandler(IConfigurableSlot<T>[] slots, boolean isStocking, @Nullable Runnable dirtyNotifier) {
         this.slots = slots;
+        this.isStocking = isStocking;
         this.dirtyNotifier = dirtyNotifier;
         this.cached = initializeCache();
         this.byteBufAdapter = initializeByteBufAdapter();
@@ -48,6 +50,8 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
     protected abstract @NotNull IConfigurableSlot<T> @NotNull [] initializeCache();
 
     protected abstract @NotNull IByteBufAdapter<T> initializeByteBufAdapter();
+
+    public abstract boolean isStackValidForSlot(int index, @Nullable T stack);
 
     @SuppressWarnings("DuplicatedCode")
     @Override
@@ -109,11 +113,11 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
                 config.setStackSize(buf.readInt());
             }
         } else if (id == setConfigID) {
-            IConfigurableSlot<T> slot = slots[buf.readVarInt()];
-            if (buf.readBoolean()) {
-                slot.setConfig(byteBufAdapter.deserialize(buf));
-            } else {
-                slot.setConfig(null);
+            int index = buf.readVarInt();
+            T newConfig = buf.readBoolean() ? byteBufAdapter.deserialize(buf) : null;
+            if (isStackValidForSlot(index, newConfig)) {
+                IConfigurableSlot<T> slot = slots[index];
+                slot.setConfig(newConfig);
             }
         }
     }

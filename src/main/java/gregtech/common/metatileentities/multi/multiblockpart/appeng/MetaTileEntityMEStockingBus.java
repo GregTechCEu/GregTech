@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -22,6 +23,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
 
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
@@ -166,7 +168,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     /**
      * @return True if the passed stack is found as a configuration in any other stocking buses on the multiblock.
      */
-    private boolean testConfiguredInOtherBus(ItemStack stack) {
+    private boolean testConfiguredInOtherBus(@Nullable ItemStack stack) {
         if (stack == null || stack.isEmpty()) return false;
         MultiblockControllerBase controller = getController();
         if (controller == null) return false;
@@ -177,15 +179,27 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
             // in any stocking bus in the multi (besides ourselves).
             var abilityList = controller.getAbilities(MultiblockAbility.IMPORT_ITEMS);
             for (var ability : abilityList) {
-                if (ability instanceof ExportOnlyAEStockingItemList aeList) {
-                    // We don't need to check for ourselves, as this case is handled elsewhere.
-                    if (aeList == this.aeItemHandler) continue;
-                    if (aeList.hasStackInConfig(stack, false)) {
-                        return true;
+                if (ability instanceof ItemHandlerList itemHandlerList) {
+                    for (var handler : itemHandlerList.getBackingHandlers()) {
+                        if (checkHandler(handler, stack)) {
+                            return true;
+                        }
                     }
+                } else if (checkHandler(ability, stack)) {
+                    return true;
                 }
             }
         }
+
+        return false;
+    }
+
+    private boolean checkHandler(@NotNull IItemHandler itemHandler, @NotNull ItemStack stack) {
+        if (itemHandler instanceof ExportOnlyAEStockingItemList itemList) {
+            if (itemList == this.aeItemHandler) return false;
+            return itemList.hasStackInConfig(stack, false);
+        }
+
         return false;
     }
 

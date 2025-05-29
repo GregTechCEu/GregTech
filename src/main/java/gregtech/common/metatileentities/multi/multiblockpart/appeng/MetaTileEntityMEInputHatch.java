@@ -171,8 +171,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
         final boolean isStocking = getAEFluidHandler().isStocking();
 
         final String syncHandlerName = "aeSync";
-        guiSyncManager.syncValue(syncHandlerName,
-                new AEFluidSyncHandler(getAEFluidHandler().getInventory(), this::markDirty));
+        guiSyncManager.syncValue(syncHandlerName, new AEFluidSyncHandler(getAEFluidHandler(), this::markDirty));
 
         Grid configGrid = new Grid()
                 .pos(7, 25)

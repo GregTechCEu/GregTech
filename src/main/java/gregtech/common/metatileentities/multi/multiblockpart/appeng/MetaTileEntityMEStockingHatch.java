@@ -157,6 +157,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
                 }
             }
         }
+
         return false;
     }
 

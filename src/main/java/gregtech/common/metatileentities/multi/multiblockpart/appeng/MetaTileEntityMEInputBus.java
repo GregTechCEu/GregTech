@@ -212,8 +212,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
         guiSyncManager.registerSlotGroup("extra_slot", 1);
 
         final String syncHandlerName = "aeSync";
-        guiSyncManager.syncValue(syncHandlerName,
-                new AEItemSyncHandler(getAEItemHandler().getInventory(), this::markDirty));
+        guiSyncManager.syncValue(syncHandlerName, new AEItemSyncHandler(getAEItemHandler(), this::markDirty));
 
         Grid configGrid = new Grid()
                 .pos(7, 25)
