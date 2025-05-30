@@ -13,7 +13,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.Collection;
 import java.util.Objects;
 
-public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter {
+public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter<FluidPipeProperties> {
 
     private final Object2BooleanMap<FluidAttribute> containmentPredicate = new Object2BooleanOpenHashMap<>();
 
@@ -73,8 +73,9 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
         return throughput;
     }
 
-    public void setThroughput(int throughput) {
+    public FluidPipeProperties setThroughput(int throughput) {
         this.throughput = throughput;
+        return this;
     }
 
     @Override
@@ -82,8 +83,9 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
         return maxFluidTemperature;
     }
 
-    public void setMaxFluidTemperature(int maxFluidTemperature) {
+    public FluidPipeProperties setMaxFluidTemperature(int maxFluidTemperature) {
         this.maxFluidTemperature = maxFluidTemperature;
+        return this;
     }
 
     @Override
@@ -101,8 +103,9 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
     }
 
     @Override
-    public void setCanContain(@NotNull FluidAttribute attribute, boolean canContain) {
+    public FluidPipeProperties setCanContain(@NotNull FluidAttribute attribute, boolean canContain) {
         this.containmentPredicate.put(attribute, canContain);
+        return this;
     }
 
     @Override
@@ -114,8 +117,9 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
         return gasProof;
     }
 
-    public void setGasProof(boolean gasProof) {
+    public FluidPipeProperties setGasProof(boolean gasProof) {
         this.gasProof = gasProof;
+        return this;
     }
 
     public boolean isAcidProof() {
@@ -126,16 +130,18 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
         return cryoProof;
     }
 
-    public void setCryoProof(boolean cryoProof) {
+    public FluidPipeProperties setCryoProof(boolean cryoProof) {
         this.cryoProof = cryoProof;
+        return this;
     }
 
     public boolean isPlasmaProof() {
         return plasmaProof;
     }
 
-    public void setPlasmaProof(boolean plasmaProof) {
+    public FluidPipeProperties setPlasmaProof(boolean plasmaProof) {
         this.plasmaProof = plasmaProof;
+        return this;
     }
 
     @Override
