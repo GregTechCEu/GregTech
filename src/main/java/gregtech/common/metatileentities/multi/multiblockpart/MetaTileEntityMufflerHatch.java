@@ -30,9 +30,6 @@ import java.util.List;
 public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements
                                         IMultiblockAbilityPart<IMufflerHatch>, ITieredMetaTileEntity, IMufflerHatch {
 
-    // todo move to GregtechDataCodes
-    private static final int MUFFLER_OBSTRUCTED = GregtechDataCodes.assignId();
-
     private boolean frontFaceFree;
 
     public MetaTileEntityMufflerHatch(ResourceLocation metaTileEntityId, int tier) {
@@ -55,7 +52,8 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
             boolean frontFaceFree = checkFrontFaceFree();
             if (frontFaceFree != this.frontFaceFree) {
                 this.frontFaceFree = frontFaceFree;
-                writeCustomData(MUFFLER_OBSTRUCTED, buffer -> buffer.writeBoolean(this.frontFaceFree));
+                writeCustomData(GregtechDataCodes.MUFFLER_OBSTRUCTED,
+                        buffer -> buffer.writeBoolean(this.frontFaceFree));
             }
         }
     }
@@ -97,7 +95,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == MUFFLER_OBSTRUCTED) {
+        if (dataId == GregtechDataCodes.MUFFLER_OBSTRUCTED) {
             this.frontFaceFree = buf.readBoolean();
         }
     }
