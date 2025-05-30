@@ -8,7 +8,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -18,22 +17,45 @@ import java.util.*;
  */
 public class ItemHandlerList extends AbstractList<IItemHandler> implements IItemHandlerModifiable {
 
-    private final Int2ObjectMap<IItemHandler> handlerBySlotIndex = new Int2ObjectOpenHashMap<>();
-    private final Object2IntMap<IItemHandler> baseIndexOffset = new Object2IntArrayMap<>();
+    protected final Int2ObjectMap<IItemHandler> handlerBySlotIndex = new Int2ObjectOpenHashMap<>();
+    protected final Object2IntMap<IItemHandler> baseIndexOffset = new Object2IntArrayMap<>();
 
-    public ItemHandlerList() {}
+    // this is only used for get()
+    protected IItemHandler[] handlers = new IItemHandler[0];
 
     public ItemHandlerList(Collection<? extends IItemHandler> itemHandlerList) {
         addAll(itemHandlerList);
+        baseIndexOffset.defaultReturnValue(-1);
+    }
+
+    public ItemHandlerList() {
+        this(Collections.emptyList());
     }
 
     public ItemHandlerList(ItemHandlerList parent, IItemHandler... additional) {
-        addAll(parent.getBackingHandlers());
+        this(parent);
         Collections.addAll(this, additional);
     }
 
+    /**
+     * @param handler the handler to get the slot offset of
+     * @return the slot offset
+     * @throws IllegalArgumentException if the handler is not in this list
+     */
     public int getIndexOffset(IItemHandler handler) {
-        return baseIndexOffset.getOrDefault(handler, -1);
+        int offset = baseIndexOffset.get(handler);
+        if (offset == -1) throw new IllegalArgumentException();
+        return offset;
+    }
+
+    @NotNull
+    protected IItemHandler getHandlerBySlot(int slot) {
+        if (invalidSlot(slot)) throw new IndexOutOfBoundsException();
+        return handlerBySlotIndex.get(slot);
+    }
+
+    protected int getInternalSlot(int slot) {
+        return slot - getIndexOffset(getHandlerBySlot(slot));
     }
 
     @Override
@@ -44,11 +66,12 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         if (invalidSlot(slot)) return;
-        IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        int actualSlot = slot - baseIndexOffset.get(itemHandler);
+        IItemHandler itemHandler = getHandlerBySlot(slot);
+        int actualSlot = getInternalSlot(slot);
         if (itemHandler instanceof IItemHandlerModifiable modifiable) {
             modifiable.setStackInSlot(actualSlot, stack);
         } else {
+            // should this no-op instead?
             itemHandler.extractItem(actualSlot, Integer.MAX_VALUE, false);
             itemHandler.insertItem(actualSlot, stack, false);
         }
@@ -58,36 +81,27 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
     @Override
     public ItemStack getStackInSlot(int slot) {
         if (invalidSlot(slot)) return ItemStack.EMPTY;
-        IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        return itemHandler.getStackInSlot(slot - baseIndexOffset.getInt(itemHandler));
+        return getHandlerBySlot(slot).getStackInSlot(getInternalSlot(slot));
     }
 
     @Override
     public int getSlotLimit(int slot) {
         if (invalidSlot(slot)) return 0;
-        IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        return itemHandler.getSlotLimit(slot - baseIndexOffset.getInt(itemHandler));
+        return getHandlerBySlot(slot).getSlotLimit(getInternalSlot(slot));
     }
 
     @NotNull
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (invalidSlot(slot)) return stack;
-        IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        return itemHandler.insertItem(slot - baseIndexOffset.getInt(itemHandler), stack, simulate);
+        return getHandlerBySlot(slot).insertItem(getInternalSlot(slot), stack, simulate);
     }
 
     @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (invalidSlot(slot)) return ItemStack.EMPTY;
-        IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        return itemHandler.extractItem(slot - baseIndexOffset.getInt(itemHandler), amount, simulate);
-    }
-
-    private boolean invalidSlot(int slot) {
-        if (handlerBySlotIndex.isEmpty()) return false;
-        return slot < 0 || slot >= handlerBySlotIndex.size();
+        return getHandlerBySlot(slot).extractItem(getInternalSlot(slot), amount, simulate);
     }
 
     @NotNull
@@ -103,7 +117,13 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
     @Override
     public boolean add(IItemHandler handler) {
         int s = size();
-        add(s, handler);
+        if (handler instanceof ItemHandlerList list) {
+            // possible infinite recursion
+            // throw instead?
+            addAll(s, list);
+        } else {
+            add(s, handler);
+        }
         return s != size();
     }
 
@@ -112,12 +132,6 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
         Objects.requireNonNull(element);
         if (baseIndexOffset.containsKey(element)) {
             throw new IllegalArgumentException("Attempted to add item handler " + element + " twice");
-        }
-        if (element instanceof ItemHandlerList list) {
-            // possible infinite recursion
-            // throw instead?
-            addAll(list);
-            return;
         }
 
         int offset = handlerBySlotIndex.size();
@@ -128,11 +142,15 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
     }
 
     @Override
+    public @NotNull Iterator<IItemHandler> iterator() {
+        return baseIndexOffset.keySet().iterator();
+    }
+
+    @Override
     public IItemHandler get(int index) {
         if (invalidIndex(index)) throw new IndexOutOfBoundsException();
-        ObjectIterator<IItemHandler> itr = baseIndexOffset.keySet().iterator();
-        itr.skip(index); // skip n-1 elements
-        return itr.next(); // get nth element
+        updateHandlerArray();
+        return handlers[index];
     }
 
     @Override
@@ -169,8 +187,53 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
         return handler;
     }
 
-    public boolean invalidIndex(int index) {
+    private boolean invalidSlot(int slot) {
+        if (handlerBySlotIndex.isEmpty()) return false;
+        return slot < 0 || slot >= handlerBySlotIndex.size();
+    }
+
+    private boolean invalidIndex(int index) {
         if (baseIndexOffset.isEmpty()) return false;
         return index < 0 || index >= baseIndexOffset.size();
+    }
+
+    private void updateHandlerArray() {
+        if (handlers.length != size()) {
+            handlers = new IItemHandler[size()];
+            int i = 0;
+            for (IItemHandler h : baseIndexOffset.keySet()) {
+                handlers[i++] = h;
+            }
+        }
+    }
+
+    public ItemHandlerList toImmutable() {
+        return new Immutable(this);
+    }
+
+    private static class Immutable extends ItemHandlerList {
+
+        private Immutable(ItemHandlerList list) {
+            this.handlers = list.handlers;
+            this.baseIndexOffset.putAll(list.baseIndexOffset);
+            this.handlerBySlotIndex.putAll(list.handlerBySlotIndex);
+        }
+
+        @Override
+        public void add(int unused, IItemHandler element) {
+            // no op?
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public IItemHandler remove(int index) {
+            // no op?
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public IItemHandler get(int index) {
+            return handlers[index];
+        }
     }
 }
