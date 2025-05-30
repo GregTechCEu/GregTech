@@ -1,5 +1,8 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.capability.INotifiableHandler;
+import gregtech.api.metatileentity.MetaTileEntity;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -15,7 +18,7 @@ import java.util.*;
 /**
  * Efficiently delegates calls into multiple item handlers
  */
-public class ItemHandlerList extends AbstractList<IItemHandler> implements IItemHandlerModifiable {
+public class ItemHandlerList extends AbstractList<IItemHandler> implements IItemHandlerModifiable, INotifiableHandler {
 
     protected final Int2ObjectMap<IItemHandler> handlerBySlotIndex = new Int2ObjectOpenHashMap<>();
     protected final Object2IntMap<IItemHandler> baseIndexOffset = new Object2IntArrayMap<>();
@@ -107,6 +110,24 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
     @NotNull
     public Collection<IItemHandler> getBackingHandlers() {
         return Collections.unmodifiableCollection(baseIndexOffset.keySet());
+    }
+
+    @Override
+    public void addNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
+        for (IItemHandler handler : this) {
+            if (handler instanceof INotifiableHandler notifiableHandler) {
+                notifiableHandler.addNotifiableMetaTileEntity(metaTileEntity);
+            }
+        }
+    }
+
+    @Override
+    public void removeNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
+        for (IItemHandler handler : this) {
+            if (handler instanceof INotifiableHandler notifiableHandler) {
+                notifiableHandler.removeNotifiableMetaTileEntity(metaTileEntity);
+            }
+        }
     }
 
     @Override
