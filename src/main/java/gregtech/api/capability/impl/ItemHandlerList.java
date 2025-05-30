@@ -155,7 +155,7 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
             throw new IllegalArgumentException("Attempted to add item handler " + element + " twice");
         }
 
-        int offset = handlerBySlotIndex.size();
+        int offset = getSlots();
         baseIndexOffset.put(element, offset);
         for (int slotIndex = 0; slotIndex < element.getSlots(); slotIndex++) {
             handlerBySlotIndex.put(offset + slotIndex, element);
