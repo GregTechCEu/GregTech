@@ -55,20 +55,14 @@ public class ItemHandlerListTest {
         // test immutable
         ItemHandlerList immutable = list.toImmutable();
 
-        boolean testRemove = false;
         try {
             immutable.remove(0);
-        } catch (UnsupportedOperationException ignored) {
-            testRemove = true;
-        }
-        assertThat("list was modified!", testRemove);
+            assertThat("list was modified!", false);
+        } catch (UnsupportedOperationException ignored) {}
 
-        boolean testAdd = false;
         try {
             immutable.add(firstHandler);
-        } catch (UnsupportedOperationException ignored) {
-            testAdd = true;
-        }
-        assertThat("list was modified!", testAdd);
+            assertThat("list was modified!", false);
+        } catch (UnsupportedOperationException ignored) {}
     }
 }

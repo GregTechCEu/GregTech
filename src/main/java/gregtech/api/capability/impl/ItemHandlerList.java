@@ -178,32 +178,33 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
     public IItemHandler remove(int index) {
         if (invalidIndex(index)) throw new IndexOutOfBoundsException();
 
-        IItemHandler handler = get(index);
+        IItemHandler removed = get(index);
+        int removedSlots = removed.getSlots();
 
         // remove handler
-        int lower = baseIndexOffset.removeInt(handler);
+        int lower = baseIndexOffset.removeInt(removed);
 
+        // update slot indices ahead of the removed handler and
         // remove slot indices
-        int upper = lower + handler.getSlots();
-        for (int i = lower; i < upper; i++) {
-            handlerBySlotIndex.remove(i);
-        }
-
-        // update slot indices ahead of the removed handler
-        for (int slot = upper; slot < getSlots() + handler.getSlots(); slot++) {
-            IItemHandler remove = handlerBySlotIndex.remove(slot);
-            handlerBySlotIndex.put(slot - upper, remove);
-        }
-
-        // update handlers ahead of the removed handler
-        for (IItemHandler h : baseIndexOffset.keySet()) {
-            int offset = baseIndexOffset.getInt(h);
-            if (offset > lower) {
-                baseIndexOffset.put(h, offset - handler.getSlots());
+        int upper = lower + removedSlots;
+        int size = getSlots(); // slot size will be mutated
+        for (int i = lower; i < size; i++) {
+            if (i < upper) {
+                handlerBySlotIndex.put(i, getHandlerBySlot(i + removedSlots));
+            } else {
+                handlerBySlotIndex.remove(i);
             }
         }
 
-        return handler;
+        // update handlers ahead of the removed handler
+        for (IItemHandler h : this) {
+            int offset = getIndexOffset(h);
+            if (offset > lower) {
+                baseIndexOffset.put(h, offset - removedSlots);
+            }
+        }
+
+        return removed;
     }
 
     @Override
