@@ -55,7 +55,7 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         return isOnline;
     }
 
-    public int getMeUpdateTick() {
+    public int getMEUpdateTick() {
         return meUpdateTick;
     }
 

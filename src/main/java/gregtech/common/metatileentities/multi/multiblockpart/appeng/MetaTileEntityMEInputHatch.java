@@ -42,15 +42,20 @@ import appeng.api.storage.data.IAEFluidStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.IntValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,17 +65,16 @@ import java.util.List;
 public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelPart<IAEFluidStack>
                                         implements IMultiblockAbilityPart<IFluidTank>, IDataStickIntractable {
 
-    public final static String FLUID_BUFFER_TAG = "FluidTanks";
-    public final static String WORKING_TAG = "WorkingEnabled";
+    public static final String FLUID_BUFFER_TAG = "FluidTanks";
+    public static final String WORKING_TAG = "WorkingEnabled";
+
     private final static int CONFIG_SIZE = 16;
     protected ExportOnlyAEFluidList aeFluidHandler;
 
     private boolean workingEnabled = true;
-    protected int refreshRate;
 
     public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false, IFluidStorageChannel.class);
-        this.refreshRate = ConfigHolder.compat.ae2.updateIntervals;
     }
 
     protected ExportOnlyAEFluidList getAEFluidHandler() {
@@ -215,7 +219,42 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                         .child(new EmptyWidget()
                                 .size(18))
                         .child(GTGuiTextures.getLogo(getUITheme()).asWidget()
-                                .size(17)));
+                                .size(17)))
+                .child(getSettingWidget(mainPanel, guiSyncManager)
+                        .right(7)
+                        .top(5));
+    }
+
+    protected Widget<?> getSettingWidget(ModularPanel mainPanel, PanelSyncManager syncManager) {
+        IPanelHandler settingPopup = IPanelHandler.simple(mainPanel,
+                (parentPanel, player) -> buildSettingsPopup(syncManager), true);
+
+        return new ButtonWidget<>()
+                .onMousePressed(mouse -> {
+                    if (settingPopup.isPanelOpen()) {
+                        settingPopup.closePanel();
+                    } else {
+                        settingPopup.openPanel();
+                    }
+
+                    return true;
+                })
+                .addTooltipLine(I18n.format("gregtech.machine.me.settings_button"))
+                .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY);
+    }
+
+    protected ModularPanel buildSettingsPopup(PanelSyncManager syncManager) {
+        IntSyncValue refreshRateSync = new IntSyncValue(this::getRefreshRate, this::setRefreshRate);
+        syncManager.syncValue("refresh_rate", refreshRateSync);
+
+        return GTGuis.defaultPopupPanel("settings")
+                .child(new TextFieldWidget()
+                        .left(5)
+                        .top(10)
+                        .size(50, 10)
+                        .setNumbers(1, Integer.MAX_VALUE)
+                        .setDefaultNumber(ConfigHolder.compat.ae2.updateIntervals)
+                        .value(new IntValue.Dynamic(refreshRateSync::getIntValue, refreshRateSync::setIntValue)));
     }
 
     protected Widget<?> getExtraButton() {
@@ -260,7 +299,9 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
+
         data.setBoolean(WORKING_TAG, this.workingEnabled);
+
         NBTTagList tanks = new NBTTagList();
         for (int i = 0; i < CONFIG_SIZE; i++) {
             ExportOnlyAEFluidSlot tank = this.getAEFluidHandler().getInventory()[i];
@@ -270,15 +311,18 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
             tanks.appendTag(tankTag);
         }
         data.setTag(FLUID_BUFFER_TAG, tanks);
+
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
+
         if (data.hasKey(WORKING_TAG)) {
             this.workingEnabled = data.getBoolean(WORKING_TAG);
         }
+
         if (data.hasKey(FLUID_BUFFER_TAG, 9)) {
             NBTTagList tanks = (NBTTagList) data.getTag(FLUID_BUFFER_TAG);
             for (NBTBase nbtBase : tanks) {
@@ -346,6 +390,9 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
             config.writeToNBT(stackNbt);
             configStacks.setTag(Integer.toString(i), stackNbt);
         }
+
+        tag.setInteger(REFRESH_RATE_TAG, this.refreshRate);
+
         return tag;
     }
 
@@ -373,6 +420,10 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                     this.aeFluidHandler.getInventory()[i].setConfig(null);
                 }
             }
+        }
+
+        if (tag.hasKey(REFRESH_RATE_TAG)) {
+            this.refreshRate = tag.getInteger(REFRESH_RATE_TAG);
         }
     }
 }

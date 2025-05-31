@@ -5526,6 +5526,7 @@ gregtech.machine.me.fluid_import.data_stick.name=§oME Input Hatch Configuration
 gregtech.machine.me.extra_connections.enabled=Allow connections from all sides
 gregtech.machine.me.extra_connections.disabled=Allow connection only on front face
 gregtech.machine.me.extra_connections.tooltip=Right-click with wire cutters to allow connecting to AE2 on all sides
+gregtech.machine.me.settings_button=ME Settings
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
