@@ -149,7 +149,7 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
     }
 
     @Override
-    public void add(int unused, IItemHandler element) {
+    public void add(int unused, @NotNull IItemHandler element) {
         Objects.requireNonNull(element);
         if (baseIndexOffset.containsKey(element)) {
             throw new IllegalArgumentException("Attempted to add item handler " + element + " twice");
@@ -176,9 +176,7 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
 
     @Override
     public IItemHandler remove(int index) {
-        if (invalidIndex(index)) {
-            throw new IndexOutOfBoundsException();
-        }
+        if (invalidIndex(index)) throw new IndexOutOfBoundsException();
 
         IItemHandler handler = get(index);
 
@@ -208,13 +206,29 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
         return handler;
     }
 
+    @Override
+    public int indexOf(@NotNull Object o) {
+        for (int i = 0; i < size(); i++) {
+            if (Objects.equals(o, get(i)))
+                return i;
+        }
+        return -1;
+    }
+
+    @Override
+    public int lastIndexOf(@NotNull Object o) {
+        for (int i = size() - 1; i >= 0; i--) {
+            if (Objects.equals(o, get(i)))
+                return i;
+        }
+        return -1;
+    }
+
     private boolean invalidSlot(int slot) {
-        if (handlerBySlotIndex.isEmpty()) return false;
         return slot < 0 || slot >= handlerBySlotIndex.size();
     }
 
     private boolean invalidIndex(int index) {
-        if (baseIndexOffset.isEmpty()) return false;
         return index < 0 || index >= baseIndexOffset.size();
     }
 
@@ -241,7 +255,7 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
         }
 
         @Override
-        public void add(int unused, IItemHandler element) {
+        public void add(int unused, @NotNull IItemHandler element) {
             // no op?
             throw new UnsupportedOperationException();
         }
