@@ -35,20 +35,20 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
         this(Collections.emptyList());
     }
 
-    public ItemHandlerList(ItemHandlerList parent, IItemHandler... additional) {
-        this(parent);
-        Collections.addAll(this, additional);
+    public static ItemHandlerList of(IItemHandler... handlers) {
+        ItemHandlerList list = new ItemHandlerList();
+        if (handlers != null && handlers.length > 0) {
+            Collections.addAll(list, handlers);
+        }
+        return list.toImmutable();
     }
 
     /**
      * @param handler the handler to get the slot offset of
-     * @return the slot offset
-     * @throws IllegalArgumentException if the handler is not in this list
+     * @return the slot offset, or {@code -1} if the handler does not exist
      */
     public int getIndexOffset(IItemHandler handler) {
-        int offset = baseIndexOffset.get(handler);
-        if (offset == -1) throw new IllegalArgumentException();
-        return offset;
+        return baseIndexOffset.get(handler);
     }
 
     @NotNull
