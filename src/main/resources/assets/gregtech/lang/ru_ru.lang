@@ -6198,3 +6198,4 @@ gregtech.machine.energy_hatch.output_16a.ev.name=Энергетический в
 gregtech.machine.substation_hatch.output_64a.ulv.name=Энергетический выходной разъем Подстанции (64A §8ULV§r)
 gregtech.machine.substation_hatch.output_64a.mv.name=Энергетический выходной разъем Подстанции (64A §bMV§r)
 gregtech.machine.substation_hatch.output_64a.hv.name=Энергетический выходной разъем Подстанции (64A §6HV§r)
+gregtech.multiblock.large_chemical_reactor.description.0=Выполняет рецепты §eХимического реактора§7 и §eБольшого химического реактора§7
