@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataStickIntractable;
@@ -24,6 +23,7 @@ import gregtech.api.mui.widget.appeng.item.AEItemConfigSlot;
 import gregtech.api.mui.widget.appeng.item.AEItemDisplaySlot;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
@@ -74,18 +74,17 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
     public final static String ITEM_BUFFER_TAG = "ItemSlots";
     public final static String WORKING_TAG = "WorkingEnabled";
     private final static int CONFIG_SIZE = 16;
-    private boolean workingEnabled = true;
     protected ExportOnlyAEItemList aeItemHandler;
     protected GhostCircuitItemStackHandler circuitInventory;
     protected NotifiableItemStackHandler extraSlotInventory;
     private ItemHandlerList actualImportItems;
 
-    public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId) {
-        this(metaTileEntityId, GTValues.EV);
-    }
+    private boolean workingEnabled = true;
+    protected int refreshRate;
 
-    protected MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId, int tier) {
+    public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false, IItemStorageChannel.class);
+        this.refreshRate = ConfigHolder.compat.ae2.updateIntervals;
     }
 
     protected ExportOnlyAEItemList getAEItemHandler() {
@@ -175,7 +174,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityMEInputBus(metaTileEntityId);
+        return new MetaTileEntityMEInputBus(metaTileEntityId, getTier());
     }
 
     @Override

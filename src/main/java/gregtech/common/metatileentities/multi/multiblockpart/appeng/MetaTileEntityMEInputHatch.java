@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataStickIntractable;
@@ -17,6 +16,7 @@ import gregtech.api.mui.widget.EmptyWidget;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidConfigSlot;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidDisplaySlot;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
@@ -63,15 +63,14 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
     public final static String FLUID_BUFFER_TAG = "FluidTanks";
     public final static String WORKING_TAG = "WorkingEnabled";
     private final static int CONFIG_SIZE = 16;
-    private boolean workingEnabled = true;
     protected ExportOnlyAEFluidList aeFluidHandler;
 
-    public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId) {
-        this(metaTileEntityId, GTValues.EV);
-    }
+    private boolean workingEnabled = true;
+    protected int refreshRate;
 
-    protected MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId, int tier) {
+    public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false, IFluidStorageChannel.class);
+        this.refreshRate = ConfigHolder.compat.ae2.updateIntervals;
     }
 
     protected ExportOnlyAEFluidList getAEFluidHandler() {
@@ -156,7 +155,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityMEInputHatch(this.metaTileEntityId);
+        return new MetaTileEntityMEInputHatch(this.metaTileEntityId, getTier());
     }
 
     @Override

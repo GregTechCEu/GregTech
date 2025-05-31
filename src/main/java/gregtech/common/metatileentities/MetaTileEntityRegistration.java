@@ -1056,9 +1056,9 @@ final class MetaTileEntityRegistration {
         // ME Hatches, IDs 11525-11539
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             MetaTileEntities.ITEM_IMPORT_BUS_ME = MetaTileEntities.registerMetaTileEntity(11525,
-                    new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus")));
+                    new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus"), GTValues.EV));
             MetaTileEntities.FLUID_IMPORT_HATCH_ME = MetaTileEntities.registerMetaTileEntity(11526,
-                    new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch")));
+                    new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch"), GTValues.EV));
             MetaTileEntities.STOCKING_BUS_ME = MetaTileEntities.registerMetaTileEntity(11527,
                     new MetaTileEntityMEStockingBus(gregtechId("me_stocking_item_bus")));
             MetaTileEntities.STOCKING_HATCH_ME = MetaTileEntities.registerMetaTileEntity(11528,
