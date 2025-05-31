@@ -175,9 +175,9 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
         return getConfig(index) != null;
     }
 
-    public long getConfigAmount(int index) {
+    public int getConfigAmount(int index) {
         T config = getConfig(index);
-        return config == null ? 0 : config.getStackSize();
+        return config == null ? 0 : (int) config.getStackSize();
     }
 
     @SideOnly(Side.CLIENT)

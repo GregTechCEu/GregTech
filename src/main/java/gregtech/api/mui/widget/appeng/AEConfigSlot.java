@@ -21,7 +21,7 @@ import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
-import com.cleanroommc.modularui.value.StringValue;
+import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
@@ -163,8 +163,6 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
     protected IPanelHandler getAmountPanel() {
         if (amountPanel == null) {
             amountPanel = IPanelHandler.simple(getPanel(), (parentPanel, player) -> {
-                AESyncHandler<T> syncHandler = getSyncHandler();
-
                 ModularPanel popupPanel = GTGuis.blankPopupPanel("ae_slot_amount." + index, 100, 18 + 5 * 2)
                         .closeListener(onSelect)
                         .child(createPopupDrawable()
@@ -174,15 +172,8 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
                         .child(new TextFieldWidget()
                                 .setNumbers(1, Integer.MAX_VALUE)
                                 .setDefaultNumber(1)
-                                .value(new StringValue.Dynamic(() -> String.valueOf(syncHandler.getConfigAmount(index)),
-                                        str -> {
-                                            try {
-                                                int newAmount = Integer.parseInt(str);
-                                                syncHandler.setConfigAmount(index, newAmount);
-                                            } catch (NumberFormatException ignored) {
-                                                // nuh uh
-                                            }
-                                        }))
+                                .value(new IntValue.Dynamic(() -> getSyncHandler().getConfigAmount(index),
+                                        newAmount -> getSyncHandler().setConfigAmount(index, newAmount)))
                                 .size(50, 10)
                                 .left(18 + 5 * 2)
                                 .top(7)); // alignY didn't work :whar:
