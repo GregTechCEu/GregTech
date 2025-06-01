@@ -545,6 +545,7 @@ public class Textures {
     public static final SimpleOverlayRenderer ME_INPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_input_bus");
     public static final SimpleOverlayRenderer ME_INPUT_BUS_ACTIVE = new SimpleOverlayRenderer(
             "overlay/appeng/me_input_bus_active");
+
     public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY = new SimpleOverlayRenderer("wireless_hatch/overlay_front");
     public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_4x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.4x");
     public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_16x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.16x");
@@ -556,6 +557,7 @@ public class Textures {
     public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_65536x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.65536x");
     public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_262144x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.262144x");
     public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_1048576x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.1048576x");
+
     public static final ResourceLocation ACE_CAPE_TEXTURE = gregtechId("textures/capes/acecape.png");
     public static final ResourceLocation AGENDER_CAPE_TEXTURE = gregtechId("textures/capes/agendercape.png");
     public static final ResourceLocation AROMANTIC_CAPE_TEXTURE = gregtechId("textures/capes/aromanticcape.png");

@@ -1,22 +1,11 @@
 package gtqt.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
-
-import com.cleanroommc.modularui.factory.PosGuiData;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-
-import com.cleanroommc.modularui.value.sync.StringSyncValue;
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.IncrementButtonWidget;
-import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ScrollableListWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -24,15 +13,9 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
-
-import gtqt.api.util.wireless.EnergyContainerWireless;
-
-import gtqt.api.util.wireless.NetworkDatabase;
-import gtqt.api.util.wireless.NetworkNode;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,105 +25,163 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import gtqt.api.util.wireless.EnergyContainerWireless;
+import gtqt.api.util.wireless.NetworkDatabase;
+import gtqt.api.util.wireless.NetworkNode;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigInteger;
 import java.util.List;
 
 public class MetaTileEntityWirelessEnergyHatch extends MetaTileEntityMultiblockPart
         implements IMultiblockAbilityPart<IEnergyContainer> {
+
     private final int amperage;
     private final boolean isExport;
     private final EnergyContainerWireless energyContainer;
-    public int WirelessId=-1;
-    public MetaTileEntityWirelessEnergyHatch(ResourceLocation metaTileEntityId, int tier, int amperage, boolean isExport) {
+    public int WirelessId = -1;
+    // 在类中添加两个字段
+    private BigInteger lastEnergy = BigInteger.ZERO;
+    private final long lastUpdateTime = 0;
+
+    public MetaTileEntityWirelessEnergyHatch(ResourceLocation metaTileEntityId, int tier, int amperage,
+                                             boolean isExport) {
         super(metaTileEntityId, tier);
         this.isExport = isExport;
         this.amperage = amperage;
-        energyContainer = new EnergyContainerWireless(this,isExport, GTValues.V[tier],this.amperage);
+        energyContainer = new EnergyContainerWireless(this, isExport, GTValues.V[tier], this.amperage);
 
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityWirelessEnergyHatch(this.metaTileEntityId,this.getTier(),this.amperage,this.isExport);
+        return new MetaTileEntityWirelessEnergyHatch(this.metaTileEntityId, this.getTier(), this.amperage,
+                this.isExport);
     }
-    public void setCurrentWirelessID(int parallelAmount) {
-        this.WirelessId = Math.min(Math.max(this.WirelessId + parallelAmount,1),(int) Math.pow((getTier()+1),2));
+
+    public void setCurrentWirelessID(int i) {
+        this.WirelessId = Math.min(Math.max(this.WirelessId + i, 1), (int) Math.pow((getTier() + 1), 2));
     }
-    public String getWirelessidToString() {
-        return Integer.toString(this.WirelessId);
-    }
+
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder;
-        builder = ModularUI.builder(GuiTextures.BACKGROUND, 198, 208);
-        builder.widget((new AdvancedTextWidget(9, 8, this::addDisplayText, 167427215)));
-        builder.widget(new LabelWidget(8,9,"==========无线网络============"));
-        builder.widget(new LabelWidget(8,18,"当前频道:"));
-        builder.widget(new IncrementButtonWidget(8, 27, 9, 9, 1, 4, 16, 64, this::setCurrentWirelessID)
-                .setDefaultTooltip()
-                .setShouldClientCallback(false));
-        builder.widget(new IncrementButtonWidget(88, 27, 9, 9, -1, -4, -16, -64, this::setCurrentWirelessID)
-                .setDefaultTooltip()
-                .setShouldClientCallback(false));
-        builder.widget(new TextFieldWidget2(40, 27, 51, 20, this::getWirelessidToString, val -> {
-            if (val != null && !val.isEmpty()) {
-                getWirelessidToString();
-            }
-        }));
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 360, 240);
 
-        var scroll = new ScrollableListWidget(0,36,198,172);
-        scroll.addWidget((new AdvancedTextWidget(8, 9, this::addNetworksDisplayText, 16777215)));
+        builder.image(3, 4, 186, 214, GuiTextures.DISPLAY);
+
+        var scroll = new ScrollableListWidget(0, 6, 188, 202);
+        scroll.addWidget((new AdvancedTextWidget(6, 2, this::addNetworksDisplayText, 16777215)));
         builder.widget(scroll);
+
+        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 192, 160);
+
+        builder.widget(new IncrementButtonWidget(4, 219, 80, 18, 1, 4, 16, 64, this::setCurrentWirelessID)
+                .setDefaultTooltip()
+                .setShouldClientCallback(false));
+
+        builder.widget(new IncrementButtonWidget(84, 219, 80, 18, -1, -4, -16, -64, this::setCurrentWirelessID)
+                .setDefaultTooltip()
+                .setShouldClientCallback(false));
+
+        builder.image(164, 220, 24, 16, GuiTextures.DISPLAY);
+        builder.widget(new TextFieldWidget2(170, 224, 20, 18, this::getValue, this::setValue).setMaxLength(3)
+                .setAllowedChars(TextFieldWidget2.WHOLE_NUMS));
+
+        builder.image(190, 4, 164, 154, GuiTextures.DISPLAY);
+        builder.dynamicLabel(194, 10, () -> "无线能源频道管理系统", 0xFFFFFF);
+        builder.widget((new AdvancedTextWidget(194, 22, this::addDisplayText, 16777215)).setMaxWidthLimit(162));
+
         return builder.build(this.getHolder(), entityPlayer);
     }
+
+    private String getValue() {
+        return String.valueOf(WirelessId);
+    }
+
+    private void setValue(String val) {
+        try {
+            this.WirelessId = Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            this.WirelessId = 0;
+        }
+
+    }
+
     protected void addDisplayText(List<ITextComponent> textList) {
-        if(this.getOwnerGT()!=null)
-        {
+        textList.add(new TextComponentString("正在访问>ID：" + WirelessId + "的网络"));
+        if (this.getOwnerGT() != null) {
             NetworkDatabase db = NetworkDatabase.get(getWorld());
             NetworkNode node = db.getNetwork(WirelessId);
-            if(node!=null)
-            {
-                textList.add(new TextComponentString(this.getOwnerGT().toString()));
-                textList.add(new TextComponentString("网络ID:"+node.getNetworkID()));
-                textList.add(new TextComponentString("网络名称:"+node.getNetworkName()));
-                textList.add(new TextComponentString("网络存储能量:"+node.getEnergy().toString()));
+            if (node != null) {
+                textList.add(new TextComponentString("网络名称:" + node.getNetworkName()));
+                textList.add(new TextComponentString("存储能量: " +
+                        formatScientificNotation(node.getEnergy()) + " EU (" +
+                        formatEnergyValue(node.getEnergy()) + ")"));
+
+
+                BigInteger energyDiff = node.getEnergy().subtract(lastEnergy);
+                if (!energyDiff.equals(BigInteger.ZERO)) {
+                    String change = energyDiff.compareTo(BigInteger.ZERO) > 0 ?
+                            "+" + formatEnergyValue(energyDiff) :
+                            formatEnergyValue(energyDiff);
+                    textList.add(new TextComponentString("能量变化: " + change));
+                }
+
+                lastEnergy = node.getEnergy();
             }
 
         }
     }
+
+    private String formatScientificNotation(BigInteger energy) {
+        double value = energy.doubleValue();
+        return String.format("%.3E", value);
+    }
+
+    private String formatEnergyValue(BigInteger energy) {
+        if (energy.compareTo(BigInteger.valueOf(1_000_000_000L)) >= 0) {
+            return energy.divide(BigInteger.valueOf(1_000_000_000L)) + " GE";
+        } else if (energy.compareTo(BigInteger.valueOf(1_000_000L)) >= 0) {
+            return energy.divide(BigInteger.valueOf(1_000_000L)) + " ME";
+        } else if (energy.compareTo(BigInteger.valueOf(1_000L)) >= 0) {
+            return energy.divide(BigInteger.valueOf(1_000L)) + " KE";
+        } else {
+            return energy + " EU";
+        }
+    }
+
     protected void addNetworksDisplayText(List<ITextComponent> textList) {
-        if(this.getOwnerGT()!=null)
-        {
+        if (this.getOwnerGT() != null) {
             NetworkDatabase db = NetworkDatabase.get(getWorld());
-            db.getNetworks().keySet().forEach(x->{
+            db.getNetworks().keySet().forEach(x -> {
                 var node = db.getNetwork(x);
-                if(node!=null)
-                {
+                if (node != null) {
                     textList.add(new TextComponentString("--------------------"));
+                    textList.add(new TextComponentString(">>ID:" + node.getNetworkID()));
                     textList.add(new TextComponentString(this.getOwnerGT().toString()));
-                    textList.add(new TextComponentString("网络ID:"+node.getNetworkID()));
-                    textList.add(new TextComponentString("网络名称:"+node.getNetworkName()));
-                    textList.add(new TextComponentString("网络存储能量:"+node.getEnergy().toString()));
-                    textList.add(new TextComponentString("--------------------"));
+                    textList.add(new TextComponentString("网络名称:" + node.getNetworkName()));
+                    textList.add(new TextComponentString("存储能量:" + node.getEnergy().toString()));
                 }
             });
 
-
         }
     }
+
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            getOverlay().renderSided(getFrontFacing(),renderState,translation,pipeline);
+            getOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
 
     }
+
     @SideOnly(Side.CLIENT)
     private SimpleOverlayRenderer getOverlay() {
         if (amperage == 2) {
@@ -165,8 +206,7 @@ public class MetaTileEntityWirelessEnergyHatch extends MetaTileEntityMultiblockP
             return Textures.MULTIPART_WIRELESS_ENERGY_262144x;
         } else if (amperage == 1048576) {
             return Textures.MULTIPART_WIRELESS_ENERGY_1048576x;
-        }
-        else return Textures.MULTIPART_WIRELESS_ENERGY;
+        } else return Textures.MULTIPART_WIRELESS_ENERGY;
 
     }
 
@@ -183,7 +223,7 @@ public class MetaTileEntityWirelessEnergyHatch extends MetaTileEntityMultiblockP
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setInteger("wirelessid",this.WirelessId);
+        data.setInteger("wirelessid", this.WirelessId);
         return data;
     }
 
@@ -194,7 +234,9 @@ public class MetaTileEntityWirelessEnergyHatch extends MetaTileEntityMultiblockP
     }
 
     public void addInformation(ItemStack stack, World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format(this.isExport ? "gregtech.machine.wireless.export.tooltip" : "gregtech.machine.wireless.import.tooltip", new Object[0]));
+        tooltip.add(I18n.format(
+                this.isExport ? "gregtech.machine.wireless.export.tooltip" : "gregtech.machine.wireless.import.tooltip"
+        ));
     }
 
 }
