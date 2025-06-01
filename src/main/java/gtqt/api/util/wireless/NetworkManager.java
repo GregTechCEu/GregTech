@@ -1,6 +1,8 @@
 package gtqt.api.util.wireless;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.server.FMLServerHandler;
 
 import java.math.BigInteger;
 import java.util.UUID;
@@ -56,5 +58,12 @@ public class NetworkManager {
 
     public boolean hasEnoughEnergy(World world, int networkID, BigInteger amount) {
         return getEnergy(world, networkID).compareTo(amount) >= 0;
+    }
+    public static World getWorldByDimension(int dimension) {
+        MinecraftServer server = FMLServerHandler.instance().getServer();
+        if (server != null) {
+            return server.getWorld(dimension);
+        }
+        return null;
     }
 }

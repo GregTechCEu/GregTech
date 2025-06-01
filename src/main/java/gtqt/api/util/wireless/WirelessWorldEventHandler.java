@@ -1,10 +1,15 @@
 package gtqt.api.util.wireless;
 
+import gregtech.api.util.GTUtility;
+
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WirelessWorldEventHandler {
     @SubscribeEvent
@@ -24,6 +29,28 @@ public class WirelessWorldEventHandler {
                 event.world.provider.getDimension() == 0) {
             if (event.world.getTotalWorldTime() % 600 == 0) {
                 NetworkDatabase db = NetworkDatabase.get(event.world);
+                db.getNetworks().keySet().forEach(x->{
+                    var net = db.getNetwork(x);
+                    if(net!=null)
+                    {
+                        List<WorldBlockPos> pos = new ArrayList<>();
+                        for (var machine:net.machines)
+                        {
+                            if(machine.getDimension()==event.world.provider.getDimension() && event.world.isBlockLoaded(machine.getPos()) )
+                            {
+                                var mte = GTUtility.getMetaTileEntity(event.world,machine.getPos());
+                                if(mte==null)
+                                {
+                                    pos.add(machine);
+                                }
+                            }
+                        }
+                        for (var remove:pos)
+                        {
+                            net.machines.remove(remove);
+                        }
+                    }
+                });
                 if (db.isDirty()) {
                     db.markDirty();
                 }

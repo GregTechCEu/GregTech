@@ -13,9 +13,12 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+
+import gtqt.api.util.wireless.NetworkManager;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +27,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -132,7 +136,15 @@ public class MetaTileEntityWirelessEnergyHatch extends MetaTileEntityMultiblockP
                             formatEnergyValue(energyDiff);
                     textList.add(new TextComponentString("能量变化: " + change));
                 }
-
+//                for (var machine:node.machines)
+//                {
+//                    var mw = NetworkManager.getWorldByDimension(machine.getDimension());
+//                    if(mw!=null && !mw.isRemote && mw.isBlockLoaded(machine.getPos()) && GTUtility.getMetaTileEntity(mw,machine.getPos())!=null)
+//                    {
+//                        var mte = GTUtility.getMetaTileEntity(mw,machine.getPos());
+//                        textList.add(new TextComponentString("维度: " + machine.getDimension()+"机器："+new TextComponentTranslation(mte.getMetaFullName())));
+//                    }
+//                }
                 lastEnergy = node.getEnergy();
             }
 
