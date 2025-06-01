@@ -63,6 +63,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
+import static gregtech.api.unification.material.info.MaterialFlags.*;
+
 @ZenClass("mods.gregtech.material.Material")
 @ZenRegister
 public class Material implements Comparable<Material> {
@@ -748,6 +750,7 @@ public class Material implements Comparable<Material> {
          */
         public Builder ingot() {
             properties.ensureSet(PropertyKey.INGOT);
+            this.flags.addFlags(GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_DENSE, GENERATE_FINE_WIRE, GENERATE_PLATE, GENERATE_DOUBLE_PLATE, GENERATE_ROD, GENERATE_LONG_ROD, GENERATE_RING, GENERATE_ROUND, GENERATE_BOLT_SCREW, GENERATE_FRAME, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_ROTOR);
             return this;
         }
 
@@ -788,6 +791,7 @@ public class Material implements Comparable<Material> {
                 if (prop.getBurnTime() == 0) prop.setBurnTime(burnTime);
             }
             properties.ensureSet(PropertyKey.INGOT);
+            this.flags.addFlags(GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_DENSE, GENERATE_FINE_WIRE, GENERATE_PLATE, GENERATE_DOUBLE_PLATE, GENERATE_ROD, GENERATE_LONG_ROD, GENERATE_RING, GENERATE_ROUND, GENERATE_BOLT_SCREW, GENERATE_FRAME, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_ROTOR);
             return this;
         }
 

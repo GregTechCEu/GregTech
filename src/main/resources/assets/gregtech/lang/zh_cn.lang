@@ -3097,18 +3097,24 @@ gregtech.machine.combustion_generator.tooltip=需要可燃液体
 gregtech.machine.combustion_generator.lv.name=基础内燃发电机
 gregtech.machine.combustion_generator.mv.name=进阶内燃发电机
 gregtech.machine.combustion_generator.hv.name=涡轮内燃发电机
+gregtech.machine.combustion_generator.ev.name=爆喷内燃发电机
+gregtech.machine.combustion_generator.iv.name=爆震内燃发电机
 
 gregtech.machine.steam_turbine.tooltip=将蒸汽转化为 EU
 
 gregtech.machine.steam_turbine.lv.name=基础蒸汽轮机
 gregtech.machine.steam_turbine.mv.name=进阶蒸汽轮机
 gregtech.machine.steam_turbine.hv.name=涡轮蒸汽轮机
+gregtech.machine.steam_turbine.ev.name=爆喷蒸汽轮机
+gregtech.machine.steam_turbine.iv.name=爆震蒸汽轮机
 
 gregtech.machine.gas_turbine.tooltip=需要可燃气体
 
 gregtech.machine.gas_turbine.lv.name=基础燃气轮机
 gregtech.machine.gas_turbine.mv.name=进阶燃气轮机
 gregtech.machine.gas_turbine.hv.name=涡轮燃气轮机
+gregtech.machine.gas_turbine.ev.name=爆喷燃气轮机
+gregtech.machine.gas_turbine.iv.name=爆震燃气轮机
 
 
 gregtech.machine.magic_energy_absorber.name=魔法能源吸收器

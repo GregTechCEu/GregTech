@@ -16,9 +16,6 @@ public final class RecyclingData {
     }
 
     public RecyclingData(@NotNull List<MaterialStack> materials) {
-        if (materials.isEmpty()) {
-            throw new IllegalArgumentException("materials cannot be empty");
-        }
         this.materials = materials;
     }
 

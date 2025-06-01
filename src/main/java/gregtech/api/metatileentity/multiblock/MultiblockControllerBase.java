@@ -24,6 +24,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.block.Block;
@@ -339,8 +340,25 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return BlockPos::hashCode;
     }
 
+    /**
+     * 判断是否应该延迟检查
+     *
+     * @return boolean 返回是否应该延迟检查的标识，
+     *         当前实现固定返回false表示不延迟
+     */
+    public boolean shouldDelayCheck() {
+        return false;
+    }
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void checkStructurePattern() {
+        if (shouldDelayCheck()&& ConfigHolder.machines.delayStructureCheckSwitch) {
+            if (this.getOffsetTimer() % 100 == 0 || this.isFirstTick()) {
+                doCheck();
+            }
+        } else doCheck();
+    }
+    public void doCheck() {
         if (structurePattern == null) return;
         PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(),
                 getFrontFacing().getOpposite(), getUpwardsFacing(), allowsFlip());
@@ -385,6 +403,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
         }
     }
+
+
 
     /**
      * Checks if a multiblock ability at a given block pos should be added to the ability instances
