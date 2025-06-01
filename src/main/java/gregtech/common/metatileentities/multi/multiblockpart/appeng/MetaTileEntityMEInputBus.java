@@ -43,6 +43,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.channels.IItemStorageChannel;
@@ -53,6 +54,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.IntValue;
@@ -71,6 +73,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPart<IAEItemStack>
                                       implements IMultiblockAbilityPart<IItemHandlerModifiable>,
@@ -270,8 +273,11 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
     }
 
     protected Widget<?> getSettingWidget(ModularPanel mainPanel, PanelSyncManager syncManager) {
+        IntSyncValue refreshRateSync = new IntSyncValue(this::getRefreshRate, this::setRefreshRate);
+        syncManager.syncValue("refresh_rate", refreshRateSync);
+
         IPanelHandler settingPopup = IPanelHandler.simple(mainPanel,
-                (parentPanel, player) -> buildSettingsPopup(syncManager), true);
+                (parentPanel, player) -> buildSettingsPopup(refreshRateSync), true);
 
         return new ButtonWidget<>()
                 .onMousePressed(mouse -> {
@@ -283,22 +289,40 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
 
                     return true;
                 })
-                .addTooltipLine(I18n.format("gregtech.machine.me.settings_button"))
+                .addTooltipLine(I18n.format("gregtech.machine.me.settings.button"))
                 .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY);
     }
 
-    protected ModularPanel buildSettingsPopup(PanelSyncManager syncManager) {
-        IntSyncValue refreshRateSync = new IntSyncValue(this::getRefreshRate, this::setRefreshRate);
-        syncManager.syncValue("refresh_rate", refreshRateSync);
+    protected ModularPanel buildSettingsPopup(IntSyncValue refreshRateSync) {
+        Optional<ItemStack> meControllerItem = AEApi.instance().definitions().blocks().controller().maybeStack(1);
+        ItemDrawable meControllerDrawable = new ItemDrawable(meControllerItem.orElse(ItemStack.EMPTY));
 
-        return GTGuis.defaultPopupPanel("settings")
+        final int width = 110;
+        return GTGuis.createPopupPanel("settings", width, getSettingsPopupHeight())
+                .child(Flow.row()
+                        .pos(4, 4)
+                        .height(16)
+                        .child(meControllerDrawable.asWidget()
+                                .size(16)
+                                .marginRight(4))
+                        .child(IKey.lang("gregtech.machine.me.settings.button")
+                                .asWidget()
+                                .heightRel(1.0f)))
+                .child(IKey.lang("gregtech.machine.me.settings.refresh_rate")
+                        .asWidget()
+                        .left(5)
+                        .top(5 + 18))
                 .child(new TextFieldWidget()
                         .left(5)
-                        .top(10)
-                        .size(50, 10)
+                        .top(15 + 18)
+                        .size(width - 10, 10)
                         .setNumbers(1, Integer.MAX_VALUE)
                         .setDefaultNumber(ConfigHolder.compat.ae2.updateIntervals)
                         .value(new IntValue.Dynamic(refreshRateSync::getIntValue, refreshRateSync::setIntValue)));
+    }
+
+    protected int getSettingsPopupHeight() {
+        return 33 + 10 + 5 + 4;
     }
 
     protected Widget<?> getExtraButton() {

@@ -69,6 +69,7 @@ public abstract class MetaTileEntityAEHostableChannelPart<T extends IAEStack<T>>
 
     protected void setRefreshRate(int newRefreshRate) {
         this.refreshRate = newRefreshRate;
+        markDirty();
     }
 
     @Override
