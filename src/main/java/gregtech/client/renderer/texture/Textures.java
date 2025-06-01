@@ -545,7 +545,17 @@ public class Textures {
     public static final SimpleOverlayRenderer ME_INPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_input_bus");
     public static final SimpleOverlayRenderer ME_INPUT_BUS_ACTIVE = new SimpleOverlayRenderer(
             "overlay/appeng/me_input_bus_active");
-
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY = new SimpleOverlayRenderer("wireless_hatch/overlay_front");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_4x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.4x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_16x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.16x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_64x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.64x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_256x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.256x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_1024x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.1024x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_4096x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.4096x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_16384x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.16384x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_65536x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.65536x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_262144x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.262144x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_1048576x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.1048576x");
     public static final ResourceLocation ACE_CAPE_TEXTURE = gregtechId("textures/capes/acecape.png");
     public static final ResourceLocation AGENDER_CAPE_TEXTURE = gregtechId("textures/capes/agendercape.png");
     public static final ResourceLocation AROMANTIC_CAPE_TEXTURE = gregtechId("textures/capes/aromanticcape.png");
@@ -659,6 +669,7 @@ public class Textures {
         for (IconRegistrar registrar : iconRegisters) {
             registrar.registerIcons(textureMap);
         }
+
 
         RESTRICTIVE_OVERLAY = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_restrictive"));
         PIPE_TINY = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_tiny_in"));
