@@ -5443,6 +5443,29 @@ gregtech.machine.substation_hatch.output_64a.uxv.name=UXV 64A Substation Dynamo 
 gregtech.machine.substation_hatch.output_64a.opv.name=OpV 64A Substation Dynamo Hatch
 gregtech.machine.substation_hatch.output_64a.max.name=MAX 64A Substation Dynamo Hatch
 
+#Hatch
+gregtech.machine.laser_hatch.source_16384a.iv.name=16384A §1IV§r Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.luv.name=16384A §dLuV§r Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.zpm.name=16384A §cZPM§r Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.uv.name=16384A §3UV§r Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.uhv.name=16384A §4UHV§r Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.uev.name=16384A §aUEV§r Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.uiv.name=16384A §2UIV§r Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.uxv.name=16384A §eUXV§r Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.opv.name=16384A §9OpV§r Laser Source Hatch
+gregtech.machine.laser_hatch.source_16384a.max.name=16384A §c§lMAX§r Laser Source Hatch
+
+gregtech.machine.laser_hatch.target_16384a.iv.name=16384A §1IV§r Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.luv.name=16384A §dLuV§r Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.zpm.name=16384A §cZPM§r Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.uv.name=16384A §3UV§r Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.uhv.name=16384A §4UHV§r Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.uev.name=16384A §aUEV§r Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.uiv.name=16384A §2UIV§r Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.uxv.name=16384A §eUXV§r Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.opv.name=16384A §9OpV§r Laser Target Hatch
+gregtech.machine.laser_hatch.target_16384a.max.name=16384A §c§lMAX§r Laser Target Hatch
+
 gregtech.machine.rotor_holder.tooltip1=Rotor Holder for Multiblocks
 gregtech.machine.rotor_holder.tooltip2=Holds Rotor in place so it will not fly away
 

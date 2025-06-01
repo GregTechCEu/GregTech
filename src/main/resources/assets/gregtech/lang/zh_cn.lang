@@ -5441,6 +5441,29 @@ gregtech.machine.substation_hatch.output_64a.uxv.name=64安§eUXV§r变电动力
 gregtech.machine.substation_hatch.output_64a.opv.name=64安§9OpV§r变电动力仓
 gregtech.machine.substation_hatch.output_64a.max.name=64安§c§lMAX§r变电动力仓
 
+#Hatch
+gregtech.machine.laser_hatch.source_16384a.iv.name=16384安§1IV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.luv.name=16384安§dLuV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.zpm.name=16384安§cZPM§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.uv.name=16384安§3UV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.uhv.name=16384安§4UHV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.uev.name=16384安§aUEV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.uiv.name=16384安§2UIV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.uxv.name=16384安§eUXV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.opv.name=16384安§9OpV§r激光源仓
+gregtech.machine.laser_hatch.source_16384a.max.name=16384安§c§lMAX§r激光源仓
+
+gregtech.machine.laser_hatch.target_16384a.iv.name=16384安§1IV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.luv.name=16384安§dLuV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.zpm.name=16384安§cZPM§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.uv.name=16384安§3UV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.uhv.name=16384安§4UHV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.uev.name=16384安§aUEV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.uiv.name=16384安§2UIV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.uxv.name=16384安§eUXV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.opv.name=16384§9OpV§r激光靶仓
+gregtech.machine.laser_hatch.target_16384a.max.name=16384安§c§lMAX§r激光靶仓
+
 gregtech.machine.rotor_holder.tooltip1=为多方块结构固定转子，
 gregtech.machine.rotor_holder.tooltip2=使其不能飞走
 

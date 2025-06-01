@@ -1,9 +1,8 @@
 package gtqt.common;
 
-import gregtech.api.GregTechAPI;
-import gregtech.api.cover.CoverDefinition;
 import gregtech.common.items.MetaItems;
 
+import gtqt.api.util.wireless.WirelessWorldEventHandler;
 import gtqt.common.items.GTQTMetaItems;
 import gtqt.common.items.covers.GTQTCoverBehavior;
 import gtqt.common.metatileentities.GTQTMetaTileEntities;
@@ -13,6 +12,7 @@ import gtqt.loaders.recipe.RecipeManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 
 public class GTQTCommonProxy {
@@ -33,7 +33,7 @@ public class GTQTCommonProxy {
     }
 
     public static void init() {
-
+        MinecraftForge.EVENT_BUS.register(new WirelessWorldEventHandler());
     }
 
     public static void preInit() {
