@@ -829,8 +829,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     /**
      * @deprecated {@link RecipeMapUI#createJeiUITemplate(IItemHandlerModifiable, IItemHandlerModifiable, FluidTankList, FluidTankList, int)}
      */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
                                                  FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         return recipeMapUI.createJeiUITemplate(importItems, exportItems, importFluids, exportFluids, yOffset);
@@ -864,24 +862,21 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     /**
      * @deprecated {@link RecipeMapUI#addInventorySlotGroup(ModularUI.Builder, IItemHandlerModifiable, FluidTankList, boolean, int)}
      */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
+
     protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler,
                                          FluidTankList fluidHandler, boolean isOutputs, int yOffset) {}
 
     /**
      * @deprecated {@link RecipeMapUI#addSlot(ModularUI.Builder, int, int, int, IItemHandlerModifiable, FluidTankList, boolean, boolean)}
      */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
+
     protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
                            FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {}
 
     /**
      * @deprecated {@link RecipeMapUI#getOverlaysForSlot(boolean, boolean, boolean)}
      */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
+
     protected TextureArea[] getOverlaysForSlot(boolean isOutput, boolean isFluid, boolean isLast) {
         return null;
     }
@@ -889,8 +884,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     /**
      * @deprecated {@link RecipeMapUI#getPropertyHeightShift()}
      */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
+    
     public int getPropertyHeightShift() {
         return recipeMapUI.getPropertyHeightShift();
     }
@@ -898,8 +892,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     /**
      * @deprecated {@link RecipeMapUI#shouldShiftWidgets()}
      */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
+
     private boolean shouldShiftWidgets() {
         return false;
     }

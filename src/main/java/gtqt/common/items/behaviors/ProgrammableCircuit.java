@@ -40,9 +40,9 @@ public class ProgrammableCircuit implements IItemBehaviour {
     public void addInformation(ItemStack stack, List<String> lines) {
         if (name.equals("programmable_circuit")) {
             lines.add(I18n.format("请配合可编程覆盖板使用"));
-            lines.add(I18n.format("安装有可编程覆盖板的输入总线/输入总成接收到本物品会自动将虚拟电路槽设置为当前电路值并消耗本物品"));
+            lines.add(I18n.format("安装有可编程覆盖板的输入总线/输入总成/单方块机器接收到本物品会自动将虚拟电路槽设置为当前电路值并消耗本物品"));
             lines.add(I18n.format("如果该多方块拥有输出总线/总成且输出总线/总成有空槽位，则会尝试返还编程电路"));
-            lines.add(I18n.format("开启阻挡模式后可解决合金冶炼炉等设备需要多个仓口的情况"));
+            lines.add(I18n.format("如果该多单方块机器输出有空槽位，则会尝试返还编程电路"));
         }
     }
 

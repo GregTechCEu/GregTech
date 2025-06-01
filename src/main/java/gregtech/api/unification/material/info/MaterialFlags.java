@@ -157,6 +157,9 @@ public class MaterialFlags {
                     .requireProps(PropertyKey.DUST)
                     .build();
 
+
+
+
     public static final MaterialFlag MORTAR_GRINDABLE = new MaterialFlag.Builder("mortar_grindable")
             .requireProps(PropertyKey.DUST)
             .build();

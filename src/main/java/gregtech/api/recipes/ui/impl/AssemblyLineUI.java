@@ -13,7 +13,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-@ApiStatus.Internal
 public final class AssemblyLineUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
 
     /**
