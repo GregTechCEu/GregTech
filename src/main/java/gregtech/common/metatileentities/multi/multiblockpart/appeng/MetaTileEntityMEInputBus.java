@@ -57,7 +57,6 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -126,8 +125,12 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
     public void update() {
         super.update();
         if (!getWorld().isRemote && this.workingEnabled && updateMEStatus() && shouldSyncME()) {
-            syncME();
+            operateOnME();
         }
+    }
+
+    protected void operateOnME() {
+        syncME();
     }
 
     protected void syncME() {
@@ -267,17 +270,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                                 .slot(SyncHandlers.itemSlot(extraSlotInventory, 0)
                                         .slotGroup("extra_slot"))
                                 .addTooltipLine(IKey.lang("gregtech.gui.me_bus.extra_slot"))))
-                .child(getSettingWidget(mainPanel, guiSyncManager)
+                .child(getSettingWidget(guiSyncManager)
                         .right(7)
                         .top(5));
     }
 
-    protected Widget<?> getSettingWidget(ModularPanel mainPanel, PanelSyncManager syncManager) {
-        IntSyncValue refreshRateSync = new IntSyncValue(this::getRefreshRate, this::setRefreshRate);
-        syncManager.syncValue("refresh_rate", refreshRateSync);
-
-        IPanelHandler settingPopup = IPanelHandler.simple(mainPanel,
-                (parentPanel, player) -> buildSettingsPopup(refreshRateSync), true);
+    protected Widget<?> getSettingWidget(PanelSyncManager guiSyncManager) {
+        IPanelHandler settingPopup = guiSyncManager.panel("settings_panel", this::buildSettingsPopup, true);
 
         return new ButtonWidget<>()
                 .onMousePressed(mouse -> {
@@ -289,16 +288,17 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
 
                     return true;
                 })
-                .addTooltipLine(I18n.format("gregtech.machine.me.settings.button"))
+                .addTooltipLine(IKey.lang("gregtech.machine.me.settings.button"))
                 .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY);
     }
 
-    protected ModularPanel buildSettingsPopup(IntSyncValue refreshRateSync) {
+    protected ModularPanel buildSettingsPopup(PanelSyncManager syncManager, IPanelHandler syncHandler) {
+        IntSyncValue refreshRateSync = new IntSyncValue(this::getRefreshRate, this::setRefreshRate);
+
         Optional<ItemStack> meControllerItem = AEApi.instance().definitions().blocks().controller().maybeStack(1);
         ItemDrawable meControllerDrawable = new ItemDrawable(meControllerItem.orElse(ItemStack.EMPTY));
 
-        final int width = 110;
-        return GTGuis.createPopupPanel("settings", width, getSettingsPopupHeight())
+        return GTGuis.createPopupPanel("settings", 110, getSettingsPopupHeight())
                 .child(Flow.row()
                         .pos(4, 4)
                         .height(16)
@@ -315,14 +315,14 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                 .child(new TextFieldWidget()
                         .left(5)
                         .top(15 + 18)
-                        .size(width - 10, 10)
+                        .size(100, 10)
                         .setNumbers(1, Integer.MAX_VALUE)
                         .setDefaultNumber(ConfigHolder.compat.ae2.updateIntervals)
-                        .value(new IntValue.Dynamic(refreshRateSync::getIntValue, refreshRateSync::setIntValue)));
+                        .value(refreshRateSync));
     }
 
     protected int getSettingsPopupHeight() {
-        return 33 + 10 + 5 + 4;
+        return 33 + 14 + 5;
     }
 
     protected Widget<?> getExtraButton() {
@@ -355,7 +355,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeBoolean(workingEnabled);
+        buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
