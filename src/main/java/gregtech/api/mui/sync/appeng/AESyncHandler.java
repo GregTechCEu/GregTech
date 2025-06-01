@@ -65,7 +65,8 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
             T newStock = slot.getStock();
             T cachedStock = cache.getStock();
 
-            if (!areAEStackCountEquals(newConfig, cachedConfig) || !areAEStackCountEquals(newStock, cachedStock)) {
+            if (init || !areAEStackCountEquals(newConfig, cachedConfig) ||
+                    !areAEStackCountEquals(newStock, cachedStock)) {
                 cached[index] = slot.copy();
                 changeMap.put(index, slot.copy());
                 notifyChange();
