@@ -1,6 +1,5 @@
 package gregtech.api.mui;
 
-import com.cleanroommc.modularui.value.sync.SyncHandler;
 import gregtech.api.GTValues;
 
 import net.minecraft.client.Minecraft;
@@ -27,7 +26,9 @@ public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransfe
 
         @Override
         public void showError(@NotNull Minecraft minecraft, int mouseX, int mouseY,
-                              @NotNull IRecipeLayout recipeLayout, int recipeX, int recipeY) {}
+                              @NotNull IRecipeLayout recipeLayout, int recipeX, int recipeY) {
+            // no error, just hide the + button
+        }
     };
 
     public GregTechGuiScreen(ModularPanel mainPanel) {
@@ -49,8 +50,6 @@ public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransfe
 
     @Override
     public IRecipeTransferError transferRecipe(IRecipeLayout recipeLayout, boolean maxTransfer, boolean simulate) {
-        // SyncHandler jeiTransferHandler = getSyncManager().getSyncHandler()
-
         // Hide the + button by default if this recipe isn't valid for insertion
         return DEFAULT_ERROR;
     }
