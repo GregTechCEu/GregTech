@@ -8,7 +8,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
