@@ -305,7 +305,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
 
     @Override
     protected int getSettingsPopupHeight() {
-        return super.getSettingsPopupHeight() + 20 + 8;
+        return super.getSettingsPopupHeight() + 20 + 7;
     }
 
     @Override
