@@ -300,8 +300,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
                         .size(100, 10)
                         .setNumbers(0, Integer.MAX_VALUE)
                         .setDefaultNumber(0)
-                        .value(minimumStockSync)
-                        .addTooltipLine(IKey.lang("gregtech.machine.me.settings.minimum.tooltip")));
+                        .value(minimumStockSync));
     }
 
     @Override
