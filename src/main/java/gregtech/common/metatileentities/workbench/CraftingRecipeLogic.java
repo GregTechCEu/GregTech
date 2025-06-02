@@ -1,4 +1,4 @@
-package gregtech.common.metatileentities.storage;
+package gregtech.common.metatileentities.workbench;
 
 import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.util.DummyContainer;

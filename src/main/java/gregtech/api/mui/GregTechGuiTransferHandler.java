@@ -1,7 +1,7 @@
 package gregtech.api.mui;
 
 import gregtech.api.mui.sync.PagedWidgetSyncHandler;
-import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
+import gregtech.common.metatileentities.workbench.CraftingRecipeLogic;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

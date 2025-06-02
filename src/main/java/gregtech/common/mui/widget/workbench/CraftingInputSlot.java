@@ -2,7 +2,7 @@ package gregtech.common.mui.widget.workbench;
 
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
+import gregtech.common.metatileentities.workbench.CraftingRecipeLogic;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
