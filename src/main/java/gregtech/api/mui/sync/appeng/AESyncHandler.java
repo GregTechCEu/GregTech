@@ -42,11 +42,6 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
         this.byteBufAdapter = initializeByteBufAdapter();
     }
 
-    @Override
-    public void init(String key, PanelSyncManager syncManager) {
-        super.init(key, syncManager);
-    }
-
     protected abstract @NotNull IConfigurableSlot<T> @NotNull [] initializeCache();
 
     protected abstract @NotNull IByteBufAdapter<T> initializeByteBufAdapter();
