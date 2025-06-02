@@ -629,17 +629,17 @@ public class WoodRecipeLoader {
 
         // Sugar to Charcoal
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
-                .input(dust, Sugar, 23)
+                .input(dust, Sugar, 24)
                 .output(dust, Charcoal, 12)
-                .fluidOutputs(Water.getFluid(1500))
+                .fluidOutputs(Water.getFluid(6000))
                 .duration(320).EUt(64)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
-                .input(dust, Sugar, 23)
+                .input(dust, Sugar, 24)
                 .fluidInputs(Nitrogen.getFluid(500))
                 .output(dust, Charcoal, 12)
-                .fluidOutputs(Water.getFluid(1500))
+                .fluidOutputs(Water.getFluid(6000))
                 .duration(160).EUt(96)
                 .buildAndRegister();
 

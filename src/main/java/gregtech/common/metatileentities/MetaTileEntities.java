@@ -225,8 +225,10 @@ public class MetaTileEntities {
     public static final SimpleMachineMetaTileEntity[] WIREMILL = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] CIRCUIT_ASSEMBLER = new SimpleMachineMetaTileEntity[
             GTValues.V.length - 1];
-    // public static final SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1]; // TODO Replication
-    // public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1]; // TODO Replication
+    public static final SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[
+            GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
     public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new MetaTileEntityGasCollector[GTValues.V.length -
             1];
@@ -261,7 +263,8 @@ public class MetaTileEntities {
     public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_INPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[GTValues.V.length];
     public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_OUTPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[GTValues.V.length];
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[12]; // HV, EV, IV, LuV, ZPM, UV, UHV, UEV, UIV, UXV, OPV,MAX
-    public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UHV + 1]; // LV-UHV
+    public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UHV +
+            1]; // LV-UHV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
     public static final MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[10];
     public static final MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[10];
@@ -598,16 +601,13 @@ public class MetaTileEntities {
         registerSimpleMetaTileEntity(FERMENTER, 335, "fermenter", RecipeMaps.FERMENTING_RECIPES,
                 Textures.FERMENTER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
-        // TODO Replication system
         // Mass Fabricator, IDs 350-364
-        // registerSimpleMetaTileEntity(MASS_FABRICATOR, 350, "mass_fabricator", RecipeMaps.MASS_FABRICATOR_RECIPES,
-        // Textures.MASS_FABRICATOR_OVERLAY, true);
+        registerSimpleMetaTileEntity(MASS_FABRICATOR, 350, "mass_fabricator", RecipeMaps.MASS_FABRICATOR_RECIPES,
+                Textures.MASS_FABRICATOR_OVERLAY, true);
 
-        // TODO Should anonymously override SimpleMachineMetaTileEntity#getCircuitSlotOverlay() to display the data
-        // stick overlay
         // Replicator, IDs 365-379
-        // registerSimpleMetaTileEntity(REPLICATOR, 365, "replicator", RecipeMaps.REPLICATOR_RECIPES,
-        // Textures.REPLICATOR_OVERLAY, true);
+        registerSimpleMetaTileEntity(REPLICATOR, 365, "replicator", RecipeMaps.REPLICATOR_RECIPES,
+                Textures.REPLICATOR_OVERLAY, true);
 
         // Fluid Heater, IDs 380-394
         registerSimpleMetaTileEntity(FLUID_HEATER, 380, "fluid_heater", RecipeMaps.FLUID_HEATER_RECIPES,
@@ -906,7 +906,6 @@ public class MetaTileEntities {
         ACTIVE_TRANSFORMER = registerMetaTileEntity(1042,
                 new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
 
-
         //IO注册
         // Import/Export Buses/Hatches, IDs 1150-1300
         endPos = GregTechAPI.isHighTier() ? ITEM_IMPORT_BUS.length : GTValues.UHV + 1;
@@ -915,8 +914,10 @@ public class MetaTileEntities {
             //总线
             ITEM_IMPORT_BUS[i] = new MetaTileEntityItemBus(gregtechId("item_bus.import." + voltageName), i, false);
             ITEM_EXPORT_BUS[i] = new MetaTileEntityItemBus(gregtechId("item_bus.export." + voltageName), i, true);
-            FLUID_IMPORT_HATCH[i] = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import." + voltageName), i, false);
-            FLUID_EXPORT_HATCH[i] = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.export." + voltageName), i, true);
+            FLUID_IMPORT_HATCH[i] = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import." + voltageName), i,
+                    false);
+            FLUID_EXPORT_HATCH[i] = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.export." + voltageName), i,
+                    true);
 
             registerMetaTileEntity(1150 + i, ITEM_IMPORT_BUS[i]);
             registerMetaTileEntity(1165 + i, ITEM_EXPORT_BUS[i]);
@@ -929,13 +930,15 @@ public class MetaTileEntities {
             NONUPLE_IMPORT_HATCH[i] = registerMetaTileEntity(1225 + i,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_9x." + voltageName), i, 9, false));
             SIXTEEN_IMPORT_HATCH[i] = registerMetaTileEntity(1240 + i,
-                    new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_16x." + voltageName), i, 16, false));
+                    new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_16x." + voltageName), i, 16,
+                            false));
             QUADRUPLE_EXPORT_HATCH[i] = registerMetaTileEntity(1255 + i,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_4x." + voltageName), i, 4, true));
             NONUPLE_EXPORT_HATCH[i] = registerMetaTileEntity(1270 + i,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x." + voltageName), i, 9, true));
             SIXTEEN_EXPORT_HATCH[i] = registerMetaTileEntity(1285 + i,
-                    new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_16x." + voltageName), i, 16, true));
+                    new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_16x." + voltageName), i, 16,
+                            true));
         }
 
         //1300-
@@ -957,9 +960,11 @@ public class MetaTileEntities {
             ENERGY_OUTPUT_HATCH_16A[i] = registerMetaTileEntity(1375 + i,
                     new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_16a." + voltageName), i, 16, true));
             SUBSTATION_ENERGY_INPUT_HATCH[i] = registerMetaTileEntity(1390 + i,
-                    new MetaTileEntitySubstationEnergyHatch(gregtechId("substation_hatch.input_64a." + voltageName), i, 64, false));
+                    new MetaTileEntitySubstationEnergyHatch(gregtechId("substation_hatch.input_64a." + voltageName), i,
+                            64, false));
             SUBSTATION_ENERGY_OUTPUT_HATCH[i] = registerMetaTileEntity(1405 + i,
-                    new MetaTileEntitySubstationEnergyHatch(gregtechId("substation_hatch.output_64a." + voltageName), i, 64, true));
+                    new MetaTileEntitySubstationEnergyHatch(gregtechId("substation_hatch.output_64a." + voltageName), i,
+                            64, true));
 
         }
 
@@ -1013,29 +1018,39 @@ public class MetaTileEntities {
             LASER_OUTPUT_HATCH_256[i] = registerMetaTileEntity(1540 + i,
                     new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_256a." + voltageName), true, v, 256));
             LASER_INPUT_HATCH_1024[i] = registerMetaTileEntity(1550 + i,
-                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_1024a." + voltageName), false, v, 1024));
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_1024a." + voltageName), false, v,
+                            1024));
             LASER_OUTPUT_HATCH_1024[i] = registerMetaTileEntity(1560 + i,
                     new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_1024a." + voltageName), true, v, 1024));
             LASER_INPUT_HATCH_4096[i] = registerMetaTileEntity(1570 + i,
-                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_4096a." + voltageName), false, v, 4096));
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_4096a." + voltageName), false, v,
+                            4096));
             LASER_OUTPUT_HATCH_4096[i] = registerMetaTileEntity(1580 + i,
                     new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_4096a." + voltageName), true, v, 4096));
             LASER_INPUT_HATCH_16384[i] = registerMetaTileEntity(1590 + i,
-                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_16384a." + voltageName), false, v, 16384));
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_16384a." + voltageName), false, v,
+                            16384));
             LASER_OUTPUT_HATCH_16384[i] = registerMetaTileEntity(1600 + i,
-                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_16384a." + voltageName), true, v, 16384));
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_16384a." + voltageName), true, v,
+                            16384));
             LASER_INPUT_HATCH_65536[i] = registerMetaTileEntity(1610 + i,
-                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_65536a." + voltageName), false, v, 65536));
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_65536a." + voltageName), false, v,
+                            65536));
             LASER_OUTPUT_HATCH_65536[i] = registerMetaTileEntity(1620 + i,
-                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_65536a." + voltageName), true, v, 65536));
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_65536a." + voltageName), true, v,
+                            65536));
             LASER_INPUT_HATCH_262144[i] = registerMetaTileEntity(1630 + i,
-                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_262144a." + voltageName), false, v, 262144));
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_262144a." + voltageName), false, v,
+                            262144));
             LASER_OUTPUT_HATCH_262144[i] = registerMetaTileEntity(1640 + i,
-                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_262144a." + voltageName), true, v, 262144));
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_262144a." + voltageName), true, v,
+                            262144));
             LASER_INPUT_HATCH_1048576[i] = registerMetaTileEntity(1650 + i,
-                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_1048576a." + voltageName), false, v, 1048576));
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_1048576a." + voltageName), false, v,
+                            1048576));
             LASER_OUTPUT_HATCH_1048576[i] = registerMetaTileEntity(1660 + i,
-                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_1048576a." + voltageName), true, v, 1048576));
+                    new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_1048576a." + voltageName), true, v,
+                            1048576));
         }
 
         // Maintenance Hatches, IDs 1700-1394
@@ -1086,7 +1101,6 @@ public class MetaTileEntities {
 
         RESERVOIR_HATCH = registerMetaTileEntity(1740, new MetaTileEntityReservoirHatch(gregtechId("reservoir_hatch")));
         MACHINE_HATCH = registerMetaTileEntity(1741, new MetaTileEntityMachineHatch(gregtechId("machine_hatch"), 2));
-
 
         // Rotor Holder, IDs 1750-1764
         for (int i = 0; i < ROTOR_HOLDER.length; i++) {
@@ -1192,7 +1206,6 @@ public class MetaTileEntities {
         CREATIVE_CHEST = registerMetaTileEntity(2015, new MetaTileEntityCreativeChest(gregtechId("creative_chest")));
         CREATIVE_TANK = registerMetaTileEntity(2016, new MetaTileEntityCreativeTank(gregtechId("creative_tank")));
 
-
         LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(2017,
                 new MetaTileEntityLDItemEndpoint(gregtechId("ld_item_endpoint")));
         LONG_DIST_FLUID_ENDPOINT = registerMetaTileEntity(2018,
@@ -1272,7 +1285,8 @@ public class MetaTileEntities {
         TUNGSTENSTEEL_DRUM = registerMetaTileEntity(2070,
                 new MetaTileEntityDrum(gregtechId("drum.tungstensteel"), Materials.TungstenSteel, 1024000));
         RHODIUM_PLATED_PALLADIUM_DRUM = MetaTileEntities.registerMetaTileEntity(2071,
-                new MetaTileEntityDrum(gregtechId("drum.rhodium_plated_palladium"), Materials.RhodiumPlatedPalladium, 2_048_000));
+                new MetaTileEntityDrum(gregtechId("drum.rhodium_plated_palladium"), Materials.RhodiumPlatedPalladium,
+                        2_048_000));
         NAQUADAH_ALLOY_DRUM = MetaTileEntities.registerMetaTileEntity(2072,
                 new MetaTileEntityDrum(gregtechId("drum.naquadah_alloy"), Materials.NaquadahAlloy, 4_096_000));
         DARMSTADTIUM_DRUM = MetaTileEntities.registerMetaTileEntity(2073,
@@ -1296,7 +1310,8 @@ public class MetaTileEntities {
         TUNGSTENSTEEL_CRATE = registerMetaTileEntity(2086,
                 new MetaTileEntityCrate(gregtechId("crate.tungstensteel"), Materials.TungstenSteel, 144, 16));
         RHODIUM_PLATED_PALLADIUM_CRATE = MetaTileEntities.registerMetaTileEntity(2087,
-                new MetaTileEntityCrate(gregtechId("crate.rhodium_plated_palladium"), Materials.RhodiumPlatedPalladium, 162, 18));
+                new MetaTileEntityCrate(gregtechId("crate.rhodium_plated_palladium"), Materials.RhodiumPlatedPalladium,
+                        162, 18));
         NAQUADAH_ALLOY_CRATE = MetaTileEntities.registerMetaTileEntity(2088,
                 new MetaTileEntityCrate(gregtechId("crate.naquadah_alloy"), Materials.NaquadahAlloy, 180, 20));
         DARMSTADTIUM_CRATE = MetaTileEntities.registerMetaTileEntity(2089,

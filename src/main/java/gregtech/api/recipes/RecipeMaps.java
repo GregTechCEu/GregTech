@@ -1173,9 +1173,9 @@ public final class RecipeMaps {
     @SuppressWarnings("unused")
     public static final RecipeMap<SimpleRecipeBuilder> MASS_FABRICATOR_RECIPES = new RecipeMapBuilder<>(
             "mass_fabricator", new SimpleRecipeBuilder())
-            .itemInputs(1)
+            .itemInputs(2)
             .fluidInputs(1)
-            .fluidOutputs(2)
+            .fluidOutputs(1)
             .uiBuilder(b -> b
                     .itemSlotOverlay(GTGuiTextures.ATOMIC_OVERLAY_1, false)
                     .fluidSlotOverlay(GTGuiTextures.ATOMIC_OVERLAY_2, false)
@@ -1350,9 +1350,9 @@ public final class RecipeMaps {
     @SuppressWarnings("unused")
     public static final RecipeMap<SimpleRecipeBuilder> REPLICATOR_RECIPES = new RecipeMapBuilder<>("replicator",
             new SimpleRecipeBuilder())
-            .itemInputs(1)
+            .itemInputs(2)
             .itemOutputs(1)
-            .fluidInputs(2)
+            .fluidInputs(3)
             .fluidOutputs(1)
             .uiBuilder(b -> b
                     .itemSlotOverlay(GTGuiTextures.DATA_ORB_OVERLAY, false)

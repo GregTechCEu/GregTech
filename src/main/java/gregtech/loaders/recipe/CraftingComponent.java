@@ -23,9 +23,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gregtech.api.GTValues.*;
+import static gregtech.api.unification.material.Materials.*;
 
 public class CraftingComponent {
 
+    public static final Map<BlastProperty.GasTier, FluidStack> EBF_GASES = new EnumMap<>(BlastProperty.GasTier.class);
     public static Component CIRCUIT;
     public static Component BETTER_CIRCUIT;
     public static Component PUMP;
@@ -70,8 +72,6 @@ public class CraftingComponent {
     public static Component POWER_COMPONENT;
     public static Component VOLTAGE_COIL;
     public static Component SPRING;
-
-    public static final Map<BlastProperty.GasTier, FluidStack> EBF_GASES = new EnumMap<>(BlastProperty.GasTier.class);
 
     static {
         EBF_GASES.put(BlastProperty.GasTier.LOW, Materials.Nitrogen.getFluid(1000));
@@ -158,7 +158,7 @@ public class CraftingComponent {
                 { 6, new UnificationEntry(OrePrefix.wireGtSingle, Materials.Osmium) },
                 { 7, new UnificationEntry(OrePrefix.wireGtSingle, Materials.Osmium) },
                 { 8, new UnificationEntry(OrePrefix.wireGtSingle, Materials.Osmium) },
-
+                { 9, new UnificationEntry(OrePrefix.wireGtSingle, Trinium) },
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         WIRE_QUAD = new Component(Stream.of(new Object[][] {
@@ -172,7 +172,7 @@ public class CraftingComponent {
                 { 6, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.NiobiumTitanium) },
                 { 7, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.VanadiumGallium) },
                 { 8, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.YttriumBariumCuprate) },
-
+                { 9, new UnificationEntry(OrePrefix.wireGtQuadruple, NaquadahAlloy) },
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         WIRE_OCT = new Component(Stream.of(new Object[][] {
@@ -186,11 +186,10 @@ public class CraftingComponent {
                 { 6, new UnificationEntry(OrePrefix.wireGtOctal, Materials.NiobiumTitanium) },
                 { 7, new UnificationEntry(OrePrefix.wireGtOctal, Materials.VanadiumGallium) },
                 { 8, new UnificationEntry(OrePrefix.wireGtOctal, Materials.YttriumBariumCuprate) },
-
+                { 9, new UnificationEntry(OrePrefix.wireGtOctal, NaquadahAlloy) },
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         WIRE_HEX = new Component(Stream.of(new Object[][] {
-
                 { 0, new UnificationEntry(OrePrefix.wireGtHex, Materials.Lead) },
                 { 1, new UnificationEntry(OrePrefix.wireGtHex, Materials.Tin) },
                 { 2, new UnificationEntry(OrePrefix.wireGtHex, Materials.Copper) },
@@ -200,7 +199,7 @@ public class CraftingComponent {
                 { 6, new UnificationEntry(OrePrefix.wireGtHex, Materials.NiobiumTitanium) },
                 { 7, new UnificationEntry(OrePrefix.wireGtHex, Materials.VanadiumGallium) },
                 { 8, new UnificationEntry(OrePrefix.wireGtHex, Materials.YttriumBariumCuprate) },
-
+                { 9, new UnificationEntry(OrePrefix.wireGtHex, NaquadahAlloy) },
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         CABLE = new Component(Stream.of(new Object[][] {
@@ -843,13 +842,12 @@ public class CraftingComponent {
         }
 
         /**
-         * appendIngredients will add onto the default GTCEu map of Crafting Components with the
-         * ingredients that are passed into the method. If an Entry is passed in that overlaps
-         * with a default entry, the passed entry will override the default GTCEu entry.
+         * appendIngredients will add onto the default GTCEu map of Crafting Components with the ingredients that are
+         * passed into the method. If an Entry is passed in that overlaps with a default entry, the passed entry will
+         * override the default GTCEu entry.
          * <p>
-         * An entry with the Key of "-1" will be the "fallback" value if no entry exists for the
-         * queried key. Any default value will be removed if ingredients are appended
-         * via this method.
+         * An entry with the Key of "-1" will be the "fallback" value if no entry exists for the queried key. Any
+         * default value will be removed if ingredients are appended via this method.
          *
          * @param newIngredients Map of <tier, ingredient> to append to the component type.
          */

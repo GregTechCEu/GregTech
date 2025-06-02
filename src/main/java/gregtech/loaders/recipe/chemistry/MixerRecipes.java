@@ -7,6 +7,7 @@ import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraftforge.fml.common.Loader;
 
 import static gregtech.api.GTValues.*;
+import static gregtech.api.recipes.RecipeMaps.CHEMICAL_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.MIXER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
@@ -122,7 +123,7 @@ public class MixerRecipes {
                 .output(dust, EnderPearl, 10)
                 .buildAndRegister();
 
-        MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[HV])
+        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[HV])
                 .fluidInputs(PolychlorinatedBiphenyl.getFluid(750))
                 .fluidInputs(DistilledWater.getFluid(250))
                 .fluidOutputs(PCBCoolant.getFluid(1000))

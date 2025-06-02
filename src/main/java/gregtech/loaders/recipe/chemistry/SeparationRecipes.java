@@ -408,10 +408,11 @@ public class SeparationRecipes {
                 .duration(150).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Sugar, 3)
-                .output(dust, Carbon)
-                .fluidOutputs(Water.getFluid(1000))
-                .duration(64).EUt(VA[LV]).buildAndRegister();
+                .input(dust, Sugar, 24)
+                .output(dust, Carbon,6)
+                .fluidOutputs(Hydrogen.getFluid(12000))
+                .fluidOutputs(Oxygen.getFluid(6000))
+                .duration(300).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Propane.getFluid(1000))

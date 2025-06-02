@@ -15,6 +15,7 @@ import gregtech.common.pipelike.laser.LaserPipeType;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Loader;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
@@ -22,11 +23,13 @@ import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
 import static gregtech.api.unification.material.MarkerMaterials.Tier;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.api.util.Mods.Names.GTQT_CORE;
 import static gregtech.common.blocks.MetaBlocks.*;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
 import static gtqt.api.util.MaterialHelper.*;
 import static gtqt.common.metatileentities.GTQTMetaTileEntities.DUAL_IMPORT_HATCH;
+import static net.minecraftforge.fml.common.Loader.isModLoaded;
 
 public class MetaTileEntityMachineRecipeLoader {
 
@@ -229,20 +232,22 @@ public class MetaTileEntityMachineRecipeLoader {
                         .EUt(VA[ZPM]))
                 .duration(800).EUt(VA[UV]).buildAndRegister();
 
-        ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(HULL[UHV])
-                .input(spring, Europium, 4)
-                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(circuit, Tier.UHV)
-                .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 2)
-                .fluidInputs(SodiumPotassium.getFluid(12000))
-                .fluidInputs(SolderingAlloy.getFluid(5760))
-                .output(ENERGY_OUTPUT_HATCH[UHV])
-                .stationResearch(b -> b
-                        .researchStack(ENERGY_OUTPUT_HATCH[UV].getStackForm())
-                        .CWUt(CWT[UV])
-                        .EUt(VA[UV]))
-                .duration(1000).EUt(VA[UHV]).buildAndRegister();
+        if (!Loader.isModLoaded(GTQT_CORE)) {
+            ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                    .input(HULL[UHV])
+                    .input(spring, Europium, 4)
+                    .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                    .input(circuit, Tier.UHV)
+                    .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 2)
+                    .fluidInputs(SodiumPotassium.getFluid(12000))
+                    .fluidInputs(SolderingAlloy.getFluid(5760))
+                    .output(ENERGY_OUTPUT_HATCH[UHV])
+                    .stationResearch(b -> b
+                            .researchStack(ENERGY_OUTPUT_HATCH[UV].getStackForm())
+                            .CWUt(CWT[UV])
+                            .EUt(VA[UV]))
+                    .duration(1000).EUt(VA[UHV]).buildAndRegister();
+        }
 
         // Energy Input Hatches
 
@@ -357,20 +362,22 @@ public class MetaTileEntityMachineRecipeLoader {
                         .EUt(VA[ZPM]))
                 .duration(800).EUt(VA[UV]).buildAndRegister();
 
-        ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(HULL[UHV])
-                .input(cableGtSingle, Europium, 4)
-                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(circuit, Tier.UHV)
-                .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 2)
-                .fluidInputs(SodiumPotassium.getFluid(12000))
-                .fluidInputs(SolderingAlloy.getFluid(5760))
-                .output(ENERGY_INPUT_HATCH[UHV])
-                .stationResearch(b -> b
-                        .researchStack(ENERGY_INPUT_HATCH[UV].getStackForm())
-                        .CWUt(CWT[UV])
-                        .EUt(VA[UV]))
-                .duration(1000).EUt(VA[UHV]).buildAndRegister();
+        if (!Loader.isModLoaded(GTQT_CORE)) {
+            ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                    .input(HULL[UHV])
+                    .input(cableGtSingle, Europium, 4)
+                    .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                    .input(circuit, Tier.UHV)
+                    .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 2)
+                    .fluidInputs(SodiumPotassium.getFluid(12000))
+                    .fluidInputs(SolderingAlloy.getFluid(5760))
+                    .output(ENERGY_INPUT_HATCH[UHV])
+                    .stationResearch(b -> b
+                            .researchStack(ENERGY_INPUT_HATCH[UV].getStackForm())
+                            .CWUt(CWT[UV])
+                            .EUt(VA[UV]))
+                    .duration(1000).EUt(VA[UHV]).buildAndRegister();
+        }
 
         // Power Transformers
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -707,7 +714,7 @@ public class MetaTileEntityMachineRecipeLoader {
         }
     }
 
-    private static void registerHatchBusRecipe(int tier, MetaTileEntity inputBus, MetaTileEntity outputBus,
+    public static void registerHatchBusRecipe(int tier, MetaTileEntity inputBus, MetaTileEntity outputBus,
                                                Object extraInput) {
         GTRecipeInput extra;
         if (extraInput instanceof ItemStack stack) {
