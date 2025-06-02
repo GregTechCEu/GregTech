@@ -200,4 +200,9 @@ public class WrappedFluidStack implements IAEFluidStack {
         result = 31 * result + (this.delegate.tag == null ? 0 : this.delegate.tag.hashCode());
         return result;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Wrapped: %s", delegate);
+    }
 }

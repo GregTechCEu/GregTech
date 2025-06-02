@@ -245,4 +245,9 @@ public class WrappedItemStack implements IAEItemStack {
     public void setCachedItemStack(ItemStack itemStack) {
         this.delegate = itemStack;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Wrapped: %s", delegate);
+    }
 }
