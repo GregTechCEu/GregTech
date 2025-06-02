@@ -3,6 +3,8 @@ package gtqt.api.util.wireless;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
@@ -35,6 +37,12 @@ public class NetworkDatabase extends WorldSavedData {
                     nodeTag.getString("name")
             );
             node.setEnergy(new BigInteger(nodeTag.getString("energy")));
+            node.setOpen(nodeTag.getBoolean("isOpen"));
+
+            NBTTagList machineList = nbt.getTagList("machines", 10);
+            for (NBTBase tagbase : machineList) {
+                node.addMachine(WorldBlockPos.fromNBT((NBTTagCompound) tagbase));
+            }
             networks.put(node.getNetworkID(), node);
         }
     }
@@ -49,6 +57,13 @@ public class NetworkDatabase extends WorldSavedData {
             nodeTag.setInteger("id", node.getNetworkID());
             nodeTag.setString("name", node.getNetworkName());
             nodeTag.setString("energy", node.getEnergy().toString());
+            nodeTag.setBoolean("isOpen", node.isOpen());
+
+            NBTTagList machineList = new NBTTagList();
+            for (WorldBlockPos wpos : node.machines) {
+                machineList.appendTag(wpos.toNBT());
+            }
+            nbt.setTag("machines", machineList);
             list.appendTag(nodeTag);
         }
         nbt.setTag("networks", list);

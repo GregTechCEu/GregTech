@@ -1356,7 +1356,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         CoverSaveHandler.readCoverNBT(data, this, covers::put);
         this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
 
-        if (data.hasKey("Owner"))
+        if (data.hasKey("OwnerMost"))
             this.owner = data.getUniqueId("Owner");
     }
 

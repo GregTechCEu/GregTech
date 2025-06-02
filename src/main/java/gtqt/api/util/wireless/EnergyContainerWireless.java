@@ -33,9 +33,25 @@ public class EnergyContainerWireless extends EnergyContainerHandler {
                 NetworkNode node = db.getNetwork(((MetaTileEntityWirelessEnergyHatch)metaTileEntity).WirelessId);
 
                 if (node == null) {
-                    NetworkManager.INSTANCE.createNetwork(world,metaTileEntity.getOwnerGT(),"test");
+                    NetworkManager.INSTANCE.createNetwork(world,metaTileEntity.getOwnerGT(),"无线网络");
                     db = NetworkDatabase.get(world);
                     node = db.getNetwork(((MetaTileEntityWirelessEnergyHatch)metaTileEntity).WirelessId);
+                }
+                {
+                    var machine = new WorldBlockPos(metaTileEntity.getWorld().provider.getDimension(),metaTileEntity.getPos());
+                    if(!node.machines.contains(machine))
+                    {
+                        node.machines.add(machine);
+                        NetworkDatabase finalDb = db;
+                        NetworkNode finalNode = node;
+                        db.getNetworks().keySet().forEach(x->{
+                            var del = finalDb.getNetwork(x);
+                            if(del.getNetworkID()!= finalNode.getNetworkID())
+                            {
+                                del.machines.remove(machine);
+                            }
+                        });
+                    }
                 }
                 //是动力舱 给网络增加能量
                 if(this.getInputVoltage()==0)
@@ -43,15 +59,22 @@ public class EnergyContainerWireless extends EnergyContainerHandler {
                     if(this.energyStored>0)
                     {
                         var b1 =BigInteger.valueOf(this.energyStored);
-                        long added = NetworkManager.INSTANCE.transferEnergy(world,node.getNetworkID(),b1);
-                        this.removeEnergy(added);
+                        if(node!=null)
+                        {
+                            long added = NetworkManager.INSTANCE.transferEnergy(world,node.getNetworkID(),b1);
+                            this.removeEnergy(added);
+                        }
+
                     }
                 }//是能源仓 抽取能量
                 else
                 {
                     long needEnergy = this.getEnergyCapacity()-this.getEnergyStored();
-                    long added = NetworkManager.INSTANCE.transferEnergy(world,node.getNetworkID(),BigInteger.valueOf(-needEnergy));
-                    this.addEnergy(Math.abs(added));
+                    if(node!=null)
+                    {
+                        long added = NetworkManager.INSTANCE.transferEnergy(world,node.getNetworkID(),BigInteger.valueOf(-needEnergy));
+                        this.addEnergy(Math.abs(added));
+                    }
                 }
 
             }
