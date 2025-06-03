@@ -1,6 +1,12 @@
 package gregtech.api.mui;
 
+import com.cleanroommc.modularui.value.sync.ModularSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
+
 import gregtech.api.GTValues;
+
+import gregtech.mixins.mui2.ModularSyncManagerAccessor;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
@@ -12,6 +18,8 @@ import com.cleanroommc.modularui.screen.ModularScreen;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
 @SideOnly(Side.CLIENT)
@@ -50,7 +58,14 @@ public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransfe
 
     @Override
     public IRecipeTransferError transferRecipe(IRecipeLayout recipeLayout, boolean maxTransfer, boolean simulate) {
+        List<PanelSyncManager> panelSyncManagers = collectPanelSyncManagers(getSyncManager());
+
         // Hide the + button by default if this recipe isn't valid for insertion
         return DEFAULT_ERROR;
+    }
+
+    private static List<PanelSyncManager> collectPanelSyncManagers(ModularSyncManager modularSyncManager) {
+        ((ModularSyncManagerAccessor) modularSyncManager).getPanelSyncManagers();
+        return null;
     }
 }

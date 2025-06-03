@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.Map;
 
-@Mixin(value = PanelSyncManager.class)
+@Mixin(value = PanelSyncManager.class, remap = false)
 public interface PanelSyncManagerAccessor {
 
     @Accessor()
