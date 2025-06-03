@@ -16,6 +16,8 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import gregtech.common.creativetab.GTCreativeTabs;
 
+import gregtech.integration.fluidlogged_api.IFluidloggableWrapper;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
@@ -47,7 +49,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class BlockFrame extends BlockMaterialBase {
+public abstract class BlockFrame extends BlockMaterialBase implements IFluidloggableWrapper {
 
     public static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
 
