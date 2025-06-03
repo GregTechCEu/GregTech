@@ -10,7 +10,8 @@
   "mixins": [
     "ModularPanelMixin",
     "ModularSyncManagerAccessor",
-    "PrintWidgetTreeMixin"
+    "PanelSyncHandlerAccessor",
+    "PanelSyncManagerAccessor"
   ],
   "client": [
     "LangKeyMixin"

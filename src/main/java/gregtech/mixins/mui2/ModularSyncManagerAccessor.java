@@ -13,4 +13,7 @@ public interface ModularSyncManagerAccessor {
 
     @Accessor(value = "panelSyncManagerMap")
     Map<String, PanelSyncManager> getPanelSyncManagers();
+
+    @Accessor(value = "mainPSM")
+    PanelSyncManager getMainPanelSyncManager();
 }

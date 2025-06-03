@@ -293,10 +293,11 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
     }
 
     protected ModularPanel buildSettingsPopup(PanelSyncManager syncManager, IPanelHandler syncHandler) {
-        IPanelHandler secondPopup = syncManager.panel("secondPopup", (syncManager1, syncHandler1) ->
-                GTGuis.createPopupPanel("secondPopupPanel", 100, 50)
+        IPanelHandler secondPopup = syncManager.panel("secondPopup",
+                (syncManager1, syncHandler1) -> GTGuis.createPopupPanel("secondPopupPanel", 100, 50)
                         .child(IKey.str("Hello, World!")
-                                .asWidget()),true);
+                                .asWidget()),
+                true);
 
         IntSyncValue refreshRateSync = new IntSyncValue(this::getRefreshRate, this::setRefreshRate);
 
