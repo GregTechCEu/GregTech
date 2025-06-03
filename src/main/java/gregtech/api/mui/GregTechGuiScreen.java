@@ -82,11 +82,11 @@ public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransfe
 
         for (SyncHandler syncHandler : panelToSyncMap.get(getPanelManager().getTopMostPanel().getName())) {
             if (syncHandler instanceof IJEIRecipeReceiver recipeReceiver) {
-                recipeReceiver.receiveRecipe(recipeLayout, maxTransfer, simulate);
+                return recipeReceiver.receiveRecipe(recipeLayout, maxTransfer, simulate);
             }
         }
 
-        // Hide the + button by default if this recipe isn't valid for insertion
+        // Hide the + button by default if no recipe receiver was found.
         return DEFAULT_ERROR;
     }
 
@@ -116,10 +116,10 @@ public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransfe
     }
 
     private static boolean hasSyncManager(PanelSyncHandler panelSyncHandler) {
-        return ((PanelSyncHandlerAccessor) panelSyncHandler).getPanelSyncManager() != null;
+        return ((PanelSyncHandlerAccessor) (Object) panelSyncHandler).getPanelSyncManager() != null;
     }
 
     private static PanelSyncManager getPanelSyncManager(PanelSyncHandler panelSyncHandler) {
-        return ((PanelSyncHandlerAccessor) panelSyncHandler).getPanelSyncManager();
+        return ((PanelSyncHandlerAccessor) (Object) panelSyncHandler).getPanelSyncManager();
     }
 }
