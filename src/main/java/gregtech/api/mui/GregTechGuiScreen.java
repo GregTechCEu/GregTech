@@ -31,7 +31,7 @@ import java.util.Map;
 @SideOnly(Side.CLIENT)
 public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransferHandler {
 
-    public static final IRecipeTransferError DEFAULT_ERROR = new IRecipeTransferError() {
+    public static final IRecipeTransferError DEFAULT_JEI_ERROR = new IRecipeTransferError() {
 
         @Override
         public @NotNull Type getType() {
@@ -87,7 +87,7 @@ public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransfe
         }
 
         // Hide the + button by default if no recipe receiver was found.
-        return DEFAULT_ERROR;
+        return DEFAULT_JEI_ERROR;
     }
 
     private static boolean hasSubPanels(PanelSyncManager panelSyncManager) {

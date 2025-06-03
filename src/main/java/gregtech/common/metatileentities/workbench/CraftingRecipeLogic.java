@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.workbench;
 
 import gregtech.api.items.toolitem.ItemGTToolbelt;
+import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.mui.IJEIRecipeReceiver;
 import gregtech.api.mui.sync.PagedWidgetSyncHandler;
 import gregtech.api.util.DummyContainer;
@@ -450,6 +451,10 @@ public class CraftingRecipeLogic extends SyncHandler implements IJEIRecipeReceiv
     @Override
     public IRecipeTransferError receiveRecipe(@NotNull IRecipeLayout recipeLayout, boolean maxTransfer,
                                               boolean simulate) {
+        if (!recipeLayout.getRecipeCategory().getUid().equals("minecraft.crafting")) {
+            return GregTechGuiScreen.DEFAULT_JEI_ERROR;
+        }
+
         if (!simulate) {
             // todo highlighting in JEI?
             return null;
