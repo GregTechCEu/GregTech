@@ -1,11 +1,11 @@
 package gregtech.api.util;
 
+import gregtech.mixins.mui2.PanelSyncHandlerAccessor;
+import gregtech.mixins.mui2.PanelSyncManagerAccessor;
+
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
-
-import gregtech.mixins.mui2.PanelSyncHandlerAccessor;
-import gregtech.mixins.mui2.PanelSyncManagerAccessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +16,7 @@ public class MUIUtil {
 
     /**
      * Checks if the {@link PanelSyncManager} has any sub panels.
+     * 
      * @param panelSyncManager the panel sync manager to check
      * @return if it has sub panels
      */
@@ -25,6 +26,7 @@ public class MUIUtil {
 
     /**
      * Retrieves all sub panel {@link PanelSyncHandler}s from a {@link PanelSyncManager}.
+     * 
      * @param panelSyncManager the panel sync manager to gather the sub panel handlers from
      * @return a list of all sub panel handlers
      */
@@ -47,6 +49,7 @@ public class MUIUtil {
 
     /**
      * Gets all of the {@link SyncHandler}s from a {@link PanelSyncManager}.
+     * 
      * @param panelSyncManager the panel sync manager to gather the sync handlers from
      * @return a list of all the sync handlers
      */
@@ -56,6 +59,7 @@ public class MUIUtil {
 
     /**
      * Checks if a {@link PanelSyncHandler} has a {@link PanelSyncManager}.
+     * 
      * @param panelSyncHandler the panel sync handler to check
      * @return if the panel sync handler has a panel sync manager
      */
@@ -65,6 +69,7 @@ public class MUIUtil {
 
     /**
      * Gets the {@link PanelSyncManager} from a {@link PanelSyncHandler}.
+     * 
      * @param panelSyncHandler the panel sync handler to get the panel sync manager from
      * @return the panel sync manager of the panel sync handler
      */

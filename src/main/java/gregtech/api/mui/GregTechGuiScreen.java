@@ -3,8 +3,6 @@ package gregtech.api.mui;
 import gregtech.api.GTValues;
 import gregtech.api.util.MUIUtil;
 import gregtech.mixins.mui2.ModularSyncManagerAccessor;
-import gregtech.mixins.mui2.PanelSyncHandlerAccessor;
-import gregtech.mixins.mui2.PanelSyncManagerAccessor;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -20,8 +18,6 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
