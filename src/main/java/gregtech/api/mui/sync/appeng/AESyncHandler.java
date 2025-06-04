@@ -1,6 +1,7 @@
 package gregtech.api.mui.sync.appeng;
 
 import gregtech.api.mui.IJEIRecipeReceiver;
+import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 
 import net.minecraft.network.PacketBuffer;
@@ -173,7 +174,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
 
     public int getConfigAmount(int index) {
         T config = getConfig(index);
-        return config == null ? 0 : (int) config.getStackSize();
+        return config == null ? 0 : GTUtility.safeCastLongToInt(config.getStackSize());
     }
 
     @SideOnly(Side.CLIENT)
