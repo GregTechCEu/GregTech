@@ -1,5 +1,7 @@
 package gregtech.api.mui.sync.appeng;
 
+import gregtech.api.util.GTUtility;
+import gregtech.api.util.JEIUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
@@ -15,6 +17,9 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
 
@@ -50,7 +55,23 @@ public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
     @Override
     public IRecipeTransferError receiveRecipe(@NotNull IRecipeLayout recipeLayout, boolean maxTransfer,
                                               boolean simulate) {
-        return DEFAULT_JEI_ERROR;
+        if (simulate) return null;
+
+        List<FluidStack> originalFluidStacks = JEIUtil.getDisplayedInputFluidStacks(recipeLayout.getFluidStacks());
+        List<FluidStack> fluidInputs = new ArrayList<>(originalFluidStacks.size());
+        originalFluidStacks.forEach(stack -> {
+            if (stack != null) {
+                fluidInputs.add(stack.copy());
+            }
+        });
+        GTUtility.collapseFluidList(fluidInputs);
+
+        for (int index = 0; index < slots.length; index++) {
+            FluidStack stackToSet = index >= fluidInputs.size() ? null : fluidInputs.get(index);
+            setConfig(index, stackToSet);
+        }
+
+        return null;
     }
 
     @SideOnly(Side.CLIENT)

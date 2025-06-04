@@ -1026,4 +1026,62 @@ public class GTUtility {
     public static void collapseItemList(List<ItemStack> stacks) {
         collapseItemList(stacks, Integer.MAX_VALUE);
     }
+
+    /**
+     * Attempts to collapse a {@link List} of {@link FluidStack}s by combining similar stacks downwards (towards index
+     * 0). <br>
+     * WARNING: Mutates original fluid stacks, you might want to make a new list with copies!
+     *
+     * @param stacks       the list to collapse
+     * @param maxStackSize the max stack size the to-be combined stack sizes can be
+     */
+    public static void collapseFluidList(@NotNull List<FluidStack> stacks,
+                                         @Range(from = 1, to = Integer.MAX_VALUE) int maxStackSize) {
+        // TODO: replace with FluidStackHashStrategy once the MUI2 Multi PR merges
+        Hash.Strategy<FluidStack> stackStrategy = new Hash.Strategy<>() {
+
+            @Override
+            public int hashCode(FluidStack o) {
+                // don't need to do this since I'll only call equals
+                return 0;
+            }
+
+            @Override
+            public boolean equals(FluidStack a, FluidStack b) {
+                if (a == null) return b == null;
+                if (b == null) return false;
+
+                return a.getFluid() == b.getFluid() && a.tag.equals(b.tag);
+            }
+        };
+
+        for (int checkingSlot = 0; checkingSlot < stacks.size(); checkingSlot++) {
+            FluidStack stackToCheck = stacks.get(checkingSlot);
+            if (stackToCheck.amount >= maxStackSize) continue;
+
+            for (int collapsingSlot = stacks.size() - 1; collapsingSlot > checkingSlot; collapsingSlot--) {
+                FluidStack collapsingStack = stacks.get(collapsingSlot);
+                if (collapsingStack.amount < 1) continue;
+
+                if (stackStrategy.equals(stackToCheck, collapsingStack)) {
+                    final int checkingSize = stackToCheck.amount;
+                    final int collapsingSize = collapsingStack.amount;
+
+                    final int maxFinalSize = Math.min(maxStackSize, checkingSize + collapsingSize);
+                    final int toTransfer = maxFinalSize - checkingSize;
+
+                    stackToCheck.amount += toTransfer;
+                    collapsingStack.amount -= toTransfer;
+                }
+            }
+        }
+    }
+
+    /**
+     * The same as {@link #collapseFluidList(List, int)} but has a stack size limit of {@link Integer#MAX_VALUE} <br>
+     * WARNING: Mutates original fluid stacks, you might want to make a new list with copies!
+     */
+    public static void collapseFluidList(List<FluidStack> stacks) {
+        collapseFluidList(stacks, Integer.MAX_VALUE);
+    }
 }
