@@ -59,7 +59,11 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
 
         List<ItemStack> originalItemInputs = JEIUtil.getDisplayedInputItemStacks(recipeLayout.getItemStacks());
         List<ItemStack> itemInputs = new ArrayList<>(originalItemInputs.size());
-        originalItemInputs.forEach(stack -> itemInputs.add(stack.copy()));
+        originalItemInputs.forEach(stack -> {
+            if (!stack.isEmpty()) {
+                itemInputs.add(stack.copy());
+            }
+        });
         GTUtility.collapseItemList(itemInputs);
 
         for (int index = 0; index < slots.length; index++) {
