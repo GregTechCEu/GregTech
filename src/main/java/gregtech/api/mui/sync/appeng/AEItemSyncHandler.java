@@ -42,7 +42,7 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
 
     @Override
     protected @NotNull IByteBufAdapter<IAEItemStack> initializeByteBufAdapter() {
-        return IAEStackByteBufAdapter.wrappedItemStackAdapter;
+        return AEStackByteBufAdapter.wrappedItemStackAdapter;
     }
 
     @Override

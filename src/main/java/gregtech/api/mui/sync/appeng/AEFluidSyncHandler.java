@@ -42,7 +42,7 @@ public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
 
     @Override
     protected @NotNull IByteBufAdapter<IAEFluidStack> initializeByteBufAdapter() {
-        return IAEStackByteBufAdapter.wrappedFluidStackAdapter;
+        return AEStackByteBufAdapter.wrappedFluidStackAdapter;
     }
 
     @Override

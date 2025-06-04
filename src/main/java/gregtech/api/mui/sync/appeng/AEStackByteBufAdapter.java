@@ -16,11 +16,11 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.Objects;
 
-class IAEStackByteBufAdapter<T extends IAEStack<T>> implements IByteBufAdapter<T> {
+public class AEStackByteBufAdapter<T extends IAEStack<T>> implements IByteBufAdapter<T> {
 
-    public static final IAEStackByteBufAdapter<IAEItemStack> wrappedItemStackAdapter = specificDeserializer(
+    public static final AEStackByteBufAdapter<IAEItemStack> wrappedItemStackAdapter = specificDeserializer(
             WrappedItemStack::fromPacket);
-    public static final IAEStackByteBufAdapter<IAEFluidStack> wrappedFluidStackAdapter = specificDeserializer(
+    public static final AEStackByteBufAdapter<IAEFluidStack> wrappedFluidStackAdapter = specificDeserializer(
             WrappedFluidStack::fromPacket);
 
     @NotNull
@@ -28,20 +28,20 @@ class IAEStackByteBufAdapter<T extends IAEStack<T>> implements IByteBufAdapter<T
     @NotNull
     private final IByteBufDeserializer<T> deserializer;
 
-    private IAEStackByteBufAdapter(@NotNull IByteBufSerializer<T> serializer,
-                                   @NotNull IByteBufDeserializer<T> deserializer) {
+    private AEStackByteBufAdapter(@NotNull IByteBufSerializer<T> serializer,
+                                  @NotNull IByteBufDeserializer<T> deserializer) {
         this.serializer = serializer;
         this.deserializer = deserializer;
     }
 
     public static <
-            T extends IAEStack<T>> IAEStackByteBufAdapter<T> createAdapter(@NotNull IByteBufSerializer<T> serializer,
-                                                                           @NotNull IByteBufDeserializer<T> deserializer) {
-        return new IAEStackByteBufAdapter<>(serializer, deserializer);
+            T extends IAEStack<T>> AEStackByteBufAdapter<T> createAdapter(@NotNull IByteBufSerializer<T> serializer,
+                                                                          @NotNull IByteBufDeserializer<T> deserializer) {
+        return new AEStackByteBufAdapter<>(serializer, deserializer);
     }
 
     public static <
-            T extends IAEStack<T>> IAEStackByteBufAdapter<T> specificDeserializer(@NotNull IByteBufDeserializer<T> deserializer) {
+            T extends IAEStack<T>> AEStackByteBufAdapter<T> specificDeserializer(@NotNull IByteBufDeserializer<T> deserializer) {
         return createAdapter((buf, stack) -> stack.writeToPacket(buf), deserializer);
     }
 
