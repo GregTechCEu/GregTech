@@ -1,6 +1,7 @@
 package gregtech.api.mui;
 
 import gregtech.api.GTValues;
+import gregtech.api.util.MUIUtil;
 import gregtech.mixins.mui2.ModularSyncManagerAccessor;
 import gregtech.mixins.mui2.PanelSyncHandlerAccessor;
 import gregtech.mixins.mui2.PanelSyncManagerAccessor;
@@ -55,12 +56,12 @@ public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransfe
         panels.add(((ModularSyncManagerAccessor) getSyncManager()).getMainPanelSyncManager());
         while (!panels.isEmpty()) {
             PanelSyncManager psm = panels.removeFirst();
-            panelToSyncMap.put(psm.getPanelName(), new ArrayList<>(getSyncHandlers(psm)));
+            panelToSyncMap.put(psm.getPanelName(), new ArrayList<>(MUIUtil.getSyncHandlers(psm)));
 
-            if (hasSubPanels(psm)) {
-                for (PanelSyncHandler psh : getSubPanels(psm)) {
-                    if (hasSyncManager(psh)) {
-                        panels.add(getPanelSyncManager(psh));
+            if (MUIUtil.hasSubPanels(psm)) {
+                for (PanelSyncHandler psh : MUIUtil.getSubPanels(psm)) {
+                    if (MUIUtil.hasSyncManager(psh)) {
+                        panels.add(MUIUtil.getPanelSyncManager(psh));
                     }
                 }
             }
@@ -74,38 +75,5 @@ public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransfe
 
         // Hide the + button by default if no recipe receiver was found.
         return DEFAULT_JEI_ERROR;
-    }
-
-    private static boolean hasSubPanels(PanelSyncManager panelSyncManager) {
-        return !((PanelSyncManagerAccessor) panelSyncManager).getSubPanels().isEmpty();
-    }
-
-    private static List<PanelSyncHandler> getSubPanels(PanelSyncManager panelSyncManager) {
-        if (!hasSubPanels(panelSyncManager)) {
-            return Collections.emptyList();
-        }
-
-        List<PanelSyncHandler> subPanels = new ArrayList<>();
-        Collection<SyncHandler> syncHandlers = ((PanelSyncManagerAccessor) panelSyncManager).getSubPanels().values();
-
-        for (SyncHandler syncHandler : syncHandlers) {
-            if (syncHandler instanceof PanelSyncHandler panelSyncHandler) {
-                subPanels.add(panelSyncHandler);
-            }
-        }
-
-        return subPanels;
-    }
-
-    private static Collection<SyncHandler> getSyncHandlers(PanelSyncManager panelSyncManager) {
-        return ((PanelSyncManagerAccessor) panelSyncManager).getSyncHandlers().values();
-    }
-
-    private static boolean hasSyncManager(PanelSyncHandler panelSyncHandler) {
-        return ((PanelSyncHandlerAccessor) (Object) panelSyncHandler).getPanelSyncManager() != null;
-    }
-
-    private static PanelSyncManager getPanelSyncManager(PanelSyncHandler panelSyncHandler) {
-        return ((PanelSyncHandlerAccessor) (Object) panelSyncHandler).getPanelSyncManager();
     }
 }
