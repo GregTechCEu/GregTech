@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
 import appeng.api.storage.data.IAEItemStack;
-import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import com.cleanroommc.modularui.screen.RichTooltip;
@@ -23,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiGhostIngredientSlot<ItemStack> {
 
@@ -126,32 +124,5 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
     protected @NotNull AEStackPreviewWidget<IAEItemStack> createPopupDrawable() {
         return new AEItemStackPreviewWidget(() -> getSyncHandler().getConfig(index))
                 .background(GTGuiTextures.SLOT);
-    }
-
-    private static class AEItemStackPreviewWidget extends AEStackPreviewWidget<IAEItemStack> {
-
-        public AEItemStackPreviewWidget(@NotNull Supplier<IAEItemStack> stackToDraw) {
-            super(stackToDraw);
-        }
-
-        @Override
-        protected void buildTooltip(@NotNull RichTooltip tooltip) {
-            if (stackToDraw.get() instanceof WrappedItemStack wrappedItemStack) {
-                tooltip.addFromItem(wrappedItemStack.getDefinition());
-            }
-        }
-
-        @Override
-        public void draw(@Nullable IAEItemStack stackToDraw, int x, int y, int width, int height) {
-            if (stackToDraw instanceof WrappedItemStack wrappedItemStack) {
-                GuiDraw.drawItem(wrappedItemStack.getDefinition(), x, y, width, height);
-            }
-        }
-
-        @Override
-        public @Nullable Object getIngredient() {
-            IAEItemStack stack = stackToDraw.get();
-            return stack == null ? null : stack.createItemStack();
-        }
     }
 }

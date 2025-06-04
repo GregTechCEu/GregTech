@@ -16,7 +16,6 @@ import net.minecraftforge.fluids.FluidUtil;
 
 import appeng.api.storage.data.IAEFluidStack;
 import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import com.cleanroommc.modularui.screen.RichTooltip;
@@ -27,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
                                implements Interactable, JeiGhostIngredientSlot<FluidStack> {
@@ -128,32 +126,5 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
     protected @NotNull AEStackPreviewWidget<IAEFluidStack> createPopupDrawable() {
         return new AEFluidStackPreviewWidget(() -> getSyncHandler().getConfig(index))
                 .background(GTGuiTextures.FLUID_SLOT);
-    }
-
-    private static class AEFluidStackPreviewWidget extends AEStackPreviewWidget<IAEFluidStack> {
-
-        public AEFluidStackPreviewWidget(@NotNull Supplier<IAEFluidStack> stackToDraw) {
-            super(stackToDraw);
-        }
-
-        @Override
-        protected void buildTooltip(@NotNull RichTooltip tooltip) {
-            if (stackToDraw.get() instanceof WrappedFluidStack wrappedFluidStack) {
-                KeyUtil.fluidInfo(wrappedFluidStack.getDelegate(), tooltip, false, true, false);
-            }
-        }
-
-        @Override
-        public void draw(@Nullable IAEFluidStack stackToDraw, int x, int y, int width, int height) {
-            if (stackToDraw instanceof WrappedFluidStack wrappedFluidStack) {
-                GuiDraw.drawFluidTexture(wrappedFluidStack.getDelegate(), x, y, width, height, 0.0f);
-            }
-        }
-
-        @Override
-        public @Nullable Object getIngredient() {
-            IAEFluidStack stack = stackToDraw.get();
-            return stack == null ? null : stack.getFluidStack();
-        }
     }
 }
