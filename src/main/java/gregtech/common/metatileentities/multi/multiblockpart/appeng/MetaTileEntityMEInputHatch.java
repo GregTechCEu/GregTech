@@ -70,7 +70,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
     public static final String FLUID_BUFFER_TAG = "FluidTanks";
     public static final String WORKING_TAG = "WorkingEnabled";
 
-    private final static int CONFIG_SIZE = 16;
+    public final static int CONFIG_SIZE = 16;
     protected ExportOnlyAEFluidList aeFluidHandler;
 
     private boolean workingEnabled = true;

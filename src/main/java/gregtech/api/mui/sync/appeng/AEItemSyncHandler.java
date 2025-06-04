@@ -1,5 +1,7 @@
 package gregtech.api.mui.sync.appeng;
 
+import gregtech.api.util.GTUtility;
+import gregtech.api.util.JEIUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
@@ -11,8 +13,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import appeng.api.storage.data.IAEItemStack;
 import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
+import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
 
@@ -43,6 +50,23 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
         if (stack == null || stack.getDefinition().isEmpty()) return true;
         if (!isStocking) return true;
         return !itemList.hasStackInConfig(stack.getDefinition(), true);
+    }
+
+    @Override
+    public IRecipeTransferError receiveRecipe(@NotNull IRecipeLayout recipeLayout, boolean maxTransfer,
+                                              boolean simulate) {
+        if (simulate) return null;
+
+        List<ItemStack> originalItemInputs = JEIUtil.getDisplayedInputItemStacks(recipeLayout.getItemStacks());
+        List<ItemStack> itemInputs = new ArrayList<>(originalItemInputs.size());
+        originalItemInputs.forEach(stack -> itemInputs.add(stack.copy()));
+        GTUtility.collapseItemList(itemInputs);
+
+        for (int index = 0; index < itemInputs.size(); index++) {
+            setConfig(index, itemInputs.get(index));
+        }
+
+        return null;
     }
 
     @SideOnly(Side.CLIENT)

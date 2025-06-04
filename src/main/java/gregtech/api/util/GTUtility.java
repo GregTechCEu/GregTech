@@ -56,6 +56,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -982,5 +983,43 @@ public class GTUtility {
             return null;
         }
         return map.get(key.toWildcard());
+    }
+
+    /**
+     * Attempts to collapse a {@link List} of {@link ItemStack}s by combining similar stacks downwards (towards index
+     * 0). <br>
+     * WARNING: Mutates original item stacks, you might want to make a new list with copies!
+     * 
+     * @param stacks       the list to collapse
+     * @param maxStackSize the max stack size the to-be combined stack sizes can be
+     */
+    public static void collapseItemList(@NotNull List<ItemStack> stacks,
+                                        @Range(from = 1, to = Integer.MAX_VALUE) int maxStackSize) {
+        Hash.Strategy<ItemStack> stackStrategy = ItemStackHashStrategy.comparingAllButCount();
+
+        for (int index = 1; index < stacks.size(); index++) {
+            ItemStack collapsingStack = stacks.get(index);
+            if (collapsingStack.isEmpty() || collapsingStack.getCount() >= maxStackSize) continue;
+
+            for (int checkingSlot = 0; checkingSlot < index; checkingSlot++) {
+                ItemStack stackToCheck = stacks.get(checkingSlot);
+                if (stackStrategy.equals(stackToCheck, collapsingStack)) {
+                    int collapsingStackSize = collapsingStack.getCount();
+                    int finalSize = Math.min(stackToCheck.getCount() + collapsingStackSize, maxStackSize);
+                    int toTransfer = finalSize - collapsingStackSize;
+
+                    stackToCheck.grow(toTransfer);
+                    collapsingStack.grow(-toTransfer);
+                }
+            }
+        }
+    }
+
+    /**
+     * The same as {@link #collapseItemList(List, int)} but has a stack size limit of {@link Integer#MAX_VALUE} <br>
+     * WARNING: Mutates original item stacks, you might want to make a new list with copies!
+     */
+    public static void collapseItemList(List<ItemStack> stacks) {
+        collapseItemList(stacks, Integer.MAX_VALUE);
     }
 }

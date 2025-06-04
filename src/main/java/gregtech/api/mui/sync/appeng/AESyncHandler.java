@@ -1,5 +1,6 @@
 package gregtech.api.mui.sync.appeng;
 
+import gregtech.api.mui.IJEIRecipeReceiver;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 
 import net.minecraft.network.PacketBuffer;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler {
+public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler implements IJEIRecipeReceiver {
 
     public static final int slotSyncID = 0;
     public static final int setConfigID = 1;

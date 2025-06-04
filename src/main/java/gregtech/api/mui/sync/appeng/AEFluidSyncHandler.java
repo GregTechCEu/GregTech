@@ -11,6 +11,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import appeng.api.storage.data.IAEFluidStack;
 import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
+import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +45,12 @@ public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
         if (stack == null) return true;
         if (!isStocking) return true;
         return !fluidList.hasStackInConfig(((WrappedFluidStack) stack).getDelegate(), true);
+    }
+
+    @Override
+    public IRecipeTransferError receiveRecipe(@NotNull IRecipeLayout recipeLayout, boolean maxTransfer,
+                                              boolean simulate) {
+        return DEFAULT_JEI_ERROR;
     }
 
     @SideOnly(Side.CLIENT)
