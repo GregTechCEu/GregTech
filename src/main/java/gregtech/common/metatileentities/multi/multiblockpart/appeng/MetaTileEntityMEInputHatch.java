@@ -35,7 +35,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.IFluidTank;
 
-import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.channels.IFluidStorageChannel;
@@ -62,7 +61,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelPart<IAEFluidStack>
                                         implements IMultiblockAbilityPart<IFluidTank>, IDataStickIntractable {
@@ -250,9 +248,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
 
     protected ModularPanel buildSettingsPopup(PanelSyncManager syncManager, IPanelHandler syncHandler) {
         IntSyncValue refreshRateSync = new IntSyncValue(this::getRefreshRate, this::setRefreshRate);
-
-        Optional<ItemStack> meControllerItem = AEApi.instance().definitions().blocks().controller().maybeStack(1);
-        ItemDrawable meControllerDrawable = new ItemDrawable(meControllerItem.orElse(ItemStack.EMPTY));
+        ItemDrawable meControllerDrawable = new ItemDrawable(getStackForm());
 
         final int width = 110;
         return GTGuis.createPopupPanel("settings", width, getSettingsPopupHeight())

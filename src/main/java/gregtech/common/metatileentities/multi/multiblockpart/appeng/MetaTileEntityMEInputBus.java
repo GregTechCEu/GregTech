@@ -43,7 +43,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.channels.IItemStorageChannel;
@@ -72,7 +71,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPart<IAEItemStack>
                                       implements IMultiblockAbilityPart<IItemHandlerModifiable>,
@@ -294,9 +292,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
 
     protected ModularPanel buildSettingsPopup(PanelSyncManager syncManager, IPanelHandler syncHandler) {
         IntSyncValue refreshRateSync = new IntSyncValue(this::getRefreshRate, this::setRefreshRate);
-
-        Optional<ItemStack> meControllerItem = AEApi.instance().definitions().blocks().controller().maybeStack(1);
-        ItemDrawable meControllerDrawable = new ItemDrawable(meControllerItem.orElse(ItemStack.EMPTY));
+        ItemDrawable meControllerDrawable = new ItemDrawable(getStackForm());
 
         return GTGuis.createPopupPanel("settings", 110, getSettingsPopupHeight())
                 .child(Flow.row()
