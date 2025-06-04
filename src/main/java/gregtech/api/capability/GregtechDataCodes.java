@@ -194,8 +194,6 @@ public class GregtechDataCodes {
     // ME Parts
     public static final int UPDATE_AUTO_PULL = assignId();
     public static final int UPDATE_ONLINE_STATUS = assignId();
-    public static final int UPDATE_REFRESH_RATE = assignId();
-    public static final int UPDATE_MINIMUM_STOCK = assignId();
 
     // Everything below MUST be last in the class!
     public static final Int2ObjectMap<String> NAMES = new Int2ObjectArrayMap<>();
