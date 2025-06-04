@@ -62,8 +62,9 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
         originalItemInputs.forEach(stack -> itemInputs.add(stack.copy()));
         GTUtility.collapseItemList(itemInputs);
 
-        for (int index = 0; index < itemInputs.size(); index++) {
-            setConfig(index, itemInputs.get(index));
+        for (int index = 0; index < slots.length; index++) {
+            ItemStack stackToSet = index >= itemInputs.size() ? null : itemInputs.get(index);
+            setConfig(index, stackToSet);
         }
 
         return null;
