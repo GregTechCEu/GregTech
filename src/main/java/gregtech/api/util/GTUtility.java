@@ -991,7 +991,7 @@ public class GTUtility {
      * WARNING: Mutates original item stacks, you might want to make a new list with copies!
      * 
      * @param stacks       the list to collapse
-     * @param maxStackSize the max stack size the to-be combined stack sizes can be
+     * @param maxStackSize the max stack size of the to-be combined stack
      */
     public static void collapseItemList(@NotNull List<ItemStack> stacks,
                                         @Range(from = 1, to = Integer.MAX_VALUE) int maxStackSize) {
@@ -1033,7 +1033,7 @@ public class GTUtility {
      * WARNING: Mutates original fluid stacks, you might want to make a new list with copies!
      *
      * @param stacks       the list to collapse
-     * @param maxStackSize the max stack size the to-be combined stack sizes can be
+     * @param maxStackSize the max stack size of the to-be combined stack
      */
     public static void collapseFluidList(@NotNull List<FluidStack> stacks,
                                          @Range(from = 1, to = Integer.MAX_VALUE) int maxStackSize) {
