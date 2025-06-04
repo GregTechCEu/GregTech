@@ -997,19 +997,23 @@ public class GTUtility {
                                         @Range(from = 1, to = Integer.MAX_VALUE) int maxStackSize) {
         Hash.Strategy<ItemStack> stackStrategy = ItemStackHashStrategy.comparingAllButCount();
 
-        for (int index = 1; index < stacks.size(); index++) {
-            ItemStack collapsingStack = stacks.get(index);
-            if (collapsingStack.isEmpty() || collapsingStack.getCount() >= maxStackSize) continue;
+        for (int checkingSlot = 0; checkingSlot < stacks.size(); checkingSlot++) {
+            ItemStack stackToCheck = stacks.get(checkingSlot);
+            if (stackToCheck.getCount() >= maxStackSize) continue;
 
-            for (int checkingSlot = 0; checkingSlot < index; checkingSlot++) {
-                ItemStack stackToCheck = stacks.get(checkingSlot);
+            for (int collapsingSlot = stacks.size() - 1; collapsingSlot > checkingSlot; collapsingSlot--) {
+                ItemStack collapsingStack = stacks.get(collapsingSlot);
+                if (collapsingStack.isEmpty()) continue;
+
                 if (stackStrategy.equals(stackToCheck, collapsingStack)) {
-                    int collapsingStackSize = collapsingStack.getCount();
-                    int finalSize = Math.min(stackToCheck.getCount() + collapsingStackSize, maxStackSize);
-                    int toTransfer = finalSize - collapsingStackSize;
+                    final int checkingSize = stackToCheck.getCount();
+                    final int collapsingSize = collapsingStack.getCount();
+
+                    final int maxFinalSize = Math.min(maxStackSize, checkingSize + collapsingSize);
+                    final int toTransfer = maxFinalSize - checkingSize;
 
                     stackToCheck.grow(toTransfer);
-                    collapsingStack.grow(-toTransfer);
+                    collapsingStack.shrink(toTransfer);
                 }
             }
         }
