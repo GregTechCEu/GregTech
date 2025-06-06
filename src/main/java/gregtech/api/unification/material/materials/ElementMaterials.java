@@ -19,6 +19,8 @@ public class ElementMaterials {
 
     public static void register() {
         Actinium = new Material.Builder(1, gregtechId("actinium"))
+                .ingot()
+                .fluid()
                 .color(0xC3D1FF).iconSet(METALLIC)
                 .element(Elements.Ac)
                 .build();
@@ -76,12 +78,16 @@ public class ElementMaterials {
                 .build();
 
         Barium = new Material.Builder(8, gregtechId("barium"))
+                .ingot()
+                .fluid()
                 .dust()
                 .color(0x83824C).iconSet(METALLIC)
                 .element(Elements.Ba)
                 .build();
 
         Berkelium = new Material.Builder(9, gregtechId("berkelium"))
+                .ingot()
+                .fluid()
                 .color(0x645A88).iconSet(METALLIC)
                 .element(Elements.Bk)
                 .build();
@@ -103,6 +109,8 @@ public class ElementMaterials {
                 .build();
 
         Bohrium = new Material.Builder(12, gregtechId("bohrium"))
+                .ingot()
+                .fluid()
                 .color(0xDC57FF).iconSet(SHINY)
                 .element(Elements.Bh)
                 .build();
@@ -131,6 +139,8 @@ public class ElementMaterials {
                 .build();
 
         Californium = new Material.Builder(17, gregtechId("californium"))
+                .ingot()
+                .fluid()
                 .color(0xA85A12).iconSet(METALLIC)
                 .element(Elements.Cf)
                 .build();
@@ -184,6 +194,8 @@ public class ElementMaterials {
                 .build();
 
         Copernicium = new Material.Builder(24, gregtechId("copernicium"))
+                .ingot()
+                .fluid()
                 .color(0xFFFEFF)
                 .element(Elements.Cn)
                 .build();
@@ -220,6 +232,8 @@ public class ElementMaterials {
                 .build();
 
         Dubnium = new Material.Builder(29, gregtechId("dubnium"))
+                .ingot()
+                .fluid()
                 .color(0xD3FDFF).iconSet(SHINY)
                 .element(Elements.Db)
                 .build();
@@ -230,6 +244,8 @@ public class ElementMaterials {
                 .build();
 
         Einsteinium = new Material.Builder(31, gregtechId("einsteinium"))
+                .ingot()
+                .fluid()
                 .color(0xCE9F00).iconSet(METALLIC)
                 .element(Elements.Es)
                 .build();
@@ -271,6 +287,8 @@ public class ElementMaterials {
                 .build();
 
         Francium = new Material.Builder(37, gregtechId("francium"))
+                .ingot()
+                .fluid()
                 .color(0xAAAAAA).iconSet(SHINY)
                 .element(Elements.Fr)
                 .build();
@@ -410,6 +428,8 @@ public class ElementMaterials {
                 .build();
 
         Lawrencium = new Material.Builder(54, gregtechId("lawrencium"))
+                .ingot()
+                .fluid()
                 .iconSet(METALLIC)
                 .element(Elements.Lr)
                 .build();
@@ -435,12 +455,15 @@ public class ElementMaterials {
                 .build();
 
         Livermorium = new Material.Builder(57, gregtechId("livermorium"))
+                .ingot()
+                .fluid()
                 .color(0xAAAAAA).iconSet(SHINY)
                 .element(Elements.Lv)
                 .build();
 
         Lutetium = new Material.Builder(58, gregtechId("lutetium"))
                 .dust()
+                .ingot()
                 .liquid(new FluidBuilder().temperature(1925))
                 .color(0x00AAFF).iconSet(METALLIC)
                 .element(Elements.Lu)
@@ -454,6 +477,8 @@ public class ElementMaterials {
                 .build();
 
         Mendelevium = new Material.Builder(60, gregtechId("mendelevium"))
+                .ingot()
+                .fluid()
                 .color(0x1D4ACF).iconSet(METALLIC)
                 .element(Elements.Md)
                 .build();
@@ -468,6 +493,8 @@ public class ElementMaterials {
                 .build();
 
         Meitnerium = new Material.Builder(62, gregtechId("meitnerium"))
+                .ingot()
+                .fluid()
                 .color(0x2246BE).iconSet(SHINY)
                 .element(Elements.Mt)
                 .build();
@@ -489,6 +516,8 @@ public class ElementMaterials {
                 .build();
 
         Moscovium = new Material.Builder(65, gregtechId("moscovium"))
+                .ingot()
+                .fluid()
                 .color(0x7854AD).iconSet(SHINY)
                 .element(Elements.Mc)
                 .build();
@@ -509,6 +538,9 @@ public class ElementMaterials {
                 .build();
 
         Neptunium = new Material.Builder(68, gregtechId("neptunium"))
+                .ingot()
+                .liquid(new FluidBuilder().temperature(3902))
+                .plasma()
                 .color(0x284D7B).iconSet(METALLIC)
                 .element(Elements.Np)
                 .build();
@@ -526,6 +558,8 @@ public class ElementMaterials {
                 .build();
 
         Nihonium = new Material.Builder(70, gregtechId("nihonium"))
+                .ingot()
+                .fluid()
                 .color(0x08269E).iconSet(SHINY)
                 .element(Elements.Nh)
                 .build();
@@ -546,6 +580,8 @@ public class ElementMaterials {
                 .build();
 
         Nobelium = new Material.Builder(73, gregtechId("nobelium"))
+                .ingot()
+                .fluid()
                 .iconSet(SHINY)
                 .element(Elements.No)
                 .build();
@@ -595,6 +631,8 @@ public class ElementMaterials {
                 .build();
 
         Phosphorus = new Material.Builder(78, gregtechId("phosphorus"))
+                .ingot()
+                .fluid()
                 .dust()
                 .color(0xFFFF00)
                 .element(Elements.P)
@@ -683,11 +721,15 @@ public class ElementMaterials {
                 .build();
 
         Roentgenium = new Material.Builder(91, gregtechId("roentgenium"))
+                .ingot()
+                .fluid()
                 .color(0xE3FDEC).iconSet(SHINY)
                 .element(Elements.Rg)
                 .build();
 
         Rubidium = new Material.Builder(92, gregtechId("rubidium"))
+                .ingot()
+                .fluid()
                 .color(0xF01E1E).iconSet(SHINY)
                 .element(Elements.Rb)
                 .build();
@@ -704,6 +746,8 @@ public class ElementMaterials {
                 .build();
 
         Rutherfordium = new Material.Builder(94, gregtechId("rutherfordium"))
+                .ingot()
+                .fluid()
                 .color(0xFFF6A1).iconSet(SHINY)
                 .element(Elements.Rf)
                 .build();
@@ -726,8 +770,11 @@ public class ElementMaterials {
                 .build();
 
         Seaborgium = new Material.Builder(97, gregtechId("seaborgium"))
+                .ingot()
+                .fluid()
                 .color(0x19C5FF).iconSet(SHINY)
                 .element(Elements.Sg)
+                .cableProperties(V[UEV], 32, 32)
                 .build();
 
         Selenium = new Material.Builder(98, gregtechId("selenium"))
@@ -780,6 +827,8 @@ public class ElementMaterials {
                 .build();
 
         Technetium = new Material.Builder(105, gregtechId("technetium"))
+                .ingot()
+                .fluid()
                 .color(0x545455).iconSet(SHINY)
                 .element(Elements.Tc)
                 .build();

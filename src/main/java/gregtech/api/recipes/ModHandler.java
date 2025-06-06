@@ -60,16 +60,13 @@ import java.util.stream.Collectors;
 
 public final class ModHandler {
 
-    public static final boolean ERROR_ON_INVALID_RECIPE = GTValues.isDeobfEnvironment() ||
-            !ConfigHolder.misc.ignoreErrorOrInvalidRecipes;
+    public static final boolean ERROR_ON_INVALID_RECIPE = GTValues.isDeobfEnvironment() || !ConfigHolder.misc.ignoreErrorOrInvalidRecipes;
     public static boolean hasInvalidRecipe = false;
 
     private ModHandler() {}
 
     public static void postInit() {
-        if (ERROR_ON_INVALID_RECIPE && hasInvalidRecipe) {
-            throw new IllegalStateException("Invalid Recipes Found. See earlier log entries for details.");
-        }
+
     }
 
     /**

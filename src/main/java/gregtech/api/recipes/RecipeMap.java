@@ -313,6 +313,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 return false;
             }
             case INVALID -> {
+                GTLog.logger.error("Invalid recipe for recipe map {}", this.unlocalizedName);
+                GTLog.logger.error(validationResult);
                 setFoundInvalidRecipe(true);
                 return false;
             }

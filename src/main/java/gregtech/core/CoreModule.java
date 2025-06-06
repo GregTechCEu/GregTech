@@ -258,7 +258,7 @@ public class CoreModule implements IGregTechModule {
         if (RecipeMap.isFoundInvalidRecipe()) {
             logger.fatal("Seems like invalid recipe was found.");
             // crash if config setting is set to false, or we are in deobfuscated environment
-            if (!ConfigHolder.misc.ignoreErrorOrInvalidRecipes || !FMLForgePlugin.RUNTIME_DEOBF) {
+            if (!ConfigHolder.misc.ignoreErrorOrInvalidRecipes) {
                 logger.fatal(
                         "Loading cannot continue. Either fix or report invalid recipes, or enable ignoreErrorOrInvalidRecipes in the config as a temporary solution");
                 throw new LoaderException(

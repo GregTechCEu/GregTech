@@ -485,7 +485,7 @@ public class OrePrefix {
         block.modifyMaterialAmount(Materials.Obsidian, 1);
         block.modifyMaterialAmount(Materials.Concrete, 1);
 
-        stick.modifyMaterialAmount(Materials.Blaze, 4);
+        stick.modifyMaterialAmount(Materials.Blaze, 0.5F);
         stick.modifyMaterialAmount(Materials.Bone, 5);
     }
 
