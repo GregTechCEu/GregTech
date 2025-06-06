@@ -1011,7 +1011,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return new ItemStack(MetaItem.this, amount, metaItemOffset + metaValue);
         }
 
-        public boolean isItemEqual(ItemStack itemStack) {
+        public boolean isItemEqual(@NotNull ItemStack itemStack) {
             return itemStack.getItem() == MetaItem.this && itemStack.getItemDamage() == (metaItemOffset + metaValue);
         }
 

@@ -13,6 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import appeng.api.storage.data.IAEFluidStack;
 import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,7 @@ import java.util.List;
 
 public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
 
-    private final ExportOnlyAEFluidList fluidList;
+    protected final ExportOnlyAEFluidList fluidList;
 
     public AEFluidSyncHandler(ExportOnlyAEFluidList fluidList, @Nullable Runnable dirtyNotifier) {
         super(fluidList.getInventory(), fluidList.isStocking(), dirtyNotifier);
@@ -57,13 +58,9 @@ public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
                                               boolean simulate) {
         if (simulate) return null;
 
-        List<FluidStack> originalFluidStacks = JEIUtil.getDisplayedInputFluidStacks(recipeLayout.getFluidStacks());
-        List<FluidStack> fluidInputs = new ArrayList<>(originalFluidStacks.size());
-        originalFluidStacks.forEach(stack -> {
-            if (stack != null) {
-                fluidInputs.add(stack.copy());
-            }
-        });
+        Int2ObjectMap<FluidStack> originalFluidInputs = JEIUtil
+                .getDisplayedInputFluidStacks(recipeLayout.getFluidStacks(), false, true);
+        List<FluidStack> fluidInputs = new ArrayList<>(originalFluidInputs.values());
         GTUtility.collapseFluidList(fluidInputs);
 
         for (int index = 0; index < slots.length; index++) {

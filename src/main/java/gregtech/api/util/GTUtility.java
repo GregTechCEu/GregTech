@@ -988,13 +988,16 @@ public class GTUtility {
     /**
      * Attempts to collapse a {@link List} of {@link ItemStack}s by combining similar stacks downwards (towards index
      * 0). <br>
-     * WARNING: Mutates original item stacks, you might want to make a new list with copies!
+     * WARNING: Mutates original item stacks and list, you might want to make a new list with copies!
      * 
      * @param stacks       the list to collapse
      * @param maxStackSize the max stack size of the to-be combined stack
+     * @param removeEmpty  if true, will remove entries from the list if they're empty after collapsing
      */
     public static void collapseItemList(@NotNull List<ItemStack> stacks,
-                                        @Range(from = 1, to = Integer.MAX_VALUE) int maxStackSize) {
+                                        @Range(from = 1, to = Integer.MAX_VALUE) int maxStackSize,
+                                        boolean removeEmpty) {
+        stacks.removeIf(Objects::isNull);
         Hash.Strategy<ItemStack> stackStrategy = ItemStackHashStrategy.comparingAllButCount();
 
         for (int checkingSlot = 0; checkingSlot < stacks.size(); checkingSlot++) {
@@ -1017,26 +1020,34 @@ public class GTUtility {
                 }
             }
         }
+
+        if (removeEmpty) {
+            stacks.removeIf(ItemStack::isEmpty);
+        }
     }
 
     /**
-     * The same as {@link #collapseItemList(List, int)} but has a stack size limit of {@link Integer#MAX_VALUE} <br>
+     * The same as {@link #collapseItemList(List, int, boolean)} but has a stack size limit of {@link Integer#MAX_VALUE}
+     * and removes empty stacks. <br>
      * WARNING: Mutates original item stacks, you might want to make a new list with copies!
      */
     public static void collapseItemList(List<ItemStack> stacks) {
-        collapseItemList(stacks, Integer.MAX_VALUE);
+        collapseItemList(stacks, Integer.MAX_VALUE, true);
     }
 
     /**
      * Attempts to collapse a {@link List} of {@link FluidStack}s by combining similar stacks downwards (towards index
      * 0). <br>
-     * WARNING: Mutates original fluid stacks, you might want to make a new list with copies!
+     * WARNING: Mutates original fluid stacks and list, you might want to make a new list with copies!
      *
      * @param stacks       the list to collapse
      * @param maxStackSize the max stack size of the to-be combined stack
+     * @param removeEmpty  if true, will remove entries from the list if they're empty after collapsing
      */
     public static void collapseFluidList(@NotNull List<FluidStack> stacks,
-                                         @Range(from = 1, to = Integer.MAX_VALUE) int maxStackSize) {
+                                         @Range(from = 1, to = Integer.MAX_VALUE) int maxStackSize,
+                                         boolean removeEmpty) {
+        stacks.removeIf(Objects::isNull);
         // TODO: replace with FluidStackHashStrategy once the MUI2 Multi PR merges
         Hash.Strategy<FluidStack> stackStrategy = new Hash.Strategy<>() {
 
@@ -1051,7 +1062,7 @@ public class GTUtility {
                 if (a == null) return b == null;
                 if (b == null) return false;
 
-                return a.getFluid() == b.getFluid() && a.tag.equals(b.tag);
+                return a.getFluid() == b.getFluid() && Objects.equals(a.tag, b.tag);
             }
         };
 
@@ -1075,13 +1086,18 @@ public class GTUtility {
                 }
             }
         }
+
+        if (removeEmpty) {
+            stacks.removeIf(stack -> stack.amount < 1);
+        }
     }
 
     /**
-     * The same as {@link #collapseFluidList(List, int)} but has a stack size limit of {@link Integer#MAX_VALUE} <br>
+     * The same as {@link #collapseFluidList(List, int, boolean)} but has a stack size limit of
+     * {@link Integer#MAX_VALUE} and removes empty stacks. <br>
      * WARNING: Mutates original fluid stacks, you might want to make a new list with copies!
      */
     public static void collapseFluidList(List<FluidStack> stacks) {
-        collapseFluidList(stacks, Integer.MAX_VALUE);
+        collapseFluidList(stacks, Integer.MAX_VALUE, true);
     }
 }

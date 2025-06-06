@@ -144,7 +144,8 @@ public class IntCircuitIngredient extends GTRecipeInput {
         return 0;
     }
 
-    public static boolean isIntegratedCircuit(ItemStack itemStack) {
+    public static boolean isIntegratedCircuit(@Nullable ItemStack itemStack) {
+        if (itemStack == null) return false;
         boolean isCircuit = MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack);
         if (isCircuit && !itemStack.hasTagCompound()) {
             NBTTagCompound compound = new NBTTagCompound();
