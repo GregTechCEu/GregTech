@@ -63,10 +63,12 @@ public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
         List<FluidStack> fluidInputs = new ArrayList<>(originalFluidInputs.values());
         GTUtility.collapseFluidList(fluidInputs);
 
-        for (int index = 0; index < slots.length; index++) {
-            FluidStack stackToSet = index >= fluidInputs.size() ? null : fluidInputs.get(index);
-            setConfig(index, stackToSet);
+        int lastSlotIndex;
+        for (lastSlotIndex = 0; lastSlotIndex < fluidInputs.size(); lastSlotIndex++) {
+            FluidStack newConfig = fluidInputs.get(lastSlotIndex);
+            setConfig(lastSlotIndex, newConfig);
         }
+        clearConfigFrom(lastSlotIndex);
 
         return null;
     }

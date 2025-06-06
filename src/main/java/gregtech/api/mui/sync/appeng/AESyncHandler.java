@@ -23,7 +23,8 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
     public static final int slotSyncID = 0;
     public static final int setConfigID = 1;
     public static final int clearConfigID = 2;
-    public static final int changeConfigAmountID = 3;
+    public static final int bulkClearConfigID = 3;
+    public static final int changeConfigAmountID = 4;
 
     protected final boolean isStocking;
     protected final IConfigurableSlot<T>[] slots;
@@ -116,6 +117,12 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
                 IConfigurableSlot<T> slot = slots[index];
                 slot.setConfig(newConfig);
             }
+        } else if (id == bulkClearConfigID) {
+            int indexFrom = buf.readVarInt();
+            for (int index = indexFrom; index < slots.length; index++) {
+                IConfigurableSlot<T> slot = slots[index];
+                slot.setConfig(null);
+            }
         }
     }
 
@@ -145,6 +152,11 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
     @SideOnly(Side.CLIENT)
     public void clearConfig(int index) {
         syncToServer(clearConfigID, buf -> buf.writeVarInt(index));
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void clearConfigFrom(int startingIndex) {
+        syncToServer(bulkClearConfigID, buf -> buf.writeVarInt(startingIndex));
     }
 
     @SideOnly(Side.CLIENT)

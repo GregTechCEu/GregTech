@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
@@ -69,15 +70,22 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
         GTUtility.collapseItemList(itemInputs);
 
         int circuitValue = GhostCircuitItemStackHandler.NO_CONFIG;
-        for (int index = 0; index < slots.length; index++) {
-            ItemStack stackToSet = index >= itemInputs.size() ? null : itemInputs.get(index);
-            if (IntCircuitIngredient.isIntegratedCircuit(stackToSet)) {
-                circuitValue = IntCircuitIngredient.getCircuitConfiguration(stackToSet);
-            } else {
-                setConfig(index, stackToSet);
+        Iterator<ItemStack> inputsIterator = itemInputs.iterator();
+        while (inputsIterator.hasNext()) {
+            ItemStack stack = inputsIterator.next();
+            if (IntCircuitIngredient.isIntegratedCircuit(stack)) {
+                inputsIterator.remove();
+                circuitValue = IntCircuitIngredient.getCircuitConfiguration(stack);
             }
         }
         setGhostCircuit(circuitValue);
+
+        int lastSlotIndex;
+        for (lastSlotIndex = 0; lastSlotIndex < itemInputs.size(); lastSlotIndex++) {
+            ItemStack newConfig = itemInputs.get(lastSlotIndex);
+            setConfig(lastSlotIndex, newConfig);
+        }
+        clearConfigFrom(lastSlotIndex);
 
         return null;
     }
