@@ -13,6 +13,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 
 import io.netty.buffer.ByteBuf;
@@ -57,7 +58,22 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
     private void notifyWorld() {
         @SuppressWarnings("deprecation")
         IBlockState blockState = getBlockType().getStateFromMeta(getBlockMetadata());
-        world.notifyBlockUpdate(getPos(), blockState, blockState, 0);
+        if (canNotifyWorld()) {
+            world.notifyBlockUpdate(getPos(), blockState, blockState, 0);
+        } else {
+            // cannot send, so clear
+            updates.clear();
+        }
+    }
+
+    private boolean canNotifyWorld() {
+        if (getWorld() instanceof WorldServer server) {
+            int x = getPos().getX() >> 4;
+            int z = getPos().getZ() >> 4;
+            // short circuit with packet size to avoid too many hash lookups
+            return updates.size() < 10 || server.getPlayerChunkMap().contains(x, z);
+        }
+        return false;
     }
 
     @Override
