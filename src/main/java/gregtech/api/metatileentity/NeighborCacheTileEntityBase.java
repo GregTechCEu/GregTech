@@ -13,14 +13,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.List;
 
 public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase implements INeighborCache {
 
     private static final WeakReference<TileEntity> NULL = new WeakReference<>(null);
     private static final WeakReference<TileEntity> INVALID = new WeakReference<>(null);
 
-    @SuppressWarnings("rawtypes")
-    private final WeakReference[] neighbors = new WeakReference[6];
+    private final List<WeakReference<TileEntity>> neighbors = Arrays.asList(
+            INVALID, INVALID, INVALID, INVALID, INVALID, INVALID);
     private boolean neighborsInvalidated = false;
 
     public NeighborCacheTileEntityBase() {
@@ -29,7 +30,9 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
 
     protected void invalidateNeighbors() {
         if (!this.neighborsInvalidated) {
-            Arrays.fill(this.neighbors, INVALID);
+            for (EnumFacing value : EnumFacing.VALUES) {
+                this.neighbors.set(value.getIndex(), INVALID);
+            }
             this.neighborsInvalidated = true;
         }
     }
@@ -80,17 +83,16 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
     private WeakReference<TileEntity> computeNeighbor(EnumFacing facing) {
         TileEntity te = super.getNeighbor(facing);
         // avoid making new references to null TEs
-        this.neighbors[facing.ordinal()] = te == null ? NULL : new WeakReference<>(te);
+        this.neighbors.set(facing.getIndex(), te == null ? NULL : new WeakReference<>(te));
         this.neighborsInvalidated = false;
         return getRef(facing);
     }
 
-    @SuppressWarnings("unchecked")
     private WeakReference<TileEntity> getRef(EnumFacing facing) {
-        return (WeakReference<TileEntity>) this.neighbors[facing.ordinal()];
+        return this.neighbors.get(facing.getIndex());
     }
 
     public void onNeighborChanged(@NotNull EnumFacing facing) {
-        this.neighbors[facing.ordinal()] = INVALID;
+        this.neighbors.set(facing.getIndex(), INVALID);
     }
 }
