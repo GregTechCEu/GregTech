@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -54,14 +53,14 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     private Predicate<FluidStack> autoPullTest;
     private int minimumStackSize = 0;
 
-    public MetaTileEntityMEStockingHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.IV);
+    public MetaTileEntityMEStockingHatch(ResourceLocation metaTileEntityId, int tier) {
+        super(metaTileEntityId, tier);
         this.autoPullTest = $ -> false;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityMEStockingHatch(metaTileEntityId);
+        return new MetaTileEntityMEStockingHatch(metaTileEntityId, getTier());
     }
 
     @Override

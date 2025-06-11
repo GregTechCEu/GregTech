@@ -1060,9 +1060,9 @@ final class MetaTileEntityRegistration {
             MetaTileEntities.FLUID_IMPORT_HATCH_ME = MetaTileEntities.registerMetaTileEntity(11526,
                     new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch"), GTValues.EV));
             MetaTileEntities.STOCKING_BUS_ME = MetaTileEntities.registerMetaTileEntity(11527,
-                    new MetaTileEntityMEStockingBus(gregtechId("me_stocking_item_bus")));
+                    new MetaTileEntityMEStockingBus(gregtechId("me_stocking_item_bus"), GTValues.IV));
             MetaTileEntities.STOCKING_HATCH_ME = MetaTileEntities.registerMetaTileEntity(11528,
-                    new MetaTileEntityMEStockingHatch(gregtechId("me_stocking_fluid_hatch")));
+                    new MetaTileEntityMEStockingHatch(gregtechId("me_stocking_fluid_hatch"), GTValues.IV));
             // slots left for CRIB and CRIBuffer in the future for nicer sorting order
             MetaTileEntities.ITEM_EXPORT_BUS_ME = MetaTileEntities.registerMetaTileEntity(11532,
                     new MetaTileEntityMEOutputBus(gregtechId("me_export_item_bus")));

@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -56,14 +55,14 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     private Predicate<ItemStack> autoPullTest;
     private int minimumStackSize = 0;
 
-    public MetaTileEntityMEStockingBus(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.IV);
+    public MetaTileEntityMEStockingBus(ResourceLocation metaTileEntityId, int tier) {
+        super(metaTileEntityId, tier);
         this.autoPullTest = $ -> false;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityMEStockingBus(metaTileEntityId);
+        return new MetaTileEntityMEStockingBus(metaTileEntityId, getTier());
     }
 
     @Override
