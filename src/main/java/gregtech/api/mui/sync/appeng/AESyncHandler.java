@@ -64,9 +64,9 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
 
             if (init || !areAEStackCountEquals(newConfig, cachedConfig) ||
                     !areAEStackCountEquals(newStock, cachedStock)) {
-                cached[index] = slot.copy();
-                changeMap.put(index, slot.copy());
-                notifyChange();
+                IConfigurableSlot<T> newCache = slot.copy();
+                cached[index] = newCache;
+                changeMap.put(index, newCache);
             }
         }
 
@@ -97,6 +97,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
             if (dirtyNotifier != null) {
                 dirtyNotifier.run();
             }
+
             changeMap.clear();
         }
     }
@@ -200,12 +201,6 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
     @Nullable
     public T getStock(int index) {
         return slots[index].getStock();
-    }
-
-    protected void notifyChange() {
-        if (dirtyNotifier != null) {
-            dirtyNotifier.run();
-        }
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
