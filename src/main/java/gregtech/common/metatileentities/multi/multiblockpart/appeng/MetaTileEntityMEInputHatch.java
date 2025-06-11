@@ -201,8 +201,9 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
 
         return mainPanel.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
-                .child(IKey.dynamic(() -> isOnline() ? I18n.format("gregtech.gui.me_network.online") :
-                        I18n.format("gregtech.gui.me_network.offline")).asWidget().pos(5, 15))
+                .child(IKey.lang(() -> isOnline() ? "gregtech.gui.me_network.online" :
+                        "gregtech.gui.me_network.offline")
+                        .asWidget().pos(5, 15))
                 .child(configGrid)
                 .child(new Grid()
                         .pos(7 + 18 * 5, 25)
