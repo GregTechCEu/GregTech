@@ -6,7 +6,6 @@ import gregtech.api.mui.widget.appeng.AEConfigSlot;
 import gregtech.api.mui.widget.appeng.AEStackPreviewWidget;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
