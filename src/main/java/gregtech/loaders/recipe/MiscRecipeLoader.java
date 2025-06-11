@@ -107,6 +107,22 @@ public class MiscRecipeLoader {
                 .EUt(VA[ULV])
                 .buildAndRegister();
 
+        //碎石机追加
+        //地狱岩
+        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+                .notConsumable(new ItemStack(Blocks.NETHERRACK, 1, 0))
+                .outputs(new ItemStack(Blocks.NETHERRACK, 1, 0))
+                .duration(16)
+                .EUt(VA[MV])
+                .buildAndRegister();
+        //末地岩
+        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+                .notConsumable(new ItemStack(Blocks.END_STONE, 1, 0))
+                .outputs(new ItemStack(Blocks.END_STONE, 1, 0))
+                .duration(16)
+                .EUt(VA[IV])
+                .buildAndRegister();
+
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Andesite)
                 .output(stone, Andesite)
