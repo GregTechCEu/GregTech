@@ -130,7 +130,7 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
 
     @Override
     public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int scrollAmount) {
-        if (getSyncHandler().getConfig(index) == null || isStocking) return false;
+        if (getSyncHandler().hasConfig(index) || isStocking) return false;
 
         long newStackSize = getSyncHandler().getConfigAmount(index);
 
