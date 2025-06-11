@@ -65,7 +65,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         IAEFluidStack config = getSyncHandler().getConfig(index);
         if (config != null) {
-            FluidStack stack = config.getFluidStack();
+            FluidStack stack = ((WrappedFluidStack) config).getDelegate();
             RenderUtil.drawFluidForGui(stack, stack.amount, 1, 1, 17, 17);
 
             if (!isStocking) {
@@ -98,7 +98,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
             FluidStack heldFluid = FluidUtil.getFluidContained(heldItem);
 
             if (heldFluid != null) {
-                getSyncHandler().setConfig(index, WrappedFluidStack.fromFluidStack(heldFluid));
+                getSyncHandler().setConfig(index, heldFluid);
                 return Result.SUCCESS;
             }
         }

@@ -60,7 +60,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         IAEItemStack config = getSyncHandler().getConfig(index);
         if (config != null) {
-            ItemStack stack = config.createItemStack();
+            ItemStack stack = config.createItemStack(); // have to copy the stack here since the count is set to 1
             if (!stack.isEmpty()) {
                 stack.setCount(1);
                 RenderUtil.renderItem(stack, 1, 1, 16f, 16f);
@@ -92,11 +92,10 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
         if (isAutoPull.getAsBoolean()) return Result.IGNORE;
 
         if (mouseButton == 0) {
-            // Left click to set item/change amount
             ItemStack heldItem = getSyncHandler().getSyncManager().getCursorItem();
 
             if (!heldItem.isEmpty()) {
-                getSyncHandler().setConfig(index, WrappedItemStack.fromItemStack(heldItem));
+                getSyncHandler().setConfig(index, heldItem);
                 return Result.SUCCESS;
             }
         }

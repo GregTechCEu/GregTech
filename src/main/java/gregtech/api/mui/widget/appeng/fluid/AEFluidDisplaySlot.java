@@ -46,7 +46,7 @@ public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         IAEFluidStack stock = getSyncHandler().getStock(index);
         if (stock != null) {
-            FluidStack stack = stock.getFluidStack();
+            FluidStack stack = ((WrappedFluidStack) stock).getDelegate();
             RenderUtil.drawFluidForGui(stack, stack.amount, 1, 1, 17, 17);
 
             String amount = TextFormattingUtil.formatLongToCompactString(stack.amount, 4);

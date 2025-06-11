@@ -44,7 +44,7 @@ public class AEItemDisplaySlot extends AEDisplaySlot<IAEItemStack> {
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         IAEItemStack stock = getSyncHandler().getStock(index);
         if (stock != null) {
-            ItemStack stack = stock.createItemStack();
+            ItemStack stack = stock.createItemStack(); // have to copy the stack here since the count is set to 1
             if (!stack.isEmpty()) {
                 stack.setCount(1);
                 RenderUtil.renderItem(stack, 1, 1, 16f, 16f);
