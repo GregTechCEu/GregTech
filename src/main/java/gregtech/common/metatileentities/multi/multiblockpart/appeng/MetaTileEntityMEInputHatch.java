@@ -12,7 +12,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
-import gregtech.api.mui.widget.EmptyWidget;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidConfigSlot;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidDisplaySlot;
 import gregtech.client.renderer.texture.Textures;
@@ -221,7 +220,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                         .size(18, 18 * 4)
                         .child(getExtraButton())
                         .child(GTGuiTextures.ARROW_DOUBLE.asWidget())
-                        .child(new EmptyWidget()
+                        .child(new Widget<>()
                                 .size(18))
                         .child(GTGuiTextures.getLogo(getUITheme()).asWidget()
                                 .size(17)))
@@ -280,7 +279,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
     }
 
     protected Widget<?> getExtraButton() {
-        return new EmptyWidget()
+        return new Widget<>()
                 .size(18);
     }
 

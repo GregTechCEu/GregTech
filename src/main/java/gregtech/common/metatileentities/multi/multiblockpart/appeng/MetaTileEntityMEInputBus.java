@@ -17,7 +17,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
-import gregtech.api.mui.widget.EmptyWidget;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.api.mui.widget.appeng.item.AEItemConfigSlot;
 import gregtech.api.mui.widget.appeng.item.AEItemDisplaySlot;
@@ -324,7 +323,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
     }
 
     protected Widget<?> getExtraButton() {
-        return new EmptyWidget()
+        return new Widget<>()
                 .size(18);
     }
 
