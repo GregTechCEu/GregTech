@@ -117,16 +117,16 @@ public class GTGuis {
             super(name);
             align(Alignment.Center);
             background(GTGuiTextures.BACKGROUND_POPUP);
-            if (addCloseButton) {
-                child(ButtonWidget.panelCloseButton().top(5).right(5)
-                        .onMousePressed(mouseButton -> {
-                            if (mouseButton == 0 || mouseButton == 1) {
-                                this.closeIfOpen(true);
-                                return true;
-                            }
-                            return false;
-                        }));
-            }
+            childIf(addCloseButton, () -> ButtonWidget.panelCloseButton()
+                    .top(5).right(5)
+                    .onMousePressed(mouseButton -> {
+                        if (mouseButton == 0 || mouseButton == 1) {
+                            closeIfOpen(true);
+                            return true;
+                        }
+
+                        return false;
+                    }));
         }
 
         @Override
