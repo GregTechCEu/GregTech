@@ -41,6 +41,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
+import mezz.jei.transfer.RecipeTransferErrorInternal;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -451,7 +452,7 @@ public class CraftingRecipeLogic extends SyncHandler implements IJEIRecipeReceiv
     public IRecipeTransferError receiveRecipe(@NotNull IRecipeLayout recipeLayout, boolean maxTransfer,
                                               boolean simulate) {
         if (!recipeLayout.getRecipeCategory().getUid().equals("minecraft.crafting")) {
-            return DEFAULT_JEI_ERROR;
+            return RecipeTransferErrorInternal.INSTANCE;
         }
 
         if (simulate) {

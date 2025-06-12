@@ -1,6 +1,5 @@
 package gregtech.api.mui;
 
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -18,23 +17,11 @@ import org.jetbrains.annotations.NotNull;
 public interface IJEIRecipeReceiver {
 
     /**
-     * Return this the recipe is invalid for the receiver to hide the + button.
-     */
-    IRecipeTransferError DEFAULT_JEI_ERROR = new IRecipeTransferError() {
-
-        @Override
-        public @NotNull Type getType() {
-            return Type.INTERNAL;
-        }
-
-        @Override
-        public void showError(@NotNull Minecraft minecraft, int mouseX, int mouseY,
-                              @NotNull IRecipeLayout recipeLayout, int recipeX, int recipeY) {
-            // nothing to show, just hide the + button
-        }
-    };
-
-    /**
+     * Returning an {@link IRecipeTransferError} with a type of {@link IRecipeTransferError.Type#INTERNAL} will hide the
+     * + button. <br>
+     * JEI has a static instance available at {@link mezz.jei.transfer.RecipeTransferErrorInternal#INSTANCE} for this
+     * purpose.
+     * 
      * @param recipeLayout the recipe layout that contains the recipe category, and the item and fluid stacks
      * @param maxTransfer  if the receiver should try to move as many ingredients as possible to the crafting slots, ie
      *                     a crafting table

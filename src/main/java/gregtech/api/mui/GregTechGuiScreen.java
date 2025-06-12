@@ -16,13 +16,12 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
+import mezz.jei.transfer.RecipeTransferErrorInternal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static gregtech.api.mui.IJEIRecipeReceiver.DEFAULT_JEI_ERROR;
 
 @SuppressWarnings("UnstableApiUsage")
 @SideOnly(Side.CLIENT)
@@ -70,6 +69,6 @@ public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransfe
         }
 
         // Hide the + button by default if no recipe receiver was found.
-        return DEFAULT_JEI_ERROR;
+        return RecipeTransferErrorInternal.INSTANCE;
     }
 }
