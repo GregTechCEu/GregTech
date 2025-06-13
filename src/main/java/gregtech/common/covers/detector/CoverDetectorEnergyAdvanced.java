@@ -114,7 +114,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
                                         .overlay(new DynamicDrawable(() -> IKey
                                                 .lang("cover.advanced_energy_detector.mode_" +
                                                         (isUsePercent() ? "percent" : "eu"))
-                                                .format(TextFormatting.WHITE)))))
+                                                .style(TextFormatting.WHITE)))))
                         .child(Flow.row()
                                 .widthRel(1f)
                                 .coverChildrenHeight()
@@ -128,7 +128,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
                                         .overlay(new DynamicDrawable(() -> IKey
                                                 .lang("cover.advanced_energy_detector." +
                                                         (isInverted() ? "inverted" : "normal"))
-                                                .format(TextFormatting.WHITE))))))
+                                                .style(TextFormatting.WHITE))))))
                 .bindPlayerInventory();
     }
 

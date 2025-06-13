@@ -84,7 +84,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                                         .overlay(new DynamicDrawable(() -> {
                                             String lang = "cover.advanced_energy_detector.";
                                             lang += isInverted() ? "inverted" : "normal";
-                                            return IKey.lang(lang).format(TextFormatting.WHITE);
+                                            return IKey.lang(lang).style(TextFormatting.WHITE);
                                         }))
                                         .addTooltipLine(IKey.lang("cover.generic.advanced_detector.invert_tooltip"))
                                         .value(new BooleanSyncValue(this::isInverted, this::setInverted)))
@@ -94,7 +94,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                                         .overlay(new DynamicDrawable(() -> {
                                             String lang = "cover.generic.advanced_detector.";
                                             lang += isLatched() ? "latched" : "continuous";
-                                            return IKey.lang(lang).format(TextFormatting.WHITE);
+                                            return IKey.lang(lang).style(TextFormatting.WHITE);
                                         }))
                                         .addTooltipLine(IKey.lang("cover.generic.advanced_detector.latch_tooltip"))
                                         .value(new BooleanSyncValue(this::isLatched, this::setLatched))))
