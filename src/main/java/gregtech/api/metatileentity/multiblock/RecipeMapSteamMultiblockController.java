@@ -1,5 +1,6 @@
 package gregtech.api.metatileentity.multiblock;
 
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -26,7 +27,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 
-public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase {
+public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase implements IControllable {
 
     protected static final double CONVERSION_RATE = ConfigHolder.machines.multiblockSteamToEU;
 
@@ -179,5 +180,15 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     @Override
     public boolean isActive() {
         return super.isActive() && recipeMapWorkable.isActive() && recipeMapWorkable.isWorkingEnabled();
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return recipeMapWorkable.isWorkingEnabled();
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        recipeMapWorkable.setWorkingEnabled(isWorkingAllowed);
     }
 }

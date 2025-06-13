@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi;
 
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.BoilerRecipeLogic;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FluidTankList;
@@ -61,7 +62,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements ProgressBarMultiblock {
+public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements ProgressBarMultiblock,
+                                       IControllable {
 
     public final BoilerType boilerType;
     protected BoilerRecipeLogic recipeLogic;
@@ -452,5 +454,15 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             }
         }
         return capacity;
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return recipeLogic.isWorkingEnabled();
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        recipeLogic.setWorkingEnabled(isWorkingAllowed);
     }
 }

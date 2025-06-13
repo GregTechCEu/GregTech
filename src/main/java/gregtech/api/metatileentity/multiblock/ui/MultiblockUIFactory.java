@@ -1,6 +1,5 @@
 package gregtech.api.metatileentity.multiblock.ui;
 
-import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
@@ -8,9 +7,7 @@ import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTLambdaUtils;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.KeyUtil;
-import gregtech.common.ConfigHolder;
 import gregtech.common.mui.widget.ScrollableTextWidget;
 
 import net.minecraft.util.text.TextFormatting;
@@ -20,6 +17,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.value.IBoolValue;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.drawable.Icon;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.factory.PosGuiData;
@@ -454,29 +452,22 @@ public class MultiblockUIFactory {
 
     @Nullable
     protected Widget<?> createPowerButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
-        IControllable controllable;
-        if (!(mte instanceof IControllable)) {
-            // is this actually relevant?
-            // todo in the future, refactor so that this multis are instanceof IControllable.
-            controllable = mte.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
-            if (controllable == null) return null;
-            if (ConfigHolder.misc.debug)
-                GTLog.logger.warn("MTE [{}] does not extend IControllable when it should!",
-                        mte.getClass().getSimpleName());
-        } else {
-            controllable = (IControllable) mte;
+        if (mte instanceof IControllable controllable) {
+            Icon detail = GTGuiTextures.BUTTON_POWER_DETAIL.asIcon().size(18, 6).marginTop(24);
+            BooleanSyncValue controllableSync = new BooleanSyncValue(controllable::isWorkingEnabled,
+                    controllable::setWorkingEnabled);
+
+            return new ToggleButton()
+                    .debugName("power_button")
+                    .size(18)
+                    .disableHoverBackground()
+                    .overlay(true, detail, GTGuiTextures.BUTTON_POWER[1])
+                    .overlay(false, detail, GTGuiTextures.BUTTON_POWER[0])
+                    .value(controllableSync)
+                    .marginTop(4);
         }
 
-        var detail = GTGuiTextures.BUTTON_POWER_DETAIL.asIcon().size(18, 6).marginTop(24);
-
-        return new ToggleButton()
-                .debugName("power_button")
-                .size(18)
-                .disableHoverBackground()
-                .overlay(true, detail, GTGuiTextures.BUTTON_POWER[1])
-                .overlay(false, detail, GTGuiTextures.BUTTON_POWER[0])
-                .value(new BooleanSyncValue(controllable::isWorkingEnabled, controllable::setWorkingEnabled))
-                .marginTop(4);
+        return null;
     }
 
     public static final class Screen {
