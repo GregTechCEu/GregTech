@@ -36,7 +36,6 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
     private IStringValue<?> stringValue;
     private Function<String, String> validator = val -> val;
     private boolean numbers = false;
-    private String mathFailMessage = null;
     private double defaultNumber = 0;
     private final GTTextFieldRenderer renderer;
 
@@ -45,6 +44,16 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
     public GTTextFieldWidget() {
         this.renderer = new GTTextFieldRenderer(this.handler);
         super.renderer = this.renderer;
+    }
+
+    public double parse(String num) {
+        ParseResult result = MathUtils.parseExpression(num, this.defaultNumber, true);
+        double value = result.getResult();
+        if (result.isFailure()) {
+            String mathFailMessage = result.getError();
+            GTLog.logger.error("Math expression error in {}: {}", this, mathFailMessage);
+        }
+        return value;
     }
 
     @Override
@@ -200,7 +209,7 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
         setValidator(val -> {
             long num;
             if (val.isEmpty()) {
-                num = 0;
+                num = (long) this.defaultNumber;
             } else {
                 num = (long) parse(val);
             }
@@ -214,7 +223,7 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
         return setValidator(val -> {
             int num;
             if (val.isEmpty()) {
-                num = 0;
+                num = (int) this.defaultNumber;
             } else {
                 num = (int) parse(val);
             }
@@ -227,7 +236,7 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
         return setValidator(val -> {
             double num;
             if (val.isEmpty()) {
-                num = 0;
+                num = this.defaultNumber;
             } else {
                 num = parse(val);
             }
@@ -251,20 +260,15 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
         return setNumbers(Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
+    public GTTextFieldWidget setDefaultNumber(double defaultNumber) {
+        this.defaultNumber = defaultNumber;
+        return this;
+    }
+
     public GTTextFieldWidget value(IStringValue<?> stringValue) {
         this.stringValue = stringValue;
         setValue(stringValue);
         return this;
-    }
-
-    public double parse(String num) {
-        ParseResult result = MathUtils.parseExpression(num, this.defaultNumber, true);
-        double value = result.getResult();
-        if (result.isFailure()) {
-            this.mathFailMessage = result.getError();
-            GTLog.logger.error("Math expression error in {}: {}", this, this.mathFailMessage);
-        }
-        return value;
     }
 
     private static class GTTextFieldRenderer extends TextFieldRenderer {
