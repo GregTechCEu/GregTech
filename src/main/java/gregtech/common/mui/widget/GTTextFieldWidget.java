@@ -1,5 +1,7 @@
 package gregtech.common.mui.widget;
 
+import gregtech.api.util.GTLog;
+
 import net.minecraft.client.renderer.GlStateManager;
 
 import com.cleanroommc.modularui.api.ITheme;
@@ -8,6 +10,8 @@ import com.cleanroommc.modularui.api.value.IStringValue;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTextFieldTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.utils.MathUtils;
+import com.cleanroommc.modularui.utils.ParseResult;
 import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.value.sync.ValueSyncHandler;
@@ -15,21 +19,25 @@ import com.cleanroommc.modularui.widgets.textfield.BaseTextFieldWidget;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldHandler;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldRenderer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.text.ParsePosition;
 import java.util.List;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
+import java.util.function.IntUnaryOperator;
+import java.util.function.LongUnaryOperator;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-
-import static com.cleanroommc.modularui.widgets.textfield.TextFieldWidget.parse;
 
 public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
 
     private IStringValue<?> stringValue;
     private Function<String, String> validator = val -> val;
     private boolean numbers = false;
+    private String mathFailMessage = null;
+    private double defaultNumber = 0;
     private final GTTextFieldRenderer renderer;
 
     protected boolean changedMarkedColor = false;
@@ -109,7 +117,8 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
         return setPostFix(() -> postFix);
     }
 
-    public GTTextFieldWidget setPostFix(Supplier<String> postFix) {
+    public GTTextFieldWidget setPostFix(@Nullable Supplier<String> postFix) {
+        if (postFix == null) return this;
         return setPostFix(IKey.dynamic(postFix));
     }
 
@@ -186,43 +195,43 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
         return this;
     }
 
-    public GTTextFieldWidget setNumbersLong(Function<Long, Long> validator) {
+    public GTTextFieldWidget setNumbersLong(LongUnaryOperator validator) {
         this.numbers = true;
         setValidator(val -> {
             long num;
             if (val.isEmpty()) {
                 num = 0;
             } else {
-                num = (long) parse(val).doubleValue();
+                num = (long) parse(val);
             }
-            return format.format(validator.apply(num));
+            return format.format(validator.applyAsLong(num));
         });
         return this;
     }
 
-    public GTTextFieldWidget setNumbers(Function<Integer, Integer> validator) {
+    public GTTextFieldWidget setNumbers(IntUnaryOperator validator) {
         this.numbers = true;
         return setValidator(val -> {
             int num;
             if (val.isEmpty()) {
                 num = 0;
             } else {
-                num = (int) parse(val).doubleValue();
+                num = (int) parse(val);
             }
-            return format.format(validator.apply(num));
+            return format.format(validator.applyAsInt(num));
         });
     }
 
-    public GTTextFieldWidget setNumbersDouble(Function<Double, Double> validator) {
+    public GTTextFieldWidget setNumbersDouble(DoubleUnaryOperator validator) {
         this.numbers = true;
         return setValidator(val -> {
             double num;
             if (val.isEmpty()) {
                 num = 0;
             } else {
-                num = parse(val).doubleValue();
+                num = parse(val);
             }
-            return format.format(validator.apply(num));
+            return format.format(validator.applyAsDouble(num));
         });
     }
 
@@ -248,6 +257,16 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
         return this;
     }
 
+    public double parse(String num) {
+        ParseResult result = MathUtils.parseExpression(num, this.defaultNumber, true);
+        double value = result.getResult();
+        if (result.isFailure()) {
+            this.mathFailMessage = result.getError();
+            GTLog.logger.error("Math expression error in {}: {}", this, this.mathFailMessage);
+        }
+        return value;
+    }
+
     private static class GTTextFieldRenderer extends TextFieldRenderer {
 
         IKey postFix = IKey.EMPTY;
@@ -269,7 +288,7 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
             GlStateManager.enableBlend();
         }
 
-        public void setPostFix(IKey postFix) {
+        public void setPostFix(@NotNull IKey postFix) {
             this.postFix = postFix;
         }
 
