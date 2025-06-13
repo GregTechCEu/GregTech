@@ -218,8 +218,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
         guiSyncManager.registerSlotGroup("extra_slot", 1);
 
         final String syncHandlerName = "aeSync";
-        guiSyncManager.syncValue(syncHandlerName,
-                new AEItemSyncHandler(getAEItemHandler(), this::markDirty, circuitInventory));
+        AEItemSyncHandler syncHandler = new AEItemSyncHandler(getAEItemHandler(), this::markDirty, circuitInventory);
+        guiSyncManager.syncValue(syncHandlerName, syncHandler);
 
         Grid configGrid = new Grid()
                 .pos(7, 25)
@@ -269,9 +269,30 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                                 .slot(SyncHandlers.itemSlot(extraSlotInventory, 0)
                                         .slotGroup("extra_slot"))
                                 .addTooltipLine(IKey.lang("gregtech.gui.me_bus.extra_slot"))))
-                .child(getSettingWidget(guiSyncManager)
+                .child(Flow.row()
+                        .width(isStocking ? 18 : 18 * 2)
+                        .height(18)
+                        .top(5)
                         .right(7)
-                        .top(5));
+                        .childIf(!isStocking, new ButtonWidget<>()
+                                .width(9)
+                                .height(18)
+                                .onMousePressed(mouseButton -> {
+                                    syncHandler.modifyConfigAmounts((index, amount) -> Math.max(1, amount / 2));
+
+                                    return true;
+                                })
+                                .addTooltipLine(IKey.str("Click to divide all slots by 2"))) // TODO: lang
+                        .childIf(!isStocking, new ButtonWidget<>()
+                                .width(9)
+                                .height(18).onMousePressed(mouseButton -> {
+                                    syncHandler.modifyConfigAmounts(
+                                            (index, amount) -> GTUtility.safeCastLongToInt((long) amount * 2));
+
+                                    return true;
+                                })
+                                .addTooltipLine(IKey.str("Click to multiply all slots by 2"))) // TODO: lang
+                        .child(getSettingWidget(guiSyncManager)));
     }
 
     protected Widget<?> getSettingWidget(PanelSyncManager guiSyncManager) {

@@ -14,6 +14,7 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidConfigSlot;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidDisplaySlot;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
@@ -177,7 +178,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
         final boolean isStocking = getAEFluidHandler().isStocking();
 
         final String syncHandlerName = "aeSync";
-        guiSyncManager.syncValue(syncHandlerName, new AEFluidSyncHandler(getAEFluidHandler(), this::markDirty));
+        AEFluidSyncHandler syncHandler = new AEFluidSyncHandler(getAEFluidHandler(), this::markDirty);
+        guiSyncManager.syncValue(syncHandlerName, syncHandler);
 
         Grid configGrid = new Grid()
                 .pos(7, 25)
@@ -224,9 +226,30 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                                 .size(18))
                         .child(GTGuiTextures.getLogo(getUITheme()).asWidget()
                                 .size(17)))
-                .child(getSettingWidget(guiSyncManager)
+                .child(Flow.row()
+                        .width(isStocking ? 18 : 18 * 2)
+                        .height(18)
+                        .top(5)
                         .right(7)
-                        .top(5));
+                        .childIf(!isStocking, new ButtonWidget<>()
+                                .width(9)
+                                .height(18)
+                                .onMousePressed(mouseButton -> {
+                                    syncHandler.modifyConfigAmounts((index, amount) -> Math.max(1, amount / 2));
+
+                                    return true;
+                                })
+                                .addTooltipLine(IKey.str("Click to divide all slots by 2"))) // TODO: lang
+                        .childIf(!isStocking, new ButtonWidget<>()
+                                .width(9)
+                                .height(18).onMousePressed(mouseButton -> {
+                                    syncHandler.modifyConfigAmounts(
+                                            (index, amount) -> GTUtility.safeCastLongToInt((long) amount * 2));
+
+                                    return true;
+                                })
+                                .addTooltipLine(IKey.str("Click to multiply all slots by 2"))) // TODO: lang
+                        .child(getSettingWidget(guiSyncManager)));
     }
 
     protected Widget<?> getSettingWidget(PanelSyncManager guiSyncManager) {

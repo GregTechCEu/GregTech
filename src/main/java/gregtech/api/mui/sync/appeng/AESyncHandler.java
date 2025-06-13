@@ -11,12 +11,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.function.IntBinaryOperator;
 
 public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler implements IJEIRecipeReceiver {
 
@@ -25,6 +28,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
     public static final int clearConfigID = 2;
     public static final int bulkClearConfigID = 3;
     public static final int changeConfigAmountID = 4;
+    public static final int bulkConfigAmountChangeID = 5;
 
     protected final boolean isStocking;
     protected final IConfigurableSlot<T>[] slots;
@@ -124,6 +128,15 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
                 IConfigurableSlot<T> slot = slots[index];
                 slot.setConfig(null);
             }
+        } else if (id == bulkConfigAmountChangeID) {
+            int size = buf.readVarInt();
+            for (int i = 0; i < size; i++) {
+                T config = slots[buf.readVarInt()].getConfig();
+                int newAmount = buf.readInt();
+                if (config != null) {
+                    config.setStackSize(newAmount);
+                }
+            }
         }
     }
 
@@ -201,6 +214,36 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
     @Nullable
     public T getStock(int index) {
         return slots[index].getStock();
+    }
+
+    /**
+     * Operate over the amounts of all slots, skipping empty slots.
+     * 
+     * @param function a function that takes the slot index and the original stack size, and returns a new stack size
+     */
+    @SideOnly(Side.CLIENT)
+    public void modifyConfigAmounts(IntBinaryOperator function) {
+        Int2IntMap changeMap = new Int2IntArrayMap(slots.length);
+
+        for (int index = 0; index < slots.length; index++) {
+            T config = slots[index].getConfig();
+            if (config != null) {
+                int originalSize = GTUtility.safeCastLongToInt(config.getStackSize());
+                int newSize = function.applyAsInt(index, originalSize);
+                if (newSize != originalSize) {
+                    changeMap.put(index, newSize);
+                }
+            }
+        }
+
+        syncToServer(bulkConfigAmountChangeID, buf -> {
+            buf.writeVarInt(changeMap.size());
+
+            for (int index : changeMap.keySet()) {
+                buf.writeVarInt(index);
+                buf.writeInt(changeMap.get(index));
+            }
+        });
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
