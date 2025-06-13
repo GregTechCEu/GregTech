@@ -628,8 +628,7 @@ public class MultiblockUIBuilder {
         chancedItemOutputs = getSyncer().syncCollection(chancedItemOutputs, GTByteBufAdapters.CHANCED_ITEM_OUTPUT);
         chancedFluidOutputs = getSyncer().syncCollection(chancedFluidOutputs, GTByteBufAdapters.CHANCED_FLUID_OUTPUT);
 
-        // todo lang
-        addKey(KeyUtil.string(TextFormatting.GRAY, "Producing: "), Operation::addLine);
+        addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.gui.multiblock.recipe_producing"), Operation::addLine);
 
         int recipeTier = GTUtility.getTierByVoltage(eut);
         int machineTier = GTUtility.getOCTierByVoltage(maxVoltage);
