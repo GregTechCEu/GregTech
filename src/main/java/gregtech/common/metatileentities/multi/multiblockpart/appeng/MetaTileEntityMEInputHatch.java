@@ -1,20 +1,22 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
+import gregtech.api.mui.widget.appeng.fluid.AEFluidConfigSlot;
+import gregtech.api.mui.widget.appeng.fluid.AEFluidDisplaySlot;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.gui.widget.appeng.AEFluidConfigWidget;
+import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
@@ -40,26 +42,38 @@ import appeng.api.storage.data.IAEFluidStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.IPanelHandler;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAEFluidStack>
+public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelPart<IAEFluidStack>
                                         implements IMultiblockAbilityPart<IFluidTank>, IDataStickIntractable {
 
-    public final static String FLUID_BUFFER_TAG = "FluidTanks";
-    public final static String WORKING_TAG = "WorkingEnabled";
-    private final static int CONFIG_SIZE = 16;
-    private boolean workingEnabled = true;
+    public static final String FLUID_BUFFER_TAG = "FluidTanks";
+    public static final String WORKING_TAG = "WorkingEnabled";
+
+    public final static int CONFIG_SIZE = 16;
     protected ExportOnlyAEFluidList aeFluidHandler;
 
-    public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId) {
-        this(metaTileEntityId, GTValues.EV);
-    }
+    private boolean workingEnabled = true;
 
-    protected MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId, int tier) {
+    public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false, IFluidStorageChannel.class);
     }
 
@@ -68,6 +82,10 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
             aeFluidHandler = new ExportOnlyAEFluidList(this, CONFIG_SIZE, this.getController());
         }
         return aeFluidHandler;
+    }
+
+    public boolean isAutoPull() {
+        return getAEFluidHandler().isAutoPull();
     }
 
     @Override
@@ -84,9 +102,13 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME() && updateMEStatus()) {
-            syncME();
+        if (!getWorld().isRemote && this.workingEnabled && updateMEStatus() && shouldSyncME()) {
+            operateOnME();
         }
+    }
+
+    protected void operateOnME() {
+        syncME();
     }
 
     protected void syncME() {
@@ -130,8 +152,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
 
         for (ExportOnlyAEFluidSlot aeTank : this.getAEFluidHandler().getInventory()) {
             IAEFluidStack stock = aeTank.getStock();
-            if (stock instanceof WrappedFluidStack) {
-                stock = ((WrappedFluidStack) stock).getAEStack();
+            if (stock instanceof WrappedFluidStack wrappedFluidStack) {
+                stock = wrappedFluidStack.getAEStack();
             }
             if (stock != null) {
                 monitor.injectItems(stock, Actionable.MODULATE, this.getActionSource());
@@ -141,38 +163,147 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityMEInputHatch(this.metaTileEntityId);
+        return new MetaTileEntityMEInputHatch(this.metaTileEntityId, getTier());
     }
 
     @Override
-    protected final ModularUI createUI(EntityPlayer player) {
-        ModularUI.Builder builder = createUITemplate(player);
-        return builder.build(this.getHolder(), player);
+    public boolean usesMui2() {
+        return true;
     }
 
-    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
-        ModularUI.Builder builder = ModularUI
-                .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
-                .label(10, 5, getMetaFullName());
-        // ME Network status
-        builder.dynamicLabel(10, 15, () -> this.isOnline ?
-                I18n.format("gregtech.gui.me_network.online") :
-                I18n.format("gregtech.gui.me_network.offline"),
-                0x404040);
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        ModularPanel mainPanel = GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94);
 
-        // Config slots
-        builder.widget(new AEFluidConfigWidget(7, 25, this.getAEFluidHandler()));
+        final boolean isStocking = getAEFluidHandler().isStocking();
 
-        // Arrow image
-        builder.image(7 + 18 * 4, 25 + 18, 18, 18, GuiTextures.ARROW_DOUBLE);
+        final String syncHandlerName = "aeSync";
+        AEFluidSyncHandler syncHandler = new AEFluidSyncHandler(getAEFluidHandler(), this::markDirty);
+        guiSyncManager.syncValue(syncHandlerName, syncHandler);
 
-        // GT Logo, cause there's some free real estate
-        builder.widget(new ImageWidget(7 + 18 * 4, 25 + 18 * 3, 17, 17,
-                GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
-                        .setIgnoreColor(true));
+        Grid configGrid = new Grid()
+                .pos(7, 25)
+                .size(18 * 4)
+                .minElementMargin(0, 0)
+                .minColWidth(18)
+                .minRowHeight(18)
+                .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
+                        index -> new AEFluidConfigSlot(isStocking, index, this::isAutoPull)
+                                .syncHandler(syncHandlerName)
+                                .debugName("Index " + index)));
 
-        builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
-        return builder;
+        for (IWidget aeWidget : configGrid.getChildren()) {
+            ((AEFluidConfigSlot) aeWidget).onSelect(() -> {
+                for (IWidget widget : configGrid.getChildren()) {
+                    ((AEFluidConfigSlot) widget).deselect();
+                }
+            });
+        }
+
+        return mainPanel.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(IKey.lang(() -> isOnline() ? "gregtech.gui.me_network.online" :
+                        "gregtech.gui.me_network.offline")
+                        .asWidget().pos(5, 15))
+                .child(configGrid)
+                .child(new Grid()
+                        .pos(7 + 18 * 5, 25)
+                        .size(18 * 4)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18)
+                        .minRowHeight(18)
+                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
+                                index -> new AEFluidDisplaySlot(index)
+                                        .background(GTGuiTextures.SLOT_DARK)
+                                        .syncHandler(syncHandlerName)
+                                        .debugName("Index " + index))))
+                .child(Flow.column()
+                        .pos(7 + 18 * 4, 25)
+                        .size(18, 18 * 4)
+                        .child(getExtraButton())
+                        .child(GTGuiTextures.ARROW_DOUBLE.asWidget())
+                        .child(new Widget<>()
+                                .size(18))
+                        .child(GTGuiTextures.getLogo(getUITheme()).asWidget()
+                                .size(17)))
+                .child(Flow.row()
+                        .width(isStocking ? 18 : 18 * 2)
+                        .height(18)
+                        .top(5)
+                        .right(7)
+                        .childIf(!isStocking, new ButtonWidget<>()
+                                .width(9)
+                                .height(18)
+                                .onMousePressed(mouseButton -> {
+                                    syncHandler.modifyConfigAmounts((index, amount) -> Math.max(1, amount / 2));
+
+                                    return true;
+                                })
+                                .addTooltipLine(IKey.str("Click to divide all slots by 2"))) // TODO: lang
+                        .childIf(!isStocking, new ButtonWidget<>()
+                                .width(9)
+                                .height(18).onMousePressed(mouseButton -> {
+                                    syncHandler.modifyConfigAmounts(
+                                            (index, amount) -> GTUtility.safeCastLongToInt((long) amount * 2));
+
+                                    return true;
+                                })
+                                .addTooltipLine(IKey.str("Click to multiply all slots by 2"))) // TODO: lang
+                        .child(getSettingWidget(guiSyncManager)));
+    }
+
+    protected Widget<?> getSettingWidget(PanelSyncManager guiSyncManager) {
+        IPanelHandler settingPopup = guiSyncManager.panel("settings_panel", this::buildSettingsPopup, true);
+
+        return new ButtonWidget<>()
+                .onMousePressed(mouse -> {
+                    if (settingPopup.isPanelOpen()) {
+                        settingPopup.closePanel();
+                    } else {
+                        settingPopup.openPanel();
+                    }
+
+                    return true;
+                })
+                .addTooltipLine(IKey.lang("gregtech.machine.me.settings.button"))
+                .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY);
+    }
+
+    protected ModularPanel buildSettingsPopup(PanelSyncManager syncManager, IPanelHandler syncHandler) {
+        IntSyncValue refreshRateSync = new IntSyncValue(this::getRefreshRate, this::setRefreshRate);
+        ItemDrawable meControllerDrawable = new ItemDrawable(getStackForm());
+
+        final int width = 110;
+        return GTGuis.createPopupPanel("settings", width, getSettingsPopupHeight())
+                .child(Flow.row()
+                        .pos(4, 4)
+                        .height(16)
+                        .child(meControllerDrawable.asWidget()
+                                .size(16)
+                                .marginRight(4))
+                        .child(IKey.lang("gregtech.machine.me.settings.button")
+                                .asWidget()
+                                .heightRel(1.0f)))
+                .child(IKey.lang("gregtech.machine.me.settings.refresh_rate")
+                        .asWidget()
+                        .left(5)
+                        .top(5 + 18))
+                .child(new TextFieldWidget()
+                        .left(5)
+                        .top(15 + 18)
+                        .size(width - 10, 10)
+                        .setNumbers(1, Integer.MAX_VALUE)
+                        .setDefaultNumber(ConfigHolder.compat.ae2.updateIntervals)
+                        .value(refreshRateSync));
+    }
+
+    protected int getSettingsPopupHeight() {
+        return 33 + 14 + 5;
+    }
+
+    protected Widget<?> getExtraButton() {
+        return new Widget<>()
+                .size(18);
     }
 
     @Override
@@ -200,7 +331,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeBoolean(workingEnabled);
+        buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
@@ -212,7 +343,9 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
+
         data.setBoolean(WORKING_TAG, this.workingEnabled);
+
         NBTTagList tanks = new NBTTagList();
         for (int i = 0; i < CONFIG_SIZE; i++) {
             ExportOnlyAEFluidSlot tank = this.getAEFluidHandler().getInventory()[i];
@@ -222,15 +355,18 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
             tanks.appendTag(tankTag);
         }
         data.setTag(FLUID_BUFFER_TAG, tanks);
+
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
+
         if (data.hasKey(WORKING_TAG)) {
             this.workingEnabled = data.getBoolean(WORKING_TAG);
         }
+
         if (data.hasKey(FLUID_BUFFER_TAG, 9)) {
             NBTTagList tanks = (NBTTagList) data.getTag(FLUID_BUFFER_TAG);
             for (NBTBase nbtBase : tanks) {
@@ -245,7 +381,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            if (isOnline) {
+            if (isOnline()) {
                 Textures.ME_INPUT_HATCH_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
             } else {
                 Textures.ME_INPUT_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);
@@ -298,6 +434,9 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
             config.writeToNBT(stackNbt);
             configStacks.setTag(Integer.toString(i), stackNbt);
         }
+
+        tag.setInteger(REFRESH_RATE_TAG, this.refreshRate);
+
         return tag;
     }
 
@@ -325,6 +464,10 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
                     this.aeFluidHandler.getInventory()[i].setConfig(null);
                 }
             }
+        }
+
+        if (tag.hasKey(REFRESH_RATE_TAG)) {
+            this.refreshRate = tag.getInteger(REFRESH_RATE_TAG);
         }
     }
 }
