@@ -184,10 +184,10 @@ public abstract class CoverDetectorBase extends CoverBase {
                 .child(IKey.lang(lang).asWidget())
                 .child(new GTTextFieldWidget()
                         .right(0)
-                        .size(90, 18)
+                        .size(90, 18 - 4)
                         .setTextColor(Color.WHITE.main)
                         .setPattern(TextFieldWidget.WHOLE_NUMS)
-                        .setPostFix(postFix == null ? IKey.EMPTY::get : postFix)
+                        .setPostFix(postFix)
                         .onUpdateListener(listener)
                         .value(new StringSyncValue(getter, setter)));
     }
