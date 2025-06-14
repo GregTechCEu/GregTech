@@ -15,7 +15,6 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
-import gregtech.api.util.NetworkUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.ToolItems;
@@ -23,7 +22,6 @@ import gregtech.common.items.ToolItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
@@ -991,39 +989,6 @@ public class MultiblockUIBuilder {
                 Arrays.setAll(initial, i -> deserializer.deserializeSafe(internal));
             }
             return initial;
-        }
-
-        @Override
-        public @NotNull ItemStack syncItemStack(@NotNull Supplier<@NotNull ItemStack> initial) {
-            if (isServer()) {
-                ItemStack stack = initial.get();
-                NetworkUtil.writeItemStack(internal, stack);
-                return stack;
-            } else {
-                return NetworkUtil.readItemStack(internal);
-            }
-        }
-
-        @Override
-        public @Nullable FluidStack syncFluidStack(@NotNull Supplier<@Nullable FluidStack> initial) {
-            if (isServer()) {
-                FluidStack stack = initial.get();
-                NetworkUtil.writeFluidStack(internal, stack);
-                return stack;
-            } else {
-                return NetworkUtil.readFluidStack(internal);
-            }
-        }
-
-        @Override
-        public @Nullable Fluid syncFluid(@NotNull Supplier<@Nullable Fluid> initial) {
-            if (isServer()) {
-                Fluid fluid = initial.get();
-                NetworkUtil.writeFluid(internal, fluid);
-                return fluid;
-            } else {
-                return NetworkUtil.readFluid(internal);
-            }
         }
 
         public void readBuffer(ByteBuf buf) {

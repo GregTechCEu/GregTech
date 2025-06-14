@@ -2,8 +2,10 @@ package gregtech.api.mui;
 
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
+import gregtech.api.util.NetworkUtil;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fluids.Fluid;
 
 import com.cleanroommc.modularui.utils.serialization.*;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,8 @@ public class GTByteBufAdapters {
     public static final IByteBufAdapter<BigInteger> BIG_INT = makeAdapter(
             buffer -> new BigInteger(buffer.readByteArray()),
             (buffer, value) -> buffer.writeByteArray(value.toByteArray()));
+
+    public static final IByteBufAdapter<Fluid> FLUID = makeAdapter(NetworkUtil::readFluid, NetworkUtil::writeFluid);
 
     public static <T> IByteBufAdapter<T> makeAdapter(@NotNull IByteBufDeserializer<T> deserializer,
                                                      @NotNull IByteBufSerializer<T> serializer) {

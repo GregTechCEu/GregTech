@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
+import gregtech.api.mui.GTByteBufAdapters;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -174,7 +175,8 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                     if (isStructureFormed()) {
                         if (syncer.syncBoolean(minerLogic.getDrilledFluid() != null)) {
                             // Fluid name
-                            Fluid drilledFluid = syncer.syncFluid(minerLogic.getDrilledFluid());
+                            Fluid drilledFluid = syncer.syncObject(minerLogic.getDrilledFluid(),
+                                    GTByteBufAdapters.FLUID);
                             IKey fluidInfo = KeyUtil.fluid(drilledFluid).style(TextFormatting.GREEN);
 
                             list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.drilled_fluid",
