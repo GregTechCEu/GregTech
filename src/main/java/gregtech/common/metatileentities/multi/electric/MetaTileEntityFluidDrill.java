@@ -174,17 +174,15 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                     if (isStructureFormed()) {
                         if (syncer.syncBoolean(minerLogic.getDrilledFluid() != null)) {
                             // Fluid name
-                            Fluid drilledFluid = minerLogic.getDrilledFluid();
+                            Fluid drilledFluid = syncer.syncFluid(minerLogic.getDrilledFluid());
                             IKey fluidInfo = KeyUtil.fluid(drilledFluid).style(TextFormatting.GREEN);
 
-                            // todo should this check if fluid info is empty?
                             list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.drilled_fluid",
                                     fluidInfo));
 
                             IKey amountInfo = KeyUtil.lang(TextFormatting.BLUE,
-                                    TextFormattingUtil.formatNumbers(
-                                            minerLogic.getFluidToProduce() * 20L / FluidDrillLogic.MAX_PROGRESS) +
-                                            " L/s");
+                                    TextFormattingUtil.formatNumbers(syncer.syncInt(minerLogic.getFluidToProduce()) *
+                                            20L / FluidDrillLogic.MAX_PROGRESS) + " L/s");
                             list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.fluid_amount",
                                     amountInfo));
                         } else {
