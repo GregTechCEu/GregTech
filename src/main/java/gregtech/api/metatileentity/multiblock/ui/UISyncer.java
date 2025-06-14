@@ -2,11 +2,16 @@ package gregtech.api.metatileentity.multiblock.ui;
 
 import gregtech.api.mui.GTByteBufAdapters;
 
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+
 import com.cleanroommc.modularui.utils.serialization.ByteBufAdapters;
 import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import com.cleanroommc.modularui.utils.serialization.IByteBufSerializer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -173,6 +178,36 @@ public interface UISyncer {
      */
     default <T> T[] syncArray(T[] initial, IByteBufAdapter<T> adapter) {
         return syncArray(initial, adapter, adapter);
+    }
+
+    @NotNull
+    default ItemStack syncItemStack(@NotNull Supplier<@NotNull ItemStack> initial) {
+        return syncObject(initial, ByteBufAdapters.ITEM_STACK);
+    }
+
+    @NotNull
+    default ItemStack syncItemStack(@NotNull ItemStack initial) {
+        return syncItemStack(() -> initial);
+    }
+
+    @Nullable
+    default FluidStack syncFluidStack(@NotNull Supplier<@Nullable FluidStack> initial) {
+        return syncObject(initial, ByteBufAdapters.FLUID_STACK);
+    }
+
+    @Nullable
+    default FluidStack syncFluidStack(@Nullable FluidStack initial) {
+        return syncFluidStack(() -> initial);
+    }
+
+    @Nullable
+    default Fluid syncFluid(@NotNull Supplier<@Nullable Fluid> initial) {
+        return syncObject(initial, GTByteBufAdapters.FLUID);
+    }
+
+    @Nullable
+    default Fluid syncFluid(@Nullable Fluid initial) {
+        return syncFluid(() -> initial);
     }
 
     interface ByteSupplier {
