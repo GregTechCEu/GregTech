@@ -415,7 +415,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                             "gregtech.multiblock.hpca.energy",
                             KeyUtil.number(syncer.syncLong(hpcaHandler.cachedEUt)),
                             KeyUtil.number(syncer.syncLong(hpcaHandler.getMaxEUt())),
-                            voltageName));
+                            voltageName + TextFormatting.GRAY));
 
                     // Provided Computation
                     manager.add(KeyUtil.lang("gregtech.multiblock.hpca.computation",
@@ -568,14 +568,17 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                         double temp = temperatureValue.getDoubleValue();
                         int degrees = (int) Math.round(temp / 10.0);
 
-                        // TODO working dynamic color substitutions into IKey.lang
+                        TextFormatting color;
                         if (temp < 500) {
-                            t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature.low", degrees));
+                            color = TextFormatting.GREEN;
                         } else if (temp < 750) {
-                            t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature.medium", degrees));
+                            color = TextFormatting.YELLOW;
                         } else {
-                            t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature.high", degrees));
+                            color = TextFormatting.RED;
                         }
+
+                        t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature",
+                                () -> new Object[] { color, degrees }));
                     } else {
                         t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
                     }

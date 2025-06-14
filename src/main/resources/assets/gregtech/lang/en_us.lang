@@ -5958,9 +5958,7 @@ gregtech.multiblock.data_bank.providing=Providing data.
 
 gregtech.multiblock.hpca.computation=§7Providing: §b%,d / %,d CWU/t
 gregtech.multiblock.hpca.energy=Using: %s / %s EU/t (%s)
-gregtech.multiblock.hpca.temperature.high=§7Temperature: §c%,d°C
-gregtech.multiblock.hpca.temperature.medium=§7Temperature: §e%,d°C
-gregtech.multiblock.hpca.temperature.low=§7Temperature: §a%,d°C
+gregtech.multiblock.hpca.temperature=§7Temperature: %s%,d°C
 gregtech.multiblock.hpca.hover_for_info=Hover for details
 gregtech.multiblock.hpca.error_damaged=Damaged component in structure!
 gregtech.multiblock.hpca.error_temperature=Temperature above 100C, components may be damaged!
