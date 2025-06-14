@@ -175,18 +175,15 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
 
     @SideOnly(Side.CLIENT)
     public void setConfig(int index, @Nullable T newConfig) {
-        if (newConfig == null) {
-            syncToServer(setConfigID, buf -> {
-                buf.writeVarInt(index);
+        syncToServer(setConfigID, buf -> {
+            buf.writeVarInt(index);
+            if (newConfig == null) {
                 buf.writeBoolean(false);
-            });
-        } else {
-            syncToServer(setConfigID, buf -> {
-                buf.writeVarInt(index);
+            } else {
                 buf.writeBoolean(true);
-                newConfig.writeToPacket(buf);
-            });
-        }
+                byteBufAdapter.serialize(buf, newConfig);
+            }
+        });
     }
 
     @Nullable
@@ -222,7 +219,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
      * @param function a function that takes the slot index and the original stack size, and returns a new stack size
      */
     @SideOnly(Side.CLIENT)
-    public void modifyConfigAmounts(IntBinaryOperator function) {
+    public void modifyConfigAmounts(@NotNull IntBinaryOperator function) {
         Int2IntMap changeMap = new Int2IntArrayMap(slots.length);
 
         for (int index = 0; index < slots.length; index++) {
@@ -236,14 +233,16 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
             }
         }
 
-        syncToServer(bulkConfigAmountChangeID, buf -> {
-            buf.writeVarInt(changeMap.size());
+        if (!changeMap.isEmpty()) {
+            syncToServer(bulkConfigAmountChangeID, buf -> {
+                buf.writeVarInt(changeMap.size());
 
-            for (int index : changeMap.keySet()) {
-                buf.writeVarInt(index);
-                buf.writeInt(changeMap.get(index));
-            }
-        });
+                for (int index : changeMap.keySet()) {
+                    buf.writeVarInt(index);
+                    buf.writeInt(changeMap.get(index));
+                }
+            });
+        }
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
