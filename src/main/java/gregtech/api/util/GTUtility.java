@@ -925,6 +925,13 @@ public class GTUtility {
     }
 
     /**
+     * Safely multiply two Ints without overflowing
+     */
+    public static int safeIntegerMultiplication(int a, int b) {
+        return safeCastLongToInt((long) a * b);
+    }
+
+    /**
      * Scales a proposed recipe voltage according to a provided Material working tier.
      *
      * @param voltage     The suggested base voltage for the recipe.

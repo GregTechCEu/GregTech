@@ -55,7 +55,9 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
@@ -77,6 +79,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
 
     public static final String ITEM_BUFFER_TAG = "ItemSlots";
     public static final String WORKING_TAG = "WorkingEnabled";
+    public static final String SYNC_HANDLER_NAME = "aeSync";
 
     public final static int CONFIG_SIZE = 16;
     protected ExportOnlyAEItemList aeItemHandler;
@@ -217,9 +220,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
         final boolean isStocking = getAEItemHandler().isStocking();
         guiSyncManager.registerSlotGroup("extra_slot", 1);
 
-        final String syncHandlerName = "aeSync";
         AEItemSyncHandler syncHandler = new AEItemSyncHandler(getAEItemHandler(), this::markDirty, circuitInventory);
-        guiSyncManager.syncValue(syncHandlerName, syncHandler);
+        guiSyncManager.syncValue(SYNC_HANDLER_NAME, 0, syncHandler);
 
         Grid configGrid = new Grid()
                 .pos(7, 25)
@@ -229,7 +231,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                 .minRowHeight(18)
                 .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
                         index -> new AEItemConfigSlot(isStocking, index, this::isAutoPull)
-                                .syncHandler(syncHandlerName)
+                                .syncHandler(SYNC_HANDLER_NAME, 0)
                                 .debugName("Index " + index)));
 
         for (IWidget aeWidget : configGrid.getChildren()) {
@@ -255,7 +257,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                         .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
                                 index -> new AEItemDisplaySlot(index)
                                         .background(GTGuiTextures.SLOT_DARK)
-                                        .syncHandler(syncHandlerName)
+                                        .syncHandler(SYNC_HANDLER_NAME, 0)
                                         .debugName("Index " + index))))
                 .child(Flow.column()
                         .pos(7 + 18 * 4, 25)
@@ -274,24 +276,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                         .height(18)
                         .top(5)
                         .right(7)
-                        .childIf(!isStocking, new ButtonWidget<>()
-                                .width(9)
-                                .height(18)
-                                .onMousePressed(mouseButton -> {
-                                    syncHandler.modifyConfigAmounts((index, amount) -> Math.max(1, amount / 2));
-
-                                    return true;
-                                })
-                                .addTooltipLine(IKey.str("Click to divide all slots by 2"))) // TODO: lang
-                        .childIf(!isStocking, new ButtonWidget<>()
-                                .width(9)
-                                .height(18).onMousePressed(mouseButton -> {
-                                    syncHandler.modifyConfigAmounts(
-                                            (index, amount) -> GTUtility.safeCastLongToInt((long) amount * 2));
-
-                                    return true;
-                                })
-                                .addTooltipLine(IKey.str("Click to multiply all slots by 2"))) // TODO: lang
+                        .childIf(!isStocking, getMultiplierWidget(guiSyncManager))
                         .child(getSettingWidget(guiSyncManager)));
     }
 
@@ -341,6 +326,56 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
 
     protected int getSettingsPopupHeight() {
         return 33 + 14 + 5;
+    }
+
+    protected Widget<?> getMultiplierWidget(PanelSyncManager syncManager) {
+        IPanelHandler multiplierPopup = syncManager.panel("multiplier_panel", this::buildMultiplierPopup, true);
+
+        return new ButtonWidget<>()
+                .onMousePressed(mouse -> {
+                    if (multiplierPopup.isPanelOpen()) {
+                        multiplierPopup.closePanel();
+                    } else {
+                        multiplierPopup.openPanel();
+                    }
+
+                    return true;
+                })
+                .addTooltipLine(IKey.lang("gregtech.machine.me.multiplier.button"));
+        // TODO button overlay
+    }
+
+    protected ModularPanel buildMultiplierPopup(PanelSyncManager syncManager, IPanelHandler syncHandler) {
+        AEItemSyncHandler aeSyncHandler = (AEItemSyncHandler) ((PanelSyncHandler) syncHandler).getSyncManager()
+                .getSyncHandler(PanelSyncManager.makeSyncKey(SYNC_HANDLER_NAME, 0));
+        IntValue multiplier = new IntValue(2);
+
+        return GTGuis.blankPopupPanel("multiplier", 100, 32)
+                .child(new ButtonWidget<>()
+                        .onMousePressed(mouse -> {
+                            aeSyncHandler.modifyConfigAmounts(
+                                    (index, amount) -> Math.max(1, amount / multiplier.getIntValue()));
+                            return true;
+                        })
+                        .left(5)
+                        .top(7)
+                        .overlay(IKey.str("÷")))
+                .child(new TextFieldWidget()
+                        .alignX(0.5f)
+                        .top(5)
+                        .widthRel(0.5f)
+                        .height(18)
+                        .setNumbers(2, Integer.MAX_VALUE)
+                        .value(multiplier))
+                .child(new ButtonWidget<>()
+                        .onMousePressed(mouse -> {
+                            aeSyncHandler.modifyConfigAmounts((index, amount) -> GTUtility
+                                    .safeIntegerMultiplication(amount, multiplier.getIntValue()));
+                            return true;
+                        })
+                        .right(5)
+                        .top(7)
+                        .overlay(IKey.str("x")));
     }
 
     protected Widget<?> getExtraButton() {

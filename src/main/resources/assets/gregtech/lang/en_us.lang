@@ -5530,6 +5530,7 @@ gregtech.machine.me.settings.button=ME Settings
 gregtech.machine.me.settings.refresh_rate=Refresh rate:
 gregtech.machine.me.settings.minimum=Minimum stack size:
 gregtech.machine.me.settings.minimum.tooltip=Set to 0 to disable the minimum stack size filtering
+gregtech.machine.me.multiplier.button=Config multiplier
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
