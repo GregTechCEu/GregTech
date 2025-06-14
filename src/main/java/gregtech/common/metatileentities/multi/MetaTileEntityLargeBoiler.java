@@ -51,6 +51,7 @@ import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
@@ -202,7 +203,17 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     private ModularPanel makeThrottlePanel(PanelSyncManager syncManager, IPanelHandler syncHandler) {
-        IntSyncValue throttleValue = new IntSyncValue(this::getThrottlePercentage, this::setThrottlePercentage);
+        StringSyncValue throttleValue = new StringSyncValue(() -> throttlePercentage + "%", str -> {
+            try {
+                if (str.charAt(str.length() - 1) == '%') {
+                    str = str.substring(0, str.length() - 1);
+                }
+
+                this.throttlePercentage = Integer.parseInt(str);
+            } catch (NumberFormatException ignored) {
+
+            }
+        });
         DoubleSyncValue sliderValue = new DoubleSyncValue(
                 () -> (double) getThrottlePercentage() / 100,
                 d -> setThrottlePercentage((int) (d * 100)));
@@ -231,23 +242,25 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                 .value(sliderValue)
                                 .widthRel(0.7f)
                                 .height(20))
-                        // TODO add inc/dec buttons
                         .child(new TextFieldWidget()
                                 .widthRel(0.3f)
                                 .height(20)
                                 // TODO proper color
                                 .setTextColor(Color.WHITE.darker(1))
-                                .setValidator(s -> {
+                                .setValidator(str -> {
+                                    if (str.charAt(str.length() - 1) == '%') {
+                                        str = str.substring(0, str.length() - 1);
+                                    }
+
                                     try {
-                                        long l = Long.parseLong(s);
+                                        long l = Long.parseLong(str);
                                         if (l < 0) l = 0;
                                         else if (l > 100) l = 100;
                                         return String.valueOf(l);
                                     } catch (NumberFormatException ignored) {
-                                        return throttleValue.getStringValue();
+                                        return throttleValue.getValue();
                                     }
                                 })
-                                // TODO show % sign
                                 .value(throttleValue)
                                 .background(GTGuiTextures.DISPLAY)));
     }
