@@ -14,7 +14,8 @@
     "PanelSyncManagerAccessor"
   ],
   "client": [
-    "LangKeyMixin"
+    "LangKeyMixin",
+    "ModularSyncManagerMixin"
   ],
   "server": []
 }
