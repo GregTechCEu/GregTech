@@ -528,6 +528,7 @@ public class GTGuiTextures {
     public static final UITexture SELECT_BOX = fullImage("textures/gui/widget/select_box.png");
     public static final UITexture BUTTON_AUTO_PULL = fullImage("textures/gui/widget/button_me_auto_pull.png");
     public static final UITexture ARROW_DOUBLE = fullImage("textures/gui/widget/arrow_double.png");
+    public static final UITexture ARROW_OPPOSITE = fullImage("textures/gui/widget/opposite_arrows.png");
     public static final UITexture[] AUTO_PULL = slice("textures/gui/widget/button_me_auto_pull.png",
             16, 32, 16, 16, true);
 

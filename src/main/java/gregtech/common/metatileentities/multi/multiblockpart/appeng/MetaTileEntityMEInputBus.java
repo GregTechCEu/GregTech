@@ -341,8 +341,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
 
                     return true;
                 })
-                .addTooltipLine(IKey.lang("gregtech.machine.me.multiplier.button"));
-        // TODO button overlay
+                .addTooltipLine(IKey.lang("gregtech.machine.me.multiplier.button"))
+                .overlay(GTGuiTextures.ARROW_OPPOSITE);
     }
 
     protected ModularPanel buildMultiplierPopup(PanelSyncManager syncManager, IPanelHandler syncHandler) {
