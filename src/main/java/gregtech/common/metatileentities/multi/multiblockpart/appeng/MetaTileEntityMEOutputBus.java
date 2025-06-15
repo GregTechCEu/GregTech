@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEItemStack>
+public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostableChannelPart<IAEItemStack>
                                        implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
     public final static String ITEM_BUFFER_TAG = "ItemBuffer";
@@ -100,7 +100,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEI
                 .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
                 .label(10, 5, getMetaFullName());
         // ME Network status
-        builder.dynamicLabel(10, 15, () -> this.isOnline ?
+        builder.dynamicLabel(10, 15, () -> isOnline() ?
                 I18n.format("gregtech.gui.me_network.online") :
                 I18n.format("gregtech.gui.me_network.offline"),
                 0x404040);
@@ -168,7 +168,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEI
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            if (isOnline) {
+            if (isOnline()) {
                 Textures.ME_OUTPUT_BUS_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
             } else {
                 Textures.ME_OUTPUT_BUS.renderSided(getFrontFacing(), renderState, translation, pipeline);

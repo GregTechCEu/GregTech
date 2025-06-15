@@ -12,28 +12,27 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.core.Api;
 import appeng.util.item.AEItemStack;
 import io.netty.buffer.ByteBuf;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @Author GlodBlock
- * @Date 2023/4/22-21:02
- */
 public class WrappedItemStack implements IAEItemStack {
 
     @NotNull
-    ItemStack delegate;
+    private ItemStack delegate;
 
     private WrappedItemStack(@NotNull ItemStack itemStack) {
         this.delegate = itemStack;
     }
 
-    @Nullable
-    public static WrappedItemStack fromItemStack(@NotNull ItemStack stack) {
+    @Contract("null -> null")
+    public static WrappedItemStack fromItemStack(@Nullable ItemStack stack) {
+        if (stack == null) return null;
         return stack.isEmpty() ? null : new WrappedItemStack(stack);
     }
 
-    public static WrappedItemStack fromNBT(NBTTagCompound i) {
+    @Contract("null -> null")
+    public static WrappedItemStack fromNBT(@Nullable NBTTagCompound i) {
         if (i == null) {
             return null;
         } else {
@@ -42,7 +41,7 @@ public class WrappedItemStack implements IAEItemStack {
         }
     }
 
-    public static WrappedItemStack fromPacket(ByteBuf data) {
+    public static WrappedItemStack fromPacket(@NotNull ByteBuf data) {
         return fromNBT(ByteBufUtils.readTag(data));
     }
 
@@ -245,5 +244,10 @@ public class WrappedItemStack implements IAEItemStack {
     @Override
     public void setCachedItemStack(ItemStack itemStack) {
         this.delegate = itemStack;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Wrapped: %s", delegate);
     }
 }

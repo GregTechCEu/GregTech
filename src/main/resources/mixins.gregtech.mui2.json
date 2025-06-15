@@ -8,10 +8,14 @@
     "maxShiftBy": 10
   },
   "mixins": [
-    "ModularPanelMixin"
+    "ModularPanelMixin",
+    "ModularSyncManagerAccessor",
+    "PanelSyncHandlerAccessor",
+    "PanelSyncManagerAccessor"
   ],
   "client": [
-    "LangKeyMixin"
+    "LangKeyMixin",
+    "ModularSyncManagerMixin"
   ],
   "server": []
 }
