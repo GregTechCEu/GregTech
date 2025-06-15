@@ -317,7 +317,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostableChannelP
                         })
                         .left(5)
                         .top(7)
-                        .overlay(IKey.str("÷")))
+                        .overlay(IKey.str("/")))
                 .child(new TextFieldWidget()
                         .alignX(0.5f)
                         .top(5)
