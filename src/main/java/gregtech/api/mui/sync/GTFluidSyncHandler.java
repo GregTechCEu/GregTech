@@ -1,6 +1,7 @@
 package gregtech.api.mui.sync;
 
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.common.covers.filter.readers.SimpleFluidFilterReader;
 
 import net.minecraft.entity.item.EntityItem;
@@ -15,6 +16,7 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.utils.BooleanConsumer;
 import com.cleanroommc.modularui.utils.MouseData;
@@ -195,12 +197,30 @@ public class GTFluidSyncHandler extends SyncHandler {
         return String.format("%,d", tankFluid == null ? 0 : tankFluid.amount);
     }
 
+    public int getFluidAmount() {
+        FluidStack tankFluid = tank.getFluid();
+        return tankFluid == null ? 0 : tankFluid.amount;
+    }
+
+    public boolean hasFluid() {
+        FluidStack tankFluid = tank.getFluid();
+        return tankFluid != null && tankFluid.amount > 0;
+    }
+
     public @Nullable String getFluidLocalizedName() {
         var tankFluid = this.tank.getFluid();
         if (tankFluid == null && canLockFluid())
             tankFluid = this.lockedFluid.get();
 
         return tankFluid == null ? null : tankFluid.getLocalizedName();
+    }
+
+    public @NotNull IKey getFluidNameKey() {
+        FluidStack tankFluid = tank.getFluid();
+        if (tankFluid == null && canLockFluid()) {
+            tankFluid = lockedFluid.get();
+        }
+        return tankFluid == null ? IKey.EMPTY : KeyUtil.fluid(tankFluid);
     }
 
     @Override

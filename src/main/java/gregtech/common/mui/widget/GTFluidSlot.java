@@ -48,32 +48,29 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         tooltip().setAutoUpdate(true).titleMargin();
         tooltipBuilder(tooltip -> {
             if (!isSynced()) return;
-            var fluid = this.syncHandler.getFluid();
+            tooltip.addLine(syncHandler.getFluidNameKey());
 
-            if (fluid == null)
-                fluid = this.syncHandler.getLockedFluid();
-
-            if (fluid != null)
-                tooltip.addLine(IKey.str(fluid.getLocalizedName()));
-
-            if (this.syncHandler.showAmountInTooltip()) {
-                int amt = fluid == null ? 0 : fluid.amount;
-                tooltip.addLine(IKey.lang("gregtech.fluid.amount", amt, this.syncHandler.getCapacity()));
+            if (syncHandler.showAmountInTooltip()) {
+                tooltip.addLine(
+                        IKey.lang("gregtech.fluid.amount", syncHandler.getFluidAmount(), syncHandler.getCapacity()));
             }
 
-            if (this.syncHandler.isPhantom() && this.syncHandler.showAmountInTooltip())
+            if (syncHandler.isPhantom() && syncHandler.showAmountInTooltip()) {
                 tooltip.addLine(IKey.lang("modularui.fluid.phantom.control"));
-
-            if (fluid == null) return;
-
-            // Add various tooltips from the material
-            for (String s : FluidTooltipUtil.getFluidTooltip(fluid)) {
-                if (s.isEmpty()) continue;
-                tooltip.addLine(IKey.str(s));
             }
 
-            if (this.syncHandler.showAmountInTooltip())
-                addIngotMolFluidTooltip(fluid, tooltip);
+            if (syncHandler.hasFluid()) {
+                FluidStack tankFluid = syncHandler.getFluid();
+                // Add various tooltips from the material
+                for (String s : FluidTooltipUtil.getFluidTooltip(tankFluid)) {
+                    if (s.isEmpty()) continue;
+                    tooltip.addLine(IKey.str(s));
+                }
+
+                if (syncHandler.showAmountInTooltip()) {
+                    addIngotMolFluidTooltip(tankFluid, tooltip);
+                }
+            }
         });
     }
 
