@@ -1,6 +1,8 @@
 package gregtech.api.metatileentity.multiblock.ui;
 
 import gregtech.api.mui.GTByteBufAdapters;
+import gregtech.api.util.function.ByteSupplier;
+import gregtech.api.util.function.FloatSupplier;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -208,15 +210,5 @@ public interface UISyncer {
     @Nullable
     default Fluid syncFluid(@Nullable Fluid initial) {
         return syncFluid(() -> initial);
-    }
-
-    interface ByteSupplier {
-
-        byte getByte();
-    }
-
-    interface FloatSupplier {
-
-        float getFloat();
     }
 }

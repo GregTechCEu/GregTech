@@ -16,6 +16,8 @@ import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.api.util.function.ByteSupplier;
+import gregtech.api.util.function.FloatSupplier;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.ToolItems;
 
@@ -408,15 +410,23 @@ public class MultiblockUIBuilder {
     /**
      * Adds a warning line when the machine is low on power.
      * <br>
+     * Added if the structure is formed and if the supplier returns true.
+     */
+    public MultiblockUIBuilder addLowPowerLine(@NotNull BooleanSupplier isLowPower) {
+        if (!isStructureFormed) return this;
+        if (getSyncer().syncBoolean(isLowPower)) {
+            addKey(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.multiblock.not_enough_energy"));
+        }
+        return this;
+    }
+
+    /**
+     * Adds a warning line when the machine is low on power.
+     * <br>
      * Added if the structure is formed and if the passed parameter is true.
      */
     public MultiblockUIBuilder addLowPowerLine(boolean isLowPower) {
-        if (!isStructureFormed) return this;
-        if (getSyncer().syncBoolean(isLowPower)) {
-            addKey(KeyUtil.lang(TextFormatting.YELLOW,
-                    "gregtech.multiblock.not_enough_energy"));
-        }
-        return this;
+        return addLowPowerLine(() -> isLowPower);
     }
 
     /**
