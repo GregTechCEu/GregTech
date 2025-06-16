@@ -4,8 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
@@ -384,7 +382,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                                     .sizeRel(1f)
                                     .padding(1)
                                     .mapTo(3, 9, value -> new Widget<>()
-                                            .overlay(new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
+                                            .overlay(new DynamicDrawable(() -> hpcaHandler.getComponentTexture(value))
                                                     .asIcon().size(14).marginLeft(2).marginTop(2))
                                             .tooltipAutoUpdate(true)
                                             .tooltipBuilder(tooltip -> {
@@ -930,19 +928,11 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             }
         }
 
-        @Deprecated
-        public TextureArea getComponentTexture(int index) {
-            if (components.size() <= index) {
-                return GuiTextures.BLANK_TRANSPARENT;
-            }
-            return components.get(index).getComponentIcon();
-        }
-
-        public UITexture getComponentTexture2(int index) {
+        public UITexture getComponentTexture(int index) {
             if (components.size() <= index) {
                 return GTGuiTextures.BLANK_TRANSPARENT;
             }
-            return components.get(index).getComponentIcon2();
+            return components.get(index).getComponentIcon();
         }
 
         public IKey getComponentKey(int index) {

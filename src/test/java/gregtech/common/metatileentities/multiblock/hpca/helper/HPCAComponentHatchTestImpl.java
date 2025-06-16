@@ -34,10 +34,4 @@ public class HPCAComponentHatchTestImpl implements IHPCAComponentHatch {
     public boolean isBridge() {
         return false;
     }
-
-    // not tested
-    @Override
-    public TextureArea getComponentIcon() {
-        return null;
-    }
 }

@@ -1,6 +1,5 @@
 package gregtech.api.capability;
 
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 
@@ -50,13 +49,7 @@ public interface IHPCAComponentHatch {
     /**
      * The icon for this component in the HPCA's UI. Should be a 13x13 px sprite.
      */
-    @Deprecated
-    TextureArea getComponentIcon();
-
-    /**
-     * The icon for this component in the HPCA's UI. Should be a 13x13 px sprite.
-     */
-    default UITexture getComponentIcon2() {
+    default UITexture getComponentIcon() {
         return GTGuiTextures.HPCA_ICON_EMPTY_COMPONENT;
     }
 
@@ -67,6 +60,6 @@ public interface IHPCAComponentHatch {
         if (this instanceof MetaTileEntity mte) {
             return mte.getMetaFullName();
         }
-        return ""; // should this throw an exception instead?
+        return "";
     }
 }

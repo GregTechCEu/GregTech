@@ -2,8 +2,6 @@ package gregtech.common.metatileentities.multi.multiblockpart.hpca;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IHPCACoolantProvider;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
@@ -39,12 +37,7 @@ public class MetaTileEntityHPCACooler extends MetaTileEntityHPCAComponent implem
     }
 
     @Override
-    public TextureArea getComponentIcon() {
-        return advanced ? GuiTextures.HPCA_ICON_ACTIVE_COOLER_COMPONENT : GuiTextures.HPCA_ICON_HEAT_SINK_COMPONENT;
-    }
-
-    @Override
-    public UITexture getComponentIcon2() {
+    public UITexture getComponentIcon() {
         return advanced ? GTGuiTextures.HPCA_ICON_ACTIVE_COOLER_COMPONENT : GTGuiTextures.HPCA_ICON_HEAT_SINK_COMPONENT;
     }
 
