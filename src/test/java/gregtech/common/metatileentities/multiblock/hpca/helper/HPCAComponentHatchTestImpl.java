@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.multiblock.hpca.helper;
 
 import gregtech.api.capability.IHPCAComponentHatch;
-import gregtech.api.gui.resources.TextureArea;
 
 public class HPCAComponentHatchTestImpl implements IHPCAComponentHatch {
 
