@@ -31,6 +31,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -332,11 +333,16 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                         .autoUpdate(true)
                         .textBuilder(richText -> {
                             richText.addLine(IKey.lang("gregtech.gui.fluid_amount"));
-                            String name = fluidSyncHandler.getFluidLocalizedName();
-                            if (name == null) return;
-                            if (name.length() > 25) name = name.substring(0, 25) + "...";
 
-                            richText.addLine(IKey.str(name));
+                            IKey nameKey = fluidSyncHandler.getFluidNameKey();
+                            if (nameKey == IKey.EMPTY) return;
+
+                            String formatted = nameKey.getFormatted();
+                            if (formatted.length() > 25) {
+                                nameKey = IKey.str(formatted.substring(0, 25) + TextFormatting.WHITE + "...");
+                            }
+
+                            richText.addLine(nameKey);
                             richText.addLine(IKey.str(fluidSyncHandler.getFormattedFluidAmount()));
                         }))
                 .child(new GTFluidSlot()
