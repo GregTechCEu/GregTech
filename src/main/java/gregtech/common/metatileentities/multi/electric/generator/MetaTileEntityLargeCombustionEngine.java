@@ -77,7 +77,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     protected void configureDisplayText(MultiblockUIBuilder builder) {
         var recipeLogic = (LargeCombustionEngineWorkableHandler) recipeMapWorkable;
 
-        builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
+        builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive() && !isDynamoFull());
 
         if (isExtreme) {
             builder.addEnergyProductionLine(GTValues.V[tier + 1], recipeLogic.getRecipeEUt());
@@ -123,8 +123,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     protected void configureWarningText(MultiblockUIBuilder builder) {
         super.configureWarningText(builder);
         builder.addCustom((manager, syncer) -> {
-            long canInsert = syncer.syncLong(getEnergyContainer().getEnergyCanBeInserted());
-            if (canInsert < syncer.syncLong(recipeMapWorkable.getRecipeEUt())) {
+            if (syncer.syncBoolean(this::isDynamoFull)) {
                 manager.add(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.large_combustion_engine.dynamo_hatch_full"));
             }
@@ -364,6 +363,10 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             }
         }
         return new int[2];
+    }
+
+    public boolean isDynamoFull() {
+        return getEnergyContainer().getEnergyCanBeInserted() < recipeMapWorkable.getRecipeEUt();
     }
 
     private static class LargeCombustionEngineWorkableHandler extends MultiblockFuelRecipeLogic {
