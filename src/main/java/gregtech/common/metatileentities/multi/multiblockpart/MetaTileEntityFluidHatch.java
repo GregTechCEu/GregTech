@@ -281,12 +281,15 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
                 .showAmountOnSlot(false)
-                .accessibility(true, !isExportHatch)
-                .handleLocking(() -> this.lockedFluid, fluidStack -> {
-                    setLocked(fluidStack != null);
-                    this.lockedFluid = fluidStack;
-                    this.fluidTank.onContentsChanged();
-                }, this::setLocked);
+                .accessibility(true, !isExportHatch);
+
+        if (isExportHatch) {
+            fluidSyncHandler.handleLocking(() -> this.lockedFluid, fluidStack -> {
+                setLocked(fluidStack != null);
+                this.lockedFluid = fluidStack;
+                this.fluidTank.onContentsChanged();
+            }, this::setLocked);
+        }
 
         return GTGuis.createPanel(this, 176, 166)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(6, 6))
