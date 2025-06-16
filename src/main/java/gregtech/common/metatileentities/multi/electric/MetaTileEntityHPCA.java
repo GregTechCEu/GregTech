@@ -23,6 +23,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.RelativeDirection;
+import gregtech.api.util.function.impl.TimedProgressSupplier;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -92,12 +93,12 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
     private double temperature = IDLE_TEMPERATURE; // start at idle temperature
 
-    private final gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier progressSupplier;
+    private final TimedProgressSupplier progressSupplier;
 
     public MetaTileEntityHPCA(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.energyContainer = new EnergyContainerList(new ArrayList<>());
-        this.progressSupplier = new gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier(200, 47, false);
+        this.progressSupplier = new TimedProgressSupplier(200, 47, false);
         this.hpcaHandler = new HPCAGridHandler(this);
     }
 

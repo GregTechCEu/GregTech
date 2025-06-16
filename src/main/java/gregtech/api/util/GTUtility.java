@@ -6,7 +6,6 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.GTFluid;
-import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.items.behavior.CoverItemBehavior;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -20,6 +19,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemAndMetadata;
+import gregtech.api.util.function.impl.TimedProgressSupplier;
 
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -939,7 +939,7 @@ public class GTUtility {
     public static @NotNull Pair<DoubleSupplier, DoubleSupplier> createPairedSupplier(int ticksPerCycle, int width,
                                                                                      double splitPoint) {
         AtomicDouble tracker = new AtomicDouble(0.0);
-        DoubleSupplier supplier1 = new ProgressWidget.TimedProgressSupplier(ticksPerCycle, width, false) {
+        DoubleSupplier supplier1 = new TimedProgressSupplier(ticksPerCycle, width, false) {
 
             @Override
             public double getAsDouble() {
