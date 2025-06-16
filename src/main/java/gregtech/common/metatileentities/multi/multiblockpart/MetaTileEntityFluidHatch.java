@@ -193,6 +193,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         buf.writeBoolean(workingEnabled);
         if (isExportHatch) {
             buf.writeBoolean(locked);
+            NetworkUtils.writeFluidStack(buf, lockedFluid);
         } else {
             buf.writeVarInt(this.circuitInventory.getCircuitValue());
         }
@@ -204,6 +205,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         this.workingEnabled = buf.readBoolean();
         if (isExportHatch) {
             this.locked = buf.readBoolean();
+            this.lockedFluid = NetworkUtils.readFluidStack(buf);
         } else {
             setGhostCircuitConfig(buf.readVarInt());
         }
