@@ -1,22 +1,16 @@
 package gregtech.common.mui.widget;
 
-import gregtech.api.GTValues;
 import gregtech.api.mui.sync.GTFluidSyncHandler;
-import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.RenderUtil;
-import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import com.cleanroommc.modularui.api.ITheme;
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
@@ -24,7 +18,6 @@ import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -48,29 +41,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         tooltip().setAutoUpdate(true).titleMargin();
         tooltipBuilder(tooltip -> {
             if (!isSynced()) return;
-            tooltip.addLine(syncHandler.getFluidNameKey());
-
-            if (syncHandler.showAmountInTooltip()) {
-                tooltip.addLine(
-                        IKey.lang("gregtech.fluid.amount", syncHandler.getFluidAmount(), syncHandler.getCapacity()));
-            }
-
-            if (syncHandler.isPhantom() && syncHandler.showAmountInTooltip()) {
-                tooltip.addLine(IKey.lang("modularui.fluid.phantom.control"));
-            }
-
-            if (syncHandler.hasFluid()) {
-                FluidStack tankFluid = syncHandler.getFluid();
-                // Add various tooltips from the material
-                for (String s : FluidTooltipUtil.getFluidTooltip(tankFluid)) {
-                    if (s.isEmpty()) continue;
-                    tooltip.addLine(IKey.str(s));
-                }
-
-                if (syncHandler.showAmountInTooltip()) {
-                    addIngotMolFluidTooltip(tankFluid, tooltip);
-                }
-            }
+            syncHandler.handleTooltip(tooltip);
         });
     }
 
@@ -183,19 +154,6 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     @Override
     protected WidgetTheme getWidgetThemeInternal(ITheme theme) {
         return theme.getFluidSlotTheme();
-    }
-
-    public static void addIngotMolFluidTooltip(FluidStack fluidStack, RichTooltip tooltip) {
-        // Add tooltip showing how many "ingot moles" (increments of 144) this fluid is if shift is held
-        if (TooltipHelper.isShiftDown() && fluidStack.amount > GTValues.L) {
-            int numIngots = fluidStack.amount / GTValues.L;
-            int extra = fluidStack.amount % GTValues.L;
-            String fluidAmount = String.format(" %,d L = %,d * %d L", fluidStack.amount, numIngots, GTValues.L);
-            if (extra != 0) {
-                fluidAmount += String.format(" + %d L", extra);
-            }
-            tooltip.add(TextFormatting.GRAY + LocalizationUtils.format("gregtech.gui.amount_raw") + fluidAmount);
-        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package gregtech.api.mui.sync;
 
+import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
 import gregtech.common.covers.filter.readers.SimpleFluidFilterReader;
@@ -18,6 +19,7 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.utils.BooleanConsumer;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
@@ -202,14 +204,6 @@ public class GTFluidSyncHandler extends SyncHandler {
         return tankFluid == null ? 0 : tankFluid.amount;
     }
 
-    public boolean hasFluid() {
-        FluidStack tankFluid = tank.getFluid();
-        if (tankFluid == null) {
-            tankFluid = lockedFluid.get();
-        }
-        return tankFluid != null;
-    }
-
     public @Nullable String getFluidLocalizedName() {
         var tankFluid = this.tank.getFluid();
         if (tankFluid == null && canLockFluid())
@@ -224,6 +218,31 @@ public class GTFluidSyncHandler extends SyncHandler {
             tankFluid = lockedFluid.get();
         }
         return tankFluid == null ? IKey.EMPTY : KeyUtil.fluid(tankFluid);
+    }
+
+    public void handleTooltip(@NotNull RichTooltip tooltip) {
+        tooltip.addLine(getFluidNameKey());
+
+        if (showAmountInTooltip()) {
+            tooltip.addLine(IKey.lang("gregtech.fluid.amount", getFluidAmount(), getCapacity()));
+        }
+
+        if (isPhantom() && showAmountInTooltip()) {
+            tooltip.addLine(IKey.lang("modularui.fluid.phantom.control"));
+        }
+
+        FluidStack tankFluid = getFluid();
+        if (tankFluid == null) {
+            tankFluid = getLockedFluid();
+        }
+
+        if (tankFluid != null) {
+            FluidTooltipUtil.handleFluidTooltip(tooltip, tankFluid);
+
+            if (showAmountInTooltip()) {
+                FluidTooltipUtil.addIngotMolFluidTooltip(tooltip, tankFluid);
+            }
+        }
     }
 
     @Override
