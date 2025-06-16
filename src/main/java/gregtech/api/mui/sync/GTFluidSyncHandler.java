@@ -204,7 +204,10 @@ public class GTFluidSyncHandler extends SyncHandler {
 
     public boolean hasFluid() {
         FluidStack tankFluid = tank.getFluid();
-        return tankFluid != null && tankFluid.amount > 0;
+        if (tankFluid == null) {
+            tankFluid = lockedFluid.get();
+        }
+        return tankFluid != null;
     }
 
     public @Nullable String getFluidLocalizedName() {
