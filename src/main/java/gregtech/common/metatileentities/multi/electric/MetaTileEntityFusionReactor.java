@@ -6,14 +6,11 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
@@ -74,7 +71,6 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.AtomicDouble;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -82,7 +78,6 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.DoubleSupplier;
 import java.util.function.UnaryOperator;
 
 import static gregtech.api.recipes.logic.OverclockingLogic.PERFECT_HALF_DURATION_FACTOR;
@@ -98,7 +93,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     private EnergyContainerList inputEnergyContainers;
     private long heat = 0; // defined in TileEntityFusionReactor but serialized in FusionRecipeLogic
     private int fusionRingColor = NO_COLOR;
-    private final FusionProgressSupplier progressBarSupplier;
 
     @SideOnly(Side.CLIENT)
     private boolean registeredBloomRenderTicket;
@@ -115,7 +109,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                 return GregtechDataCodes.FUSION_REACTOR_ENERGY_CONTAINER_TRAIT;
             }
         };
-        this.progressBarSupplier = new FusionProgressSupplier();
     }
 
     @Override
@@ -440,133 +433,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                         1.0 * heat.getLongValue() / capacity.getLongValue() : 0));
     }
 
-    private static class FusionProgressSupplier {
-
-        private final AtomicDouble tracker = new AtomicDouble(0.0);
-        private final gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier bottomLeft;
-        private final DoubleSupplier topLeft;
-        private final DoubleSupplier topRight;
-        private final DoubleSupplier bottomRight;
-
-        public FusionProgressSupplier() {
-            // Bottom Left, fill on [0, 0.25)
-            bottomLeft = new gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier(200, 164, false) {
-
-                @Override
-                public double getAsDouble() {
-                    double val = super.getAsDouble();
-                    tracker.set(val);
-                    if (val >= 0.25) {
-                        return 1;
-                    }
-                    return 4 * val;
-                }
-
-                @Override
-                public void resetCountdown() {
-                    super.resetCountdown();
-                    tracker.set(0);
-                }
-            };
-
-            // Top Left, fill on [0.25, 0.5)
-            topLeft = () -> {
-                double val = tracker.get();
-                if (val < 0.25) {
-                    return 0;
-                } else if (val >= 0.5) {
-                    return 1;
-                }
-                return 4 * (val - 0.25);
-            };
-
-            // Top Right, fill on [0.5, 0.75)
-            topRight = () -> {
-                double val = tracker.get();
-                if (val < 0.5) {
-                    return 0;
-                } else if (val >= 0.75) {
-                    return 1;
-                }
-                return 4 * (val - 0.5);
-            };
-
-            // Bottom Right, fill on [0.75, 1.0]
-            bottomRight = () -> {
-                double val = tracker.get();
-                if (val < 0.75) {
-                    return 0;
-                } else if (val >= 1) {
-                    return 1;
-                }
-                return 4 * (val - 0.75);
-            };
-        }
-
-        public void resetCountdown() {
-            bottomLeft.resetCountdown();
-        }
-
-        public DoubleSupplier getSupplier(Type type) {
-            return switch (type) {
-                case BOTTOM_LEFT -> bottomLeft;
-                case TOP_LEFT -> topLeft;
-                case TOP_RIGHT -> topRight;
-                case BOTTOM_RIGHT -> bottomRight;
-            };
-        }
-
-        private enum Type {
-
-            BOTTOM_LEFT(
-                    61, 66, 35, 41,
-                    GuiTextures.PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_BL,
-                    gregtech.api.gui.widgets.ProgressWidget.MoveType.VERTICAL),
-            TOP_LEFT(
-                    61, 30, 41, 35,
-                    GuiTextures.PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_TL,
-                    gregtech.api.gui.widgets.ProgressWidget.MoveType.HORIZONTAL),
-            TOP_RIGHT(
-                    103, 30, 35, 41,
-                    GuiTextures.PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_TR,
-                    gregtech.api.gui.widgets.ProgressWidget.MoveType.VERTICAL_DOWNWARDS),
-            BOTTOM_RIGHT(
-                    97, 72, 41, 35,
-                    GuiTextures.PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_BR,
-                    gregtech.api.gui.widgets.ProgressWidget.MoveType.HORIZONTAL_BACKWARDS);
-
-            private final int x;
-            private final int y;
-            private final int width;
-            private final int height;
-            private final TextureArea texture;
-            private final gregtech.api.gui.widgets.ProgressWidget.MoveType moveType;
-
-            Type(int x, int y, int width, int height, TextureArea texture,
-                 gregtech.api.gui.widgets.ProgressWidget.MoveType moveType) {
-                this.x = x;
-                this.y = y;
-                this.width = width;
-                this.height = height;
-                this.texture = texture;
-                this.moveType = moveType;
-            }
-
-            public gregtech.api.gui.widgets.ProgressWidget getWidget(MetaTileEntityFusionReactor instance) {
-                return new gregtech.api.gui.widgets.ProgressWidget(
-                        () -> instance.recipeMapWorkable.isActive() ?
-                                instance.progressBarSupplier.getSupplier(this).getAsDouble() : 0,
-                        x, y, width, height, texture, moveType)
-                                .setIgnoreColor(true)
-                                .setHoverTextConsumer(
-                                        tl -> MultiblockDisplayText.builder(tl, instance.isStructureFormed())
-                                                .setWorkingStatus(instance.recipeMapWorkable.isWorkingEnabled(),
-                                                        instance.recipeMapWorkable.isActive())
-                                                .addWorkingStatusLine());
-            }
-        }
-    }
-
     private class FusionRecipeLogic extends MultiblockRecipeLogic {
 
         public FusionRecipeLogic(MetaTileEntityFusionReactor tileEntity) {
@@ -653,14 +519,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         public void deserializeNBT(@NotNull NBTTagCompound compound) {
             super.deserializeNBT(compound);
             heat = compound.getLong("Heat");
-        }
-
-        @Override
-        protected void setActive(boolean active) {
-            if (active != isActive) {
-                MetaTileEntityFusionReactor.this.progressBarSupplier.resetCountdown();
-            }
-            super.setActive(active);
         }
     }
 
