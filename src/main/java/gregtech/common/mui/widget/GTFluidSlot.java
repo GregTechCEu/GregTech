@@ -83,7 +83,9 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         this.textRenderer.setShadow(true);
         this.textRenderer.setScale(0.5f);
         this.textRenderer.setColor(Color.WHITE.main);
-        getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
+        if (syncHandler.canLockFluid() || syncHandler.isPhantom()) {
+            getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
+        }
     }
 
     public GTFluidSlot syncHandler(IFluidTank fluidTank) {
@@ -209,6 +211,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
     @Override
     public @Nullable FluidStack castGhostIngredientIfValid(@NotNull Object ingredient) {
+        if (!(syncHandler.canLockFluid() || syncHandler.isPhantom())) return null;
+
         if (ingredient instanceof FluidStack stack) {
             return stack;
         } else if (ingredient instanceof ItemStack stack &&
