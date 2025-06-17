@@ -1,6 +1,5 @@
 package gregtech.api.configurator.profile;
 
-import gregtech.api.configurator.playerdata.ConfiguratorDataRegistry;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 
@@ -8,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
@@ -18,8 +18,6 @@ import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 public class SimpleMachineProfile implements IMachineConfiguratorProfile {
 
@@ -33,40 +31,35 @@ public class SimpleMachineProfile implements IMachineConfiguratorProfile {
     }
 
     @Override
-    public @NotNull String getTranslationKey() {
-        return "gregtech.machine_configurator.simple_machine_profile";
+    public @NotNull IKey getProfileName() {
+        return IKey.lang("gregtech.machine_configurator.simple_machine_profile");
     }
 
     @NotNull
     @Override
-    public ModularPanel createConfiguratorPanel(PanelSyncManager panelSyncManager, UUID playerID) {
+    public ModularPanel createConfiguratorPanel(@NotNull PanelSyncManager panelSyncManager,
+                                                @NotNull NBTTagCompound config) {
         var panel = GTGuis.createPopupPanel("simple_machine_configurator", 75, 150);
 
-        NBTTagCompound nbt = ConfiguratorDataRegistry.getPlayerData(playerID).getSlotConfig(selectedSlot.getValue());
-
-        BooleanSyncValue autoOutputItems = new BooleanSyncValue(() -> nbt.getBoolean("AutoOutputItems"),
-                bool -> nbt.setBoolean("AutoOutputItems", bool));
-        BooleanSyncValue autoOutputFluids = new BooleanSyncValue(() -> nbt.getBoolean("AutoOutputFluids"),
-                bool -> nbt.setBoolean("AutoOutputFluids", bool));
+        BooleanSyncValue autoOutputItems = new BooleanSyncValue(() -> config.getBoolean("AutoOutputItems"),
+                bool -> config.setBoolean("AutoOutputItems", bool));
+        BooleanSyncValue autoOutputFluids = new BooleanSyncValue(() -> config.getBoolean("AutoOutputFluids"),
+                bool -> config.setBoolean("AutoOutputFluids", bool));
 
         BooleanSyncValue allowItemInputFromOutput = new BooleanSyncValue(
-                () -> nbt.getBoolean("AllowItemInputFromOutput"),
-                bool -> nbt.setBoolean("AllowItemInputFromOutput", bool));
+                () -> config.getBoolean("AllowItemInputFromOutput"),
+                bool -> config.setBoolean("AllowItemInputFromOutput", bool));
         BooleanSyncValue allowFluidInputFromOutput = new BooleanSyncValue(
-                () -> nbt.getBoolean("AllowFluidInputFromOutput"),
-                bool -> nbt.setBoolean("AllowFluidInputFromOutput", bool));
+                () -> config.getBoolean("AllowFluidInputFromOutput"),
+                bool -> config.setBoolean("AllowFluidInputFromOutput", bool));
 
         EnumSyncValue<EnumFacing> itemOutputSide = new EnumSyncValue<>(EnumFacing.class,
-                () -> EnumFacing.values()[nbt.getByte("ItemOutputSide")],
-                side -> nbt.setByte("ItemOutputSide", (byte) side.getIndex()));
+                () -> EnumFacing.values()[config.getByte("ItemOutputSide")],
+                side -> config.setByte("ItemOutputSide", (byte) side.getIndex()));
         EnumSyncValue<EnumFacing> fluidOutputSide = new EnumSyncValue<>(EnumFacing.class,
-                () -> EnumFacing.values()[nbt.getByte("FluidOutputSide")],
-                side -> nbt.setByte("FluidOutputSide", (byte) side.getIndex()));
+                () -> EnumFacing.values()[config.getByte("FluidOutputSide")],
+                side -> config.setByte("FluidOutputSide", (byte) side.getIndex()));
 
-        panelSyncManager.syncValue("AutoOutputItems", autoOutputItems);
-        panelSyncManager.syncValue("AutoOutputFluids", autoOutputFluids);
-        panelSyncManager.syncValue("AllowItemInputFromOutput", allowItemInputFromOutput);
-        panelSyncManager.syncValue("AllowFluidInputFromOutput", allowFluidInputFromOutput);
         panelSyncManager.syncValue("ItemOutputSide", itemOutputSide);
         panelSyncManager.syncValue("FluidOutputSide", fluidOutputSide);
 

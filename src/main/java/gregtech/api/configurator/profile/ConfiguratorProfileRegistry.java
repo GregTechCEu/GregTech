@@ -32,8 +32,4 @@ public class ConfiguratorProfileRegistry {
     public static Collection<IMachineConfiguratorProfile> getMachineConfiguratorProfiles() {
         return Collections.unmodifiableCollection(MACHINE_CONFIGURATOR_PROFILES.values());
     }
-
-    public static boolean machineConfiguratorProfileExists(String name) {
-        return MACHINE_CONFIGURATOR_PROFILES.containsKey(name);
-    }
 }

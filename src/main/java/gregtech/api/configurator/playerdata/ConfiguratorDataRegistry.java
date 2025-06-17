@@ -66,6 +66,7 @@ public class ConfiguratorDataRegistry extends WorldSavedData {
     public static void initializeStorage(World world) {
         MapStorage storage = world.getMapStorage();
 
+        // noinspection DataFlowIssue
         ConfiguratorDataRegistry registry = (ConfiguratorDataRegistry) storage
                 .getOrLoadData(ConfiguratorDataRegistry.class, DATA_ID);
 

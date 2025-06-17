@@ -107,7 +107,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
     public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
         UUID playerID = guiData.getPlayer().getUniqueID();
 
-        return GTGuis.createPanel(guiData.getUsedItemStack(), 176, 120)
+        return GTGuis.createPanel(guiData.getUsedItemStack(), 100, 50)
                 .child(CoverWithUI.createTitleRow(guiData.getUsedItemStack()))
                 .child(createWidgets(guiData, guiSyncManager, playerID));
     }
@@ -122,18 +122,15 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
         IPanelHandler profileSelector = syncManager.panel("profile_selector", profileSelector(playerID, selectedSlot),
                 true);
 
-        Map<String, IPanelHandler> panels = new Object2ObjectOpenHashMap<>();
-        ConfiguratorProfileRegistry.getMachineConfiguratorProfiles()
-                .forEach(profile -> panels.put(profile.getName(),
-                        syncManager.panel(profile.getName(), (syncManager1, syncHandler) -> profile
-                                .createConfiguratorPanel(syncManager1, playerID), true)));
+        Map<IMachineConfiguratorProfile, IPanelHandler> configPanels = new Object2ObjectOpenHashMap<>();
+        PlayerConfiguratorData playerData = ConfiguratorDataRegistry.getPlayerData(playerID);
+        ConfiguratorProfileRegistry.getMachineConfiguratorProfiles().forEach(profile -> configPanels.put(profile,
+                syncManager.panel(profile.getName(), (profileSyncManager, profilePanelHandler) -> profile
+                        .createConfiguratorPanel(profileSyncManager, playerData.getSlotConfig(selectedSlot.getValue())),
+                        true)));
 
         return Flow.row().coverChildrenHeight().top(24)
                 .margin(7, 0).widthRel(1f)
-                .child(new TextFieldWidget()
-                        .height(18)
-                        .value(selectedSlot)
-                        .widthRel(0.5f))
                 .child(new ButtonWidget<>()
                         .overlay(GTGuiTextures.MENU_OVERLAY)
                         .background(GTGuiTextures.MC_BUTTON)
@@ -162,17 +159,14 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
                         .hoverBackground(GuiTextures.MC_BUTTON_HOVERED,
                                 GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
                         .onMousePressed(mb -> {
-                            IMachineConfiguratorProfile profile = ConfiguratorDataRegistry.getPlayerData(playerID)
-                                    .getSlotProfile(selectedSlot.getValue());
-                            if (profile == null) return false;
+                            IMachineConfiguratorProfile profile = playerData.getSlotProfile(selectedSlot.getValue());
+                            IPanelHandler configPH = configPanels.get(profile);
+                            if (configPH == null) return false;
 
-                            IPanelHandler panelHandler = panels.get(profile.getName());
-                            if (panelHandler == null) return false;
-
-                            if (panelHandler.isPanelOpen()) {
-                                panelHandler.closePanel();
+                            if (configPH.isPanelOpen()) {
+                                configPH.closePanel();
                             } else {
-                                panelHandler.openPanel();
+                                configPH.openPanel();
                             }
 
                             return true;
@@ -185,7 +179,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
             ConfiguratorProfileRegistry.getMachineConfiguratorProfiles().forEach(profile -> rows.add(
                     createProfileRow(profile, playerID, selectedSlot)));
             return GTGuis.createPopupPanel("profile_selector", 168, 112, false)
-                    .child(IKey.lang("profiles")
+                    .child(IKey.str("Profiles") // TODO: lang
                             .color(CoverWithUI.UI_TITLE_COLOR)
                             .asWidget()
                             .top(6)
@@ -219,11 +213,20 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
             List<IWidget> rows = new ArrayList<>();
             ConfiguratorDataRegistry.getSlots(player).forEach(name -> rows.add(createSlotRow(name, syncManager)));
             return GTGuis.createPopupPanel("slot_selector", 168, 112, false)
-                    .child(IKey.lang("slots")
-                            .color(CoverWithUI.UI_TITLE_COLOR)
-                            .asWidget()
+                    .child(Flow.row()
                             .top(6)
-                            .left(4))
+                            .left(4)
+                            .child(IKey.str("Slots") // TODO: lang
+                                    .color(CoverWithUI.UI_TITLE_COLOR)
+                                    .asWidget())
+                            .child(new ButtonWidget<>()
+                                    .onMousePressed(mouse -> {
+
+
+                                        return true;
+                                    })
+                                    .overlay(IKey.str("+"))
+                                    .addTooltipLine(IKey.str("Add new slot")))) //TODO: lang
                     .child(new ListWidget<>()
                             .children(rows).background(GTGuiTextures.DISPLAY.asIcon()
                                     .width(168 - 8)
