@@ -16,6 +16,7 @@ import gregtech.api.mui.factory.MetaItemGuiFactory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -33,6 +34,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
@@ -47,6 +49,7 @@ import java.util.UUID;
 public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactory {
 
     private static final String SELECTED_SLOT_KEY = "SelectedSlot";
+    private static final String SYNC_HANDLER_NAME = "configuratorSync";
 
     @Override
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
@@ -119,8 +122,11 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
                 () -> getSlotFromConfigurator(configuratorStack),
                 str -> setSlotToConfigurator(configuratorStack, str));
 
+        ConfiguratorSyncHandler configuratorSyncHandler = new ConfiguratorSyncHandler();
+        syncManager.syncValue(SYNC_HANDLER_NAME, 0, configuratorSyncHandler);
+
         IPanelHandler slotSelector = syncManager.panel("slot_selector", slotSelector(playerID), true);
-        IPanelHandler profileSelector = syncManager.panel("profile_selector", profileSelector(playerID, selectedSlot),
+        IPanelHandler profileSelector = syncManager.panel("profile_selector", profileSelector(configuratorSyncHandler),
                 true);
 
         Map<IMachineConfiguratorProfile, IPanelHandler> configPanels = new Object2ObjectOpenHashMap<>();
@@ -174,11 +180,11 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
                         }));
     }
 
-    private PanelSyncHandler.IPanelBuilder profileSelector(UUID playerID, StringSyncValue selectedSlot) {
+    private PanelSyncHandler.IPanelBuilder profileSelector(ConfiguratorSyncHandler configuratorSyncHandler) {
         return ((syncManager, syncHandler) -> {
             List<IWidget> rows = new ArrayList<>();
             ConfiguratorProfileRegistry.getMachineConfiguratorProfiles().forEach(profile -> rows.add(
-                    createProfileRow(profile, playerID, selectedSlot)));
+                    createProfileRow(profile, configuratorSyncHandler)));
             return GTGuis.createPopupPanel("profile_selector", 168, 112, false)
                     .child(IKey.str("Profiles") // TODO: lang
                             .color(CoverWithUI.UI_TITLE_COLOR)
@@ -196,13 +202,12 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
         });
     }
 
-    private Flow createProfileRow(IMachineConfiguratorProfile profile, UUID playerID, StringSyncValue selectedSlot) {
+    private Flow createProfileRow(IMachineConfiguratorProfile profile,
+                                  ConfiguratorSyncHandler configuratorSyncHandler) {
         return Flow.row()
                 .child(new ButtonWidget<>()
                         .size(10)
                         .onMousePressed(i -> {
-                            ConfiguratorDataRegistry.getPlayerData(playerID)
-                                    .setSlotProfile(selectedSlot.getValue(), profile);
 
                             return true;
                         }))
@@ -259,5 +264,18 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, List<String> lines) {}
+    public void addInformation(ItemStack itemStack, List<String> lines) {
+        // TODO: show selected slot and it's profile
+    }
+
+    private static class ConfiguratorSyncHandler extends SyncHandler {
+
+        public ConfiguratorSyncHandler() {}
+
+        @Override
+        public void readOnClient(int id, PacketBuffer buf) {}
+
+        @Override
+        public void readOnServer(int id, PacketBuffer buf) {}
+    }
 }
