@@ -1,6 +1,7 @@
 package gregtech.client.utils;
 
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.util.Mods;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -26,6 +27,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.MCHelper;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
+import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -384,6 +389,24 @@ public class RenderUtil {
         net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
     }
 
+    // adapted from com.cleanroommc.modularui.drawable.GuiDraw.java
+    // todo merge this with the method from the qstorage mui2 port
+    public static void renderItem(ItemStack item, int x, int y, float width, float height) {
+        if (item.isEmpty()) return;
+        GlStateManager.pushMatrix();
+        RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.enableDepth();
+        GlStateManager.translate(x, y, 0);
+        GlStateManager.scale(width / 16f, height / 16f, 1);
+        RenderItem renderItem = MCHelper.getMc().getRenderItem();
+        renderItem.renderItemAndEffectIntoGUI(MCHelper.getPlayer(), item, 0, 0);
+        renderItem.renderItemOverlayIntoGUI(MCHelper.getFontRenderer(), item, 0, 0, null);
+        GlStateManager.disableDepth();
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.disableLighting();
+        GlStateManager.popMatrix();
+    }
+
     public static void renderFluidOverLay(float x, float y, float width, float height, float z, FluidStack fluidStack,
                                           float alpha) {
         if (fluidStack != null) {
@@ -691,5 +714,16 @@ public class RenderUtil {
      */
     public static @NotNull TextureAtlasSprite getMissingSprite() {
         return getTextureMap().getMissingSprite();
+    }
+
+    public static void handleJeiGhostHighlight(IWidget slot) {
+        if (!Mods.JustEnoughItems.isModLoaded()) return;
+        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return;
+        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() ||
+                ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
+            GlStateManager.colorMask(true, true, true, false);
+            ingredientSlot.drawHighlight(slot.getArea(), slot.isHovering());
+            GlStateManager.colorMask(true, true, true, true);
+        }
     }
 }

@@ -17,7 +17,6 @@ import gregtech.api.cover.Cover;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
@@ -517,13 +516,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                     GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
                             .setTooltipText("gregtech.gui.fluid_auto_output.tooltip")
                             .shouldUseBaseBackground());
-            leftButtonStartX += 18;
         }
-
-        builder.widget(new CycleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
-                workable.getAvailableOverclockingTiers(), workable::getOverclockTier, workable::setOverclockTier)
-                        .setTooltipHoverString("gregtech.gui.overclock.description")
-                        .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
             ImageWidget logo = new ImageWidget(152, 63 + yOffset, 17, 17,

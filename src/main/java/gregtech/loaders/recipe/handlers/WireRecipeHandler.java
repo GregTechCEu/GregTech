@@ -2,7 +2,6 @@ package gregtech.loaders.recipe.handlers;
 
 import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -66,13 +65,14 @@ public class WireRecipeHandler {
     public static void processWireSingle(OrePrefix wirePrefix, Material material, WireProperties property) {
         OrePrefix prefix = material.hasProperty(PropertyKey.INGOT) ? ingot :
                 material.hasProperty(PropertyKey.GEM) ? gem : dust;
+        int workingTier = material.getWorkingTier();
 
         EXTRUDER_RECIPES.recipeBuilder()
                 .input(prefix, material)
                 .notConsumable(SHAPE_EXTRUDER_WIRE)
                 .output(wireGtSingle, material, 2)
                 .duration((int) material.getMass() * 2)
-                .EUt(6 * getVoltageMultiplier(material))
+                .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                 .buildAndRegister();
 
         WIREMILL_RECIPES.recipeBuilder()
@@ -80,7 +80,7 @@ public class WireRecipeHandler {
                 .circuitMeta(1)
                 .output(wireGtSingle, material, 2)
                 .duration((int) material.getMass())
-                .EUt(getVoltageMultiplier(material))
+                .EUt(GTUtility.scaleVoltage(getVoltageMultiplier(material), workingTier))
                 .buildAndRegister();
 
         for (OrePrefix wireSize : wireSizes) {
@@ -90,11 +90,11 @@ public class WireRecipeHandler {
                     .circuitMeta(multiplier * 2)
                     .output(wireSize, material)
                     .duration((int) (material.getMass() * multiplier))
-                    .EUt(getVoltageMultiplier(material))
+                    .EUt(GTUtility.scaleVoltage(getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         }
 
-        if (!material.hasFlag(NO_WORKING) && material.hasFlag(GENERATE_PLATE)) {
+        if (!material.hasFlag(NO_WORKING) && material.hasFlag(GENERATE_PLATE) && workingTier <= HV) {
             ModHandler.addShapedRecipe(String.format("%s_wire_single", material),
                     OreDictUnifier.get(wireGtSingle, material), "Xx",
                     'X', new UnificationEntry(plate, material));
@@ -117,7 +117,7 @@ public class WireRecipeHandler {
 
         // Rubber Recipe (ULV-EV cables)
         if (voltageTier <= GTValues.EV) {
-            AssemblerRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
+            var builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
                     .input(wirePrefix, material)
                     .output(cablePrefix, material)
                     .fluidInputs(Rubber.getFluid(GTValues.L * insulationAmount));
@@ -129,7 +129,7 @@ public class WireRecipeHandler {
         }
 
         // Silicone Rubber Recipe (all cables)
-        AssemblerRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
+        var builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
                 .input(wirePrefix, material)
                 .output(cablePrefix, material);
 
@@ -185,7 +185,7 @@ public class WireRecipeHandler {
                 .buildAndRegister();
     }
 
-    private static int getVoltageMultiplier(Material material) {
+    private static long getVoltageMultiplier(Material material) {
         return material.getBlastTemperature() >= 2800 ? VA[LV] : VA[ULV];
     }
 }

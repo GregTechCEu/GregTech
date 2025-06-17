@@ -4,6 +4,8 @@ import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.materials.*;
 import gregtech.api.unification.ore.OrePrefix;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,26 +80,6 @@ public class Materials {
          * Register info for cyclical references
          */
         MaterialFlagAddition.register();
-
-        /*
-         * FOR ADDON DEVELOPERS:
-         *
-         * GTCEu will not take more than 3000 IDs. Anything past ID 2999
-         * is considered FAIR GAME, take whatever you like.
-         *
-         * If you would like to reserve IDs, feel free to reach out to the
-         * development team and claim a range of IDs! We will mark any
-         * claimed ranges below this comment. Max value is 32767.
-         *
-         * - Gregicality: 3000-19999
-         * - Gregification: 20000-20999
-         * - HtmlTech: 21000-21499
-         * - GregTech Food Option: 21500-22499
-         * - FREE RANGE 22500-23599
-         * - MechTech: 23600-23999
-         * - FREE RANGE 24000-31999
-         * - Reserved for CraftTweaker: 32000-32767
-         */
 
         CHEMICAL_DYES = new Material[] {
                 Materials.DyeWhite, Materials.DyeOrange,
@@ -322,6 +304,9 @@ public class Materials {
     public static Material NiobiumNitride;
     public static Material NiobiumTitanium;
     public static Material Obsidian;
+    @ApiStatus.Obsolete
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
+    @Deprecated
     public static Material Phosphate;
     public static Material SterlingSilver;
     public static Material RoseGold;
@@ -395,11 +380,9 @@ public class Materials {
     public static Material ChromiumTrioxide;
     public static Material AntimonyTrioxide;
     public static Material Zincite;
-    public static Material CupricOxide;
     public static Material CobaltOxide;
     public static Material ArsenicTrioxide;
     public static Material Massicot;
-    public static Material Ferrosilite;
     public static Material MetalMixture;
     public static Material SodiumHydroxide;
     public static Material SodiumPersulfate;
@@ -705,7 +688,6 @@ public class Materials {
      * Second Degree Compounds
      */
     public static Material Glass;
-    public static Material Perlite;
     public static Material Borax;
     public static Material Olivine;
     public static Material Opal;

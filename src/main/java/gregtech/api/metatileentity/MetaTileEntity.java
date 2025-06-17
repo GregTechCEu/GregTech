@@ -12,7 +12,6 @@ import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
-import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.cover.CoverRayTracer;
@@ -73,7 +72,6 @@ import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -393,26 +391,28 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return getMetaName() + ".name";
     }
 
-    public <T> void addNotifiedInput(T input) {
+    public void addNotifiedInput(Object input) {
         if (input instanceof IItemHandlerModifiable) {
             if (!notifiedItemInputList.contains(input)) {
                 this.notifiedItemInputList.add((IItemHandlerModifiable) input);
             }
-        } else if (input instanceof IFluidHandler) {
+        }
+        if (input instanceof IFluidHandler) {
             if (!notifiedFluidInputList.contains(input)) {
                 this.notifiedFluidInputList.add((IFluidHandler) input);
             }
         }
     }
 
-    public <T> void addNotifiedOutput(T output) {
+    public void addNotifiedOutput(Object output) {
         if (output instanceof IItemHandlerModifiable) {
             if (!notifiedItemOutputList.contains(output)) {
                 this.notifiedItemOutputList.add((IItemHandlerModifiable) output);
             }
-        } else if (output instanceof NotifiableFluidTank) {
+        }
+        if (output instanceof IFluidHandler) {
             if (!notifiedFluidOutputList.contains(output)) {
-                this.notifiedFluidOutputList.add((NotifiableFluidTank) output);
+                this.notifiedFluidOutputList.add((IFluidHandler) output);
             }
         }
     }
@@ -827,26 +827,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         }
     }
 
-    /**
-     * @deprecated Will be removed in 2.9. Comparators no longer supported for MetaTileEntities, as cover are
-     *             interactions favored.
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public int getActualComparatorValue() {
-        return 0;
-    }
-
     public int getActualLightValue() {
-        return 0;
-    }
-
-    /**
-     * @deprecated Will be removed in 2.9.
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public final int getComparatorValue() {
         return 0;
     }
 
@@ -865,8 +846,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void update() {
-        if (!getWorld().isRemote && !allowTickAcceleration()) {
-            int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        if (!allowTickAcceleration() && getWorld().getMinecraftServer() != null) {
+            int currentTick = getWorld().getMinecraftServer().getTickCounter();
             if (currentTick == lastTick) {
                 return;
             }
@@ -1023,7 +1004,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         buf.writeShort(this.mteTraitByNetworkId.size());
         for (Int2ObjectMap.Entry<MTETrait> entry : mteTraitByNetworkId.int2ObjectEntrySet()) {
             buf.writeVarInt(entry.getIntKey());
-            entry.getValue().writeInitialData(buf);
+            entry.getValue().writeInitialSyncData(buf);
         }
         CoverSaveHandler.writeInitialSyncData(buf, this);
         buf.writeBoolean(muffled);
@@ -1162,6 +1143,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public void fillInternalTankFromFluidContainer(IFluidHandler fluidHandler) {
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack inputContainerStack = importItems.extractItem(i, 1, true);
+            if (inputContainerStack.isEmpty() ||
+                    !inputContainerStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                continue;
+            }
             FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE,
                     null, false);
             if (result.isSuccess()) {
@@ -1184,6 +1169,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public void fillContainerFromInternalTank(IFluidHandler fluidHandler) {
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack emptyContainer = importItems.extractItem(i, 1, true);
+            if (emptyContainer.isEmpty() ||
+                    !emptyContainer.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                continue;
+            }
             FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, fluidHandler, Integer.MAX_VALUE, null,
                     false);
             if (result.isSuccess()) {
@@ -1337,8 +1326,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
         data.setBoolean(TAG_KEY_MUFFLED, muffled);
 
-        if (owner != null)
-            data.setUniqueId("Owner", owner);
+        if (owner != null) {
+            NBTTagCompound ownerTag = new NBTTagCompound();
+            ownerTag.setUniqueId("UUID", owner);
+            data.setTag("Owner", ownerTag);
+        }
 
         return data;
     }
@@ -1366,8 +1358,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         CoverSaveHandler.readCoverNBT(data, this, covers::put);
         this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
 
-        if (data.hasKey("Owner"))
-            this.owner = data.getUniqueId("Owner");
+        if (data.hasKey("Owner", 10)) {
+            this.owner = data.getCompoundTag("Owner").getUniqueId("UUID");
+        }
     }
 
     @Override

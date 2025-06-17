@@ -2,7 +2,6 @@ package gregtech.api.util.input;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.util.GTLog;
 import gregtech.core.network.packets.PacketKeysPressed;
 
 import net.minecraft.client.Minecraft;
@@ -11,7 +10,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.client.settings.IKeyConflictContext;
 import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -19,12 +17,14 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import org.apache.commons.lang3.tuple.MutablePair;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Supplier;
 
@@ -42,13 +42,6 @@ public enum KeyBind {
     TOOL_AOE_CHANGE("gregtech.key.tool_aoe_change", KeyConflictContext.IN_GAME, Keyboard.KEY_V);
 
     public static final KeyBind[] VALUES = values();
-
-    public static void init() {
-        GTLog.logger.info("Registering KeyBinds");
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            MinecraftForge.EVENT_BUS.register(KeyBind.class);
-        }
-    }
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
@@ -83,75 +76,89 @@ public enum KeyBind {
         return Mouse.getEventDWheel() < 0;
     }
 
-    @SideOnly(Side.CLIENT)
-    private KeyBinding keybinding;
-    @SideOnly(Side.CLIENT)
-    private boolean isPressed, isKeyDown;
+    private final Map<EntityPlayerMP, Boolean> keysPressed = new WeakHashMap<>();
+    private final Map<EntityPlayerMP, Boolean> keysDown = new WeakHashMap<>();
 
-    private final WeakHashMap<EntityPlayerMP, MutablePair<Boolean, Boolean>> mapping = new WeakHashMap<>();
+    @SideOnly(Side.CLIENT)
+    private KeyBinding mcKeyBinding;
+    @SideOnly(Side.CLIENT)
+    private boolean isPressed;
+    @SideOnly(Side.CLIENT)
+    private boolean isKeyDown;
 
-    // For Vanilla/Other Mod keybinds
-    // Double Supplier to keep client classes from loading
-    KeyBind(Supplier<Supplier<KeyBinding>> keybindingGetter) {
+    /**
+     * For Vanilla/Other Mod keybinds
+     * <p>
+     * Double Supplier keeps client classes from loading
+     *
+     * @param keybindingSupplier supplier to the client side keybinding
+     */
+    KeyBind(@NotNull Supplier<Supplier<KeyBinding>> keybindingSupplier) {
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            this.keybinding = keybindingGetter.get().get();
+            this.mcKeyBinding = keybindingSupplier.get().get();
         }
     }
 
-    KeyBind(String langKey, int button) {
+    KeyBind(@NotNull String langKey, int button) {
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            this.keybinding = new KeyBinding(langKey, button, GTValues.MOD_NAME);
-            ClientRegistry.registerKeyBinding(this.keybinding);
+            this.mcKeyBinding = new KeyBinding(langKey, button, GTValues.MOD_NAME);
+            ClientRegistry.registerKeyBinding(this.mcKeyBinding);
         }
     }
 
-    KeyBind(String langKey, IKeyConflictContext ctx, int button) {
+    KeyBind(@NotNull String langKey, @NotNull IKeyConflictContext ctx, int button) {
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            this.keybinding = new KeyBinding(langKey, ctx, button, GTValues.MOD_NAME);
-            ClientRegistry.registerKeyBinding(this.keybinding);
+            this.mcKeyBinding = new KeyBinding(langKey, ctx, button, GTValues.MOD_NAME);
+            ClientRegistry.registerKeyBinding(this.mcKeyBinding);
         }
     }
 
     @SideOnly(Side.CLIENT)
     public KeyBinding toMinecraft() {
-        return this.keybinding;
+        return this.mcKeyBinding;
     }
 
     @SideOnly(Side.CLIENT)
     public boolean isPressed() {
-        return this.keybinding.isPressed();
+        return this.mcKeyBinding.isPressed();
     }
 
     @SideOnly(Side.CLIENT)
     public boolean isKeyDown() {
-        return this.keybinding.isKeyDown();
+        return this.mcKeyBinding.isKeyDown();
     }
 
-    public void update(boolean pressed, boolean keyDown, EntityPlayerMP player) {
-        MutablePair<Boolean, Boolean> pair = this.mapping.get(player);
-        if (pair == null) {
-            this.mapping.put(player, MutablePair.of(pressed, keyDown));
-        } else {
-            pair.left = pressed;
-            pair.right = keyDown;
-        }
+    @ApiStatus.Internal
+    public void updateServerState(@NotNull EntityPlayerMP player, boolean pressed, boolean keyDown) {
+        this.keysPressed.put(player, pressed);
+        this.keysDown.put(player, keyDown);
     }
 
-    public boolean isPressed(EntityPlayer player) {
+    /**
+     * Can call on either the {@code Server} or {@code Client} side.
+     *
+     * @param player the player to test
+     * @return if the player pressed the key
+     */
+    public boolean isPressed(@NotNull EntityPlayer player) {
         if (player.world.isRemote) {
             return isPressed();
         } else {
-            MutablePair<Boolean, Boolean> pair = this.mapping.get((EntityPlayerMP) player);
-            return pair != null && pair.left;
+            return keysPressed.getOrDefault((EntityPlayerMP) player, false);
         }
     }
 
-    public boolean isKeyDown(EntityPlayer player) {
+    /**
+     * Can call on either the {@code Server} or {@code Client} side.
+     *
+     * @param player the player to test
+     * @return if the player is holding the key down
+     */
+    public boolean isKeyDown(@NotNull EntityPlayer player) {
         if (player.world.isRemote) {
             return isKeyDown();
         } else {
-            MutablePair<Boolean, Boolean> pair = this.mapping.get((EntityPlayerMP) player);
-            return pair != null && pair.right;
+            return keysDown.getOrDefault((EntityPlayerMP) player, false);
         }
     }
 }

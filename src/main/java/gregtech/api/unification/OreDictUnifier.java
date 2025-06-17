@@ -26,8 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -37,7 +35,6 @@ public class OreDictUnifier {
 
     private OreDictUnifier() {}
 
-    private static final Map<ItemAndMetadata, ItemMaterialInfo> materialUnificationInfo = new Object2ObjectOpenHashMap<>();
     private static final Map<ItemAndMetadata, UnificationEntry> stackUnificationInfo = new Object2ObjectOpenHashMap<>();
     private static final Map<UnificationEntry, ArrayList<ItemAndMetadata>> stackUnificationItems = new Object2ObjectOpenHashMap<>();
     private static final Map<Item, ItemVariantMap.Mutable<Set<String>>> stackOreDictName = new Object2ObjectOpenHashMap<>();
@@ -63,11 +60,6 @@ public class OreDictUnifier {
     public static Comparator<ItemStack> getItemStackComparator() {
         Comparator<ItemAndMetadata> comparator = getSimpleItemStackComparator();
         return (first, second) -> comparator.compare(new ItemAndMetadata(first), new ItemAndMetadata(second));
-    }
-
-    public static void registerOre(ItemStack itemStack, ItemMaterialInfo materialInfo) {
-        if (itemStack.isEmpty()) return;
-        materialUnificationInfo.put(new ItemAndMetadata(itemStack), materialInfo);
     }
 
     public static void registerOre(ItemStack itemStack, OrePrefix orePrefix, @Nullable Material material) {
@@ -226,11 +218,13 @@ public class OreDictUnifier {
                 .collect(Collectors.toList());
     }
 
-    @Nullable
-    public static MaterialStack getMaterial(ItemStack itemStack) {
-        if (itemStack.isEmpty()) return null;
+    public static @Nullable MaterialStack getMaterial(ItemStack itemStack) {
+        if (itemStack.isEmpty()) {
+            return null;
+        }
+
         ItemAndMetadata key = new ItemAndMetadata(itemStack);
-        UnificationEntry entry = getOrWildcard(stackUnificationInfo, key);
+        UnificationEntry entry = GTUtility.getOrWildcardMeta(stackUnificationInfo, key);
         if (entry != null) {
             Material entryMaterial = entry.material;
             if (entryMaterial == null) {
@@ -240,27 +234,22 @@ public class OreDictUnifier {
                 return new MaterialStack(entryMaterial, entry.orePrefix.getMaterialAmount(entryMaterial));
             }
         }
-        ItemMaterialInfo info = getOrWildcard(materialUnificationInfo, key);
-        return info == null ? null : info.getMaterial().copy();
+        return null;
     }
 
-    @Nullable
-    public static ItemMaterialInfo getMaterialInfo(ItemStack itemStack) {
-        if (itemStack.isEmpty()) return null;
-        return getOrWildcard(materialUnificationInfo, new ItemAndMetadata(itemStack));
-    }
-
-    @Nullable
-    public static OrePrefix getPrefix(ItemStack itemStack) {
-        if (itemStack.isEmpty()) return null;
-        UnificationEntry entry = getOrWildcard(stackUnificationInfo, new ItemAndMetadata(itemStack));
+    public static @Nullable OrePrefix getPrefix(ItemStack itemStack) {
+        if (itemStack.isEmpty()) {
+            return null;
+        }
+        UnificationEntry entry = GTUtility.getOrWildcardMeta(stackUnificationInfo, new ItemAndMetadata(itemStack));
         return entry != null ? entry.orePrefix : null;
     }
 
-    @Nullable
-    public static UnificationEntry getUnificationEntry(ItemStack itemStack) {
-        if (itemStack.isEmpty()) return null;
-        return getOrWildcard(stackUnificationInfo, new ItemAndMetadata(itemStack));
+    public static @Nullable UnificationEntry getUnificationEntry(ItemStack itemStack) {
+        if (itemStack.isEmpty()) {
+            return null;
+        }
+        return GTUtility.getOrWildcardMeta(stackUnificationInfo, new ItemAndMetadata(itemStack));
     }
 
     public static ItemStack getUnificated(ItemStack itemStack) {
@@ -293,12 +282,6 @@ public class OreDictUnifier {
         List<ItemStack> itemStacks = oreDictNameStacks.get(oreDictName);
         if (itemStacks == null || itemStacks.size() == 0) return ItemStack.EMPTY;
         return itemStacks.get(0).copy();
-    }
-
-    public static List<Entry<ItemStack, ItemMaterialInfo>> getAllItemInfos() {
-        return materialUnificationInfo.entrySet().stream()
-                .map(entry -> new SimpleEntry<>(entry.getKey().toItemStack(), entry.getValue()))
-                .collect(Collectors.toList());
     }
 
     public static List<ItemStack> getAll(UnificationEntry unificationEntry) {
@@ -367,21 +350,5 @@ public class OreDictUnifier {
 
         if (list.size() > 1)
             list.sort(comparator);
-    }
-
-    /**
-     * Get the value corresponding to given key or its wildcard counterpart.
-     *
-     * @param map Map
-     * @param key Key
-     * @return value corresponding to given key or its wildcard counterpart
-     */
-    @Nullable
-    private static <T> T getOrWildcard(@NotNull Map<ItemAndMetadata, T> map,
-                                       @NotNull ItemAndMetadata key) {
-        T t = map.get(key);
-        if (t != null) return t;
-        if (key.isWildcard()) return null;
-        return map.get(key.toWildcard());
     }
 }

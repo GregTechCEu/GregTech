@@ -24,6 +24,9 @@ jobs:
     permissions:
       contents: write # needed to create GitHub releases
 
+    env:
+      DISABLE_BUILDSCRIPT_UPDATE_CHECK: true
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
