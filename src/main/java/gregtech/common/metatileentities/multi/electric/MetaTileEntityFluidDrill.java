@@ -170,28 +170,35 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                         "gregtech.multiblock.work_paused",
                         "gregtech.multiblock.miner.drilling")
                 .addEnergyUsageLine(energyContainer)
-                .addCustom((list, syncer) -> {
-                    if (isStructureFormed()) {
-                        if (syncer.syncBoolean(minerLogic.getDrilledFluid() != null)) {
-                            // Fluid name
-                            Fluid drilledFluid = syncer.syncFluid(minerLogic.getDrilledFluid());
-                            IKey fluidInfo = KeyUtil.fluid(drilledFluid).style(TextFormatting.GREEN);
+                .addCustom((keyManager, syncer) -> {
+                    if (!isStructureFormed()) return;
 
-                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.drilled_fluid",
-                                    fluidInfo));
+                    // Fluid name
+                    Fluid drilledFluid = syncer.syncFluid(minerLogic.getDrilledFluid());
+                    if (drilledFluid == null) {
+                        IKey noFluid = KeyUtil.lang(TextFormatting.RED,
+                                "gregtech.multiblock.fluid_rig.no_fluid_in_area");
 
-                            IKey amountInfo = KeyUtil.lang(TextFormatting.BLUE,
-                                    TextFormattingUtil.formatNumbers(syncer.syncInt(minerLogic.getFluidToProduce()) *
-                                            20L / FluidDrillLogic.MAX_PROGRESS) + " L/s");
-                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.fluid_amount",
-                                    amountInfo));
-                        } else {
-                            IKey noFluid = KeyUtil.lang(TextFormatting.RED,
-                                    "gregtech.multiblock.fluid_rig.no_fluid_in_area");
-                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.drilled_fluid",
-                                    noFluid));
-                        }
+                        keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.fluid_rig.drilled_fluid",
+                                noFluid));
+                        return;
                     }
+
+                    IKey fluidInfo = KeyUtil.fluid(drilledFluid).style(TextFormatting.GREEN);
+
+                    keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
+                            "gregtech.multiblock.fluid_rig.drilled_fluid",
+                            fluidInfo));
+
+                    int fluidProduce = syncer.syncInt(minerLogic.getFluidToProduce());
+
+                    IKey amountInfo = KeyUtil.number(TextFormatting.BLUE,
+                            fluidProduce * 20L / FluidDrillLogic.MAX_PROGRESS, " L/s");
+
+                    keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
+                            "gregtech.multiblock.fluid_rig.fluid_amount",
+                            amountInfo));
                 })
                 .addProgressLine(minerLogic.getProgressTime(), FluidDrillLogic.MAX_PROGRESS)
                 .addWorkingStatusLine();

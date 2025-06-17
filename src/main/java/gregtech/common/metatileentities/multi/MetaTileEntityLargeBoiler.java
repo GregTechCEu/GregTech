@@ -242,6 +242,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                 .value(sliderValue)
                                 .widthRel(0.7f)
                                 .height(20))
+                        // todo switch this text field with GTTextFieldWidget in PR #2700
                         .child(new TextFieldWidget()
                                 .widthRel(0.3f)
                                 .height(20)

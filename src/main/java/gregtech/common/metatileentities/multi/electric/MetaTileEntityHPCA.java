@@ -414,7 +414,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                             "gregtech.multiblock.hpca.energy",
                             KeyUtil.number(syncer.syncLong(hpcaHandler.cachedEUt)),
                             KeyUtil.number(syncer.syncLong(hpcaHandler.getMaxEUt())),
-                            voltageName + TextFormatting.GRAY));
+                            IKey.str(voltageName)));
 
                     // Provided Computation
                     manager.add(KeyUtil.lang("gregtech.multiblock.hpca.computation",
@@ -576,8 +576,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                             color = TextFormatting.RED;
                         }
 
-                        t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature",
-                                () -> new Object[] { color, degrees }));
+                        t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature", degrees).style(color));
                     } else {
                         t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
                     }
