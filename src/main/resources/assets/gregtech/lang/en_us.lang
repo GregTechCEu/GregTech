@@ -1173,6 +1173,15 @@ metaitem.tool.multiblock_builder.tooltip2=Sneak and right-click Multiblock contr
 
 metaitem.tool.machine_configurator.name=Machine Configurator
 metaitem.tool.machine_configurator.tooltip=The ultimate solution to configuring your machines!
+metaitem.tool.machine_configurator.active_slot=Selected slot: %s
+metaitem.tool.machine_configurator.no_slot=No slot selected
+metaitem.tool.machine_configurator.slots=Slots
+metaitem.tool.machine_configurator.delete_slot=Delete slot
+metaitem.tool.machine_configurator.select_slot=Select slot
+metaitem.tool.machine_configurator.add_slot=Add new slot
+metaitem.tool.machine_configurator.active_profile=Selected profile: %s
+metaitem.tool.machine_configurator.no_profile=No profile selected
+metaitem.tool.machine_configurator.profiles=Available Profiles
 
 metaarmor.nms.nightvision.enabled=NanoMuscle™ Suite: NightVision Enabled
 metaarmor.nms.nightvision.disabled=NanoMuscle™ Suite: NightVision Disabled
@@ -6522,3 +6531,7 @@ gregtech.scanner.forestry.pollen=§oScanned Pollen
 gregtech.mutation.block_of=Block of %s
 
 record.sus=Leonz - Among Us Drip
+
+
+#Configurator Profiles
+gregtech.machine_configurator.simple_machine_profile=Singleblock Machines

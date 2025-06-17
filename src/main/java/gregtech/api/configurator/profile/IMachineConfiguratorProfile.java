@@ -1,11 +1,13 @@
 package gregtech.api.configurator.profile;
 
-import net.minecraft.nbt.NBTTagCompound;
+import gregtech.api.configurator.playerdata.PlayerConfiguratorData;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Supplier;
 
 public interface IMachineConfiguratorProfile {
 
@@ -16,11 +18,26 @@ public interface IMachineConfiguratorProfile {
     String getName();
 
     /**
-     * The name to use when translating this profile's name for the player to see.
+     * Get the network ID of this profile.
+     */
+    int networkID();
+
+    /**
+     * Set the network ID of this profile. Will be called when registering in
+     * {@link ConfiguratorProfileRegistry#registerMachineConfiguratorProfile(IMachineConfiguratorProfile)}
+     * 
+     * @param networkID the network ID to be assigned
+     */
+    void setNetworkID(int networkID);
+
+    /**
+     * The name of this profile as an {@link IKey}
      */
     @NotNull
     IKey getProfileName();
 
     @NotNull
-    ModularPanel createConfiguratorPanel(@NotNull PanelSyncManager panelSyncManager, @NotNull NBTTagCompound config);
+    ModularPanel createConfiguratorPanel(@NotNull PanelSyncManager panelSyncManager,
+                                         @NotNull PlayerConfiguratorData playerData,
+                                         @NotNull Supplier<@NotNull String> selectedSlot);
 }

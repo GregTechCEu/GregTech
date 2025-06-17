@@ -83,8 +83,14 @@ public class GTGuis {
     }
 
     public static PopupPanel defaultPopupPanel(String name) {
-        return new PopupPanel(name)
+        return new PopupPanel(name, true)
                 .size(DEFAULT_WIDTH, DEFAULT_HIEGHT);
+    }
+
+    // TODO: replace with the changes in my ME hatch MUI2 PR when that merges
+    public static PopupPanel blankPopupPanel(String name, int width, int height) {
+        return new PopupPanel(name, false)
+                .size(width, height);
     }
 
     public static PopupPanel defaultPopupPanel(String name, boolean disableBelow,
@@ -101,11 +107,11 @@ public class GTGuis {
         private boolean closeOnOutsideClick;
         private boolean deleteCachedPanel;
 
-        private PopupPanel(@NotNull String name) {
+        private PopupPanel(@NotNull String name, boolean addCloseButton) {
             super(name);
             align(Alignment.Center);
             background(GTGuiTextures.BACKGROUND_POPUP);
-            child(ButtonWidget.panelCloseButton().top(5).right(5)
+            childIf(addCloseButton, ButtonWidget.panelCloseButton().top(5).right(5)
                     .onMousePressed(mouseButton -> {
                         if (mouseButton == 0 || mouseButton == 1) {
                             this.closeIfOpen(true);

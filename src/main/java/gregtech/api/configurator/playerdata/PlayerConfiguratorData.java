@@ -31,46 +31,64 @@ public class PlayerConfiguratorData implements INBTSerializable<NBTTagCompound> 
         return SLOT_MAP.containsKey(name);
     }
 
-    @NotNull
-    private NBTTagCompound getSlot(String name) {
-        return SLOT_MAP.computeIfAbsent(name, ignored -> {
-            NBTTagCompound tag = new NBTTagCompound();
-
-            tag.setString(PROFILE_NBT_KEY, NO_PROFILE_NBT_KEY);
-            tag.setTag(CONFIG_NBT_KEY, new NBTTagCompound());
-
-            return tag;
-        });
+    private @Nullable NBTTagCompound getSlot(String name) {
+        return SLOT_MAP.get(name);
     }
 
-    @Nullable
-    public IMachineConfiguratorProfile getSlotProfile(String name) {
-        return ConfiguratorProfileRegistry.getMachineConfiguratorProfile(getSlot(name).getString(PROFILE_NBT_KEY));
+    public void deleteSlot(@NotNull String name) {
+        SLOT_MAP.remove(name);
     }
 
-    public void setSlotProfile(String name, IMachineConfiguratorProfile profile) {
-        getSlot(name).setString(PROFILE_NBT_KEY, profile.getName());
+    private @NotNull NBTTagCompound createFreshSlotTag() {
+        NBTTagCompound tag = new NBTTagCompound();
+
+        tag.setString(PROFILE_NBT_KEY, NO_PROFILE_NBT_KEY);
+        tag.setTag(CONFIG_NBT_KEY, new NBTTagCompound());
+
+        return tag;
     }
 
-    @NotNull
-    public NBTTagCompound getSlotConfig(String name) {
-        return getSlot(name).getCompoundTag(CONFIG_NBT_KEY);
+    /**
+     * Create a new, empty slot if a slot doesn't exist by the supplied name
+     *
+     * @param slotName the name of the slot to make
+     */
+    public void createNewSlot(@NotNull String slotName) {
+        SLOT_MAP.computeIfAbsent(slotName, ignored -> createFreshSlotTag());
     }
 
-    public void setSlotConfig(String name, @NotNull NBTTagCompound tag) {
-        SLOT_MAP.get(name).setTag(CONFIG_NBT_KEY, tag);
+    public @Nullable IMachineConfiguratorProfile getSlotProfile(@NotNull String name) {
+        NBTTagCompound slot = getSlot(name);
+        if (slot == null) return null;
+        return ConfiguratorProfileRegistry.getConfiguratorProfileByName(slot.getString(PROFILE_NBT_KEY));
     }
 
-    public Set<String> getSlots() {
+    public void setSlotProfile(@NotNull String name, @NotNull IMachineConfiguratorProfile profile) {
+        NBTTagCompound slot = getSlot(name);
+        if (slot == null) return;
+        slot.setString(PROFILE_NBT_KEY, profile.getName());
+    }
+
+    public @Nullable NBTTagCompound getSlotConfig(String name) {
+        NBTTagCompound slot = getSlot(name);
+        if (slot == null) return null;
+        return slot.getCompoundTag(CONFIG_NBT_KEY);
+    }
+
+    public void setSlotConfig(@NotNull String name, @NotNull NBTTagCompound tag) {
+        NBTTagCompound slot = getSlot(name);
+        if (slot == null) return;
+        slot.setTag(CONFIG_NBT_KEY, tag);
+    }
+
+    public Set<String> getSlotNames() {
         return SLOT_MAP.keySet();
     }
 
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
-
         SLOT_MAP.forEach(tag::setTag);
-
         return tag;
     }
 

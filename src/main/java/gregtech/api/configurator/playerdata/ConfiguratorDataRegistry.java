@@ -30,7 +30,7 @@ public class ConfiguratorDataRegistry extends WorldSavedData {
     }
 
     public static Set<String> getSlots(UUID player) {
-        return getPlayerData(player).getSlots();
+        return getPlayerData(player).getSlotNames();
     }
 
     @Override
@@ -61,6 +61,11 @@ public class ConfiguratorDataRegistry extends WorldSavedData {
 
     public static void clearMaps() {
         PLAYER_DATA_MAP.clear();
+    }
+
+    @Override
+    public boolean isDirty() {
+        return true;
     }
 
     public static void initializeStorage(World world) {
