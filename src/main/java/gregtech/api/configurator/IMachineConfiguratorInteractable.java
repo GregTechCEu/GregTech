@@ -6,13 +6,15 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+
 public interface IMachineConfiguratorInteractable {
 
     @NotNull
-    IMachineConfiguratorProfile getProfile();
+    Set<@NotNull IMachineConfiguratorProfile> getProfiles();
 
     @NotNull
-    NBTTagCompound writeProfileData();
+    NBTTagCompound writeProfileData(@NotNull IMachineConfiguratorProfile configuratorProfile);
 
-    void readProfileData(@NotNull NBTTagCompound profile);
+    void readProfileData(@NotNull IMachineConfiguratorProfile configuratorProfile, @NotNull NBTTagCompound profile);
 }

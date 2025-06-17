@@ -61,7 +61,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -589,55 +591,58 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         super.addToolUsages(stack, world, tooltip, advanced);
     }
 
-    @NotNull
     @Override
-    public IMachineConfiguratorProfile getProfile() {
-        return SimpleMachineProfile.INSTANCE;
+    public @NotNull Set<@NotNull IMachineConfiguratorProfile> getProfiles() {
+        return Collections.singleton(SimpleMachineProfile.INSTANCE);
     }
 
     @NotNull
     @Override
-    public NBTTagCompound writeProfileData() {
+    public NBTTagCompound writeProfileData(@NotNull IMachineConfiguratorProfile configuratorProfile) {
         NBTTagCompound tag = new NBTTagCompound();
 
-        tag.setBoolean("AutoOutputItems", autoOutputItems);
-        tag.setBoolean("AutoOutputFluids", autoOutputFluids);
+        if (configuratorProfile == SimpleMachineProfile.INSTANCE) {
+            tag.setBoolean("AutoOutputItems", autoOutputItems);
+            tag.setBoolean("AutoOutputFluids", autoOutputFluids);
 
-        tag.setBoolean("AllowItemInputFromOutput", allowInputFromOutputSideItems);
-        tag.setBoolean("AllowFluidInputFromOutput", allowInputFromOutputSideFluids);
+            tag.setBoolean("AllowItemInputFromOutput", allowInputFromOutputSideItems);
+            tag.setBoolean("AllowFluidInputFromOutput", allowInputFromOutputSideFluids);
 
-        EnumFacing relativeItemOutput = GTUtility.getFaceRelativeToFace(frontFacing, outputFacingItems);
-        tag.setByte("ItemOutputSide", (byte) relativeItemOutput.getIndex());
+            EnumFacing relativeItemOutput = GTUtility.getFaceRelativeToFace(frontFacing, outputFacingItems);
+            tag.setByte("ItemOutputSide", (byte) relativeItemOutput.getIndex());
 
-        EnumFacing relativeFluidOutput = GTUtility.getFaceRelativeToFace(frontFacing, outputFacingItems);
-        tag.setByte("FluidOutputSide", (byte) relativeFluidOutput.getIndex());
+            EnumFacing relativeFluidOutput = GTUtility.getFaceRelativeToFace(frontFacing, outputFacingItems);
+            tag.setByte("FluidOutputSide", (byte) relativeFluidOutput.getIndex());
+        }
 
         return tag;
     }
 
     @Override
-    public void readProfileData(@NotNull NBTTagCompound tag) {
-        if (tag.hasKey("AutoOutputItems")) {
-            setAutoOutputItems(tag.getBoolean("AutoOutputItems"));
-        }
-        if (tag.hasKey("AutoOutputFluids")) {
-            setAutoOutputFluids(tag.getBoolean("AutoOutputFluids"));
-        }
+    public void readProfileData(@NotNull IMachineConfiguratorProfile configuratorProfile, @NotNull NBTTagCompound tag) {
+        if (configuratorProfile == SimpleMachineProfile.INSTANCE) {
+            if (tag.hasKey("AutoOutputItems")) {
+                setAutoOutputItems(tag.getBoolean("AutoOutputItems"));
+            }
+            if (tag.hasKey("AutoOutputFluids")) {
+                setAutoOutputFluids(tag.getBoolean("AutoOutputFluids"));
+            }
 
-        if (tag.hasKey("AllowItemInputFromOutput")) {
-            setAllowInputFromOutputSideItems(tag.getBoolean("AllowItemInputFromOutput"));
-        }
-        if (tag.hasKey("AllowFluidInputFromOutput")) {
-            setAllowInputFromOutputSideFluids(tag.getBoolean("AllowFluidInputFromOutput"));
-        }
+            if (tag.hasKey("AllowItemInputFromOutput")) {
+                setAllowInputFromOutputSideItems(tag.getBoolean("AllowItemInputFromOutput"));
+            }
+            if (tag.hasKey("AllowFluidInputFromOutput")) {
+                setAllowInputFromOutputSideFluids(tag.getBoolean("AllowFluidInputFromOutput"));
+            }
 
-        if (tag.hasKey("ItemOutputSide")) {
-            EnumFacing relativeItemOutput = EnumFacing.values()[tag.getByte("ItemOutputSide")];
-            setOutputFacingItems(GTUtility.getFaceRelativeToFace(frontFacing, relativeItemOutput));
-        }
-        if (tag.hasKey("FluidOutputSide")) {
-            EnumFacing relativeFluidOutput = EnumFacing.values()[tag.getByte("FluidOutputSide")];
-            setOutputFacingFluids(GTUtility.getFaceRelativeToFace(frontFacing, relativeFluidOutput));
+            if (tag.hasKey("ItemOutputSide")) {
+                EnumFacing relativeItemOutput = EnumFacing.values()[tag.getByte("ItemOutputSide")];
+                setOutputFacingItems(GTUtility.getFaceRelativeToFace(frontFacing, relativeItemOutput));
+            }
+            if (tag.hasKey("FluidOutputSide")) {
+                EnumFacing relativeFluidOutput = EnumFacing.values()[tag.getByte("FluidOutputSide")];
+                setOutputFacingFluids(GTUtility.getFaceRelativeToFace(frontFacing, relativeFluidOutput));
+            }
         }
     }
 }

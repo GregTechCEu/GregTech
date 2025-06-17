@@ -37,6 +37,7 @@ import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,14 +81,15 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
             return EnumActionResult.PASS;
         }
 
-        if (mci.getProfile() != configuratorData.getSlotProfile(slotName)) {
+        IMachineConfiguratorProfile profile = configuratorData.getSlotProfile(slotName);
+        if (profile == null || !mci.getProfiles().contains(profile)) {
             return EnumActionResult.PASS;
         }
 
         if (player.isSneaking()) {
-            configuratorData.setSlotConfig(slotName, mci.writeProfileData());
+            configuratorData.setSlotConfig(slotName, mci.writeProfileData(profile));
         } else {
-            mci.readProfileData(configuratorData.getSlotConfig(slotName));
+            mci.readProfileData(profile, configuratorData.getSlotConfig(slotName));
         }
 
         return EnumActionResult.SUCCESS;
@@ -106,7 +108,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
     public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
         UUID playerID = guiData.getPlayer().getUniqueID();
 
-        return GTGuis.createPanel(guiData.getUsedItemStack(), 100, 50)
+        return GTGuis.createPanel(guiData.getUsedItemStack(), 120, 50)
                 .child(CoverWithUI.createTitleRow(guiData.getUsedItemStack()))
                 .child(createWidgets(guiData, guiSyncManager, playerID));
     }
@@ -197,6 +199,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
     private Flow createProfileRow(IMachineConfiguratorProfile profile, UUID playerID, StringSyncValue selectedSlot) {
         return Flow.row()
                 .child(new ButtonWidget<>()
+                        .size(10)
                         .onMousePressed(i -> {
                             ConfiguratorDataRegistry.getPlayerData(playerID)
                                     .setSlotProfile(selectedSlot.getValue(), profile);
@@ -219,6 +222,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
                                     .color(CoverWithUI.UI_TITLE_COLOR)
                                     .asWidget())
                             .child(new ButtonWidget<>()
+                                    .size(10)
                                     .onMousePressed(mouse -> {
 
                                         return true;
@@ -248,12 +252,12 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
         stack.setTagCompound(newNBT);
     }
 
+    @Nullable
     private static String getSlotFromConfigurator(ItemStack stack) {
         NBTTagCompound configuratorNBT = stack.getTagCompound();
-        if (configuratorNBT != null) {
-            return configuratorNBT.getString(SELECTED_SLOT_KEY);
-        } else {
-            return "";
-        }
+        return configuratorNBT != null ? configuratorNBT.getString(SELECTED_SLOT_KEY) : null;
     }
+
+    @Override
+    public void addInformation(ItemStack itemStack, List<String> lines) {}
 }
