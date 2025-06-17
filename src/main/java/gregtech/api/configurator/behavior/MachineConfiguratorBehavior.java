@@ -36,7 +36,6 @@ import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.ArrayList;
@@ -222,11 +221,10 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
                             .child(new ButtonWidget<>()
                                     .onMousePressed(mouse -> {
 
-
                                         return true;
                                     })
                                     .overlay(IKey.str("+"))
-                                    .addTooltipLine(IKey.str("Add new slot")))) //TODO: lang
+                                    .addTooltipLine(IKey.str("Add new slot")))) // TODO: lang
                     .child(new ListWidget<>()
                             .children(rows).background(GTGuiTextures.DISPLAY.asIcon()
                                     .width(168 - 8)
