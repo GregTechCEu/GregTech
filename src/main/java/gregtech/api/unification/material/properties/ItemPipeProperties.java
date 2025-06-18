@@ -38,8 +38,9 @@ public class ItemPipeProperties implements IMaterialProperty {
     /**
      * Sets the Priority of the item pipe
      */
-    public void setPriority(int priority) {
+    public ItemPipeProperties setPriority(int priority) {
         this.priority = priority;
+        return this;
     }
 
     /**
@@ -56,8 +57,9 @@ public class ItemPipeProperties implements IMaterialProperty {
      *
      * @param transferRate The transfer rate
      */
-    public void setTransferRate(float transferRate) {
+    public ItemPipeProperties setTransferRate(float transferRate) {
         this.transferRate = transferRate;
+        return this;
     }
 
     @Override

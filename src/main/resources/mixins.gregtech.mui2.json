@@ -8,7 +8,11 @@
     "maxShiftBy": 10
   },
   "mixins": [
+    "AbstractCycleButtonWidgetMixin",
+    "IconMixin",
+    "IconMixin$DelegateMixin",
     "ModularPanelMixin",
+    "RichTextCompilerMixin",
     "ModularSyncManagerAccessor",
     "PanelSyncHandlerAccessor",
     "PanelSyncManagerAccessor"
