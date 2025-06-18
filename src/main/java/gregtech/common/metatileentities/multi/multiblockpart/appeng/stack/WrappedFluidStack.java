@@ -4,9 +4,9 @@ import gregtech.api.util.NetworkUtil;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import appeng.api.AEApi;
 import appeng.api.config.FuzzyMode;
@@ -39,7 +39,7 @@ public class WrappedFluidStack implements IAEFluidStack {
         return fromFluidStack(fluidStack);
     }
 
-    public static WrappedFluidStack fromPacket(@NotNull ByteBuf buffer) {
+    public static WrappedFluidStack fromPacket(@NotNull PacketBuffer buffer) {
         return fromFluidStack(NetworkUtil.readFluidStack(buffer));
     }
 
@@ -143,7 +143,11 @@ public class WrappedFluidStack implements IAEFluidStack {
 
     @Override
     public void writeToPacket(ByteBuf buffer) {
-        ByteBufUtils.writeTag(buffer, serializeToNBT());
+        writeToPacket(new PacketBuffer(buffer));
+    }
+
+    public void writeToPacket(@NotNull PacketBuffer packetBuffer) {
+        NetworkUtil.writeFluidStack(packetBuffer, this.delegate);
     }
 
     @Override

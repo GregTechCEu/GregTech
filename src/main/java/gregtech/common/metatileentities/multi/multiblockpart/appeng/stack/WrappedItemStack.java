@@ -1,9 +1,11 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng.stack;
 
+import gregtech.api.util.NetworkUtil;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraft.network.PacketBuffer;
 
 import appeng.api.config.FuzzyMode;
 import appeng.api.storage.IStorageChannel;
@@ -41,8 +43,8 @@ public class WrappedItemStack implements IAEItemStack {
         }
     }
 
-    public static WrappedItemStack fromPacket(@NotNull ByteBuf data) {
-        return fromNBT(ByteBufUtils.readTag(data));
+    public static WrappedItemStack fromPacket(@NotNull PacketBuffer data) {
+        return fromItemStack(NetworkUtil.readItemStack(data));
     }
 
     public AEItemStack getAEStack() {
@@ -138,7 +140,11 @@ public class WrappedItemStack implements IAEItemStack {
 
     @Override
     public void writeToPacket(ByteBuf byteBuf) {
-        ByteBufUtils.writeTag(byteBuf, this.delegate.serializeNBT());
+        writeToPacket(new PacketBuffer(byteBuf));
+    }
+
+    public void writeToPacket(@NotNull PacketBuffer packetBuffer) {
+        NetworkUtil.writeItemStack(packetBuffer, this.delegate);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package gregtech.api.mui.sync.appeng;
 
+import gregtech.api.mui.GTByteBufAdapters;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.JEIUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
@@ -43,7 +44,7 @@ public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
 
     @Override
     protected @NotNull IByteBufAdapter<IAEFluidStack> initializeByteBufAdapter() {
-        return AEStackByteBufAdapter.wrappedFluidStackAdapter;
+        return GTByteBufAdapters.WRAPPED_FLUID_STACK;
     }
 
     @Override

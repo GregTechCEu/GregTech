@@ -1,7 +1,5 @@
 package gregtech.api.util;
 
-import com.cleanroommc.modularui.screen.RichTooltip;
-
 import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluid;
 
@@ -11,6 +9,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.RichTooltip;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -152,23 +151,18 @@ public class KeyUtil {
                                  boolean showTooltip, boolean showMolAmount) {
         if (stack == null) return;
 
-        // TODO: use GTFluid.GTMaterialFluid#getLocalizedKey when 2672 merges for more accurate names
-        tooltip.addLine(IKey.str(stack.getLocalizedName()));
+        tooltip.addLine(fluid(stack));
 
         if (showAmount) {
             tooltip.addLine(IKey.str("%,d L", stack.amount));
         }
 
         if (showTooltip) {
-            for (String fluidToolTip : FluidTooltipUtil.getFluidTooltip(stack)) {
-                if (!tooltip.isEmpty()) {
-                    tooltip.addLine(IKey.str(fluidToolTip));
-                }
-            }
+            FluidTooltipUtil.handleFluidTooltip(tooltip, stack);
         }
 
         if (showMolAmount) {
-            GTFluidSlot.addIngotMolFluidTooltip(stack, tooltip);
+            FluidTooltipUtil.addIngotMolFluidTooltip(tooltip, stack);
         }
     }
 

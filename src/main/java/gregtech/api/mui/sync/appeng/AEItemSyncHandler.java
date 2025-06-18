@@ -1,6 +1,7 @@
 package gregtech.api.mui.sync.appeng;
 
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
+import gregtech.api.mui.GTByteBufAdapters;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.JEIUtil;
@@ -49,7 +50,7 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
 
     @Override
     protected @NotNull IByteBufAdapter<IAEItemStack> initializeByteBufAdapter() {
-        return AEStackByteBufAdapter.wrappedItemStackAdapter;
+        return GTByteBufAdapters.WRAPPED_ITEM_STACK;
     }
 
     @Override
