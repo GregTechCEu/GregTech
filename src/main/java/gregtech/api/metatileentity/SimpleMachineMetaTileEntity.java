@@ -10,7 +10,7 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
-import gregtech.api.configurator.IMachineConfiguratorInteractable;
+import gregtech.api.configurator.IConfiguratorInteractable;
 import gregtech.api.configurator.profile.IMachineConfiguratorProfile;
 import gregtech.api.configurator.profile.SimpleMachineProfile;
 import gregtech.api.cover.Cover;
@@ -61,16 +61,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                                          implements IActiveOutputSide, IGhostSlotConfigurable,
-                                         IMachineConfiguratorInteractable {
+                                         IConfiguratorInteractable {
 
     private final boolean hasFrontFacing;
 
@@ -592,15 +590,13 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
     }
 
     @Override
-    public @NotNull Set<@NotNull IMachineConfiguratorProfile> getProfiles() {
-        return Collections.singleton(SimpleMachineProfile.INSTANCE);
+    public boolean isProfileValid(@NotNull IMachineConfiguratorProfile profile) {
+        return profile == SimpleMachineProfile.INSTANCE;
     }
 
-    @NotNull
     @Override
-    public NBTTagCompound writeProfileData(@NotNull IMachineConfiguratorProfile configuratorProfile) {
-        NBTTagCompound tag = new NBTTagCompound();
-
+    public void writeProfileData(@NotNull IMachineConfiguratorProfile configuratorProfile,
+                                 @NotNull NBTTagCompound tag) {
         if (configuratorProfile == SimpleMachineProfile.INSTANCE) {
             tag.setBoolean("AutoOutputItems", autoOutputItems);
             tag.setBoolean("AutoOutputFluids", autoOutputFluids);
@@ -614,8 +610,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
             EnumFacing relativeFluidOutput = GTUtility.getFaceRelativeToFace(frontFacing, outputFacingItems);
             tag.setByte("FluidOutputSide", (byte) relativeFluidOutput.getIndex());
         }
-
-        return tag;
     }
 
     @Override

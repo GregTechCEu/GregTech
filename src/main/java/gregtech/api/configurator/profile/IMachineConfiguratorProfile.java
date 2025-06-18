@@ -1,13 +1,11 @@
 package gregtech.api.configurator.profile;
 
-import gregtech.api.configurator.playerdata.PlayerConfiguratorData;
+import net.minecraft.nbt.NBTTagCompound;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Supplier;
 
 public interface IMachineConfiguratorProfile {
 
@@ -38,6 +36,5 @@ public interface IMachineConfiguratorProfile {
 
     @NotNull
     ModularPanel createConfiguratorPanel(@NotNull PanelSyncManager panelSyncManager,
-                                         @NotNull PlayerConfiguratorData playerData,
-                                         @NotNull Supplier<@NotNull String> selectedSlot);
+                                         @NotNull NBTTagCompound config);
 }

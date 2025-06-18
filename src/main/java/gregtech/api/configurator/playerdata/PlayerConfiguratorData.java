@@ -27,7 +27,8 @@ public class PlayerConfiguratorData implements INBTSerializable<NBTTagCompound> 
 
     public PlayerConfiguratorData() {}
 
-    public boolean hasSlot(String name) {
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean hasSlot(@NotNull String name) {
         return SLOT_MAP.containsKey(name);
     }
 
@@ -61,6 +62,10 @@ public class PlayerConfiguratorData implements INBTSerializable<NBTTagCompound> 
         NBTTagCompound slot = getSlot(name);
         if (slot == null) return null;
         return ConfiguratorProfileRegistry.getConfiguratorProfileByName(slot.getString(PROFILE_NBT_KEY));
+    }
+
+    public boolean slotHasProfile(@NotNull String slotName) {
+        return getSlotProfile(slotName) != null;
     }
 
     public void setSlotProfile(@NotNull String name, @NotNull IMachineConfiguratorProfile profile) {

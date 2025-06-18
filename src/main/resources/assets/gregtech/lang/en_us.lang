@@ -1179,9 +1179,14 @@ metaitem.tool.machine_configurator.slots=Slots
 metaitem.tool.machine_configurator.delete_slot=Delete slot
 metaitem.tool.machine_configurator.select_slot=Select slot
 metaitem.tool.machine_configurator.add_slot=Add new slot
+metaitem.tool.machine_configurator.invalid_slot=Cannot open configurator, no slot has been selected!
+metaitem.tool.machine_configurator.invalid_slot_name=Cannot open configurator, no slot by the name %s exists!
 metaitem.tool.machine_configurator.active_profile=Selected profile: %s
-metaitem.tool.machine_configurator.no_profile=No profile selected
+metaitem.tool.machine_configurator.set_profile=Set slot profile
+metaitem.tool.machine_configurator.no_profile=Slot has no profile set
+metaitem.tool.machine_configurator.no_profile_exclamation=Cannot open configurator, slot "%s" has no profile set!
 metaitem.tool.machine_configurator.profiles=Available Profiles
+metaitem.tool.machine_configurator.open_config=Open configurator
 
 metaarmor.nms.nightvision.enabled=NanoMuscle™ Suite: NightVision Enabled
 metaarmor.nms.nightvision.disabled=NanoMuscle™ Suite: NightVision Disabled

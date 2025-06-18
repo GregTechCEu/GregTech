@@ -2,6 +2,7 @@ package gregtech.api.configurator.playerdata;
 
 import gregtech.api.GTValues;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
@@ -11,7 +12,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 public class ConfiguratorDataRegistry extends WorldSavedData {
@@ -25,12 +25,12 @@ public class ConfiguratorDataRegistry extends WorldSavedData {
         super(name);
     }
 
-    public static PlayerConfiguratorData getPlayerData(UUID player) {
+    public static @NotNull PlayerConfiguratorData getPlayerData(UUID player) {
         return PLAYER_DATA_MAP.computeIfAbsent(player, key -> new PlayerConfiguratorData());
     }
 
-    public static Set<String> getSlots(UUID player) {
-        return getPlayerData(player).getSlotNames();
+    public static @NotNull PlayerConfiguratorData getPlayerData(EntityPlayer player) {
+        return getPlayerData(player.getUniqueID());
     }
 
     @Override

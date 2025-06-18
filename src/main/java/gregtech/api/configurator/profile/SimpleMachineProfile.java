@@ -1,6 +1,5 @@
 package gregtech.api.configurator.profile;
 
-import gregtech.api.configurator.playerdata.PlayerConfiguratorData;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 
@@ -19,8 +18,6 @@ import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Supplier;
 
 public class SimpleMachineProfile implements IMachineConfiguratorProfile {
 
@@ -52,12 +49,8 @@ public class SimpleMachineProfile implements IMachineConfiguratorProfile {
     @NotNull
     @Override
     public ModularPanel createConfiguratorPanel(@NotNull PanelSyncManager panelSyncManager,
-                                                @NotNull PlayerConfiguratorData playerData,
-                                                @NotNull Supplier<@NotNull String> selectedSlot) {
-        var panel = GTGuis.createPopupPanel("simple_machine_configurator", 75, 150);
-
-        NBTTagCompound config = playerData.getSlotConfig(selectedSlot.get());
-        if (config == null) throw new IllegalStateException("Opened a configurator panel for a nonexistent slot");
+                                                @NotNull NBTTagCompound config) {
+        var panel = GTGuis.createPanel("simple_machine_configurator", 75, 150);
 
         BooleanSyncValue autoOutputItems = new BooleanSyncValue(() -> config.getBoolean("AutoOutputItems"),
                 bool -> config.setBoolean("AutoOutputItems", bool));
