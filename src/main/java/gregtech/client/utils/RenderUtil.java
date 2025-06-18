@@ -735,14 +735,16 @@ public class RenderUtil {
         return getTextureMap().getMissingSprite();
     }
 
-    public static void handleJeiGhostHighlight(IWidget slot) {
-        if (!Mods.JustEnoughItems.isModLoaded()) return;
-        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return;
+    public static boolean handleJeiGhostHighlight(IWidget slot) {
+        if (!Mods.JustEnoughItems.isModLoaded()) return false;
+        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return false;
         if (ModularUIJeiPlugin.hasDraggingGhostIngredient() ||
                 ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
             GlStateManager.colorMask(true, true, true, false);
             ingredientSlot.drawHighlight(slot.getArea(), slot.isHovering());
             GlStateManager.colorMask(true, true, true, true);
+            return true;
         }
+        return false;
     }
 }
