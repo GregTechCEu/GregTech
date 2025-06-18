@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -13,6 +14,7 @@ import gregtech.client.utils.TooltipHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -47,7 +49,12 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
                 VanillaParticleEffects.mufflerEffect(this, controller.getMufflerParticle());
             }
         } else if (getOffsetTimer() % 10 == 0) {
-            this.frontFaceFree = checkFrontFaceFree();
+            boolean frontFaceFree = checkFrontFaceFree();
+            if (frontFaceFree != this.frontFaceFree) {
+                this.frontFaceFree = frontFaceFree;
+                writeCustomData(GregtechDataCodes.MUFFLER_OBSTRUCTED,
+                        buffer -> buffer.writeBoolean(this.frontFaceFree));
+            }
         }
     }
 
@@ -71,6 +78,26 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
             return blockState.getBlock().isAir(blockState, getWorld(), frontPos);
         }
         return blockState.getBlock().isAir(blockState, getWorld(), frontPos) || GTUtility.isBlockSnow(blockState);
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(this.frontFaceFree);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.frontFaceFree = buf.readBoolean();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.MUFFLER_OBSTRUCTED) {
+            this.frontFaceFree = buf.readBoolean();
+        }
     }
 
     @Override

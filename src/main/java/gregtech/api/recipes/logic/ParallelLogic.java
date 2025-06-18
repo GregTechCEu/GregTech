@@ -2,11 +2,11 @@ package gregtech.api.recipes.logic;
 
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.IVoidable;
-import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.util.FluidStackHashStrategy;
 import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
@@ -25,7 +25,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +45,7 @@ public abstract class ParallelLogic {
         Object2IntMap<ItemStack> ingredientStacks = GTHashMaps.fromItemHandler(inputs);
 
         // Find all the fluids in the combined Fluid Input inventories and create oversized FluidStacks
-        Map<FluidKey, Integer> fluidStacks = GTHashMaps.fromFluidHandler(fluidInputs);
+        Object2IntMap<FluidStack> fluidStacks = GTHashMaps.fromFluidHandler(fluidInputs);
 
         // Find the maximum number of recipes that can be performed from the items in the item input inventories
         int itemMultiplier = getMaxRatioItem(ingredientStacks, recipe, parallelAmount);
@@ -390,44 +389,42 @@ public abstract class ParallelLogic {
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Fluids
      */
-    protected static int getMaxRatioFluid(@NotNull Map<FluidKey, Integer> countFluid, @NotNull Recipe recipe,
+    protected static int getMaxRatioFluid(@NotNull Object2IntMap<FluidStack> countFluid, @NotNull Recipe recipe,
                                           int parallelAmount) {
         int minMultiplier = Integer.MAX_VALUE;
         // map the recipe input fluids to account for duplicated fluids,
         // so their sum is counted against the total of fluids available in the input
-        Map<FluidKey, Integer> fluidCountMap = new HashMap<>();
-        Map<FluidKey, Integer> notConsumableMap = new HashMap<>();
+        Object2IntMap<FluidStack> fluidCountMap = GTHashMaps.createFluidStackMap(true);
+        Object2IntMap<FluidStack> notConsumableMap = GTHashMaps.createFluidStackMap(true);
         for (GTRecipeInput fluidInput : recipe.getFluidInputs()) {
             int fluidAmount = fluidInput.getAmount();
             if (fluidInput.isNonConsumable()) {
-                notConsumableMap.computeIfPresent(new FluidKey(fluidInput.getInputFluidStack()),
-                        (k, v) -> v + fluidAmount);
-                notConsumableMap.putIfAbsent(new FluidKey(fluidInput.getInputFluidStack()), fluidAmount);
+                notConsumableMap.merge(fluidInput.getInputFluidStack(), fluidAmount, Integer::sum);
             } else {
-                fluidCountMap.computeIfPresent(new FluidKey(fluidInput.getInputFluidStack()),
-                        (k, v) -> v + fluidAmount);
-                fluidCountMap.putIfAbsent(new FluidKey(fluidInput.getInputFluidStack()), fluidAmount);
+                fluidCountMap.merge(fluidInput.getInputFluidStack(), fluidAmount, Integer::sum);
             }
         }
 
+        FluidStackHashStrategy fluidStrategy = FluidStackHashStrategy.comparingAllButAmount();
+
         // Iterate through the recipe inputs, excluding the not consumable fluids from the fluid inventory map
-        for (Map.Entry<FluidKey, Integer> notConsumableFluid : notConsumableMap.entrySet()) {
-            int needed = notConsumableFluid.getValue();
+        for (FluidStack notConsumableFluid : notConsumableMap.keySet()) {
+            int needed = notConsumableMap.getInt(notConsumableFluid);
             int available = 0;
             // For every fluid gathered from the fluid inputs.
-            for (Map.Entry<FluidKey, Integer> inputFluid : countFluid.entrySet()) {
+            for (FluidStack inputFluid : countFluid.keySet()) {
                 // Strip the Non-consumable tags here, as FluidKey compares the tags, which causes finding matching
                 // fluids
                 // in the input tanks to fail, because there is nothing in those hatches with a non-consumable tag
-                if (notConsumableFluid.getKey().equals(inputFluid.getKey())) {
-                    available = inputFluid.getValue();
+                if (fluidStrategy.equals(notConsumableFluid, inputFluid)) {
+                    available = countFluid.getInt(inputFluid);
                     if (available > needed) {
-                        inputFluid.setValue(available - needed);
+                        countFluid.replace(inputFluid, available - needed);
                         needed -= available;
                         break;
                     } else {
-                        inputFluid.setValue(0);
-                        notConsumableFluid.setValue(needed - available);
+                        countFluid.replace(inputFluid, 0);
+                        notConsumableMap.replace(notConsumableFluid, needed - available);
                         needed -= available;
                     }
                 }
@@ -451,13 +448,13 @@ public abstract class ParallelLogic {
         }
 
         // Iterate through the fluid inputs in the recipe
-        for (Map.Entry<FluidKey, Integer> fs : fluidCountMap.entrySet()) {
-            int needed = fs.getValue();
+        for (FluidStack stack : fluidCountMap.keySet()) {
+            int needed = fluidCountMap.getInt(stack);
             int available = 0;
             // For every fluid gathered from the fluid inputs.
-            for (Map.Entry<FluidKey, Integer> inputFluid : countFluid.entrySet()) {
-                if (fs.getKey().equals(inputFluid.getKey())) {
-                    available += inputFluid.getValue();
+            for (FluidStack inputFluid : countFluid.keySet()) {
+                if (fluidStrategy.equals(stack, inputFluid)) {
+                    available += countFluid.getInt(inputFluid);
                 }
             }
             if (available >= needed) {
