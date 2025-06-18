@@ -34,7 +34,6 @@ import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiTextures;
-import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.StringValue;
@@ -183,18 +182,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
                                                  @NotNull StringSyncValue selectedSlot,
                                                  @NotNull ItemStack configuratorStack) {
         return GTGuis.createPanel(configuratorStack, 150, 64)
-                .child(Flow.row()
-                        .left(4)
-                        .top(4)
-                        .widthRel(1.0f)
-                        .coverChildrenHeight()
-                        .widthRel(1.0f)
-                        .child(new ItemDrawable(configuratorStack)
-                                .asWidget()
-                                .size(16))
-                        .child(IKey.lang("metaitem.tool.machine_configurator.name")
-                                .asWidget()
-                                .marginLeft(4)))
+                .child(CoverWithUI.createTitleRow(configuratorStack))
                 .child(createWidgets(syncManager, playerData, selectedSlot));
     }
 
@@ -306,6 +294,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
                         .overlay(IKey.str("✓")))
                 .child(profile.getProfileName()
                         .asWidget()
+                        .marginLeft(4)
                         .alignY(0.5f));
     }
 

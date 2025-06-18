@@ -588,6 +588,19 @@ public class GTGuiTextures {
     public static final UITexture PROGRESS_BAR_WIREMILL = progressBar(
             "textures/gui/progress_bar/progress_bar_wiremill.png", true);
 
+    /**
+     * 0 = don't allow<br>
+     * 1 = allow
+     */
+    public static final UITexture[] INPUT_FROM_OUTPUT_ITEM = slice("gui/widget/input_from_output_item.png", 18, 36, 18,
+            18, true);
+    /**
+     * 0 = don't allow<br>
+     * 1 = allow
+     */
+    public static final UITexture[] INPUT_FROM_OUTPUT_FLUID = slice("gui/widget/input_from_output_fluid.png", 18, 36,
+            18, 18, true);
+
     // more custom progress bars
     // MULTIBLOCK BARS
     // todo these boiler empty bars can probably be replaced by using a resized steam slot texture
@@ -647,6 +660,8 @@ public class GTGuiTextures {
             "textures/gui/progress_bar/progress_bar_fluid_rig_depletion.png", 190, 14);
 
     // MISC
+    public static final UITexture ASSEMBLER_FRONT_OVERLAY = fullImage(
+            "blocks/machines/assembler/overlay_front.png");
 
     public static void init() {/**/}
 

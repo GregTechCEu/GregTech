@@ -6549,3 +6549,10 @@ record.sus=Leonz - Among Us Drip
 
 #Configurator Profiles
 gregtech.machine_configurator.simple_machine_profile=Singleblock Machines
+gregtech.machine_configurator.simple_machine_profile.item_input_from_output_side.allow=Allow item input from output side
+gregtech.machine_configurator.simple_machine_profile.fluid_input_from_output_side.allow=Allow fluid input from output side
+gregtech.machine_configurator.simple_machine_profile.item_input_from_output_side.disallow=Disallow item input from output side
+gregtech.machine_configurator.simple_machine_profile.fluid_input_from_output_side.disallow=Disallow fluid input from output side
+gregtech.machine_configurator.simple_machine_profile.item_output=Left click to set as the item output
+gregtech.machine_configurator.simple_machine_profile.fluid_output=Right click to set as the fluid output
+gregtech.machine_configurator.simple_machine_profile.front_face=Cannot set the front face as an output
