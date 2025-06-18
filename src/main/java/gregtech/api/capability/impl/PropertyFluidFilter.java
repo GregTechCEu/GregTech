@@ -12,7 +12,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 
-public class PropertyFluidFilter implements IPropertyFluidFilter {
+public class PropertyFluidFilter implements IPropertyFluidFilter<PropertyFluidFilter> {
 
     private final Object2BooleanMap<FluidAttribute> containmentPredicate = new Object2BooleanOpenHashMap<>();
 
@@ -48,8 +48,9 @@ public class PropertyFluidFilter implements IPropertyFluidFilter {
     }
 
     @Override
-    public void setCanContain(@NotNull FluidAttribute attribute, boolean canContain) {
+    public PropertyFluidFilter setCanContain(@NotNull FluidAttribute attribute, boolean canContain) {
         containmentPredicate.put(attribute, canContain);
+        return this;
     }
 
     @Override
