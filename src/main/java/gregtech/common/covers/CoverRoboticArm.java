@@ -19,7 +19,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
@@ -197,7 +196,7 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
+    protected ParentWidget<Flow> createUI(ModularPanel panel, PanelSyncManager guiSyncManager) {
         EnumSyncValue<TransferMode> transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode,
                 this::setTransferMode);
         guiSyncManager.syncValue("transfer_mode", transferMode);
@@ -207,7 +206,7 @@ public class CoverRoboticArm extends CoverConveyor {
                 s -> this.itemFilterContainer.setTransferSize(Integer.parseInt(s)));
         filterTransferSize.updateCacheFromSource(true);
 
-        return super.createUI(data, guiSyncManager)
+        return super.createUI(panel, guiSyncManager)
                 .child(new EnumRowBuilder<>(TransferMode.class)
                         .value(transferMode)
                         .lang("cover.generic.transfer_mode")
