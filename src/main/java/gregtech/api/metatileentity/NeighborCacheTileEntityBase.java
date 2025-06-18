@@ -68,11 +68,11 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
     @Override
     public @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
         if (world == null || pos == null) return null;
+        // if the ref is INVALID, compute neighbor, otherwise, return TE or null
         WeakReference<TileEntity> ref = invalidRef(facing) ? computeNeighbor(facing) : getRef(facing);
         return ref.get();
     }
 
-    // if true, compute neighbor, if false, return TE or null
     private boolean invalidRef(EnumFacing facing) {
         WeakReference<TileEntity> ref = getRef(facing);
         if (ref == INVALID) return true;
@@ -80,14 +80,17 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
         return te != null && te.isInvalid();
     }
 
+    @NotNull
     private WeakReference<TileEntity> computeNeighbor(EnumFacing facing) {
         TileEntity te = super.getNeighbor(facing);
         // avoid making new references to null TEs
-        this.neighbors.set(facing.getIndex(), te == null ? NULL : new WeakReference<>(te));
+        WeakReference<TileEntity> ref = te == null ? NULL : new WeakReference<>(te);
+        this.neighbors.set(facing.getIndex(), ref);
         this.neighborsInvalidated = false;
-        return getRef(facing);
+        return ref;
     }
 
+    @NotNull
     private WeakReference<TileEntity> getRef(EnumFacing facing) {
         return this.neighbors.get(facing.getIndex());
     }
