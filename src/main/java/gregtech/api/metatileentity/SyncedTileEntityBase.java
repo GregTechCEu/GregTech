@@ -60,9 +60,6 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         IBlockState blockState = getBlockType().getStateFromMeta(getBlockMetadata());
         if (canNotifyWorld()) {
             world.notifyBlockUpdate(getPos(), blockState, blockState, 0);
-        } else if (!updates.isEmpty()) {
-            // cannot send, so clear only if there's any data
-            updates.clear();
         }
     }
 
@@ -71,7 +68,13 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         if (updates.size() > 10 && getWorld() instanceof WorldServer server) {
             int x = getPos().getX() >> 4;
             int z = getPos().getZ() >> 4;
-            return server.getPlayerChunkMap().contains(x, z);
+            if (server.getPlayerChunkMap().contains(x, z)) {
+                return true;
+            } else {
+                // cannot send, so clear
+                updates.clear();
+                return false;
+            }
         }
         return false;
     }
