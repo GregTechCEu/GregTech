@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,18 +30,15 @@ public class ConfiguratorProfileRegistry {
         profileByNetworkID.put(profile.networkID(), profile);
     }
 
-    @Nullable
-    public static IMachineConfiguratorProfile getConfiguratorProfileByName(String name) {
+    public static @Nullable IMachineConfiguratorProfile getConfiguratorProfileByName(String name) {
         return name.equals(PlayerConfiguratorData.NO_PROFILE_NBT_KEY) ? null : configuratorProfiles.get(name);
     }
 
-    @Nullable
-    public static IMachineConfiguratorProfile getConfiguratorProfileByNetworkID(int id) {
+    public static @Nullable IMachineConfiguratorProfile getConfiguratorProfileByNetworkID(int id) {
         return profileByNetworkID.get(id);
     }
 
-    @NotNull
-    public static Collection<IMachineConfiguratorProfile> getConfiguratorProfiles() {
+    public static @NotNull @UnmodifiableView Collection<IMachineConfiguratorProfile> getConfiguratorProfiles() {
         return Collections.unmodifiableCollection(configuratorProfiles.values());
     }
 }

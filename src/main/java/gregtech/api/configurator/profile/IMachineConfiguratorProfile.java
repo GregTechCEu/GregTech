@@ -16,7 +16,8 @@ public interface IMachineConfiguratorProfile {
     String getName();
 
     /**
-     * Get the network ID of this profile.
+     * Get the network ID of this profile. <br>
+     * Must return the same ID as set in {@link #setNetworkID(int)}!
      */
     int networkID();
 
