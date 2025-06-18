@@ -1123,7 +1123,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     public void setMaximumOverclockVoltage(final long overclockVoltage) {
         this.overclockVoltage = overclockVoltage;
         // Overclocking is not allowed if the passed voltage is <= LV
-        this.allowOverclocking = (overclockVoltage <= GTValues.V[GTValues.LV]);
+        this.allowOverclocking = (overclockVoltage > GTValues.V[GTValues.LV]);
     }
 
     /**
