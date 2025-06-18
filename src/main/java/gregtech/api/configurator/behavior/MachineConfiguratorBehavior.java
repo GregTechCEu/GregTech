@@ -26,6 +26,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -193,7 +194,8 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
 
         IPanelHandler slotSelector = syncManager.panel("slot_selector",
                 slotSelector(configuratorSyncHandler, playerData, selectedSlot), true);
-        IPanelHandler profileSelector = syncManager.panel("profile_selector", profileSelector(configuratorSyncHandler),
+        IPanelHandler profileSelector = syncManager.panel("profile_selector",
+                profileSelector(configuratorSyncHandler, selectedSlot, playerData),
                 true);
 
         Flow slotRow = Flow.row()
@@ -216,6 +218,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
                     String slotName = selectedSlot.getValue();
                     return slotName.isEmpty() ? I18n.format("metaitem.tool.machine_configurator.no_slot") : slotName;
                 }).asWidget()
+                        .widthRel(1.0f)
                         .alignY(0.5f)
                         .marginLeft(4));
 
@@ -240,6 +243,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
                     return profile == null ? I18n.format("metaitem.tool.machine_configurator.no_profile") :
                             profile.getProfileName().getFormatted();
                 }).asWidget()
+                        .widthRel(1.0f)
                         .alignY(0.5f)
                         .marginLeft(4));
 
@@ -251,11 +255,13 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
                 .child(profileRow);
     }
 
-    private PanelSyncHandler.IPanelBuilder profileSelector(@NotNull ConfiguratorSyncHandler configuratorSyncHandler) {
+    private PanelSyncHandler.IPanelBuilder profileSelector(@NotNull ConfiguratorSyncHandler configuratorSyncHandler,
+                                                           @NotNull StringSyncValue selectedSlot,
+                                                           @NotNull PlayerConfiguratorData playerData) {
         return ((syncManager, syncHandler) -> {
             List<IWidget> rows = new ArrayList<>();
             ConfiguratorProfileRegistry.getConfiguratorProfiles().forEach(profile -> rows.add(
-                    createProfileRow(profile, configuratorSyncHandler, syncHandler)));
+                    createProfileRow(profile, configuratorSyncHandler, syncHandler, selectedSlot, playerData)));
             return GTGuis.createPopupPanel("profile_selector", 168, 112, false)
                     .child(IKey.lang("metaitem.tool.machine_configurator.profiles")
                             .color(CoverWithUI.UI_TITLE_COLOR)
@@ -275,7 +281,13 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
 
     private Widget<?> createProfileRow(@NotNull IMachineConfiguratorProfile profile,
                                        @NotNull ConfiguratorSyncHandler configuratorSyncHandler,
-                                       @NotNull IPanelHandler parentPanel) {
+                                       @NotNull IPanelHandler parentPanel, @NotNull StringSyncValue selectedSlot,
+                                       @NotNull PlayerConfiguratorData playerData) {
+        IKey profileKey = profile.getProfileName();
+        if (profile == playerData.getSlotProfile(selectedSlot.getValue())) {
+            profileKey.style(TextFormatting.GREEN);
+        }
+
         return Flow.row()
                 .height(25)
                 .margin(5, 0, 0, 0)
@@ -292,8 +304,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
                             return true;
                         })
                         .overlay(IKey.str("✓")))
-                .child(profile.getProfileName()
-                        .asWidget()
+                .child(profileKey.asWidget()
                         .marginLeft(4)
                         .alignY(0.5f));
     }
@@ -398,6 +409,11 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
         IKey hoverText = slotProfile == null ? IKey.lang("metaitem.tool.machine_configurator.no_profile") :
                 IKey.lang("metaitem.tool.machine_configurator.active_profile", slotProfile.getProfileName());
 
+        IKey nameKey = IKey.str(name);
+        if (selectedSlot.getValue().equals(name)) {
+            nameKey.style(TextFormatting.GREEN);
+        }
+
         return Flow.row()
                 .height(25)
                 .margin(5, 0, 0, 0)
@@ -413,8 +429,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
                         })
                         .overlay(IKey.str("✓"))
                         .addTooltipLine(IKey.lang("metaitem.tool.machine_configurator.select_slot")))
-                .child(IKey.str(name)
-                        .asWidget()
+                .child(nameKey.asWidget()
                         .marginLeft(4)
                         .alignY(0.5f)
                         .addTooltipLine(hoverText))
@@ -462,6 +477,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
 
         private final PlayerConfiguratorData playerData;
         private final Set<String> slotNames = new HashSet<>();
+        private int lastSelectedProfileID;
 
         @Nullable
         private Runnable onSlotsChanged;
