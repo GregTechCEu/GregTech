@@ -105,16 +105,18 @@ public class OreProperty implements IMaterialProperty {
         this(1, 1);
     }
 
-    public void setOreMultiplier(int multiplier) {
+    public OreProperty setOreMultiplier(int multiplier) {
         this.oreMultiplier = multiplier;
+        return this;
     }
 
     public int getOreMultiplier() {
         return this.oreMultiplier;
     }
 
-    public void setByProductMultiplier(int multiplier) {
+    public OreProperty setByProductMultiplier(int multiplier) {
         this.byProductMultiplier = multiplier;
+        return this;
     }
 
     public int getByProductMultiplier() {
@@ -125,12 +127,14 @@ public class OreProperty implements IMaterialProperty {
         return emissive;
     }
 
-    public void setEmissive(boolean emissive) {
+    public OreProperty setEmissive(boolean emissive) {
         this.emissive = emissive;
+        return this;
     }
 
-    public void setDirectSmeltResult(@Nullable Material m) {
+    public OreProperty setDirectSmeltResult(@Nullable Material m) {
         this.directSmeltResult = m;
+        return this;
     }
 
     @Nullable
@@ -138,21 +142,24 @@ public class OreProperty implements IMaterialProperty {
         return this.directSmeltResult;
     }
 
-    public void setWashedIn(@Nullable Material m) {
+    public OreProperty setWashedIn(@Nullable Material m) {
         this.washedIn = m;
+        return this;
     }
 
-    public void setWashedIn(@Nullable Material m, int washedAmount) {
+    public OreProperty setWashedIn(@Nullable Material m, int washedAmount) {
         this.washedIn = m;
         this.washedAmount = washedAmount;
+        return this;
     }
 
     public Pair<Material, Integer> getWashedIn() {
         return Pair.of(this.washedIn, this.washedAmount);
     }
 
-    public void setSeparatedInto(Material... materials) {
+    public OreProperty setSeparatedInto(Material... materials) {
         this.separatedInto.addAll(Arrays.asList(materials));
+        return this;
     }
 
     @Nullable
@@ -165,8 +172,9 @@ public class OreProperty implements IMaterialProperty {
      *
      * @param materials the materials to use as byproducts
      */
-    public void setOreByProducts(@NotNull Material... materials) {
+    public OreProperty setOreByProducts(@NotNull Material... materials) {
         setOreByProducts(Arrays.asList(materials));
+        return this;
     }
 
     /**
@@ -174,9 +182,10 @@ public class OreProperty implements IMaterialProperty {
      *
      * @param materials the materials to use as byproducts
      */
-    public void setOreByProducts(@NotNull Collection<Material> materials) {
+    public OreProperty setOreByProducts(@NotNull Collection<Material> materials) {
         this.oreByProducts.clear();
         this.oreByProducts.addAll(materials);
+        return this;
     }
 
     /**
@@ -184,8 +193,9 @@ public class OreProperty implements IMaterialProperty {
      *
      * @param materials the materials to add as byproducts
      */
-    public void addOreByProducts(@NotNull Material... materials) {
+    public OreProperty addOreByProducts(@NotNull Material... materials) {
         this.oreByProducts.addAll(Arrays.asList(materials));
+        return this;
     }
 
     public List<Material> getOreByProducts() {

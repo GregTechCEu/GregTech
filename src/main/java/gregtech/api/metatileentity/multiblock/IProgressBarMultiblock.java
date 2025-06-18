@@ -5,8 +5,12 @@ import gregtech.api.gui.resources.TextureArea;
 
 import net.minecraft.util.text.ITextComponent;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.List;
 
+@ApiStatus.ScheduledForRemoval(inVersion = "2.10")
+@Deprecated
 public interface IProgressBarMultiblock {
 
     default boolean showProgressBar() {
@@ -24,6 +28,7 @@ public interface IProgressBarMultiblock {
     double getFillPercentage(int index);
 
     /** Textures for the progress bar(s). */
+    @Deprecated
     default TextureArea getProgressBarTexture(int index) {
         return GuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW;
     }
@@ -33,5 +38,6 @@ public interface IProgressBarMultiblock {
      *
      * @param index The index, 0, 1, or 2, of your progress bar. Only relevant if you have multiple bars.
      */
+    @Deprecated
     default void addBarHoverText(List<ITextComponent> hoverList, int index) {}
 }

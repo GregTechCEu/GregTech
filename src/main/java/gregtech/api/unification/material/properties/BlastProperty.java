@@ -81,49 +81,55 @@ public class BlastProperty implements IMaterialProperty {
         return blastTemperature;
     }
 
-    public void setBlastTemperature(int blastTemp) {
+    public BlastProperty setBlastTemperature(int blastTemp) {
         if (blastTemp <= 0) throw new IllegalArgumentException("Blast Temperature must be greater than zero!");
         this.blastTemperature = blastTemp;
+        return this;
     }
 
     public GasTier getGasTier() {
         return gasTier;
     }
 
-    public void setGasTier(@NotNull GasTier tier) {
+    public BlastProperty setGasTier(@NotNull GasTier tier) {
         this.gasTier = tier;
+        return this;
     }
 
     public int getDurationOverride() {
         return durationOverride;
     }
 
-    public void setDurationOverride(int duration) {
+    public BlastProperty setDurationOverride(int duration) {
         this.durationOverride = duration;
+        return this;
     }
 
     public int getEUtOverride() {
         return eutOverride;
     }
 
-    public void setEutOverride(int eut) {
+    public BlastProperty setEutOverride(int eut) {
         this.eutOverride = eut;
+        return this;
     }
 
     public int getVacuumDurationOverride() {
         return vacuumDurationOverride;
     }
 
-    public void setVacuumDurationOverride(int duration) {
+    public BlastProperty setVacuumDurationOverride(int duration) {
         this.vacuumDurationOverride = duration;
+        return this;
     }
 
     public int getVacuumEUtOverride() {
         return vacuumEUtOverride;
     }
 
-    public void setVacuumEutOverride(int eut) {
+    public BlastProperty setVacuumEutOverride(int eut) {
         this.vacuumEUtOverride = eut;
+        return this;
     }
 
     @Override
