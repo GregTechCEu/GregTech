@@ -200,7 +200,7 @@ public class CoverEnderItemLink extends CoverAbstractEnderLink<VirtualChest> {
         if (getConveyorMode().isImport()) {
             GTTransferUtils.moveInventoryItems(handler, this.activeEntry, this.container::test);
         } else {
-            GTTransferUtils.moveInventoryItems(this.activeEntry, handler, this.container::test);
+            GTTransferUtils.moveInventoryItems(this.activeEntry, handler);
         }
     }
 

@@ -18,11 +18,10 @@ import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
 import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
-import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
@@ -31,8 +30,8 @@ import gregtech.api.pattern.PatternStringError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.Mods;
-import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -51,7 +50,6 @@ import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -64,11 +62,9 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -78,7 +74,7 @@ import appeng.core.features.AEFeature;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,10 +86,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
-                                     implements ICleanroomProvider, IWorkable, IDataInfoProvider {
+        implements ICleanroomProvider, IWorkable, IDataInfoProvider {
 
     public static final int CLEAN_AMOUNT_THRESHOLD = 90;
     public static final int MIN_CLEAN_AMOUNT = 0;
@@ -115,9 +110,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     private ICleanroomFilter cleanroomFilter;
     private final CleanroomLogic cleanroomLogic;
     private final Collection<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
-
-    private Set<BlockPos> doors = Collections.emptySet();
-    private int openBlocks = 0;
 
     public MetaTileEntityCleanroom(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -150,8 +142,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         this.cleanroomLogic.setMaxProgress(Math.max(100,
                 ((lDist + rDist + 1) * (bDist + fDist + 1) * hDist) - ((lDist + rDist + 1) * (bDist + fDist + 1))));
         this.cleanroomLogic.setMinEnergyTier(cleanroomFilter.getMinTier());
-        this.doors = context.get("Doors")==null?Collections.emptySet():context.get("Doors");
-
     }
 
     @Override
@@ -166,8 +156,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
             }
         });
         cleanroomReceivers.clear();
-        this.doors = Collections.emptySet();
-        this.openBlocks = 0;
     }
 
     @Override
@@ -187,149 +175,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
             reinitializeStructurePattern();
         }
         super.checkStructurePattern();
-        if (isStructureFormed()) {
-            checkDoors();
-        }
-    }
-
-    protected static class DoorCheckingContext {
-
-        private World world;
-        private BlockPos doorPos;
-        private IBlockState doorState;
-        private EnumFacing doorFacing;
-        private EnumFacing actualDoorFacing;
-        private boolean doorOpen;
-        private int openDoors;
-        private int checkX;
-        private int checkZ;
-        private boolean doorOnPositive;
-        private boolean doorOnNegative;
-
-        public void init(BlockPos pos, IBlockState state) {
-            this.doorPos = pos;
-            this.doorState = state.getActualState(this.world, this.doorPos);
-            this.doorFacing = this.doorState.getValue(BlockDoor.FACING);
-            this.doorOpen = this.doorState.getValue(BlockDoor.OPEN);
-            this.actualDoorFacing = getActualDoorFacing(this.doorFacing, this.doorState.getValue(BlockDoor.HINGE),
-                    this.doorOpen);
-            this.checkX = this.doorOpen ? Math.abs(this.doorFacing.getXOffset()) :
-                    1 - Math.abs(this.doorFacing.getXOffset()); // 1 or 0
-            this.checkZ = 1 - this.checkX; // inversion of x since facing can only face in x or z
-            this.doorOnPositive = false;
-            this.doorOnNegative = false;
-        }
-
-        public void setDoor(boolean positive) {
-            if (positive) this.doorOnPositive = true;
-            else this.doorOnNegative = true;
-        }
-
-        public boolean isDoor(boolean positive) {
-            return positive ? this.doorOnPositive : this.doorOnNegative;
-        }
-    }
-
-    public void checkDoors() {
-        DoorCheckingContext context = new DoorCheckingContext();
-        context.world = getWorld();
-        context.openDoors = 0;
-        for (BlockPos pos : this.doors) {
-            IBlockState state = getWorld().getBlockState(pos);
-            if (!(state.getBlock() instanceof BlockDoor)) {
-                invalidateStructure();
-                return;
-            }
-            context.init(pos, state);
-            determineOpenDoors(context);
-        }
-        if (this.openBlocks != context.openDoors && context.world instanceof WorldServer worldServer) {
-            List<EntityPlayerMP> players = worldServer.getMinecraftServer().getPlayerList().getPlayers();
-            if (!players.isEmpty()) {
-                // for debug
-                players.get(0).sendMessage(new TextComponentString("Open blocks: " + context.openDoors));
-            }
-        }
-        this.openBlocks = context.openDoors;
-    }
-
-    protected void determineOpenDoors(DoorCheckingContext context) {
-        int x = context.doorPos.getX();
-        int z = context.doorPos.getZ();
-        int y = context.doorPos.getY();
-        int cx = context.checkX;
-        int cz = context.checkZ;
-
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-        // use negative facing on positive side since we are considering the neighboring block
-        if (!isBlockBlockingDoor(context, pos.setPos(x + cx, y, z + cz), false) ||
-                !isBlockBlockingDoor(context, pos.setPos(x - cx, y, z - cz), true)) {
-            context.openDoors++;
-        }
-        if ((!context.doorOnPositive &&
-                !isBlockBlockingDoor(context, pos.setPos(x + cx, y + 1, z + cz), false)) ||
-                (!context.doorOnNegative &&
-                        !isBlockBlockingDoor(context, pos.setPos(x - cx, y + 1, z - cz), true))) {
-            context.openDoors++;
-        }
-    }
-
-    private static EnumFacing getActualDoorFacing(EnumFacing facing, BlockDoor.EnumHingePosition hinge, boolean open) {
-        if (!open) return facing;
-        return hinge == BlockDoor.EnumHingePosition.LEFT ? facing.rotateY() : facing.rotateYCCW();
-    }
-
-    protected boolean isBlockBlockingDoor(DoorCheckingContext context, BlockPos neighborPos, boolean positive) {
-        // we could make a generalized check with bounding box here but this would leave room for bypassing this check
-        // simply checking if the block is potentially part of the wall is enough
-        IBlockState state = context.world.getBlockState(neighborPos);
-        // casing and glass
-        if (state.getBlock() instanceof BlockCleanroomCasing cleanroomCasing) {
-            return cleanroomCasing.getState(state) == BlockCleanroomCasing.CasingType.PLASCRETE;
-        }
-        if (state.getBlock() instanceof BlockGlassCasing cleanroomCasing) {
-            return cleanroomCasing.getState(state) == BlockGlassCasing.CasingType.CLEANROOM_GLASS;
-        }
-        // multiblock abilities
-        MetaTileEntity mte = GTUtility.getMetaTileEntity(context.world, neighborPos);
-        if (mte instanceof IMultiblockAbilityPart<?>multiblockAbilityPart) {
-            List<MultiblockAbility<?>> abilities = multiblockAbilityPart.getAbilities();
-            if (abilities.isEmpty()) return false;
-            return abilities.contains(MultiblockAbility.MUFFLER_HATCH) ||
-                    abilities.contains(MultiblockAbility.MAINTENANCE_HATCH) ||
-                    abilities.contains(MultiblockAbility.PASSTHROUGH_HATCH) ||
-                    abilities.contains(MultiblockAbility.INPUT_ENERGY);
-        } else if (mte != null) {
-            return false;
-        }
-        // double doors
-        if (state.getBlock() instanceof BlockDoor) {
-            if (context.isDoor(positive)) {
-                // the bottom already had doors, and we don't need to check again
-                return true;
-            }
-            if (!this.doors.contains(neighborPos)) {
-                // don't worry about doors which are not part of the structure
-                return false;
-            }
-            state = state.getActualState(context.world, neighborPos);
-            BlockDoor.EnumDoorHalf half = state.getValue(BlockDoor.HALF);
-            BlockDoor.EnumHingePosition hinge = state.getValue(BlockDoor.HINGE);
-            EnumFacing facing = state.getValue(BlockDoor.FACING);
-            boolean open = state.getValue(BlockDoor.OPEN);
-            EnumFacing actualFacing = getActualDoorFacing(facing, hinge, open);
-            if (half == BlockDoor.EnumDoorHalf.LOWER) {
-                context.setDoor(positive);
-            }
-            if (context.actualDoorFacing == actualFacing) {
-                // if door face the same direction and the other door is open it will count that by itself so we accept
-                return true;
-            }
-            // I can't really explain why, but this needed
-            return context.actualDoorFacing.rotateY() == actualFacing ||
-                    context.actualDoorFacing.rotateYCCW() == actualFacing;
-        }
-        return false;
     }
 
     @Override
@@ -533,7 +378,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                 .where('S', selfPredicate())
                 .where('B', states(getCasingState()).or(basePredicate))
                 .where('X', wallPredicate.or(basePredicate)
-                        .or(improvedDoorPredicate().setMaxGlobalLimited(8))
+                        .or(doorPredicate().setMaxGlobalLimited(8))
                         .or(abilities(MultiblockAbility.PASSTHROUGH_HATCH).setMaxGlobalLimited(30)))
                 .where('K', wallPredicate) // the block beneath the controller must only be a casing for structure
                 // dimension checks
@@ -565,7 +410,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                 .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
                 .map(entry -> new BlockInfo(entry.getKey(), null))
                 .toArray(BlockInfo[]::new))
-                        .addTooltips("gregtech.multiblock.pattern.error.filters");
+                .addTooltips("gregtech.multiblock.pattern.error.filters");
     }
 
     @SideOnly(Side.CLIENT)
@@ -589,23 +434,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     protected static TraceabilityPredicate doorPredicate() {
         return new TraceabilityPredicate(
                 blockWorldState -> blockWorldState.getBlockState().getBlock() instanceof BlockDoor);
-    }
-
-    @NotNull
-    protected static TraceabilityPredicate improvedDoorPredicate() {
-        return new TraceabilityPredicate(blockWorldState -> {
-            IBlockState state = blockWorldState.getBlockState();
-            if (state.getBlock() instanceof BlockDoor) {
-                BlockDoor.EnumDoorHalf half = state.getValue(BlockDoor.HALF);
-                if (half == BlockDoor.EnumDoorHalf.LOWER) {
-                    // we only need the door once
-                    blockWorldState.getMatchContext().getOrCreate("Doors", () -> new ObjectOpenHashSet<BlockPos>())
-                            .add(blockWorldState.getPos().toImmutable());
-                }
-                return true;
-            }
-            return false;
-        });
     }
 
     @NotNull
@@ -656,57 +484,51 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(cleanroomLogic.isWorkingEnabled(), cleanroomLogic.isActive())
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
+        builder.setWorkingStatus(cleanroomLogic.isWorkingEnabled(), cleanroomLogic.isActive())
                 .addEnergyUsageLine(energyContainer)
-                .addCustom(tl -> {
+                .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
+                .addCustom((list, syncer) -> {
                     // Cleanliness status line
                     if (isStructureFormed()) {
-                        ITextComponent cleanState;
-                        if (isClean()) {
-                            cleanState = TextComponentUtil.translationWithColor(
-                                    TextFormatting.GREEN,
-                                    "gregtech.multiblock.cleanroom.clean_state",
-                                    this.cleanAmount);
+                        IKey cleanState;
+                        int amount = syncer.syncInt(cleanAmount);
+                        if (amount >= CLEAN_AMOUNT_THRESHOLD) {
+                            cleanState = KeyUtil.lang(TextFormatting.GREEN,
+                                    "gregtech.multiblock.cleanroom.clean_state", amount);
                         } else {
-                            cleanState = TextComponentUtil.translationWithColor(
-                                    TextFormatting.DARK_RED,
-                                    "gregtech.multiblock.cleanroom.dirty_state",
-                                    this.cleanAmount);
+                            cleanState = KeyUtil.lang(TextFormatting.DARK_RED,
+                                    "gregtech.multiblock.cleanroom.dirty_state", amount);
                         }
 
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.cleanroom.clean_status",
+                        list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.cleanroom.clean_status",
                                 cleanState));
                     }
                 })
-                .addCustom(tl -> {
-                    if (!cleanroomLogic.isVoltageHighEnough()) {
-                        ITextComponent energyNeeded = new TextComponentString(
-                                GTValues.VNF[cleanroomFilter.getMinTier()]);
-                        tl.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
-                                "gregtech.multiblock.cleanroom.low_tier", energyNeeded));
-                    }
-                })
-                .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
-                .addWorkingStatusLine()
-                .addProgressLine(getProgressPercent() / 100.0);
+                .addProgressLine(getProgress(), getMaxProgress())
+                .addWorkingStatusLine();
     }
 
     @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addLowPowerLine(!drainEnergy(true))
-                .addCustom(tl -> {
-                    if (isStructureFormed() && !isClean()) {
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.YELLOW,
+    protected void configureWarningText(MultiblockUIBuilder builder) {
+        boolean lowPower = false;
+        if (isStructureFormed() && !getWorld().isRemote) {
+            lowPower = !drainEnergy(true);
+        }
+        builder.addLowPowerLine(lowPower)
+                .addCustom((list, syncer) -> {
+                    if (isStructureFormed() && !syncer.syncBoolean(isClean())) {
+                        list.add(KeyUtil.lang(TextFormatting.YELLOW,
                                 "gregtech.multiblock.cleanroom.warning_contaminated"));
                     }
-                })
-                .addMaintenanceProblemLines(getMaintenanceProblems());
+
+                    if (!syncer.syncBoolean(cleanroomLogic.isVoltageHighEnough())) {
+                        IKey energyNeeded = IKey.str(GTValues.VNF[cleanroomFilter.getMinTier()]);
+                        list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.multiblock.cleanroom.low_tier",
+                                energyNeeded));
+                    }
+                });
+        super.configureWarningText(builder);
     }
 
     @Override
@@ -952,7 +774,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return false;
     }
 }

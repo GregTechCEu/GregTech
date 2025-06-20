@@ -52,7 +52,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
-                                      implements IMultiblockAbilityPart<IFluidTank> {
+        implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int INVENTORY_SIZE = 64000;
     private static final boolean IS_STEEL = ConfigHolder.machines.steelSteamMultiblocks;
@@ -144,7 +144,7 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
         guiSyncManager.registerSlotGroup("item_inv", 2);
 
         GTFluidSyncHandler tankSyncHandler = GTFluidSlot.sync(this.importFluids.getTankAt(0))
-                .showAmount(false);
+                .showAmountOnSlot(false);
 
         return GTGuis.createPanel(this, 176, 166)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
@@ -173,12 +173,12 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
                         .pos(69, 52)
                         .disableBackground())
                 .child(new ItemSlot().slot(SyncHandlers.itemSlot(this.importItems, 0)
-                        .slotGroup("item_inv")
-                        .filter(itemStack -> FluidUtil.getFluidHandler(itemStack) != null))
+                                .slotGroup("item_inv")
+                                .filter(itemStack -> FluidUtil.getFluidHandler(itemStack) != null))
                         .pos(90, 16))
                 .child(new ItemSlot().slot(SyncHandlers.itemSlot(this.exportItems, 0)
-                        .slotGroup("item_inv")
-                        .accessibility(false, true))
+                                .slotGroup("item_inv")
+                                .accessibility(false, true))
                         .pos(90, 53));
     }
 

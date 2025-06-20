@@ -43,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,8 +66,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected int progressTime;
     protected int maxProgressTime;
     protected long recipeEUt;
-    protected List<FluidStack> fluidOutputs;
-    protected List<ItemStack> itemOutputs;
+    @NotNull
+    protected List<FluidStack> fluidOutputs = Collections.emptyList();
+    @NotNull
+    protected List<ItemStack> itemOutputs = Collections.emptyList();
     protected boolean isActive;
     protected boolean workingEnabled = true;
     protected boolean hasNotEnoughEnergy;
@@ -365,6 +368,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.parallelRecipesPerformed = amount;
     }
 
+
+    public int getParallelRecipesPerformed() {
+        return parallelRecipesPerformed;
+    }
     /**
      * Update the current running recipe's progress
      * <p>
@@ -1053,8 +1060,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.progressTime = 0;
         setMaxProgress(0);
         this.recipeEUt = 0;
-        this.fluidOutputs = null;
-        this.itemOutputs = null;
+        this.fluidOutputs = Collections.emptyList();
+        this.itemOutputs = Collections.emptyList();
         this.hasNotEnoughEnergy = false;
         this.wasActiveAndNeedsUpdate = true;
         this.parallelRecipesPerformed = 0;
@@ -1241,8 +1248,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         progressTime = 0;
         maxProgressTime = 0;
         recipeEUt = 0;
-        fluidOutputs = null;
-        itemOutputs = null;
+        this.fluidOutputs = Collections.emptyList();
+        this.itemOutputs = Collections.emptyList();
         parallelRecipesPerformed = 0;
         isOutputsFull = false;
         invalidInputsForRecipes = false;
@@ -1317,7 +1324,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 this.itemOutputs.add(new ItemStack(itemOutputsList.getCompoundTagAt(i)));
             }
             NBTTagList fluidOutputsList = compound.getTagList("FluidOutputs", Constants.NBT.TAG_COMPOUND);
-            this.fluidOutputs = new ArrayList<>();
+            this.fluidOutputs = new ArrayList<>(fluidOutputsList.tagCount());
             for (int i = 0; i < fluidOutputsList.tagCount(); i++) {
                 this.fluidOutputs.add(FluidStack.loadFluidStackFromNBT(fluidOutputsList.getCompoundTagAt(i)));
             }

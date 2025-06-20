@@ -1,6 +1,5 @@
 package gregtech.api.mui;
 
-import gregtech.api.GTValues;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.common.ConfigHolder;
 
@@ -9,9 +8,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.IThemeApi;
+import com.cleanroommc.modularui.drawable.DrawableSerialization;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.theme.ReloadThemeEvent;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.JsonBuilder;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,55 +21,96 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static gregtech.api.mui.GTGuiTextures.*;
+
 public class GTGuiTheme {
+
+    public static class Colors {
+
+        public static final int BRONZE = 0xFF7706;
+        public static final int STEEL = 0x57576A;
+        public static final int PRIMITIVE = 0x826B51;
+    }
+
+    public static class Names {
+
+        public static final String STANDARD = gregtech("standard");
+        public static final String COVER = gregtech("cover");
+        public static final String BRONZE = gregtech("bronze");
+        public static final String STEEL = gregtech("steel");
+        public static final String PRIMITIVE = gregtech("primitive");
+
+        private static String gregtech(String s) {
+            return "gregtech:" + s;
+        }
+    }
 
     private static final List<GTGuiTheme> THEMES = new ArrayList<>();
 
-    public static final GTGuiTheme STANDARD = templateBuilder("gregtech_standard")
-            .panel(GTGuiTextures.IDs.STANDARD_BACKGROUND)
-            .itemSlot(GTGuiTextures.IDs.STANDARD_SLOT)
-            .fluidSlot(GTGuiTextures.IDs.STANDARD_FLUID_SLOT)
+    public static final GTGuiTheme STANDARD = templateBuilder(Names.STANDARD)
+            .panel(IDs.STANDARD_BACKGROUND)
+            .itemSlot(IDs.STANDARD_SLOT)
+            .fluidSlot(IDs.STANDARD_FLUID_SLOT)
             .color(ConfigHolder.client.defaultUIColor)
-            .button(GTGuiTextures.IDs.STANDARD_BUTTON)
-            .simpleToggleButton(GTGuiTextures.IDs.STANDARD_BUTTON,
-                    GTGuiTextures.IDs.STANDARD_SLOT,
+            .button(IDs.STANDARD_BUTTON)
+            .simpleToggleButton(IDs.STANDARD_BUTTON,
+                    IDs.STANDARD_SLOT,
                     ConfigHolder.client.defaultUIColor)
-            .logo(() -> GTValues.XMAS.get() ? GTGuiTextures.GREGTECH_LOGO_XMAS : GTGuiTextures.GREGTECH_LOGO)
             .build();
 
-    public static final GTGuiTheme COVER = templateBuilder("gregtech_cover")
-            .panel(GTGuiTextures.IDs.COVER_BACKGROUND)
-            .itemSlot(GTGuiTextures.IDs.STANDARD_SLOT)
-            .fluidSlot(GTGuiTextures.IDs.STANDARD_FLUID_SLOT)
+    public static final GTGuiTheme COVER = templateBuilder(Names.COVER)
+            .panel(IDs.COVER_BACKGROUND)
+            .itemSlot(IDs.STANDARD_SLOT)
+            .fluidSlot(IDs.STANDARD_FLUID_SLOT)
             .color(ConfigHolder.client.defaultUIColor)
             .textColor(CoverWithUI.UI_TEXT_COLOR)
             .build();
 
     // TODO Multiblock theme for display texture, logo changes
 
-    public static final GTGuiTheme BRONZE = templateBuilder("gregtech_bronze")
-            .panel(GTGuiTextures.IDs.BRONZE_BACKGROUND)
-            .itemSlot(GTGuiTextures.IDs.BRONZE_SLOT)
+    public static final GTGuiTheme BRONZE = templateBuilder(Names.BRONZE)
+            .parent(Names.STANDARD)
+            .panel(IDs.BRONZE_BACKGROUND)
+            // .itemSlot(GTGuiTextures.IDs.BRONZE_SLOT)
+            // .fluidSlot(GTGuiTextures.IDs.BRONZE_SLOT)
+            .displayBackground(IDs.DISPLAY_BRONZE)
+            .button(IDs.BRONZE_BUTTON)
+            .color(Colors.BRONZE)
+            .simpleToggleButton(IDs.BRONZE_BUTTON, IDs.BRONZE_BUTTON_SELECTED,
+                    ConfigHolder.client.defaultUIColor)
             .build();
 
-    public static final GTGuiTheme STEEL = templateBuilder("gregtech_steel")
-            .panel(GTGuiTextures.IDs.STEEL_BACKGROUND)
-            .itemSlot(GTGuiTextures.IDs.STEEL_SLOT)
+    public static final GTGuiTheme STEEL = templateBuilder(Names.STEEL)
+            .parent(Names.STANDARD)
+            .panel(IDs.STEEL_BACKGROUND)
+            .textColor(Color.WHITE.darker(1))
+            // .itemSlot(GTGuiTextures.IDs.STEEL_SLOT)
+            // .fluidSlot(GTGuiTextures.IDs.STEEL_SLOT)
+            .displayBackground(IDs.DISPLAY_STEEL)
+            .button(IDs.STEEL_BUTTON)
+            .simpleToggleButton(IDs.STEEL_BUTTON, IDs.STEEL_BUTTON_SELECTED,
+                    ConfigHolder.client.defaultUIColor)
+            .color(Colors.STEEL)
             .build();
 
-    public static final GTGuiTheme PRIMITIVE = templateBuilder("gregtech_primitive")
-            .panel(GTGuiTextures.IDs.PRIMITIVE_BACKGROUND)
-            .itemSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
+    public static final GTGuiTheme PRIMITIVE = templateBuilder(Names.PRIMITIVE)
+            .parent(Names.STANDARD)
+            .panel(IDs.PRIMITIVE_BACKGROUND)
+            .textColor(Color.WHITE.darker(1))
+            .color(Colors.PRIMITIVE)
+            // .itemSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
+            // .fluidSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
             .build();
 
-    private final String themeId;
+    protected final String themeId;
 
-    private final List<Consumer<JsonBuilder>> elementBuilder;
-    private final JsonBuilder jsonBuilder;
+    protected final List<Consumer<JsonBuilder>> elementBuilder;
+    protected final JsonBuilder jsonBuilder;
 
     private Supplier<UITexture> logo;
+    private String displayBackground = IDs.DISPLAY;
 
-    private GTGuiTheme(String themeId) {
+    protected GTGuiTheme(String themeId) {
         this.themeId = themeId;
         this.jsonBuilder = new JsonBuilder();
         this.elementBuilder = new ArrayList<>();
@@ -86,6 +128,10 @@ public class GTGuiTheme {
     public @Nullable UITexture getLogo() {
         if (logo == null) return null;
         return logo.get();
+    }
+
+    public @Nullable UITexture getDisplayBackground() {
+        return DrawableSerialization.getTexture(this.displayBackground);
     }
 
     private void register() {
@@ -390,6 +436,14 @@ public class GTGuiTheme {
          */
         public Builder logo(Supplier<UITexture> logo) {
             theme.logo = logo;
+            return this;
+        }
+
+        /**
+         * Sets the display background for this theme.
+         */
+        public Builder displayBackground(String displayBackground) {
+            theme.displayBackground = displayBackground;
             return this;
         }
 

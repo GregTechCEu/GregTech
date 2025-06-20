@@ -6,13 +6,14 @@ import gregtech.api.capability.*;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.IndicatorImageWidget;
 import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
@@ -33,6 +34,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -45,6 +49,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private static final String NBT_VOIDING_MODE = "VoidingMode";
     private static final String NBT_VOIDING_ITEMS = "VoidingItems";
     private static final String NBT_VOIDING_FLUIDS = "VoidingFluids";
+    private MultiblockUIFactory uiFactory;
 
     private boolean voidingItems = false;
     private boolean voidingFluids = false;
@@ -183,7 +188,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         if (this.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) { // nothing extra if no
-                                                                                         // maintenance
+            // maintenance
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
             maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
@@ -244,23 +249,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             Tuple<Byte, Integer> data = hatch.readMaintenanceData();
             this.maintenance_problems = data.getFirst();
             this.timeActive = data.getSecond();
-        }
-    }
-
-    /**
-     * Outputs the recovery items into the muffler hatch
-     */
-    public void outputRecoveryItems() {
-        IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
-        if(!muffler.outputItem())return;
-        muffler.recoverItemsTable(recoveryItems);
-    }
-
-    public void outputRecoveryItems(int parallel) {
-        IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
-        if(!muffler.outputItem())return;
-        for (int i = 0; i < parallel; i++) {
-            muffler.recoverItemsTable(recoveryItems);
         }
     }
 
@@ -352,21 +340,81 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return new TraceabilityPredicate();
     }
 
-    /**
-     * Called serverside to obtain text displayed in GUI
-     * each element of list is displayed on new line
-     * to use translation, use TextComponentTranslation
-     */
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed());
+    public boolean shouldShowVoidingModeButton() {
+        return true;
+    }
+
+    public final int getVoidingMode() {
+        return voidingMode.ordinal();
+    }
+
+    public final void setVoidingMode(int mode) {
+        this.voidingMode = VoidingMode.VALUES[mode];
+
+        this.voidingFluids = mode >= 2;
+
+        this.voidingItems = mode == 1 || mode == 3;
+
+        // After changing the voiding mode, reset the notified buses in case a recipe can run now that voiding mode has
+        // been changed
+        for (IFluidTank tank : this.getAbilities(MultiblockAbility.IMPORT_FLUIDS)) {
+            this.getNotifiedFluidInputList().add((IFluidHandler) tank);
+        }
+        this.getNotifiedItemInputList()
+                .addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+
+        markDirty();
+    }
+
+    public static @NotNull String getVoidingModeTooltip(int mode) {
+        return VoidingMode.VALUES[mode].getName();
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    protected void configureDisplayText(MultiblockUIBuilder builder) {}
+
+    protected void configureErrorText(MultiblockUIBuilder builder) {
+        builder.structureFormed(isStructureFormed());
+        if (hasMufflerMechanics())
+            builder.addMufflerObstructedLine(!isMufflerFaceFree());
+        if (hasMaintenanceMechanics())
+            builder.addMaintenanceProblemLines(getMaintenanceProblems(), false);
+    }
+
+    protected void configureWarningText(MultiblockUIBuilder builder) {
+        if (hasMaintenanceMechanics())
+            builder.addMaintenanceProblemLines(getMaintenanceProblems(), true);
+    }
+
+    protected MultiblockUIFactory createUIFactory() {
+        return new MultiblockUIFactory(this)
+                .configureDisplayText(this::configureDisplayText)
+                .configureWarningText(this::configureWarningText)
+                .configureErrorText(this::configureErrorText);
+    }
+
+    @Override
+    public final ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+        if (uiFactory == null) uiFactory = createUIFactory();
+        return this.uiFactory.buildUI(guiData, panelSyncManager);
     }
 
     /**
-     * Called on serverside when client is clicked on the specific text component
-     * with special click event handler
-     * Data is the data specified in the component
+     * Outputs the recovery items into the muffler hatch
      */
-    protected void handleDisplayClick(String componentData, ClickData clickData) {}
+    public void outputRecoveryItems() {
+        IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
+        if(!muffler.outputItem())return;
+        muffler.recoverItemsTable(recoveryItems);
+    }
+
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return createUITemplate(entityPlayer).build(getHolder(), entityPlayer);
+    }
 
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 198, 208);
@@ -381,21 +429,21 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                         () -> progressMulti.getFillPercentage(0),
                         4, 115, 62, 7,
                         progressMulti.getProgressBarTexture(0), ProgressWidget.MoveType.HORIZONTAL)
-                                .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
                 builder.widget(progressBar);
 
                 progressBar = new ProgressWidget(
                         () -> progressMulti.getFillPercentage(1),
                         68, 115, 62, 7,
                         progressMulti.getProgressBarTexture(1), ProgressWidget.MoveType.HORIZONTAL)
-                                .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 1));
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 1));
                 builder.widget(progressBar);
 
                 progressBar = new ProgressWidget(
                         () -> progressMulti.getFillPercentage(2),
                         132, 115, 62, 7,
                         progressMulti.getProgressBarTexture(2), ProgressWidget.MoveType.HORIZONTAL)
-                                .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 2));
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 2));
                 builder.widget(progressBar);
             } else if (progressMulti.getNumProgressBars() == 2) {
                 // double bar
@@ -403,14 +451,14 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                         () -> progressMulti.getFillPercentage(0),
                         4, 115, 94, 7,
                         progressMulti.getProgressBarTexture(0), ProgressWidget.MoveType.HORIZONTAL)
-                                .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
                 builder.widget(progressBar);
 
                 progressBar = new ProgressWidget(
                         () -> progressMulti.getFillPercentage(1),
                         100, 115, 94, 7,
                         progressMulti.getProgressBarTexture(1), ProgressWidget.MoveType.HORIZONTAL)
-                                .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 1));
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 1));
                 builder.widget(progressBar);
             } else {
                 // single bar
@@ -418,7 +466,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                         () -> progressMulti.getFillPercentage(0),
                         4, 115, 190, 7,
                         progressMulti.getProgressBarTexture(0), ProgressWidget.MoveType.HORIZONTAL)
-                                .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
                 builder.widget(progressBar);
             }
             builder.widget(new IndicatorImageWidget(174, 93, 17, 17, getLogo())
@@ -449,7 +497,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (shouldShowVoidingModeButton()) {
             builder.widget(new ImageCycleButtonWidget(173, 161, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
                     4, this::getVoidingMode, this::setVoidingMode)
-                            .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
+                    .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
         } else {
             builder.widget(new ImageWidget(173, 161, 18, 18, GuiTextures.BUTTON_VOID_NONE)
                     .setTooltip("gregtech.gui.multiblock_voiding_not_supported"));
@@ -459,8 +507,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (this instanceof IDistinctBusController distinct && distinct.canBeDistinct()) {
             builder.widget(new ImageCycleButtonWidget(173, 143, 18, 18, GuiTextures.BUTTON_DISTINCT_BUSES,
                     distinct::isDistinct, distinct::setDistinct)
-                            .setTooltipHoverString(i -> "gregtech.multiblock.universal.distinct_" +
-                                    (i == 0 ? "disabled" : "enabled")));
+                    .setTooltipHoverString(i -> "gregtech.multiblock.universal.distinct_" +
+                            (i == 0 ? "disabled" : "enabled")));
         } else {
             builder.widget(new ImageWidget(173, 143, 18, 18, GuiTextures.BUTTON_NO_DISTINCT_BUSES)
                     .setTooltip("gregtech.multiblock.universal.distinct_not_supported"));
@@ -473,85 +521,13 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return builder;
     }
 
-    /**
-     * Add a custom third button to the Multiblock UI. By default, this is a placeholder
-     * stating that there is no additional functionality for this Multiblock.
-     * <br>
-     * <br>
-     * Parameters should be passed directly to the created widget. Size will be 18x18.
-     */
-    @SuppressWarnings("SameParameterValue")
-    @NotNull
-    protected Widget getFlexButton(int x, int y, int width, int height) {
-        return new ImageWidget(x, y, width, height, GuiTextures.BUTTON_NO_FLEX)
-                .setTooltip("gregtech.multiblock.universal.no_flex_button");
-    }
-
-    protected @NotNull TextureArea getLogo() {
-        return GuiTextures.GREGTECH_LOGO_DARK;
-    }
-
-    protected @NotNull TextureArea getWarningLogo() {
-        return GuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
-    }
-
-    protected @NotNull TextureArea getErrorLogo() {
-        return GuiTextures.GREGTECH_LOGO_BLINKING_RED;
-    }
-
-    /**
-     * Returns a list of text indicating any current warnings in this Multiblock.
-     * Recommended to only display warnings if the structure is already formed.
-     */
-    protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addMaintenanceProblemLines(getMaintenanceProblems());
-    }
-
-    /**
-     * Returns a list of translation keys indicating any current errors in this Multiblock.
-     * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#addWarningText}.
-     */
-    protected void addErrorText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .addMufflerObstructedLine(hasMufflerMechanics() && !isMufflerFaceFree());
-    }
-
-    protected boolean shouldShowVoidingModeButton() {
-        return true;
-    }
-
-    protected int getVoidingMode() {
-        return voidingMode.ordinal();
-    }
-
-    protected void setVoidingMode(int mode) {
-        this.voidingMode = VoidingMode.VALUES[mode];
-
-        this.voidingFluids = mode >= 2;
-
-        this.voidingItems = mode == 1 || mode == 3;
-
-        // After changing the voiding mode, reset the notified buses in case a recipe can run now that voiding mode has
-        // been changed
-        for (IFluidTank tank : this.getAbilities(MultiblockAbility.IMPORT_FLUIDS)) {
-            this.getNotifiedFluidInputList().add((IFluidHandler) tank);
+    public void outputRecoveryItems(int parallel) {
+        IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
+        if(!muffler.outputItem())return;
+        for (int i = 0; i < parallel; i++) {
+            muffler.recoverItemsTable(recoveryItems);
         }
-        this.getNotifiedItemInputList()
-                .addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
-
-        markDirty();
     }
-
-    protected static String getVoidingModeTooltip(int mode) {
-        return VoidingMode.VALUES[mode].getName();
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return createUITemplate(entityPlayer).build(getHolder(), entityPlayer);
-    }
-
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
@@ -671,5 +647,55 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     public void enableItemInfSink() {
         this.itemInfSink = true;
+    }
+
+    protected @NotNull TextureArea getLogo() {
+        return GuiTextures.GREGTECH_LOGO_DARK;
+    }
+
+    protected @NotNull TextureArea getWarningLogo() {
+        return GuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
+    }
+
+    protected @NotNull TextureArea getErrorLogo() {
+        return GuiTextures.GREGTECH_LOGO_BLINKING_RED;
+    }
+    /**
+     * Returns a list of text indicating any current warnings in this Multiblock.
+     * Recommended to only display warnings if the structure is already formed.
+     */
+    protected void addWarningText(List<ITextComponent> textList) {
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
+                .addMaintenanceProblemLines(getMaintenanceProblems());
+    }
+
+    /**
+     * Returns a list of translation keys indicating any current errors in this Multiblock.
+     * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#addWarningText}.
+     */
+    protected void addErrorText(List<ITextComponent> textList) {
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .addMufflerObstructedLine(hasMufflerMechanics() && !isMufflerFaceFree());
+    }
+
+    /**
+     * Called serverside to obtain text displayed in GUI
+     * each element of list is displayed on new line
+     * to use translation, use TextComponentTranslation
+     */
+    protected void addDisplayText(List<ITextComponent> textList) {
+        MultiblockDisplayText.builder(textList, isStructureFormed());
+    }
+
+    /**
+     * Called on serverside when client is clicked on the specific text component
+     * with special click event handler
+     * Data is the data specified in the component
+     */
+    protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {}
+
+    protected Widget getFlexButton(int x, int y, int width, int height) {
+        return new ImageWidget(x, y, width, height, GuiTextures.BUTTON_NO_FLEX)
+                .setTooltip("gregtech.multiblock.universal.no_flex_button");
     }
 }

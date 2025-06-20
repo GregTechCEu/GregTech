@@ -56,8 +56,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifiablePart
-                                          implements IMultiblockAbilityPart<IFluidTank>,
-                                          IGhostSlotConfigurable {
+        implements IMultiblockAbilityPart<IFluidTank>,
+                   IGhostSlotConfigurable {
 
     private static final int FLUID_AMOUNT = 2_000_000_000;
     private final InfiniteWaterTank fluidTank;
@@ -153,7 +153,7 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
         guiSyncManager.registerSlotGroup("item_inv", 2);
 
         GTFluidSyncHandler tankSyncHandler = GTFluidSlot.sync(this.fluidTank)
-                .showAmount(false)
+                .showAmountOnSlot(false)
                 .accessibility(true, false);
 
         // TODO: Change the position of the name when it's standardized.
@@ -184,13 +184,13 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
                         .pos(69, 52)
                         .disableBackground())
                 .child(new ItemSlot().slot(SyncHandlers.itemSlot(this.importItems, 0)
-                        .slotGroup("item_inv")
-                        .filter(itemStack -> FluidUtil.getFluidHandler(itemStack) != null))
+                                .slotGroup("item_inv")
+                                .filter(itemStack -> FluidUtil.getFluidHandler(itemStack) != null))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.IN_SLOT_OVERLAY)
                         .pos(90, 16))
                 .child(new ItemSlot().slot(SyncHandlers.itemSlot(this.exportItems, 0)
-                        .slotGroup("item_inv")
-                        .accessibility(false, true))
+                                .slotGroup("item_inv")
+                                .accessibility(false, true))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.OUT_SLOT_OVERLAY)
                         .pos(90, 53))
                 .child(new GhostCircuitSlotWidget()

@@ -1,24 +1,26 @@
 package gregtech.common.metatileentities.multi;
 
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.BoilerRecipeLogic;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.Widget.ClickData;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.ui.KeyManager;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
+import gregtech.api.metatileentity.multiblock.ui.UISyncer;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuiTheme;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.util.TextComponentUtil;
-import gregtech.api.util.TextFormattingUtil;
+import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.core.sound.GTSoundEvents;
@@ -29,8 +31,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidTank;
@@ -41,13 +41,30 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.GuiAxis;
+import com.cleanroommc.modularui.api.IPanelHandler;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.drawable.Rectangle;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.SliderWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
-public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements IProgressBarMultiblock {
+public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements ProgressBarMultiblock,
+                                                                                    IControllable {
 
     public final BoilerType boilerType;
     protected BoilerRecipeLogic recipeLogic;
@@ -95,46 +112,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         this.steamOutputTank = new FluidTankList(true);
     }
 
-    @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
-                .addCustom(tl -> {
-                    if (isStructureFormed()) {
-                        // Steam Output line
-                        ITextComponent steamOutput = TextComponentUtil.stringWithColor(
-                                TextFormatting.AQUA,
-                                TextFormattingUtil.formatNumbers(recipeLogic.getLastTickSteam()) + " L/t");
-
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.large_boiler.steam_output",
-                                steamOutput));
-
-                        // Efficiency line
-                        ITextComponent efficiency = TextComponentUtil.stringWithColor(
-                                getNumberColor(recipeLogic.getHeatScaled()),
-                                recipeLogic.getHeatScaled() + "%");
-
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.large_boiler.efficiency",
-                                efficiency));
-
-                        // Throttle line
-                        ITextComponent throttle = TextComponentUtil.stringWithColor(
-                                getNumberColor(getThrottle()),
-                                getThrottle() + "%");
-
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.large_boiler.throttle",
-                                throttle));
-                    }
-                })
-                .addWorkingStatusLine();
-    }
-
     private TextFormatting getNumberColor(int number) {
         if (number == 0) {
             return TextFormatting.DARK_RED;
@@ -148,37 +125,153 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            int[] waterAmount = getWaterAmount();
-            if (waterAmount[0] == 0) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
-                        "gregtech.multiblock.large_boiler.no_water"));
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                        "gregtech.multiblock.large_boiler.explosion_tooltip"));
-            }
-        }
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
+        builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+                .addCustom(this::addCustomData)
+                .addWorkingStatusLine();
     }
 
     @Override
-    protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
-        WidgetGroup group = new WidgetGroup(x, y, width, height);
-        group.addWidget(new ClickButtonWidget(0, 0, 9, 18, "", this::decrementThrottle)
-                .setButtonTexture(GuiTextures.BUTTON_THROTTLE_MINUS)
-                .setTooltipText("gregtech.multiblock.large_boiler.throttle_decrement"));
-        group.addWidget(new ClickButtonWidget(9, 0, 9, 18, "", this::incrementThrottle)
-                .setButtonTexture(GuiTextures.BUTTON_THROTTLE_PLUS)
-                .setTooltipText("gregtech.multiblock.large_boiler.throttle_increment"));
-        return group;
+    protected void configureWarningText(MultiblockUIBuilder builder) {
+        super.configureWarningText(builder);
+        builder.addCustom((manager, syncer) -> {
+            if (isStructureFormed() && syncer.syncBoolean(getWaterFilled() == 0)) {
+                manager.add(KeyUtil.lang(TextFormatting.YELLOW,
+                        "gregtech.multiblock.large_boiler.no_water"));
+                manager.add(KeyUtil.lang(TextFormatting.GRAY,
+                        "gregtech.multiblock.large_boiler.explosion_tooltip"));
+            }
+        });
     }
 
-    private void incrementThrottle(ClickData clickData) {
-        this.throttlePercentage = MathHelper.clamp(throttlePercentage + 5, 25, 100);
+    @Override
+    public GTGuiTheme getUITheme() {
+        return switch (this.boilerType) {
+            case BRONZE -> GTGuiTheme.BRONZE;
+            case STEEL -> GTGuiTheme.STEEL;
+            default -> super.getUITheme();
+        };
     }
 
-    private void decrementThrottle(ClickData clickData) {
-        this.throttlePercentage = MathHelper.clamp(throttlePercentage - 5, 25, 100);
+    @Override
+    protected MultiblockUIFactory createUIFactory() {
+        return super.createUIFactory()
+                .createFlexButton((guiData, syncManager) -> {
+                    var throttle = syncManager.panel("throttle_panel", this::makeThrottlePanel, true);
+
+                    return new ButtonWidget<>()
+                            .size(18)
+                            .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
+                            .addTooltipLine(IKey.lang("gregtech.multiblock.large_boiler.throttle_button.tooltip"))
+                            .onMousePressed(i -> {
+                                if (throttle.isPanelOpen()) {
+                                    throttle.closePanel();
+                                } else {
+                                    throttle.openPanel();
+                                }
+                                return true;
+                            });
+                });
+    }
+
+    private void addCustomData(KeyManager keyManager, UISyncer syncer) {
+        if (isStructureFormed()) {
+            int steam = syncer.syncInt(recipeLogic.getLastTickSteam());
+            int heatScaled = syncer.syncInt(recipeLogic.getHeatScaled());
+            int throttleAmt = syncer.syncInt(getThrottle());
+
+            // Steam Output line
+            IKey steamOutput = KeyUtil.number(TextFormatting.AQUA,
+                    steam, " L/t");
+
+            keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.large_boiler.steam_output", steamOutput));
+
+            // Efficiency line
+            IKey efficiency = KeyUtil.number(
+                    getNumberColor(heatScaled), heatScaled, "%");
+            keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.large_boiler.efficiency", efficiency));
+
+            // Throttle line
+            IKey throttle = KeyUtil.number(
+                    getNumberColor(throttleAmt),
+                    throttleAmt, "%");
+            keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.large_boiler.throttle", throttle));
+        }
+    }
+
+    private ModularPanel makeThrottlePanel(PanelSyncManager syncManager, IPanelHandler syncHandler) {
+        StringSyncValue throttleValue = new StringSyncValue(() -> throttlePercentage + "%", str -> {
+            try {
+                if (str.charAt(str.length() - 1) == '%') {
+                    str = str.substring(0, str.length() - 1);
+                }
+
+                this.throttlePercentage = Integer.parseInt(str);
+            } catch (NumberFormatException ignored) {
+
+            }
+        });
+        DoubleSyncValue sliderValue = new DoubleSyncValue(
+                () -> (double) getThrottlePercentage() / 100,
+                d -> setThrottlePercentage((int) (d * 100)));
+
+        return GTGuis.createPopupPanel("boiler_throttle", 116, 53)
+                .child(Flow.row()
+                        .pos(4, 4)
+                        .height(16)
+                        .coverChildrenWidth()
+                        .child(new ItemDrawable(getStackForm())
+                                .asWidget()
+                                .size(16)
+                                .marginRight(4))
+                        .child(IKey.lang("gregtech.multiblock.large_boiler.throttle.title")
+                                .asWidget()
+                                .heightRel(1.0f)))
+                .child(Flow.row()
+                        .top(20)
+                        .margin(4, 0)
+                        .coverChildrenHeight()
+                        .child(new SliderWidget()
+                                .background(new Rectangle().setColor(Color.BLACK.brighter(2)).asIcon()
+                                        .height(8))
+                                .bounds(0, 1)
+                                .setAxis(GuiAxis.X)
+                                .value(sliderValue)
+                                .widthRel(0.7f)
+                                .height(20))
+                        // todo switch this text field with GTTextFieldWidget in PR #2700
+                        .child(new TextFieldWidget()
+                                .widthRel(0.3f)
+                                .height(20)
+                                // TODO proper color
+                                .setTextColor(Color.WHITE.darker(1))
+                                .setValidator(str -> {
+                                    if (str.charAt(str.length() - 1) == '%') {
+                                        str = str.substring(0, str.length() - 1);
+                                    }
+
+                                    try {
+                                        long l = Long.parseLong(str);
+                                        if (l < 0) l = 0;
+                                        else if (l > 100) l = 100;
+                                        return String.valueOf(l);
+                                    } catch (NumberFormatException ignored) {
+                                        return throttleValue.getValue();
+                                    }
+                                })
+                                .value(throttleValue)
+                                .background(GTGuiTextures.DISPLAY)));
+    }
+
+    private void setThrottlePercentage(int amount) {
+        this.throttlePercentage = amount;
+    }
+
+    private int getThrottlePercentage() {
+        return this.throttlePercentage;
     }
 
     @Override
@@ -187,7 +280,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    protected BlockPattern createStructurePattern() {
+    protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "CCC", "CCC", "CCC")
                 .aisle("XXX", "CPC", "CPC", "CCC")
@@ -195,10 +288,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 .where('S', selfPredicate())
                 .where('P', states(boilerType.pipeState))
                 .where('X', states(boilerType.fireboxState).setMinGlobalLimited(4)
-                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setMaxGlobalLimited(3).setPreviewCount(1))
-                        .or(abilities(MultiblockAbility.IMPORT_ITEMS).setMaxGlobalLimited(1).setPreviewCount(1))
-                        .or(abilities(MultiblockAbility.MUFFLER_HATCH).setExactLimit(1))
-                        .or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setExactLimit(1)))
+                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.IMPORT_ITEMS).setMaxGlobalLimited(1))
+                        .or(autoAbilities())) // muffler, maintenance
                 .where('C', states(boilerType.casingState).setMinGlobalLimited(20)
                         .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1)))
                 .build();
@@ -312,61 +404,79 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return false;
     }
 
     @Override
-    public double getFillPercentage(int index) {
-        if (!isStructureFormed()) return 0;
-        int[] waterAmount = getWaterAmount();
-        if (waterAmount[1] == 0) return 0; // no water capacity
-        return (1.0 * waterAmount[0]) / waterAmount[1];
+    public int getProgressBarCount() {
+        return 1;
     }
 
     @Override
-    public TextureArea getProgressBarTexture(int index) {
-        return GuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION;
-    }
+    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
+        IntSyncValue waterFilledValue = new IntSyncValue(this::getWaterFilled);
+        IntSyncValue waterCapacityValue = new IntSyncValue(this::getWaterCapacity);
+        syncManager.syncValue("water_filled", waterFilledValue);
+        syncManager.syncValue("water_capacity", waterCapacityValue);
 
-    @Override
-    public void addBarHoverText(List<ITextComponent> hoverList, int index) {
-        if (!isStructureFormed()) {
-            hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                    "gregtech.multiblock.invalid_structure"));
-        } else {
-            int[] waterAmount = getWaterAmount();
-            if (waterAmount[0] == 0) {
-                hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
-                        "gregtech.multiblock.large_boiler.no_water"));
-            } else {
-                ITextComponent waterInfo = TextComponentUtil.translationWithColor(
-                        TextFormatting.BLUE,
-                        "%s / %s L",
-                        waterAmount[0], waterAmount[1]);
-                hoverList.add(TextComponentUtil.translationWithColor(
-                        TextFormatting.GRAY,
-                        "gregtech.multiblock.large_boiler.water_bar_hover",
-                        waterInfo));
-            }
-        }
+        bars.add(barTest -> barTest
+                .progress(() -> waterCapacityValue.getIntValue() == 0 ? 0 :
+                        waterFilledValue.getIntValue() * 1.0 / waterCapacityValue.getIntValue())
+                .texture(GTGuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION)
+                .tooltipBuilder(tooltip -> {
+                    if (isStructureFormed()) {
+                        if (waterFilledValue.getIntValue() == 0) {
+                            tooltip.addLine(IKey.lang("gregtech.multiblock.large_boiler.no_water"));
+                        } else {
+                            tooltip.addLine(IKey.lang("gregtech.multiblock.large_boiler.water_bar_hover",
+                                    waterFilledValue.getIntValue(), waterCapacityValue.getIntValue()));
+                        }
+                    } else {
+                        tooltip.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                    }
+                }));
     }
 
     /**
-     * Returns an int[] of {AmountFilled, Capacity} where capacity is the sum of hatches with some water in them.
-     * If there is no water in the boiler (or the structure isn't formed, both of these values will be zero.
+     * @return the total amount of water filling the inputs
      */
-    private int[] getWaterAmount() {
-        if (!isStructureFormed()) return new int[] { 0, 0 };
+    private int getWaterFilled() {
+        if (!isStructureFormed()) return 0;
         List<IFluidTank> tanks = getAbilities(MultiblockAbility.IMPORT_FLUIDS);
-        int filled = 0, capacity = 0;
+        int filled = 0;
         for (IFluidTank tank : tanks) {
             if (tank == null || tank.getFluid() == null) continue;
             if (CommonFluidFilters.BOILER_FLUID.test(tank.getFluid())) {
                 filled += tank.getFluidAmount();
+            }
+        }
+        return filled;
+    }
+
+    /**
+     * @return the total capacity for water-containing inputs
+     */
+    private int getWaterCapacity() {
+        if (!isStructureFormed()) return 0;
+        List<IFluidTank> tanks = getAbilities(MultiblockAbility.IMPORT_FLUIDS);
+        int capacity = 0;
+        for (IFluidTank tank : tanks) {
+            if (tank == null || tank.getFluid() == null) continue;
+            if (CommonFluidFilters.BOILER_FLUID.test(tank.getFluid())) {
                 capacity += tank.getCapacity();
             }
         }
-        return new int[] { filled, capacity };
+        return capacity;
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return recipeLogic.isWorkingEnabled();
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        recipeLogic.setWorkingEnabled(isWorkingAllowed);
     }
 }

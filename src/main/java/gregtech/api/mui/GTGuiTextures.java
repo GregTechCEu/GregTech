@@ -2,40 +2,47 @@ package gregtech.api.mui;
 
 import gregtech.api.GTValues;
 
+
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.UITexture;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.theme.WidgetTheme;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * GT MUI textures.<br>
- * Marked experimental as some of these textures may disappear or be renamed at some point
- * while MUI port is still ongoing. When MUI port is done, this annotation will be removed.
- */
-// TODO ^
-@SuppressWarnings("unused")
-@ApiStatus.Experimental
+
 public class GTGuiTextures {
 
     /** Keys used for GT assets registered for use in Themes */
     public static class IDs {
 
-        public static final String STANDARD_BACKGROUND = "gregtech_standard_bg";
-        public static final String COVER_BACKGROUND = "gregtech_cover_bg";
-        public static final String BRONZE_BACKGROUND = "gregtech_bronze_bg";
-        public static final String STEEL_BACKGROUND = "gregtech_steel_bg";
-        public static final String PRIMITIVE_BACKGROUND = "gregtech_primitive_bg";
+        public static final String STANDARD_BACKGROUND = id("standard_bg");
+        public static final String COVER_BACKGROUND = id("cover_bg");
+        public static final String BRONZE_BACKGROUND = id("bronze_bg");
+        public static final String STEEL_BACKGROUND = id("steel_bg");
+        public static final String PRIMITIVE_BACKGROUND = id("primitive_bg");
 
-        public static final String STANDARD_SLOT = "gregtech_standard_slot";
-        public static final String BRONZE_SLOT = "gregtech_bronze_slot";
-        public static final String STEEL_SLOT = "gregtech_steel_slot";
-        public static final String PRIMITIVE_SLOT = "gregtech_primitive_slot";
+        public static final String STANDARD_SLOT = id("standard_slot");
+        public static final String BRONZE_SLOT = id("bronze_slot");
+        public static final String STEEL_SLOT = id("steel_slot");
+        public static final String PRIMITIVE_SLOT = id("primitive_slot");
 
-        public static final String STANDARD_FLUID_SLOT = "gregtech_standard_fluid_slot";
+        public static final String STANDARD_FLUID_SLOT = id("standard_fluid_slot");
 
-        public static final String STANDARD_BUTTON = "gregtech_standard_button";
+        public static final String STANDARD_BUTTON = id("standard_button");
+        public static final String BRONZE_BUTTON = id("bronze_button");
+        public static final String STEEL_BUTTON = id("steel_button");
+        public static final String BRONZE_BUTTON_SELECTED = id("bronze_button_sel");
+        public static final String STEEL_BUTTON_SELECTED = id("steel_button_sel");
+
+        public static final String DISPLAY = id("display");
+        public static final String DISPLAY_BRONZE = id("display_bronze");
+        public static final String DISPLAY_STEEL = id("display_steel");
+
+        private static String id(String path) {
+            return "gregtech:" + path;
+        }
     }
 
     // ICONS
@@ -44,7 +51,12 @@ public class GTGuiTextures {
     /** @apiNote You may want {@link GTGuiTextures#getLogo} instead. */
     public static final UITexture GREGTECH_LOGO_XMAS = fullImage("textures/gui/icon/gregtech_logo_xmas.png");
     public static final UITexture GREGTECH_LOGO_DARK = fullImage("textures/gui/icon/gregtech_logo_dark.png");
-    // todo blinking GT logos
+    public static final IDrawable GREGTECH_LOGO_BLINKING_YELLOW = animated(
+            "textures/gui/icon/gregtech_logo_blinking_yellow.png",
+            17, 34, false, 60);
+    public static final IDrawable GREGTECH_LOGO_BLINKING_RED = animated(
+            "textures/gui/icon/gregtech_logo_blinking_red.png",
+            17, 34, false, 36);
 
     public static final UITexture INDICATOR_NO_ENERGY = fullImage("textures/gui/base/indicator_no_energy.png");
     public static final UITexture INDICATOR_NO_STEAM_BRONZE = fullImage(
@@ -99,6 +111,7 @@ public class GTGuiTextures {
     // DISPLAYS
     public static final UITexture DISPLAY = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/base/display.png")
+            .name(IDs.DISPLAY)
             .imageSize(143, 75)
             .adaptable(2)
             .canApplyTheme()
@@ -106,17 +119,30 @@ public class GTGuiTextures {
 
     public static final UITexture DISPLAY_BRONZE = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/base/display_bronze.png")
+            .name(IDs.DISPLAY_BRONZE)
             .imageSize(143, 75)
             .adaptable(2)
             .build();
 
     public static final UITexture DISPLAY_STEEL = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/base/display_steel.png")
+            .name(IDs.DISPLAY_STEEL)
             .imageSize(143, 75)
             .adaptable(2)
             .build();
 
     // todo primitive display?
+
+    // FUSION
+    public static final UITexture FUSION_REACTOR_MK1_TITLE = fullImage(
+            "textures/gui/widget/fusion_reactor_mk1_title.png");
+    public static final UITexture FUSION_REACTOR_MK2_TITLE = fullImage(
+            "textures/gui/widget/fusion_reactor_mk2_title.png");
+    public static final UITexture FUSION_REACTOR_MK3_TITLE = fullImage(
+            "textures/gui/widget/fusion_reactor_mk3_title.png");
+    public static final UITexture FUSION_DIAGRAM = fullImage("textures/gui/widget/fusion_reactor_diagram.png");
+    public static final UITexture FUSION_LEGEND = fullImage("textures/gui/widget/fusion_reactor_legend.png");
+    public static final UITexture FUSION_PROGRESS = fullImage("textures/gui/progress_bar/fusion_diagram/stitched.png");
 
     // SLOTS
     public static final UITexture SLOT = new UITexture.Builder()
@@ -157,6 +183,25 @@ public class GTGuiTextures {
             .canApplyTheme()
             .build();
 
+    // HPCA Component icons
+    public static final UITexture BLANK_TRANSPARENT = fullImage("textures/gui/base/blank_transparent.png");
+    public static final UITexture HPCA_COMPONENT_OUTLINE = fullImage("textures/gui/widget/hpca/component_outline.png");
+    public static final UITexture HPCA_ICON_EMPTY_COMPONENT = fullImage("textures/gui/widget/hpca/empty_component.png");
+    public static final UITexture HPCA_ICON_ADVANCED_COMPUTATION_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/advanced_computation_component.png");
+    public static final UITexture HPCA_ICON_BRIDGE_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/bridge_component.png");
+    public static final UITexture HPCA_ICON_COMPUTATION_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/computation_component.png");
+    public static final UITexture HPCA_ICON_ACTIVE_COOLER_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/active_cooler_component.png");
+    public static final UITexture HPCA_ICON_HEAT_SINK_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/heat_sink_component.png");
+    public static final UITexture HPCA_ICON_DAMAGED_ADVANCED_COMPUTATION_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/damaged_advanced_computation_component.png");
+    public static final UITexture HPCA_ICON_DAMAGED_COMPUTATION_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/damaged_computation_component.png");
+
     public static final UITexture[] BUTTON_BLACKLIST = slice("textures/gui/widget/button_blacklist.png",
             16, 32, 16, 16, true);
     public static final UITexture[] BUTTON_IGNORE_DAMAGE = slice("textures/gui/widget/button_filter_damage.png",
@@ -189,12 +234,13 @@ public class GTGuiTextures {
             18, 18 * 3, 18, 18, true);
     public static final UITexture[] CONVEYOR_MODE_OVERLAY = slice("textures/gui/overlay/conveyor_mode_overlay.png",
             18, 18 * 2, 18, 18, true);
+
     public static final UITexture[] TRANSFER_MODE_OVERLAY = slice("textures/gui/overlay/transfer_mode_overlay.png",
-            18, 18 * 4, 18, 18, true);
+            18, 18 * 3, 18, 18, true);
 
     public static final UITexture[] FLUID_TRANSFER_MODE_OVERLAY = slice(
             "textures/gui/overlay/fluid_transfer_mode_overlay.png",
-            18, 18 * 4, 18, 18, true);
+            18, 18 * 3, 18, 18, true);
 
     public static final UITexture[] DISTRIBUTION_MODE_OVERLAY = slice(
             "textures/gui/widget/button_distribution_mode.png",
@@ -215,6 +261,21 @@ public class GTGuiTextures {
     public static final UITexture MENU_OVERLAY = fullImage("textures/gui/overlay/menu_overlay.png");
 
     public static final UITexture RECIPE_LOCK = fullImage("textures/gui/widget/lock.png");
+    public static final UITexture PRIMITIVE_FURNACE_OVERLAY = fullImage(
+            "textures/gui/primitive/overlay_primitive_furnace.png");
+    public static final UITexture PRIMITIVE_DUST_OVERLAY = fullImage(
+            "textures/gui/primitive/overlay_primitive_dust.png");
+    public static final UITexture PRIMITIVE_INGOT_OVERLAY = fullImage(
+            "textures/gui/primitive/overlay_primitive_ingot.png");
+    public static final UITexture PRIMITIVE_LARGE_FLUID_TANK = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/primitive/primitive_large_fluid_tank.png")
+            .fullImage()
+            .adaptable(2)
+            .build();
+    public static final UITexture PRIMITIVE_LARGE_FLUID_TANK_OVERLAY = fullImage(
+            "textures/gui/primitive/primitive_large_fluid_tank_overlay.png");
+    public static final UITexture PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR = fullImage(
+            "textures/gui/primitive/progress_bar_primitive_blast_furnace.png");
 
     // todo bronze/steel/primitive fluid slots?
 
@@ -269,8 +330,7 @@ public class GTGuiTextures {
             "textures/gui/overlay/extractor_overlay_steel.png");
     public static final UITexture FILTER_SLOT_OVERLAY = fullImage("textures/gui/overlay/filter_slot_overlay.png", true);
     public static final UITexture FILTER_SETTINGS_OVERLAY = fullImage(
-            "textures/gui/overlay/filter_settings_overlay.png",
-            true);
+            "textures/gui/overlay/filter_settings_overlay.png");
     public static final UITexture FURNACE_OVERLAY_1 = fullImage("textures/gui/overlay/furnace_overlay_1.png", true);
     public static final UITexture FURNACE_OVERLAY_2 = fullImage("textures/gui/overlay/furnace_overlay_2.png", true);
     public static final UITexture FURNACE_OVERLAY_BRONZE = fullImage("textures/gui/overlay/furnace_overlay_bronze.png");
@@ -287,8 +347,6 @@ public class GTGuiTextures {
     public static final UITexture IN_SLOT_OVERLAY_STEEL = fullImage("textures/gui/overlay/in_slot_overlay_steel.png");
     public static final UITexture INGOT_OVERLAY = fullImage("textures/gui/overlay/ingot_overlay.png", true);
     public static final UITexture INT_CIRCUIT_OVERLAY = fullImage("textures/gui/overlay/int_circuit_overlay.png", true);
-    public static final UITexture PATTERN_OVERLAY = fullImage("textures/gui/overlay/pattern_overlay.png", true);
-    public static final UITexture EXTRA_SLOT_OVERLAY = fullImage("textures/gui/overlay/extra_slot.png", true);
     public static final UITexture LENS_OVERLAY = fullImage("textures/gui/overlay/lens_overlay.png", true);
     public static final UITexture LIGHTNING_OVERLAY_1 = fullImage("textures/gui/overlay/lightning_overlay_1.png", true);
     public static final UITexture LIGHTNING_OVERLAY_2 = fullImage("textures/gui/overlay/lightning_overlay_2.png", true);
@@ -329,6 +387,12 @@ public class GTGuiTextures {
             "textures/gui/overlay/research_station_overlay.png", true);
 
     // BUTTONS
+    public static final UITexture EXPORT_OVERLAY = fullImage("textures/gui/widget/pattern_export.png");
+    public static final UITexture BUTTON_DUAL_OUTPUT = fullImage("textures/gui/widget/button_dual_output_overlay.png");
+    public static final UITexture BUTTON_DUAL_COLLAPSE = fullImage("textures/gui/widget/button_dual_collapse_overlay.png");
+    public static final UITexture PATTERN_OVERLAY = fullImage("textures/gui/overlay/pattern_overlay.png", true);
+    public static final UITexture EXTRA_SLOT_OVERLAY = fullImage("textures/gui/overlay/extra_slot.png", true);
+    public static final UITexture BUTTON_AUTO_COLLAPSE = fullImage("textures/gui/widget/button_auto_collapse_overlay.png");
 
     public static final UITexture BUTTON = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/widget/button.png")
@@ -336,6 +400,38 @@ public class GTGuiTextures {
             .adaptable(2)
             .name(IDs.STANDARD_BUTTON)
             .canApplyTheme()
+            .build();
+
+    public static final UITexture BUTTON_BRONZE = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/widget/buttons.png")
+            .imageSize(54, 36)
+            .uv(18, 0, 18, 18)
+            .adaptable(2)
+            .name(IDs.BRONZE_BUTTON)
+            .build();
+
+    public static final UITexture BUTTON_BRONZE_SELECTED = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/widget/buttons.png")
+            .imageSize(54, 36)
+            .uv(18, 18, 18, 18)
+            .adaptable(2)
+            .name(IDs.BRONZE_BUTTON_SELECTED)
+            .build();
+
+    public static final UITexture BUTTON_STEEL = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/widget/buttons.png")
+            .imageSize(54, 36)
+            .uv(36, 0, 18, 18)
+            .adaptable(2)
+            .name(IDs.STEEL_BUTTON)
+            .build();
+
+    public static final UITexture BUTTON_STEEL_SELECTED = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/widget/buttons.png")
+            .imageSize(54, 36)
+            .uv(36, 18, 18, 18)
+            .adaptable(2)
+            .name(IDs.STEEL_BUTTON_SELECTED)
             .build();
 
     public static final UITexture MC_BUTTON = new UITexture.Builder()
@@ -352,22 +448,49 @@ public class GTGuiTextures {
             .build();
 
     // BUTTON OVERLAYS
-    public static final UITexture EXPORT_OVERLAY = fullImage("textures/gui/widget/pattern_export.png");
-    public static final UITexture BUTTON_DUAL_OUTPUT = fullImage("textures/gui/widget/button_dual_output_overlay.png");
-    public static final UITexture BUTTON_DUAL_COLLAPSE = fullImage("textures/gui/widget/button_dual_collapse_overlay.png");
 
     public static final UITexture BUTTON_ITEM_OUTPUT = fullImage("textures/gui/widget/button_item_output_overlay.png");
-    public static final UITexture BUTTON_FLUID_OUTPUT = fullImage(
-            "textures/gui/widget/button_fluid_output_overlay.png");
-    public static final UITexture BUTTON_AUTO_COLLAPSE = fullImage("textures/gui/widget/button_auto_collapse_overlay.png");
+    public static final UITexture BUTTON_FLUID_OUTPUT = fullImage("textures/gui/widget/button_fluid_output_overlay.png");
     public static final UITexture BUTTON_X = fullImage("textures/gui/widget/button_x_overlay.png", true);
     public static final UITexture BUTTON_CLEAR_GRID = fullImage("textures/gui/widget/button_clear_grid.png", false);
-
     public static final UITexture BUTTON_CROSS = fullImage("textures/gui/widget/button_cross.png");
     public static final UITexture BUTTON_REDSTONE_ON = fullImage("textures/gui/widget/button_redstone_on.png");
     public static final UITexture BUTTON_REDSTONE_OFF = fullImage("textures/gui/widget/button_redstone_off.png");
-    public static final UITexture BUTTON_THROTTLE_PLUS = fullImage("textures/gui/widget/button_throttle_plus.png");
-    public static final UITexture BUTTON_THROTTLE_MINUS = fullImage("textures/gui/widget/button_throttle_minus.png");
+
+    /**
+     * 0 = OFF <br />
+     * 1 = ON <br />
+     */
+    public static final UITexture[] BUTTON_POWER = slice("textures/gui/widget/button_power.png",
+            18, 36, 18, 18, false);
+
+    public static final UITexture BUTTON_POWER_DETAIL = fullImage("textures/gui/widget/button_power_detail.png");
+
+    /**
+     * 0 = DISABLED <br />
+     * 1 = ITEM VOID <br />
+     * 2 = FLUID VOID <br />
+     * 3 = VOID BOTH <br />
+     **/
+    public static final UITexture[] MULTIBLOCK_VOID = slice("textures/gui/widget/button_void_multiblock.png",
+            18, 72, 18, 18, false);
+
+    public static final UITexture OVERLAY_VOID_NONE = fullImage("textures/gui/widget/button_void_none.png");
+
+    /**
+     * 0 = DISABLED <br />
+     * 1 = ENABLED <br />
+     */
+    public static final UITexture[] OVERLAY_DISTINCT_BUSES = slice("textures/gui/widget/button_distinct_buses.png",
+            18, 36, 18, 18, false);
+
+    public static final UITexture OVERLAY_NO_FLEX = fullImage("textures/gui/widget/button_no_flex.png", false);
+    public static final UITexture BUTTON_MULTI_MAP = fullImage("textures/gui/widget/button_multi_map.png", true);
+    public static final UITexture BUTTON_MINER_MODES = fullImage("textures/gui/widget/button_miner_modes.png", true);
+    public static final UITexture BUTTON_THROTTLE_MINUS = fullImage("textures/gui/widget/button_throttle_minus.png",
+            true); // TODO new texture
+    public static final UITexture BUTTON_THROTTLE_PLUS = fullImage("textures/gui/widget/button_throttle_plus.png",
+            true); // TODO remove this
 
     // PROGRESS BARS
     public static final UITexture PROGRESS_BAR_ARC_FURNACE = progressBar(
@@ -458,6 +581,7 @@ public class GTGuiTextures {
             "textures/gui/progress_bar/progress_bar_wiremill.png", true);
 
     // more custom progress bars
+    // MULTIBLOCK BARS
     // todo these boiler empty bars can probably be replaced by using a resized steam slot texture
     public static final UITexture PROGRESS_BAR_BOILER_EMPTY_BRONZE = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/progress_bar/progress_bar_boiler_empty_bronze.png")
@@ -474,25 +598,25 @@ public class GTGuiTextures {
     public static final UITexture PROGRESS_BAR_BOILER_FUEL_STEEL = progressBar(
             "textures/gui/progress_bar/progress_bar_boiler_fuel_steel.png", 18, 36);
     public static final UITexture PROGRESS_BAR_BOILER_HEAT = progressBar(
-            "textures/gui/progress_bar/progress_bar_boiler_heat.png", true);
+            "textures/gui/progress_bar/progress_bar_boiler_heat.png");
     public static final UITexture PROGRESS_BAR_ASSEMBLY_LINE = progressBar(
-            "textures/gui/progress_bar/progress_bar_assembly_line.png", 54, 144, true);
+            "textures/gui/progress_bar/progress_bar_assembly_line.png", 54, 144);
     public static final UITexture PROGRESS_BAR_ASSEMBLY_LINE_ARROW = progressBar(
-            "textures/gui/progress_bar/progress_bar_assembly_line_arrow.png", 10, 36, true);
+            "textures/gui/progress_bar/progress_bar_assembly_line_arrow.png", 10, 36);
     public static final UITexture PROGRESS_BAR_COKE_OVEN = progressBar(
-            "textures/gui/progress_bar/progress_bar_coke_oven.png", 36, 36, true);
+            "textures/gui/progress_bar/progress_bar_coke_oven.png", 36, 36);
     public static final UITexture PROGRESS_BAR_DISTILLATION_TOWER = progressBar(
-            "textures/gui/progress_bar/progress_bar_distillation_tower.png", 66, 116, true);
+            "textures/gui/progress_bar/progress_bar_distillation_tower.png", 66, 116);
     public static final UITexture PROGRESS_BAR_SOLAR_BRONZE = progressBar(
             "textures/gui/progress_bar/progress_bar_solar_bronze.png", 10, 20);
     public static final UITexture PROGRESS_BAR_SOLAR_STEEL = progressBar(
             "textures/gui/progress_bar/progress_bar_solar_steel.png", 10, 20);
     public static final UITexture PROGRESS_BAR_RESEARCH_STATION_1 = progressBar(
-            "textures/gui/progress_bar/progress_bar_research_station_1.png", 54, 10, true);
+            "textures/gui/progress_bar/progress_bar_research_station_1.png", 54, 10);
     public static final UITexture PROGRESS_BAR_RESEARCH_STATION_2 = progressBar(
-            "textures/gui/progress_bar/progress_bar_research_station_2.png", 10, 36, true);
+            "textures/gui/progress_bar/progress_bar_research_station_2.png", 10, 36);
     public static final UITexture PROGRESS_BAR_RESEARCH_STATION_BASE = fullImage(
-            "textures/gui/progress_bar/progress_bar_research_station_base.png", true);
+            "textures/gui/progress_bar/progress_bar_research_station_base.png");
     public static final UITexture PROGRESS_BAR_FUSION_ENERGY = progressBar(
             "textures/gui/progress_bar/progress_bar_fusion_energy.png", 94, 14);
     public static final UITexture PROGRESS_BAR_FUSION_HEAT = progressBar(
@@ -549,6 +673,15 @@ public class GTGuiTextures {
         return slices;
     }
 
+    private static UITexture[] slice(String path, int imageWidth, int imageHeight, boolean canApplyTheme) {
+        int sliceSize = Math.min(imageWidth, imageHeight);
+        return slice(path, imageWidth, imageHeight, sliceSize, sliceSize, canApplyTheme);
+    }
+
+    private static IDrawable animated(String path, int imageWidth, int imageHeight, boolean canApplyTheme, int rate) {
+        return dynamic(slice(path, imageWidth, imageHeight, canApplyTheme), rate);
+    }
+
     private static UITexture progressBar(String path) {
         return progressBar(path, 20, 40, false);
     }
@@ -576,5 +709,20 @@ public class GTGuiTextures {
             if (logo != null) return logo;
         }
         return GTValues.XMAS.get() ? GREGTECH_LOGO_XMAS : GREGTECH_LOGO;
+    }
+
+    public static IDrawable dynamic(UITexture[] textures, int rate) {
+        return new IDrawable() {
+
+            int tick = 0;
+            int index = 0;
+
+            @Override
+            public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
+                int a = tick++ % rate; // this makes rate per frame ?
+                if (a == 0) index++;
+                textures[index % textures.length].draw(context, x, y, width, height, widgetTheme);
+            }
+        };
     }
 }

@@ -411,7 +411,8 @@ public class ElementMaterials {
                 .rotorStats(7.0f, 2.5f, 256)
                 .cableProperties(V[MV], 2, 3)
                 .fluidPipeProperties(800, 24, true)
-                .build();
+                .build()
+                .setTooltips("我是铁");
 
         Krypton = new Material.Builder(52, gregtechId("krypton"))
                 .gas(new FluidBuilder()

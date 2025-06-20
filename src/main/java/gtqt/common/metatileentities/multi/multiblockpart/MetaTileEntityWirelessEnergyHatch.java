@@ -39,6 +39,7 @@ import gtqt.api.util.wireless.EnergyContainerWireless;
 import gtqt.api.util.wireless.NetworkDatabase;
 import gtqt.api.util.wireless.NetworkNode;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.input.Keyboard;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -245,10 +246,30 @@ public class MetaTileEntityWirelessEnergyHatch extends MetaTileEntityMultiblockP
         this.WirelessId = data.getInteger("wirelessid");
     }
 
-    public void addInformation(ItemStack stack, World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format(
-                this.isExport ? "gregtech.machine.wireless.export.tooltip" : "gregtech.machine.wireless.import.tooltip"
-        ));
-    }
+    @Override
+    public void addInformation(ItemStack stack,
+                               World player,
+                               @NotNull List<String> tooltip,
+                               boolean advanced) {
+        String tierName = GTValues.VNF[this.getTier()];
+        tooltip.add(I18n.format("gregtech.machine.wireless_energy_hatch.tooltip.1"));
+        tooltip.add(I18n.format("gregtech.machine.wireless_energy_hatch.tooltip.2"));
 
+        if (this.isExport) {
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", this.energyContainer.getOutputVoltage(), tierName));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", this.energyContainer.getOutputAmperage()));
+        } else {
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", this.energyContainer.getInputVoltage(), tierName));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", this.energyContainer.getInputAmperage()));
+        }
+
+        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", this.energyContainer.getEnergyCapacity()));
+        tooltip.add(I18n.format("gregtech.universal.enabled"));
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+            tooltip.add(I18n.format("gregtech.machine.wireless_energy_hatch.tooltip.shift"));
+        } else {
+            tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
+        }
+    }
 }

@@ -30,6 +30,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.GTUtility;
+
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import org.apache.commons.lang3.ArrayUtils;
 
 public abstract class MultiMapMultiblockController extends RecipeMapMultiblockController
         implements IMultipleRecipeMaps {
@@ -138,18 +152,39 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
         return predicate;
     }
 
+    protected MultiblockUIFactory createUIFactory() {
+        return super.createUIFactory()
+                .createFlexButton((guiData, syncManager) -> {
+                    RecipeMap<?>[] recipeMaps = getAvailableRecipeMaps();
+                    if (ArrayUtils.getLength(recipeMaps) <= 1) return null;
+
+                    IntSyncValue activeMapIndex = new IntSyncValue(this::getRecipeMapIndex, this::setRecipeMapIndex);
+
+                    return new CycleButtonWidget()
+                            .overlay(GTGuiTextures.BUTTON_MULTI_MAP)
+                            .background(GTGuiTextures.BUTTON)
+                            // TODO find out why this needs to be called
+                            .disableHoverBackground()
+                            .value(activeMapIndex)
+                            .length(recipeMaps.length)
+                            .tooltipBuilder(t -> {
+                                RecipeMap<?> map = recipeMaps[activeMapIndex.getIntValue()];
+                                t.addLine(IKey.lang("gregtech.multiblock.multiple_recipemaps.value",
+                                        map.getTranslationKey()));
+                            });
+                });
+    }
+
     @Override
-    protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
-        if (getAvailableRecipeMaps() != null && getAvailableRecipeMaps().length > 1) {
-            return new ImageCycleButtonWidget(x, y, width, height, GuiTextures.BUTTON_MULTI_MAP,
-                    getAvailableRecipeMaps().length, this::getRecipeMapIndex, this::setRecipeMapIndex)
-                    .shouldUseBaseBackground().singleTexture()
-                    .setTooltipHoverString(i -> LocalizationUtils
-                            .format("gregtech.multiblock.multiple_recipemaps.header") + " " +
-                            LocalizationUtils.format(
-                                    "recipemap." + getAvailableRecipeMaps()[i].getUnlocalizedName() + ".name"));
-        }
-        return super.getFlexButton(x, y, width, height);
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
+        builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .addRecipeMapLine(getCurrentRecipeMap())
+                .addEnergyUsageLine(this.getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addWorkingStatusLine()
+                .addProgressLine(recipeMapWorkable.getProgress(), recipeMapWorkable.getMaxProgress())
+                .addRecipeOutputLine(recipeMapWorkable);
     }
 
     @Override
@@ -212,5 +247,15 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
             return GregtechTileCapabilities.CAPABILITY_MULTIPLE_RECIPEMAPS.cast(this);
         }
         return capabilityResult;
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return recipeMapWorkable.isWorkingEnabled();
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        recipeMapWorkable.setWorkingEnabled(isWorkingAllowed);
     }
 }

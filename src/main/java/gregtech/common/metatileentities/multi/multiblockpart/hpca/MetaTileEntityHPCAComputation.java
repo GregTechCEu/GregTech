@@ -1,11 +1,14 @@
 package gregtech.common.metatileentities.multi.multiblockpart.hpca;
 
+import com.cleanroommc.modularui.drawable.UITexture;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.IHPCAComputationProvider;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
@@ -39,13 +42,13 @@ public class MetaTileEntityHPCAComputation extends MetaTileEntityHPCAComponent i
     }
 
     @Override
-    public TextureArea getComponentIcon() {
+    public UITexture getComponentIcon() {
         if (isDamaged()) {
-            return advanced ? GuiTextures.HPCA_ICON_DAMAGED_ADVANCED_COMPUTATION_COMPONENT :
-                    GuiTextures.HPCA_ICON_DAMAGED_COMPUTATION_COMPONENT;
+            return advanced ? GTGuiTextures.HPCA_ICON_DAMAGED_ADVANCED_COMPUTATION_COMPONENT :
+                    GTGuiTextures.HPCA_ICON_DAMAGED_COMPUTATION_COMPONENT;
         }
-        return advanced ? GuiTextures.HPCA_ICON_ADVANCED_COMPUTATION_COMPONENT :
-                GuiTextures.HPCA_ICON_COMPUTATION_COMPONENT;
+        return advanced ? GTGuiTextures.HPCA_ICON_ADVANCED_COMPUTATION_COMPONENT :
+                GTGuiTextures.HPCA_ICON_COMPUTATION_COMPONENT;
     }
 
     @Override

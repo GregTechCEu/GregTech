@@ -165,6 +165,10 @@ gregtech.machine.thread_hatch.display=Adjust independent core count for multiblo
 gregtech.machine.me_dual_hatch.import.name=ME Input Bus
 gregtech.machine.me_dual_hatch.export.name=ME Output Bus
 
+gregtech.machine.wireless_energy_hatch.tooltip.1=Stores energy in wireless network, capacity up to 2^(2^31) EU.
+gregtech.machine.wireless_energy_hatch.tooltip.2=No cables needed, automatically interacts with network to draw/store energy.
+gregtech.machine.wireless_energy_hatch.tooltip.shift=Select channel in UI, each channel operates independently.
+
 gregtech.machine.wireless_energy_hatch.input.ulv.name=Wireless Energy Storage (ulv)
 gregtech.machine.wireless_energy_hatch.input.lv.name=Wireless Energy Storage (§7LV§r)
 gregtech.machine.wireless_energy_hatch.input.mv.name=Wireless Energy Storage (§bMV§r)

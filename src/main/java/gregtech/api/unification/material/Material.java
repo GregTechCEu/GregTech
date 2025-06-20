@@ -97,6 +97,10 @@ public class Material implements Comparable<Material> {
      * Chemical formula of this material
      */
     private String chemicalFormula;
+    /**
+     * Tooltips of this material
+     */
+    private String tooltips;
 
     @NotNull
     private String calculateChemicalFormula() {
@@ -134,6 +138,15 @@ public class Material implements Comparable<Material> {
     public Material setFormula(String formula, boolean withFormatting) {
         this.chemicalFormula = withFormatting ? SmallDigits.toSmallDownNumbers(formula) : formula;
         return this;
+    }
+
+    public Material setTooltips(String tooltips) {
+        this.tooltips=tooltips;
+        return this;
+    }
+
+    public String getTooltips() {
+        return tooltips;
     }
 
     @ZenMethod

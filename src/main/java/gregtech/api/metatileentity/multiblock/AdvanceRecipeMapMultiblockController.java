@@ -21,6 +21,7 @@ import gregtech.api.gui.widgets.ScrollableListWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.interfaces.IRefreshBeforeConsumption;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
@@ -213,8 +214,12 @@ public abstract class AdvanceRecipeMapMultiblockController extends RecipeMapMult
         }
     }
 
-    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
+    @Override
+    public boolean usesMui2() {
+        return false;
+    }
 
+    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 288, 208);
         ///////////////////////////多线程组件
         builder.image(192, 4, 90, 200, GuiTextures.DISPLAY);
@@ -378,9 +383,7 @@ public abstract class AdvanceRecipeMapMultiblockController extends RecipeMapMult
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.Builder builder = MultiblockDisplayText.builder(textList, isStructureFormed());
-
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(checkWorkingEnable(), checkActive());
         builder.addWorkingStatusLine()
                 .addEnergyUsageLine(recipeMapWorkable.get(0).getEnergyContainer())

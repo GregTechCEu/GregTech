@@ -467,17 +467,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * @param entityPlayer player opening inventory
      * @return freshly created UI instance
      */
-    @Deprecated
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return null;
     }
 
-    @Deprecated
     public ModularUI getModularUI(EntityPlayer entityPlayer) {
         return createUI(entityPlayer);
     }
 
-    @ApiStatus.Experimental
     public boolean usesMui2() {
         return false;
     }

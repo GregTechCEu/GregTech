@@ -165,6 +165,10 @@ gregtech.machine.thread_hatch.display=调整多方块的独立核心数量。
 gregtech.machine.me_dual_hatch.import.name=ME输入总成
 gregtech.machine.me_dual_hatch.export.name=ME输出总成
 
+gregtech.machine.wireless_energy_hatch.tooltip.1=将能量存储于无线能量网络中，上限为2^(2^31)EU。
+gregtech.machine.wireless_energy_hatch.tooltip.2=无需连接导线，此仓室可以自动与网络交互来抽取/存储能量。
+gregtech.machine.wireless_energy_hatch.tooltip.shift=请在UI内自行选择频道，各频道之间能量传输存储均相互独立
+
 gregtech.machine.wireless_energy_hatch.input.ulv.name=无线能源仓（§8ULV§r）
 gregtech.machine.wireless_energy_hatch.input.lv.name=无线能源仓（§7LV§r）
 gregtech.machine.wireless_energy_hatch.input.mv.name=无线能源仓（§bMV§r）
