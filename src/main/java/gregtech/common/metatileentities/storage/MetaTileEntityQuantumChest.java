@@ -318,7 +318,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 textWidget -> !virtualItemStack.isEmpty(),
                 () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
                 .child(new GTItemSlot()
-                        .showTooltip(false)
+                        .showTooltip(true)
                         .showAmount(false)
                         .background(IDrawable.NONE)
                         .slot(new ModularSlot(itemInventory, 0)
