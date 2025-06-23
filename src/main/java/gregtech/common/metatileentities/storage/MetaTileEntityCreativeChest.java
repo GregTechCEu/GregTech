@@ -36,15 +36,11 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
-import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,51 +87,18 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
-        return GTGuis.createPanel(this, 176, 166)
-                .child(IKey.lang("gregtech.creative.chest.item").asWidget()
-                        .pos(7, 9))
-                .child(Flow.column()
-                        .pos(7, 28)
-                        .coverChildren()
-                        .crossAxisAlignment(Alignment.CrossAxis.START)
-                        .child(IKey.lang("gregtech.creative.chest.ipc").asWidget()
-                                .marginBottom(2))
-                        .child(new TextFieldWidget()
-                                .left(2)
-                                .marginBottom(15)
-                                .size(152, 14)
-                                .keepScrollBarInArea(true)
-                                .setMaxLength(11)
-                                .setNumbers(1, Integer.MAX_VALUE)
-                                .value(new IntSyncValue(() -> itemsPerCycle, value -> itemsPerCycle = value)))
-                        .child(IKey.lang("gregtech.creative.chest.tpc").asWidget()
-                                .marginBottom(2))
-                        .child(new TextFieldWidget()
-                                .left(2)
-                                .setTextAlignment(Alignment.CenterLeft)
-                                .size(152, 14)
-                                .keepScrollBarInArea(true)
-                                .setMaxLength(11)
-                                .setNumbers(1, Integer.MAX_VALUE)
-                                .value(new IntSyncValue(() -> ticksPerCycle, value -> ticksPerCycle = value))))
-                .child(new ToggleButton()
-                        .pos(7, 101)
-                        .size(162, 20)
-                        .overlay(IKey.lang(() -> active ?
-                                "gregtech.creative.activity.on" :
-                                "gregtech.creative.activity.off"))
-                        .value(new BooleanSyncValue(() -> active, value -> {
-                            active = value;
-                            scheduleRenderUpdate();
-                            var c = getQuantumController();
-                            if (c != null) c.onHandlerUpdate();
-                        })))
-                .child(new ItemSlot()
-                        .slot(SyncHandlers.phantomItemSlot(handler, 0)
-                                .changeListener((newItem, onlyAmountChanged, client, init) -> markDirty()))
-                        .pos(36, 6))
-                .child(createConnectionButton()
-                        .top(7));
+        return appendCreativeUI(GTGuis.createPanel(this, 176, 166), false,
+                new BoolValue.Dynamic(() -> active, b -> active = b),
+                new IntSyncValue(() -> itemsPerCycle, v -> itemsPerCycle = v),
+                new IntSyncValue(() -> ticksPerCycle, v -> ticksPerCycle = v))
+                        .child(IKey.lang("gregtech.creative.chest.item").asWidget()
+                                .pos(7, 9))
+                        .child(new ItemSlot()
+                                .slot(SyncHandlers.phantomItemSlot(handler, 0)
+                                        .changeListener((newItem, onlyAmountChanged, client, init) -> markDirty()))
+                                .pos(36, 6))
+                        .child(createConnectionButton()
+                                .top(7));
     }
 
     @Override
