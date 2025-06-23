@@ -148,9 +148,16 @@ public class GTFluidSyncHandler extends SyncHandler {
         return phantom;
     }
 
+    public GTFluidSyncHandler showAmount(boolean inSlot, boolean inTooltip) {
+        return showAmount(() -> inSlot, () -> inTooltip);
+    }
+
+    public GTFluidSyncHandler showAmount(BooleanSupplier inSlot, BooleanSupplier inTooltip) {
+        return showAmountOnSlot(inSlot).showAmountInTooltip(inTooltip);
+    }
+
     public GTFluidSyncHandler showAmountInTooltip(boolean showAmount) {
-        this.showAmountInTooltip = () -> showAmount;
-        return this;
+        return showAmountInTooltip(() -> showAmount);
     }
 
     public GTFluidSyncHandler showAmountInTooltip(BooleanSupplier showAmount) {
@@ -165,8 +172,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public GTFluidSyncHandler showAmountOnSlot(boolean showAmount) {
-        this.showAmountOnSlot = () -> showAmount;
-        return this;
+        return showAmountOnSlot(() -> showAmount);
     }
 
     public GTFluidSyncHandler showAmountOnSlot(BooleanSupplier showAmount) {
@@ -221,7 +227,11 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public void handleTooltip(@NotNull RichTooltip tooltip) {
-        tooltip.addLine(getFluidNameKey());
+        IKey nameKey = getFluidNameKey();
+
+        if (nameKey != IKey.EMPTY) {
+            tooltip.addLine(nameKey);
+        }
 
         if (showAmountInTooltip()) {
             tooltip.addLine(IKey.lang("gregtech.fluid.amount", getFluidAmount(), getCapacity()));
