@@ -96,11 +96,11 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         return GTGuis.createPanel(this, 176, 166)
                 .child(IKey.lang("gregtech.creative.tank.fluid").asWidget()
                         .pos(7, 9))
-                // todo replace with our fluid slot
                 .child(new GTFluidSlot()
                         .syncHandler(GTFluidSlot.sync(this.fluidTank)
                                 .phantom(true)
-                                .showAmount(true))
+                                .showAmountInTooltip(true)
+                                .showAmountOnSlot(true))
                         .pos(36, 6))
                 .child(Flow.column()
                         .pos(7, 28)

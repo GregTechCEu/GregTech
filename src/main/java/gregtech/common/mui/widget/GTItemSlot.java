@@ -36,8 +36,8 @@ public class GTItemSlot extends Widget<GTItemSlot>
     private ItemSlotSH syncHandler;
 
     public GTItemSlot() {
-        tooltip().setAutoUpdate(true);
-        // .setHasTitleMargin(true);
+        tooltip().setAutoUpdate(true)
+                .titleMargin();
         tooltipBuilder(tooltip -> {
             if (!isSynced()) return;
             ItemStack stack = getSlot().getStack();
@@ -61,7 +61,7 @@ public class GTItemSlot extends Widget<GTItemSlot>
     }
 
     public GTItemSlot showAmount(boolean showAmount) {
-        this.showAmount = showTooltip;
+        this.showAmount = showAmount;
         return getThis();
     }
 
@@ -82,7 +82,7 @@ public class GTItemSlot extends Widget<GTItemSlot>
             MouseData mouseData = MouseData.create(mouseButton);
             this.syncHandler.syncToServer(2, mouseData::writeToPacket);
         } else {
-            ClientScreenHandler.clickSlot();
+            ClientScreenHandler.clickSlot(getScreen(), getSlot());
         }
         return Result.SUCCESS;
     }
