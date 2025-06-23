@@ -13,7 +13,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
@@ -122,9 +121,9 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
                 .child(new ToggleButton()
                         .pos(7, 101)
                         .size(162, 20)
-                        .overlay(IKey.dynamic(() -> LocalizationUtils.format(active ?
+                        .overlay(IKey.lang(() -> active ?
                                 "gregtech.creative.activity.on" :
-                                "gregtech.creative.activity.off")))
+                                "gregtech.creative.activity.off"))
                         .value(new BooleanSyncValue(() -> active, value -> {
                             active = value;
                             scheduleRenderUpdate();
