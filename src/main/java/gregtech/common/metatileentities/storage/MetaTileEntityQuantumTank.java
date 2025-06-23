@@ -324,8 +324,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                                     setLocked(fluidStack != null);
                                     lockedFluid = fluidStack;
                                 }, this::setLocked)
-                                .showAmountOnSlot(true)
-                                .showAmountInTooltip(true))
+                                .showAmount(false, false))
                         .pos(148, 41));
     }
 

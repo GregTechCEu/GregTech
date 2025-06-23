@@ -27,12 +27,14 @@ import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BooleanSupplier;
+
 public class GTItemSlot extends Widget<GTItemSlot>
                         implements IVanillaSlot, Interactable, JeiGhostIngredientSlot<ItemStack>,
                         JeiIngredientProvider {
 
-    private boolean showTooltip = true;
-    private boolean showAmount = true;
+    private BooleanSupplier showTooltip = () -> true;
+    private BooleanSupplier showAmount = () -> true;
     private ItemSlotSH syncHandler;
 
     public GTItemSlot() {
@@ -56,11 +58,19 @@ public class GTItemSlot extends Widget<GTItemSlot>
     }
 
     public GTItemSlot showTooltip(boolean showTooltip) {
+        return showTooltip(() -> showTooltip);
+    }
+
+    public GTItemSlot showTooltip(BooleanSupplier showTooltip) {
         this.showTooltip = showTooltip;
         return getThis();
     }
 
     public GTItemSlot showAmount(boolean showAmount) {
+        return showAmount(() -> showAmount);
+    }
+
+    public GTItemSlot showAmount(BooleanSupplier showAmount) {
         this.showAmount = showAmount;
         return getThis();
     }
@@ -128,7 +138,7 @@ public class GTItemSlot extends Widget<GTItemSlot>
     @Override
     public void drawForeground(ModularGuiContext context) {
         RichTooltip tooltip = getTooltip();
-        if (showTooltip && tooltip != null && isHoveringFor(tooltip.getShowUpTimer())) {
+        if (showTooltip.getAsBoolean() && tooltip != null && isHoveringFor(tooltip.getShowUpTimer())) {
             tooltip.draw(getContext(), getSlot().getStack());
         }
     }
@@ -137,7 +147,7 @@ public class GTItemSlot extends Widget<GTItemSlot>
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         if (this.syncHandler == null) return;
 
-        RenderUtil.drawItemStack(getSlot().getStack(), 1, 1, showAmount);
+        RenderUtil.drawItemStack(getSlot().getStack(), 1, 1, showAmount.getAsBoolean());
 
         if (isHovering()) {
             GlStateManager.colorMask(true, true, true, false);

@@ -99,8 +99,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                 .child(new GTFluidSlot()
                         .syncHandler(GTFluidSlot.sync(this.fluidTank)
                                 .phantom(true)
-                                .showAmountInTooltip(true)
-                                .showAmountOnSlot(true))
+                                .showAmount(false, false))
                         .pos(36, 6))
                 .child(Flow.column()
                         .pos(7, 28)
@@ -133,7 +132,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                             active = value;
                             scheduleRenderUpdate();
                             var c = getQuantumController();
-                            if (c != null) c.updateHandler();
+                            if (c != null) c.onHandlerUpdate();
                         })))
                 .child(createConnectionButton()
                         .top(6));
