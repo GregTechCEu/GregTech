@@ -38,13 +38,9 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,52 +88,19 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
-        return GTGuis.createPanel(this, 176, 166)
-                .child(IKey.lang("gregtech.creative.tank.fluid").asWidget()
-                        .pos(7, 9))
-                .child(new GTFluidSlot()
-                        .syncHandler(GTFluidSlot.sync(this.fluidTank)
-                                .phantom(true)
-                                .showAmount(false, false))
-                        .pos(36, 6))
-                .child(Flow.column()
-                        .pos(7, 28)
-                        .crossAxisAlignment(Alignment.CrossAxis.START)
-                        .coverChildren()
-                        .child(IKey.lang("gregtech.creative.tank.mbpc").asWidget()
-                                .marginBottom(2))
-                        .child(new TextFieldWidget()
-                                .left(2)
-                                .marginBottom(15)
-                                .size(154, 14)
-                                .keepScrollBarInArea(true)
-                                .setNumbers(1, Integer.MAX_VALUE)
-                                .setMaxLength(11)
-                                .value(new IntSyncValue(() -> mBPerCycle, value -> mBPerCycle = value)))
-                        .child(IKey.lang("gregtech.creative.tank.tpc").asWidget()
-                                .marginBottom(2))
-                        .child(new TextFieldWidget()
-                                .left(2)
-                                .size(154, 14)
-                                .keepScrollBarInArea(true)
-                                .setNumbers(1, Integer.MAX_VALUE)
-                                .setMaxLength(11)
-                                .value(new IntSyncValue(() -> ticksPerCycle, value -> ticksPerCycle = value))))
-                .child(new ToggleButton()
-                        .disableHoverBackground()
-                        .pos(7, 101)
-                        .size(162, 20)
-                        .overlay(IKey.lang(() -> active ?
-                                "gregtech.creative.activity.on" :
-                                "gregtech.creative.activity.off"))
-                        .value(new BooleanSyncValue(() -> active, value -> {
-                            active = value;
-                            scheduleRenderUpdate();
-                            var c = getQuantumController();
-                            if (c != null) c.onHandlerUpdate();
-                        })))
-                .child(createConnectionButton()
-                        .top(6));
+        return appendCreativeUI(GTGuis.createPanel(this, 176, 166), true,
+                new BoolValue.Dynamic(() -> active, b -> active = b),
+                new IntSyncValue(() -> mBPerCycle, v -> mBPerCycle = v),
+                new IntSyncValue(() -> ticksPerCycle, v -> ticksPerCycle = v))
+                        .child(IKey.lang("gregtech.creative.tank.fluid").asWidget()
+                                .pos(7, 9))
+                        .child(new GTFluidSlot()
+                                .syncHandler(GTFluidSlot.sync(this.fluidTank)
+                                        .phantom(true)
+                                        .showAmount(false, false))
+                                .pos(36, 6))
+                        .child(createConnectionButton()
+                                .top(6));
     }
 
     @Override

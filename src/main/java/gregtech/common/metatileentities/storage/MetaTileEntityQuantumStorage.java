@@ -38,7 +38,9 @@ import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
@@ -48,6 +50,7 @@ import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -245,6 +248,50 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                 .child(new ToggleButton()
                         .overlay(isFluid ? GTGuiTextures.FLUID_VOID_OVERLAY : GTGuiTextures.ITEM_VOID_OVERLAY)
                         .value(new BooleanSyncValue(this::isVoiding, this::setVoiding)));
+    }
+
+    protected ModularPanel appendCreativeUI(ModularPanel panel, boolean isTank,
+                                            BoolValue.Dynamic isActive,
+                                            IntSyncValue amountPerCycle,
+                                            IntSyncValue ticksPerCycle) {
+        return panel.child(Flow.column()
+                .pos(7, 28)
+                .crossAxisAlignment(Alignment.CrossAxis.START)
+                .coverChildren()
+                .child(IKey.lang("gregtech.creative." +
+                        (isTank ? "tank.mbpc" : "chest.ipc"))
+                        .asWidget()
+                        .marginBottom(2))
+                .child(new TextFieldWidget()
+                        .left(2)
+                        .marginBottom(15)
+                        .size(154, 14)
+                        .keepScrollBarInArea(true)
+                        .setNumbers(1, Integer.MAX_VALUE)
+                        .setMaxLength(11)
+                        .value(amountPerCycle))
+                .child(IKey.lang("gregtech.creative.tank.tpc").asWidget()
+                        .marginBottom(2))
+                .child(new TextFieldWidget()
+                        .left(2)
+                        .size(154, 14)
+                        .keepScrollBarInArea(true)
+                        .setNumbers(1, Integer.MAX_VALUE)
+                        .setMaxLength(11)
+                        .value(ticksPerCycle)))
+                .child(new ToggleButton()
+                        .disableHoverBackground()
+                        .pos(7, 101)
+                        .size(162, 20)
+                        .overlay(IKey.lang(() -> isActive.getBoolValue() ?
+                                "gregtech.creative.activity.on" :
+                                "gregtech.creative.activity.off"))
+                        .value(new BooleanSyncValue(isActive::getBoolValue, value -> {
+                            isActive.setBoolValue(value);
+                            scheduleRenderUpdate();
+                            var c = getQuantumController();
+                            if (c != null) c.onHandlerUpdate();
+                        })));
     }
 
     protected boolean isVoiding() {
