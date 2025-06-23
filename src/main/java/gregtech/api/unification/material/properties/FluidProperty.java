@@ -81,8 +81,9 @@ public class FluidProperty implements IMaterialProperty, FluidStorage {
     /**
      * @param primaryKey the key to use primarily
      */
-    public void setPrimaryKey(@NotNull FluidStorageKey primaryKey) {
+    public FluidProperty setPrimaryKey(@NotNull FluidStorageKey primaryKey) {
         this.primaryKey = primaryKey;
+        return this;
     }
 
     @Override
@@ -112,11 +113,12 @@ public class FluidProperty implements IMaterialProperty, FluidStorage {
 
     /**
      * Sets the fluid that solidifies into the material.
-     * 
+     *
      * @param solidifyingFluid The Fluid which solidifies into the material. If left null, it will be left as the
      *                         default value: the material's liquid.
      */
-    public void setSolidifyingFluid(@Nullable Fluid solidifyingFluid) {
+    public FluidProperty setSolidifyingFluid(@Nullable Fluid solidifyingFluid) {
         this.solidifyingFluid = solidifyingFluid;
+        return this;
     }
 }

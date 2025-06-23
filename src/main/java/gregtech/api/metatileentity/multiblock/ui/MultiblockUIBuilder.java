@@ -356,14 +356,16 @@ public class MultiblockUIBuilder {
 
         if (maxProgress <= 20) {
             addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.recipe_progress.ticks",
-                    // %02d is not supported by lang
-                    String.format("%02d", progress), String.format("%02d", maxProgress),
+                    progress,
+                    maxProgress,
+
                     (float) progress / maxProgress * 100f));
         } else {
             addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.recipe_progress.seconds",
-                    progress / 20f, maxProgress / 20f, (float) progress / maxProgress * 100f));
+                    progress / 20f,
+                    maxProgress / 20f,
+                    (float) progress / maxProgress * 100f));
         }
-
         return this;
     }
 

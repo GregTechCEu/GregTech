@@ -55,6 +55,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -1105,5 +1106,29 @@ public class GTUtility {
      */
     public static boolean isEmpty(FluidStack stack) {
         return stack == null || stack.amount <= 0;
+    }
+
+    public static ItemStack getItemStack(String itemstr) {
+        return getItemStack(itemstr, 0);
+    }
+
+    public static ItemStack getItemStack(String itemstr, long num) {
+        var item = getItemStack(itemstr, 0);
+        item.setCount((int) num);
+        return item;
+    }
+
+    public static ItemStack getItemStack(String itemstr, int meta) {
+        if (itemstr.startsWith("<") && itemstr.endsWith(">"))
+            itemstr = itemstr.substring(1, itemstr.length() - 1);
+        String[] str = itemstr.split(":");
+        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(str[0], str[1]));
+        if (item != null) {
+            if (str.length == 3)
+                return new ItemStack(item, 1, Integer.parseInt(str[2]));
+            return new ItemStack(item, 1, meta);
+        } else {
+            return ItemStack.EMPTY;
+        }
     }
 }

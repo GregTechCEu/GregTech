@@ -22,6 +22,7 @@ import gregtech.core.advancement.AdvancementTriggers;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -32,6 +33,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
@@ -51,23 +54,39 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiablePart
-                                       implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
+        implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
 
     static final int SPEED_INCREMENT = 1;
     static final int SPEED_DECREMENT = 3;
 
     private final InventoryRotorHolder inventory;
-
     private final int maxSpeed;
     private int currentSpeed;
     private int rotorColor = -1;
     private boolean isRotorSpinning;
     private boolean frontFaceFree;
-
     public MetaTileEntityRotorHolder(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false);
         this.inventory = new InventoryRotorHolder();
         this.maxSpeed = 2000 + 1000 * tier;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ?
+                CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.inventory) :
+                super.getCapability(capability, side);
+    }
+
+    @Override
+    public void onRemoval() {
+        super.onRemoval();
+        var pos = getPos();
+        if (!inventory.getStackInSlot(0).isEmpty()) {
+            getWorld().spawnEntity(new EntityItem(getWorld(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                    inventory.getStackInSlot(0)));
+            inventory.extractItem(0, 1, false);
+        }
     }
 
     @Override
@@ -189,6 +208,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
 
         for (int left = -1; left <= 1; left++) {
             for (int up = -1; up <= 1; up++) {
+                if (left == 0 && up == 0) continue;
                 // flip doesn't affect anything here since we are checking a square anyway
                 final BlockPos checkPos = RelativeDirection.offsetPos(
                         getPos(), front, upwards, false, up, left, 1);
@@ -223,12 +243,12 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
         return rotorColor != -1;
     }
 
-    protected void setRotorColor(int color) {
-        this.rotorColor = color;
-    }
-
     protected int getRotorColor() {
         return rotorColor;
+    }
+
+    protected void setRotorColor(int color) {
+        this.rotorColor = color;
     }
 
     @Override
@@ -420,7 +440,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
         private int getRotorColor() {
             if (!hasRotor()) return -1;
             // noinspection ConstantConditions
-            return getTurbineBehavior().getPartMaterial(getStackInSlot(0)).getMaterialRGB();
+            getTurbineBehavior();
+            return AbstractMaterialPartBehavior.getPartMaterial(getStackInSlot(0)).getMaterialRGB();
         }
 
         private int getRotorDurabilityPercent() {
@@ -434,14 +455,16 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
             if (!hasRotor()) return -1;
 
             // noinspection ConstantConditions
-            return getTurbineBehavior().getRotorEfficiency(getTurbineStack());
+            getTurbineBehavior();
+            return TurbineRotorBehavior.getRotorEfficiency(getTurbineStack());
         }
 
         private int getRotorPower() {
             if (!hasRotor()) return -1;
 
             // noinspection ConstantConditions
-            return getTurbineBehavior().getRotorPower(getTurbineStack());
+            getTurbineBehavior();
+            return TurbineRotorBehavior.getRotorPower(getTurbineStack());
         }
 
         private void damageRotor(int damageAmount) {
