@@ -1,9 +1,11 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
+import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.capability.impl.SteamMultiblockRecipeLogic;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MTETrait;
@@ -14,11 +16,15 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.KeyUtil;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -26,25 +32,38 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase implements IControllable {
 
     protected static final double CONVERSION_RATE = ConfigHolder.machines.multiblockSteamToEU;
 
     public final RecipeMap<?> recipeMap;
-    protected SteamMultiblockRecipeLogic recipeMapWorkable;
-
+    protected SteamMultiWorkable recipeMapWorkable;
+    ParallelLogicType type;
     protected IItemHandlerModifiable inputInventory;
     protected IItemHandlerModifiable outputInventory;
     protected IMultipleTankHandler steamFluidTank;
 
     public RecipeMapSteamMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap,
-                                              double conversionRate) {
+                                              double conversionRate,ParallelLogicType type) {
         super(metaTileEntityId);
         this.recipeMap = recipeMap;
-        this.recipeMapWorkable = new SteamMultiblockRecipeLogic(this, recipeMap, steamFluidTank, conversionRate);
+        this.recipeMapWorkable = new SteamMultiWorkable(this, conversionRate ,type);
         resetTileAbilities();
     }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        if(type==ParallelLogicType.APPEND_ITEMS)tooltip.add(I18n.format("多方块并行模式：配方并发（允许同时运行多个配方，但是输入物品仅限一个）"));
+        if(type==ParallelLogicType.MULTIPLY)tooltip.add(I18n.format("多方块并行模式：单配方并行（只允许同时运行一个配方）"));
+    }
+
 
     public IItemHandlerModifiable getInputInventory() {
         return inputInventory;

@@ -27,11 +27,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
 
-    private IMultipleTankHandler steamFluidTank;
-    private IFluidTank steamFluidTankCombined;
-
     // EU per mB
     private final double conversionRate;
+    private IMultipleTankHandler steamFluidTank;
+    private IFluidTank steamFluidTankCombined;
 
     public SteamMultiblockRecipeLogic(RecipeMapSteamMultiblockController tileEntity, RecipeMap<?> recipeMap,
                                       IMultipleTankHandler steamFluidTank, double conversionRate) {

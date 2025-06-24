@@ -14,14 +14,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
 
-    public SteamMultiWorkable(RecipeMapSteamMultiblockController tileEntity, double conversionRate) {
-        super(tileEntity, tileEntity.recipeMap, tileEntity.getSteamFluidTank(), conversionRate);
+    ParallelLogicType type;
+    public SteamMultiWorkable(RecipeMapSteamMultiblockController tileEntity, double conversionRate,ParallelLogicType type) {
+        super(tileEntity, tileEntity.recipeMap,tileEntity.getSteamFluidTank(), conversionRate);
+        this.type = type;
     }
 
     @NotNull
     @Override
     public ParallelLogicType getParallelLogicType() {
-        return ParallelLogicType.APPEND_ITEMS;
+        return type;
     }
 
     @Override
@@ -31,4 +33,5 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
         builder.EUt((long) Math.min(32, Math.ceil(currentRecipeEU * 1.33)))
                 .duration((int) (currentRecipeDuration * 1.5));
     }
+
 }

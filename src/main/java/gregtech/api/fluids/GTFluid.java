@@ -4,6 +4,7 @@ import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.unification.material.Material;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fluids.Fluid;
@@ -64,7 +65,6 @@ public class GTFluid extends Fluid implements AttributedFluid {
         }
 
         @Deprecated
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
         public @NotNull TextComponentTranslation toTextComponentTranslation() {
             TextComponentTranslation localizedName;
             String customMaterialTranslation = "fluid." + material.getUnlocalizedName();
@@ -77,6 +77,23 @@ public class GTFluid extends Fluid implements AttributedFluid {
 
             if (translationKey != null) {
                 return new TextComponentTranslation(translationKey, localizedName);
+            }
+            return localizedName;
+        }
+        @Override
+        @SideOnly(Side.CLIENT)
+        public String getLocalizedName(FluidStack stack) {
+            String localizedName;
+            String customMaterialTranslation = "fluid." + material.getUnlocalizedName();
+
+            if (I18n.hasKey(customMaterialTranslation)) {
+                localizedName = I18n.format(customMaterialTranslation);
+            } else {
+                localizedName = I18n.format(material.getUnlocalizedName());
+            }
+
+            if (translationKey != null) {
+                return I18n.format(translationKey, localizedName);
             }
             return localizedName;
         }
@@ -96,12 +113,6 @@ public class GTFluid extends Fluid implements AttributedFluid {
             }
 
             return localizedName;
-        }
-
-        @Override
-        @SideOnly(Side.CLIENT)
-        public String getLocalizedName(FluidStack stack) {
-            return getLocalizedKey().get();
         }
     }
 }

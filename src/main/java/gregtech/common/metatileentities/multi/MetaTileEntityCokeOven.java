@@ -133,6 +133,7 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
                 });
     }
 
+
     @Override
     public GTGuiTheme getUITheme() {
         return GTGuiTheme.PRIMITIVE;
