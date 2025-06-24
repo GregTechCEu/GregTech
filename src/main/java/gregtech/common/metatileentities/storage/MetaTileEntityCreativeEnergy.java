@@ -184,34 +184,59 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
         super.update();
         if (getWorld().isRemote) return;
 
+        // 每秒重置I/O速度并检查爆炸
         if (getOffsetTimer() % 20 == 0) {
             this.setIOSpeed(energyIOPerSec);
             energyIOPerSec = 0;
+            if (doExplosion) {
+                getWorld().createExplosion(null,
+                        getPos().getX() + 0.5,
+                        getPos().getY() + 0.5,
+                        getPos().getZ() + 0.5,
+                        1, false);
+                doExplosion = false;
+            }
         }
 
         ampsReceived = 0;
         if (!active || !source || voltage <= 0 || amps <= 0) return;
 
+        long ampsUsed = 0;
+        // 遍历所有方向传输能量
         for (EnumFacing facing : EnumFacing.values()) {
+            EnumFacing opposite = facing.getOpposite();
             TileEntity tile = getNeighbor(facing);
-            for (EnumFacing opposite : EnumFacing.values()) {
-                if (tile != null) {
-                    if (tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, opposite) instanceof IEnergyContainer) {
-                        IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, opposite);
-                        if (container != null) {
-                            container.addEnergy(voltage * amps);
-                        }
-                    }
-                    else if (tile.getCapability(CAPABILITY_LASER, opposite) != null) {
-                        IEnergyContainer container = tile.getCapability(CAPABILITY_LASER, opposite);
-                        if (container != null) {
-                            container.addEnergy(voltage * amps);
-                        }
-                    }
-                }
+            if (tile == null) continue;
+
+            // 尝试获取能量容器能力
+            IEnergyContainer container = tile.getCapability(
+                    GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, opposite);
+
+            // 如果未找到则尝试激光能力
+            if (container == null) {
+                container = tile.getCapability(
+                        GregtechTileCapabilities.CAPABILITY_LASER, opposite);
             }
+
+            // 验证容器有效性
+            if (container == null ||
+                    !container.inputsEnergy(opposite) ||
+                    container.getEnergyCanBeInserted() == 0) {
+                continue;
+            }
+
+            // 传输能量并统计用量
+            ampsUsed += container.acceptEnergyFromNetwork(
+                    opposite,
+                    voltage,
+                    amps - ampsUsed
+            );
+
+            if (ampsUsed >= amps) break;  // 电流已达上限
         }
-        energyIOPerSec += voltage*amps;
+
+        // 统计每秒能量传输量
+        energyIOPerSec += ampsUsed * voltage;
     }
 
     @Override

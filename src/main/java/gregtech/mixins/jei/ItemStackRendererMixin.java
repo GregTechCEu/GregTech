@@ -16,35 +16,25 @@ import org.spongepowered.asm.mixin.Unique;
 @Mixin(value = ItemStackRenderer.class, remap = false)
 public class ItemStackRendererMixin implements IIngredientRenderer<ItemStack> {
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param mc         The minecraft instance.
-     * @param x          The x position to render the ingredient.
-     * @param y          The y position to render the ingredient.
-     * @param ingredient The ingredient to render. May be null, some renderers (like fluid tanks) will render a
-     *                   background even if there is no ingredient.
-     * @author
-     * @reason
-     */
-    @Overwrite
+
     @Override
     public void render(Minecraft mc, int x, int y, @Nullable ItemStack ingredient) {
         if (ingredient != null) {
             GlStateManager.enableDepth();
             RenderHelper.enableGUIStandardItemLighting();
             FontRenderer fontRenderer = getFontRenderer(mc, ingredient);
-            mc.getRenderItem().renderItemAndEffectIntoGUI(null, ingredient, x, y);
-            // Change RenderItem.renderItemAndEffectIntoGUI calling to utility method.
+
+            // 关键修改：移除原版渲染调用，改为直接渲染物品（不渲染数量）
+            mc.getRenderItem().renderItemIntoGUI(ingredient, x, y);
+
+            // 只添加自定义数量渲染
             gregtech$renderItemAndEffectIntoGui(fontRenderer, ingredient, x, y);
+
             GlStateManager.disableBlend();
             RenderHelper.disableStandardItemLighting();
         }
     }
 
-    /**
-     * @see net.minecraft.client.renderer.RenderItem#renderItemAndEffectIntoGUI
-     */
     @Unique
     private void gregtech$renderItemAndEffectIntoGui(FontRenderer fontRenderer, ItemStack stack,
                                                      int x, int y) {
@@ -69,16 +59,14 @@ public class ItemStackRendererMixin implements IIngredientRenderer<ItemStack> {
             if (shouldScale) GlStateManager.popMatrix();
             GlStateManager.enableLighting();
             GlStateManager.enableDepth();
-            GlStateManager.enableBlend();
         }
     }
 
     @Unique
     private String gregtech$formatCount(int count) {
-        if (count <= 99)
+        if (count <= 9_999) {
             return String.valueOf(count);
-        if (count <= 9_999)
-            return String.valueOf(count);
+        }
         if (count <= 999_999) {
             float k = count / 1000f;
             return String.format(k % 1 == 0 ? "%.0fk" : "%.1fk", k);
@@ -90,5 +78,4 @@ public class ItemStackRendererMixin implements IIngredientRenderer<ItemStack> {
         float g = count / 1_000_000_000f;
         return String.format(g % 1 == 0 ? "%.0fg" : "%.1fg", g);
     }
-
 }

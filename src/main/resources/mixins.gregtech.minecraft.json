@@ -24,7 +24,8 @@
     "RegionRenderCacheBuilderMixin",
     "RenderChunkMixin",
     "RenderGlobalMixin",
-    "RenderItemMixin"
+    "RenderItemMixin",
+    "StringUtilsMixin"
   ],
   "server": []
 }

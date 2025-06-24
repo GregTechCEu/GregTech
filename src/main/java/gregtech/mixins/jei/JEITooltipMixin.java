@@ -1,16 +1,13 @@
 package gregtech.mixins.jei;
 
 import gregtech.api.util.FluidTooltipUtil;
-
 import net.minecraftforge.fluids.FluidStack;
-
 import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.startup.ForgeModIdHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import java.util.List;
 
 @Mixin(ForgeModIdHelper.class)
@@ -30,3 +27,4 @@ public class JEITooltipMixin {
         }
     }
 }
+
