@@ -515,6 +515,12 @@ public class GuiTextures {
             .fullImage("textures/gui/widget/fusion_reactor_mk2_title.png");
     public static final TextureArea FUSION_REACTOR_MK3_TITLE = TextureArea
             .fullImage("textures/gui/widget/fusion_reactor_mk3_title.png");
+    public static final TextureArea FUSION_REACTOR_MK4_TITLE = TextureArea
+            .fullImage("textures/gui/widget/fusion_reactor_mk4_title.png");
+    public static final TextureArea FUSION_REACTOR_MK5_TITLE = TextureArea
+            .fullImage("textures/gui/widget/fusion_reactor_mk5_title.png");
+    public static final TextureArea FUSION_REACTOR_MK6_TITLE = TextureArea
+            .fullImage("textures/gui/widget/fusion_reactor_mk6_title.png");
     public static final TextureArea FUSION_REACTOR_DIAGRAM = TextureArea
             .fullImage("textures/gui/widget/fusion_reactor_diagram.png");
     public static final TextureArea FUSION_REACTOR_LEGEND = TextureArea

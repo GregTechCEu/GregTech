@@ -79,10 +79,4 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
         return recipe;
     }
 
-    @Override
-    @NotNull
-    public Iterator<Recipe> getRecipeIterator(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs,
-                                              boolean exactVoltage) {
-        return Collections.singleton(this.findRecipe(voltage, inputs, fluidInputs, exactVoltage)).iterator();
-    }
 }

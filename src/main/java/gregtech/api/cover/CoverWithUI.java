@@ -215,19 +215,30 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
                     var button = new ToggleButton().size(18).marginRight(2)
                             .value(boolValueOf(this.syncValue, enumVal));
 
-                    if (this.background != null && this.background.length > 0)
+                    // 设置默认背景
+                    if (this.background != null && this.background.length > 0) {
                         button.background(this.background);
-                    else
+                    } else {
                         button.background(GTGuiTextures.MC_BUTTON);
+                    }
 
-                    if (this.selectedBackground != null)
+                    // 设置选中状态背景
+                    if (this.selectedBackground != null) {
                         button.selectedBackground(this.selectedBackground);
-                    else
+                    } else {
                         button.selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED);
+                    }
 
-                    if (this.overlay != null)
-                        button.overlay(this.overlay[enumVal.ordinal()]);
+                    // 修复点：添加数组边界检查
+                    if (this.overlay != null) {
+                        int ordinal = enumVal.ordinal();
+                        // 确保索引在数组范围内
+                        if (ordinal < this.overlay.length) {
+                            button.overlay(this.overlay[ordinal]);
+                        }
+                    }
 
+                    // 添加工具提示
                     if (enumVal instanceof IStringSerializable serializable) {
                         button.addTooltipLine(IKey.lang(serializable.getName()));
                     }
@@ -235,8 +246,12 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
                 }
             }
 
-            if (this.lang != null && !this.lang.isEmpty())
-                row.child(IKey.lang(this.lang).asWidget().align(Alignment.CenterRight).height(18));
+            // 添加语言标签
+            if (this.lang != null && !this.lang.isEmpty()) {
+                row.child(IKey.lang(this.lang).asWidget()
+                        .align(Alignment.CenterRight)
+                        .height(18));
+            }
 
             return row;
         }

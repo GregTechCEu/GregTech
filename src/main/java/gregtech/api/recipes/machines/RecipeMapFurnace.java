@@ -53,10 +53,4 @@ public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
         return null;
     }
 
-    @Override
-    @NotNull
-    public Iterator<Recipe> getRecipeIterator(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs,
-                                              boolean exactVoltage) {
-        return Collections.singleton(this.findRecipe(voltage, inputs, fluidInputs, exactVoltage)).iterator();
-    }
 }

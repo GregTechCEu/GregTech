@@ -163,14 +163,13 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
                     return new CycleButtonWidget()
                             .overlay(GTGuiTextures.BUTTON_MULTI_MAP)
                             .background(GTGuiTextures.BUTTON)
-                            // TODO find out why this needs to be called
                             .disableHoverBackground()
                             .value(activeMapIndex)
                             .length(recipeMaps.length)
                             .tooltipBuilder(t -> {
                                 RecipeMap<?> map = recipeMaps[activeMapIndex.getIntValue()];
-                                t.addLine(IKey.lang("gregtech.multiblock.multiple_recipemaps.value",
-                                        map.getTranslationKey()));
+                                String name = I18n.format(map.getTranslationKey());
+                                t.addLine(IKey.lang("gregtech.multiblock.multiple_recipemaps.value", name));
                             });
                 });
     }

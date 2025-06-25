@@ -140,6 +140,12 @@ public class GTGuiTextures {
             "textures/gui/widget/fusion_reactor_mk2_title.png");
     public static final UITexture FUSION_REACTOR_MK3_TITLE = fullImage(
             "textures/gui/widget/fusion_reactor_mk3_title.png");
+    public static final UITexture FUSION_REACTOR_MK4_TITLE = fullImage(
+            "textures/gui/widget/fusion_reactor_mk4_title.png");
+    public static final UITexture FUSION_REACTOR_MK5_TITLE = fullImage(
+            "textures/gui/widget/fusion_reactor_mk5_title.png");
+    public static final UITexture FUSION_REACTOR_MK6_TITLE = fullImage(
+            "textures/gui/widget/fusion_reactor_mk6_title.png");
     public static final UITexture FUSION_DIAGRAM = fullImage("textures/gui/widget/fusion_reactor_diagram.png");
     public static final UITexture FUSION_LEGEND = fullImage("textures/gui/widget/fusion_reactor_legend.png");
     public static final UITexture FUSION_PROGRESS = fullImage("textures/gui/progress_bar/fusion_diagram/stitched.png");
@@ -236,7 +242,7 @@ public class GTGuiTextures {
             18, 18 * 2, 18, 18, true);
 
     public static final UITexture[] TRANSFER_MODE_OVERLAY = slice("textures/gui/overlay/transfer_mode_overlay.png",
-            18, 18 * 3, 18, 18, true);
+            18, 18 * 4, 18, 18, true);
 
     public static final UITexture[] FLUID_TRANSFER_MODE_OVERLAY = slice(
             "textures/gui/overlay/fluid_transfer_mode_overlay.png",

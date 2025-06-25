@@ -862,21 +862,21 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * @deprecated {@link RecipeMapUI#addInventorySlotGroup(ModularUI.Builder, IItemHandlerModifiable, FluidTankList, boolean, int)}
+     * @deprecated
      */
 
     protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler,
                                          FluidTankList fluidHandler, boolean isOutputs, int yOffset) {}
 
     /**
-     * @deprecated {@link RecipeMapUI#addSlot(ModularUI.Builder, int, int, int, IItemHandlerModifiable, FluidTankList, boolean, boolean)}
+     * @deprecated
      */
 
     protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
                            FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {}
 
     /**
-     * @deprecated {@link RecipeMapUI#getOverlaysForSlot(boolean, boolean, boolean)}
+     * @deprecated
      */
 
     protected TextureArea[] getOverlaysForSlot(boolean isOutput, boolean isFluid, boolean isLast) {
@@ -892,7 +892,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * @deprecated {@link RecipeMapUI#shouldShiftWidgets()}
+     * @deprecated
      */
 
     private boolean shouldShiftWidgets() {
@@ -1464,71 +1464,5 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public Branch getLookup() {
         return lookup;
-    }
-
-    @NotNull
-    public Iterator<Recipe> getRecipeIterator(long voltage, IItemHandlerModifiable inputs,
-                                              IMultipleTankHandler fluidInputs) {
-        return this.getRecipeIterator(voltage, GTUtility.itemHandlerToList(inputs),
-                GTUtility.fluidHandlerToList(fluidInputs));
-    }
-
-    /**
-     * Creates an Iterator of Recipes matching the Fluid and/or ItemStack Inputs.
-     *
-     * @param voltage     Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
-     * @param inputs      the Item Inputs
-     * @param fluidInputs the Fluid Inputs
-     * @return the Recipe Iterator
-     */
-    @NotNull
-    public Iterator<Recipe> getRecipeIterator(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
-        return getRecipeIterator(voltage, inputs, fluidInputs, false);
-    }
-
-    /**
-     * Creates an Iterator of Recipes matching the Fluid and/or ItemStack Inputs.
-     *
-     * @param voltage      Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
-     * @param inputs       the Item Inputs
-     * @param fluidInputs  the Fluid Inputs
-     * @param exactVoltage should require exact voltage matching on recipe. used by craftweaker
-     * @return the Recipe Iterator
-     */
-    @NotNull
-    public Iterator<Recipe> getRecipeIterator(long voltage, final List<ItemStack> inputs,
-                                              final List<FluidStack> fluidInputs,
-                                              boolean exactVoltage) {
-        final List<ItemStack> items = inputs.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
-        final List<FluidStack> fluids = fluidInputs.stream().filter(f -> f != null && f.amount != 0)
-                .collect(Collectors.toList());
-
-        return getRecipeIterator(items, fluids, recipe -> {
-            if (exactVoltage && recipe.getEUt() != voltage) {
-                // if exact voltage is required, the recipe is not considered valid
-                return false;
-            }
-            if (recipe.getEUt() > voltage) {
-                // there is not enough voltage to consider the recipe valid
-                return false;
-            }
-            return recipe.matches(false, inputs, fluidInputs);
-        });
-    }
-
-    /**
-     * Creates an Iterator of Recipes using Items and Fluids.
-     *
-     * @param items     a collection of items
-     * @param fluids    a collection of fluids
-     * @param canHandle a predicate for determining if a recipe is valid
-     * @return the Recipe Iterator
-     */
-    @NotNull
-    public Iterator<Recipe> getRecipeIterator(@NotNull Collection<ItemStack> items,
-                                              @NotNull Collection<FluidStack> fluids,
-                                              @NotNull Predicate<Recipe> canHandle) {
-        List<List<AbstractMapIngredient>> list = prepareRecipeFind(items, fluids);
-        return new RecipeIterator(this, list, canHandle);
     }
 }

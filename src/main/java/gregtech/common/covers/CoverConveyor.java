@@ -1,5 +1,7 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -518,6 +520,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     .marginBottom(2).widthRel(1f)
                     .child(new ButtonWidget<>()
                             .left(0).width(18)
+                            .tooltip(tooltip -> tooltip
+                                    .addLine(IKey.lang("减少每次传输的物品/流体量")))
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
                                 throughput.setValue(val, true, true);
@@ -532,6 +536,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .background(GTGuiTextures.DISPLAY))
                     .child(new ButtonWidget<>()
                             .right(0).width(18)
+                            .tooltip(tooltip -> tooltip
+                                    .addLine(IKey.lang("增大每次传输的物品/流体量")))
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
                                 throughput.setValue(val, true, true);
@@ -544,6 +550,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     .marginBottom(2).widthRel(1f)
                     .child(new ButtonWidget<>()
                             .left(0).width(18)
+                            .tooltip(tooltip -> tooltip
+                                    .addLine(IKey.lang("减小更新触发时间间隔")))
                             .onMousePressed(mouseButton -> {
                                 updateTime.setValue(MathHelper.clamp(
                                         updateTime.getValue() - getIncrementValue(MouseData.create(mouseButton)), 1,
@@ -556,9 +564,12 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .setTextColor(Color.WHITE.darker(1))
                             .setNumbers(1, 100)
                             .value(formattedUpdateTime)
-                            .background(GTGuiTextures.DISPLAY))
+                            .background(GTGuiTextures.DISPLAY)
+                           )
                     .child(new ButtonWidget<>()
                             .right(0).width(18)
+                            .tooltip(tooltip -> tooltip
+                                    .addLine(IKey.lang("增大更新触发时间间隔")))
                             .onMousePressed(mouseButton -> {
                                 updateTime.setValue(MathHelper.clamp(
                                         updateTime.getValue() + getIncrementValue(MouseData.create(mouseButton)), 1,
