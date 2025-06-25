@@ -1,6 +1,9 @@
 package gregtech.api.capability;
 
-import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+
+import com.cleanroommc.modularui.drawable.UITexture;
 
 public interface IHPCAComponentHatch {
 
@@ -46,5 +49,17 @@ public interface IHPCAComponentHatch {
     /**
      * The icon for this component in the HPCA's UI. Should be a 13x13 px sprite.
      */
-    TextureArea getComponentIcon();
+    default UITexture getComponentIcon() {
+        return GTGuiTextures.HPCA_ICON_EMPTY_COMPONENT;
+    }
+
+    /**
+     * The untranslated name of the tile implementing an HPCA component
+     */
+    default String getTileName() {
+        if (this instanceof MetaTileEntity mte) {
+            return mte.getMetaFullName();
+        }
+        return "";
+    }
 }

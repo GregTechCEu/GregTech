@@ -102,13 +102,15 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         ItemStack itemstack = this.syncHandler.getStack();
-        if (itemstack.isEmpty()) return;
+        if (!itemstack.isEmpty()) {
+            if (!this.hasIngredients) {
+                RenderUtil.renderRect(0, 0, 18, 18, 200, 0x80FF0000);
+            }
 
-        if (!this.hasIngredients) {
-            RenderUtil.renderRect(0, 0, 18, 18, 200, 0x80FF0000);
+            RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
         }
 
-        RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
+        RenderUtil.handleJeiGhostHighlight(this);
     }
 
     @Override

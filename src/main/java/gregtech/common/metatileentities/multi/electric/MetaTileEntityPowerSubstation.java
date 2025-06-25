@@ -11,17 +11,20 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.IProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.sync.BigIntegerSyncValue;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
-import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -40,17 +43,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -63,11 +67,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
-                                           implements IControllable, IProgressBarMultiblock {
+                                           implements IControllable, ProgressBarMultiblock {
 
     // Structure Constants
     public static final int MAX_BATTERY_LAYERS = 18;
@@ -140,7 +145,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         if (this.energyBank == null) {
             this.energyBank = new PowerStationEnergyBank(parts);
         } else {
-            this.energyBank = energyBank.rebuild(parts);
+            this.energyBank.rebuild(parts);
         }
         this.passiveDrain = this.energyBank.getPassiveDrainPerTick();
     }
@@ -232,7 +237,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return false;
     }
 
@@ -339,112 +344,101 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
-                .setWorkingStatusKeys(
-                        "gregtech.multiblock.idling",
-                        "gregtech.multiblock.idling",
-                        "gregtech.machine.active_transformer.routing")
-                .addCustom(tl -> {
-                    if (isStructureFormed() && energyBank != null) {
-                        BigInteger energyStored = energyBank.getStored();
-                        BigInteger energyCapacity = energyBank.getCapacity();
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
+        builder.structureFormed(isStructureFormed());
+        builder.setWorkingStatus(true, isActive() && isWorkingEnabled()); // transform into two-state system for display
+        builder.setWorkingStatusKeys("gregtech.multiblock.idling", "gregtech.multiblock.idling",
+                "gregtech.machine.active_transformer.routing");
+        builder.addCustom((manager, syncer) -> {
+            if (isStructureFormed() && syncer.syncBoolean(energyBank != null)) {
+                BigInteger energyStored = syncer
+                        .syncBigInt(energyBank == null ? BigInteger.ZERO : energyBank.getStored());
+                BigInteger energyCapacity = syncer
+                        .syncBigInt(energyBank == null ? BigInteger.ZERO : energyBank.getCapacity());
 
-                        // Stored EU line
-                        ITextComponent storedFormatted = TextComponentUtil.stringWithColor(
-                                TextFormatting.GOLD,
-                                TextFormattingUtil.formatNumbers(energyStored) + " EU");
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.stored",
-                                storedFormatted));
+                // Stored EU line
+                IKey storedFormatted = KeyUtil.string(
+                        TextFormattingUtil.formatNumbers(energyStored) + " EU");
 
-                        // EU Capacity line
-                        ITextComponent capacityFormatted = TextComponentUtil.stringWithColor(
-                                TextFormatting.GOLD,
-                                TextFormattingUtil.formatNumbers(energyCapacity) + " EU");
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.capacity",
-                                capacityFormatted));
+                IKey truncated = KeyUtil.string(TextFormatting.GOLD,
+                        TextFormattingUtil.formatBigIntToCompactString(energyStored, 7) + " EU");
 
-                        // Passive Drain line
-                        ITextComponent passiveDrain = TextComponentUtil.stringWithColor(
-                                TextFormatting.DARK_RED,
-                                TextFormattingUtil.formatNumbers(getPassiveDrain()) + " EU/t");
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.passive_drain",
-                                passiveDrain));
+                IKey bodyStored = (KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.stored",
+                        truncated));
 
-                        // Average EU IN line
-                        ITextComponent avgValue = TextComponentUtil.stringWithColor(
-                                TextFormatting.GREEN,
-                                TextFormattingUtil.formatNumbers(averageInLastSec) + " EU/t");
-                        ITextComponent base = TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.average_in",
-                                avgValue);
-                        ITextComponent hover = TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.average_in_hover");
-                        tl.add(TextComponentUtil.setHover(base, hover));
+                manager.add(KeyUtil.setHover(bodyStored, storedFormatted));
 
-                        // Average EU OUT line
-                        avgValue = TextComponentUtil.stringWithColor(
-                                TextFormatting.RED,
-                                TextFormattingUtil.formatNumbers(averageOutLastSec) + " EU/t");
-                        base = TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.average_out",
-                                avgValue);
-                        hover = TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.average_out_hover");
-                        tl.add(TextComponentUtil.setHover(base, hover));
+                // EU Capacity line
+                IKey capacityFormatted = KeyUtil.string(
+                        TextFormattingUtil.formatNumbers(energyCapacity) + " EU");
 
-                        // Time to fill/drain line
-                        if (averageInLastSec > averageOutLastSec) {
-                            ITextComponent timeToFill = getTimeToFillDrainText(energyCapacity.subtract(energyStored)
-                                    .divide(BigInteger.valueOf((averageInLastSec - averageOutLastSec) * 20)));
-                            TextComponentUtil.setColor(timeToFill, TextFormatting.GREEN);
-                            tl.add(TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.power_substation.time_to_fill",
-                                    timeToFill));
-                        } else if (averageInLastSec < averageOutLastSec) {
-                            ITextComponent timeToDrain = getTimeToFillDrainText(
-                                    energyStored.divide(BigInteger.valueOf(
-                                            (averageOutLastSec - averageInLastSec) * 20)));
-                            TextComponentUtil.setColor(timeToDrain, TextFormatting.RED);
-                            tl.add(TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.power_substation.time_to_drain",
-                                    timeToDrain));
-                        }
-                    }
-                })
-                .addWorkingStatusLine();
+                IKey capCompact = KeyUtil.string(TextFormatting.GOLD,
+                        TextFormattingUtil.formatBigIntToCompactString(energyCapacity, 7) + " EU");
+
+                IKey bodyCap = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.capacity",
+                        capCompact);
+
+                manager.add(KeyUtil.setHover(bodyCap, capacityFormatted));
+
+                // Passive Drain line
+                IKey passiveDrain = KeyUtil.string(TextFormatting.DARK_RED,
+                        TextFormattingUtil.formatNumbers(syncer.syncLong(getPassiveDrain())) + " EU/t");
+                manager.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.passive_drain",
+                        passiveDrain));
+
+                // Average EU IN line
+                long avgIn = syncer.syncLong(averageInLastSec);
+                long avgOut = syncer.syncLong(averageOutLastSec);
+
+                IKey avgValue = KeyUtil.number(TextFormatting.GREEN, avgIn, " EU/t");
+                IKey base = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.average_in",
+                        avgValue);
+                IKey hover = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.average_in_hover");
+                manager.add(KeyUtil.setHover(base, hover));
+
+                // Average EU OUT line
+                avgValue = KeyUtil.number(TextFormatting.RED, avgOut, " EU/t");
+                base = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.average_out", avgValue);
+                hover = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.average_out_hover");
+                manager.add(KeyUtil.setHover(base, hover));
+
+                // Time to fill/drain line
+                if (avgIn > avgOut) {
+                    IKey timeToFill = getTimeToFillDrainText(energyCapacity.subtract(energyStored)
+                            .divide(BigInteger.valueOf((avgIn - avgOut) * 20)))
+                                    .style(TextFormatting.GREEN);
+
+                    manager.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.time_to_fill",
+                            timeToFill));
+
+                } else if (avgIn < avgOut) {
+                    IKey timeToDrain = getTimeToFillDrainText(
+                            energyStored.divide(BigInteger.valueOf((avgOut - avgIn) * 20)))
+                                    .style(TextFormatting.RED);
+
+                    manager.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.time_to_drain",
+                            timeToDrain));
+                }
+            }
+        }).addWorkingStatusLine();
     }
 
     @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            if (averageInLastSec < averageOutLastSec) { // decreasing
+    protected void configureWarningText(MultiblockUIBuilder builder) {
+        super.configureWarningText(builder);
+        builder.addCustom((list, syncer) -> {
+            if (isStructureFormed() && averageInLastSec < averageOutLastSec) {
                 BigInteger timeToDrainSeconds = energyBank.getStored()
                         .divide(BigInteger.valueOf((averageOutLastSec - averageInLastSec) * 20));
                 if (timeToDrainSeconds.compareTo(BigInteger.valueOf(60 * 60)) < 0) { // less than 1 hour left
-                    textList.add(TextComponentUtil.translationWithColor(
-                            TextFormatting.YELLOW,
+                    list.add(KeyUtil.lang(TextFormatting.YELLOW,
                             "gregtech.multiblock.power_substation.under_one_hour_left"));
                 }
             }
-        }
+        });
     }
 
-    private static ITextComponent getTimeToFillDrainText(BigInteger timeToFillSeconds) {
+    private static IKey getTimeToFillDrainText(BigInteger timeToFillSeconds) {
         if (timeToFillSeconds.compareTo(BIG_INTEGER_MAX_LONG) > 0) {
             // too large to represent in a java Duration
             timeToFillSeconds = BIG_INTEGER_MAX_LONG;
@@ -469,10 +463,10 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
             fillTime = duration.toDays() / 365;
             key = "gregtech.multiblock.power_substation.time_years";
         } else {
-            return new TextComponentTranslation("gregtech.multiblock.power_substation.time_forever");
+            return KeyUtil.lang("gregtech.multiblock.power_substation.time_forever");
         }
 
-        return new TextComponentTranslation(key, TextFormattingUtil.formatNumbers(fillTime));
+        return KeyUtil.lang(key, TextFormattingUtil.formatNumbers(fillTime));
     }
 
     @Override
@@ -579,23 +573,31 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    public double getFillPercentage(int index) {
-        if (energyBank == null) return 0;
-        return energyBank.getStored().doubleValue() / energyBank.getCapacity().doubleValue();
+    public int getProgressBarCount() {
+        return 1;
     }
 
     @Override
-    public void addBarHoverText(List<ITextComponent> hoverList, int index) {
-        String stored = energyBank != null ? TextFormattingUtil.formatNumbers(energyBank.getStored()) : "0";
-        String capacity = energyBank != null ? TextFormattingUtil.formatNumbers(energyBank.getCapacity()) : "0";
+    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
+        BigIntegerSyncValue energyStoredValue = new BigIntegerSyncValue(
+                () -> energyBank == null ? BigInteger.ZERO : energyBank.getStored(), null);
+        BigIntegerSyncValue energyCapacityValue = new BigIntegerSyncValue(
+                () -> energyBank == null ? BigInteger.ZERO : energyBank.getCapacity(), null);
+        syncManager.syncValue("energy_stored", energyStoredValue);
+        syncManager.syncValue("energy_capacity", energyCapacityValue);
 
-        ITextComponent energyInfo = TextComponentUtil.stringWithColor(
-                TextFormatting.YELLOW,
-                stored + " / " + capacity + " EU");
-        hoverList.add(TextComponentUtil.translationWithColor(
-                TextFormatting.GRAY,
-                "gregtech.multiblock.energy_stored",
-                energyInfo));
+        bars.add(b -> b
+                .progress(
+                        () -> energyStoredValue.getValue().doubleValue() / energyCapacityValue.getValue().doubleValue())
+                .texture(GTGuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW)
+                .tooltipBuilder(t -> {
+                    if (isStructureFormed()) {
+                        t.addLine(IKey.lang("gregtech.multiblock.energy_stored", energyStoredValue.getValue(),
+                                energyCapacityValue.getValue()));
+                    } else {
+                        t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                    }
+                }));
     }
 
     public static class PowerStationEnergyBank {
@@ -603,46 +605,60 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         private static final String NBT_SIZE = "Size";
         private static final String NBT_STORED = "Stored";
         private static final String NBT_MAX = "Max";
-
-        private final long[] storage;
-        private final long[] maximums;
-        private final BigInteger capacity;
-        private int index;
+        // the following two fields represent ((a[0] << 63) | a[1])
+        private final long[] stored = new long[2];
+        private final long[] max = new long[2];
+        private BigInteger capacity;
+        private long drain;
+        private long drainMod;
 
         public PowerStationEnergyBank(List<IBatteryData> batteries) {
-            storage = new long[batteries.size()];
-            maximums = new long[batteries.size()];
-            for (int i = 0; i < batteries.size(); i++) {
-                maximums[i] = batteries.get(i).getCapacity();
+            for (IBatteryData i : batteries) {
+                add(max, i.getCapacity());
+                updateDrain(i.getCapacity());
             }
-            capacity = summarize(maximums);
+            capacity = summarize(max);
         }
 
         public PowerStationEnergyBank(NBTTagCompound storageTag) {
-            int size = storageTag.getInteger(NBT_SIZE);
-            storage = new long[size];
-            maximums = new long[size];
-            for (int i = 0; i < size; i++) {
-                NBTTagCompound subtag = storageTag.getCompoundTag(String.valueOf(i));
-                if (subtag.hasKey(NBT_STORED)) {
-                    storage[i] = subtag.getLong(NBT_STORED);
+            // legacy nbt handling
+            if (storageTag.hasKey(NBT_SIZE, Constants.NBT.TAG_INT)) {
+                int size = storageTag.getInteger(NBT_SIZE);
+                for (int i = 0; i < size; i++) {
+                    NBTTagCompound tag = storageTag.getCompoundTag(String.valueOf(i));
+                    if (tag.hasKey(NBT_STORED)) add(stored, tag.getLong(NBT_STORED));
+                    long store = tag.getLong(NBT_MAX);
+                    add(max, store);
+                    updateDrain(store);
                 }
-                maximums[i] = subtag.getLong(NBT_MAX);
+            } else {
+                stored[0] = storageTag.getLong(NBT_STORED + "0");
+                stored[1] = storageTag.getLong(NBT_STORED + "1");
+                drain = storageTag.getLong("drain");
+                drainMod = storageTag.getLong("drainMod");
             }
-            capacity = summarize(maximums);
+            capacity = summarize(max);
         }
 
-        private NBTTagCompound writeToNBT(NBTTagCompound compound) {
-            compound.setInteger(NBT_SIZE, storage.length);
-            for (int i = 0; i < storage.length; i++) {
-                NBTTagCompound subtag = new NBTTagCompound();
-                if (storage[i] > 0) {
-                    subtag.setLong(NBT_STORED, storage[i]);
-                }
-                subtag.setLong(NBT_MAX, maximums[i]);
-                compound.setTag(String.valueOf(i), subtag);
-            }
+        public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+            compound.setLong(NBT_STORED + "0", stored[0]);
+            compound.setLong(NBT_STORED + "1", stored[1]);
+            compound.setLong("drain", drain);
+            compound.setLong("drainMod", drainMod);
             return compound;
+        }
+
+        private void updateDrain(long val) {
+            if (val / PASSIVE_DRAIN_DIVISOR >= PASSIVE_DRAIN_MAX_PER_STORAGE) {
+                drain += PASSIVE_DRAIN_MAX_PER_STORAGE;
+            } else {
+                drain += val / PASSIVE_DRAIN_DIVISOR;
+                drainMod += (val % PASSIVE_DRAIN_DIVISOR);
+                if (drainMod >= PASSIVE_DRAIN_DIVISOR) {
+                    drain++;
+                    drainMod -= PASSIVE_DRAIN_DIVISOR;
+                }
+            }
         }
 
         /**
@@ -650,76 +666,60 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
          * Will use existing stored power and try to map it onto new batteries.
          * If there was more power before the rebuild operation, it will be lost.
          */
-        public PowerStationEnergyBank rebuild(@NotNull List<IBatteryData> batteries) {
+        public void rebuild(@NotNull List<IBatteryData> batteries) {
             if (batteries.isEmpty()) {
                 throw new IllegalArgumentException("Cannot rebuild Power Substation power bank with no batteries!");
             }
-            PowerStationEnergyBank newStorage = new PowerStationEnergyBank(batteries);
-            for (long stored : storage) {
-                newStorage.fill(stored);
+            Arrays.fill(max, 0);
+            drain = 0;
+            for (IBatteryData i : batteries) {
+                add(max, i.getCapacity());
+                updateDrain(i.getCapacity());
             }
-            return newStorage;
+
+            if (stored[0] > max[0]) {
+                stored[0] = max[0];
+                stored[1] = max[1];
+            } else if (stored[0] == max[0]) {
+                stored[1] = Math.min(stored[1], max[1]);
+            }
+            capacity = summarize(max);
         }
 
         /** @return Amount filled into storage */
         public long fill(long amount) {
             if (amount < 0) throw new IllegalArgumentException("Amount cannot be negative!");
-
-            // ensure index
-            if (index != storage.length - 1 && storage[index] == maximums[index]) {
-                index++;
+            // can't overflow, just add normally
+            if (max[0] == stored[0]) {
+                amount = Math.min(max[1] - stored[1], amount);
+                stored[1] += amount;
+                return amount;
             }
-
-            long maxFill = Math.min(maximums[index] - storage[index], amount);
-
-            // storage is completely full
-            if (maxFill == 0 && index == storage.length - 1) {
-                return 0;
+            if (stored[1] + amount < 0) {
+                stored[0]++;
+                stored[1] += Long.MIN_VALUE;
+                if (max[0] == stored[0] && max[1] < stored[1] + amount) {
+                    amount = max[1] - stored[1];
+                }
             }
-
-            // fill this "battery" as much as possible
-            storage[index] += maxFill;
-            amount -= maxFill;
-
-            // try to fill other "batteries" if necessary
-            if (amount > 0 && index != storage.length - 1) {
-                return maxFill + fill(amount);
-            }
-
-            // other fill not necessary, either because the storage is now completely full,
-            // or we were able to consume all the energy in this "battery"
-            return maxFill;
+            stored[1] += amount;
+            return amount;
         }
 
         /** @return Amount drained from storage */
         public long drain(long amount) {
             if (amount < 0) throw new IllegalArgumentException("Amount cannot be negative!");
-
-            // ensure index
-            if (index != 0 && storage[index] == 0) {
-                index--;
+            // cant borrow, just subtract normally
+            if (stored[0] == 0) {
+                long sub = Math.min(stored[1], amount);
+                stored[1] -= sub;
+                return sub;
             }
-
-            long maxDrain = Math.min(storage[index], amount);
-
-            // storage is completely empty
-            if (maxDrain == 0 && index == 0) {
-                return 0;
-            }
-
-            // drain this "battery" as much as possible
-            storage[index] -= maxDrain;
-            amount -= maxDrain;
-
-            // try to drain other "batteries" if necessary
-            if (amount > 0 && index != 0) {
-                index--;
-                return maxDrain + drain(amount);
-            }
-
-            // other drain not necessary, either because the storage is now completely empty,
-            // or we were able to drain all the energy from this "battery"
-            return maxDrain;
+            if (stored[1] < amount) {
+                stored[0]--;
+                stored[1] -= amount + Long.MIN_VALUE;
+            } else stored[1] -= amount;
+            return amount;
         }
 
         public BigInteger getCapacity() {
@@ -727,51 +727,28 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         }
 
         public BigInteger getStored() {
-            return summarize(storage);
+            return summarize(stored);
         }
 
         public boolean hasEnergy() {
-            for (long l : storage) {
-                if (l > 0) return true;
-            }
-            return false;
+            return stored[0] != 0 && stored[1] != 0;
         }
 
-        private static BigInteger summarize(long[] values) {
-            BigInteger retVal = BigInteger.ZERO;
-            long currentSum = 0;
-            for (long value : values) {
-                if (currentSum != 0 && value > Long.MAX_VALUE - currentSum) {
-                    // will overflow if added
-                    retVal = retVal.add(BigInteger.valueOf(currentSum));
-                    currentSum = 0;
-                }
-                currentSum += value;
+        private static BigInteger summarize(long[] num) {
+            return BigInteger.valueOf(num[0]).shiftLeft(63).add(BigInteger.valueOf(num[1]));
+        }
+
+        private static void add(long[] num, long val) {
+            num[1] += val;
+            if (num[1] < 0) {
+                num[0]++;
+                num[1] -= Long.MIN_VALUE;
             }
-            if (currentSum != 0) {
-                retVal = retVal.add(BigInteger.valueOf(currentSum));
-            }
-            return retVal;
         }
 
         @VisibleForTesting
         public long getPassiveDrainPerTick() {
-            long[] maximumsExcl = new long[maximums.length];
-            int index = 0;
-            int numExcl = 0;
-            for (long maximum : maximums) {
-                if (maximum / PASSIVE_DRAIN_DIVISOR >= PASSIVE_DRAIN_MAX_PER_STORAGE) {
-                    numExcl++;
-                } else {
-                    maximumsExcl[index++] = maximum;
-                }
-            }
-            maximumsExcl = Arrays.copyOf(maximumsExcl, index);
-            BigInteger capacityExcl = summarize(maximumsExcl);
-
-            return capacityExcl.divide(BigInteger.valueOf(PASSIVE_DRAIN_DIVISOR))
-                    .add(BigInteger.valueOf(PASSIVE_DRAIN_MAX_PER_STORAGE * numExcl))
-                    .longValue();
+            return drain;
         }
     }
 

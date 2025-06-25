@@ -133,8 +133,8 @@ public class ClientProxy extends CommonProxy {
     public static void textureStitchPre(@NotNull TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
         GTFluidRegistration.INSTANCE.registerSprites(map);
-        PipeRenderer.initializeRestrictor(map);
         Textures.register(map);
+        PipeRenderer.initializeRestrictor(map);
         CableRenderer.INSTANCE.registerIcons(map);
         FluidPipeRenderer.INSTANCE.registerIcons(map);
         ItemPipeRenderer.INSTANCE.registerIcons(map);

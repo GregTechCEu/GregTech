@@ -1,14 +1,11 @@
 package gregtech.api.util;
 
-import gregtech.api.recipes.FluidKey;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenCustomHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -47,8 +44,12 @@ public final class GTHashMaps {
 
         for (int i = 0; i < inputs.getSlots(); i++) {
             ItemStack stack = inputs.getStackInSlot(i);
-            if (!stack.isEmpty()) {
-                map.put(stack.copy(), map.getInt(stack) + stack.getCount());
+            if (stack.isEmpty()) continue;
+            if (map.containsKey(stack)) {
+                map.merge(stack, stack.getCount(), Integer::sum);
+            } else {
+                ItemStack key = GTUtility.copy(1, stack);
+                map.put(key, stack.getCount());
             }
         }
 
@@ -83,37 +84,69 @@ public final class GTHashMaps {
         // Create a single stack of the combined count for each item
 
         for (ItemStack stack : inputs) {
-            if (!stack.isEmpty()) {
-                map.put(stack.copy(), map.getInt(stack) + stack.getCount());
+            if (stack.isEmpty()) continue;
+            if (map.containsKey(stack)) {
+                map.merge(stack, stack.getCount(), Integer::sum);
+            } else {
+                map.put(GTUtility.copy(1, stack), stack.getCount());
             }
         }
 
         return map;
     }
 
+    /**
+     * @param linked if the map should respect the order that keys are added
+     * @return an Object2IntMap
+     */
     @NotNull
-    private static Object2IntMap<ItemStack> createItemStackMap(boolean linked) {
+    public static Object2IntMap<ItemStack> createItemStackMap(boolean linked) {
         ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingAllButCount();
         return linked ? new Object2IntLinkedOpenCustomHashMap<>(strategy) : new Object2IntOpenCustomHashMap<>(strategy);
     }
 
     /**
-     * Maps all fluids in the {@link IFluidHandler} into a {@link FluidKey}, {@link Integer} value as amount
+     * @param linked if the map should respect the order that keys are added
+     * @return an Object2IntMap
+     */
+    @NotNull
+    public static Object2IntMap<FluidStack> createFluidStackMap(boolean linked) {
+        var strategy = FluidStackHashStrategy.comparingAllButAmount();
+        return linked ? new Object2IntLinkedOpenCustomHashMap<>(strategy) : new Object2IntOpenCustomHashMap<>(strategy);
+    }
+
+    /**
+     * Maps all fluids in the {@link IFluidHandler} into a {@link FluidStack}, {@link Integer} value as amount
      *
      * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
-     * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if
+     * @return a {@link Set} of unique {@link FluidStack}s for each fluid in the handler. Will be oversized stacks if
      *         required
      */
-    public static Map<FluidKey, Integer> fromFluidHandler(IFluidHandler fluidInputs) {
-        final Object2IntMap<FluidKey> map = new Object2IntLinkedOpenHashMap<>();
+    public static Object2IntMap<FluidStack> fromFluidHandler(IFluidHandler fluidInputs) {
+        return fromFluidHandler(fluidInputs, true);
+    }
+
+    /**
+     * Maps all fluids in the {@link IFluidHandler} into a {@link FluidStack}, {@link Integer} value as amount
+     *
+     * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
+     * @return a {@link Set} of unique {@link FluidStack}s for each fluid in the handler. Will be oversized stacks if
+     *         required
+     */
+    public static Object2IntMap<FluidStack> fromFluidHandler(IFluidHandler fluidInputs, boolean linked) {
+        final Object2IntMap<FluidStack> map = createFluidStackMap(linked);
 
         // Create a single stack of the combined count for each item
 
-        for (int i = 0; i < fluidInputs.getTankProperties().length; i++) {
-            FluidStack fluidStack = fluidInputs.getTankProperties()[i].getContents();
-            if (fluidStack != null && fluidStack.amount > 0) {
-                FluidKey key = new FluidKey(fluidStack);
-                map.put(key, map.getInt(key) + fluidStack.amount);
+        for (var prop : fluidInputs.getTankProperties()) {
+            FluidStack fluidStack = prop.getContents();
+            if (GTUtility.isEmpty(fluidStack))
+                continue;
+
+            if (map.containsKey(fluidStack)) {
+                map.merge(fluidStack, fluidStack.amount, Integer::sum);
+            } else {
+                map.put(GTUtility.copy(1, fluidStack), fluidStack.amount);
             }
         }
 
@@ -121,22 +154,38 @@ public final class GTHashMaps {
     }
 
     /**
-     * Maps all fluids in the {@link FluidStack} {@link Collection} into a {@link FluidKey}, {@link Integer} value as
+     * Maps all fluids in the {@link FluidStack} {@link Collection} into a {@link FluidStack}, {@link Integer} value as
      * amount
      *
      * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
-     * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if
+     * @return a {@link Set} of unique {@link FluidStack}s for each fluid in the handler. Will be oversized stacks if
      *         required
      */
-    public static Map<FluidKey, Integer> fromFluidCollection(Collection<FluidStack> fluidInputs) {
-        final Object2IntMap<FluidKey> map = new Object2IntLinkedOpenHashMap<>();
+    public static Object2IntMap<FluidStack> fromFluidCollection(Collection<FluidStack> fluidInputs) {
+        return fromFluidCollection(fluidInputs, true);
+    }
+
+    /**
+     * Maps all fluids in the {@link FluidStack} {@link Collection} into a {@link FluidStack}, {@link Integer} value as
+     * amount
+     *
+     * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
+     * @return a {@link Set} of unique {@link FluidStack}s for each fluid in the handler. Will be oversized stacks if
+     *         required
+     */
+    public static Object2IntMap<FluidStack> fromFluidCollection(Collection<FluidStack> fluidInputs, boolean linked) {
+        final Object2IntMap<FluidStack> map = createFluidStackMap(linked);
 
         // Create a single stack of the combined count for each item
 
         for (FluidStack fluidStack : fluidInputs) {
-            if (fluidStack != null && fluidStack.amount > 0) {
-                FluidKey key = new FluidKey(fluidStack);
-                map.put(key, map.getInt(key) + fluidStack.amount);
+            if (GTUtility.isEmpty(fluidStack))
+                continue;
+
+            if (map.containsKey(fluidStack)) {
+                map.merge(fluidStack, fluidStack.amount, Integer::sum);
+            } else {
+                map.put(GTUtility.copy(1, fluidStack), fluidStack.amount);
             }
         }
 

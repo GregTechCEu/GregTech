@@ -1,8 +1,10 @@
 package gregtech.api.util;
 
+import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.GTFluid;
 import gregtech.api.unification.material.Material;
+import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
@@ -10,6 +12,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.RichTooltip;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,9 +46,9 @@ public class FluidTooltipUtil {
      * @param fluid The Fluid to get the tooltip of.
      * @return The tooltip.
      */
-    public static List<String> getFluidTooltip(Fluid fluid) {
+    public static @NotNull List<String> getFluidTooltip(@Nullable Fluid fluid) {
         if (fluid == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         var list = tooltips.get(fluid);
@@ -56,18 +60,36 @@ public class FluidTooltipUtil {
         return tooltip;
     }
 
+    public static void handleFluidTooltip(@NotNull RichTooltip tooltip, @Nullable Fluid fluid) {
+        if (fluid == null) return;
+
+        var tooltipList = tooltips.get(fluid);
+        if (tooltipList == null) return;
+
+        for (var subList : tooltipList) {
+            for (String tooltipStr : subList.get()) {
+                tooltip.addLine(IKey.str(tooltipStr));
+            }
+        }
+    }
+
     /**
      * Used to get a Fluid's tooltip.
      *
      * @param stack A FluidStack, containing the Fluid to get the tooltip of.
      * @return The tooltip.
      */
-    public static List<String> getFluidTooltip(FluidStack stack) {
+    public static @NotNull List<String> getFluidTooltip(@Nullable FluidStack stack) {
         if (stack == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         return getFluidTooltip(stack.getFluid());
+    }
+
+    public static void handleFluidTooltip(@NotNull RichTooltip tooltip, @Nullable FluidStack stack) {
+        if (stack == null) return;
+        handleFluidTooltip(tooltip, stack.getFluid());
     }
 
     /**
@@ -76,9 +98,9 @@ public class FluidTooltipUtil {
      * @param fluidName A String representing a Fluid to get the tooltip of.
      * @return The tooltip.
      */
-    public static List<String> getFluidTooltip(String fluidName) {
+    public static @NotNull List<String> getFluidTooltip(@Nullable String fluidName) {
         if (fluidName == null || fluidName.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
 
         return getFluidTooltip(FluidRegistry.getFluid(fluidName));
@@ -109,5 +131,18 @@ public class FluidTooltipUtil {
 
             return tooltip;
         };
+    }
+
+    public static void addIngotMolFluidTooltip(@NotNull RichTooltip tooltip, @NotNull FluidStack fluidStack) {
+        // Add tooltip showing how many "ingot moles" (increments of 144) this fluid is if shift is held
+        if (TooltipHelper.isShiftDown() && fluidStack.amount > GTValues.L) {
+            int numIngots = fluidStack.amount / GTValues.L;
+            int extra = fluidStack.amount % GTValues.L;
+            String fluidAmount = String.format(" %,d L = %,d * %d L", fluidStack.amount, numIngots, GTValues.L);
+            if (extra != 0) {
+                fluidAmount += String.format(" + %d L", extra);
+            }
+            tooltip.add(TextFormatting.GRAY + LocalizationUtils.format("gregtech.gui.amount_raw") + fluidAmount);
+        }
     }
 }
