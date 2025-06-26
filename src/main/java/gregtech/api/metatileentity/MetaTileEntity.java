@@ -1430,7 +1430,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @SideOnly(Side.CLIENT)
-    public SoundEvent getSound() {
+    public @Nullable SoundEvent getSound() {
         return null;
     }
 

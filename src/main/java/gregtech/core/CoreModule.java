@@ -50,6 +50,7 @@ import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.metatileentities.electric.MetaTileEntityAlarm;
 import gregtech.common.worldgen.LootTableHelper;
 import gregtech.core.advancement.AdvancementTriggers;
 import gregtech.core.advancement.internal.AdvancementManager;
@@ -78,6 +79,7 @@ import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.MinecraftForge;
@@ -139,6 +141,13 @@ public class CoreModule implements IGregTechModule {
 
         GregTechAPI.soundManager = SoundManager.getInstance();
         GTSoundEvents.register();
+        MetaTileEntityAlarm.addSound(GTSoundEvents.DEFAULT_ALARM);
+        MetaTileEntityAlarm.addSound(GTSoundEvents.ARC);
+        MetaTileEntityAlarm.addSound(SoundEvents.ENTITY_WOLF_HOWL);
+        MetaTileEntityAlarm.addSound(SoundEvents.ENTITY_ENDERMEN_DEATH);
+        if (GTValues.FOOLS.get() && ConfigHolder.misc.specialEvents) {
+            MetaTileEntityAlarm.addSound(GTSoundEvents.SUS_RECORD);
+        }
 
         /* MUI Initialization */
         GTGuis.registerFactories();
