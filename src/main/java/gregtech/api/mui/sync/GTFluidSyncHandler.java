@@ -410,6 +410,9 @@ public class GTFluidSyncHandler extends SyncHandler {
             // neither is empty but tank is not full, try to fill tank
         } else if (canFillSlot && tank.getFluidAmount() < tank.getCapacity() && heldFluid != null) {
             returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
+        }else if(canFillSlot && tank.getFluidAmount() >= tank.getCapacity() && heldFluid.isFluidEqual(tank.getFluid()))
+        {
+            returnable = drainTankIntoStack(fluidHandlerItem, tankFluid, tryFillAll);
         }
 
         syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
