@@ -445,37 +445,37 @@ public final class ToolItems {
                 .toolClasses(ToolClasses.WRENCH));
 
         ONCE_HARD_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "once_hammer")
-                .oreDict(ToolOreDict.toolWrench)
+                .oreDict(ToolOreDict.toolHammer)
                 .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
                 .secondaryOreDicts("craftingToolHardHammer")
                 .toolClasses(ToolClasses.HARD_HAMMER));
 
         ONCE_WIRE_CUTTER = register(ItemGTTool.Builder.of(GTValues.MODID, "once_wire_cutter")
-                .oreDict(ToolOreDict.toolWrench)
+                .oreDict(ToolOreDict.toolWireCutter)
                 .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
                 .secondaryOreDicts("craftingToolWireCutter")
                 .toolClasses(ToolClasses.WIRE_CUTTER));
 
         ONCE_SAW= register(ItemGTTool.Builder.of(GTValues.MODID, "once_saw")
-                .oreDict(ToolOreDict.toolWrench)
+                .oreDict(ToolOreDict.toolSaw)
                 .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
                 .secondaryOreDicts("craftingToolSaw")
                 .toolClasses(ToolClasses.SAW));
 
         ONCE_FILE= register(ItemGTTool.Builder.of(GTValues.MODID, "once_file")
-                .oreDict(ToolOreDict.toolWrench)
+                .oreDict(ToolOreDict.toolFile)
                 .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
                 .secondaryOreDicts("craftingToolFile")
                 .toolClasses(ToolClasses.FILE));
 
         ONCE_SCREWDRIVER= register(ItemGTTool.Builder.of(GTValues.MODID, "once_screwdriver")
-                .oreDict(ToolOreDict.toolWrench)
+                .oreDict(ToolOreDict.toolScrewdriver)
                 .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
                 .secondaryOreDicts("craftingToolScrewdriver")
                 .toolClasses(ToolClasses.SCREWDRIVER));
 
         ONCE_MORTAR= register(ItemGTTool.Builder.of(GTValues.MODID, "once_mortar")
-                .oreDict(ToolOreDict.toolWrench)
+                .oreDict(ToolOreDict.toolMortar)
                 .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
                 .secondaryOreDicts("craftingToolMortar")
                 .toolClasses(ToolClasses.MORTAR));
