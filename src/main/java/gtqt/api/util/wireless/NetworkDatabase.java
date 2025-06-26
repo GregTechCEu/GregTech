@@ -39,10 +39,6 @@ public class NetworkDatabase extends WorldSavedData {
             node.setEnergy(new BigInteger(nodeTag.getString("energy")));
             node.setOpen(nodeTag.getBoolean("isOpen"));
 
-            NBTTagList machineList = nbt.getTagList("machines", 10);
-            for (NBTBase tagbase : machineList) {
-                node.addMachine(WorldBlockPos.fromNBT((NBTTagCompound) tagbase));
-            }
             networks.put(node.getNetworkID(), node);
         }
     }
@@ -58,12 +54,6 @@ public class NetworkDatabase extends WorldSavedData {
             nodeTag.setString("name", node.getNetworkName());
             nodeTag.setString("energy", node.getEnergy().toString());
             nodeTag.setBoolean("isOpen", node.isOpen());
-
-            NBTTagList machineList = new NBTTagList();
-            for (WorldBlockPos wpos : node.machines) {
-                machineList.appendTag(wpos.toNBT());
-            }
-            nbt.setTag("machines", machineList);
             list.appendTag(nodeTag);
         }
         nbt.setTag("networks", list);

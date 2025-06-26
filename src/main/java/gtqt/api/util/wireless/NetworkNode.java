@@ -16,8 +16,6 @@ public class NetworkNode {
     private BigInteger energy;
     private boolean isOpen;
 
-    public List<WorldBlockPos> machines = new ArrayList<>();
-
     public NetworkNode(UUID owner, int id, String name) {
         this.ownerUUID = owner;
         this.networkID = id;
@@ -58,28 +56,6 @@ public class NetworkNode {
         isOpen = open;
     }
 
-    public synchronized boolean addMachine(World world, BlockPos pos) {
-        WorldBlockPos wpos = new WorldBlockPos(
-                world.provider.getDimension(),
-                pos
-        );
-        if (!machines.contains(wpos)) {
-            return machines.add(wpos);
-        }
-        return false;
-    }
-    public synchronized boolean addMachine(WorldBlockPos wpos) {
-        if (!machines.contains(wpos)) {
-            return machines.add(wpos);
-        }
-        return false;
-    }
-    public synchronized List<BlockPos> getMachinesInDimension(int dim) {
-        return machines.stream()
-                .filter(wpos -> wpos.getDimension() == dim)
-                .map(WorldBlockPos::getPos)
-                .collect(Collectors.toList());
-    }
     public BigInteger modifyEnergy(BigInteger delta) {
         BigInteger original = this.energy;
         BigInteger newValue = original.add(delta);

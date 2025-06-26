@@ -37,22 +37,6 @@ public class EnergyContainerWireless extends EnergyContainerHandler {
                     db = NetworkDatabase.get(world);
                     node = db.getNetwork(((MetaTileEntityWirelessEnergyHatch)metaTileEntity).WirelessId);
                 }
-                {
-                    var machine = new WorldBlockPos(metaTileEntity.getWorld().provider.getDimension(),metaTileEntity.getPos());
-                    if(!node.machines.contains(machine))
-                    {
-                        node.machines.add(machine);
-                        NetworkDatabase finalDb = db;
-                        NetworkNode finalNode = node;
-                        db.getNetworks().keySet().forEach(x->{
-                            var del = finalDb.getNetwork(x);
-                            if(del.getNetworkID()!= finalNode.getNetworkID())
-                            {
-                                del.machines.remove(machine);
-                            }
-                        });
-                    }
-                }
                 //是动力舱 给网络增加能量
                 if(this.getInputVoltage()==0)
                 {
