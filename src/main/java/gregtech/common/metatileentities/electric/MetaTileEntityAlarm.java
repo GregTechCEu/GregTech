@@ -17,7 +17,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import codechicken.lib.render.CCRenderState;
@@ -31,6 +30,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
@@ -101,7 +101,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
                 true);
 
         // TODO: Change the position of the name when it's standardized.
-        return GTGuis.createPanel(this, 150, 55)
+        return GTGuis.createPanel(this, 200, 55)
                 .child(Flow.column()
                         .marginLeft(5)
                         .marginRight(5)
@@ -133,13 +133,13 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
                                             }
 
                                             return true;
-                                        })
-                                        .addTooltipLine(IKey.lang("gregtech.gui.alarm.sounds_popup_button"))) // TODO:
-                                                                                                              // 🎵
-                                                                                                              // overlay
+                                        })// TODO: 🎵 icon overlay on the button or smth
+                                        .addTooltipLine(IKey.lang("gregtech.gui.alarm.sounds_popup_button")))
                                 .child(IKey.dynamic(() -> getSoundName(selectedSound))
                                         .asWidget()
-                                        .alignY(0.5f))));
+                                        .alignY(0.5f)
+                                        .expanded()
+                                        .addTooltipLine(IKey.lang("gregtech.gui.alarm.selected_sound")))));
     }
 
     protected PanelSyncHandler.IPanelBuilder createSoundsPopup(@NotNull ResourceLocationSyncHandler soundSync) {
@@ -150,7 +150,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
                 soundList.add(Flow.row()
                         .widthRel(1.0f)
                         .coverChildrenHeight()
-                        .margin(4, 2)
+                        .margin(4, 1)
                         .child(new ButtonWidget<>()
                                 .widthRel(1.0f)
                                 .onMousePressed(mouse -> {
@@ -159,8 +159,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
                                     return true;
                                 })
                                 .addTooltipLine(IKey.lang("gregtech.gui.alarm.set_sound"))
-                                .overlay(IKey.str(getSoundName(sound))
-                                        .style(TextFormatting.WHITE))));
+                                .overlay(IKey.str(getSoundName(sound)))));
             }
 
             return GTGuis.createPopupPanel("sound_selector", 200, 100)
@@ -168,12 +167,19 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
                             .margin(5)
                             .child(IKey.lang("gregtech.gui.alarm.sounds")
                                     .asWidget())
-                            .child(new ListWidget<>()
+                            .child(new ParentWidget<>()
                                     .widthRel(1.0f)
-                                    .marginTop(4)
+                                    .margin(2, 2, 6, 2)
                                     .expanded()
-                                    .children(soundList)
-                                    .background(GTGuiTextures.DISPLAY)));
+                                    .child(GTGuiTextures.DISPLAY.asWidget()
+                                            .widthRel(1.0f)
+                                            .heightRel(1.0f))
+                                    .child(new ListWidget<>()
+                                            .widthRel(1.0f)
+                                            .heightRel(1.0f)
+                                            .margin(2)
+                                            .expanded()
+                                            .children(soundList))));
         };
     }
 

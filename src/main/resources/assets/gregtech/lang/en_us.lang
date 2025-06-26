@@ -5677,6 +5677,7 @@ gregtech.gui.alarm.radius=Alarm Radius:
 gregtech.gui.alarm.sounds_popup_button=Select sound to play
 gregtech.gui.alarm.set_sound=Set sound
 gregtech.gui.alarm.sounds=Sounds
+gregtech.gui.alarm.selected_sound=Selected sound
 gregtech.gui.item_passthrough.enabled=Item Passthough Enabled
 gregtech.gui.item_passthrough.disabled=Item Passthough Disabled
 gregtech.gui.fluid_passthrough.enabled=Fluid Passthough Enabled
