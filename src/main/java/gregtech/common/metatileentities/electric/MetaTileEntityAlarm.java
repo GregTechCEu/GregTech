@@ -30,7 +30,6 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
@@ -88,7 +87,8 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         IntSyncValue radiusSync = new IntSyncValue(() -> radius, newRadius -> {
             radius = newRadius;
-            GregTechAPI.soundManager.stopTileSound(getPos());
+            GregTechAPI.soundManager.stopTileSound(getPos()); // TODO: one of these is making the sound restart when you
+                                                              // open the gui
         });
         ResourceLocationSyncHandler soundSync = new ResourceLocationSyncHandler(
                 () -> getSoundResourceLocation(selectedSound),
@@ -167,19 +167,15 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
                             .margin(5)
                             .child(IKey.lang("gregtech.gui.alarm.sounds")
                                     .asWidget())
-                            .child(new ParentWidget<>()
-                                    .widthRel(1.0f)
-                                    .margin(2, 2, 6, 2)
+                            .child(new ListWidget<>()
+                                    .left(2)
+                                    .right(2)
+                                    .marginTop(6)
+                                    .marginBottom(4)
                                     .expanded()
-                                    .child(GTGuiTextures.DISPLAY.asWidget()
-                                            .widthRel(1.0f)
-                                            .heightRel(1.0f))
-                                    .child(new ListWidget<>()
-                                            .widthRel(1.0f)
-                                            .heightRel(1.0f)
-                                            .margin(2)
-                                            .expanded()
-                                            .children(soundList))));
+                                    .children(soundList)
+                                    .background(GTGuiTextures.DISPLAY.asIcon()
+                                            .margin(0, -2))));
         };
     }
 
