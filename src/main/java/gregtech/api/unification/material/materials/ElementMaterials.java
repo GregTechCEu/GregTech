@@ -826,7 +826,7 @@ public class ElementMaterials {
                 .build();
 
         Titanium = Material.builder(113, gregtechId("titanium")) // todo Ore? Look at EBF recipe here if we do Ti
-                                                                     // ores
+                                                                 // ores
                 .ingot(3).fluid()
                 .color(0xDCA0F0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR,

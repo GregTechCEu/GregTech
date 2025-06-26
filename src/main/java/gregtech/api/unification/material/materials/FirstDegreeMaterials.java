@@ -1416,31 +1416,31 @@ public class FirstDegreeMaterials {
 
         EnrichedNaquadahTriniumEuropiumDuranide = Material.builder(431,
                 gregtechId("enriched_naquadah_trinium_europium_duranide"))
-                        .ingot()
-                        .liquid(new FluidBuilder().temperature(5930))
-                        .color(0x7D9673).iconSet(METALLIC)
-                        .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
-                        .components(NaquadahEnriched, 4, Trinium, 3, Europium, 2, Duranium, 1)
-                        .cableProperties(GTValues.V[GTValues.UV], 16, 0, true, 3)
-                        .blast(b -> b
-                                .temp(9900, GasTier.HIGH)
-                                .blastStats(VA[LuV], 1200)
-                                .vacuumStats(VA[UV], 200))
-                        .build();
+                .ingot()
+                .liquid(new FluidBuilder().temperature(5930))
+                .color(0x7D9673).iconSet(METALLIC)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
+                .components(NaquadahEnriched, 4, Trinium, 3, Europium, 2, Duranium, 1)
+                .cableProperties(GTValues.V[GTValues.UV], 16, 0, true, 3)
+                .blast(b -> b
+                        .temp(9900, GasTier.HIGH)
+                        .blastStats(VA[LuV], 1200)
+                        .vacuumStats(VA[UV], 200))
+                .build();
 
         RutheniumTriniumAmericiumNeutronate = Material.builder(432,
                 gregtechId("ruthenium_trinium_americium_neutronate"))
-                        .ingot()
-                        .liquid(new FluidBuilder().temperature(23691))
-                        .color(0xFFFFFF).iconSet(BRIGHT)
-                        .flags(DECOMPOSITION_BY_ELECTROLYZING)
-                        .components(Ruthenium, 1, Trinium, 2, Americium, 1, Neutronium, 2, Oxygen, 8)
-                        .cableProperties(GTValues.V[GTValues.UHV], 24, 0, true, 3)
-                        .blast(b -> b
-                                .temp(10800, GasTier.HIGHER)
-                                .blastStats(VA[ZPM], 1000)
-                                .vacuumStats(VA[UHV], 200))
-                        .build();
+                .ingot()
+                .liquid(new FluidBuilder().temperature(23691))
+                .color(0xFFFFFF).iconSet(BRIGHT)
+                .flags(DECOMPOSITION_BY_ELECTROLYZING)
+                .components(Ruthenium, 1, Trinium, 2, Americium, 1, Neutronium, 2, Oxygen, 8)
+                .cableProperties(GTValues.V[GTValues.UHV], 24, 0, true, 3)
+                .blast(b -> b
+                        .temp(10800, GasTier.HIGHER)
+                        .blastStats(VA[ZPM], 1000)
+                        .vacuumStats(VA[UHV], 200))
+                .build();
 
         InertMetalMixture = Material.builder(433, gregtechId("inert_metal_mixture"))
                 .dust()
