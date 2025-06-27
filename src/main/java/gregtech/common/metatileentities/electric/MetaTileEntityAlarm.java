@@ -94,7 +94,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
 
         // TODO: Change the position of the name when it's standardized.
         // noinspection Convert2MethodRef
-        return GTGuis.createPanel(this, 200, 55)
+        return GTGuis.createPanel(this, 200, 56)
                 .child(Flow.column()
                         .marginLeft(5)
                         .marginRight(5)
@@ -127,7 +127,9 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
                                             }
 
                                             return true;
-                                        })// TODO: 🎵 icon overlay on the button or smth
+                                        })
+                                        .overlay(GTGuiTextures.SPEAKER_ICON.asIcon()
+                                                .size(18))
                                         .addTooltipLine(IKey.lang("gregtech.gui.alarm.sounds_popup_button")))
                                 .child(IKey.dynamic(() -> getSoundName(selectedSound))
                                         .asWidget()
