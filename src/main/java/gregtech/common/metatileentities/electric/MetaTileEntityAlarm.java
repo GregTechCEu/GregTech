@@ -93,6 +93,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
                 createSoundsPopup(alarmSyncHandler), true);
 
         // TODO: Change the position of the name when it's standardized.
+        // noinspection Convert2MethodRef
         return GTGuis.createPanel(this, 200, 55)
                 .child(Flow.column()
                         .marginLeft(5)
@@ -108,7 +109,8 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
                                 .height(16)
                                 .setMaxLength(10)
                                 .setNumbers(0, 128)
-                                .value(new IntValue.Dynamic(() -> radius, alarmSyncHandler::setRadius))
+                                .value(new IntValue.Dynamic(() -> radius,
+                                        newRadius -> alarmSyncHandler.setRadius(newRadius)))
                                 .background(GTGuiTextures.DISPLAY))
                         .child(Flow.row()
                                 .widthRel(1.0f)
