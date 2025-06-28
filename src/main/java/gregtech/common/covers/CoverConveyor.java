@@ -576,7 +576,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                         100));
                                 return true;
                             })
-                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
+                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(true))))
+            );
 
         if (createFilterRow())
             column.child(getItemFilterContainer().initUI(panel, guiSyncManager));
