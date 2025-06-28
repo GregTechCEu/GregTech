@@ -25,6 +25,8 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.google.common.collect.ImmutableList;
@@ -402,6 +404,7 @@ public class OreByProduct implements IRecipeWrapper {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         for (JeiInteractableText text : jeiTexts) {
             text.render(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
@@ -418,6 +421,7 @@ public class OreByProduct implements IRecipeWrapper {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean handleClick(Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
         for (JeiInteractableText text : jeiTexts) {
             if (text.isHovering(mouseX, mouseY) &&
