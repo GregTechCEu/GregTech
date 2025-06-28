@@ -363,7 +363,7 @@ metaitem.electric.motor.uhv.name=Электрический мотор (§4UHV§
 metaitem.electric.motor.uev.name=Электрический мотор (§aUEV§r)
 metaitem.electric.motor.uiv.name=Электрический мотор (§2UIV§r)
 metaitem.electric.motor.uxv.name=Электрический мотор (§eUXV§r)
-metaitem.electric.motor.opv.name=Электрический мотор (§9OpV§r)
+metaitem.electric.motor.opv.name=Электрический мотор (§9§lOpV§r)
 metaitem.electric.pump.lv.name=Электрическая помпа (§7LV§r)
 metaitem.electric.pump.mv.name=Электрическая помпа (§bMV§r)
 metaitem.electric.pump.hv.name=Электрическая помпа (§6HV§r)
@@ -376,7 +376,7 @@ metaitem.electric.pump.uhv.name=Электрическая помпа (§4UHV§r
 metaitem.electric.pump.uev.name=Электрическая помпа (§aUEV§r)
 metaitem.electric.pump.uiv.name=Электрическая помпа (§2UIV§r)
 metaitem.electric.pump.uxv.name=Электрическая помпа (§eUXV§r)
-metaitem.electric.pump.opv.name=Электрическая помпа (§9OpV§r)
+metaitem.electric.pump.opv.name=Электрическая помпа (§9§lOpV§r)
 metaitem.electric.pump.tooltip=Передаёт §fЖидкость§7 с определенной скоростью как §fУлучшение механизма§7.
 metaitem.fluid.regulator.lv.name=Регулятор жидкости (§7LV§r)
 metaitem.fluid.regulator.mv.name=Регулятор жидкости (§bMV§r)
@@ -399,7 +399,7 @@ metaitem.conveyor.module.uhv.name=Конвейерный модуль (§4UHV§r
 metaitem.conveyor.module.uev.name=Конвейерный модуль (§aUEV§r)
 metaitem.conveyor.module.uiv.name=Конвейерный модуль (§2UIV§r)
 metaitem.conveyor.module.uxv.name=Конвейерный модуль (§eUXV§r)
-metaitem.conveyor.module.opv.name=Конвейерный модуль (§9OpV§r)
+metaitem.conveyor.module.opv.name=Конвейерный модуль (§9§lOpV§r)
 metaitem.conveyor.module.tooltip=Передаёт §fПредметы§7 с определенной скоростью как §fУлучшение механизма§7.
 metaitem.electric.piston.lv.name=Электрический поршень (§7LV§r)
 metaitem.electric.piston.mv.name=Электрический поршень (§bMV§r)
@@ -413,7 +413,7 @@ metaitem.electric.piston.uhv.name=Электрический поршень (§4
 metaitem.electric.piston.uev.name=Электрический поршень (§aUEV§r)
 metaitem.electric.piston.uiv.name=Электрический поршень (§2UIV§r)
 metaitem.electric.piston.uxv.name=Электрический поршень (§eUXV§r)
-metaitem.electric.piston.opv.name=Электрический поршень (§9OpV§r)
+metaitem.electric.piston.opv.name=Электрический поршень (§9§lOpV§r)
 metaitem.robot.arm.lv.name=Роботизированный манипулятор (§7LV§r)
 metaitem.robot.arm.mv.name=Роботизированный манипулятор (§bMV§r)
 metaitem.robot.arm.hv.name=Роботизированный манипулятор (§6HV§r)
@@ -426,7 +426,7 @@ metaitem.robot.arm.uhv.name=Роботизированный манипулят�
 metaitem.robot.arm.uev.name=Роботизированный манипулятор (§aUEV§r)
 metaitem.robot.arm.uiv.name=Роботизированный манипулятор (§2UIV§r)
 metaitem.robot.arm.uxv.name=Роботизированный манипулятор (§eUXV§r)
-metaitem.robot.arm.opv.name=Роботизированный манипулятор (§9OpV§r)
+metaitem.robot.arm.opv.name=Роботизированный манипулятор (§9§lOpV§r)
 metaitem.robot.arm.tooltip=Ограничивает передачу §fПредметов§7 заданным кол-вом как §fУлучшение механизма§7.
 metaitem.field.generator.lv.name=Генератор поля (§7LV§r)
 metaitem.field.generator.mv.name=Генератор поля (§bMV§r)
@@ -440,7 +440,7 @@ metaitem.field.generator.uhv.name=Генератор поля (§4UHV§r)
 metaitem.field.generator.uev.name=Генератор поля (§aUEV§r)
 metaitem.field.generator.uiv.name=Генератор поля (§2UIV§r)
 metaitem.field.generator.uxv.name=Генератор поля (§eUXV§r)
-metaitem.field.generator.opv.name=Генератор поля (§9OpV§r)
+metaitem.field.generator.opv.name=Генератор поля (§9§lOpV§r)
 metaitem.emitter.lv.name=Эмиттер (§7LV§r)
 metaitem.emitter.mv.name=Эмиттер (§bMV§r)
 metaitem.emitter.hv.name=Эмиттер (§6HV§r)
@@ -453,7 +453,7 @@ metaitem.emitter.uhv.name=Эмиттер (§4UHV§r)
 metaitem.emitter.uev.name=Эмиттер (§aUEV§r)
 metaitem.emitter.uiv.name=Эмиттер (§2UIV§r)
 metaitem.emitter.uxv.name=Эмиттер (§eUXV§r)
-metaitem.emitter.opv.name=Эмиттер (§9OpV§r)
+metaitem.emitter.opv.name=Эмиттер (§9§lOpV§r)
 metaitem.sensor.lv.name=Сенсор (§7LV§r)
 metaitem.sensor.mv.name=Сенсор (§bMV§r)
 metaitem.sensor.hv.name=Сенсор (§6HV§r)
@@ -466,7 +466,7 @@ metaitem.sensor.uhv.name=Сенсор (§4UHV§r)
 metaitem.sensor.uev.name=Сенсор (§aUEV§r)
 metaitem.sensor.uiv.name=Сенсор (§2UIV§r)
 metaitem.sensor.uxv.name=Сенсор (§eUXV§r)
-metaitem.sensor.opv.name=Сенсор (§9OpV§r)
+metaitem.sensor.opv.name=Сенсор (§9§lOpV§r)
 metaitem.tool.datastick.name=Флешка
 metaitem.tool.datastick.tooltip=Хранение простых данных
 metaitem.tool.dataorb.name=Сфера данных
@@ -981,9 +981,9 @@ metaitem.voltage_coil.uiv.name=Катушка (§2UIV§r)
 metaitem.voltage_coil.uiv.tooltip=Идеальная катушка II
 metaitem.voltage_coil.uxv.name=Катушка (§eUXV§r)
 metaitem.voltage_coil.uxv.tooltip=Идеальная катушка III
-metaitem.voltage_coil.opv.name=Катушка (§9OpV§r)
+metaitem.voltage_coil.opv.name=Катушка (§9§lOpV§r)
 metaitem.voltage_coil.opv.tooltip=Идеальная катушка IV
-metaitem.voltage_coil.max.name=Катушка (§cMAX§r)
+metaitem.voltage_coil.max.name=Катушка (§c§lMAX)
 metaitem.voltage_coil.max.tooltip=Совершенная катушка
 metaitem.liquid_fuel_jetpack.name=Реактивный ранец на жидком топливе
 metaitem.liquid_fuel_jetpack.tooltip=Использует топливо, от дизельного генератора, для тяги
@@ -3727,8 +3727,8 @@ gregtech.machine.hull.uhv.name=Оболочка машины (§4UHV§r)
 gregtech.machine.hull.uev.name=Оболочка машины (§aUEV§r)
 gregtech.machine.hull.uiv.name=Оболочка машины (§2UIV§r)
 gregtech.machine.hull.uxv.name=Оболочка машины (§eUXV§r)
-gregtech.machine.hull.opv.name=Оболочка машины (§9OpV§r)
-gregtech.machine.hull.max.name=Оболочка машины (§cMAX§r)
+gregtech.machine.hull.opv.name=Оболочка машины (§9§lOpV§r)
+gregtech.machine.hull.max.name=Оболочка машины (§c§lMAX)
 
 # Battery buffers
 gregtech.machine.battery_buffer.ulv.4.name=Батарейный буфер (4 ячейки §8ULV§r)
@@ -3770,12 +3770,12 @@ gregtech.machine.battery_buffer.uiv.16.name=Батарейный буфер (16 
 gregtech.machine.battery_buffer.uxv.4.name=Батарейный буфер (4 ячейки §eUXV§r)
 gregtech.machine.battery_buffer.uxv.8.name=Батарейный буфер (8 ячеек §eUXV§r)
 gregtech.machine.battery_buffer.uxv.16.name=Батарейный буфер (16 ячеек §eUXV§r)
-gregtech.machine.battery_buffer.opv.4.name=Батарейный буфер (4 ячейки §9OpV§r)
-gregtech.machine.battery_buffer.opv.8.name=Батарейный буфер (8 ячеек §9OpV§r)
-gregtech.machine.battery_buffer.opv.16.name=Батарейный буфер (16 ячеек §9OpV§r)
-gregtech.machine.battery_buffer.max.4.name=Батарейный буфер (4 ячейки §cMAX§r)
-gregtech.machine.battery_buffer.max.8.name=Батарейный буфер (8 ячеек §cMAX§r)
-gregtech.machine.battery_buffer.max.16.name=Батарейный буфер (16 ячеек §cMAX§r)
+gregtech.machine.battery_buffer.opv.4.name=Батарейный буфер (4 ячейки §9§lOpV§r)
+gregtech.machine.battery_buffer.opv.8.name=Батарейный буфер (8 ячеек §9§lOpV§r)
+gregtech.machine.battery_buffer.opv.16.name=Батарейный буфер (16 ячеек §9§lOpV§r)
+gregtech.machine.battery_buffer.max.4.name=Батарейный буфер (4 ячейки §c§lMAX)
+gregtech.machine.battery_buffer.max.8.name=Батарейный буфер (8 ячеек §c§lMAX)
+gregtech.machine.battery_buffer.max.16.name=Батарейный буфер (16 ячеек §c§lMAX)
 gregtech.battery_buffer.average_output=Сред. вывод: %s EU/t: %s EU/t
 gregtech.battery_buffer.average_input=Сред. ввод: %s EU/t
 
@@ -3802,7 +3802,7 @@ gregtech.machine.transformer.uhv.name=Трансформатор (§4UHV§R)
 gregtech.machine.transformer.uev.name=Трансформатор (§aUEV§r)
 gregtech.machine.transformer.uiv.name=Трансформатор (§2UIV§r)
 gregtech.machine.transformer.uxv.name=Трансформатор (§eUXV§r)
-gregtech.machine.transformer.opv.name=Трансформатор (§9OpV§r)
+gregtech.machine.transformer.opv.name=Трансформатор (§9§lOpV§r)
 gregtech.machine.transformer.adjustable.ulv.name=Силовой трансформатор (§8ULV§r)
 gregtech.machine.transformer.adjustable.lv.name=Силовой трансформатор (§7LV§r)
 gregtech.machine.transformer.adjustable.mv.name=Силовой трансформатор (§bMV§r)
@@ -3816,7 +3816,7 @@ gregtech.machine.transformer.adjustable.uhv.name=Силовой трансфор
 gregtech.machine.transformer.adjustable.uev.name=Силовой трансформатор (§aUEV§r)
 gregtech.machine.transformer.adjustable.uiv.name=Силовой трансформатор (§2UIV§r)
 gregtech.machine.transformer.adjustable.uxv.name=Силовой трансформатор (§eUXV§r)
-gregtech.machine.transformer.adjustable.opv.name=Силовой трансформатор (§9OpV§r)
+gregtech.machine.transformer.adjustable.opv.name=Силовой трансформатор (§9§lOpV§r)
 gregtech.machine.transformer.hi_amp.ulv.name=Высокотоковый трансформатор (§8ULV§r)
 gregtech.machine.transformer.hi_amp.lv.name=Высокотоковый трансформатор (§7LV§r)
 gregtech.machine.transformer.hi_amp.mv.name=Высокотоковый трансформатор (§bMV§r)
@@ -3830,7 +3830,7 @@ gregtech.machine.transformer.hi_amp.uhv.name=Высокотоковый тран
 gregtech.machine.transformer.hi_amp.uev.name=Высокотоковый трансформатор (§aUEV§r)
 gregtech.machine.transformer.hi_amp.uiv.name=Высокотоковый трансформатор (§2UIV§r)
 gregtech.machine.transformer.hi_amp.uxv.name=Высокотоковый трансформатор (§eUXV§r)
-gregtech.machine.transformer.hi_amp.opv.name=Высокотоковый трансформатор (§9OpV§r)
+gregtech.machine.transformer.hi_amp.opv.name=Высокотоковый трансформатор (§9§lOpV§r)
 
 # Diodes
 gregtech.machine.diode.message=Макс. пропускная способность: %s
@@ -3849,8 +3849,8 @@ gregtech.machine.diode.uhv.name=Диод (§4UHV§R)
 gregtech.machine.diode.uev.name=Диод (§aUEV§r)
 gregtech.machine.diode.uiv.name=Диод (§2UIV§r)
 gregtech.machine.diode.uxv.name=Диод (§eUXV§r)
-gregtech.machine.diode.opv.name=Диод (§9OpV§r)
-gregtech.machine.diode.max.name=Диод (§cMAX§r)
+gregtech.machine.diode.opv.name=Диод (§9§lOpV§r)
+gregtech.machine.diode.max.name=Диод (§c§lMAX)
 
 # Chargers
 gregtech.machine.charger.ulv.name=Зарядное устройство (§8ULV§r)
@@ -3862,12 +3862,12 @@ gregtech.machine.charger.iv.name=Зарядное устройство (§1IV§r
 gregtech.machine.charger.luv.name=Зарядное устройство (§dLuV§r)
 gregtech.machine.charger.zpm.name=Зарядное устройство (§fZPM§r)
 gregtech.machine.charger.uv.name=Зарядное устройство (§3UV§r)
-gregtech.machine.charger.max.name=Зарядное устройство (§cMAX§r)
+gregtech.machine.charger.max.name=Зарядное устройство (§c§lMAX)
 gregtech.machine.charger.uhv.name=Зарядное устройство (§4UHV§R)
 gregtech.machine.charger.uev.name=Зарядное устройство (§aUEV§r)
 gregtech.machine.charger.uiv.name=Зарядное устройство (§2UIV§r)
 gregtech.machine.charger.uxv.name=Зарядное устройство (§eUXV§r)
-gregtech.machine.charger.opv.name=Зарядное устройство (§9OpV§r)
+gregtech.machine.charger.opv.name=Зарядное устройство (§9§lOpV§r)
 gregtech.machine.energy_converter.ulv.1.name=Преобразователь энергии (1A §8ULV§r)
 gregtech.machine.energy_converter.ulv.4.name=Преобразователь энергии (4A §8ULV§r)
 gregtech.machine.energy_converter.ulv.8.name=Преобразователь энергии (8A §8ULV§r)
@@ -3920,14 +3920,14 @@ gregtech.machine.energy_converter.uxv.1.name=Преобразователь эн
 gregtech.machine.energy_converter.uxv.4.name=Преобразователь энергии (4A §eUXV§r)
 gregtech.machine.energy_converter.uxv.8.name=Преобразователь энергии (8A §eUXV§r)
 gregtech.machine.energy_converter.uxv.16.name=Преобразователь энергии (16A §eUXV§r)
-gregtech.machine.energy_converter.opv.1.name=Преобразователь энергии (1A §9OpV§r)
-gregtech.machine.energy_converter.opv.4.name=Преобразователь энергии (4A §9OpV§r)
-gregtech.machine.energy_converter.opv.8.name=Преобразователь энергии (8A §9OpV§r)
-gregtech.machine.energy_converter.opv.16.name=Преобразователь энергии (16A §9OpV§r)
-gregtech.machine.energy_converter.max.1.name=Преобразователь энергии (1A §cMAX§r)
-gregtech.machine.energy_converter.max.4.name=Преобразователь энергии (4A §cMAX§r)
-gregtech.machine.energy_converter.max.8.name=Преобразователь энергии (8A §cMAX§r)
-gregtech.machine.energy_converter.max.16.name=Преобразователь энергии (16A §cMAX§r)
+gregtech.machine.energy_converter.opv.1.name=Преобразователь энергии (1A §9§lOpV§r)
+gregtech.machine.energy_converter.opv.4.name=Преобразователь энергии (4A §9§lOpV§r)
+gregtech.machine.energy_converter.opv.8.name=Преобразователь энергии (8A §9§lOpV§r)
+gregtech.machine.energy_converter.opv.16.name=Преобразователь энергии (16A §9§lOpV§r)
+gregtech.machine.energy_converter.max.1.name=Преобразователь энергии (1A §c§lMAX)
+gregtech.machine.energy_converter.max.4.name=Преобразователь энергии (4A §c§lMAX)
+gregtech.machine.energy_converter.max.8.name=Преобразователь энергии (8A §c§lMAX)
+gregtech.machine.energy_converter.max.16.name=Преобразователь энергии (16A §c§lMAX)
 gregtech.machine.energy_converter.description=Преобразует Энергию между EU и FE
 gregtech.machine.energy_converter.tooltip_tool_usage=Начиная как FE конвертер, используйте киянку, чтобы переключить
 gregtech.machine.energy_converter.message_conversion_fe=Конвертация FE, в: %d FE, из: %dA %d EU
@@ -4594,8 +4594,8 @@ gregtech.machine.energy_hatch.input.uhv.name=Энергетический вхо
 gregtech.machine.energy_hatch.input.uev.name=Энергетический входной разъем (§aUEV§r)
 gregtech.machine.energy_hatch.input.uiv.name=Энергетический входной разъем (§2UIV§r)
 gregtech.machine.energy_hatch.input.uxv.name=Энергетический входной разъем (§eUXV§r)
-gregtech.machine.energy_hatch.input.opv.name=Энергетический входной разъем (§9OpV§r)
-gregtech.machine.energy_hatch.input.max.name=Энергетический входной разъем (§cMAX§r)
+gregtech.machine.energy_hatch.input.opv.name=Энергетический входной разъем (§9§lOpV§r)
+gregtech.machine.energy_hatch.input.max.name=Энергетический входной разъем (§c§lMAX)
 gregtech.machine.energy_hatch.input_hi_amp.tooltip=Силовой энергетический входной разъем для многоблочной структуры
 gregtech.machine.energy_hatch.input_4a.ev.name=Энергетический входной разъем (4A §5EV§r)
 gregtech.machine.energy_hatch.input_4a.iv.name=Энергетический входной разъем (4A §1IV§r)
@@ -4628,8 +4628,8 @@ gregtech.machine.energy_hatch.output.uhv.name=Энергетический вы�
 gregtech.machine.energy_hatch.output.uev.name=Энергетический выходной разъем (§aUEV§r)
 gregtech.machine.energy_hatch.output.uiv.name=Энергетический выходной разъем (§2UIV§r)
 gregtech.machine.energy_hatch.output.uxv.name=Энергетический выходной разъем (§eUXV§r)
-gregtech.machine.energy_hatch.output.opv.name=Энергетический выходной разъем (§9OpV§r)
-gregtech.machine.energy_hatch.output.max.name=Энергетический выходной разъем (§cMAX§r)
+gregtech.machine.energy_hatch.output.opv.name=Энергетический выходной разъем (§9§lOpV§r)
+gregtech.machine.energy_hatch.output.max.name=Энергетический выходной разъем (§c§lMAX)
 gregtech.machine.energy_hatch.output_hi_amp.tooltip=Силовой энергетический выходной разъем для многоблочной структуры
 gregtech.machine.energy_hatch.output_4a.ev.name=Энергетический выходной разъем (4A §5EV§r)
 gregtech.machine.energy_hatch.output_4a.iv.name=Энергетический выходной разъем (4A §1IV§r)
@@ -4689,11 +4689,11 @@ gregtech.machine.muffler_hatch.uhv.name=Люк глушителя (§4UHV§r)
 gregtech.machine.muffler_hatch.uev.name=Люк глушителя (§aUEV§r)
 gregtech.machine.muffler_hatch.uiv.name=Люк глушителя (§2UIV§r)
 gregtech.machine.muffler_hatch.uxv.name=Люк глушителя (§eUXV§r)
-gregtech.machine.muffler_hatch.opv.name=Люк глушителя (§9OpV§r)
+gregtech.machine.muffler_hatch.opv.name=Люк глушителя (§9§lOpV§r)
 gregtech.machine.muffler_hatch.ulv.name=Люк глушителя (§8ULV§r)
 gregtech.machine.muffler_hatch.hv.name=Люк глушителя (§6HV§r)
 gregtech.machine.muffler_hatch.uv.name=Люк глушителя (§3UV§r)
-gregtech.machine.muffler_hatch.max.name=Люк глушителя (§cMAX§r)
+gregtech.machine.muffler_hatch.max.name=Люк глушителя (§c§lMAX)
 gregtech.machine.pump_hatch.name=Выходной люк насоса
 gregtech.machine.pump_hatch.tooltip=Примитивный жидкостный выход для водяного насоса
 gregtech.machine.machine_hatch.name=Интерфейс доступа к машине
@@ -5369,41 +5369,41 @@ gregtech.machine.laser_hatch.source_256a.uv.name=Люк для Лазерног�
 gregtech.machine.laser_hatch.source_256a.uhv.name=Люк для Лазерного Источника (256A §4UHV§r)
 gregtech.machine.laser_hatch.source_256a.uiv.name=Люк для Лазерного Источника (256A §2UIV§r)
 gregtech.machine.laser_hatch.source_256a.uxv.name=Люк для Лазерного Источника (256A §eUXV§r)
-gregtech.machine.laser_hatch.source_256a.max.name=Люк для Лазерного Источника (256A §cMAX§r)
+gregtech.machine.laser_hatch.source_256a.max.name=Люк для Лазерного Источника (256A §c§lMAX)
 gregtech.machine.laser_hatch.source_1024a.iv.name=Люк для Лазерного Источника (1024A §1IV§r)
 gregtech.machine.laser_hatch.source_1024a.luv.name=Люк для Лазерного Источника (1024A §dLuV§r)
 gregtech.machine.laser_hatch.source_1024a.uv.name=Люк для Лазерного Источника (1024A §3UV§r)
 gregtech.machine.laser_hatch.source_1024a.uhv.name=Люк для Лазерного Источника (1024A §4UHV§r)
 gregtech.machine.laser_hatch.source_1024a.uev.name=Люк для Лазерного Источника (1024A §aUEV§r)
 gregtech.machine.laser_hatch.source_1024a.uxv.name=Люк для Лазерного Источника (1024A §eUXV§r)
-gregtech.machine.laser_hatch.source_1024a.opv.name=Люк для Лазерного Источника (1024A §9OpV§r)
-gregtech.machine.laser_hatch.source_1024a.max.name=Люк для Лазерного Источника (1024A §cMAX§r)
+gregtech.machine.laser_hatch.source_1024a.opv.name=Люк для Лазерного Источника (1024A §9§lOpV§r)
+gregtech.machine.laser_hatch.source_1024a.max.name=Люк для Лазерного Источника (1024A §c§lMAX)
 gregtech.machine.laser_hatch.source_4096a.luv.name=Люк для Лазерного Источника (4096A §dLuV§r)
 gregtech.machine.laser_hatch.source_4096a.zpm.name=Люк для Лазерного Источника (4096A §fZPM§r)
 gregtech.machine.laser_hatch.source_4096a.uv.name=Люк для Лазерного Источника (4096A §3UV§r)
 gregtech.machine.laser_hatch.source_4096a.uev.name=Люк для Лазерного Источника (4096A §aUEV§r)
 gregtech.machine.laser_hatch.source_4096a.uiv.name=Люк для Лазерного Источника (4096A §2UIV§r)
-gregtech.machine.laser_hatch.source_4096a.opv.name=Люк для Лазерного Источника (4096A §9OpV§r)
-gregtech.machine.laser_hatch.source_4096a.max.name=Люк для Лазерного Источника (4096A §cMAX§r)
+gregtech.machine.laser_hatch.source_4096a.opv.name=Люк для Лазерного Источника (4096A §9§lOpV§r)
+gregtech.machine.laser_hatch.source_4096a.max.name=Люк для Лазерного Источника (4096A §c§lMAX)
 gregtech.machine.laser_hatch.target_256a.iv.name=Люк для Лазерного Приемника (256A §1IV§r)
 gregtech.machine.laser_hatch.target_256a.luv.name=Люк для Лазерного Приемника (256A §dLuV§r)
 gregtech.machine.laser_hatch.target_256a.uxv.name=Люк для Лазерного Приемника (256A §eUXV§r)
-gregtech.machine.laser_hatch.target_256a.opv.name=Люк для Лазерного Приемника (256A §9OpV§r)
-gregtech.machine.laser_hatch.target_256a.max.name=Люк для Лазерного Приемника (256A §cMAX§r)
+gregtech.machine.laser_hatch.target_256a.opv.name=Люк для Лазерного Приемника (256A §9§lOpV§r)
+gregtech.machine.laser_hatch.target_256a.max.name=Люк для Лазерного Приемника (256A §c§lMAX)
 gregtech.machine.laser_hatch.target_1024a.luv.name=Люк для Лазерного Приемника (1024A §dLuV§r)
 gregtech.machine.laser_hatch.target_1024a.zpm.name=Люк для Лазерного Приемника (1024A §fZPM§r)
 gregtech.machine.laser_hatch.target_1024a.uv.name=Люк для Лазерного Приемника (1024A §3UV§r)
 gregtech.machine.laser_hatch.target_1024a.uev.name=Люк для Лазерного Приемника (1024A §aUEV§r)
 gregtech.machine.laser_hatch.target_1024a.uiv.name=Люк для Лазерного Приемника (1024A §2UIV§r)
 gregtech.machine.laser_hatch.target_1024a.uxv.name=Люк для Лазерного Приемника (1024A §eUXV§r)
-gregtech.machine.laser_hatch.target_1024a.max.name=Люк для Лазерного Приемника (1024A §cMAX§r)
+gregtech.machine.laser_hatch.target_1024a.max.name=Люк для Лазерного Приемника (1024A §c§lMAX)
 gregtech.machine.laser_hatch.target_4096a.luv.name=Люк для Лазерного Приемника (4096A §dLuV§r)
 gregtech.machine.laser_hatch.target_4096a.zpm.name=Люк для Лазерного Приемника (4096A §fZPM§r)
 gregtech.machine.laser_hatch.target_4096a.uhv.name=Люк для Лазерного Приемника (4096A §4UHV§r)
 gregtech.machine.laser_hatch.target_4096a.uev.name=Люк для Лазерного Приемника (4096A §aUEV§r)
 gregtech.machine.laser_hatch.target_4096a.uiv.name=Люк для Лазерного Приемника (4096A §2UIV§r)
-gregtech.machine.laser_hatch.target_4096a.opv.name=Люк для Лазерного Приемника (4096A §9OpV§r)
-gregtech.machine.laser_hatch.target_4096a.max.name=Люк для Лазерного Приемника (4096A §cMAX§r)
+gregtech.machine.laser_hatch.target_4096a.opv.name=Люк для Лазерного Приемника (4096A §9§lOpV§r)
+gregtech.machine.laser_hatch.target_4096a.max.name=Люк для Лазерного Приемника (4096A §c§lMAX)
 gregtech.machine.laser_hatch.source.tooltip1=Передача энергии на расстоянии
 gregtech.machine.laser_hatch.target.tooltip1=Получение энергии на расстоянии
 gregtech.recipe.research_result=Предмет результата Исследования, не производится напрямую по этому рецепту
@@ -5418,7 +5418,7 @@ gregtech.machine.fluid_hatch.export_9x.zpm.name=Девятерной выход�
 gregtech.machine.laser_hatch.source_256a.iv.name=Люк для Лазерного Источника (256A §1IV§r)
 gregtech.machine.laser_hatch.source_256a.luv.name=Люк для Лазерного Источника (256A §dLuV§r)
 gregtech.machine.laser_hatch.source_256a.uev.name=Люк для Лазерного Источника (256A §aUEV§r)
-gregtech.machine.laser_hatch.source_256a.opv.name=Люк для Лазерного Источника (256A §9OpV§r)
+gregtech.machine.laser_hatch.source_256a.opv.name=Люк для Лазерного Источника (256A §9§lOpV§r)
 gregtech.machine.laser_hatch.source_1024a.zpm.name=Люк для Лазерного Источника (1024A §fZPM§r)
 gregtech.machine.laser_hatch.source_1024a.uiv.name=Люк для Лазерного Источника (1024A §2UIV§r)
 gregtech.machine.laser_hatch.source_4096a.iv.name=Люк для Лазерного Источника (4096A §1IV§r)
@@ -5430,7 +5430,7 @@ gregtech.machine.laser_hatch.target_256a.uev.name=Люк для Лазерног
 gregtech.machine.laser_hatch.target_256a.uiv.name=Люк для Лазерного Приемника (256A §2UIV§r)
 gregtech.machine.laser_hatch.target_1024a.iv.name=Люк для Лазерного Приемника (1024A §1IV§r)
 gregtech.machine.laser_hatch.target_1024a.uhv.name=Люк для Лазерного Приемника (1024A §4UHV§r)
-gregtech.machine.laser_hatch.target_1024a.opv.name=Люк для Лазерного Приемника (1024A §9OpV§r)
+gregtech.machine.laser_hatch.target_1024a.opv.name=Люк для Лазерного Приемника (1024A §9§lOpV§r)
 gregtech.machine.laser_hatch.target_4096a.uv.name=Люк для Лазерного Приемника (4096A §3UV§r)
 gregtech.gui.configurator_slot.no_value=Нет
 gregtech.machine.laser_hatch.target_4096a.uxv.name=Люк для Лазерного Приемника (4096A §eUXV§r)
