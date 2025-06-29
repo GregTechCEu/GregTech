@@ -1,8 +1,6 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -10,29 +8,22 @@ import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.IndicatorImageWidget;
-import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.gui.widgets.ScrollableListWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.interfaces.IRefreshBeforeConsumption;
+import gregtech.api.metatileentity.multiblock.ui.KeyManager;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+import gregtech.api.metatileentity.multiblock.ui.UISyncer;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -214,138 +205,6 @@ public abstract class AdvanceRecipeMapMultiblockController extends RecipeMapMult
         }
     }
 
-    @Override
-    public boolean usesMui2() {
-        return false;
-    }
-
-    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 288, 208);
-        ///////////////////////////多线程组件
-        builder.image(192, 4, 90, 200, GuiTextures.DISPLAY);
-        var scroll = new ScrollableListWidget(196, 8, 86, 196);
-        AdvancedTextWidget textWidget = new AdvancedTextWidget(0, 0, this::addInfo, 0xFFFFFF);
-        scroll.addWidget(textWidget);
-        builder.widget(scroll);
-        ///////////////////////////Main GUI
-        // Display
-        if (this instanceof IProgressBarMultiblock progressMulti && progressMulti.showProgressBar()) {
-            builder.image(4, 4, 190, 109, GuiTextures.DISPLAY);
-
-            if (progressMulti.getNumProgressBars() == 3) {
-                // triple bar
-                ProgressWidget progressBar = new ProgressWidget(
-                        () -> progressMulti.getFillPercentage(0),
-                        4, 115, 62, 7,
-                        progressMulti.getProgressBarTexture(0), ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
-                builder.widget(progressBar);
-
-                progressBar = new ProgressWidget(
-                        () -> progressMulti.getFillPercentage(1),
-                        68, 115, 62, 7,
-                        progressMulti.getProgressBarTexture(1), ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 1));
-                builder.widget(progressBar);
-
-                progressBar = new ProgressWidget(
-                        () -> progressMulti.getFillPercentage(2),
-                        132, 115, 62, 7,
-                        progressMulti.getProgressBarTexture(2), ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 2));
-                builder.widget(progressBar);
-            } else if (progressMulti.getNumProgressBars() == 2) {
-                // double bar
-                ProgressWidget progressBar = new ProgressWidget(
-                        () -> progressMulti.getFillPercentage(0),
-                        4, 115, 94, 7,
-                        progressMulti.getProgressBarTexture(0), ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
-                builder.widget(progressBar);
-
-                progressBar = new ProgressWidget(
-                        () -> progressMulti.getFillPercentage(1),
-                        100, 115, 94, 7,
-                        progressMulti.getProgressBarTexture(1), ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 1));
-                builder.widget(progressBar);
-            } else {
-                // single bar
-                ProgressWidget progressBar = new ProgressWidget(
-                        () -> progressMulti.getFillPercentage(0),
-                        4, 115, 190, 7,
-                        progressMulti.getProgressBarTexture(0), ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
-                builder.widget(progressBar);
-            }
-            builder.widget(new IndicatorImageWidget(174, 93, 17, 17, getLogo())
-                    .setWarningStatus(getWarningLogo(), this::addWarningText)
-                    .setErrorStatus(getErrorLogo(), this::addErrorText));
-        } else {
-            builder.image(4, 4, 190, 117, GuiTextures.DISPLAY);
-            builder.widget(new IndicatorImageWidget(174, 101, 17, 17, getLogo())
-                    .setWarningStatus(getWarningLogo(), this::addWarningText)
-                    .setErrorStatus(getErrorLogo(), this::addErrorText));
-        }
-
-        builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
-        builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(181)
-                .setClickHandler(this::handleDisplayClick));
-
-        // Power Button
-        // todo in the future, refactor so that this class is instanceof IControllable.
-        IControllable controllable = getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
-        if (controllable != null) {
-            builder.widget(new ImageCycleButtonWidget(173, 183, 18, 18, GuiTextures.BUTTON_POWER,
-                    controllable::isWorkingEnabled, controllable::setWorkingEnabled));
-            builder.widget(new ImageWidget(173, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
-        }
-
-        // Voiding Mode Button
-        if (shouldShowVoidingModeButton()) {
-            builder.widget(new ImageCycleButtonWidget(173, 161, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
-                    4, this::getVoidingMode, this::setVoidingMode)
-                    .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
-        } else {
-            builder.widget(new ImageWidget(173, 161, 18, 18, GuiTextures.BUTTON_VOID_NONE)
-                    .setTooltip("gregtech.gui.multiblock_voiding_not_supported"));
-        }
-
-        // Distinct Buses Button
-        if (this.canBeDistinct()) {
-            builder.widget(new ImageCycleButtonWidget(173, 143, 18, 18, GuiTextures.BUTTON_DISTINCT_BUSES,
-                    this::isDistinct, this::setDistinct)
-                    .setTooltipHoverString(i -> "gregtech.multiblock.universal.distinct_" +
-                            (i == 0 ? "disabled" : "enabled")));
-        }
-
-        // Flex Button
-        builder.widget(getFlexButton(173, 125, 18, 18));
-
-        builder.bindPlayerInventory(entityPlayer.inventory, 125);
-        return builder;
-    }
-
-    protected void addInfo(List<ITextComponent> textList) {
-        textList.add(new TextComponentTranslation("总线程数：%s", recipeMapWorkable.size()));
-        int i = 1;
-        for (MultiblockRecipeLogic multiblockRecipeLogic : recipeMapWorkable) {
-            textList.add(new TextComponentTranslation(">>线程：%s", i++));
-
-            textList.add(TextComponentUtil.translationWithColor(
-                    TextFormatting.GRAY,
-                    "gregtech.multiblock.parallel",
-                    multiblockRecipeLogic.getParallelLimit()));
-
-            int currentProgress = (int) (multiblockRecipeLogic.getProgressPercent() * 100);
-            textList.add(TextComponentUtil.translationWithColor(
-                    TextFormatting.GRAY,
-                    "gregtech.multiblock.progress",
-                    currentProgress));
-        }
-    }
-
     private void resetTileAbilities() {
         this.inputInventory = new GTItemStackHandler(this, 0);
         this.inputFluidInventory = new FluidTankList(true);
@@ -384,22 +243,39 @@ public abstract class AdvanceRecipeMapMultiblockController extends RecipeMapMult
 
     @Override
     protected void configureDisplayText(MultiblockUIBuilder builder) {
-        builder.setWorkingStatus(checkWorkingEnable(), checkActive());
-        builder.addWorkingStatusLine()
-                .addEnergyUsageLine(recipeMapWorkable.get(0).getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.get(0).getMaxVoltage()));
+        builder.addEnergyUsageLine(this.getEnergyContainer())
+                .addCustom(this::addCustomCapacity)
+                .addCustom((list, syncer) -> {
+                    if (isStructureFormed()) {
+                        list.add(KeyUtil.lang(TextFormatting.GOLD, "总线程数：%s",
+                                syncer.syncInt(recipeMapWorkable.size())));
+                    }
+                });
+        for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable) {
+            builder.addCustom((list, syncer) -> {
+                        if (isStructureFormed()) {
+                            list.add(KeyUtil.lang(TextFormatting.GOLD, ">>线程："));
+                        }
+                    })
+                    .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                    .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                    .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                    .addWorkingStatusLine()
+                    .addProgressLine(recipeMapWorkable.getProgress(), recipeMapWorkable.getMaxProgress())
+                    .addRecipeOutputLine(recipeMapWorkable);
+        }
+    }
+
+    protected void addCustomCapacity(KeyManager keyManager, UISyncer syncer) {
 
     }
 
-    @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.Builder builder = MultiblockDisplayText.builder(textList, isStructureFormed(), false);
-
-        for (MultiblockRecipeLogic multiblockRecipeLogic : recipeMapWorkable)
-            builder.addLowPowerLine(multiblockRecipeLogic.isHasNotEnoughEnergy());
-
-        builder.addMaintenanceProblemLines(getMaintenanceProblems());
-
+    protected void configureWarningText(MultiblockUIBuilder builder) {
+        for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable) {
+            builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy());
+            break;
+        }
+        super.configureWarningText(builder);
     }
 
     @Override

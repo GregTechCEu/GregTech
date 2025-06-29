@@ -1,5 +1,9 @@
 package gregtech.api.metatileentity.multiblock;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultipleRecipeMaps;
@@ -7,6 +11,8 @@ import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.LocalizationUtils;
@@ -26,6 +32,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -143,17 +150,26 @@ public abstract class AdvanceMultiMapMultiblockController extends AdvanceRecipeM
     }
 
     @Override
-    protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
-        if (getAvailableRecipeMaps() != null && getAvailableRecipeMaps().length > 1) {
-            return new ImageCycleButtonWidget(x, y, width, height, GuiTextures.BUTTON_MULTI_MAP,
-                    getAvailableRecipeMaps().length, this::getRecipeMapIndex, this::setRecipeMapIndex)
-                    .shouldUseBaseBackground().singleTexture()
-                    .setTooltipHoverString(i -> LocalizationUtils
-                            .format("gregtech.multiblock.multiple_recipemaps.header") + " " +
-                            LocalizationUtils.format(
-                                    "recipemap." + getAvailableRecipeMaps()[i].getUnlocalizedName() + ".name"));
-        }
-        return super.getFlexButton(x, y, width, height);
+    protected MultiblockUIFactory createUIFactory() {
+        return super.createUIFactory()
+                .createFlexButton((guiData, syncManager) -> {
+                    RecipeMap<?>[] recipeMaps = getAvailableRecipeMaps();
+                    if (ArrayUtils.getLength(recipeMaps) <= 1) return null;
+
+                    IntSyncValue activeMapIndex = new IntSyncValue(this::getRecipeMapIndex, this::setRecipeMapIndex);
+
+                    return new CycleButtonWidget()
+                            .overlay(GTGuiTextures.BUTTON_MULTI_MAP)
+                            .background(GTGuiTextures.BUTTON)
+                            .disableHoverBackground()
+                            .value(activeMapIndex)
+                            .length(recipeMaps.length)
+                            .tooltipBuilder(t -> {
+                                RecipeMap<?> map = recipeMaps[activeMapIndex.getIntValue()];
+                                String name = I18n.format(map.getTranslationKey());
+                                t.addLine(IKey.lang("gregtech.multiblock.multiple_recipemaps.value", name));
+                            });
+                });
     }
 
     @Override
