@@ -5,6 +5,8 @@ import net.minecraft.nbt.NBTTagList;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 /**
  * An optimised data structure backed by two arrays.
  * This is essentially equivalent to <code>List<Pair<Integer, byte[]>></code>, but more efficient.
@@ -84,9 +86,8 @@ public class PacketDataList {
      * remove all data packets
      */
     public void clear() {
-        for (int i = 0; i < this.size; i++) {
-            this.data[i] = null;
-        }
+        Arrays.fill(this.discriminators, 0);
+        Arrays.fill(this.data, null);
         this.size = 0;
     }
 
