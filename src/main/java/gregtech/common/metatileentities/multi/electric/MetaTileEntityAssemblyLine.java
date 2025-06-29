@@ -338,10 +338,15 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             // slot count is not enough, so don't try to match it
             if (itemInputInventory.size() < inputs.size()) return false;
 
-            for (int i = 0; i < inputs.size(); i++) {
-                if (!inputs.get(i).acceptsStack(itemInputInventory.get(i).getStackInSlot(0))) {
-                    return false;
+            int itemIndex = 0;
+            for (GTRecipeInput input : inputs) {
+                while (itemIndex < itemInputInventory.size() &&
+                        itemInputInventory.get(itemIndex).getStackInSlot(0).isEmpty()) {
+                    itemIndex++;
                 }
+                if (itemIndex >= itemInputInventory.size()) return false;
+                if (!input.acceptsStack(itemInputInventory.get(itemIndex).getStackInSlot(0))) return false;
+                itemIndex++;
             }
 
             // check ordered fluids
