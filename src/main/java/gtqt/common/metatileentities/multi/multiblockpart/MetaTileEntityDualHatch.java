@@ -199,7 +199,8 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                 }
 
                 FluidTankList fluidInventory = (isExportHatch ? this.getExportFluids() : this.getImportFluids());
-                if (!isAttachedToMultiBlock()) {
+                if (!isAttachedToMultiBlock()|| (isExportHatch ? this.getNotifiedFluidOutputList().contains(fluidInventory) :
+                        this.getNotifiedFluidInputList().contains(fluidInventory))) {
                     GTUtility.collapseFluidTankContents(fluidInventory);
                 }
             }
