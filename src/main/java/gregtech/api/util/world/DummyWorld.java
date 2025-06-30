@@ -40,12 +40,6 @@ public class DummyWorld extends World {
         // De-allocate lightUpdateBlockList, checkLightFor uses this
         ObfuscationReflectionHelper.setPrivateValue(World.class, this, null,
                 FMLLaunchHandler.isDeobfuscatedEnvironment() ? "lightUpdateBlockList" : "field_72994_J");
-
-        // De-allocate alfheim lighting engine
-        if (Mods.Alfheim.isModLoaded()) {
-            ObfuscationReflectionHelper.setPrivateValue(World.class, this, null,
-                    "alfheim$lightingEngine");
-        }
     }
 
     @Override
@@ -98,22 +92,5 @@ public class DummyWorld extends World {
     // De-allocated lightUpdateBlockList, default return
     public boolean checkLightFor(@NotNull EnumSkyBlock lightType, @NotNull BlockPos pos) {
         return true;
-    }
-
-    @Override
-    @Method(modid = Mods.Names.ALFHEIM)
-    public World init() {
-        return this;
-    }
-
-    @Override
-    @Method(modid = Mods.Names.ALFHEIM)
-    public int getLightFromNeighborsFor(EnumSkyBlock type, BlockPos pos) {
-        return 15;
-    }
-
-    @Method(modid = Mods.Names.ALFHEIM)
-    public int alfheim$getLight(BlockPos pos, boolean checkNeighbors) {
-        return 15;
     }
 }
