@@ -643,6 +643,7 @@ public class GTGuiTextures {
             "textures/gui/progress_bar/progress_bar_fluid_rig_depletion.png", 190, 14);
 
     // MISC
+    public static final UITexture SPEAKER_ICON = fullImage("textures/gui/widget/speaker.png");
 
     public static void init() {/**/}
 
