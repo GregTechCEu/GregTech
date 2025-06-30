@@ -1,7 +1,5 @@
 package gregtech.api.util.world;
 
-import gregtech.api.util.Mods;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.profiler.Profiler;
@@ -12,7 +10,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,12 +37,6 @@ public class DummyWorld extends World {
         // De-allocate lightUpdateBlockList, checkLightFor uses this
         ObfuscationReflectionHelper.setPrivateValue(World.class, this, null,
                 FMLLaunchHandler.isDeobfuscatedEnvironment() ? "lightUpdateBlockList" : "field_72994_J");
-
-        // De-allocate alfheim lighting engine
-        if (Mods.Alfheim.isModLoaded()) {
-            ObfuscationReflectionHelper.setPrivateValue(World.class, this, null,
-                    "alfheim$lightingEngine");
-        }
     }
 
     @Override
@@ -98,22 +89,5 @@ public class DummyWorld extends World {
     // De-allocated lightUpdateBlockList, default return
     public boolean checkLightFor(@NotNull EnumSkyBlock lightType, @NotNull BlockPos pos) {
         return true;
-    }
-
-    @Override
-    @Method(modid = Mods.Names.ALFHEIM)
-    public World init() {
-        return this;
-    }
-
-    @Override
-    @Method(modid = Mods.Names.ALFHEIM)
-    public int getLightFromNeighborsFor(EnumSkyBlock type, BlockPos pos) {
-        return 15;
-    }
-
-    @Method(modid = Mods.Names.ALFHEIM)
-    public int alfheim$getLight(BlockPos pos, boolean checkNeighbors) {
-        return 15;
     }
 }
