@@ -378,6 +378,25 @@ public class RenderUtil {
         GlStateManager.popMatrix();
     }
 
+    public static void renderTextSized(String text, double x, double y, int color, boolean dropShadow, float scale,
+                                       boolean center) {
+        GlStateManager.pushMatrix();
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        double scaledTextWidth = center ? fontRenderer.getStringWidth(text) * scale : 0.0;
+        GlStateManager.translate(x - scaledTextWidth / 2.0, y, 0.0f);
+        GlStateManager.scale(scale, scale, scale);
+        fontRenderer.drawString(text, 0, 0, color, dropShadow);
+        GlStateManager.popMatrix();
+    }
+
+    public static void renderTextFixedCorner(String text, double x, double y, int color, boolean dropShadow,
+                                             float scale) {
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        double scaledWidth = fontRenderer.getStringWidth(text) * scale;
+        double scaledHeight = fontRenderer.FONT_HEIGHT * scale;
+        renderTextSized(text, x - scaledWidth, y - scaledHeight, color, dropShadow, scale, false);
+    }
+
     public static void renderItemOverLay(float x, float y, float z, float scale, ItemStack itemStack) {
         net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
         GlStateManager.pushMatrix();
@@ -716,14 +735,16 @@ public class RenderUtil {
         return getTextureMap().getMissingSprite();
     }
 
-    public static void handleJeiGhostHighlight(IWidget slot) {
-        if (!Mods.JustEnoughItems.isModLoaded()) return;
-        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return;
+    public static boolean handleJeiGhostHighlight(IWidget slot) {
+        if (!Mods.JustEnoughItems.isModLoaded()) return false;
+        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return false;
         if (ModularUIJeiPlugin.hasDraggingGhostIngredient() ||
                 ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
             GlStateManager.colorMask(true, true, true, false);
             ingredientSlot.drawHighlight(slot.getArea(), slot.isHovering());
             GlStateManager.colorMask(true, true, true, true);
+            return true;
         }
+        return false;
     }
 }

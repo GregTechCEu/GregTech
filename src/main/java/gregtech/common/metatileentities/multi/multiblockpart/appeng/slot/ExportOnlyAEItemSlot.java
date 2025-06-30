@@ -38,7 +38,7 @@ public class ExportOnlyAEItemSlot extends ExportOnlyAESlot<IAEItemStack> impleme
     }
 
     @Override
-    public ExportOnlyAEItemSlot copy() {
+    public @NotNull IConfigurableSlot<IAEItemStack> copy() {
         return new ExportOnlyAEItemSlot(
                 this.config == null ? null : this.config.copy(),
                 this.stock == null ? null : this.stock.copy());
@@ -91,8 +91,8 @@ public class ExportOnlyAEItemSlot extends ExportOnlyAESlot<IAEItemStack> impleme
     @Override
     public IAEItemStack requestStack() {
         IAEItemStack result = super.requestStack();
-        if (result instanceof WrappedItemStack) {
-            return ((WrappedItemStack) result).getAEStack();
+        if (result instanceof WrappedItemStack wrappedItemStack) {
+            return wrappedItemStack.getAEStack();
         } else {
             return result;
         }
@@ -101,8 +101,8 @@ public class ExportOnlyAEItemSlot extends ExportOnlyAESlot<IAEItemStack> impleme
     @Override
     public IAEItemStack exceedStack() {
         IAEItemStack result = super.exceedStack();
-        if (result instanceof WrappedItemStack) {
-            return ((WrappedItemStack) result).getAEStack();
+        if (result instanceof WrappedItemStack wrappedItemStack) {
+            return wrappedItemStack.getAEStack();
         } else {
             return result;
         }
