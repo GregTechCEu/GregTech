@@ -76,11 +76,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         if (itemstack.isEmpty()) return;
 
         RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
-    }
 
-    @Override
-    public void drawOverlay(ModularGuiContext context, WidgetTheme widgetTheme) {
-        super.drawOverlay(context, widgetTheme);
         if (isHovering() && widgetTheme instanceof WidgetSlotTheme slotTheme) {
             RenderUtil.drawSlotOverlay(this, slotTheme);
         }
