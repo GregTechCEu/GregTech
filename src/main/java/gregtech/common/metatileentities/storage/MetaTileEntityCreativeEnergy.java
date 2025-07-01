@@ -169,7 +169,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
                             }
                             return true;
                         })
-                        .overlay(IKey.str("-")))
+                        .overlay(IKey.str("-"))
+                        .addTooltipLine(IKey.lang("gregtech.creative.energy.amps_minus")))
                 .child(new TextFieldWidget()
                         .pos(31, 93)
                         .size(114, 16)
@@ -187,7 +188,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
                             }
                             return true;
                         })
-                        .overlay(IKey.str("+")))
+                        .overlay(IKey.str("+"))
+                        .addTooltipLine(IKey.lang("gregtech.creative.energy.amps_plus")))
                 .child(IKey
                         .lang("gregtech.creative.energy.io",
                                 () -> new Object[] { TextFormattingUtil.formatNumbers(lastEnergyIOPerSec) })
