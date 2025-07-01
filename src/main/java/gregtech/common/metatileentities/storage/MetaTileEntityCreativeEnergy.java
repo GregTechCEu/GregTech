@@ -120,7 +120,10 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
             setTier = val;
             voltage = GTValues.V[setTier];
         });
-        LongSyncValue voltageSync = SyncHandlers.longNumber(() -> voltage, val -> voltage = val);
+        LongSyncValue voltageSync = SyncHandlers.longNumber(() -> voltage, val -> {
+            voltage = val;
+            setTier = GTUtility.getTierByVoltage(voltage);
+        });
         LongSyncValue ampSync = SyncHandlers.longNumber(() -> amps, val -> amps = val);
         BooleanSyncValue activeSync = SyncHandlers.bool(() -> active, this::setActive);
         BooleanSyncValue sourceSync = SyncHandlers.bool(() -> source, val -> {
