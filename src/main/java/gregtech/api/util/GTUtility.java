@@ -3,6 +3,8 @@ package gregtech.api.util;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.GTFluid;
@@ -45,6 +47,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -1022,5 +1026,55 @@ public class GTUtility {
             return null;
         }
         return map.get(key.toWildcard());
+    }
+
+    /**
+     * Check if an {@link ItemStack} is chargeable.
+     * 
+     * @param stack       the stack to check
+     * @param tier        if the item is a GT energy item, the minimum tier it has to be
+     * @param checkCharge whether to check if it is fully charged or not
+     * @return if the stack is electric and meets the supplied conditions
+     */
+    public static boolean isItemChargeable(@NotNull ItemStack stack, int tier, boolean checkCharge) {
+        IElectricItem euItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (euItem != null) {
+            return euItem.chargeable() && euItem.getCharge() < euItem.getMaxCharge() && euItem.getTier() <= tier;
+        }
+
+        IEnergyStorage rfItem = stack.getCapability(CapabilityEnergy.ENERGY, null);
+        if (rfItem != null) {
+            return rfItem.canReceive() && rfItem.getEnergyStored() < rfItem.getMaxEnergyStored();
+        }
+
+        return false;
+    }
+
+    /**
+     * See {@link #isItemChargeable(ItemStack, int, boolean)}
+     */
+    public static boolean isItemChargeable(@NotNull ItemStack stack) {
+        return isItemChargeable(stack, GTValues.MAX_TRUE, true);
+    }
+
+    /**
+     * Get the level of charge from 0 to 1 of an item
+     * 
+     * @return 0 if the supplied item is not electric
+     */
+    public static float itemChargeLevel(@NotNull ItemStack stack) {
+        if (stack.isEmpty()) return 0.0f;
+
+        IElectricItem euItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (euItem != null) {
+            return (float) euItem.getCharge() / euItem.getMaxCharge();
+        }
+
+        IEnergyStorage rfItem = stack.getCapability(CapabilityEnergy.ENERGY, null);
+        if (rfItem != null) {
+            return (float) rfItem.getEnergyStored() / rfItem.getMaxEnergyStored();
+        }
+
+        return 0.0f;
     }
 }
