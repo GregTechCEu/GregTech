@@ -129,9 +129,9 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
         BooleanSyncValue sourceSync = SyncHandlers.bool(() -> source, val -> {
             source = val;
             if (source) {
-                voltage = 0;
-                amps = 0;
-                setTier = 0;
+                voltage = GTValues.V[GTValues.ULV];
+                amps = 1;
+                setTier = GTValues.ULV;
             } else {
                 voltage = GTValues.V[MAX];
                 amps = Integer.MAX_VALUE;
