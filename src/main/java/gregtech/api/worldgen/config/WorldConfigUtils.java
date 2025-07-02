@@ -5,6 +5,8 @@ import gregtech.api.util.GTUtility;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldProviderEnd;
+import net.minecraft.world.WorldProviderHell;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
@@ -16,11 +18,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class WorldConfigUtils {
 
@@ -35,13 +40,22 @@ public class WorldConfigUtils {
                 allPredicates.add(WorldProvider::isSurfaceWorld);
                 continue;
             } else if (stringValue.equals("is_nether")) {
-                allPredicates.add(wp -> wp.isNether() || wp.getDimensionType() == DimensionType.NETHER);
+                allPredicates.add(wp -> wp instanceof WorldProviderHell);
+                continue;
+            }else if (stringValue.equals("is_end")) {
+                allPredicates.add(wp -> wp instanceof WorldProviderEnd);
                 continue;
             }
             Function<WorldProvider, String> stringSupplier = null;
             if (stringValue.startsWith("dimension_id:")) {
                 String filterValue = stringValue.substring(13);
-                if (filterValue.indexOf(':') == -1) {
+                if (filterValue.contains(",")) {
+                    Set<Integer> dimensionIds = Arrays.stream(filterValue.split(","))
+                            .map(String::trim)
+                            .map(Integer::parseInt)
+                            .collect(Collectors.toSet());
+                    allPredicates.add(provider -> dimensionIds.contains(provider.getDimension()));
+                } else if (filterValue.indexOf(':') == -1) {
                     int dimensionId = Integer.parseInt(filterValue);
                     allPredicates.add(provider -> provider.getDimension() == dimensionId);
                 } else {
