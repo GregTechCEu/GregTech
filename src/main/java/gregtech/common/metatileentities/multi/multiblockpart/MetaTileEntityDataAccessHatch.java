@@ -67,7 +67,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     public MetaTileEntityDataAccessHatch(ResourceLocation metaTileEntityId, int tier, boolean isCreative) {
         super(metaTileEntityId, tier, false);
         this.isCreative = isCreative;
-        this.recipes = isCreative ? Collections.emptySet() : new ObjectOpenHashSet<>();
+        this.recipes = isCreative ? Collections.emptySet() : new ObjectOpenHashSet<>(importItems.getSlots());
         rebuildData(getController() instanceof MetaTileEntityDataBank);
     }
 
@@ -136,6 +136,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
                         tooltip.addLine(IKey.lang("gregtech.machine.data_access_hatch.no_recipes"));
                     } else {
                         tooltip.addLine(IKey.lang("gregtech.machine.data_access_hatch.recipes"));
+                        tooltip.spaceLine(2);
                     }
 
                     Set<ItemStack> itemsAdded = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAll());
