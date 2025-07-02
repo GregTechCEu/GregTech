@@ -33,17 +33,22 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.GuiTextures;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.DoubleValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.LongSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
@@ -118,12 +123,13 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        ModularPanel panel = GTGuis.createPanel(this, 176, 166);
+        ModularPanel panel = GTGuis.createPanel(this, 176, 140);
 
         IntSyncValue tierSync = SyncHandlers.intNumber(() -> setTier, val -> {
             setTier = val;
             voltage = GTValues.V[setTier];
         });
+        panelSyncManager.syncValue("tier", 0, tierSync);
         LongSyncValue voltageSync = SyncHandlers.longNumber(() -> voltage, val -> {
             voltage = val;
             setTier = GTUtility.getTierByVoltage(voltage);
@@ -147,15 +153,26 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
                 .margin(7)
                 .crossAxisAlignment(Alignment.CrossAxis.START)
                 .childPadding(4)
-                .child(new CycleButtonWidget()
-                        .size(30, 20)
-                        .length(GTValues.V.length)
-                        .value(tierSync)
-                        .overlay(IKey.dynamic(() -> GTValues.VNF[tierSync.getIntValue()])))
+                .child(new SliderWidget()
+                        .widthRel(1.0f)
+                        .sliderWidth(30)
+                        .bounds(0, GTValues.V.length - 1)
+                        .stopper(1)
+                        .value(new DoubleValue.Dynamic(tierSync::getIntValue, val -> tierSync.setIntValue((int) val)))
+                        .background(new Rectangle()
+                                .setColor(Color.GREY.darker(1))
+                                .asIcon()
+                                .margin(8, 0)
+                                .height(4))
+                        .stopperTexture(GuiTextures.BUTTON_CLEAN.asIcon()
+                                .size(2, 8))
+                        .sliderTexture(IDrawable.of(GuiTextures.BUTTON_CLEAN,
+                                IKey.dynamic(() -> GTValues.VNF[tierSync.getIntValue()]))))
                 .child(IKey.lang("gregtech.creative.energy.voltage")
                         .asWidget())
                 .child(new TextFieldWidget()
-                        .size(152, 16)
+                        .widthRel(1.0f)
+                        .height(16)
                         .value(voltageSync)
                         .setNumbersLong(() -> 0L, () -> Long.MAX_VALUE)
                         .setMaxLength(19)
@@ -196,7 +213,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
                                 .overlay(IKey.str("+"))
                                 .addTooltipLine(IKey.lang("gregtech.creative.energy.amps_plus"))))
                 .child(IKey.lang("gregtech.creative.energy.io",
-                                () -> new Object[] { TextFormattingUtil.formatNumbers(lastEnergyIOPerSec) })
+                        () -> new Object[] { TextFormattingUtil.formatNumbers(lastEnergyIOPerSec) })
                         .asWidget())
                 .child(Flow.row()
                         .coverChildrenHeight()
