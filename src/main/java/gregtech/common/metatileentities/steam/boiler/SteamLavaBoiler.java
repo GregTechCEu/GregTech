@@ -130,7 +130,7 @@ public class SteamLavaBoiler extends SteamBoiler {
         return super.buildUI(guiData, guiSyncManager)
                 .child(new GTFluidSlot()
                         .syncHandler(GTFluidSlot.sync(fuelFluidTank)
-                                .showAmount(true))
+                                .showAmountOnSlot(true))
                         .pos(119, 26)
                         .size(10, 54)
                         .overlay(isHighPressure ?
