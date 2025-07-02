@@ -546,6 +546,20 @@ public class MixerRecipes {
                 .output(dust, UraniumTriplatinum, 4)
                 .buildAndRegister();
 
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
+                .input(dust, Uranium235)
+                .input(dust, Platinum, 3)
+                .circuitMeta(4)
+                .output(dust, UraniumTriplatinum, 4)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
+                .input(dust, Uranium238)
+                .input(dust, Platinum, 3)
+                .circuitMeta(4)
+                .output(dust, UraniumTriplatinum, 4)
+                .buildAndRegister();
+
         MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[IV])
                 .input(dust, Samarium)
                 .input(dust, Iron)

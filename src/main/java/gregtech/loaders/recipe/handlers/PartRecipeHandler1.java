@@ -120,7 +120,7 @@ public class PartRecipeHandler1 {
         if (material.hasFluid()) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(SHAPE_MOLD_TURBINE_BLADE)
-                    .fluidInputs(material.getFluid(L * 6))
+                    .fluidInputs(material.getFluid(L * 10))
                     .output(OrePrefix.turbineBlade, material)
                     .EUt(Math.max(VA[MV], 6 * getVoltageMultiplier(material)))
                     .duration(20 * SECOND)
@@ -129,7 +129,7 @@ public class PartRecipeHandler1 {
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .notConsumable(SHAPE_EXTRUDER_TURBINE_BLADE)
-                .input(OrePrefix.ingot, material, 4)
+                .input(OrePrefix.ingot, material, 10)
                 .output(OrePrefix.turbineBlade, material)
                 .EUt(VA[MV])
                 .duration(20 * SECOND)

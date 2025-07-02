@@ -10,6 +10,7 @@ import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.filler.BlockFiller;
 import gregtech.api.worldgen.filler.FillerEntry;
 import gregtech.api.worldgen.filler.LayeredBlockFiller;
+import gregtech.api.worldgen.populator.FluidBallPopulator;
 import gregtech.api.worldgen.populator.FluidSpringPopulator;
 import gregtech.api.worldgen.populator.IVeinPopulator;
 import gregtech.api.worldgen.populator.SurfaceBlockPopulator;
@@ -142,7 +143,7 @@ public class GTOreInfo implements IRecipeWrapper {
         blockFiller.getAllPossibleStates().forEach(e -> getPossibleStates(e, containedStates));
 
         // Check to see if we are dealing with a fluid generation case, before transforming states.
-        if (veinPopulator instanceof FluidSpringPopulator) {
+        if (veinPopulator instanceof FluidSpringPopulator || veinPopulator instanceof FluidBallPopulator) {
             for (IBlockState state : containedStates) {
                 Block temp = state.getBlock();
                 if (temp instanceof IFluidBlock) {
@@ -194,7 +195,7 @@ public class GTOreInfo implements IRecipeWrapper {
         int entries = itemList.size();
 
         // Return early for Fluid Generation.
-        if (veinPopulator instanceof FluidSpringPopulator) {
+        if (veinPopulator instanceof FluidSpringPopulator || veinPopulator instanceof FluidBallPopulator ) {
             groupedItems.add(new ArrayList<>(itemList));
             return groupedItems;
         }
@@ -244,6 +245,16 @@ public class GTOreInfo implements IRecipeWrapper {
         // Fluid generation support
         else if (veinPopulator instanceof FluidSpringPopulator) {
             state = ((FluidSpringPopulator) veinPopulator).getFluidState();
+            Block temp = state.getBlock();
+            if (temp instanceof IFluidBlock) {
+                Fluid fluid = ((IFluidBlock) temp).getFluid();
+                fStack = new FluidStack(fluid, 1000);
+                stack = FluidUtil.getFilledBucket(fStack);
+                return stack;
+            }
+        }
+        else if (veinPopulator instanceof FluidBallPopulator) {
+            state = ((FluidBallPopulator) veinPopulator).getFluidState();
             Block temp = state.getBlock();
             if (temp instanceof IFluidBlock) {
                 Fluid fluid = ((IFluidBlock) temp).getFluid();

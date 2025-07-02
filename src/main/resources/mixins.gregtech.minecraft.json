@@ -17,6 +17,7 @@
   ],
   "client": [
     "BlockMixin",
+    "BlockFluidBaseMixin",
     "EntityRendererMixin",
     "LayerArmorBaseMixin",
     "LayerCustomHeadMixin",
