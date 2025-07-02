@@ -13,10 +13,15 @@ import gregtech.common.blocks.BlockFrame;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public final class GTStringUtils {
 
@@ -78,6 +83,29 @@ public final class GTStringUtils {
     @NotNull
     public static String itemStackToString(@NotNull ItemStack stack) {
         return stack.getCount() + "x" + stack.getItem().getTranslationKey(stack) + "@" + stack.getItemDamage();
+    }
+
+    /**
+     * Re-implementation of {@link net.minecraft.client.gui.GuiScreen#getItemToolTip(ItemStack)} that does not require
+     * an instance of {@link net.minecraft.client.gui.GuiScreen}.
+     * 
+     * @param stack the stack to get the tooltip of
+     * @return the tooltip of the stack, with formatting
+     */
+    @NotNull
+    public static List<String> itemStackTooltip(@NotNull ItemStack stack) {
+        Minecraft mc = Minecraft.getMinecraft();
+        ITooltipFlag flag = mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED :
+                ITooltipFlag.TooltipFlags.NORMAL;
+        List<String> tooltip = stack.getTooltip(mc.player, flag);
+        for (int i = 0; i < tooltip.size(); ++i) {
+            if (i == 0) {
+                tooltip.set(i, stack.getItem().getForgeRarity(stack).getColor() + tooltip.get(i));
+            } else {
+                tooltip.set(i, TextFormatting.GRAY + tooltip.get(i));
+            }
+        }
+        return tooltip;
     }
 
     /**
