@@ -5407,6 +5407,8 @@ gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
 gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Items
 gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
 gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
+gregtech.machine.data_access_hatch.recipes=Providing recipes:
+gregtech.machine.data_access_hatch.no_recipes=Providing no recipes
 
 gregtech.machine.data_access_hatch.optical.receiver.name=Optical Data Reception Hatch
 gregtech.machine.data_access_hatch.optical.receiver.tooltip=Research Data Input for Multiblocks
