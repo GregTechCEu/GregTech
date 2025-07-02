@@ -175,8 +175,8 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
                                                 }))))
                         .child(recipeLogo))
                 .child(SlotGroupWidget.playerInventory()
-                        .left(7)
-                        .bottom(7));
+                        .bottom(7)
+                        .left(7));
     }
 
     protected int getInventorySize() {

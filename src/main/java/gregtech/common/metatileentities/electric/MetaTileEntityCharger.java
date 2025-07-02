@@ -1,5 +1,16 @@
 package gregtech.common.metatileentities.electric;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+
+import com.cleanroommc.modularui.widgets.layout.Grid;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
@@ -11,6 +22,8 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.resources.I18n;
@@ -80,6 +93,35 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
     protected void initializeInventory() {
         super.initializeInventory();
         this.itemInventory = importItems;
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+        int rowSize = (int) Math.sqrt(inventorySize);
+        panelSyncManager.registerSlotGroup("slots", rowSize);
+
+        return GTGuis.createPanel(this, 176, 18 + 18 * rowSize + 94)
+                .child(IKey.lang(getMetaFullName())
+                        .asWidget()
+                        .pos(5, 5))
+                .child(new Grid()
+                        .top(18)
+                        .height(rowSize * 18)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .alignX(0.5f)
+                        .mapTo(rowSize, rowSize * rowSize, index -> new ItemSlot()
+                                .slot(SyncHandlers.itemSlot(importItems, index)
+                                        .slotGroup("slots"))
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)))
+                .child(SlotGroupWidget.playerInventory()
+                        .bottom(7)
+                        .left(7));
     }
 
     @Override
