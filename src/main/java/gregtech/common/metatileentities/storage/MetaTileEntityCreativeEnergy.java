@@ -82,7 +82,6 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
         super(metaTileEntityId);
     }
 
-
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityCreativeEnergy(metaTileEntityId);
