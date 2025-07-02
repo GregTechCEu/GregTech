@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 
+import dev.redstudio.alfheim.lighting.LightingEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -115,5 +116,10 @@ public class DummyWorld extends World {
     @Method(modid = Mods.Names.ALFHEIM)
     public int alfheim$getLight(BlockPos pos, boolean checkNeighbors) {
         return 15;
+    }
+
+    @Method(modid = Mods.Names.ALFHEIM)
+    public LightingEngine getAlfheim$lightingEngine() {
+        return null;
     }
 }
