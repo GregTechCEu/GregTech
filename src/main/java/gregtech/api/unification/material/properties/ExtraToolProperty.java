@@ -28,11 +28,11 @@ public class ExtraToolProperty implements IMaterialProperty {
         }
 
         // It does not make much sense to set these overrides:
-        public void setShouldIgnoreCraftingTools(boolean ignore) {
+        public OverrideToolProperty setShouldIgnoreCraftingTools(boolean ignore) {
             throw new UnsupportedOperationException();
         }
 
-        public void setUnbreakable(boolean isUnbreakable) {
+        public OverrideToolProperty setUnbreakable(boolean isUnbreakable) {
             throw new UnsupportedOperationException();
         }
 

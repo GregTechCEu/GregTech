@@ -16,8 +16,8 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
     /**
      * @return a builder object for producing a custom ItemStackHashStrategy.
      */
-    static ItemStackHashStrategyBuilder builder() {
-        return new ItemStackHashStrategyBuilder();
+    static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -56,7 +56,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
     /**
      * Builder pattern class for generating customized ItemStackHashStrategy
      */
-    class ItemStackHashStrategyBuilder {
+    class Builder {
 
         private boolean item, count, damage, tag, meta;
 
@@ -66,7 +66,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
          * @param choice {@code true} to consider this property, {@code false} to ignore it.
          * @return {@code this}
          */
-        public ItemStackHashStrategyBuilder compareItem(boolean choice) {
+        public Builder compareItem(boolean choice) {
             item = choice;
             return this;
         }
@@ -77,7 +77,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
          * @param choice {@code true} to consider this property, {@code false} to ignore it.
          * @return {@code this}
          */
-        public ItemStackHashStrategyBuilder compareCount(boolean choice) {
+        public Builder compareCount(boolean choice) {
             count = choice;
             return this;
         }
@@ -88,7 +88,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
          * @param choice {@code true} to consider this property, {@code false} to ignore it.
          * @return {@code this}
          */
-        public ItemStackHashStrategyBuilder compareDamage(boolean choice) {
+        public Builder compareDamage(boolean choice) {
             damage = choice;
             return this;
         }
@@ -99,7 +99,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
          * @param choice {@code true} to consider this property, {@code false} to ignore it.
          * @return {@code this}
          */
-        public ItemStackHashStrategyBuilder compareMetadata(boolean choice) {
+        public Builder compareMetadata(boolean choice) {
             meta = choice;
             return this;
         }
@@ -110,7 +110,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
          * @param choice {@code true} to consider this property, {@code false} to ignore it.
          * @return {@code this}
          */
-        public ItemStackHashStrategyBuilder compareTag(boolean choice) {
+        public Builder compareTag(boolean choice) {
             tag = choice;
             return this;
         }

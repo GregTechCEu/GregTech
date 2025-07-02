@@ -26,11 +26,7 @@ public class SecondDegreeMaterials {
                 .components(SiliconDioxide, 1)
                 .build();
 
-        Perlite = new Material.Builder(2001, gregtechId("perlite"))
-                .dust(1)
-                .color(0x1E141E)
-                .components(Obsidian, 2, Water, 1)
-                .build();
+        // FREE ID 2001
 
         Borax = new Material.Builder(2002, gregtechId("borax"))
                 .dust(1)
@@ -88,9 +84,10 @@ public class SecondDegreeMaterials {
         Apatite = new Material.Builder(2010, gregtechId("apatite"))
                 .gem(1).ore(2, 2)
                 .color(0xC8C8FF).iconSet(DIAMOND)
-                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
-                .components(Calcium, 5, Phosphate, 3, Chlorine, 1)
-                .build();
+                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_BOLT_SCREW)
+                .components(Calcium, 5, Phosphorus, 3, Oxygen, 12, Chlorine, 1)
+                .build()
+                .setFormula("Ca5(PO4)3Cl", true);
 
         BlackSteel = new Material.Builder(2011, gregtechId("black_steel"))
                 .ingot().fluid()
@@ -145,9 +142,10 @@ public class SecondDegreeMaterials {
         TricalciumPhosphate = new Material.Builder(2015, gregtechId("tricalcium_phosphate"))
                 .dust().ore(3, 1)
                 .color(0xFFFF00).iconSet(FLINT)
-                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE, DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Calcium, 3, Phosphate, 2)
-                .build();
+                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE)
+                .components(Calcium, 3, Phosphorus, 2, Oxygen, 8)
+                .build()
+                .setFormula("Ca3(PO4)2", true);
 
         GarnetRed = new Material.Builder(2016, gregtechId("garnet_red"))
                 .gem().ore(4, 1)
@@ -232,8 +230,8 @@ public class SecondDegreeMaterials {
         Monazite = new Material.Builder(2029, gregtechId("monazite"))
                 .gem(1).ore(4, 2, true)
                 .color(0x324632).iconSet(DIAMOND)
-                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
-                .components(RareEarth, 1, Phosphate, 1)
+                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, DECOMPOSITION_BY_CENTRIFUGING)
+                .components(RareEarth, 1, Phosphorus, 1)
                 .build();
 
         Mirabilite = new Material.Builder(2030, gregtechId("mirabilite"))

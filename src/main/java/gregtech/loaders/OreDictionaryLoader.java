@@ -1,13 +1,14 @@
 package gregtech.loaders;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.MetaBlocks;
@@ -41,10 +42,10 @@ public class OreDictionaryLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.BRICK_BLOCK), OrePrefix.block, Materials.Brick);
         OreDictUnifier.registerOre(new ItemStack(Items.CLAY_BALL), OrePrefix.ingot, Materials.Clay);
         OreDictUnifier.registerOre(new ItemStack(Items.FLINT), OrePrefix.gem, Materials.Flint);
-        OreDictUnifier.registerOre(new ItemStack(Blocks.HARDENED_CLAY, 1, W),
-                new ItemMaterialInfo(new MaterialStack(Materials.Clay, M * 4)));
-        OreDictUnifier.registerOre(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, W),
-                new ItemMaterialInfo(new MaterialStack(Materials.Clay, M * 4)));
+        GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(new ItemStack(Blocks.HARDENED_CLAY, 1, W),
+                new RecyclingData(new MaterialStack(Materials.Clay, M * 4)));
+        GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, W),
+                new RecyclingData(new MaterialStack(Materials.Clay, M * 4)));
 
         for (Material material : new Material[] { Materials.Wood, Materials.TreatedWood }) {
             for (ItemStack woodPlateStack : OreDictUnifier.getAll(new UnificationEntry(OrePrefix.plate, material))) {
