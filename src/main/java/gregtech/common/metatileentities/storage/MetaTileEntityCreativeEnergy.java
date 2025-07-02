@@ -41,9 +41,8 @@ import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.DoubleValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.LongSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -125,11 +124,10 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         ModularPanel panel = GTGuis.createPanel(this, 176, 140);
 
-        IntSyncValue tierSync = SyncHandlers.intNumber(() -> setTier, val -> {
-            setTier = val;
+        DoubleSyncValue tierSync = SyncHandlers.doubleNumber(() -> setTier, val -> {
+            setTier = (int) val;
             voltage = GTValues.V[setTier];
         });
-        panelSyncManager.syncValue("tier", 0, tierSync);
         LongSyncValue voltageSync = SyncHandlers.longNumber(() -> voltage, val -> {
             voltage = val;
             setTier = GTUtility.getTierByVoltage(voltage);
@@ -158,7 +156,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
                         .sliderWidth(30)
                         .bounds(0, GTValues.V.length - 1)
                         .stopper(1)
-                        .value(new DoubleValue.Dynamic(tierSync::getIntValue, val -> tierSync.setIntValue((int) val)))
+                        .value(tierSync)
                         .background(new Rectangle()
                                 .setColor(Color.GREY.darker(1))
                                 .asIcon()
@@ -167,7 +165,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
                         .stopperTexture(GuiTextures.BUTTON_CLEAN.asIcon()
                                 .size(2, 8))
                         .sliderTexture(IDrawable.of(GuiTextures.BUTTON_CLEAN,
-                                IKey.dynamic(() -> GTValues.VNF[tierSync.getIntValue()]))))
+                                IKey.dynamic(() -> GTValues.VNF[(int) tierSync.getDoubleValue()]))))
                 .child(IKey.lang("gregtech.creative.energy.voltage")
                         .asWidget())
                 .child(new TextFieldWidget()
