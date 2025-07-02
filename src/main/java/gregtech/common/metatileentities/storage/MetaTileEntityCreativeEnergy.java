@@ -36,6 +36,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.LongSyncValue;
@@ -44,6 +45,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -116,6 +118,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+        ModularPanel panel = GTGuis.createPanel(this, 176, 166);
+
         IntSyncValue tierSync = SyncHandlers.intNumber(() -> setTier, val -> {
             setTier = val;
             voltage = GTValues.V[setTier];
@@ -139,74 +143,76 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
             }
         });
 
-        return GTGuis.createPanel(this, 176, 166)
+        panel.child(Flow.column()
+                .margin(7)
+                .crossAxisAlignment(Alignment.CrossAxis.START)
+                .childPadding(4)
                 .child(new CycleButtonWidget()
-                        .pos(7, 7)
                         .size(30, 20)
                         .length(GTValues.V.length)
                         .value(tierSync)
                         .overlay(IKey.dynamic(() -> GTValues.VNF[tierSync.getIntValue()])))
                 .child(IKey.lang("gregtech.creative.energy.voltage")
-                        .asWidget()
-                        .pos(7, 32))
+                        .asWidget())
                 .child(new TextFieldWidget()
-                        .pos(9, 50)
                         .size(152, 16)
                         .value(voltageSync)
                         .setNumbersLong(() -> 0L, () -> Long.MAX_VALUE)
                         .setMaxLength(19)
                         .background(GTGuiTextures.DISPLAY))
                 .child(IKey.lang("gregtech.creative.energy.amperage")
-                        .asWidget()
-                        .pos(7, 74))
-                .child(new ButtonWidget<>()
-                        .pos(7, 87)
-                        .size(20)
-                        .onMousePressed(mouse -> {
-                            long amps = ampSync.getLongValue();
-                            if (amps > 0) {
-                                ampSync.setLongValue(amps - 1);
-                            }
-                            return true;
-                        })
-                        .overlay(IKey.str("-"))
-                        .addTooltipLine(IKey.lang("gregtech.creative.energy.amps_minus")))
-                .child(new TextFieldWidget()
-                        .pos(31, 93)
-                        .size(114, 16)
-                        .value(ampSync)
-                        .setNumbersLong(() -> 0L, () -> Long.MAX_VALUE)
-                        .setMaxLength(10)
-                        .background(GTGuiTextures.DISPLAY))
-                .child(new ButtonWidget<>()
-                        .pos(149, 87)
-                        .size(20)
-                        .onMousePressed(mouse -> {
-                            long amps = ampSync.getLongValue();
-                            if (amps < Long.MAX_VALUE) {
-                                ampSync.setLongValue(amps + 1);
-                            }
-                            return true;
-                        })
-                        .overlay(IKey.str("+"))
-                        .addTooltipLine(IKey.lang("gregtech.creative.energy.amps_plus")))
-                .child(IKey
-                        .lang("gregtech.creative.energy.io",
+                        .asWidget())
+                .child(Flow.row()
+                        .widthRel(1.0f)
+                        .coverChildrenHeight()
+                        .child(new ButtonWidget<>()
+                                .size(20)
+                                .onMousePressed(mouse -> {
+                                    long amps = ampSync.getLongValue();
+                                    if (amps > 0) {
+                                        ampSync.setLongValue(amps - 1);
+                                    }
+                                    return true;
+                                })
+                                .overlay(IKey.str("-"))
+                                .addTooltipLine(IKey.lang("gregtech.creative.energy.amps_minus")))
+                        .child(new TextFieldWidget()
+                                .height(20)
+                                .expanded()
+                                .margin(4, 0)
+                                .value(ampSync)
+                                .setNumbersLong(() -> 0L, () -> Long.MAX_VALUE)
+                                .setMaxLength(10)
+                                .background(GTGuiTextures.DISPLAY))
+                        .child(new ButtonWidget<>()
+                                .size(20)
+                                .onMousePressed(mouse -> {
+                                    long amps = ampSync.getLongValue();
+                                    if (amps < Long.MAX_VALUE) {
+                                        ampSync.setLongValue(amps + 1);
+                                    }
+                                    return true;
+                                })
+                                .overlay(IKey.str("+"))
+                                .addTooltipLine(IKey.lang("gregtech.creative.energy.amps_plus"))))
+                .child(IKey.lang("gregtech.creative.energy.io",
                                 () -> new Object[] { TextFormattingUtil.formatNumbers(lastEnergyIOPerSec) })
-                        .asWidget()
-                        .pos(7, 110))
-                .child(new ToggleButton()
-                        .pos(7, 139)
-                        .size(77, 20)
-                        .value(activeSync)
-                        .overlay(IKey.lang(() -> activeSync.getBoolValue() ? "gregtech.creative.activity.on" :
-                                "gregtech.creative.activity.off")))
-                .child(new ToggleButton()
-                        .pos(85, 139)
-                        .size(77, 20)
-                        .value(sourceSync)
-                        .overlay(IKey.lang(() -> sourceSync.getBoolValue() ? "gregtech.creative.energy.source" :
-                                "gregtech.creative.energy.sink")));
+                        .asWidget())
+                .child(Flow.row()
+                        .coverChildrenHeight()
+                        .child(new ToggleButton()
+                                .size(77, 20)
+                                .value(activeSync)
+                                .overlay(IKey.lang(() -> activeSync.getBoolValue() ? "gregtech.creative.activity.on" :
+                                        "gregtech.creative.activity.off")))
+                        .child(new ToggleButton()
+                                .size(77, 20)
+                                .align(Alignment.CenterRight)
+                                .value(sourceSync)
+                                .overlay(IKey.lang(() -> sourceSync.getBoolValue() ? "gregtech.creative.energy.source" :
+                                        "gregtech.creative.energy.sink")))));
+
+        return panel;
     }
 
     public void setActive(boolean active) {
