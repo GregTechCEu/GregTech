@@ -23,6 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -77,8 +78,14 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     private long ampsReceived = 0;
     private boolean doExplosion = false;
 
-    public MetaTileEntityCreativeEnergy() {
-        super(GTUtility.gregtechId("infinite_energy"));
+    public MetaTileEntityCreativeEnergy(ResourceLocation metaTileEntityId) {
+        super(metaTileEntityId);
+    }
+
+
+    @Override
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+        return new MetaTileEntityCreativeEnergy(metaTileEntityId);
     }
 
     @Override
@@ -95,11 +102,6 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(Textures.VOLTAGE_CASINGS[this.setTier].getParticleSprite(), this.getPaintingColorForRendering());
-    }
-
-    @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityCreativeEnergy();
     }
 
     @Override
