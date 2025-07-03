@@ -935,7 +935,7 @@ item.gt.tool.harvest_level.1=§7Камень
 item.gt.tool.harvest_level.2=§aЖелезо
 item.gt.tool.harvest_level.3=§bАлмаз
 item.gt.tool.harvest_level.4=§dУльтимет
-item.gt.tool.harvest_level.5=§9Дураний
+item.gt.tool.harvest_level.5=§9Дюраний
 item.gt.tool.harvest_level.6=§cНейтроний
 item.gt.tool.tooltip.repair_info=Зажмите SHIFT для Информации о Ремонте
 item.gt.tool.tooltip.repair_material=Чинится: §a%s
@@ -1400,7 +1400,7 @@ gregtech.material.naquadah_enriched=Обогащенная наквада
 gregtech.material.naquadria=Наквадрия
 gregtech.material.neutronium=Нейтроний
 gregtech.material.tritanium=Тританий
-gregtech.material.duranium=Дураний
+gregtech.material.duranium=Дюраний
 gregtech.material.trinium=Триниум
 
 
@@ -1580,7 +1580,7 @@ gregtech.material.uranium_triplatinum=Триплатина уран
 gregtech.material.samarium_iron_arsenic_oxide=Оксид Самария Железа Мышьяка
 gregtech.material.indium_tin_barium_titanium_cuprate=Купрат Индия Олова Бария Титана
 gregtech.material.uranium_rhodium_dinaquadide=Уран родий динаквада
-gregtech.material.enriched_naquadah_trinium_europium_duranide=Обогащенный наквада триний европий дураний
+gregtech.material.enriched_naquadah_trinium_europium_duranide=Обогащенный наквада триний европий дюраний
 gregtech.material.ruthenium_trinium_americium_neutronate=Нейтронат рутения триния америция
 gregtech.material.platinum_raw=Необработанная платина
 gregtech.material.inert_metal_mixture=Смесь инертных металлов
