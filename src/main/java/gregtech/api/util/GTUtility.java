@@ -1077,4 +1077,31 @@ public class GTUtility {
 
         return 0.0f;
     }
+
+    /**
+     * Lerp between two ARGB colors
+     * 
+     * @param start    the start point of the lerp
+     * @param end      the end point of the lerp
+     * @param position the position of the lerp. Must be between 0 and 1.
+     * @return the lerped color value
+     */
+    public static int argbLerp(int start, int end, float position) {
+        int aStart = (start >> 24 & 0xFF);
+        int rStart = (start >> 16 & 0xFF);
+        int gStart = (start >> 8 & 0xFF);
+        int bStart = (start & 0xFF);
+
+        int aEnd = (end >> 24 & 0xFF);
+        int rEnd = (end >> 16 & 0xFF);
+        int gEnd = (end >> 8 & 0xFF);
+        int bEnd = (end & 0xFF);
+
+        int aFinal = (int) (aStart + (aEnd - aStart) * position);
+        int rFinal = (int) (rStart + (rEnd - rStart) * position);
+        int gFinal = (int) (gStart + (gEnd - gStart) * position);
+        int bFinal = (int) (bStart + (bEnd - bStart) * position);
+
+        return (aFinal << 24) | (rFinal << 16) | (gFinal << 8) | bFinal;
+    }
 }

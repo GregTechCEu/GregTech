@@ -1,5 +1,6 @@
 package gregtech.api.mui.drawable;
 
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.FloatSupplier;
 import gregtech.client.utils.RenderUtil;
 
@@ -17,28 +18,23 @@ public class BatteryIndicatorDrawable implements IDrawable {
 
     @NotNull
     private final FloatSupplier chargeLevelProvider;
-    private final float reallyLowCharge;
     private final float lowCharge;
 
-    public BatteryIndicatorDrawable(@NotNull FloatSupplier chargeLevelProvider, float reallyLowCharge,
-                                    float lowCharge) {
+    public BatteryIndicatorDrawable(@NotNull FloatSupplier chargeLevelProvider, float lowCharge) {
         this.chargeLevelProvider = chargeLevelProvider;
-        this.reallyLowCharge = reallyLowCharge;
         this.lowCharge = lowCharge;
     }
 
     @Override
     public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
         float charge = chargeLevelProvider.getFloat();
-        if (charge >= 0) {
+        if (charge >= 0.0f && charge <= 1.0f) {
             float newHeight = height * charge;
             int color;
-            if (charge < reallyLowCharge) {
-                color = red;
-            } else if (charge < lowCharge) {
-                color = yellow;
+            if (charge < lowCharge) {
+                color = GTUtility.argbLerp(red, yellow, charge / lowCharge);
             } else {
-                color = green;
+                color = GTUtility.argbLerp(yellow, green, (charge - lowCharge) / (1.0f - lowCharge));
             }
             RenderUtil.renderRect(1, (height - newHeight) + 1, width - 2, newHeight - 2, 1.0f, color);
         }

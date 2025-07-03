@@ -106,7 +106,7 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY,
                                         new BatteryIndicatorDrawable(
                                                 () -> GTUtility.itemChargeLevel(importItems.getStackInSlot(index)),
-                                                0.35f, 0.85f))))
+                                                0.85f))))
                 .child(SlotGroupWidget.playerInventory()
                         .bottom(7)
                         .left(7));
