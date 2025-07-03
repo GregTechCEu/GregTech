@@ -76,7 +76,8 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
                 return false;
             }
         }
-        return false;
+        // assume we can send data regardless
+        return true;
     }
 
     @Override
