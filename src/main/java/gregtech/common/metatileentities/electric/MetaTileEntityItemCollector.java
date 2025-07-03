@@ -1,25 +1,21 @@
 package gregtech.common.metatileentities.electric;
 
 import gregtech.api.GTValues;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.SimpleTextWidget;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.KeyUtil;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -28,6 +24,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -37,12 +34,27 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_ITEMS;
 
 public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
 
@@ -55,6 +67,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     private AxisAlignedBB areaBoundingBox;
     private BlockPos areaCenterPos;
     private boolean isWorking;
+    private boolean autoOutput = true;
     private final ItemFilterContainer itemFilter;
 
     public MetaTileEntityItemCollector(ResourceLocation metaTileEntityId, int tier, int maxItemSuckingRange) {
@@ -71,12 +84,16 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         SimpleOverlayRenderer renderer = isWorking ? Textures.BLOWER_ACTIVE_OVERLAY : Textures.BLOWER_OVERLAY;
         renderer.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         Textures.AIR_VENT_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
         Textures.PIPE_OUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        if (autoOutput) {
+            Textures.ITEM_OUTPUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        }
     }
 
     protected int getEnergyConsumedPerTick() {
@@ -84,22 +101,27 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isWorking);
+        buf.writeBoolean(autoOutput);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isWorking = buf.readBoolean();
+        this.autoOutput = buf.readBoolean();
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == IS_WORKING) {
             this.isWorking = buf.readBoolean();
+            scheduleRenderUpdate();
+        } else if (dataId == UPDATE_AUTO_OUTPUT_ITEMS) {
+            this.autoOutput = buf.readBoolean();
             scheduleRenderUpdate();
         }
     }
@@ -129,6 +151,10 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
                 this.areaBoundingBox = new AxisAlignedBB(areaCenterPos).grow(itemSuckingRange, 1.0, itemSuckingRange);
             }
             moveItemsInEffectRange();
+        }
+
+        if (autoOutput && getOffsetTimer() % 5 == 0) {
+            pushItemsIntoNearbyHandlers(getFrontFacing());
         }
 
         if (isWorkingNow != isWorking) {
@@ -165,9 +191,6 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
                     entityItem.setItem(remainder);
                 }
             }
-        }
-        if (getOffsetTimer() % 5 == 0) {
-            pushItemsIntoNearbyHandlers(getFrontFacing());
         }
     }
 
@@ -211,6 +234,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
         super.writeToNBT(data);
         data.setInteger("CollectRange", itemSuckingRange);
         data.setTag("Filter", itemFilter.serializeNBT());
+        data.setBoolean("AutoOutput", autoOutput);
         return data;
     }
 
@@ -219,6 +243,9 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
         super.readFromNBT(data);
         this.itemSuckingRange = data.getInteger("CollectRange");
         this.itemFilter.deserializeNBT(data.getCompoundTag("Filter"));
+        if (data.hasKey("AutoOutput")) {
+            this.autoOutput = data.getBoolean("AutoOutput");
+        }
     }
 
     protected void setItemSuckingRange(int itemSuckingRange) {
@@ -227,33 +254,100 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
         markDirty();
     }
 
-    protected void adjustSuckingRange(int amount) {
-        setItemSuckingRange(MathHelper.clamp(itemSuckingRange + amount, 1, maxItemSuckingRange));
+    public int getItemSuckingRange() {
+        return itemSuckingRange;
+    }
+
+    protected void setAutoOutput(boolean autoOutput) {
+        this.autoOutput = autoOutput;
+        markDirty();
+        if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_AUTO_OUTPUT_ITEMS, buf -> buf.writeBoolean(autoOutput));
+        }
+    }
+
+    public boolean autoOutputs() {
+        return autoOutput;
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         int rowSize = (int) Math.sqrt(exportItems.getSlots());
-        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                45 + rowSize * 18 + 105 + 82)
-                .label(10, 5, getMetaFullName());
 
-        builder.widget(new ClickButtonWidget(10, 20, 20, 20, "-1", data -> adjustSuckingRange(-1)));
-        builder.widget(new ClickButtonWidget(146, 20, 20, 20, "+1", data -> adjustSuckingRange(+1)));
-        builder.widget(new ImageWidget(30, 20, 116, 20, GuiTextures.DISPLAY));
-        builder.widget(new SimpleTextWidget(88, 30, "gregtech.machine.item_collector.gui.collect_range", 0xFFFFFF,
-                () -> Integer.toString(itemSuckingRange)));
+        IntSyncValue rangeSync = SyncHandlers.intNumber(this::getItemSuckingRange, this::setItemSuckingRange);
+        BooleanSyncValue autoOutputSync = SyncHandlers.bool(this::autoOutputs, this::setAutoOutput);
 
-        for (int y = 0; y < rowSize; y++) {
-            for (int x = 0; x < rowSize; x++) {
-                int index = y * rowSize + x;
-                builder.widget(new SlotWidget(exportItems, index, 89 - rowSize * 9 + x * 18, 45 + y * 18, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT));
-            }
-        }
-
-        this.itemFilter.initUI(45 + rowSize * 18 + 5, builder::widget);
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 45 + rowSize * 18 + 105);
-        return builder.build(getHolder(), entityPlayer);
+        return GTGuis.createPanel(this, 176, 45 + rowSize * 18 + 35 + 82)
+                .child(Flow.column()
+                        .margin(5)
+                        .coverChildrenHeight()
+                        .child(IKey.lang(getMetaFullName())
+                                .asWidget()
+                                .alignX(0.0f))
+                        .child(Flow.row()
+                                .widthRel(1.0f)
+                                .coverChildrenHeight()
+                                .margin(0, 4)
+                                .child(new ButtonWidget<>()
+                                        .marginRight(5)
+                                        .size(20)
+                                        .onMousePressed(mouse -> {
+                                            int range = rangeSync.getIntValue();
+                                            if (range > 1) {
+                                                rangeSync.setIntValue(range - 1);
+                                            }
+                                            return true;
+                                        })
+                                        .overlay(IKey.str("-1")))
+                                .child(KeyUtil.lang(TextFormatting.WHITE,
+                                        "gregtech.machine.item_collector.gui.collect_range",
+                                        () -> new Object[] {
+                                                TextFormattingUtil.formatNumbers(rangeSync.getIntValue()) })
+                                        .alignment(Alignment.Center)
+                                        .asWidget()
+                                        .height(20)
+                                        .expanded()
+                                        .background(GTGuiTextures.DISPLAY))
+                                .child(new ButtonWidget<>()
+                                        .marginLeft(5)
+                                        .size(20)
+                                        .onMousePressed(mouse -> {
+                                            int range = rangeSync.getIntValue();
+                                            if (range < maxItemSuckingRange) {
+                                                rangeSync.setIntValue(range + 1);
+                                            }
+                                            return true;
+                                        })
+                                        .overlay(IKey.str("-1"))))
+                        .child(itemFilter.initUI(guiData, panelSyncManager))
+                        .child(Flow.row()
+                                .widthRel(1.0f)
+                                .marginTop(4)
+                                .coverChildrenHeight()
+                                .child(new Grid()
+                                        .alignX(0.5f)
+                                        .height(rowSize * 18)
+                                        .minElementMargin(0, 0)
+                                        .minColWidth(18).minRowHeight(18)
+                                        .mapTo(rowSize, rowSize * rowSize, index -> new ItemSlot()
+                                                .slot(SyncHandlers.itemSlot(exportItems, index)
+                                                        .accessibility(false, true))))
+                                .child(new ToggleButton()
+                                        .right(2)
+                                        .bottom(0)
+                                        .value(autoOutputSync)
+                                        .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
+                                        .tooltipAutoUpdate(true)
+                                        .tooltipBuilder(tooltip -> tooltip.addLine(autoOutputSync.getBoolValue() ?
+                                                IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
+                                                IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled"))))))
+                .child(SlotGroupWidget.playerInventory()
+                        .bottom(7)
+                        .left(7));
     }
 }

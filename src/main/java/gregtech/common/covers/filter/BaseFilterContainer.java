@@ -12,7 +12,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.network.NetworkUtils;
@@ -211,7 +210,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     /** Uses Cleanroom MUI */
-    public IWidget initUI(GuiData data, PanelSyncManager manager) {
+    public Flow initUI(GuiData data, PanelSyncManager manager) {
         IPanelHandler panel = manager.panel("filter_panel", (syncManager, syncHandler) -> {
             var filter = hasFilter() ? getFilter() : BaseFilter.ERROR_FILTER;
             filter.setMaxTransferSize(getMaxTransferSize());
