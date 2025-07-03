@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -260,9 +261,9 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
 
     protected void setAutoOutput(boolean autoOutput) {
         this.autoOutput = autoOutput;
-        markDirty();
         if (!getWorld().isRemote) {
             writeCustomData(UPDATE_AUTO_OUTPUT_ITEMS, buf -> buf.writeBoolean(autoOutput));
+            markDirty();
         }
     }
 
