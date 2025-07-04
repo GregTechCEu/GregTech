@@ -10,7 +10,6 @@ import net.minecraftforge.oredict.OreDictionary;
 import java.time.LocalDate;
 import java.util.Random;
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 import static net.minecraft.util.text.TextFormatting.*;
 
