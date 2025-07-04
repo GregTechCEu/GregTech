@@ -21,6 +21,8 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -54,11 +56,21 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.ToggleButton;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -478,6 +490,90 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         clearInventory(itemBuffer, chargerInventory);
     }
 
+    @Override
+    public boolean usesMui2() {
+        RecipeMap<?> map = getRecipeMap();
+        return map != null && map.getRecipeMapUI().usesMui2();
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        RecipeMap<?> workableRecipeMap = Objects.requireNonNull(workable.getRecipeMap(), "recipe map is null");
+        int yOffset = 0;
+        if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
+                workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
+            yOffset = FONT_HEIGHT;
+        }
+
+        ModularPanel panel = GTGuis.createPanel(this, 176, 166 + yOffset);
+        Widget<?> widget = workableRecipeMap.getRecipeMapUI().buildWidget(workable::getProgressPercent, importItems,
+                exportItems, importFluids, exportFluids, yOffset, guiSyncManager);
+
+        BooleanSyncValue hasEnergy = new BooleanSyncValue(workable::isHasNotEnoughEnergy);
+
+        panel.child(widget)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(new ItemSlot()
+                        .slot(SyncHandlers.itemSlot(chargerInventory, 0))
+                        .pos(79, 62 + yOffset)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
+                        .addTooltipLine(IKey.lang("gregtech.gui.charger_slot.tooltip",
+                                GTValues.VNF[getTier()], GTValues.VNF[getTier()])))
+                .child(new Widget<>()
+                        .size(18, 18)
+                        .pos(79, 42 + yOffset)
+                        .background(GTGuiTextures.INDICATOR_NO_ENERGY)
+                        // todo flicker appears on ui open even when it has enough energy
+                        // will need to test this
+                        .setEnabledIf($ -> hasEnergy.getBoolValue()))
+                .bindPlayerInventory();
+
+        int leftButtonStartX = 7;
+
+        if (exportItems.getSlots() > 0) {
+
+            panel.child(new ToggleButton()
+                    .pos(leftButtonStartX, 62 + yOffset)
+                    .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
+                    .value(new BooleanSyncValue(() -> autoOutputItems, val -> autoOutputItems = val))
+                    .addTooltip(true, IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled"))
+                    .addTooltip(false, IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")));
+
+            leftButtonStartX += 18;
+        }
+
+        if (exportFluids.getTanks() > 0) {
+
+            panel.child(new ToggleButton()
+                    .pos(leftButtonStartX, 62 + yOffset)
+                    .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
+                    .value(new BooleanSyncValue(() -> autoOutputFluids, val -> autoOutputFluids = val))
+                    .addTooltip(true, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.enabled"))
+                    .addTooltip(false, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.disabled")));
+        }
+
+        if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
+            panel.child(new Widget<>()
+                    .size(17)
+                    .pos(152, 63 + yOffset)
+                    .background(GTGuiTextures.getLogo(getUITheme())));
+
+            if (hasGhostCircuitInventory() && circuitInventory != null) {
+                panel.child(new gregtech.api.mui.widget.GhostCircuitSlotWidget()
+                        .pos(124, 62 + yOffset)
+                        .slot(SyncHandlers.itemSlot(circuitInventory, 0))
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY));
+            }
+        }
+        return panel;
+    }
+
+    @Override
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return createGuiTemplate(entityPlayer).build(getHolder(), entityPlayer);
+    }
+
+    @Deprecated
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
         RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
         int yOffset = 0;
@@ -555,11 +651,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         }
 
         widget.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return createGuiTemplate(entityPlayer).build(getHolder(), entityPlayer);
     }
 
     @Override
