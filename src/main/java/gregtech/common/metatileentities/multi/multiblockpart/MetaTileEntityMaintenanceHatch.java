@@ -409,7 +409,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 .label(5, 5, getMetaFullName())
                 .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16);
 
-        if (!isConfigurable && GTValues.FOOLS.get()) {
+        if (!isConfigurable && GTValues.FOOLS.getAsBoolean()) {
             builder.widget(new FixWiringTaskWidget(48, 15, 80, 50)
                     .setOnFinished(this::fixAllMaintenanceProblems)
                     .setCanInteractPredicate(this::isAttachedToMultiBlock));
