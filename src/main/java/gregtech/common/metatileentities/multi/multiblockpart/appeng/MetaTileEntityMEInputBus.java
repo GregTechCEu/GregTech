@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataStickIntractable;
@@ -9,19 +8,21 @@ import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
+import gregtech.api.mui.widget.GhostCircuitSlotWidget;
+import gregtech.api.mui.widget.appeng.item.AEItemConfigSlot;
+import gregtech.api.mui.widget.appeng.item.AEItemDisplaySlot;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
+import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
@@ -48,30 +49,47 @@ import appeng.api.storage.data.IAEItemStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.IPanelHandler;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.IntValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEItemStack>
+public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPart<IAEItemStack>
                                       implements IMultiblockAbilityPart<IItemHandlerModifiable>,
                                       IGhostSlotConfigurable, IDataStickIntractable {
 
-    public final static String ITEM_BUFFER_TAG = "ItemSlots";
-    public final static String WORKING_TAG = "WorkingEnabled";
-    private final static int CONFIG_SIZE = 16;
-    private boolean workingEnabled = true;
+    public static final String ITEM_BUFFER_TAG = "ItemSlots";
+    public static final String WORKING_TAG = "WorkingEnabled";
+    public static final String SYNC_HANDLER_NAME = "aeSync";
+
+    public final static int CONFIG_SIZE = 16;
     protected ExportOnlyAEItemList aeItemHandler;
     protected GhostCircuitItemStackHandler circuitInventory;
     protected NotifiableItemStackHandler extraSlotInventory;
     private ItemHandlerList actualImportItems;
 
-    public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId) {
-        this(metaTileEntityId, GTValues.EV);
-    }
+    private boolean workingEnabled = true;
 
-    protected MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId, int tier) {
+    public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false, IItemStorageChannel.class);
     }
 
@@ -80,6 +98,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
             aeItemHandler = new ExportOnlyAEItemList(this, CONFIG_SIZE, this.getController());
         }
         return aeItemHandler;
+    }
+
+    public boolean isAutoPull() {
+        return getAEItemHandler().isAutoPull();
     }
 
     @Override
@@ -103,8 +125,12 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
     public void update() {
         super.update();
         if (!getWorld().isRemote && this.workingEnabled && updateMEStatus() && shouldSyncME()) {
-            syncME();
+            operateOnME();
         }
+    }
+
+    protected void operateOnME() {
+        syncME();
     }
 
     protected void syncME() {
@@ -147,8 +173,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
 
         for (ExportOnlyAEItemSlot aeSlot : this.getAEItemHandler().getInventory()) {
             IAEItemStack stock = aeSlot.getStock();
-            if (stock instanceof WrappedItemStack) {
-                stock = ((WrappedItemStack) stock).getAEStack();
+            if (stock instanceof WrappedItemStack wrappedItemStack) {
+                stock = wrappedItemStack.getAEStack();
             }
             if (stock != null) {
                 monitor.injectItems(stock, Actionable.MODULATE, this.getActionSource());
@@ -158,7 +184,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityMEInputBus(metaTileEntityId);
+        return new MetaTileEntityMEInputBus(metaTileEntityId, getTier());
     }
 
     @Override
@@ -183,50 +209,178 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
     }
 
     @Override
-    protected final ModularUI createUI(EntityPlayer player) {
-        ModularUI.Builder builder = createUITemplate(player);
-        return builder.build(this.getHolder(), player);
+    public boolean usesMui2() {
+        return true;
     }
 
-    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
-        ModularUI.Builder builder = ModularUI
-                .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
-                .label(10, 5, getMetaFullName());
-        // ME Network status
-        builder.dynamicLabel(10, 15, () -> this.isOnline ?
-                I18n.format("gregtech.gui.me_network.online") :
-                I18n.format("gregtech.gui.me_network.offline"),
-                0x404040);
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        ModularPanel mainPanel = GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94);
 
-        // Config slots
-        builder.widget(new AEItemConfigWidget(7, 25, this.getAEItemHandler()));
+        final boolean isStocking = getAEItemHandler().isStocking();
+        guiSyncManager.registerSlotGroup("extra_slot", 1);
 
-        // Ghost circuit slot
-        SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 7 + 18 * 4, 25 + 18 * 3)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY);
-        builder.widget(circuitSlot.setConsumer(w -> {
-            String configString;
-            if (circuitInventory == null ||
-                    circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
-                configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value")
-                        .getFormattedText();
-            } else {
-                configString = String.valueOf(circuitInventory.getCircuitValue());
-            }
+        AEItemSyncHandler syncHandler = new AEItemSyncHandler(getAEItemHandler(), this::markDirty, circuitInventory);
+        guiSyncManager.syncValue(SYNC_HANDLER_NAME, 0, syncHandler);
 
-            w.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
-        }));
+        Grid configGrid = new Grid()
+                .pos(7, 25)
+                .size(18 * 4)
+                .minElementMargin(0, 0)
+                .minColWidth(18)
+                .minRowHeight(18)
+                .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
+                        index -> new AEItemConfigSlot(isStocking, index, this::isAutoPull)
+                                .syncHandler(SYNC_HANDLER_NAME, 0)
+                                .debugName("Index " + index)));
 
-        // Extra slot
-        builder.widget(new SlotWidget(extraSlotInventory, 0, 7 + 18 * 4, 25 + 18 * 2)
-                .setBackgroundTexture(GuiTextures.SLOT)
-                .setTooltipText("gregtech.gui.me_bus.extra_slot"));
+        for (IWidget aeWidget : configGrid.getChildren()) {
+            ((AEItemConfigSlot) aeWidget).onSelect(() -> {
+                for (IWidget widget : configGrid.getChildren()) {
+                    ((AEItemConfigSlot) widget).deselect();
+                }
+            });
+        }
 
-        // Arrow image
-        builder.image(7 + 18 * 4, 25 + 18, 18, 18, GuiTextures.ARROW_DOUBLE);
+        return mainPanel.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(IKey.lang(() -> isOnline() ? "gregtech.gui.me_network.online" :
+                        "gregtech.gui.me_network.offline")
+                        .asWidget().pos(5, 15))
+                .child(configGrid)
+                .child(new Grid()
+                        .pos(7 + 18 * 5, 25)
+                        .size(18 * 4)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18)
+                        .minRowHeight(18)
+                        .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
+                                index -> new AEItemDisplaySlot(index)
+                                        .background(GTGuiTextures.SLOT_DARK)
+                                        .syncHandler(SYNC_HANDLER_NAME, 0)
+                                        .debugName("Index " + index))))
+                .child(Flow.column()
+                        .pos(7 + 18 * 4, 25)
+                        .size(18, 18 * 4)
+                        .child(getExtraButton())
+                        .child(GTGuiTextures.ARROW_DOUBLE.asWidget())
+                        .child(new GhostCircuitSlotWidget()
+                                .slot(SyncHandlers.itemSlot(circuitInventory, 0))
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
+                        .child(new ItemSlot()
+                                .slot(SyncHandlers.itemSlot(extraSlotInventory, 0)
+                                        .slotGroup("extra_slot"))
+                                .addTooltipLine(IKey.lang("gregtech.gui.me_bus.extra_slot"))))
+                .child(Flow.row()
+                        .width(isStocking ? 18 : 18 * 2)
+                        .height(18)
+                        .top(5)
+                        .right(7)
+                        .childIf(!isStocking, getMultiplierWidget(guiSyncManager))
+                        .child(getSettingWidget(guiSyncManager)));
+    }
 
-        builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
-        return builder;
+    protected Widget<?> getSettingWidget(PanelSyncManager guiSyncManager) {
+        IPanelHandler settingPopup = guiSyncManager.panel("settings_panel", this::buildSettingsPopup, true);
+
+        return new ButtonWidget<>()
+                .onMousePressed(mouse -> {
+                    if (settingPopup.isPanelOpen()) {
+                        settingPopup.closePanel();
+                    } else {
+                        settingPopup.openPanel();
+                    }
+
+                    return true;
+                })
+                .addTooltipLine(IKey.lang("gregtech.machine.me.settings.button"))
+                .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY);
+    }
+
+    protected ModularPanel buildSettingsPopup(PanelSyncManager syncManager, IPanelHandler syncHandler) {
+        IntSyncValue refreshRateSync = new IntSyncValue(this::getRefreshRate, this::setRefreshRate);
+        ItemDrawable meControllerDrawable = new ItemDrawable(getStackForm());
+
+        return GTGuis.createPopupPanel("settings", 110, getSettingsPopupHeight())
+                .child(Flow.row()
+                        .pos(4, 4)
+                        .height(16)
+                        .child(meControllerDrawable.asWidget()
+                                .size(16)
+                                .marginRight(4))
+                        .child(IKey.lang("gregtech.machine.me.settings.button")
+                                .asWidget()
+                                .heightRel(1.0f)))
+                .child(IKey.lang("gregtech.machine.me.settings.refresh_rate")
+                        .asWidget()
+                        .left(5)
+                        .top(5 + 18))
+                .child(new TextFieldWidget()
+                        .left(5)
+                        .top(15 + 18)
+                        .size(100, 10)
+                        .setNumbers(1, Integer.MAX_VALUE)
+                        .setDefaultNumber(ConfigHolder.compat.ae2.updateIntervals)
+                        .value(refreshRateSync));
+    }
+
+    protected int getSettingsPopupHeight() {
+        return 33 + 14 + 5;
+    }
+
+    protected Widget<?> getMultiplierWidget(PanelSyncManager syncManager) {
+        IPanelHandler multiplierPopup = syncManager.panel("multiplier_panel", this::buildMultiplierPopup, true);
+
+        return new ButtonWidget<>()
+                .onMousePressed(mouse -> {
+                    if (multiplierPopup.isPanelOpen()) {
+                        multiplierPopup.closePanel();
+                    } else {
+                        multiplierPopup.openPanel();
+                    }
+
+                    return true;
+                })
+                .addTooltipLine(IKey.lang("gregtech.machine.me.multiplier.button"))
+                .overlay(GTGuiTextures.ARROW_OPPOSITE);
+    }
+
+    protected ModularPanel buildMultiplierPopup(PanelSyncManager syncManager, IPanelHandler syncHandler) {
+        AEItemSyncHandler aeSyncHandler = (AEItemSyncHandler) ((PanelSyncHandler) syncHandler).getSyncManager()
+                .getSyncHandler(PanelSyncManager.makeSyncKey(SYNC_HANDLER_NAME, 0));
+        IntValue multiplier = new IntValue(2);
+
+        return GTGuis.blankPopupPanel("multiplier", 100, 32)
+                .child(new ButtonWidget<>()
+                        .onMousePressed(mouse -> {
+                            aeSyncHandler.modifyConfigAmounts(
+                                    (index, amount) -> Math.max(1, amount / multiplier.getIntValue()));
+                            return true;
+                        })
+                        .left(5)
+                        .top(7)
+                        .overlay(IKey.str("/")))
+                .child(new TextFieldWidget()
+                        .alignX(0.5f)
+                        .top(5)
+                        .widthRel(0.5f)
+                        .height(18)
+                        .setNumbers(2, Integer.MAX_VALUE)
+                        .value(multiplier))
+                .child(new ButtonWidget<>()
+                        .onMousePressed(mouse -> {
+                            aeSyncHandler.modifyConfigAmounts((index, amount) -> GTUtility
+                                    .safeIntegerMultiplication(amount, multiplier.getIntValue()));
+                            return true;
+                        })
+                        .right(5)
+                        .top(7)
+                        .overlay(IKey.str("x")));
+    }
+
+    protected Widget<?> getExtraButton() {
+        return new Widget<>()
+                .size(18);
     }
 
     @Override
@@ -254,7 +408,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeBoolean(workingEnabled);
+        buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
@@ -266,7 +420,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
+
         data.setBoolean(WORKING_TAG, this.workingEnabled);
+
         NBTTagList slots = new NBTTagList();
         for (int i = 0; i < CONFIG_SIZE; i++) {
             ExportOnlyAEItemSlot slot = this.getAEItemHandler().getInventory()[i];
@@ -276,18 +432,21 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
             slots.appendTag(slotTag);
         }
         data.setTag(ITEM_BUFFER_TAG, slots);
+
         this.circuitInventory.write(data);
-        // Extra slot inventory
         GTUtility.writeItems(this.extraSlotInventory, "ExtraInventory", data);
+
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
+
         if (data.hasKey(WORKING_TAG)) {
             this.workingEnabled = data.getBoolean(WORKING_TAG);
         }
+
         if (data.hasKey(ITEM_BUFFER_TAG, 9)) {
             NBTTagList slots = (NBTTagList) data.getTag(ITEM_BUFFER_TAG);
             for (NBTBase nbtBase : slots) {
@@ -296,6 +455,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
                 slot.deserializeNBT(slotTag.getCompoundTag("stack"));
             }
         }
+
         this.circuitInventory.read(data);
         GTUtility.readItems(this.extraSlotInventory, "ExtraInventory", data);
         this.importItems = createImportItemHandler();
@@ -305,7 +465,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            if (isOnline) {
+            if (isOnline()) {
                 Textures.ME_INPUT_BUS_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
             } else {
                 Textures.ME_INPUT_BUS.renderSided(getFrontFacing(), renderState, translation, pipeline);
@@ -374,7 +534,11 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
             config.getDefinition().writeToNBT(stackNbt);
             configStacks.setTag(Integer.toString(i), stackNbt);
         }
+
         tag.setByte("GhostCircuit", (byte) this.circuitInventory.getCircuitValue());
+
+        tag.setInteger(REFRESH_RATE_TAG, this.refreshRate);
+
         return tag;
     }
 
@@ -403,8 +567,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
                 }
             }
         }
+
         if (tag.hasKey("GhostCircuit")) {
             this.setGhostCircuitConfig(tag.getByte("GhostCircuit"));
+        }
+
+        if (tag.hasKey(REFRESH_RATE_TAG)) {
+            this.refreshRate = tag.getInteger(REFRESH_RATE_TAG);
         }
     }
 }

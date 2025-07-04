@@ -1,9 +1,11 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng.stack;
 
+import gregtech.api.util.NetworkUtil;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import appeng.api.AEApi;
@@ -13,41 +15,35 @@ import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.fluids.util.AEFluidStack;
 import io.netty.buffer.ByteBuf;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.StandardCharsets;
-
-/**
- * @Author GlodBlock
- * @Date 2023/4/22-19:25
- */
 public class WrappedFluidStack implements IAEFluidStack {
 
     @NotNull
-    FluidStack delegate;
+    private FluidStack delegate;
 
     private WrappedFluidStack(@NotNull FluidStack stack) {
         this.delegate = stack;
     }
 
-    public static WrappedFluidStack fromFluidStack(FluidStack fluidStack) {
+    @Contract("null -> null; !null -> !null")
+    public static WrappedFluidStack fromFluidStack(@Nullable FluidStack fluidStack) {
         return fluidStack == null ? null : new WrappedFluidStack(fluidStack);
     }
 
+    @Contract("null -> null")
     public static WrappedFluidStack fromNBT(NBTTagCompound data) {
         FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(data);
         return fromFluidStack(fluidStack);
     }
 
-    public static WrappedFluidStack fromPacket(ByteBuf buffer) {
-        byte len = buffer.readByte();
-        byte[] name = new byte[len];
-        buffer.readBytes(name, 0, len);
-        int amt = buffer.readInt();
-        FluidStack fluidStack = FluidRegistry.getFluidStack(new String(name, StandardCharsets.UTF_8), amt);
-        return fromFluidStack(fluidStack);
+    public static WrappedFluidStack fromPacket(@NotNull PacketBuffer buffer) {
+        return fromFluidStack(NetworkUtil.readFluidStack(buffer));
     }
 
+    @NotNull
     public AEFluidStack getAEStack() {
         return AEFluidStack.fromFluidStack(this.delegate);
     }
@@ -134,6 +130,12 @@ public class WrappedFluidStack implements IAEFluidStack {
         this.delegate.writeToNBT(nbtTagCompound);
     }
 
+    public NBTTagCompound serializeToNBT() {
+        NBTTagCompound tag = new NBTTagCompound();
+        writeToNBT(tag);
+        return tag;
+    }
+
     @Override
     public boolean fuzzyComparison(IAEFluidStack stack, FuzzyMode fuzzyMode) {
         return this.delegate.getFluid() == stack.getFluid();
@@ -141,10 +143,11 @@ public class WrappedFluidStack implements IAEFluidStack {
 
     @Override
     public void writeToPacket(ByteBuf buffer) {
-        byte[] name = this.delegate.getFluid().getName().getBytes(StandardCharsets.UTF_8);
-        buffer.writeByte((byte) name.length);
-        buffer.writeBytes(name);
-        buffer.writeInt(this.delegate.amount);
+        writeToPacket(new PacketBuffer(buffer));
+    }
+
+    public void writeToPacket(@NotNull PacketBuffer packetBuffer) {
+        NetworkUtil.writeFluidStack(packetBuffer, this.delegate);
     }
 
     @Override
@@ -200,5 +203,10 @@ public class WrappedFluidStack implements IAEFluidStack {
         result = 31 * result + this.delegate.getFluid().hashCode();
         result = 31 * result + (this.delegate.tag == null ? 0 : this.delegate.tag.hashCode());
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Wrapped: %s", delegate);
     }
 }

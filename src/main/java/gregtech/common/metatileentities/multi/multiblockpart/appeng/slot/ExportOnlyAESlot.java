@@ -11,10 +11,12 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>>
 
     protected final static String CONFIG_TAG = "config";
     protected final static String STOCK_TAG = "stock";
+    @Nullable
     protected T config;
+    @Nullable
     protected T stock;
 
-    public ExportOnlyAESlot(T config, T stock) {
+    public ExportOnlyAESlot(@Nullable T config, @Nullable T stock) {
         this.config = config;
         this.stock = stock;
     }
@@ -80,22 +82,22 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>>
     }
 
     @Override
-    public T getConfig() {
+    public @Nullable T getConfig() {
         return this.config;
     }
 
     @Override
-    public T getStock() {
+    public @Nullable T getStock() {
         return this.stock;
     }
 
     @Override
-    public void setConfig(T val) {
+    public void setConfig(@Nullable T val) {
         this.config = val;
     }
 
     @Override
-    public void setStock(T val) {
+    public void setStock(@Nullable T val) {
         this.stock = val;
     }
 }

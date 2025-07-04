@@ -8,6 +8,7 @@
     "BasicRecipeTransferHandlerServerMixin",
     "DragManagerAccessor",
     "GhostDragAccessor",
+    "GuiIngredientGroupAccessor",
     "IngredientGridMixin",
     "JEITooltipMixin",
     "ModRegistryMixin",
