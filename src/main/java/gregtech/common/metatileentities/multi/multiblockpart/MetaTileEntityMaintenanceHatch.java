@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMaintenanceHatch;
+import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
@@ -15,12 +16,12 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
-import gregtech.common.inventory.handlers.TapeItemStackHandler;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.client.resources.I18n;
@@ -43,6 +44,11 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -106,7 +112,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.itemStackHandler = new TapeItemStackHandler(this, 1);
+        this.itemStackHandler = new FilteredItemHandler(this, 1);
         this.itemInventory = itemStackHandler;
     }
 
@@ -404,12 +410,30 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
+    public boolean usesMui2() {
+        return false;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+        BooleanSyncValue wiringMinigame = new BooleanSyncValue(GTValues.FOOLS);
+        panelSyncManager.syncValue("wiringMinigame", 0, wiringMinigame);
+
+        return GTGuis.createPanel(this, 176, 152)
+                // TODO: amongus
+                // .childIf(!isConfigurable && GTValues.FOOLS.getAsBoolean(), () -> new FixWiringTaskWidgetButMUI2())
+                .child(SlotGroupWidget.playerInventory()
+                        .left(7)
+                        .bottom(7));
+    }
+
+    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 * 3 + 98)
                 .label(5, 5, getMetaFullName())
                 .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16);
 
-        if (!isConfigurable && GTValues.FOOLS.get()) {
+        if (!isConfigurable && GTValues.FOOLS.getAsBoolean()) {
             builder.widget(new FixWiringTaskWidget(48, 15, 80, 50)
                     .setOnFinished(this::fixAllMaintenanceProblems)
                     .setCanInteractPredicate(this::isAttachedToMultiBlock));

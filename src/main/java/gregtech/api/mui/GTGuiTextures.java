@@ -643,6 +643,7 @@ public class GTGuiTextures {
             "textures/gui/progress_bar/progress_bar_fluid_rig_depletion.png", 190, 14);
 
     // MISC
+    public static final UITexture SPEAKER_ICON = fullImage("textures/gui/widget/speaker.png");
 
     public static void init() {/**/}
 
@@ -712,7 +713,7 @@ public class GTGuiTextures {
             UITexture logo = theme.getLogo();
             if (logo != null) return logo;
         }
-        return GTValues.XMAS.get() ? GREGTECH_LOGO_XMAS : GREGTECH_LOGO;
+        return GTValues.XMAS.getAsBoolean() ? GREGTECH_LOGO_XMAS : GREGTECH_LOGO;
     }
 
     public static IDrawable dynamic(UITexture[] textures, int rate) {
