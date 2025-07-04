@@ -565,6 +565,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem SUS_RECORD;
     public static MetaItem<?>.MetaValueItem NAN_CERTIFICATE;
+    public static MetaItem<?>.MetaValueItem RUSSEL_HOBBS;
 
     public static MetaItem<?>.MetaValueItem FERTILIZER;
     public static MetaItem<?>.MetaValueItem BLACKLIGHT;
