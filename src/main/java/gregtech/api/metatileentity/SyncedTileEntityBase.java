@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 
 public abstract class SyncedTileEntityBase extends BlockStateTileEntity implements ISyncedTileEntity {
 
+    public static final int SIZE_THRESHOLD = 10;
     private final PacketDataList updates = new PacketDataList();
 
     public @Nullable TileEntity getNeighbor(EnumFacing facing) {
@@ -65,7 +66,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
 
     private boolean canNotifyWorld() {
         // short circuit with packet size to avoid too many hash lookups and instanceof casts
-        if (updates.size() > 10 && getWorld() instanceof WorldServer server) {
+        if (updates.size() > SIZE_THRESHOLD && getWorld() instanceof WorldServer server) {
             int x = getPos().getX() >> 4;
             int z = getPos().getZ() >> 4;
             if (server.getPlayerChunkMap().contains(x, z)) {
@@ -76,7 +77,8 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
                 return false;
             }
         }
-        return false;
+        // assume we can send data regardless
+        return true;
     }
 
     @Override
