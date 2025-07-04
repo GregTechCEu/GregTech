@@ -16,6 +16,7 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -43,6 +44,11 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -401,6 +407,24 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             }
         }
         return super.onRightClick(playerIn, hand, facing, hitResult);
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return false;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+        BooleanSyncValue wiringMinigame = new BooleanSyncValue(GTValues.FOOLS);
+        panelSyncManager.syncValue("wiringMinigame", 0, wiringMinigame);
+
+        return GTGuis.createPanel(this, 176, 152)
+                // TODO: amongus
+                // .childIf(!isConfigurable && GTValues.FOOLS.getAsBoolean(), () -> new FixWiringTaskWidgetButMUI2())
+                .child(SlotGroupWidget.playerInventory()
+                        .left(7)
+                        .bottom(7));
     }
 
     @Override
