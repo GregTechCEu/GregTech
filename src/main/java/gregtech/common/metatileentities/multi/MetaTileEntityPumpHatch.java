@@ -94,7 +94,7 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new FilteredItemHandler(this, 1).setFillPredicate(
+        return new FilteredItemHandler(this, 1,
                 FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
     }
 
