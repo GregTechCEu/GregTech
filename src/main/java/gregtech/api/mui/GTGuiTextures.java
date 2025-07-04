@@ -713,7 +713,7 @@ public class GTGuiTextures {
             UITexture logo = theme.getLogo();
             if (logo != null) return logo;
         }
-        return GTValues.XMAS.get() ? GREGTECH_LOGO_XMAS : GREGTECH_LOGO;
+        return GTValues.XMAS.getAsBoolean() ? GREGTECH_LOGO_XMAS : GREGTECH_LOGO;
     }
 
     public static IDrawable dynamic(UITexture[] textures, int rate) {

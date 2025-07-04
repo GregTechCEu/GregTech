@@ -145,7 +145,7 @@ public class CoreModule implements IGregTechModule {
         MetaTileEntityAlarm.addSound(GTSoundEvents.ARC);
         MetaTileEntityAlarm.addSound(SoundEvents.ENTITY_WOLF_HOWL);
         MetaTileEntityAlarm.addSound(SoundEvents.ENTITY_ENDERMEN_DEATH);
-        if ((GTValues.FOOLS.get() && ConfigHolder.misc.specialEvents) || GTValues.isDeobfEnvironment()) {
+        if ((GTValues.FOOLS.getAsBoolean() && ConfigHolder.misc.specialEvents) || GTValues.isDeobfEnvironment()) {
             MetaTileEntityAlarm.addSound(GTSoundEvents.SUS_RECORD);
         }
 
