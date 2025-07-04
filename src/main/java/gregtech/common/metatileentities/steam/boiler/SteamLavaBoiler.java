@@ -87,7 +87,7 @@ public class SteamLavaBoiler extends SteamBoiler {
 
     @Override
     protected int getBaseSteamOutput() {
-        return isHighPressure ? 600 : 240;
+        return isHighPressure ? 640 : 320;
     }
 
     @Override
