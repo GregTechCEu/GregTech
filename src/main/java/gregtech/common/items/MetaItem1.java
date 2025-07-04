@@ -1185,6 +1185,8 @@ public class MetaItem1 extends StandardMetaItem {
 
         MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior())
                 .setMaxStackSize(1);
+        
+        RUSSEL_HOBBS = addItem(1005, "russel_hobbs");
 
         // Extra molds 1006-1010
         SHAPE_MOLDS[18] = SHAPE_MOLD_PIPE_TINY = addItem(1006, "shape.mold.pipe.tiny")
