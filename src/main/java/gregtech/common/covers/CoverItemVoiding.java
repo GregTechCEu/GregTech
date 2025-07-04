@@ -22,7 +22,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
@@ -78,10 +77,10 @@ public class CoverItemVoiding extends CoverConveyor {
     }
 
     @Override
-    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
+    protected ParentWidget<Flow> createUI(ModularPanel panel, PanelSyncManager guiSyncManager) {
         var isWorking = new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled);
 
-        return super.createUI(data, guiSyncManager)
+        return super.createUI(panel, guiSyncManager)
                 .child(Flow.row().height(18).widthRel(1f)
                         .marginBottom(2)
                         .child(new ToggleButton()
