@@ -116,7 +116,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @Deprecated
     public final boolean isHidden = false;
 
-    private boolean allowEmptyOutput;
+    private boolean allowEmptyOutput= false;
 
     private final Object grsVirtualizedRecipeMap;
     private final Branch lookup = new Branch();
@@ -289,6 +289,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public RecipeMap<R> allowEmptyOutput() {
         this.allowEmptyOutput = true;
         return this;
+    }
+    public boolean isEmptyOutput() {
+        return this.allowEmptyOutput;
     }
 
     public RecipeMap<R> setSmallRecipeMap(RecipeMap<?> recipeMap) {

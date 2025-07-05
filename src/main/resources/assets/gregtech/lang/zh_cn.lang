@@ -2505,8 +2505,14 @@ tile.laser_pipe_normal.name=激光传导线缆
 tile.laser_pipe_normal.tooltip1=§f无损§7传递能量，仅限直线摆放
 
 metaitem.prospector.lv.name=电动勘探扫描仪（LV）
+metaitem.prospector.mv.name=电动勘探扫描仪（MV）
 metaitem.prospector.hv.name=电动勘探扫描仪（HV）
+metaitem.prospector.ev.name=电动勘探扫描仪（EV）
+metaitem.prospector.iv.name=电动勘探扫描仪（IV）
 metaitem.prospector.luv.name=电动勘探扫描仪（LuV）
+metaitem.prospector.zpm.name=电动勘探扫描仪（ZPM）
+metaitem.prospector.uv.name=电动勘探扫描仪（UV）
+metaitem.prospector.uhv.name=电动勘探扫描仪（UHV）
 metaitem.prospector.mode.ores=§a矿物勘探模式
 metaitem.prospector.mode.fluid=§b流体勘探模式
 metaitem.prospector.tooltip.ores=在半径为%s个区块的范围内扫描矿物

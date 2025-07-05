@@ -2508,8 +2508,14 @@ tile.laser_pipe_normal.name=Laser Transmitting Cable
 tile.laser_pipe_normal.tooltip1=Transmitting power with §fno loss§7 in straight lines
 
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
+metaitem.prospector.mv.name=Electric Prospector's Scanner (MV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
+metaitem.prospector.ev.name=Electric Prospector's Scanner (EV)
+metaitem.prospector.iv.name=Electric Prospector's Scanner (IV)
 metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)
+metaitem.prospector.zpm.name=Electric Prospector's Scanner (ZPM)
+metaitem.prospector.uv.name=Electric Prospector's Scanner (UV)
+metaitem.prospector.uhv.name=Electric Prospector's Scanner (UHV)
 metaitem.prospector.mode.ores=§aOre Prospection Mode
 metaitem.prospector.mode.fluid=§bFluid Prospection Mode
 metaitem.prospector.tooltip.ores=Scans Ores in a %s Chunk Radius

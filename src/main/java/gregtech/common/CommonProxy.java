@@ -440,6 +440,9 @@ public class CommonProxy {
     }
 
     public void onPreLoad() {
+        if(ConfigHolder.easyMode.easyModeEnable&&ConfigHolder.expertMode.expertModeEnable){
+            throw new IllegalArgumentException("Easy Mode and Expert Mode cannot be enabled at the same time.");
+        }
         GTQTCommonProxy.preInit();
     }
 

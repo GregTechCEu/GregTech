@@ -7,6 +7,8 @@ import gregtech.api.worldgen.filler.BlockFiller;
 import gregtech.api.worldgen.populator.IVeinPopulator;
 import gregtech.api.worldgen.shape.ShapeGenerator;
 
+import gregtech.common.ConfigHolder;
+
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 

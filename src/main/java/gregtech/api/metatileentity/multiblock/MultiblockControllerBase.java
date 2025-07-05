@@ -78,18 +78,115 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
 
-    @Nullable
-    public BlockPattern structurePattern;
-
     private final Map<MultiblockAbility<Object>, AbilityInstances> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
-    private boolean structureFormed;
-
+    @Nullable
+    public BlockPattern structurePattern;
     protected EnumFacing upwardsFacing = EnumFacing.NORTH;
     protected boolean isFlipped;
+    private boolean structureFormed;
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
+    }
+
+    public static TraceabilityPredicate tilePredicate(
+            @NotNull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate,
+            @Nullable Supplier<BlockInfo[]> candidates) {
+        return new TraceabilityPredicate(blockWorldState -> {
+            TileEntity tileEntity = blockWorldState.getTileEntity();
+            if (!(tileEntity instanceof IGregTechTileEntity))
+                return false;
+            MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
+            if (predicate.apply(blockWorldState, metaTileEntity)) {
+                if (metaTileEntity instanceof IMultiblockPart) {
+                    Set<IMultiblockPart> partsFound = blockWorldState.getMatchContext().getOrCreate("MultiblockParts",
+                            HashSet::new);
+                    partsFound.add((IMultiblockPart) metaTileEntity);
+                }
+                return true;
+            }
+            return false;
+        }, candidates);
+    }
+
+    public static TraceabilityPredicate metaTileEntities(MetaTileEntity... metaTileEntities) {
+        ResourceLocation[] ids = Arrays.stream(metaTileEntities).filter(Objects::nonNull)
+                .map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
+        return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId),
+                getCandidates(metaTileEntities));
+    }
+
+    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
+        return () -> Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
+            // TODO
+            MetaTileEntityHolder holder = new MetaTileEntityHolder();
+            holder.setMetaTileEntity(tile);
+            holder.getMetaTileEntity().onPlacement();
+            holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
+            return new BlockInfo(tile.getBlock().getDefaultState(), holder);
+        }).toArray(BlockInfo[]::new);
+    }
+
+    private static Supplier<BlockInfo[]> getCandidates(IBlockState... allowedStates) {
+        return () -> Arrays.stream(allowedStates).map(state -> new BlockInfo(state, null)).toArray(BlockInfo[]::new);
+    }
+
+    public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
+        return tilePredicate((state, tile) -> {
+            if (tile instanceof IMultiblockAbilityPart<?> abilityPart) {
+                for (var ability : abilityPart.getAbilities()) {
+                    if (ArrayUtils.contains(allowedAbilities, ability))
+                        return true;
+                }
+            }
+            return false;
+        }, getCandidates(Arrays.stream(allowedAbilities)
+                .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
+                .toArray(MetaTileEntity[]::new)));
+    }
+
+    public static TraceabilityPredicate states(IBlockState... allowedStates) {
+        return new TraceabilityPredicate(blockWorldState -> {
+            IBlockState state = blockWorldState.getBlockState();
+            if (state.getBlock() instanceof VariantActiveBlock) {
+                blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
+            }
+            return ArrayUtils.contains(allowedStates, state);
+        }, getCandidates(allowedStates));
+    }
+
+    /**
+     * Use this predicate for Frames in your Multiblock. Allows for Framed Pipes as well as normal Frame blocks.
+     */
+    public static TraceabilityPredicate frames(Material... frameMaterials) {
+        return states(Arrays.stream(frameMaterials).map(m -> MetaBlocks.FRAMES.get(m).getBlock(m))
+                .toArray(IBlockState[]::new))
+                .or(new TraceabilityPredicate(blockWorldState -> {
+                    TileEntity tileEntity = blockWorldState.getTileEntity();
+                    if (!(tileEntity instanceof IPipeTile<?, ?> pipeTile)) {
+                        return false;
+                    }
+                    return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial());
+                }));
+    }
+
+    public static TraceabilityPredicate blocks(Block... block) {
+        return new TraceabilityPredicate(
+                blockWorldState -> ArrayUtils.contains(block, blockWorldState.getBlockState().getBlock()),
+                getCandidates(Arrays.stream(block).map(Block::getDefaultState).toArray(IBlockState[]::new)));
+    }
+
+    public static TraceabilityPredicate air() {
+        return TraceabilityPredicate.AIR;
+    }
+
+    public static TraceabilityPredicate any() {
+        return TraceabilityPredicate.ANY;
+    }
+
+    public static TraceabilityPredicate heatingCoils() {
+        return TraceabilityPredicate.HEATING_COILS.get();
     }
 
     @Override
@@ -190,105 +287,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return getFrontOverlay().getParticleSprite();
     }
 
-    public static TraceabilityPredicate tilePredicate(@NotNull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate,
-                                                      @Nullable Supplier<BlockInfo[]> candidates) {
-        return new TraceabilityPredicate(blockWorldState -> {
-            TileEntity tileEntity = blockWorldState.getTileEntity();
-            if (!(tileEntity instanceof IGregTechTileEntity))
-                return false;
-            MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
-            if (predicate.apply(blockWorldState, metaTileEntity)) {
-                if (metaTileEntity instanceof IMultiblockPart) {
-                    Set<IMultiblockPart> partsFound = blockWorldState.getMatchContext().getOrCreate("MultiblockParts",
-                            HashSet::new);
-                    partsFound.add((IMultiblockPart) metaTileEntity);
-                }
-                return true;
-            }
-            return false;
-        }, candidates);
-    }
-
-    public static TraceabilityPredicate metaTileEntities(MetaTileEntity... metaTileEntities) {
-        ResourceLocation[] ids = Arrays.stream(metaTileEntities).filter(Objects::nonNull)
-                .map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
-        return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId),
-                getCandidates(metaTileEntities));
-    }
-
-    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
-        return () -> Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
-            // TODO
-            MetaTileEntityHolder holder = new MetaTileEntityHolder();
-            holder.setMetaTileEntity(tile);
-            holder.getMetaTileEntity().onPlacement();
-            holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
-            return new BlockInfo(tile.getBlock().getDefaultState(), holder);
-        }).toArray(BlockInfo[]::new);
-    }
-
-    private static Supplier<BlockInfo[]> getCandidates(IBlockState... allowedStates) {
-        return () -> Arrays.stream(allowedStates).map(state -> new BlockInfo(state, null)).toArray(BlockInfo[]::new);
-    }
-
-    public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
-        return tilePredicate((state, tile) -> {
-            if (tile instanceof IMultiblockAbilityPart<?>abilityPart) {
-                for (var ability : abilityPart.getAbilities()) {
-                    if (ArrayUtils.contains(allowedAbilities, ability))
-                        return true;
-                }
-            }
-            return false;
-        }, getCandidates(Arrays.stream(allowedAbilities)
-                .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
-                .toArray(MetaTileEntity[]::new)));
-    }
-
-    public static TraceabilityPredicate states(IBlockState... allowedStates) {
-        return new TraceabilityPredicate(blockWorldState -> {
-            IBlockState state = blockWorldState.getBlockState();
-            if (state.getBlock() instanceof VariantActiveBlock) {
-                blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
-            }
-            return ArrayUtils.contains(allowedStates, state);
-        }, getCandidates(allowedStates));
-    }
-
-    /**
-     * Use this predicate for Frames in your Multiblock. Allows for Framed Pipes as well as normal Frame blocks.
-     */
-    public static TraceabilityPredicate frames(Material... frameMaterials) {
-        return states(Arrays.stream(frameMaterials).map(m -> MetaBlocks.FRAMES.get(m).getBlock(m))
-                .toArray(IBlockState[]::new))
-                        .or(new TraceabilityPredicate(blockWorldState -> {
-                            TileEntity tileEntity = blockWorldState.getTileEntity();
-                            if (!(tileEntity instanceof IPipeTile)) {
-                                return false;
-                            }
-                            IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
-                            return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial());
-                        }));
-    }
-
-    public static TraceabilityPredicate blocks(Block... block) {
-        return new TraceabilityPredicate(
-                blockWorldState -> ArrayUtils.contains(block, blockWorldState.getBlockState().getBlock()),
-                getCandidates(Arrays.stream(block).map(Block::getDefaultState).toArray(IBlockState[]::new)));
-    }
-
-    public static TraceabilityPredicate air() {
-        return TraceabilityPredicate.AIR;
-    }
-
-    public static TraceabilityPredicate any() {
-        return TraceabilityPredicate.ANY;
-    }
-
-    public static TraceabilityPredicate heatingCoils() {
-        return TraceabilityPredicate.HEATING_COILS.get();
-    }
-
     public TraceabilityPredicate selfPredicate() {
         return metaTileEntities(this).setCenter();
     }
@@ -333,8 +331,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     * Used if MultiblockPart Abilities need to be sorted a certain way, like
-     * Distillation Tower and Assembly Line.
+     * Used if MultiblockPart Abilities need to be sorted a certain way, like Distillation Tower and Assembly Line.
      */
     protected Function<BlockPos, Integer> multiblockPartSorter() {
         return BlockPos::hashCode;
@@ -343,25 +340,26 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     /**
      * 判断是否应该延迟检查
      *
-     * @return boolean 返回是否应该延迟检查的标识，
-     *         当前实现固定返回false表示不延迟
+     * @return boolean 返回是否应该延迟检查的标识， 当前实现固定返回false表示不延迟
      */
     public boolean shouldDelayCheck() {
-        return false;
+        return ConfigHolder.machines.commonStructureCheckSwitch;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void checkStructurePattern() {
-        if (shouldDelayCheck()&& ConfigHolder.machines.delayStructureCheckSwitch) {
-            if (this.getOffsetTimer() % 100 == 0 || this.isFirstTick()) {
+        if (shouldDelayCheck() && ConfigHolder.machines.delayStructureCheckSwitch) {
+            if (this.getOffsetTimer() % ConfigHolder.machines.delayStructureCheckTick == 0 || this.isFirstTick()) {
                 doCheck();
             }
         } else doCheck();
     }
+
     public void doCheck() {
         if (structurePattern == null) return;
         PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(),
-                getFrontFacing().getOpposite(), getUpwardsFacing(), allowsFlip());
+                getFrontFacing().getOpposite(), getUpwardsFacing(), allowsFlip(),
+                shouldDelayCheck() && ConfigHolder.machines.enableStructureCheckSample);
         if (context != null && !structureFormed) {
             Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
@@ -404,11 +402,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }
     }
 
-
-
     /**
      * Checks if a multiblock ability at a given block pos should be added to the ability instances
-     * 
+     *
      * @return true if the ability should be added to this multiblocks ability instances
      */
     protected <T> boolean checkAbilityPart(MultiblockAbility<T> ability, BlockPos pos) {
@@ -578,6 +574,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     // todo tooltip on multis saying if this is enabled or disabled?
+
     /** Whether this multi can be rotated or face upwards. */
     public boolean allowsExtendedFacing() {
         return true;

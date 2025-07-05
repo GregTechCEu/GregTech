@@ -288,8 +288,14 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         String oreSpawnID = GTOreCategory.UID;
         registry.addRecipes(oreInfoList, oreSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LV.getStackForm(), oreSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_MV.getStackForm(), oreSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_HV.getStackForm(), oreSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_EV.getStackForm(), oreSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_IV.getStackForm(), oreSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LUV.getStackForm(), oreSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_ZPM.getStackForm(), oreSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_UV.getStackForm(), oreSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_UHV.getStackForm(), oreSpawnID);
         // Ore Veins End
 
         // Fluid Veins

@@ -74,9 +74,6 @@ metaitem.large_fluid_cell.iridium.name=%s铱单元
 metaitem.large_fluid_cell.naquadah_alloy.name=%s硅岩合金单元
 metaitem.large_fluid_cell.neutronium.name=%s中子素单元
 
-metaitem.prospector.uv.name=电动勘探扫描仪（UV）
-metaitem.prospector.uev.name=电动勘探扫描仪（UEV）
-
 metaitem.endless_spray.empty.name=无尽喷漆罐（空）
 metaitem.endless_spray.solvent.name=无尽喷漆罐（溶剂）
 metaitem.endless_spray.can.dyes.white.name=无尽喷漆罐（白色）

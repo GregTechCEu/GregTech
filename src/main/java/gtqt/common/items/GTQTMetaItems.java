@@ -63,9 +63,6 @@ public class GTQTMetaItems {
     public static MetaItem<?>.MetaValueItem FLUID_CELL_NAQUADAH_ALLOY;
     public static MetaItem<?>.MetaValueItem FLUID_CELL_NEUTRONIUM;
 
-    public static MetaItem<?>.MetaValueItem PROSPECTOR_UV;
-    public static MetaItem<?>.MetaValueItem PROSPECTOR_UEV;
-
     public static final MetaItem<?>.MetaValueItem[] ENDLESS_SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
     public static MetaItem<?>.MetaValueItem ENDLESS_SPRAY_SOLVENT;
     public static MetaItem<?>.MetaValueItem ENDLESS_SPRAY_EMPTY;

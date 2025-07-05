@@ -127,20 +127,6 @@ public class GTQTMetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(32)
                 .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Neutronium, M * 8))) // ingot * 8
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
-
-        GTQTMetaItems.PROSPECTOR_UV = addItem(95, "prospector.uv")
-                .addComponents(ElectricStats.createElectricItem(16_000_000_000L, GTValues.UV),
-                        new ProspectorScannerBehavior(7, GTValues.UV))
-                .setMaxStackSize(1)
-                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
-
-        GTQTMetaItems.PROSPECTOR_UEV = addItem(96, "prospector.uev")
-                .addComponents(ElectricStats.createElectricItem(16_000_000_000L, GTValues.UEV),
-                        new ProspectorScannerBehavior(9, GTValues.UEV))
-                .setMaxStackSize(1)
-                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
-
-
         // Spray Cans: ID 60-77
         ENDLESS_SPRAY_EMPTY = addItem(101, "endless_spray.empty");
 

@@ -5,6 +5,8 @@ import gregtech.api.GregTechAPI;
 
 import net.minecraftforge.common.config.Config;
 
+import org.jetbrains.annotations.Range;
+
 @Config(modid = GTValues.MODID, name = GTValues.MODID + '/' + GTValues.MODID)
 public class ConfigHolder {
 
@@ -42,13 +44,28 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static WorldGenOptions worldgen = new WorldGenOptions();
 
+    //简单模式
+    @Config.Comment("Config options for Easy Mode")
+    @Config.Name("Easy Mode")
+    public static EasyModeOptions easyMode = new EasyModeOptions();
+
+    //专家模式
+    @Config.Comment("Config options for Expert Mode")
+    @Config.Name("Expert Mode")
+    public static ExpertModeOptions expertMode = new ExpertModeOptions();
+
+    public static class ExpertModeOptions {
+        @Config.Comment({"Whether or not to enable the Expert Mode", })
+        @Config.Name("Expert Mode Enable")
+        public boolean expertModeEnable = false;
+    }
+    public static class EasyModeOptions {
+        @Config.Comment("Whether or not to enable the easy mode, which will open up a way to adjust sensitive values to reduce the difficulty of the game")
+        @Config.Name("Enable Easy Mode")
+        public boolean easyModeEnable = false;
+    }
+
     public static class MachineOptions {
-
-        @Config.Comment({ "Specifies whether to enable multi-block delay detection",
-                "If detected, detection is delayed for multi-party blocks that mark the need for delayed detection.", "If it is not detected, it will be the same as the original",
-                "Default: false" })
-        public boolean delayStructureCheckSwitch = false;
-
         @Config.Comment({ "Whether insufficient energy supply should reset Machine recipe progress to zero.",
                 "If true, progress will reset.", "If false, progress will decrease to zero with 2x speed",
                 "Default: false" })
@@ -165,6 +182,32 @@ public class ConfigHolder {
                 "This does NOT apply to the World Accelerator, but to external effects like Time in a Bottle.",
                 "Default: true" })
         public boolean allowTickAcceleration = true;
+
+        //为所有设备都开启延迟检测功能
+        @Config.Comment({ "Whether to enable delayed structure checks for GT machines.",
+        "Otherwise, delay detection is enabled only for specific multi-party blocks"})
+        public boolean commonStructureCheckSwitch = false;
+
+        @Config.Comment({ "Specifies whether to enable multi-block delay detection",
+                "If detected, detection is delayed for multi-party blocks that mark the need for delayed detection.", "If it is not detected, it will be the same as the original",
+                "Default: false" })
+        public boolean delayStructureCheckSwitch = false;
+
+        //每次检查的时间间隔（单位tick）
+        @Config.Comment({ "The delay between structure checks for machines that require a structure.", })
+        @Config.RangeInt(min = 1, max = 200)
+        public int delayStructureCheckTick = 100;
+
+        //是否开启抽样多方块成型检测
+        @Config.Comment({ "Whether to enable sampling for structure checks for machines that require a structure.",
+        "Note! Sampling molding testing will only be performed if the multi-block delay detection is turned on"})
+        public boolean enableStructureCheckSample = true;
+
+        //每次检查的抽样范围 默认20%
+        @Config.Comment({ "The sampling rate for structure checks for machines that require a structure.",
+        "Each failed sampling increases the proportion of the next sampling until the test is completed"})
+        @Config.RangeDouble(min = 0.05,max = 1)
+        public double delayStructureCheckSample = 0.20;
     }
 
     public static class WorldGenOptions {

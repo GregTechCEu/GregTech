@@ -818,21 +818,7 @@ public class MetaItem1 extends StandardMetaItem {
         TERMINAL = addItem(465, "terminal")
                 .setMaxStackSize(1)
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
-        PROSPECTOR_LV = addItem(466, "prospector.lv")
-                .addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV),
-                        new ProspectorScannerBehavior(2, GTValues.LV))
-                .setMaxStackSize(1)
-                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
-        PROSPECTOR_HV = addItem(467, "prospector.hv")
-                .addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV),
-                        new ProspectorScannerBehavior(3, GTValues.HV))
-                .setMaxStackSize(1)
-                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
-        PROSPECTOR_LUV = addItem(468, "prospector.luv")
-                .addComponents(ElectricStats.createElectricItem(1_000_000_000L, GTValues.LuV),
-                        new ProspectorScannerBehavior(5, GTValues.LuV))
-                .setMaxStackSize(1)
-                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+
         TRICORDER_SCANNER = addItem(469, "tricorder_scanner")
                 .addComponents(ElectricStats.createElectricItem(100_000L, GTValues.MV), new TricorderBehavior(2))
                 .setMaxStackSize(1)
@@ -859,6 +845,53 @@ public class MetaItem1 extends StandardMetaItem {
         TREATED_WOOD_DOOR = addItem(476, "treated_wood_door")
                 .addComponents(new DoorBehavior(MetaBlocks.TREATED_WOOD_DOOR)).setBurnValue(200)
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_DECORATIONS);
+
+        //480
+        PROSPECTOR_LV = addItem(480, "prospector.lv")
+                .addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV),
+                        new ProspectorScannerBehavior(2, GTValues.LV))
+                .setMaxStackSize(1)
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+        PROSPECTOR_MV = addItem(481, "prospector.mv")
+                .addComponents(ElectricStats.createElectricItem(500_000L, GTValues.MV),
+                        new ProspectorScannerBehavior(2, GTValues.MV))
+                .setMaxStackSize(1)
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+        PROSPECTOR_HV = addItem(482, "prospector.hv")
+                .addComponents(ElectricStats.createElectricItem(1_000_000L, GTValues.HV),
+                        new ProspectorScannerBehavior(3, GTValues.HV))
+                .setMaxStackSize(1)
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+        PROSPECTOR_EV = addItem(483, "prospector.ev")
+                .addComponents(ElectricStats.createElectricItem(5_000_000L, GTValues.EV),
+                        new ProspectorScannerBehavior(3, GTValues.EV))
+                .setMaxStackSize(1)
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+        PROSPECTOR_IV = addItem(484, "prospector.iv")
+                .addComponents(ElectricStats.createElectricItem(10_000_000L, GTValues.IV),
+                        new ProspectorScannerBehavior(4, GTValues.IV))
+                .setMaxStackSize(1)
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+        PROSPECTOR_LUV = addItem(485, "prospector.luv")
+                .addComponents(ElectricStats.createElectricItem(50_000_000L, GTValues.LuV),
+                        new ProspectorScannerBehavior(4, GTValues.LuV))
+                .setMaxStackSize(1)
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+        PROSPECTOR_ZPM = addItem(486, "prospector.zpm")
+                .addComponents(ElectricStats.createElectricItem(100_000_000L, GTValues.ZPM),
+                        new ProspectorScannerBehavior(5, GTValues.ZPM))
+                .setMaxStackSize(1)
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+        PROSPECTOR_UV = addItem(487, "prospector.uv")
+                .addComponents(ElectricStats.createElectricItem(500_000_000L, GTValues.UV),
+                        new ProspectorScannerBehavior(5, GTValues.UV))
+                .setMaxStackSize(1)
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+        PROSPECTOR_UHV = addItem(488, "prospector.uhv")
+                .addComponents(ElectricStats.createElectricItem(1_000_000_000L, GTValues.UHV),
+                        new ProspectorScannerBehavior(6, GTValues.UHV))
+                .setMaxStackSize(1)
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");

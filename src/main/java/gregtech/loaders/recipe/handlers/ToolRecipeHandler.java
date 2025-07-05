@@ -15,7 +15,6 @@ import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.crafting.ToolHeadReplaceRecipe;
 import gregtech.common.items.MetaItems;
@@ -40,7 +39,6 @@ import static gregtech.api.recipes.RecipeMaps.LATHE_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.material.properties.PropertyKey.GEM;
-import static gregtech.api.unification.material.properties.PropertyKey.INGOT;
 
 public class ToolRecipeHandler {
 
@@ -134,7 +132,8 @@ public class ToolRecipeHandler {
     private static void processTool(OrePrefix prefix, Material material, MaterialToolProperty property) {
         UnificationEntry stick = new UnificationEntry(OrePrefix.stick, Materials.Wood);
         UnificationEntry plate = new UnificationEntry(OrePrefix.plate, material);
-        UnificationEntry ingot = new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot, material);
+        UnificationEntry ingot = new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot,
+                material);
 
         if (material.hasFlag(GENERATE_PLATE)) {
             addToolRecipe(material, ToolItems.MINING_HAMMER, true,
@@ -271,7 +270,7 @@ public class ToolRecipeHandler {
 
             addHammerDrillRecipe(toolPrefix, material,
                     new IGTTool[] { ToolItems.HARD_HAMMER_LV, ToolItems.HARD_HAMMER_MV, ToolItems.HARD_HAMMER_HV,
-                            ToolItems.HARD_HAMMER_EV,ToolItems.HARD_HAMMER_IV});
+                            ToolItems.HARD_HAMMER_EV, ToolItems.HARD_HAMMER_IV });
             // chainsaw
             toolPrefix = OrePrefix.toolHeadChainsaw;
             ModHandler.addShapedRecipe(String.format("chainsaw_head_%s", material),
@@ -359,6 +358,7 @@ public class ToolRecipeHandler {
                     'R', new UnificationEntry(OrePrefix.stick, material));
         }
     }
+
     public static void addHammerDrillRecipe(OrePrefix toolHead, Material material, IGTTool[] toolItems) {
         for (IGTTool toolItem : toolItems) {
             int tier = toolItem.getElectricTier();
@@ -436,9 +436,8 @@ public class ToolRecipeHandler {
     private static void registerMortarRecipes() {
         for (Material material : new Material[] {
                 Materials.Bronze, Materials.Iron, Materials.Invar, Materials.Steel, Materials.DamascusSteel,
-                Materials.CobaltBrass, Materials.WroughtIron,TungstenSteel, NaquadahAlloy, Neutronium,
-                StainlessSteel,VanadiumSteel, RedSteel, BlueSteel,HSSE})
-        {
+                Materials.CobaltBrass, Materials.WroughtIron, TungstenSteel, NaquadahAlloy, Neutronium,
+                StainlessSteel, VanadiumSteel, RedSteel, BlueSteel, HSSE }) {
             addToolRecipe(material, ToolItems.MORTAR, false,
                     " I ", "SIS", "SSS",
                     'I', new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot, material),
@@ -495,6 +494,17 @@ public class ToolRecipeHandler {
         }
 
         for (MetaValueItem batteryItem : batteryItems.get(MV)) {
+            ModHandler.addShapedEnergyTransferRecipe("prospector_mv_" + batteryItem.unlocalizedName,
+                    MetaItems.PROSPECTOR_MV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_MV.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, Aluminium),
+                    'S', MetaItems.SENSOR_MV.getStackForm(),
+                    'D', new UnificationEntry(OrePrefix.plate, Materials.Glass),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.MV),
+                    'B', batteryItem.getStackForm());
+
             ModHandler.addShapedEnergyTransferRecipe("tricorder_" + batteryItem.unlocalizedName,
                     MetaItems.TRICORDER_SCANNER.getStackForm(),
                     batteryItem::isItemEqual, true, true,
@@ -528,7 +538,32 @@ public class ToolRecipeHandler {
                     'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold),
                     'B', batteryItem.getStackForm());
         }
-
+        //ev
+        for (MetaValueItem batteryItem : batteryItems.get(EV)) {
+            ModHandler.addShapedEnergyTransferRecipe("prospector_ev_" + batteryItem.unlocalizedName,
+                    MetaItems.PROSPECTOR_EV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_EV.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, Titanium),
+                    'S', MetaItems.SENSOR_EV.getStackForm(),
+                    'D', MetaItems.COVER_SCREEN.getStackForm(),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.EV),
+                    'B', batteryItem.getStackForm());
+        }
+        //iv
+        for (MetaValueItem batteryItem : batteryItems.get(IV)) {
+            ModHandler.addShapedEnergyTransferRecipe("prospector_iv_" + batteryItem.unlocalizedName,
+                    MetaItems.PROSPECTOR_EV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_IV.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, TungstenSteel),
+                    'S', MetaItems.SENSOR_IV.getStackForm(),
+                    'D', MetaItems.COVER_SCREEN.getStackForm(),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.IV),
+                    'B', batteryItem.getStackForm());
+        }
         for (MetaValueItem batteryItem : batteryItems.get(LuV)) {
             ModHandler.addShapedEnergyTransferRecipe("prospector_luv_" + batteryItem.unlocalizedName,
                     MetaItems.PROSPECTOR_LUV.getStackForm(),
@@ -541,5 +576,47 @@ public class ToolRecipeHandler {
                     'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.LuV),
                     'B', batteryItem.getStackForm());
         }
+        //zpm
+        for (MetaValueItem batteryItem : batteryItems.get(ZPM)) {
+            ModHandler.addShapedEnergyTransferRecipe("prospector_zpm_" + batteryItem.unlocalizedName,
+                    MetaItems.PROSPECTOR_ZPM.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_ZPM.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, NaquadahAlloy),
+                    'S', MetaItems.SENSOR_ZPM.getStackForm(),
+                    'D', MetaItems.COVER_SCREEN.getStackForm(),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.ZPM),
+                    'B', batteryItem.getStackForm());
+        }
+        //uv
+        for (MetaValueItem batteryItem : batteryItems.get(UV)) {
+            ModHandler.addShapedEnergyTransferRecipe("prospector_uv_" + batteryItem.unlocalizedName,
+                    MetaItems.PROSPECTOR_UV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_UV.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, Darmstadtium),
+                    'S', MetaItems.SENSOR_UV.getStackForm(),
+                    'D', MetaItems.COVER_SCREEN.getStackForm(),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.UV),
+                    'B', batteryItem.getStackForm());
+        }
+        /*
+        //uhv
+        for (MetaValueItem batteryItem : batteryItems.get(UHV)) {
+            ModHandler.addShapedEnergyTransferRecipe("prospector_uhv_" + batteryItem.unlocalizedName,
+                    MetaItems.PROSPECTOR_UHV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_UHV.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, Neutronium),
+                    'S', MetaItems.SENSOR_UHV.getStackForm(),
+                    'D', MetaItems.COVER_SCREEN.getStackForm(),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.UHV),
+                    'B', batteryItem.getStackForm());
+        }
+
+         */
     }
 }
