@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import gregtech.common.ConfigHolder;
@@ -33,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -115,32 +117,83 @@ public class BlockPattern {
 
     public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing frontFacing,
                                                   EnumFacing upwardsFacing, boolean allowsFlip) {
-        return checkPatternFastAt(world, centerPos, frontFacing, upwardsFacing, true,true);
+        return checkPatternFastAt(world, centerPos, frontFacing, upwardsFacing, allowsFlip,true);
     }
     public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing frontFacing,
-                                                  EnumFacing upwardsFacing, boolean allowsFlip,boolean checkCache) {
+                                                  EnumFacing upwardsFacing, boolean allowsFlip, boolean doRandomCheck) {
         if (!cache.isEmpty()) {
-            boolean pass = true;
-            for (Map.Entry<Long, BlockInfo> entry : cache.entrySet()) {
-                BlockPos pos = BlockPos.fromLong(entry.getKey());
-                IBlockState blockState = world.getBlockState(pos);
-                if (blockState != entry.getValue().getBlockState()) {
-                    pass = false;
-                    break;
-                }
-                TileEntity cachedTileEntity = entry.getValue().getTileEntity();
-                if (cachedTileEntity != null) {
-                    TileEntity tileEntity = world.getTileEntity(pos);
-                    if (tileEntity != cachedTileEntity) {
+            if (!doRandomCheck ||cache.size() < 512) {
+                // 小缓存直接完整检查
+                boolean pass = true;
+                for (Map.Entry<Long, BlockInfo> entry : cache.entrySet()) {
+                    BlockPos pos = BlockPos.fromLong(entry.getKey());
+                    IBlockState blockState = world.getBlockState(pos);
+                    if (blockState != entry.getValue().getBlockState()) {
                         pass = false;
                         break;
                     }
+                    TileEntity cachedTileEntity = entry.getValue().getTileEntity();
+                    if (cachedTileEntity != null) {
+                        TileEntity tileEntity = world.getTileEntity(pos);
+                        if (tileEntity != cachedTileEntity) {
+                            pass = false;
+                            break;
+                        }
+                    }
                 }
+                if (pass) return worldState.hasError() ? null : matchContext;
+            } else {
+                // 大缓存使用随机抽样（5%）
+                int cacheSize = cache.size();
+                int sampleCount = (int) Math.ceil(cacheSize * ConfigHolder.machines.delayStructureCheckSample);
+                boolean pass = true;
+
+                // 高效抽样：使用迭代器随机跳过元素
+                Iterator<Map.Entry<Long, BlockInfo>> iterator = cache.entrySet().iterator();
+                int step = Math.max(1, cacheSize / sampleCount); // 计算步长
+
+                while (iterator.hasNext() && sampleCount > 0) {
+                    // 随机跳过0到(step-1)个元素
+                    int skip = ThreadLocalRandom.current().nextInt(step);
+                    for (int i = 0; i < skip && iterator.hasNext(); i++) {
+                        iterator.next();
+                    }
+
+                    if (!iterator.hasNext()) break;
+
+                    Map.Entry<Long, BlockInfo> entry = iterator.next();
+                    sampleCount--;
+
+                    BlockPos pos = BlockPos.fromLong(entry.getKey());
+                    IBlockState blockState = world.getBlockState(pos);
+                    // 检查方块状态
+                    if (blockState != entry.getValue().getBlockState()) {
+                        pass = false;
+                        break;
+                    }
+                    // 检查TileEntity
+                    TileEntity cachedTileEntity = entry.getValue().getTileEntity();
+                    if (cachedTileEntity != null) {
+                        TileEntity tileEntity = world.getTileEntity(pos);
+                        if (tileEntity != cachedTileEntity) {
+                            pass = false;
+                            break;
+                        }
+                    }
+
+                    // 准备下一次跳跃
+                    if (iterator.hasNext()) {
+                        for (int i = 0; i < step - skip - 1 && iterator.hasNext(); i++) {
+                            iterator.next();
+                        }
+                    }
+                }
+
+                if (pass) return worldState.hasError() ? null : matchContext;
             }
-            if (pass) return worldState.hasError() ? null : matchContext;
         }
 
-        // First try normal pattern, and if it fails, try flipped (if allowed).
+        // 剩余逻辑保持不变
         PatternMatchContext pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
         if (allowsFlip) {
             if (pmc != null) {
@@ -148,7 +201,7 @@ public class BlockPattern {
             }
             pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, true);
         }
-        if (pmc == null) clearCache(); // we don't want a random cache of a partially formed multi
+        if (pmc == null) clearCache();
         return pmc;
     }
 
