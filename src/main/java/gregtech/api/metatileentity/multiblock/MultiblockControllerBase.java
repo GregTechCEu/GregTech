@@ -203,7 +203,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            if (getOffsetTimer() % 20 == 0 || isFirstTick()) {
+            if (shouldDelayCheck() && ConfigHolder.machines.delayStructureCheckSwitch &&
+                    getOffsetTimer() % ConfigHolder.machines.delayStructureCheckTick == 0 || isFirstTick()) {
+                checkStructurePattern();
+            } else if (getOffsetTimer() % 20 == 0 || isFirstTick()) {
                 checkStructurePattern();
             }
             // DummyWorld is the world for the JEI preview. We do not want to update the Multi in this world,
@@ -348,14 +351,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void checkStructurePattern() {
-        if (shouldDelayCheck() && ConfigHolder.machines.delayStructureCheckSwitch) {
-            if (this.getOffsetTimer() % ConfigHolder.machines.delayStructureCheckTick == 0 || this.isFirstTick()) {
-                doCheck();
-            }
-        } else doCheck();
-    }
-
-    public void doCheck() {
         if (structurePattern == null) return;
         PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(),
                 getFrontFacing().getOpposite(), getUpwardsFacing(), allowsFlip(),

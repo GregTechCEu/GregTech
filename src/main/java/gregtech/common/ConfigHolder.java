@@ -190,12 +190,13 @@ public class ConfigHolder {
 
         @Config.Comment({ "Specifies whether to enable multi-block delay detection",
                 "If detected, detection is delayed for multi-party blocks that mark the need for delayed detection.", "If it is not detected, it will be the same as the original",
-                "Default: false" })
-        public boolean delayStructureCheckSwitch = false;
+                "Default: true",})
+        public boolean delayStructureCheckSwitch = true;
 
         //每次检查的时间间隔（单位tick）
-        @Config.Comment({ "The delay between structure checks for machines that require a structure.", })
-        @Config.RangeInt(min = 1, max = 200)
+        @Config.Comment({ "The delay between structure checks for machines that require a structure.",
+                "值得注意的是，在原版逻辑中，就是每20tick检测一次，如果你设置为20tick，那么他将什么效果都没有",})
+        @Config.RangeInt(min = 20, max = 200)
         public int delayStructureCheckTick = 100;
 
         //是否开启抽样多方块成型检测

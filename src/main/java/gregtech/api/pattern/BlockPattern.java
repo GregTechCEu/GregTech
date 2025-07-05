@@ -32,9 +32,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class BlockPattern {
@@ -110,119 +113,45 @@ public class BlockPattern {
         return worldState.error;
     }
 
-    // 添加状态跟踪字段
-    private boolean lastFullCheckValid = false;
-    private Map<Long, BlockInfo> lastValidCache = new HashMap<>();
-
     public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing frontFacing,
-                                                  EnumFacing upwardsFacing, boolean allowsFlip, boolean useSampling) {
+                                                  EnumFacing upwardsFacing, boolean allowsFlip) {
+        return checkPatternFastAt(world, centerPos, frontFacing, upwardsFacing, true,true);
+    }
+    public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing frontFacing,
+                                                  EnumFacing upwardsFacing, boolean allowsFlip,boolean checkCache) {
         if (!cache.isEmpty()) {
             boolean pass = true;
-
-            // 状态一致性检查：抽样结果必须与上次完整检测一致
-            if (useSampling && lastFullCheckValid) {
-                if (!cache.equals(lastValidCache)) {
+            for (Map.Entry<Long, BlockInfo> entry : cache.entrySet()) {
+                BlockPos pos = BlockPos.fromLong(entry.getKey());
+                IBlockState blockState = world.getBlockState(pos);
+                if (blockState != entry.getValue().getBlockState()) {
                     pass = false;
+                    break;
                 }
-            }
-
-            if (pass) {
-                if (useSampling) {
-                    // 抽样检测逻辑
-                    Random rand = world.rand;
-                    int sampleSize = Math.max(1, (int) (cache.size() * ConfigHolder.machines.delayStructureCheckSample));
-                    List<Map.Entry<Long, BlockInfo>> entries = new ArrayList<>(cache.entrySet());
-                    Collections.shuffle(entries, new Random(rand.nextLong()));
-
-                    int count = 0;
-                    for (Map.Entry<Long, BlockInfo> entry : entries) {
-                        if (count++ >= sampleSize) break;
-
-                        BlockPos pos = BlockPos.fromLong(entry.getKey());
-                        IBlockState blockState = world.getBlockState(pos);
-                        if (blockState != entry.getValue().getBlockState()) {
-                            pass = false;
-                            break;
-                        }
-                        TileEntity cachedTileEntity = entry.getValue().getTileEntity();
-                        if (cachedTileEntity != null) {
-                            TileEntity tileEntity = world.getTileEntity(pos);
-                            if (tileEntity != cachedTileEntity) {
-                                pass = false;
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    // 原版全量检测逻辑
-                    for (Map.Entry<Long, BlockInfo> entry : cache.entrySet()) {
-                        BlockPos pos = BlockPos.fromLong(entry.getKey());
-                        IBlockState blockState = world.getBlockState(pos);
-                        if (blockState != entry.getValue().getBlockState()) {
-                            pass = false;
-                            break;
-                        }
-                        TileEntity cachedTileEntity = entry.getValue().getTileEntity();
-                        if (cachedTileEntity != null) {
-                            TileEntity tileEntity = world.getTileEntity(pos);
-                            if (tileEntity != cachedTileEntity) {
-                                pass = false;
-                                break;
-                            }
-                        }
+                TileEntity cachedTileEntity = entry.getValue().getTileEntity();
+                if (cachedTileEntity != null) {
+                    TileEntity tileEntity = world.getTileEntity(pos);
+                    if (tileEntity != cachedTileEntity) {
+                        pass = false;
+                        break;
                     }
                 }
             }
-
-            if (pass) {
-                // 只有在上次完整检测有效时才返回成型
-                if (useSampling) {
-                    if (lastFullCheckValid && !worldState.hasError()) {
-                        return matchContext;
-                    }
-                } else {
-                    // 原版逻辑：全量检测通过即返回成型
-                    return !worldState.hasError() ? matchContext : null;
-                }
-            }
+            if (pass) return worldState.hasError() ? null : matchContext;
         }
 
-        // 执行完整检测
+        // First try normal pattern, and if it fails, try flipped (if allowed).
         PatternMatchContext pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
         if (allowsFlip) {
             if (pmc != null) {
-                // 更新状态：完整检测通过
-                if (useSampling) {
-                    lastFullCheckValid = true;
-                    lastValidCache = new HashMap<>(cache);
-                }
                 return pmc;
             }
             pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, true);
         }
-
-        if (pmc != null) {
-            // 更新状态：完整检测通过
-            if (useSampling) {
-                lastFullCheckValid = true;
-                lastValidCache = new HashMap<>(cache);
-            }
-        } else {
-            // 更新状态：完整检测失败
-            if (useSampling) {
-                lastFullCheckValid = false;
-            }
-            clearCache();
-        }
+        if (pmc == null) clearCache(); // we don't want a random cache of a partially formed multi
         return pmc;
     }
 
-    // 保持原有方法签名的重载方法
-    public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing frontFacing,
-                                                  EnumFacing upwardsFacing, boolean allowsFlip) {
-        // 默认启用抽样检测
-        return checkPatternFastAt(world, centerPos, frontFacing, upwardsFacing, allowsFlip, true);
-    }
     public void clearCache() {
         cache.clear();
     }
