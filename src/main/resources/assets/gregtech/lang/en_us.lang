@@ -6023,14 +6023,14 @@ gregtech.veins.ore.red_granite_sphere=Red Granite Sphere
 gregtech.veins.ore.salts=Salts Vein
 gregtech.veins.ore.sapphire=Sapphire Vein
 
-gregtech.veins.fluid.lava=Nether Lava Deposit
-gregtech.veins.fluid.natural_gas_nether=Nether Natural Gas Deposit
-gregtech.veins.fluid.heavy_oil=Overworld Heavy Oil Deposit
-gregtech.veins.fluid.light_oil=Overworld Light Oil Deposit
-gregtech.veins.fluid.natural_gas_overworld=Overworld Natural Gas Deposit
-gregtech.veins.fluid.oil=Overworld Oil Deposit
-gregtech.veins.fluid.raw_oil=Overworld Raw Oil Deposit
-gregtech.veins.fluid.salt_water=Overworld Salt Water Deposit
+gregtech.veins.fluid.lava=Lava Deposit
+gregtech.veins.fluid.natural_gas_nether=Natural Gas Deposit
+gregtech.veins.fluid.heavy_oil=Heavy Oil Deposit
+gregtech.veins.fluid.light_oil=Light Oil Deposit
+gregtech.veins.fluid.natural_gas_overworld=Natural Gas Deposit
+gregtech.veins.fluid.oil=Oil Deposit
+gregtech.veins.fluid.raw_oil=Raw Oil Deposit
+gregtech.veins.fluid.salt_water=Salt Water Deposit
 
 gregtech.item_filter.empty_item=Empty (No Item)
 gregtech.item_filter.footer=§eClick with item to override

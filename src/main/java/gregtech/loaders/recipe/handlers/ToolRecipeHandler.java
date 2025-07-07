@@ -554,7 +554,7 @@ public class ToolRecipeHandler {
         //iv
         for (MetaValueItem batteryItem : batteryItems.get(IV)) {
             ModHandler.addShapedEnergyTransferRecipe("prospector_iv_" + batteryItem.unlocalizedName,
-                    MetaItems.PROSPECTOR_EV.getStackForm(),
+                    MetaItems.PROSPECTOR_IV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",
                     'E', MetaItems.EMITTER_IV.getStackForm(),

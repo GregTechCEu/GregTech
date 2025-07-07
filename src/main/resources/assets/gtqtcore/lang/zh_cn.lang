@@ -533,6 +533,7 @@ gregtech.gui.dual_auto_collapse.tooltip.disabled=物品/流体堆叠自动合并
 gregtech.machine.me_pattern.tooltip.1=内置样板供应器，使用样板标记配方后可直接下单至机器
 gregtech.machine.me_pattern.tooltip.2=阻挡模式：只允许与总成缓存的相同配方物品流进入总成，其他配方的物品流将被阻挡
 gregtech.machine.me_pattern.tooltip.3=样板优化：将样板自动倍乘到当前并行数量，多方块并行变更也会导致样板倍乘自动变更
+gregtech.machine.me_pattern.tooltip.4=高级样板电路：在样板读取中如果读取到虚拟电路（不包含可编程电路）则自动设置当前虚拟电路为样板中电路的值并将虚拟电路发送回网络
 
 gregtech.machine.thread_multiblock.tooltip.1=本设备支持使用线程仓进行核心拓展，支持在不同批次处理不同种类的配方
 gregtech.machine.thread_multiblock.tooltip.2=每个核心都拥有完整且独立的配方调度系统，各核心的耗电，超频，并行等计算相互独立

@@ -26,10 +26,13 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.PagedWidgetSyncHandler;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockNotifiablePart;
 import gregtech.common.mui.widget.GTFluidSlot;
 
@@ -160,6 +163,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
     private boolean isBlockedMode = true;
 
     private boolean patternDeal = false;
+    private boolean advancedCircuit = false;
     private int parallel;
     private int lastParallel;
 
@@ -510,6 +514,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         data.setBoolean("BlockingEnabled", this.isBlockedMode);
         data.setBoolean("Export", this.export);
         data.setBoolean("patternDeal", this.patternDeal);
+        data.setBoolean("advancedCircuit", this.advancedCircuit);
         data.setInteger("parallel", this.parallel);
         data.setInteger("lastParallel", this.lastParallel);
 
@@ -530,6 +535,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         this.isBlockedMode = data.getBoolean("BlockingEnabled");
         this.export = data.getBoolean("Export");
         this.patternDeal = data.getBoolean("patternDeal");
+        this.advancedCircuit = data.getBoolean("advancedCircuit");
         this.parallel = data.getInteger("parallel");
         this.lastParallel = data.getInteger("lastParallel");
 
@@ -717,6 +723,9 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         BooleanSyncValue patternStateValue = new BooleanSyncValue(() -> patternDeal, val -> patternDeal = val);
         guiSyncManager.syncValue("pattern_state", patternStateValue);
 
+        BooleanSyncValue ghostCircuitStateValue = new BooleanSyncValue(() -> advancedCircuit, val -> advancedCircuit = val);
+        guiSyncManager.syncValue("ghost_circuit_state", ghostCircuitStateValue);
+
         boolean hasGhostCircuit = hasGhostCircuitInventory() && this.circuitInventory != null;
 
         var controller = new PagedWidget.Controller();
@@ -789,22 +798,34 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
                                         .addLine(IKey.lang("自动整理"))))
 
                         .childIf(hasGhostCircuit, new GhostCircuitSlotWidget()
-                                .top(-18 - 10)
+                                .top(18)
+                                .left(18+10)
                                 .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
                         .childIf(!hasGhostCircuit, new Widget<>()
-                                .top(-18 - 10)
+                                .top(18)
+                                .left(18+10)
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.BUTTON_X)
                                 .tooltip(t -> t.addLine(
                                         IKey.lang("gregtech.gui.configurator_slot.unavailable.tooltip")))
                         )
 
                         .child(new ToggleButton()
+                                .top(0)
                                 .value(new BoolValue.Dynamic(patternStateValue::getBoolValue,
                                         patternStateValue::setBoolValue))
                                 .overlay(GTGuiTextures.PATTERN_OVERLAY)
                                 .tooltipBuilder(t -> t.setAutoUpdate(true)
                                         .addLine(IKey.lang("样板优化"))))
+
+                        .child(new ToggleButton()
+                                .top(0)
+                                .left(18+10)
+                                .value(new BoolValue.Dynamic(ghostCircuitStateValue::getBoolValue,
+                                        ghostCircuitStateValue::setBoolValue))
+                                .overlay(GTGuiTextures.CIRCUIT_OVERLAY)
+                                .tooltipBuilder(t -> t.setAutoUpdate(true)
+                                        .addLine(IKey.lang("高级样板电路"))))
                 );
     }
 
@@ -920,7 +941,8 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         return getProxy() != null && getProxy().isActive();
     }
 
-    public boolean addItemAndFluid(InventoryCrafting inventoryCrafting) {
+    public boolean addItemAndFluid(InventoryCrafting inventoryCrafting) throws GridAccessException {
+        // 第一阶段：模拟检查所有物品是否可插入
         for (int i = 0; i < inventoryCrafting.getSizeInventory(); ++i) {
             ItemStack itemStack = inventoryCrafting.getStackInSlot(i);
             if (itemStack.isEmpty()) continue;
@@ -936,6 +958,22 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
                 }
             }
 
+            // 处理集成电路 - 模拟阶段
+            if (advancedCircuit&&isOnline && MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack)) {
+                IItemStorageChannel channel = AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class);
+                IMEMonitor<IAEItemStack> monitor = networkProxy.getStorage().getInventory(channel);
+                IAEItemStack aeStack = AEItemStack.fromItemStack(itemStack);
+                if (aeStack != null) {
+                    // 模拟注入网络，检查是否可返还
+                    IAEItemStack remaining = monitor.injectItems(aeStack, Actionable.SIMULATE, getActionSource());
+                    if (remaining != null && remaining.getStackSize() > 0) {
+                        return false; // 网络无法完全接收物品
+                    }
+                }
+                continue; // 跳过容器插入检查
+            }
+
+            // 普通物品模拟插入检查
             ItemStack simulated = itemStack.copy();
             for (int slot = 0; slot < importItems.getSlots() && !simulated.isEmpty(); slot++) {
                 ItemStack remaining = importItems.insertItem(slot, simulated, true);
@@ -948,6 +986,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
             }
         }
 
+        // 第二阶段：实际执行插入操作
         for (int i = 0; i < inventoryCrafting.getSizeInventory(); ++i) {
             ItemStack itemStack = inventoryCrafting.getStackInSlot(i);
             if (itemStack.isEmpty()) continue;
@@ -961,6 +1000,21 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
                 }
             }
 
+            // 处理集成电路 - 实际执行阶段
+            if (advancedCircuit&&isOnline && MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack)) {
+                IItemStorageChannel channel = AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class);
+                IMEMonitor<IAEItemStack> monitor = networkProxy.getStorage().getInventory(channel);
+                IAEItemStack aeStack = AEItemStack.fromItemStack(itemStack);
+                if (aeStack != null) {
+                    // 实际注入网络返还物品
+                    monitor.injectItems(aeStack, Actionable.MODULATE, getActionSource());
+                    // 设置机器电路配置
+                    this.setGhostCircuitConfig(IntCircuitIngredient.getCircuitConfiguration(itemStack));
+                }
+                continue; // 跳过容器插入
+            }
+
+            // 普通物品实际插入
             ItemStack toInsert = itemStack.copy();
             for (int slot = 0; slot < importItems.getSlots() && !toInsert.isEmpty(); slot++) {
                 toInsert = importItems.insertItem(slot, toInsert, false);
@@ -975,11 +1029,14 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         if (!isActive()) return false;
 
         if (checkIfEmpty() && checkIfFluidEmpty()) {
-            return addItemAndFluid(inventoryCrafting);
+            try {
+                return addItemAndFluid(inventoryCrafting);
+            } catch (GridAccessException e) {
+                GTLog.logger.warn("Grid access failed", e);
+            }
         }
 
         if (isBlockedMode) {
-            //如果不空 且开启智能阻挡，需要判断是否能插入
             for (int i = 0; i < inventoryCrafting.getSizeInventory(); ++i) {
                 ItemStack itemStack = inventoryCrafting.getStackInSlot(i);
                 if (itemStack.isEmpty()) continue;
@@ -987,7 +1044,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
                 // 处理流体假物品
                 if (FakeFluids.isFluidFakeItem(itemStack)) {
                     FluidStack fluid = FakeItemRegister.getStack(itemStack);
-                    if (fluid == null) return false; // 无效流体物品
+                    if (fluid == null) return false;
 
                     boolean fluidExists = false;
                     for (IFluidTank tank : fluidTankList) {
@@ -998,6 +1055,10 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
                         }
                     }
                     if (!fluidExists) return false;
+                }
+                // 跳过集成电路的检查
+                else if (MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack)) {
+                    continue; // 不检查容器中存在性
                 }
                 // 处理普通物品
                 else {
@@ -1014,7 +1075,12 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
             }
         }
 
-        return addItemAndFluid(inventoryCrafting);
+        try {
+            return addItemAndFluid(inventoryCrafting);
+        } catch (GridAccessException e) {
+            GTLog.logger.warn("Grid access failed", e);
+            return false;
+        }
     }
 
     @Override
@@ -1044,6 +1110,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.3"));
+        tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.4"));
         tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.fluid_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getSlotByTier()));

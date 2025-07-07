@@ -6021,14 +6021,14 @@ gregtech.veins.ore.red_granite_sphere=红花岗岩球
 gregtech.veins.ore.salts=盐矿脉
 gregtech.veins.ore.sapphire=蓝宝石矿脉
 
-gregtech.veins.fluid.lava=下界熔岩矿藏
-gregtech.veins.fluid.natural_gas_nether=下界天然气矿藏
-gregtech.veins.fluid.heavy_oil=主世界重油矿藏
-gregtech.veins.fluid.light_oil=主世界轻油矿藏
-gregtech.veins.fluid.natural_gas_overworld=主世界天然气矿藏
-gregtech.veins.fluid.oil=主世界石油矿藏
-gregtech.veins.fluid.raw_oil=主世界原油矿藏
-gregtech.veins.fluid.salt_water=主世界盐水矿藏
+gregtech.veins.fluid.lava=熔岩矿藏
+gregtech.veins.fluid.natural_gas_nether=天然气矿藏
+gregtech.veins.fluid.heavy_oil=重油矿藏
+gregtech.veins.fluid.light_oil=轻油矿藏
+gregtech.veins.fluid.natural_gas_overworld=天然气矿藏
+gregtech.veins.fluid.oil=石油矿藏
+gregtech.veins.fluid.raw_oil=原油矿藏
+gregtech.veins.fluid.salt_water=盐水矿藏
 
 gregtech.item_filter.empty_item=空（没有物品）
 gregtech.item_filter.footer=§e手持物品右键覆盖设置

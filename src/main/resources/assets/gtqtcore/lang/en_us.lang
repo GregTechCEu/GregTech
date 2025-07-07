@@ -540,6 +540,7 @@ gregtech.gui.dual_auto_collapse.tooltip.disabled=Item/Fluid Stack Auto-Collapse 
 gregtech.machine.me_pattern.tooltip.1=Built-in pattern provider: Directly orders machines after marking recipes with patterns
 gregtech.machine.me_pattern.tooltip.2=Blocking Mode: Only allows item flows matching cached recipes in bus, blocks other recipe items
 gregtech.machine.me_pattern.tooltip.3=Pattern Optimization: Automatically multiplies patterns according to current thread count, adjusts dynamically with multiblock parallel changes
+gregtech.machine.me_pattern.tooltip.4=Advanced Template Circuit: In Template Reading, if a virtual circuit (without programmable circuits) is read, the value of the current virtual circuit is automatically set to the circuit in the template and the virtual circuit is sent back to the network
 
 gregtech.machine.thread_multiblock.tooltip.1=Supports core expansion via thread hatches for processing different recipe types across batches
 gregtech.machine.thread_multiblock.tooltip.2=Each core has complete independent recipe scheduling system with separate power/overclocking/parallel calculations
