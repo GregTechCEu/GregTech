@@ -23,6 +23,7 @@ import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.Mods;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.OreDepositDefinition;
@@ -242,7 +243,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                 }
             }
         }
-
+        OreByProduct.addOreByProductPrefix(OrePrefix.rawOre);
         List<OreByProduct> oreByproductList = new ArrayList<>();
         List<MaterialTree> materialTreeList = new ArrayList<>();
         for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {

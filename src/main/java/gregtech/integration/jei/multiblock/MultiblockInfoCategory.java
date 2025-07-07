@@ -49,46 +49,7 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
     }
 
     public static void registerRecipes(IModRegistry registry) {
-        int processorCount = Runtime.getRuntime().availableProcessors();
-        int threadCount = Math.max(1, processorCount - 1); // 保留一个核心给主线程
-        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-
-        int totalRecipes = REGISTER.size();
-        int batchSize = Math.max(1, (totalRecipes + threadCount - 1) / threadCount); // 计算每批大小
-
-        List<Future<List<MultiblockInfoRecipeWrapper>>> futures = new ArrayList<>();
-
-        // 将任务分批提交给线程池
-        for (int i = 0; i < threadCount; i++) {
-            final int start = i * batchSize;
-            final int end = Math.min(start + batchSize, totalRecipes);
-
-            if (start >= totalRecipes) break;
-
-            futures.add(executor.submit(() -> {
-                List<MultiblockInfoRecipeWrapper> batchWrappers = new ArrayList<>();
-                for (int j = start; j < end; j++) {
-                    MultiblockControllerBase controller = REGISTER.get(j);
-                    batchWrappers.add(new MultiblockInfoRecipeWrapper(controller));
-                }
-                return batchWrappers;
-            }));
-        }
-
-        // 收集所有结果
-        List<MultiblockInfoRecipeWrapper> allWrappers = new ArrayList<>(totalRecipes);
-        for (Future<List<MultiblockInfoRecipeWrapper>> future : futures) {
-            try {
-                allWrappers.addAll(future.get());
-            } catch (InterruptedException | ExecutionException e) {
-                GTLog.logger.error("Failed to generate JEI multiblock preview", e);
-                // 部分失败时继续处理其他结果
-            }
-        }
-
-        executor.shutdown(); // 关闭线程池
-
-        registry.addRecipes(allWrappers, UID);
+        registry.addRecipes(REGISTER.stream().map(MultiblockInfoRecipeWrapper::new).collect(Collectors.toList()), UID);
     }
 
     @NotNull

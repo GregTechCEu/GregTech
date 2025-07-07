@@ -1,11 +1,14 @@
 package gregtech.common.blocks;
 
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.ore.StoneTypes;
+import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.IBlockOre;
 import gregtech.api.worldgen.config.OreConfigUtils;
@@ -21,6 +24,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
@@ -35,6 +39,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import team.chisel.common.util.OreDictionaryUtil;
 
 import java.util.Objects;
 import java.util.Random;
@@ -83,28 +88,40 @@ public class BlockOre extends Block implements IBlockOre {
     @NotNull
     @Override
     public Item getItemDropped(@NotNull IBlockState state, @NotNull Random rand, int fortune) {
+        // 获取当前方块状态对应的 StoneType
         StoneType stoneType = state.getValue(STONE_TYPE);
-        // if the stone type should be dropped as an item, or if it is within the first 16 block states
-        // don't do any special handling
-        if (stoneType.shouldBeDroppedAsItem || StoneType.STONE_TYPE_REGISTRY.getIDForObject(stoneType) < 16) {
-            return super.getItemDropped(state, rand, fortune);
+
+        // 直接返回粗矿物品，忽略原分支逻辑
+        ItemStack rawOreStack = OreDictUnifier.get(OrePrefix.rawOre, this.material);
+        if (!rawOreStack.isEmpty()) {
+            return rawOreStack.getItem(); // 返回粗矿物品（忽略元数据）
         }
 
-        // always drop StoneTypes.STONE as the default
-        // this prevents stone types of id>15 from dropping the meta=0 variant of the block,
-        // which might not be the block with the vanilla stone type
-        IBlockState stoneOre = OreConfigUtils.getOreForMaterial(this.material).get(StoneTypes.STONE);
-        return Item.getItemFromBlock(stoneOre.getBlock());
+        // 粗矿不存在时回退到原逻辑
+        if (stoneType.shouldBeDroppedAsItem || StoneType.STONE_TYPE_REGISTRY.getIDForObject(stoneType) < 16) {
+            return super.getItemDropped(state, rand, fortune);
+        } else {
+            IBlockState stoneOre = OreConfigUtils.getOreForMaterial(this.material).get(StoneTypes.STONE);
+            return Item.getItemFromBlock(stoneOre.getBlock());
+        }
+    }
+
+    // 新增方法：处理掉落数量和元数据
+    @Override
+    public int damageDropped(@NotNull IBlockState state) {
+        // 返回粗矿对应的元数据值
+        ItemStack rawOreStack = OreDictUnifier.get(OrePrefix.rawOre, this.material);
+        return rawOreStack.isEmpty() ? 0 : rawOreStack.getItemDamage();
     }
 
     @Override
-    public int damageDropped(@NotNull IBlockState state) {
-        StoneType stoneType = state.getValue(STONE_TYPE);
-        if (stoneType.shouldBeDroppedAsItem) {
-            return getMetaFromState(state);
-        } else {
-            return 0;
-        }
+    public int quantityDropped(IBlockState state, int fortune, @NotNull Random random) {
+        // 基础掉落数量 = 1 + 时运增幅
+        int base = 1 + random.nextInt(fortune + 1);
+
+        // 粗矿处理：时运每级增加 1 个额外掉落
+        ItemStack rawOreStack = OreDictUnifier.get(OrePrefix.rawOre, this.material);
+        return rawOreStack.isEmpty() ? super.quantityDropped(state, fortune, random) : base;
     }
 
     @NotNull

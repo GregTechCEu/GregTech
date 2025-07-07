@@ -54,6 +54,10 @@ public class OrePrefix {
     // Regular Ore Prefix. Ore -> Material is a Oneway Operation! Introduced by Eloraam
     public static final OrePrefix ore = new OrePrefix("ore", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION,
             hasOreProperty);
+    //rawOre
+    public static final OrePrefix rawOre = new OrePrefix("rawOre", -1, null, MaterialIconType.raw, ENABLE_UNIFICATION,
+            hasOreProperty);
+
     public static final OrePrefix oreGranite = new OrePrefix("oreGranite", -1, null, MaterialIconType.ore,
             ENABLE_UNIFICATION, hasOreProperty);
     public static final OrePrefix oreDiorite = new OrePrefix("oreDiorite", -1, null, MaterialIconType.ore,

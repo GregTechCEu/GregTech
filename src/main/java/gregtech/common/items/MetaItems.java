@@ -583,6 +583,7 @@ public final class MetaItems {
     private static final List<OrePrefix> orePrefixes = new ArrayList<>();
 
     static {
+        orePrefixes.add(OrePrefix.rawOre);
         orePrefixes.add(OrePrefix.dust);
         orePrefixes.add(OrePrefix.dustSmall);
         orePrefixes.add(OrePrefix.dustTiny);

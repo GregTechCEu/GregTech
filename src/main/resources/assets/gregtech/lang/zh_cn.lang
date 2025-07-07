@@ -370,7 +370,7 @@ metaitem.spray.can.dyes.blue.name=喷漆罐（蓝色）
 metaitem.spray.can.dyes.brown.name=喷漆罐（棕色）
 metaitem.spray.can.dyes.green.name=喷漆罐（绿色）
 metaitem.spray.can.dyes.red.name=喷漆罐（红色）
-metaitem.spray.can.dyes.black.name=喷漆罐（黑色）
+metaitem.spray.can.dyes.black.name=喷漆罐（花岗岩）
 
 metaitem.tool.matches.name=火柴
 metaitem.tool.matchbox.name=火柴盒
@@ -1504,6 +1504,7 @@ item.material.oreprefix.dustImpure=含杂%s粉
 item.material.oreprefix.dustPure=纯净%s粉
 item.material.oreprefix.dust=%s粉
 item.material.oreprefix.nugget=%s粒
+item.material.oreprefix.rawOre=%s粗矿
 item.material.oreprefix.plateDense=致密%s板
 item.material.oreprefix.plateDouble=双层%s板
 item.material.oreprefix.plate=%s板

@@ -32,6 +32,7 @@ public class OreRecipeHandler {
 
     public static void register() {
         OrePrefix.ore.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
+        OrePrefix.rawOre.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
         OrePrefix.oreEndstone.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOreDouble);
         OrePrefix.oreNetherrack.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOreDouble);
         if (ConfigHolder.worldgen.allUniqueStoneTypes) {
