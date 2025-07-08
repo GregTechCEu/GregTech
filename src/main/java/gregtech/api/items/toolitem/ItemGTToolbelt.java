@@ -4,12 +4,12 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.items.IDyeableItem;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.TooltipHelper;
@@ -471,10 +471,9 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         if (result == EnumActionResult.PASS) {
             ItemStack stack = player.getHeldItem(hand);
             ToolStackHandler handler = getHandler(stack);
-            if (handler.getSelectedStack().isEmpty() &&
-                    world.getTileEntity(pos) instanceof MetaTileEntityHolder holder &&
-                    holder.getMetaTileEntity() instanceof MetaTileEntityMaintenanceHatch maintenance) {
-                maintenance.fixMaintenanceProblemsWithToolbelt(player, this, stack);
+            if (handler.getSelectedStack().isEmpty() && GTUtility.getMetaTileEntity(world,
+                    pos) instanceof MetaTileEntityMaintenanceHatch maintenanceHatch) {
+                maintenanceHatch.fixMaintenanceProblemsWithToolbelt(player, this, stack);
                 return EnumActionResult.SUCCESS;
             }
             return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);

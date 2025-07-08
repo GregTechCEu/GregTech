@@ -644,6 +644,7 @@ public class GTGuiTextures {
 
     // MISC
     public static final UITexture SPEAKER_ICON = fullImage("textures/gui/widget/speaker.png");
+    public static final UITexture MAINTENANCE_ICON = fullImage("textures/gui/widget/button_maintenance.png", true);
 
     public static void init() {/**/}
 

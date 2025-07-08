@@ -3,25 +3,18 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.FilteredItemHandler;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ItemGTToolbelt;
-import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
-import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.client.resources.I18n;
@@ -31,36 +24,32 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
@@ -68,7 +57,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                                             implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
     private final boolean isConfigurable;
-    private GTItemStackHandler itemStackHandler;
+    private TapeStackHandler tapeHandler;
     private boolean isTaped;
 
     // Used to store state temporarily if the Controller is broken
@@ -112,14 +101,14 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.itemStackHandler = new FilteredItemHandler(this, 1);
-        this.itemInventory = itemStackHandler;
+        this.tapeHandler = new TapeStackHandler(this);
+        this.itemInventory = tapeHandler;
     }
 
     @Override
     public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         super.clearMachineInventory(itemBuffer);
-        clearInventory(itemBuffer, itemStackHandler);
+        clearInventory(itemBuffer, tapeHandler);
     }
 
     /**
@@ -185,10 +174,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         super.update();
         if (!getWorld().isRemote && getOffsetTimer() % 20 == 0) {
             MultiblockControllerBase controller = getController();
-            if (controller instanceof IMaintenance) {
-                if (((IMaintenance) controller).hasMaintenanceProblems()) {
-                    if (consumeDuctTape(this.itemInventory, 0)) {
-                        fixAllMaintenanceProblems();
+            if (controller instanceof IMaintenance iMaintenance) {
+                if (iMaintenance.hasMaintenanceProblems()) {
+                    if (tapeHandler.tryConsumeTape()) {
+                        iMaintenance.fixAllMaintenance();
                         setTaped(true);
                     }
                 }
@@ -201,49 +190,36 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * 
      * @param entityPlayer the player performing the fixing
      */
-    private void fixMaintenanceProblems(@Nullable EntityPlayer entityPlayer) {
-        if (!(this.getController() instanceof IMaintenance))
+    private void fixMaintenanceProblems(@NotNull EntityPlayer entityPlayer) {
+        if (!(this.getController() instanceof IMaintenance iMaintenance)) {
             return;
+        }
 
-        if (!((IMaintenance) this.getController()).hasMaintenanceProblems())
+        if (!iMaintenance.hasMaintenanceProblems()) {
             return;
+        }
 
-        if (entityPlayer != null) {
-            // Fix automatically on slot click by player in Creative Mode
-            if (entityPlayer.capabilities.isCreativeMode) {
-                fixAllMaintenanceProblems();
+        // Fix automatically on slot click by player in Creative Mode
+        if (entityPlayer.capabilities.isCreativeMode) {
+            iMaintenance.fixAllMaintenance();
+            return;
+        }
+
+        // Then for every slot in the player's main inventory, try to duct tape fix
+        for (int i = 0; i < entityPlayer.inventory.mainInventory.size(); i++) {
+            if (consumeDuctTape(entityPlayer.inventory.mainInventory.get(i), true)) {
+                iMaintenance.fixAllMaintenance();
+                setTaped(true);
                 return;
             }
-            // Then for every slot in the player's main inventory, try to duct tape fix
-            for (int i = 0; i < entityPlayer.inventory.mainInventory.size(); i++) {
-                if (consumeDuctTape(new ItemStackHandler(entityPlayer.inventory.mainInventory), i)) {
-                    fixAllMaintenanceProblems();
-                    setTaped(true);
-                    return;
-                }
-            }
-            // Lastly for each problem the multi has, try to fix with tools
-            fixProblemsWithTools(((IMaintenance) this.getController()).getMaintenanceProblems(), entityPlayer);
         }
+        // Lastly for each problem the multi has, try to fix with tools
+        fixProblemsWithTools(iMaintenance, entityPlayer);
     }
 
-    /**
-     *
-     * Handles duct taping for manual and auto-taping use
-     *
-     * @param handler is the handler to get duct tape from
-     * @param slot    is the inventory slot to check for tape
-     * @return true if tape was consumed, else false
-     */
-    private boolean consumeDuctTape(@Nullable IItemHandler handler, int slot) {
-        if (handler == null)
-            return false;
-        return consumeDuctTape(null, handler.getStackInSlot(slot));
-    }
-
-    private boolean consumeDuctTape(@Nullable EntityPlayer player, ItemStack itemStack) {
+    private boolean consumeDuctTape(@NotNull ItemStack itemStack, boolean consumeTape) {
         if (!itemStack.isEmpty() && itemStack.isItemEqual(MetaItems.DUCT_TAPE.getStackForm())) {
-            if (player == null || !player.capabilities.isCreativeMode) {
+            if (consumeTape) {
                 itemStack.shrink(1);
             }
             return true;
@@ -255,32 +231,28 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * Attempts to fix a provided maintenance problem with a tool in the player's
      * inventory, if the tool exists.
      *
-     * @param problems     Problem Flags
+     * @param iMaintenance The maintainable machine to target
      * @param entityPlayer Target Player which their inventory would be scanned for tools to fix
      */
-    private void fixProblemsWithTools(byte problems, EntityPlayer entityPlayer) {
-        List<String> toolsToMatch = Arrays.asList(new String[6]);
+    private void fixProblemsWithTools(@NotNull IMaintenance iMaintenance, @NotNull EntityPlayer entityPlayer) {
+        byte problems = iMaintenance.getMaintenanceProblems();
+
         boolean proceed = false;
+        String[] toolsToMatch = new String[6];
         for (byte index = 0; index < 6; index++) {
             if (((problems >> index) & 1) == 0) {
                 proceed = true;
-                switch (index) {
-                    case 0 -> toolsToMatch.set(0, ToolClasses.WRENCH);
-                    case 1 -> toolsToMatch.set(1, ToolClasses.SCREWDRIVER);
-                    case 2 -> toolsToMatch.set(2, ToolClasses.SOFT_MALLET);
-                    case 3 -> toolsToMatch.set(3, ToolClasses.HARD_HAMMER);
-                    case 4 -> toolsToMatch.set(4, ToolClasses.WIRE_CUTTER);
-                    case 5 -> toolsToMatch.set(5, ToolClasses.CROWBAR);
-                }
+                toolsToMatch[index] = IMaintenance.maintenance2tool.get(index);
             }
         }
+
         if (!proceed) {
             return;
         }
 
         mainfor:
-        for (int i = 0; i < toolsToMatch.size(); i++) {
-            String toolToMatch = toolsToMatch.get(i);
+        for (int i = 0; i < toolsToMatch.length; i++) {
+            String toolToMatch = toolsToMatch[i];
             if (toolToMatch != null) {
                 // Try to use the item in the player's "hand" (under the cursor)
                 ItemStack heldItem = entityPlayer.inventory.getItemStack();
@@ -292,10 +264,6 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                     }
                 } else if (ToolHelper.isTool(heldItem, toolToMatch)) {
                     fixProblemWithTool(i, heldItem, entityPlayer);
-
-                    if (toolsToMatch.stream().allMatch(Objects::isNull)) {
-                        return;
-                    }
                     continue;
                 }
 
@@ -309,10 +277,6 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                         }
                     } else if (ToolHelper.isTool(itemStack, toolToMatch)) {
                         fixProblemWithTool(i, itemStack, entityPlayer);
-
-                        if (toolsToMatch.stream().allMatch(Objects::isNull)) {
-                            return;
-                        }
                         continue mainfor;
                     }
                 }
@@ -324,17 +288,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     public void fixMaintenanceProblemsWithToolbelt(@NotNull EntityPlayer entityPlayer, ItemGTToolbelt toolbelt,
                                                    ItemStack toolbeltStack) {
         byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
-        for (byte index = 0; index < 6; index++) {
+        for (int index = 0; index < 6; index++) {
             if (((problems >> index) & 1) == 0) {
-                String toolToMatch = switch (index) {
-                    case 0 -> ToolClasses.WRENCH;
-                    case 1 -> ToolClasses.SCREWDRIVER;
-                    case 2 -> ToolClasses.SOFT_MALLET;
-                    case 3 -> ToolClasses.HARD_HAMMER;
-                    case 4 -> ToolClasses.WIRE_CUTTER;
-                    case 5 -> ToolClasses.CROWBAR;
-                    default -> null;
-                };
+                String toolToMatch = IMaintenance.maintenance2tool.get(index);
                 if (toolbelt.damageAgainstMaintenanceProblem(toolbeltStack, toolToMatch, entityPlayer)) {
                     ((IMaintenance) getController()).setMaintenanceFixed(index);
                     setTaped(false);
@@ -347,14 +303,6 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         ((IMaintenance) getController()).setMaintenanceFixed(problemIndex);
         ToolHelper.damageItemWhenCrafting(stack, player);
         setTaped(false);
-    }
-
-    /**
-     * Fixes every maintenance problem of the controller
-     */
-    public void fixAllMaintenanceProblems() {
-        if (this.getController() instanceof IMaintenance)
-            for (int i = 0; i < 6; i++) ((IMaintenance) this.getController()).setMaintenanceFixed(i);
     }
 
     @Override
@@ -388,95 +336,71 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public void onRemoval() {
-        if (getController() instanceof IMaintenance) {
-            IMaintenance controller = (IMaintenance) getController();
-            if (!getWorld().isRemote && controller != null)
-                controller.storeTaped(isTaped);
+        if (getController() instanceof IMaintenance iMaintenance) {
+            if (!getWorld().isRemote) {
+                iMaintenance.storeTaped(isTaped);
+            }
         }
+
         super.onRemoval();
     }
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                 CuboidRayTraceResult hitResult) {
-        if (getController() instanceof IMaintenance && ((IMaintenance) getController()).hasMaintenanceProblems()) {
-            if (consumeDuctTape(playerIn, playerIn.getHeldItem(hand))) {
-                fixAllMaintenanceProblems();
+        if (getController() instanceof IMaintenance iMaintenance && iMaintenance.hasMaintenanceProblems()) {
+            if (consumeDuctTape(playerIn.getHeldItem(hand), !playerIn.capabilities.isCreativeMode)) {
+                iMaintenance.fixAllMaintenance();
                 setTaped(true);
                 return true;
             }
         }
+
         return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
     public boolean usesMui2() {
-        return false;
+        return true;
     }
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        BooleanSyncValue wiringMinigame = new BooleanSyncValue(GTValues.FOOLS);
-        panelSyncManager.syncValue("wiringMinigame", 0, wiringMinigame);
+        BooleanSyncValue wiringMinigameSync = new BooleanSyncValue(GTValues.FOOLS);
+        panelSyncManager.syncValue("wiringMinigame", 0, wiringMinigameSync);
+        InteractionSyncHandler maintenanceClickSync = new InteractionSyncHandler()
+                .setOnMousePressed(mouse -> fixMaintenanceProblems(guiData.getPlayer()));
 
         return GTGuis.createPanel(this, 176, 152)
+                .child(IKey.lang(getMetaFullName())
+                        .asWidget()
+                        .pos(5, 5))
                 // TODO: amongus
-                // .childIf(!isConfigurable && GTValues.FOOLS.getAsBoolean(), () -> new FixWiringTaskWidgetButMUI2())
+                // .childIf(!isConfigurable && wiringMinigame.getBoolValue(), () -> new FixWiringTaskWidgetButMUI2())
+                .childIf(!wiringMinigameSync.getBoolValue(), () -> Flow.column()
+                        .top(17)
+                        .widthRel(1.0f)
+                        .coverChildrenHeight()
+                        .child(new ItemSlot()
+                                .slot(SyncHandlers.itemSlot(tapeHandler, 0))
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.DUCT_TAPE_OVERLAY)
+                                .addTooltipLine(IKey.lang("gregtech.machine.maintenance_hatch_tape_slot.tooltip")))
+                        .child(new ButtonWidget<>()
+                                .size(20)
+                                .syncHandler(maintenanceClickSync)
+                                .overlay(GTGuiTextures.MAINTENANCE_ICON)
+                                .addTooltipLine(IKey.lang("gregtech.machine.maintenance_hatch_tool_slot.tooltip"))))
+                // .childIf(isConfigurable, () -> speed configuration widgets)
                 .child(SlotGroupWidget.playerInventory()
                         .left(7)
                         .bottom(7));
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 * 3 + 98)
-                .label(5, 5, getMetaFullName())
-                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16);
-
-        if (!isConfigurable && GTValues.FOOLS.getAsBoolean()) {
-            builder.widget(new FixWiringTaskWidget(48, 15, 80, 50)
-                    .setOnFinished(this::fixAllMaintenanceProblems)
-                    .setCanInteractPredicate(this::isAttachedToMultiBlock));
-        } else {
-            builder.widget(new SlotWidget(itemStackHandler, 0, 89 - 10, 18 - 1)
-                    .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY)
-                    .setTooltipText("gregtech.machine.maintenance_hatch_tape_slot.tooltip"))
-                    .widget(new ClickButtonWidget(89 - 10 - 1, 18 * 2 + 3, 20, 20, "",
-                            data -> fixMaintenanceProblems(entityPlayer))
-                                    .setButtonTexture(GuiTextures.MAINTENANCE_ICON)
-                                    .setTooltipText("gregtech.machine.maintenance_hatch_tool_slot.tooltip"));
-        }
-        if (isConfigurable) {
-            builder.widget(
-                    new AdvancedTextWidget(5, 25, getTextWidgetText("duration", this::getDurationMultiplier), 0x404040))
-                    .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", this::getTimeMultiplier), 0x404040))
-                    .widget(new ClickButtonWidget(9, 18 * 3 + 16 - 18, 12, 12, "-", this::decInternalMultiplier))
-                    .widget(new ClickButtonWidget(9 + 18 * 2, 18 * 3 + 16 - 18, 12, 12, "+",
-                            this::incInternalMultiplier));
-        }
-        return builder.build(getHolder(), entityPlayer);
-    }
-
-    private static Consumer<List<ITextComponent>> getTextWidgetText(String type, Supplier<Double> multiplier) {
-        return (list) -> {
-            ITextComponent tooltip;
-            if (multiplier.get() == 1.0) {
-                tooltip = new TextComponentTranslation(
-                        "gregtech.maintenance.configurable_" + type + ".unchanged_description");
-            } else {
-                tooltip = new TextComponentTranslation(
-                        "gregtech.maintenance.configurable_" + type + ".changed_description", multiplier.get());
-            }
-            list.add(new TextComponentTranslation("gregtech.maintenance.configurable_" + type, multiplier.get())
-                    .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
-        };
-    }
-
-    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean("IsTaped", isTaped);
-        data.setTag("tapeInventory", itemStackHandler.serializeNBT());
+        data.setTag("tapeInventory", tapeHandler.serializeNBT());
         if (isConfigurable) {
             data.setDouble("DurationMultiplier", durationMultiplier.doubleValue());
         }
@@ -488,14 +412,14 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         super.readFromNBT(data);
         isTaped = data.getBoolean("IsTaped");
         if (data.hasKey("tapeInventory", Constants.NBT.TAG_COMPOUND)) {
-            this.itemStackHandler.deserializeNBT(data.getCompoundTag("tapeInventory"));
+            this.tapeHandler.deserializeNBT(data.getCompoundTag("tapeInventory"));
         }
         if (isConfigurable) {
             durationMultiplier = BigDecimal.valueOf(data.getDouble("DurationMultiplier"));
         }
         // Legacy Inventory Handler Support
         if (data.hasKey("ImportInventory", Constants.NBT.TAG_COMPOUND)) {
-            GTUtility.readItems(itemStackHandler, "ImportInventory", data);
+            GTUtility.readItems(tapeHandler, "ImportInventory", data);
             data.removeTag("ImportInventory");
         }
     }
@@ -575,5 +499,35 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         super.addToolUsages(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.tool_action.tape"));
+    }
+
+    private static class TapeStackHandler extends FilteredItemHandler {
+
+        @Nullable
+        private static ItemStack tapeReference;
+
+        public TapeStackHandler(MetaTileEntity metaTileEntity) {
+            super(metaTileEntity, 1, TapeStackHandler::isStackTape);
+        }
+
+        public boolean tryConsumeTape() {
+            ItemStack slotStack = getStackInSlot(0);
+            // There *should* be no need to check if the stack is tape
+            if (slotStack.isEmpty()) return false;
+            slotStack.shrink(1);
+            return true;
+        }
+
+        public static @NotNull ItemStack getTapeReference() {
+            if (tapeReference == null) {
+                tapeReference = MetaItems.DUCT_TAPE.getStackForm();
+            }
+
+            return tapeReference;
+        }
+
+        public static boolean isStackTape(@NotNull ItemStack itemStack) {
+            return getTapeReference().isItemEqual(itemStack);
+        }
     }
 }

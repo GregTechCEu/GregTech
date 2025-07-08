@@ -760,10 +760,10 @@ public class GTUtility {
         return result.toString();
     }
 
-    public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
+    public static @Nullable MetaTileEntity getMetaTileEntity(@Nullable IBlockAccess world, @Nullable BlockPos pos) {
         if (world == null || pos == null) return null;
         TileEntity te = world.getTileEntity(pos);
-        return te instanceof IGregTechTileEntity ? ((IGregTechTileEntity) te).getMetaTileEntity() : null;
+        return te instanceof IGregTechTileEntity igtte ? igtte.getMetaTileEntity() : null;
     }
 
     public static MetaTileEntity getMetaTileEntity(ItemStack stack) {
