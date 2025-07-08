@@ -213,6 +213,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 return;
             }
         }
+
         // Lastly for each problem the multi has, try to fix with tools
         fixProblemsWithTools(iMaintenance, entityPlayer);
     }
@@ -232,66 +233,66 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * inventory, if the tool exists.
      *
      * @param iMaintenance The maintainable machine to target
-     * @param entityPlayer Target Player which their inventory would be scanned for tools to fix
+     * @param player       Target Player which their inventory would be scanned for tools to fix
      */
-    private void fixProblemsWithTools(@NotNull IMaintenance iMaintenance, @NotNull EntityPlayer entityPlayer) {
+    private void fixProblemsWithTools(@NotNull IMaintenance iMaintenance, @NotNull EntityPlayer player) {
         byte problems = iMaintenance.getMaintenanceProblems();
 
-        boolean proceed = false;
         String[] toolsToMatch = new String[6];
-        for (byte index = 0; index < 6; index++) {
-            if (((problems >> index) & 1) == 0) {
-                proceed = true;
-                toolsToMatch[index] = IMaintenance.maintenance2tool.get(index);
-            }
-        }
-
-        if (!proceed) {
+        if (!IMaintenance.getToolsForMaintenance(problems, toolsToMatch)) {
             return;
         }
 
-        mainfor:
-        for (int i = 0; i < toolsToMatch.length; i++) {
-            String toolToMatch = toolsToMatch[i];
-            if (toolToMatch != null) {
-                // Try to use the item in the player's "hand" (under the cursor)
-                ItemStack heldItem = entityPlayer.inventory.getItemStack();
-                if (heldItem.getItem() instanceof ItemGTToolbelt toolbelt) {
-                    if (toolbelt.damageAgainstMaintenanceProblem(heldItem, toolToMatch, entityPlayer)) {
-                        ((IMaintenance) getController()).setMaintenanceFixed(i);
-                        setTaped(false);
-                        continue;
-                    }
-                } else if (ToolHelper.isTool(heldItem, toolToMatch)) {
-                    fixProblemWithTool(i, heldItem, entityPlayer);
-                    continue;
-                }
+        ItemStack heldStack = player.inventory.getItemStack();
+        if (!heldStack.isEmpty()) {
+            handleItemFix(heldStack, player, toolsToMatch);
+        }
 
-                // Then try all the remaining inventory slots
-                for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
-                    if (itemStack.getItem() instanceof ItemGTToolbelt toolbelt) {
-                        if (toolbelt.damageAgainstMaintenanceProblem(itemStack, toolToMatch, entityPlayer)) {
-                            ((IMaintenance) getController()).setMaintenanceFixed(i);
-                            setTaped(false);
-                            continue mainfor;
-                        }
-                    } else if (ToolHelper.isTool(itemStack, toolToMatch)) {
-                        fixProblemWithTool(i, itemStack, entityPlayer);
-                        continue mainfor;
-                    }
+        for (ItemStack itemStack : player.inventory.mainInventory) {
+            if (itemStack.isEmpty()) continue;
+            handleItemFix(itemStack, player, toolsToMatch);
+        }
+    }
+
+    private void handleItemFix(@NotNull ItemStack itemStack, @NotNull EntityPlayer player,
+                               @Nullable String @NotNull [] toolsToMatch) {
+        if (itemStack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            fixMaintenanceProblemsWithToolbelt(player, itemStack, toolbelt, toolsToMatch);
+        } else {
+            for (int index = 0; index < toolsToMatch.length; index++) {
+                String toolToMatch = toolsToMatch[index];
+                if (toolToMatch == null) continue;
+                if (ToolHelper.isTool(itemStack, toolToMatch)) {
+                    fixProblemWithTool(index, itemStack, player);
+                    toolsToMatch[index] = null;
                 }
             }
         }
     }
 
+    private void fixMaintenanceProblemsWithToolbelt(@NotNull EntityPlayer entityPlayer,
+                                                    @NotNull ItemStack toolbeltStack, @NotNull ItemGTToolbelt toolbelt,
+                                                    @Nullable String @NotNull [] toolsToMatch) {
+        for (int index = 0; index < toolsToMatch.length; index++) {
+            String toolToMatch = toolsToMatch[index];
+            if (toolToMatch == null) continue;
+            if (toolbelt.damageAgainstMaintenanceProblem(toolbeltStack, entityPlayer, toolToMatch)) {
+                ((IMaintenance) getController()).setMaintenanceFixed(index);
+                toolsToMatch[index] = null;
+                setTaped(false);
+            }
+        }
+    }
+
+    // TODO: change this a smidge
     @ApiStatus.Internal
-    public void fixMaintenanceProblemsWithToolbelt(@NotNull EntityPlayer entityPlayer, ItemGTToolbelt toolbelt,
-                                                   ItemStack toolbeltStack) {
+    public void fixMaintenanceProblemsWithToolbelt(@NotNull EntityPlayer entityPlayer,
+                                                   @NotNull ItemStack toolbeltStack, @NotNull ItemGTToolbelt toolbelt) {
         byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
         for (int index = 0; index < 6; index++) {
             if (((problems >> index) & 1) == 0) {
                 String toolToMatch = IMaintenance.maintenance2tool.get(index);
-                if (toolbelt.damageAgainstMaintenanceProblem(toolbeltStack, toolToMatch, entityPlayer)) {
+                if (toolbelt.damageAgainstMaintenanceProblem(toolbeltStack, entityPlayer, toolToMatch)) {
                     ((IMaintenance) getController()).setMaintenanceFixed(index);
                     setTaped(false);
                 }
@@ -299,7 +300,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         }
     }
 
-    private void fixProblemWithTool(int problemIndex, ItemStack stack, EntityPlayer player) {
+    private void fixProblemWithTool(int problemIndex, @NotNull ItemStack stack, @NotNull EntityPlayer player) {
         ((IMaintenance) getController()).setMaintenanceFixed(problemIndex);
         ToolHelper.damageItemWhenCrafting(stack, player);
         setTaped(false);
@@ -369,7 +370,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         BooleanSyncValue wiringMinigameSync = new BooleanSyncValue(GTValues.FOOLS);
         panelSyncManager.syncValue("wiringMinigame", 0, wiringMinigameSync);
         InteractionSyncHandler maintenanceClickSync = new InteractionSyncHandler()
-                .setOnMousePressed(mouse -> fixMaintenanceProblems(guiData.getPlayer()));
+                .setOnMousePressed(mouse -> {
+                    if (panelSyncManager.isClient()) return;
+                    fixMaintenanceProblems(guiData.getPlayer());
+                });
 
         return GTGuis.createPanel(this, 176, 152)
                 .child(IKey.lang(getMetaFullName())

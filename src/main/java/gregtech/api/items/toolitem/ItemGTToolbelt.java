@@ -397,9 +397,9 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         }
     }
 
-    public boolean damageAgainstMaintenanceProblem(ItemStack stack, String toolClass,
-                                                   @Nullable EntityPlayer entityPlayer) {
-        return getHandler(stack).checkMaintenanceAgainstTools(toolClass, true, entityPlayer);
+    public boolean damageAgainstMaintenanceProblem(ItemStack stack, @Nullable EntityPlayer entityPlayer,
+                                                   @NotNull String toolClass) {
+        return getHandler(stack).checkMaintenanceAgainstTools(entityPlayer, true, toolClass);
     }
 
     public boolean supportsIngredient(ItemStack stack, Ingredient ingredient) {
@@ -473,7 +473,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             ToolStackHandler handler = getHandler(stack);
             if (handler.getSelectedStack().isEmpty() && GTUtility.getMetaTileEntity(world,
                     pos) instanceof MetaTileEntityMaintenanceHatch maintenanceHatch) {
-                maintenanceHatch.fixMaintenanceProblemsWithToolbelt(player, this, stack);
+                maintenanceHatch.fixMaintenanceProblemsWithToolbelt(player, stack, this);
                 return EnumActionResult.SUCCESS;
             }
             return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
@@ -729,8 +729,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             }
         }
 
-        public boolean checkMaintenanceAgainstTools(String toolClass, boolean doCraftingDamage,
-                                                    @Nullable EntityPlayer entityPlayer) {
+        public boolean checkMaintenanceAgainstTools(@Nullable EntityPlayer entityPlayer, boolean doCraftingDamage,
+                                                    @NotNull String toolClass) {
             for (int i = 0; i < this.getSlots(); i++) {
                 ItemStack stack = this.getStackInSlot(i);
                 if (ToolHelper.isTool(stack, toolClass)) {

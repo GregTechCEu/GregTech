@@ -374,7 +374,7 @@ public final class ToolHelper {
     /**
      * @return if any of the specified tool classes exists in the tool
      */
-    public static boolean isTool(ItemStack tool, String... toolClasses) {
+    public static boolean isTool(@NotNull ItemStack tool, @Nullable String @NotNull... toolClasses) {
         if (toolClasses.length == 1) {
             return tool.getItem().getToolClasses(tool).contains(toolClasses[0]);
         }
