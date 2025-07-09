@@ -1254,7 +1254,7 @@ public class VanillaStandardRecipes {
                 .duration(50).EUt(VA[HV]).buildAndRegister();
 
         COMPRESSOR_RECIPES.recipeBuilder()
-                .input(dust, Blaze, 4)
+                .input(dust, Blaze, 5)
                 .output(stick, Blaze)
                 .buildAndRegister();
 

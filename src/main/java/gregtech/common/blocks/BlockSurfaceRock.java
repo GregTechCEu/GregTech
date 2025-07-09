@@ -112,6 +112,7 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
         return false;
     }
 
+    /*
     @Override
     public void neighborChanged(@NotNull IBlockState state, @NotNull World worldIn, @NotNull BlockPos pos,
                                 @NotNull Block blockIn, BlockPos fromPos) {
@@ -122,6 +123,8 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
             }
         }
     }
+
+     */
 
     @Override
     @NotNull

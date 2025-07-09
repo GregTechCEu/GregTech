@@ -57,7 +57,7 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
                 }
             } else {
                 ItemStack itemStack = new ItemStack(blockState.getBlock(), 1,
-                        blockState.getBlock().damageDropped(blockState));
+                        blockState.getBlock().getMetaFromState(blockState));
                 UnificationEntry entry = OreDictUnifier.getUnificationEntry(itemStack);
                 if (entry != null && entry.material != null && entry.material.hasProperty(PropertyKey.ORE)) {
                     return true;

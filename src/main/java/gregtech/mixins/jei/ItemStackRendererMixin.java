@@ -23,11 +23,7 @@ public class ItemStackRendererMixin implements IIngredientRenderer<ItemStack> {
             GlStateManager.enableDepth();
             RenderHelper.enableGUIStandardItemLighting();
             FontRenderer fontRenderer = getFontRenderer(mc, ingredient);
-
-            // 关键修改：移除原版渲染调用，改为直接渲染物品（不渲染数量）
             mc.getRenderItem().renderItemIntoGUI(ingredient, x, y);
-
-            // 只添加自定义数量渲染
             gregtech$renderItemAndEffectIntoGui(fontRenderer, ingredient, x, y);
 
             GlStateManager.disableBlend();
