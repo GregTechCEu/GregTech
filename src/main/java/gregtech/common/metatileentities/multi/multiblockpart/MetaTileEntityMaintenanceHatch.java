@@ -278,8 +278,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         }
     }
 
-    private boolean consumeDuctTape(@NotNull ItemStack itemStack, boolean consumeTape) {
-        if (!itemStack.isEmpty() && itemStack.isItemEqual(MetaItems.DUCT_TAPE.getStackForm())) {
+    private static boolean consumeDuctTape(@NotNull ItemStack itemStack, boolean consumeTape) {
+        if (!itemStack.isEmpty() && TapeStackHandler.isStackTape(itemStack)) {
             if (consumeTape) {
                 itemStack.shrink(1);
             }
