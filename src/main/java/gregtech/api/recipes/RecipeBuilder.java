@@ -871,6 +871,45 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R batch(Recipe recipe, int multiplier,int baseDuration) {
+        for (Map.Entry<RecipeProperty<?>, Object> property : recipe.propertyStorage().entrySet()) {
+            this.applyPropertyCT(property.getKey().getKey(), property.getValue());
+        }
+
+        // Create holders for the various parts of the new multiplied Recipe
+        List<GTRecipeInput> newRecipeInputs = new ArrayList<>();
+        List<GTRecipeInput> newFluidInputs = new ArrayList<>();
+        List<ItemStack> outputItems = new ArrayList<>();
+        List<FluidStack> outputFluids = new ArrayList<>();
+
+        // Populate the various holders of the multiplied Recipe
+        multiplyInputsAndOutputs(newRecipeInputs, newFluidInputs, outputItems, outputFluids, recipe, multiplier);
+
+        this.inputs.clear();
+        this.fluidInputs.clear();
+        this.outputs.clear();
+        this.fluidOutputs.clear();
+
+        // Build the new Recipe with multiplied components
+        this.inputIngredients(newRecipeInputs);
+        this.fluidInputs(newFluidInputs);
+
+        this.outputs(outputItems);
+        this.fluidOutputs(outputFluids);
+
+        chancedOutputsMultiply(recipe, multiplier);
+
+        this.EUt(recipe.getEUt());
+        this.duration(baseDuration  * multiplier );
+
+        if (this.parallel == 0) {
+            this.parallel = multiplier;
+        } else {
+            this.parallel += multiplier;
+        }
+        return (R) this;
+    }
+
     protected static void multiplyInputsAndOutputs(List<GTRecipeInput> newRecipeInputs,
                                                    List<GTRecipeInput> newFluidInputs,
                                                    List<ItemStack> outputItems,

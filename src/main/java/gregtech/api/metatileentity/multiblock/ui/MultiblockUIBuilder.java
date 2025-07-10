@@ -601,7 +601,9 @@ public class MultiblockUIBuilder {
      */
     public MultiblockUIBuilder addRecipeOutputLine(AbstractRecipeLogic arl, int maxLines) {
         // todo recipe is null on first load, fix in the future
-        Recipe recipe = arl.getPreviousRecipe();
+        Recipe recipe;
+        if(arl.isBatchEnable())recipe = arl.getShowRecipes();
+        else recipe = arl.getPreviousRecipe();
 
         if (getSyncer().syncBoolean(recipe == null)) return this;
         RecipeMap<?> map = arl.getRecipeMap();
@@ -612,9 +614,14 @@ public class MultiblockUIBuilder {
             MetaTileEntity mte = arl.getMetaTileEntity();
             trimmed = Recipe.trimRecipeOutputs(recipe, map, mte.getItemOutputLimit(), mte.getFluidOutputLimit());
         }
+        int p=1;
+        if(arl.isBatchEnable()){
 
-        int p = getSyncer().syncInt(arl.getParallelRecipesPerformed());
-        if (p == 0) p = 1;
+        }
+        else {
+            p = getSyncer().syncInt(arl.getParallelRecipesPerformed());
+            if (p == 0) p = 1;
+        }
 
         long eut = getSyncer().syncLong(trimmed == null ? 0 : trimmed.getEUt());
         long maxVoltage = getSyncer().syncLong(arl.getMaximumOverclockVoltage());

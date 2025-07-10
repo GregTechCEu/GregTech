@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.IBatch;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IEnergyContainer;
@@ -45,7 +46,7 @@ import java.util.List;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider,
                                                                                                  ICleanroomReceiver, IDistinctBusController,
-                                                                                                 IControllable {
+                                                                                                 IControllable, IBatch {
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
     protected IItemHandlerModifiable inputInventory;
@@ -398,5 +399,16 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     @Override
     public void setWorkingEnabled(boolean isWorkingAllowed) {
         recipeMapWorkable.setWorkingEnabled(isWorkingAllowed);
+    }
+
+    @Override
+    public boolean isBatchEnable(){
+        return recipeMapWorkable.isBatchEnable();
+    }
+
+    @Override
+    public void setBatchEnable(boolean enable)
+    {
+        recipeMapWorkable.setBatchEnable(enable);
     }
 }

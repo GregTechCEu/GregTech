@@ -152,7 +152,7 @@ public abstract class AdvanceMultiMapMultiblockController extends AdvanceRecipeM
     @Override
     protected MultiblockUIFactory createUIFactory() {
         return super.createUIFactory()
-                .createFlexButton((guiData, syncManager) -> {
+                .createGcymButton((guiData, syncManager) -> {
                     RecipeMap<?>[] recipeMaps = getAvailableRecipeMaps();
                     if (ArrayUtils.getLength(recipeMaps) <= 1) return null;
 
@@ -233,4 +233,6 @@ public abstract class AdvanceMultiMapMultiblockController extends AdvanceRecipeM
         }
         return capabilityResult;
     }
+
+
 }

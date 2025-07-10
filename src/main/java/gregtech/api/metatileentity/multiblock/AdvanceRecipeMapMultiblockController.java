@@ -252,6 +252,7 @@ public abstract class AdvanceRecipeMapMultiblockController extends RecipeMapMult
                     }
                 });
         for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable) {
+            if (!recipeMapWorkable.isActive()) continue;
             builder.addCustom((list, syncer) -> {
                         if (isStructureFormed()) {
                             list.add(KeyUtil.lang(TextFormatting.GOLD, ">>线程："));
@@ -262,8 +263,11 @@ public abstract class AdvanceRecipeMapMultiblockController extends RecipeMapMult
                     .addParallelsLine(recipeMapWorkable.getParallelLimit())
                     .addWorkingStatusLine()
                     .addProgressLine(recipeMapWorkable.getProgress(), recipeMapWorkable.getMaxProgress())
-                    .addRecipeOutputLine(recipeMapWorkable);
+                    .addRecipeOutputLine(recipeMapWorkable)
+                    .addEmptyLine();
+
         }
+
     }
 
     protected void addCustomCapacity(KeyManager keyManager, UISyncer syncer) {
@@ -479,4 +483,33 @@ public abstract class AdvanceRecipeMapMultiblockController extends RecipeMapMult
         tooltip.add(I18n.format("gregtech.machine.thread_multiblock.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.thread_multiblock.tooltip.3"));
     }
+    @Override
+    public boolean isWorkingEnabled() {
+        for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable)
+            if(recipeMapWorkable.isWorkingEnabled())
+                return true;
+        return false;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable)
+            recipeMapWorkable.setWorkingEnabled(isWorkingAllowed);
+    }
+
+    @Override
+    public boolean isBatchEnable(){
+        for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable)
+            if(recipeMapWorkable.isBatchEnable())
+                return true;
+        return false;
+    }
+
+    @Override
+    public void setBatchEnable(boolean enable)
+    {
+        for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable)
+            recipeMapWorkable.setBatchEnable(enable);
+    }
+
 }

@@ -45,8 +45,7 @@ import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import org.apache.commons.lang3.ArrayUtils;
 
-public abstract class MultiMapMultiblockController extends RecipeMapMultiblockController
-        implements IMultipleRecipeMaps {
+public abstract class MultiMapMultiblockController extends RecipeMapMultiblockController implements IMultipleRecipeMaps {
 
     // array of possible recipes, specific to each multi - used when the multi has multiple RecipeMaps
     private final RecipeMap<?>[] recipeMaps;
@@ -154,7 +153,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
 
     protected MultiblockUIFactory createUIFactory() {
         return super.createUIFactory()
-                .createFlexButton((guiData, syncManager) -> {
+                .createGcymButton((guiData, syncManager) -> {
                     RecipeMap<?>[] recipeMaps = getAvailableRecipeMaps();
                     if (ArrayUtils.getLength(recipeMaps) <= 1) return null;
 
@@ -246,15 +245,5 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
             return GregtechTileCapabilities.CAPABILITY_MULTIPLE_RECIPEMAPS.cast(this);
         }
         return capabilityResult;
-    }
-
-    @Override
-    public boolean isWorkingEnabled() {
-        return recipeMapWorkable.isWorkingEnabled();
-    }
-
-    @Override
-    public void setWorkingEnabled(boolean isWorkingAllowed) {
-        recipeMapWorkable.setWorkingEnabled(isWorkingAllowed);
     }
 }

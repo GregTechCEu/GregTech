@@ -1,5 +1,6 @@
 package gregtech.api.metatileentity.multiblock.ui;
 
+import gregtech.api.capability.IBatch;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
@@ -52,6 +53,8 @@ public class MultiblockUIFactory {
     private final MultiblockWithDisplayBase mte;
     protected Consumer<MultiblockUIBuilder> displayText, warningText, errorText;
     protected BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton = (guiData, syncManager) -> null;
+    protected BiFunction<PosGuiData, PanelSyncManager, IWidget> gcymButton = (guiData, syncManager) -> null;
+
     private int width = 198, height = 202;
     private int screenHeight = 109;
     private ScreenFunction screenFunction;
@@ -209,7 +212,10 @@ public class MultiblockUIFactory {
         this.flexButton = flexButton;
         return this;
     }
-
+    public MultiblockUIFactory createGcymButton(BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton) {
+        this.gcymButton = flexButton;
+        return this;
+    }
     public MultiblockUIFactory setSize(int width, int height) {
         this.width = width;
         this.height = height;
@@ -254,14 +260,25 @@ public class MultiblockUIFactory {
             playerInv.left(4);
         }
 
-        return panel.child(Flow.row()
-                .debugName("bottom_row")
-                .bottom(7)
-                .coverChildrenHeight()
-                .margin(4, 0)
-                .crossAxisAlignment(Alignment.CrossAxis.CENTER)
-                .child(playerInv)
-                .childIf(!disableButtons, () -> createButtons(panel, panelSyncManager, guiData)));
+        return panel
+                .child(Flow.row()
+                    .debugName("bottom_row")
+                    .bottom(7)
+                    .coverChildrenHeight()
+                    .margin(4, 0)
+                    .crossAxisAlignment(Alignment.CrossAxis.CENTER)
+                    .child(playerInv)
+                    .childIf(!disableButtons, () -> createButtons(panel, panelSyncManager, guiData))
+                )
+                .child(Flow.column()
+                        .debugName("side_row")
+                        .size(18,4*18+4)
+                        .bottom(7)
+                        .coverChildrenHeight()
+                        .right(-18-7)
+                        .margin(4, 0)
+                        .childIf(!disableButtons, () -> createSideButtons(panel, panelSyncManager, guiData))
+                );
     }
 
     private static int calculateRows(int count) {
@@ -403,7 +420,25 @@ public class MultiblockUIFactory {
                 .child(flexButton)
                 .childIf(powerButton != null, powerButton);
     }
+    @NotNull
+    protected Flow createSideButtons(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager,
+                                 PosGuiData guiData) {
+        IWidget gcymButton = this.gcymButton.apply(guiData, panelSyncManager);
+        if (gcymButton == null) {
+            gcymButton = new ToggleButton()
+                    .debugName("flex_none")
+                    .value(ALWAYS_ON)
+                    .overlay(GTGuiTextures.OVERLAY_NO_FLEX)
+                    .size(18)
+                    .addTooltipLine(IKey.lang("这个多方块不需要配方切换"));
+        }
 
+        return Flow.column()
+                .debugName("side_col")
+                .coverChildren()
+                .child(createBatchButton(mainPanel, panelSyncManager))
+                .child(gcymButton);
+    }
     protected IWidget createDistinctButton(@NotNull ModularPanel mainPanel,
                                            @NotNull PanelSyncManager panelSyncManager) {
         if (!(mte instanceof IDistinctBusController distinct) || !distinct.canBeDistinct()) {
@@ -449,7 +484,23 @@ public class MultiblockUIFactory {
                 .stateOverlay(3, GTGuiTextures.MULTIBLOCK_VOID[3])
                 .tooltipBuilder(t -> t.addLine(IKey.lang(mte.getVoidingModeTooltip(voidingValue.getIntValue()))));
     }
+    @Nullable
+    protected Widget<?> createBatchButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
+        if (mte instanceof IBatch controllable) {
 
+            return new ToggleButton()
+                    .debugName("batch_button")
+                    .bottom(3*18+4)
+                    .size(18)
+                    .value(new BooleanSyncValue(controllable::isBatchEnable, controllable::setBatchEnable))
+                    .overlay(true, GTGuiTextures.OVERLAY_DISTINCT_BUSES[1])
+                    .overlay(false, GTGuiTextures.OVERLAY_DISTINCT_BUSES[0])
+                    .addTooltip(true, IKey.lang("批处理，启动！"))
+                    .addTooltip(false, IKey.lang("批处理，不启动！"));
+        }
+
+        return null;
+    }
     @Nullable
     protected Widget<?> createPowerButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
         if (mte instanceof IControllable controllable) {

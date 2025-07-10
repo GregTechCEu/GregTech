@@ -55,10 +55,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
 
-    private final RecipeMap<?> recipeMap;
+    public final RecipeMap<?> recipeMap;
     private final OCParams ocParams = new OCParams();
     private final OCResult ocResult = new OCResult();
     protected Recipe previousRecipe;
+    protected Recipe showRecipes;
     protected LinkedList<Recipe> latestRecipes = new LinkedList<>();
     protected int parallelRecipesPerformed;
     protected boolean canRecipeProgress = true;
@@ -80,6 +81,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private double speedBonus = -1;
     private boolean allowOverclocking = true;
     private long overclockVoltage;
+
+    private boolean enableBatch = false;
     /**
      * DO NOT use the parallelLimit field directly, EVER use {@link AbstractRecipeLogic#setParallelLimit(int)} instead
      */
@@ -121,7 +124,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 (ItemStack.areItemsEqual(stackA, stackB) &&
                         ItemStack.areItemStackTagsEqual(stackA, stackB));
     }
-
     public List<ItemStack> getItemOutputs() {
         return itemOutputs;
     }
@@ -286,6 +288,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return previousRecipe;
     }
 
+    public Recipe getShowRecipes() {
+        return showRecipes;
+    }
+
     /**
      * @return true if recipes should be searched for
      */
@@ -357,6 +363,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.isOutputsFull = true;
     }
 
+    public int getParallelRecipesPerformed() {
+        return parallelRecipesPerformed;
+    }
+
     /**
      * Set the amount of parallel recipes currently being performed
      *
@@ -367,10 +377,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.parallelRecipesPerformed = amount;
     }
 
-
-    public int getParallelRecipesPerformed() {
-        return parallelRecipesPerformed;
-    }
     /**
      * Update the current running recipe's progress
      * <p>
@@ -739,6 +745,24 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         modifyOverclockPost(ocResult, recipe.propertyStorage());
 
+        if(enableBatch){
+            if(ocResult.duration()<=64) {
+                //在这里运用批处理
+                int baseDuration = ocResult.duration();
+                // 计算批处理倍数（向上取整）
+                int batchMultiplier = (int) Math.ceil(128.0 / baseDuration);
+                // 创建新配方（等比增加输入/输出/耗时）
+                RecipeBuilder<?> batchBuilder = new RecipeBuilder<>(recipe, recipeMap)
+                        .batch(recipe, batchMultiplier,baseDuration);
+
+                Recipe batchedRecipe = batchBuilder.build().getResult();
+                if (batchedRecipe != null) {
+                    recipe = batchedRecipe;
+                }
+                ocResult.setDuration(baseDuration*batchMultiplier);
+            }
+
+        }
         if (ocResult.parallel() > 1) {
             recipe = subTickOC(ocResult, recipe, importInventory, importFluids);
             if (recipe == null) {
@@ -992,8 +1016,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     @MustBeInvokedByOverriders
     protected void setupRecipe(@NotNull Recipe recipe) {
         this.progressTime = 1;
-        setMaxProgress(ocResult.duration());
+        this.maxProgressTime = ocResult.duration();
         this.recipeEUt = ocResult.eut();
+        this.showRecipes = recipe;
 
         int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
         int machineTier = getOverclockForTier(getMaximumOverclockVoltage());
@@ -1106,6 +1131,20 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
         }
     }
+
+    public boolean isBatchEnable() {
+        return enableBatch;
+    }
+
+    public void setBatchEnable(boolean enable) {
+        enableBatch = enable;
+        metaTileEntity.markDirty();
+        World world = metaTileEntity.getWorld();
+        if (world != null && !world.isRemote) {
+            writeCustomData(GregtechDataCodes.WORKING_BATCH, buf -> buf.writeBoolean(enableBatch));
+        }
+    }
+
 
     @Override
     public boolean isActive() {
@@ -1226,6 +1265,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.workingEnabled = buf.readBoolean();
             getMetaTileEntity().scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.WORKING_BATCH) {
+            this.enableBatch = buf.readBoolean();
+            getMetaTileEntity().scheduleRenderUpdate();
         }
     }
 
@@ -1233,18 +1275,21 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.workingEnabled);
+        buf.writeBoolean(this.enableBatch);
     }
 
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         this.isActive = buf.readBoolean();
         this.workingEnabled = buf.readBoolean();
+        this.enableBatch = buf.readBoolean();
     }
 
     @NotNull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
+        compound.setBoolean("Batch", enableBatch);
         compound.setBoolean("WorkEnabled", workingEnabled);
         compound.setBoolean("CanRecipeProgress", canRecipeProgress);
         compound.setBoolean(ALLOW_OVERCLOCKING, allowOverclocking);
@@ -1269,6 +1314,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     @Override
     public void deserializeNBT(@NotNull NBTTagCompound compound) {
+        this.enableBatch = compound.getBoolean("Batch");
         this.workingEnabled = compound.getBoolean("WorkEnabled");
         this.canRecipeProgress = compound.getBoolean("CanRecipeProgress");
         this.progressTime = compound.getInteger("Progress");

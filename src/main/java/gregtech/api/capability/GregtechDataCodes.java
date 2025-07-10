@@ -143,6 +143,7 @@ public class GregtechDataCodes {
     // Recipe Logic
     public static final int WORKABLE_ACTIVE = assignId();
     public static final int WORKING_ENABLED = assignId();
+    public static final int WORKING_BATCH = assignId();
 
     // Creative Energy
     public static final int UPDATE_IO_SPEED = assignId();

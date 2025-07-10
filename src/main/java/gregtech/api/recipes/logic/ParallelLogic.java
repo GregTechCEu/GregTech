@@ -41,6 +41,10 @@ public abstract class ParallelLogic {
 
     public static int getMaxRecipeMultiplier(@NotNull Recipe recipe, @NotNull IItemHandlerModifiable inputs,
                                              @NotNull IMultipleTankHandler fluidInputs, int parallelAmount) {
+        // 新增空指针检查
+        if (inputs == null || fluidInputs == null) {
+            return 0;
+        }
         // Find all the items in the combined Item Input inventories and create oversized ItemStacks
         Object2IntMap<ItemStack> ingredientStacks = GTHashMaps.fromItemHandler(inputs);
 
