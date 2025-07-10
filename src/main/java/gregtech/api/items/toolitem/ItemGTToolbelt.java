@@ -473,8 +473,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             ToolStackHandler handler = getHandler(stack);
             if (handler.getSelectedStack().isEmpty() && GTUtility.getMetaTileEntity(world,
                     pos) instanceof MetaTileEntityMaintenanceHatch maintenanceHatch) {
-                maintenanceHatch.fixMaintenanceProblemsWithToolbelt(player, stack, this);
-                return EnumActionResult.SUCCESS;
+                maintenanceHatch.fixMaintenanceProblemsWithToolbelt(
+                        toolClass -> damageAgainstMaintenanceProblem(stack, player, toolClass));
             }
             return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
         } else return result;
