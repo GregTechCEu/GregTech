@@ -489,6 +489,8 @@ public class GTGuiTextures {
      */
     public static final UITexture[] OVERLAY_DISTINCT_BUSES = slice("textures/gui/widget/button_distinct_buses.png",
             18, 36, 18, 18, false);
+    public static final UITexture[] OVERLAY_BATCH = slice("textures/gui/widget/button_batch.png",
+            18, 36, 18, 18, false);
 
     public static final UITexture OVERLAY_NO_FLEX = fullImage("textures/gui/widget/button_no_flex.png", false);
     public static final UITexture BUTTON_MULTI_MAP = fullImage("textures/gui/widget/button_multi_map.png", true);

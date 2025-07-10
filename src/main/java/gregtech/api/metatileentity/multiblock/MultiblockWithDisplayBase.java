@@ -344,6 +344,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return true;
     }
 
+    public boolean shouldShowBatchModeButton() {
+        return this instanceof IBatch;
+    }
+
     public final int getVoidingMode() {
         return voidingMode.ordinal();
     }

@@ -488,15 +488,26 @@ public class MultiblockUIFactory {
     protected Widget<?> createBatchButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
         if (mte instanceof IBatch controllable) {
 
+            if (!mte.shouldShowBatchModeButton()) {
+                return new ToggleButton()
+                        .debugName("voiding_none")
+                        .bottom(3*18+4)
+                        .size(18)
+                        .value(ALWAYS_ON)
+                        .size(18)
+                        .overlay(GTGuiTextures.OVERLAY_BATCH[0])
+                        .addTooltipLine(IKey.lang("gregtech.gui.multiblock_batch_not_supported"));
+            }
+
             return new ToggleButton()
                     .debugName("batch_button")
                     .bottom(3*18+4)
                     .size(18)
                     .value(new BooleanSyncValue(controllable::isBatchEnable, controllable::setBatchEnable))
-                    .overlay(true, GTGuiTextures.OVERLAY_DISTINCT_BUSES[1])
-                    .overlay(false, GTGuiTextures.OVERLAY_DISTINCT_BUSES[0])
-                    .addTooltip(true, IKey.lang("批处理，启动！"))
-                    .addTooltip(false, IKey.lang("批处理，不启动！"));
+                    .overlay(true, GTGuiTextures.OVERLAY_BATCH[1])
+                    .overlay(false, GTGuiTextures.OVERLAY_BATCH[0])
+                    .addTooltip(true, IKey.lang("gregtech.multiblock.universal.batch_enabled"))
+                    .addTooltip(false, IKey.lang("gregtech.multiblock.universal.batch_disabled"));
         }
 
         return null;
