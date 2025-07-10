@@ -1474,10 +1474,10 @@ public final class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> VACUUM_RECIPES = new RecipeMapBuilder<>("vacuum_freezer",
             new SimpleRecipeBuilder().EUt(VA[MV]))
-            .itemInputs(1)
-            .itemOutputs(1)
+            .itemInputs(2)
+            .itemOutputs(2)
             .fluidInputs(2)
-            .fluidOutputs(1)
+            .fluidOutputs(2)
             .sound(GTSoundEvents.COOLING)
             .build();
 

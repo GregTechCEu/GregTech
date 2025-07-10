@@ -89,7 +89,7 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
 
         this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18)
                 .build();
-        this.icon = guiHelper.createDrawableIngredient(OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium));
+        this.icon = guiHelper.createDrawableIngredient(OreDictUnifier.get(OrePrefix.ingot, Materials.TungstenSteel));
 
         /*
          * couldn't think of a better way to register all these

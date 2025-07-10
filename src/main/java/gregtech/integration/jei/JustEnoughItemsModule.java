@@ -95,17 +95,52 @@ import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_BOLT
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_RING;
 
 @JEIPlugin
-@GregTechModule(
-        moduleID = GregTechModules.MODULE_JEI,
-        containerID = GTValues.MODID,
-        modDependencies = Mods.Names.JUST_ENOUGH_ITEMS,
-        name = "GregTech JEI Integration",
-        description = "JustEnoughItems Integration Module")
+@GregTechModule(moduleID = GregTechModules.MODULE_JEI,
+                containerID = GTValues.MODID,
+                modDependencies = Mods.Names.JUST_ENOUGH_ITEMS,
+                name = "GregTech JEI Integration",
+                description = "JustEnoughItems Integration Module")
 public class JustEnoughItemsModule extends IntegrationSubmodule implements IModPlugin {
 
     public static IIngredientRegistry ingredientRegistry;
     public static IJeiRuntime jeiRuntime;
     public static IGuiHelper guiHelper;
+
+    /**
+     * Comparator to sort certain GT categories to the front or back of the JEI category list.
+     *
+     * @return the comparator
+     */
+    @ApiStatus.Internal
+    public static @NotNull Comparator<IRecipeCategory<?>> getRecipeCategoryComparator() {
+        List<String> backIds = GTRecipeCategory.getCategories().stream().filter(GTRecipeCategory::shouldSortToBackJEI)
+                .map(GTRecipeCategory::getUniqueID).collect(Collectors.toCollection(ArrayList::new));
+        backIds.add(IntCircuitCategory.UID);
+        backIds.add(MultiblockInfoCategory.UID);
+        backIds.add(OreByProductCategory.UID);
+        backIds.add(GTOreCategory.UID);
+        backIds.add(GTFluidVeinCategory.UID);
+        List<String> frontIds;
+        if (ConfigHolder.client.preferMaterialTreeInJEI) {
+            frontIds = Collections.singletonList(MaterialTreeCategory.UID);
+        } else {
+            frontIds = Collections.emptyList();
+        }
+
+        return Comparator.<IRecipeCategory<?>>comparingInt(category -> {
+            int index = backIds.indexOf(category.getUid());
+            if (index >= 0) {
+                return index;
+            }
+            return Integer.MIN_VALUE;
+        }).thenComparingInt(category -> {
+            int index = frontIds.indexOf(category.getUid());
+            if (index >= 0) {
+                return index;
+            }
+            return Integer.MAX_VALUE;
+        });
+    }
 
     @Override
     public void loadComplete(FMLLoadCompleteEvent event) {
@@ -160,17 +195,15 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         // register transfer handler for all categories, but not for the crafting station
         ModularUIGuiHandler modularUIGuiHandler = new ModularUIGuiHandler(jeiHelpers.recipeTransferHandlerHelper());
-        modularUIGuiHandler.blacklistCategory(
-                IntCircuitCategory.UID,
-                MaterialTreeCategory.UID,
-                VanillaRecipeCategoryUid.INFORMATION,
-                VanillaRecipeCategoryUid.FUEL);
-        registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler,
-                Constants.UNIVERSAL_RECIPE_TRANSFER_UID);
+        modularUIGuiHandler.blacklistCategory(IntCircuitCategory.UID, MaterialTreeCategory.UID,
+                VanillaRecipeCategoryUid.INFORMATION, VanillaRecipeCategoryUid.FUEL);
+        registry.getRecipeTransferRegistry()
+                .addRecipeTransferHandler(modularUIGuiHandler, Constants.UNIVERSAL_RECIPE_TRANSFER_UID);
 
         // register transfer handler for crafting recipes
-        registry.getRecipeTransferRegistry().addRecipeTransferHandler(new GregTechGuiTransferHandler(
-                jeiHelpers.recipeTransferHandlerHelper()), VanillaRecipeCategoryUid.CRAFTING);
+        registry.getRecipeTransferRegistry()
+                .addRecipeTransferHandler(new GregTechGuiTransferHandler(jeiHelpers.recipeTransferHandlerHelper()),
+                        VanillaRecipeCategoryUid.CRAFTING);
 
         registry.addAdvancedGuiHandlers(modularUIGuiHandler);
         registry.addGhostIngredientHandler(modularUIGuiHandler.getGuiContainerClass(), modularUIGuiHandler);
@@ -189,25 +222,36 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                     if (recipeMap instanceof IScannerRecipeMap scannerMap) {
                         List<Recipe> scannerRecipes = scannerMap.getRepresentativeRecipes();
                         if (!scannerRecipes.isEmpty()) {
-                            registry.addRecipes(scannerRecipes.stream()
-                                    .map(r -> new GTRecipeWrapper(recipeMap, r))
+                            registry.addRecipes(scannerRecipes.stream().map(r -> new GTRecipeWrapper(recipeMap, r))
                                     .collect(Collectors.toList()), entry.getKey().getUniqueID());
                         }
                     }
 
-                    registry.addRecipes(recipeStream.map(r -> new GTRecipeWrapper(recipeMap, r))
-                                    .collect(Collectors.toList()),
+                    registry.addRecipes(
+                            recipeStream.map(r -> new GTRecipeWrapper(recipeMap, r)).collect(Collectors.toList()),
                             entry.getKey().getUniqueID());
                 }
             }
         }
 
-        for (MTERegistry mteRegistry : GregTechAPI.mteManager.getRegistries()) {
-            for (ResourceLocation metaTileEntityId : mteRegistry.getKeys()) {
-                MetaTileEntity metaTileEntity = mteRegistry.getObject(metaTileEntityId);
-                assert metaTileEntity != null;
+        for (MetaTileEntity metaTileEntity : getSortedMTEs()) {
+            assert metaTileEntity != null;
+            if (metaTileEntity instanceof ICategoryOverride override &&
+                    ((ICategoryOverride) metaTileEntity).shouldOverride()) {
+                for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
+                    registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
+                }
+                if (override.getJEICategoryOverrides().length != 0)
+                    registry.addRecipeCatalyst(metaTileEntity.getStackForm(), override.getJEICategoryOverrides());
+                if (override.shouldReplace()) continue;
+            }
 
-                if (metaTileEntity instanceof ICategoryOverride override && override.shouldOverride()) {
+            if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
+                IControllable workableCapability = metaTileEntity.getCapability(
+                        GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+
+                if (workableCapability instanceof ICategoryOverride override &&
+                        ((ICategoryOverride) workableCapability).shouldOverride()) {
                     for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
                         registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                     }
@@ -216,33 +260,16 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                     if (override.shouldReplace()) continue;
                 }
 
-                if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
-                    IControllable workableCapability = metaTileEntity
-                            .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
-
-                    if (workableCapability instanceof ICategoryOverride override && override.shouldOverride()) {
-                        for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
+                if (workableCapability instanceof AbstractRecipeLogic logic) {
+                    if (metaTileEntity instanceof IMultipleRecipeMaps) {
+                        for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps())
                             registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
-                        }
-                        if (override.getJEICategoryOverrides().length != 0)
-                            registry.addRecipeCatalyst(metaTileEntity.getStackForm(),
-                                    override.getJEICategoryOverrides());
-                        if (override.shouldReplace()) continue;
-                    }
-
-                    if (workableCapability instanceof AbstractRecipeLogic logic) {
-                        if (metaTileEntity instanceof IMultipleRecipeMaps) {
-                            for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity)
-                                    .getAvailableRecipeMaps()) {
-                                registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
-                            }
-                        } else if (logic.getRecipeMap() != null) {
-                            registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
-                        }
-                    }
+                    } else if (logic.getRecipeMap() != null)
+                        registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
                 }
             }
         }
+
         OreByProduct.addOreByProductPrefix(OrePrefix.rawOre);
         List<OreByProduct> oreByproductList = new ArrayList<>();
         List<MaterialTree> materialTreeList = new ArrayList<>();
@@ -262,15 +289,9 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
 
         registry.addRecipes(oreByproductList, OreByProductCategory.UID);
-        MetaTileEntity[][] machineLists = {
-                MetaTileEntities.MACERATOR,
-                MetaTileEntities.ORE_WASHER,
-                MetaTileEntities.CENTRIFUGE,
-                MetaTileEntities.THERMAL_CENTRIFUGE,
-                MetaTileEntities.CHEMICAL_BATH,
-                MetaTileEntities.ELECTROMAGNETIC_SEPARATOR,
-                MetaTileEntities.SIFTER
-        };
+        MetaTileEntity[][] machineLists = { MetaTileEntities.MACERATOR, MetaTileEntities.ORE_WASHER,
+                MetaTileEntities.CENTRIFUGE, MetaTileEntities.THERMAL_CENTRIFUGE, MetaTileEntities.CHEMICAL_BATH,
+                MetaTileEntities.ELECTROMAGNETIC_SEPARATOR, MetaTileEntities.SIFTER };
         for (MetaTileEntity[] machine : machineLists) {
             if (machine.length < GTValues.LV + 1 || machine[GTValues.LV] == null) continue;
             registry.addRecipeCatalyst(machine[GTValues.LV].getStackForm(), OreByProductCategory.UID);
@@ -345,8 +366,8 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             Field inputHandlerField = Internal.class.getDeclaredField("inputHandler");
             inputHandlerField.setAccessible(true);
             InputHandler inputHandler = (InputHandler) inputHandlerField.get(null);
-            List<IShowsRecipeFocuses> showsRecipeFocuses = ObfuscationReflectionHelper
-                    .getPrivateValue(InputHandler.class, inputHandler, "showsRecipeFocuses");
+            List<IShowsRecipeFocuses> showsRecipeFocuses = ObfuscationReflectionHelper.getPrivateValue(
+                    InputHandler.class, inputHandler, "showsRecipeFocuses");
 
             showsRecipeFocuses.add(new MultiblockInfoRecipeFocusShower());
 
@@ -380,8 +401,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             if (jeiCategory != null && !(metaTileEntity instanceof SteamMetaTileEntity)) {
                 Object icon = category.getJEIIcon();
                 if (icon instanceof TextureArea textureArea) {
-                    icon = guiHelper.drawableBuilder(textureArea.imageLocation, 0, 0, 18, 18)
-                            .setTextureSize(18, 18)
+                    icon = guiHelper.drawableBuilder(textureArea.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18)
                             .build();
                 } else if (icon == null) {
                     icon = metaTileEntity.getStackForm();
@@ -391,41 +411,25 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
     }
 
-    /**
-     * Comparator to sort certain GT categories to the front or back of the JEI category list.
-     *
-     * @return the comparator
-     */
-    @ApiStatus.Internal
-    public static @NotNull Comparator<IRecipeCategory<?>> getRecipeCategoryComparator() {
-        List<String> backIds = GTRecipeCategory.getCategories().stream()
-                .filter(GTRecipeCategory::shouldSortToBackJEI)
-                .map(GTRecipeCategory::getUniqueID)
-                .collect(Collectors.toCollection(ArrayList::new));
-        backIds.add(IntCircuitCategory.UID);
-        backIds.add(MultiblockInfoCategory.UID);
-        backIds.add(OreByProductCategory.UID);
-        backIds.add(GTOreCategory.UID);
-        backIds.add(GTFluidVeinCategory.UID);
-        List<String> frontIds;
-        if (ConfigHolder.client.preferMaterialTreeInJEI) {
-            frontIds = Collections.singletonList(MaterialTreeCategory.UID);
-        } else {
-            frontIds = Collections.emptyList();
+    private List<MetaTileEntity> getSortedMTEs() {
+        List<MetaTileEntity> sortedMTEs = new ArrayList<>();
+        for (MTERegistry mteRegistry : GregTechAPI.mteManager.getRegistries()) {
+            for (ResourceLocation mteId : mteRegistry.getKeys()) {
+                MetaTileEntity mte = mteRegistry.getObject(mteId);
+                if (mte != null) sortedMTEs.add(mte);
+            }
         }
 
-        return Comparator.<IRecipeCategory<?>>comparingInt(category -> {
-            int index = backIds.indexOf(category.getUid());
-            if (index >= 0) {
-                return index;
-            }
-            return Integer.MIN_VALUE;
-        }).thenComparingInt(category -> {
-            int index = frontIds.indexOf(category.getUid());
-            if (index >= 0) {
-                return index;
-            }
-            return Integer.MAX_VALUE;
+        sortedMTEs.sort((a, b) -> {
+            boolean a1 = a.metaTileEntityId.getNamespace().equals(GTValues.MODID);
+            boolean b1 = b.metaTileEntityId.getNamespace().equals(GTValues.MODID);
+
+            if (a1 && !b1) return -1;
+            if (!a1 && b1) return 1;
+
+            return a.metaTileEntityId.getNamespace().compareTo(b.metaTileEntityId.getNamespace());
         });
+        return sortedMTEs;
     }
+
 }

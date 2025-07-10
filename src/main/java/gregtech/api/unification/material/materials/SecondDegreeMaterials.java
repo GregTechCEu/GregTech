@@ -455,6 +455,7 @@ public class SecondDegreeMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Palladium, 1, Ammonia, 1)
                 .build();
+        PalladiumRaw.setFormula("PdCl2?");
 
         RarestMetalMixture = new Material.Builder(2059, gregtechId("rarest_metal_mixture"))
                 .dust()
@@ -462,6 +463,7 @@ public class SecondDegreeMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Iridium, 1, Osmium, 1, Oxygen, 4, Water, 1)
                 .build();
+        RarestMetalMixture.setFormula("Ir2O2(SiO2)2Au3?");
 
         AmmoniumChloride = new Material.Builder(2060, gregtechId("ammonium_chloride"))
                 .dust()
@@ -476,6 +478,7 @@ public class SecondDegreeMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Osmium, 1, Oxygen, 4, Water, 1, HydrochloricAcid, 1)
                 .build();
+        AcidicOsmiumSolution.setFormula("OsO4(H2O)(HCl)");
 
         RhodiumPlatedPalladium = new Material.Builder(2062, gregtechId("rhodium_plated_palladium"))
                 .ingot().fluid()

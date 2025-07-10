@@ -37,8 +37,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 
-import gregtech.common.ConfigHolder;
-
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -1002,6 +1000,7 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder element(Element element) {
+            if(properties.hasProperty(PropertyKey.INGOT)||properties.hasProperty(PropertyKey.DUST))properties.ensureSet(PropertyKey.ORE);
             this.materialInfo.element = element;
             return this;
         }

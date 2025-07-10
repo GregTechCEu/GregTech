@@ -2,6 +2,8 @@ package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.fluids.store.FluidStorageKeys;
 
+import gregtech.api.unification.material.Material;
+
 import net.minecraft.init.Items;
 
 import static gregtech.api.GTValues.*;
@@ -64,15 +66,17 @@ public class ChemistryRecipes {
                 .fluidOutputs(LiquidEnderAir.getFluid(4000))
                 .duration(80).EUt(VA[IV]).buildAndRegister();
 
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(Oxygen.getFluid(1000))
-                .fluidOutputs(Oxygen.getFluid(FluidStorageKeys.LIQUID, 1000))
-                .duration(240).EUt(VA[EV]).buildAndRegister();
-
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(Helium.getFluid(1000))
-                .fluidOutputs(Helium.getFluid(FluidStorageKeys.LIQUID, 1000))
-                .duration(240).EUt(VA[EV]).buildAndRegister();
+        vacuumAir(CarbonDioxide, 1);
+        vacuumAir(Radon, 2);
+        vacuumAir(Krypton, 2);
+        vacuumAir(Nitrogen, 3);
+        vacuumAir(Argon, 3);
+        vacuumAir(Xenon, 3);
+        vacuumAir(Oxygen, 4);
+        vacuumAir(Helium, 4);
+        vacuumAir(Hydrogen, 4);
+        vacuumAir(Neon, 4);
+        vacuumAir(Helium, 4);
 
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, FerriteMixture)
@@ -108,5 +112,17 @@ public class ChemistryRecipes {
                 .fluidOutputs(EnderAir.getFluid(10000))
                 .dimension(1)
                 .duration(200).EUt(256).buildAndRegister();
+    }
+
+    private static void vacuumAir(Material material, int i) {
+        VACUUM_RECIPES.recipeBuilder()
+                .fluidInputs(material.getFluid(FluidStorageKeys.GAS, 1000))
+                .fluidOutputs(material.getFluid(FluidStorageKeys.LIQUID, 1000))
+                .duration((int) (100*Math.pow(2,i+1))).EUt(VA[i]).buildAndRegister();
+
+        FLUID_HEATER_RECIPES.recipeBuilder()
+                .fluidInputs(material.getFluid(FluidStorageKeys.LIQUID, 4000))
+                .fluidOutputs(material.getFluid(FluidStorageKeys.GAS, 4000))
+                .duration((int) (20*Math.pow(2,i))).EUt(VA[i]).buildAndRegister();
     }
 }

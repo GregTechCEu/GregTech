@@ -604,7 +604,7 @@ public class FirstDegreeMaterials {
                         .enchantability(14).build())
                 .rotorStats(7.0f, 4.0f, 480)
                 .fluidPipeProperties(2428, 75, true, true, true, false)
-                .blast(b -> b.temp(1700, GasTier.LOW).blastStats(VA[HV], 1100))
+                .blast(b -> b.temp(2700, GasTier.LOW).blastStats(VA[HV], 1100))
                 .build();
 
         Steel = new Material.Builder(324, gregtechId("steel"))
@@ -772,6 +772,7 @@ public class FirstDegreeMaterials {
         Graphite = new Material.Builder(341, gregtechId("graphite"))
                 .ore()
                 .ingot()
+                .fluid()
                 .color(0x808080)
                 .flags(NO_SMELTING, FLAMMABLE, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
@@ -1144,10 +1145,16 @@ public class FirstDegreeMaterials {
                 .build();
 
         CarbonDioxide = new Material.Builder(397, gregtechId("carbon_dioxide"))
-                .gas()
+                .gas(new FluidBuilder().customStill())
+                .liquid(new FluidBuilder()
+                        .temperature(195)
+                        .color(0x9B9B9B)
+                        .name("liquid_carbon_dioxide")
+                        .translation("gregtech.fluid.liquid_generic"))
                 .color(0xA9D0F5)
                 .components(Carbon, 1, Oxygen, 2)
                 .build();
+        CarbonDioxide.getProperty(PropertyKey.FLUID).setPrimaryKey(FluidStorageKeys.GAS);
 
         TitaniumTetrachloride = new Material.Builder(398, gregtechId("titanium_tetrachloride"))
                 .liquid(new FluidBuilder().customStill())

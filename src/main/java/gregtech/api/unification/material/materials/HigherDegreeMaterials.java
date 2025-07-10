@@ -146,6 +146,7 @@ public class HigherDegreeMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Iridium, 1, Chlorine, 3, PlatinumSludgeResidue, 1)
                 .build();
+        IridiumMetalResidue.setFormula("Ir2O4(SiO2)2Au3");
 
         Granite = new Material.Builder(2523, gregtechId("granite"))
                 .dust()

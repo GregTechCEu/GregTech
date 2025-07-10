@@ -446,9 +446,11 @@ public class UnknownCompositionMaterials {
 
         NetherStar = new Material.Builder(1602, gregtechId("nether_star"))
                 .gem(4)
+                .fluid()
                 .iconSet(NETHERSTAR)
                 .flags(NO_SMASHING, NO_SMELTING, GENERATE_LENS)
                 .build();
+        NetherStar.setFormula("PtDc?KQ", true);
 
         Endstone = new Material.Builder(1603, gregtechId("endstone"))
                 .dust(1)
