@@ -356,6 +356,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                     if (panelSyncManager.isClient()) return;
                     fixMaintenanceProblems(guiData.getPlayer());
                 });
+        panelSyncManager.registerSlotGroup("tape_slot", 1);
 
         return GTGuis.createPanel(this, 176, 152)
                 .child(IKey.lang(getMetaFullName())
@@ -368,10 +369,12 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                         .widthRel(1.0f)
                         .coverChildrenHeight()
                         .child(new ItemSlot()
-                                .slot(SyncHandlers.itemSlot(tapeHandler, 0))
+                                .slot(SyncHandlers.itemSlot(tapeHandler, 0)
+                                        .slotGroup("tape_slot"))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.DUCT_TAPE_OVERLAY)
                                 .addTooltipLine(IKey.lang("gregtech.machine.maintenance_hatch_tape_slot.tooltip")))
                         .child(new ButtonWidget<>()
+                                .marginTop(4)
                                 .size(20)
                                 .syncHandler(maintenanceClickSync)
                                 .overlay(GTGuiTextures.MAINTENANCE_ICON)
