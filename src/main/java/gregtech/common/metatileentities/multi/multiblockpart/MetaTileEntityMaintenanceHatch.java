@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.sync.FloatSyncValue;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.FloatUnaryOperator;
 import gregtech.client.renderer.texture.Textures;
@@ -296,6 +297,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         return durationMultiplier;
     }
 
+    protected void setDurationMultiplier(float multiplier) {
+        this.durationMultiplier = multiplier;
+    }
+
     @Override
     public float getTimeMultiplier() {
         return TIME_ACTION.apply(durationMultiplier);
@@ -340,6 +345,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                     if (panelSyncManager.isClient()) return;
                     fixMaintenanceProblems(guiData.getPlayer());
                 });
+        FloatSyncValue multiplierSync = new FloatSyncValue(this::getDurationMultiplier, this::setDurationMultiplier);
         panelSyncManager.registerSlotGroup("tape_slot", 1);
 
         return GTGuis.createPanel(this, 176, 152)
@@ -365,7 +371,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                                 .addTooltipLine(IKey.lang("gregtech.machine.maintenance_hatch_tool_slot.tooltip"))))
                 .childIf(isConfigurable, () -> new ParentWidget<>()
                         .pos(5, 25)
-                        .coverChildren())
+                        .coverChildren()
+                        .child(IKey.lang("e")
+                                .asWidget()))
                 .child(SlotGroupWidget.playerInventory()
                         .left(7)
                         .bottom(7));

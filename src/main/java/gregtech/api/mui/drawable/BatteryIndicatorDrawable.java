@@ -27,7 +27,7 @@ public class BatteryIndicatorDrawable implements IDrawable {
 
     @Override
     public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
-        float charge = chargeLevelProvider.getFloat();
+        float charge = chargeLevelProvider.getAsFloat();
         if (charge >= 0.0f && charge <= 1.0f) {
             float newHeight = height * charge;
             int color;

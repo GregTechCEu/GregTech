@@ -882,7 +882,7 @@ public class MultiblockUIBuilder {
         @Override
         public float syncFloat(@NotNull FloatSupplier initial) {
             if (isServer()) {
-                float val = initial.getFloat();
+                float val = initial.getAsFloat();
                 internal.writeFloat(val);
                 return val;
             } else {
