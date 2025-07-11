@@ -37,9 +37,13 @@ public interface IMaintenanceHatch {
      */
     Tuple<Byte, Integer> readMaintenanceData();
 
-    double getDurationMultiplier();
+    default float getDurationMultiplier() {
+        return 1.0f;
+    }
 
-    double getTimeMultiplier();
+    default float getTimeMultiplier() {
+        return 1.0f;
+    }
 
     boolean startWithoutProblems();
 }

@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.FilteredItemHandler;
-import gregtech.api.gui.Widget;
 import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -12,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.function.FloatUnaryOperator;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
@@ -38,6 +38,7 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
@@ -46,10 +47,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -65,17 +63,17 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     private byte maintenanceProblems = -1;
     private int timeActive = -1;
 
-    private BigDecimal durationMultiplier = BigDecimal.ONE;
-
     // Some stats used for the Configurable Maintenance Hatch
-    private static final BigDecimal MAX_DURATION_MULTIPLIER = BigDecimal.valueOf(1.1);
-    private static final BigDecimal MIN_DURATION_MULTIPLIER = BigDecimal.valueOf(0.9);
-    private static final BigDecimal DURATION_ACTION_AMOUNT = BigDecimal.valueOf(0.01);
-    private static final Function<Double, Double> TIME_ACTION = (d) -> {
-        if (d < 1.0)
-            return -20.0 * d + 21;
-        else
-            return -8.0 * d + 9;
+    private float durationMultiplier = 1.0f;
+    private static final float MAX_DURATION_MULTIPLIER = 1.1f;
+    private static final float MIN_DURATION_MULTIPLIER = 0.9f;
+    private static final float DURATION_ACTION_AMOUNT = 0.01f;
+    private static final FloatUnaryOperator TIME_ACTION = t -> {
+        if (t < 1.0f) {
+            return -20.0f * t + 21.0f;
+        } else {
+            return -8.0f * t + 9.0f;
+        }
     };
 
     public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId, boolean isConfigurable) {
@@ -294,27 +292,13 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public double getDurationMultiplier() {
-        return durationMultiplier.doubleValue();
+    public float getDurationMultiplier() {
+        return durationMultiplier;
     }
 
     @Override
-    public double getTimeMultiplier() {
-        return BigDecimal.valueOf(TIME_ACTION.apply(durationMultiplier.doubleValue()))
-                .setScale(2, RoundingMode.HALF_UP)
-                .doubleValue();
-    }
-
-    private void incInternalMultiplier(Widget.ClickData data) {
-        if (durationMultiplier.compareTo(MAX_DURATION_MULTIPLIER) == 0) return;
-        durationMultiplier = durationMultiplier.add(DURATION_ACTION_AMOUNT);
-        writeCustomData(MAINTENANCE_MULTIPLIER, b -> b.writeDouble(durationMultiplier.doubleValue()));
-    }
-
-    private void decInternalMultiplier(Widget.ClickData data) {
-        if (durationMultiplier.compareTo(MIN_DURATION_MULTIPLIER) == 0) return;
-        durationMultiplier = durationMultiplier.subtract(DURATION_ACTION_AMOUNT);
-        writeCustomData(MAINTENANCE_MULTIPLIER, b -> b.writeDouble(durationMultiplier.doubleValue()));
+    public float getTimeMultiplier() {
+        return TIME_ACTION.apply(durationMultiplier);
     }
 
     @Override
@@ -379,7 +363,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                                 .syncHandler(maintenanceClickSync)
                                 .overlay(GTGuiTextures.MAINTENANCE_ICON)
                                 .addTooltipLine(IKey.lang("gregtech.machine.maintenance_hatch_tool_slot.tooltip"))))
-                // .childIf(isConfigurable, () -> speed configuration widgets)
+                .childIf(isConfigurable, () -> new ParentWidget<>()
+                        .pos(5, 25)
+                        .coverChildren())
                 .child(SlotGroupWidget.playerInventory()
                         .left(7)
                         .bottom(7));
@@ -390,9 +376,11 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         super.writeToNBT(data);
         data.setBoolean("IsTaped", isTaped);
         data.setTag("tapeInventory", tapeHandler.serializeNBT());
+
         if (isConfigurable) {
-            data.setDouble("DurationMultiplier", durationMultiplier.doubleValue());
+            data.setFloat("DurationMultiplier", durationMultiplier);
         }
+
         return data;
     }
 
@@ -400,12 +388,19 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         isTaped = data.getBoolean("IsTaped");
+
         if (data.hasKey("tapeInventory", Constants.NBT.TAG_COMPOUND)) {
             this.tapeHandler.deserializeNBT(data.getCompoundTag("tapeInventory"));
         }
+
         if (isConfigurable) {
-            durationMultiplier = BigDecimal.valueOf(data.getDouble("DurationMultiplier"));
+            if (data.hasKey("DurationMultiplier", Constants.NBT.TAG_DOUBLE)) {
+                durationMultiplier = (float) data.getDouble("DurationMultiplier");
+            } else {
+                durationMultiplier = data.getFloat("DurationMultiplier");
+            }
         }
+
         // Legacy Inventory Handler Support
         if (data.hasKey("ImportInventory", Constants.NBT.TAG_COMPOUND)) {
             GTUtility.readItems(tapeHandler, "ImportInventory", data);
@@ -417,14 +412,12 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isTaped);
-        if (isConfigurable) buf.writeDouble(durationMultiplier.doubleValue());
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         isTaped = buf.readBoolean();
-        if (isConfigurable) durationMultiplier = BigDecimal.valueOf(buf.readDouble());
     }
 
     @Override
@@ -437,9 +430,6 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         } else if (dataId == IS_TAPED) {
             this.isTaped = buf.readBoolean();
             scheduleRenderUpdate();
-            markDirty();
-        } else if (dataId == MAINTENANCE_MULTIPLIER) {
-            this.durationMultiplier = BigDecimal.valueOf(buf.readDouble());
             markDirty();
         }
     }
