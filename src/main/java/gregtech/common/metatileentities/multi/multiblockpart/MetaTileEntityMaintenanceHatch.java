@@ -30,6 +30,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.PosGuiData;
@@ -50,6 +51,7 @@ import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
+import it.unimi.dsi.fastutil.doubles.DoubleLists;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -83,9 +85,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         }
     };
 
-    private static final DoubleList SLIDER_STOPPER_STOPS = new DoubleArrayList(
-            new double[] { 0.9d, 0.91d, 0.92d, 0.93d, 0.94d, 0.95d, 0.96d, 0.97d, 0.98d, 0.99d, 1.0d, 1.01d, 1.02d, 1.03d,
-                    1.04d, 1.05d, 1.06d, 1.07d, 1.08d, 1.09d, 1.1d });
+    private static final DoubleList SLIDER_STOPPER_STOPS = DoubleLists.unmodifiable(
+            new DoubleArrayList(new double[] { 0.9d, 0.91d, 0.92d, 0.93d, 0.94d, 0.95d, 0.96d, 0.97d, 0.98d, 0.99d,
+                    1.0d, 1.01d, 1.02d, 1.03d, 1.04d, 1.05d, 1.06d, 1.07d, 1.08d, 1.09d, 1.1d }));
 
     public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId, boolean isConfigurable) {
         super(metaTileEntityId, isConfigurable ? 3 : 1);
@@ -383,7 +385,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                                 .addTooltipLine(IKey.lang("gregtech.machine.maintenance_hatch_tool_slot.tooltip"))))
                 .childIf(isConfigurable, () -> {
                     Widget<?> durationText = IKey.lang("gregtech.maintenance.configurable_duration",
-                            () -> new Object[] { multiplierSync.getDoubleValue() })
+                            () -> new Object[] { String.format("%.2f", multiplierSync.getDoubleValue()) })
                             .asWidget()
                             .tooltipBuilder(tooltip -> {
                                 double multiplier = multiplierSync.getDoubleValue();
@@ -393,11 +395,12 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                                 } else {
                                     tooltip.addLine(
                                             IKey.lang("gregtech.maintenance.configurable_duration.changed_description",
-                                                    multiplier));
+                                                    String.format("%.2f", multiplier)));
                                 }
                             });
                     Widget<?> timeText = IKey.lang("gregtech.maintenance.configurable_time",
-                            () -> new Object[] { TIME_ACTION.applyAsDouble(multiplierSync.getDoubleValue()) })
+                            () -> new Object[] {
+                                    String.format("%.2f", TIME_ACTION.applyAsDouble(multiplierSync.getDoubleValue())) })
                             .asWidget()
                             .tooltipBuilder(tooltip -> {
                                 double multiplier = TIME_ACTION.applyAsDouble(multiplierSync.getDoubleValue());
@@ -405,8 +408,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                                     tooltip.addLine(
                                             IKey.lang("gregtech.maintenance.configurable_time.unchanged_description"));
                                 } else {
-                                    tooltip.addLine(IKey.lang(
-                                            "gregtech.maintenance.configurable_time.changed_description", multiplier));
+                                    tooltip.addLine(
+                                            IKey.lang("gregtech.maintenance.configurable_time.changed_description",
+                                                    String.format("%.2f", multiplier)));
                                 }
                             });
 
@@ -416,7 +420,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                             .child(durationText)
                             .child(timeText.top(14))
                             .child(new SliderWidget()
-                                    .width(36)
+                                    .width(67 - 8)
                                     .pos(4, 27)
                                     .bounds(MIN_DURATION_MULTIPLIER, MAX_DURATION_MULTIPLIER)
                                     .stopper(SLIDER_STOPPER_STOPS)
@@ -430,6 +434,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                                             .asIcon()
                                             .height(2))
                                     .stopperSize(1, 4)
+                                    .stopperTexture(IDrawable.EMPTY)
                                     .sliderHeight(8));
                 })
                 .child(SlotGroupWidget.playerInventory()

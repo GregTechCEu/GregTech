@@ -36,6 +36,7 @@ public interface IMaintenance {
      * @param toolClasses a string array to be filled
      * @return if any tools for the maintenance problems were added to the array
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     static boolean getToolsForMaintenance(byte problems, @Nullable String @NotNull [] toolClasses) {
         if (problems == 0b111111) return false;
 

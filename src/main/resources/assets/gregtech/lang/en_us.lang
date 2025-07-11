@@ -5349,13 +5349,13 @@ gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=Cleans as:
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=Click slot with empty hand when required tools are in inventory to solve problems
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=Insert Tape to prevent problems
 
-gregtech.maintenance.configurable_duration=Duration: %.2fx
+gregtech.maintenance.configurable_duration=Duration: %sx
 gregtech.maintenance.configurable_duration.unchanged_description=Recipes will run at normal speed. Change configuration to update.
-gregtech.maintenance.configurable_duration.changed_description=Recipes will run with %fx duration, applied before overclocking.
+gregtech.maintenance.configurable_duration.changed_description=Recipes will run with %sx duration, applied before overclocking.
 
-gregtech.maintenance.configurable_time=Time: %.2fx
+gregtech.maintenance.configurable_time=Time: %sx
 gregtech.maintenance.configurable_time.unchanged_description=Maintenance problems will occur at normal rate. Change configuration to update.
-gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur at %fx the normal rate.
+gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur at %sx the normal rate.
 
 gregtech.maintenance.configurable.tooltip_basic=Speeds up machine processing time at the cost of more frequent maintenance problems
 gregtech.maintenance.configurable.tooltip_more_info=Hold SHIFT for special interactions
