@@ -84,7 +84,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     };
 
     private static final DoubleList SLIDER_STOPPER_STOPS = new DoubleArrayList(
-            new double[] { 0.9d, 0.91d, 0.92d, 0.93d, 0.94d, 0.95d, 0.97d, 0.98d, 0.99d, 1.0d, 1.01d, 1.02d, 1.03d,
+            new double[] { 0.9d, 0.91d, 0.92d, 0.93d, 0.94d, 0.95d, 0.96d, 0.97d, 0.98d, 0.99d, 1.0d, 1.01d, 1.02d, 1.03d,
                     1.04d, 1.05d, 1.06d, 1.07d, 1.08d, 1.09d, 1.1d });
 
     public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId, boolean isConfigurable) {
