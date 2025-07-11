@@ -10,9 +10,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.sync.FloatSyncValue;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.function.FloatUnaryOperator;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
@@ -33,22 +31,31 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.DoubleValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
+import it.unimi.dsi.fastutil.doubles.DoubleList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.Predicate;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -65,17 +72,20 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     private int timeActive = -1;
 
     // Some stats used for the Configurable Maintenance Hatch
-    private float durationMultiplier = 1.0f;
-    private static final float MAX_DURATION_MULTIPLIER = 1.1f;
-    private static final float MIN_DURATION_MULTIPLIER = 0.9f;
-    private static final float DURATION_ACTION_AMOUNT = 0.01f;
-    private static final FloatUnaryOperator TIME_ACTION = t -> {
+    private double durationMultiplier = 1.0f;
+    private static final double MIN_DURATION_MULTIPLIER = 0.9d;
+    private static final double MAX_DURATION_MULTIPLIER = 1.1d;
+    private static final DoubleUnaryOperator TIME_ACTION = t -> {
         if (t < 1.0f) {
             return -20.0f * t + 21.0f;
         } else {
             return -8.0f * t + 9.0f;
         }
     };
+
+    private static final DoubleList SLIDER_STOPPER_STOPS = new DoubleArrayList(
+            new double[] { 0.9d, 0.91d, 0.92d, 0.93d, 0.94d, 0.95d, 0.97d, 0.98d, 0.99d, 1.0d, 1.01d, 1.02d, 1.03d,
+                    1.04d, 1.05d, 1.06d, 1.07d, 1.08d, 1.09d, 1.1d });
 
     public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId, boolean isConfigurable) {
         super(metaTileEntityId, isConfigurable ? 3 : 1);
@@ -293,17 +303,17 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public float getDurationMultiplier() {
+    public double getDurationMultiplier() {
         return durationMultiplier;
     }
 
-    protected void setDurationMultiplier(float multiplier) {
+    protected void setDurationMultiplier(double multiplier) {
         this.durationMultiplier = multiplier;
     }
 
     @Override
-    public float getTimeMultiplier() {
-        return TIME_ACTION.apply(durationMultiplier);
+    public double getTimeMultiplier() {
+        return TIME_ACTION.applyAsDouble(durationMultiplier);
     }
 
     @Override
@@ -345,7 +355,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                     if (panelSyncManager.isClient()) return;
                     fixMaintenanceProblems(guiData.getPlayer());
                 });
-        FloatSyncValue multiplierSync = new FloatSyncValue(this::getDurationMultiplier, this::setDurationMultiplier);
+        DoubleSyncValue multiplierSync = SyncHandlers.doubleNumber(this::getDurationMultiplier,
+                this::setDurationMultiplier);
+        panelSyncManager.syncValue("multiplierSync", 0, multiplierSync);
         panelSyncManager.registerSlotGroup("tape_slot", 1);
 
         return GTGuis.createPanel(this, 176, 152)
@@ -369,11 +381,57 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                                 .syncHandler(maintenanceClickSync)
                                 .overlay(GTGuiTextures.MAINTENANCE_ICON)
                                 .addTooltipLine(IKey.lang("gregtech.machine.maintenance_hatch_tool_slot.tooltip"))))
-                .childIf(isConfigurable, () -> new ParentWidget<>()
-                        .pos(5, 25)
-                        .coverChildren()
-                        .child(IKey.lang("e")
-                                .asWidget()))
+                .childIf(isConfigurable, () -> {
+                    Widget<?> durationText = IKey.lang("gregtech.maintenance.configurable_duration",
+                            () -> new Object[] { multiplierSync.getDoubleValue() })
+                            .asWidget()
+                            .tooltipBuilder(tooltip -> {
+                                double multiplier = multiplierSync.getDoubleValue();
+                                if (multiplier == 1.0f) {
+                                    tooltip.addLine(IKey
+                                            .lang("gregtech.maintenance.configurable_duration.unchanged_description"));
+                                } else {
+                                    tooltip.addLine(
+                                            IKey.lang("gregtech.maintenance.configurable_duration.changed_description",
+                                                    multiplier));
+                                }
+                            });
+                    Widget<?> timeText = IKey.lang("gregtech.maintenance.configurable_time",
+                            () -> new Object[] { TIME_ACTION.applyAsDouble(multiplierSync.getDoubleValue()) })
+                            .asWidget()
+                            .tooltipBuilder(tooltip -> {
+                                double multiplier = TIME_ACTION.applyAsDouble(multiplierSync.getDoubleValue());
+                                if (multiplier == 1.0f) {
+                                    tooltip.addLine(
+                                            IKey.lang("gregtech.maintenance.configurable_time.unchanged_description"));
+                                } else {
+                                    tooltip.addLine(IKey.lang(
+                                            "gregtech.maintenance.configurable_time.changed_description", multiplier));
+                                }
+                            });
+
+                    return new ParentWidget<>()
+                            .pos(5, 25)
+                            .coverChildren()
+                            .child(durationText)
+                            .child(timeText.top(14))
+                            .child(new SliderWidget()
+                                    .width(36)
+                                    .pos(4, 27)
+                                    .bounds(MIN_DURATION_MULTIPLIER, MAX_DURATION_MULTIPLIER)
+                                    .stopper(SLIDER_STOPPER_STOPS)
+                                    .value(new DoubleValue.Dynamic(multiplierSync::getDoubleValue, val -> {
+                                        multiplierSync.setDoubleValue(val);
+                                        durationText.markTooltipDirty();
+                                        timeText.markTooltipDirty();
+                                    }))
+                                    .background(new Rectangle()
+                                            .setColor(Color.BLACK.brighter(2))
+                                            .asIcon()
+                                            .height(2))
+                                    .stopperSize(1, 4)
+                                    .sliderHeight(8));
+                })
                 .child(SlotGroupWidget.playerInventory()
                         .left(7)
                         .bottom(7));
@@ -386,7 +444,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         data.setTag("tapeInventory", tapeHandler.serializeNBT());
 
         if (isConfigurable) {
-            data.setFloat("DurationMultiplier", durationMultiplier);
+            data.setDouble("DurationMultiplier", durationMultiplier);
         }
 
         return data;
@@ -402,11 +460,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         }
 
         if (isConfigurable) {
-            if (data.hasKey("DurationMultiplier", Constants.NBT.TAG_DOUBLE)) {
-                durationMultiplier = (float) data.getDouble("DurationMultiplier");
-            } else {
-                durationMultiplier = data.getFloat("DurationMultiplier");
-            }
+            durationMultiplier = data.getDouble("DurationMultiplier");
         }
 
         // Legacy Inventory Handler Support
