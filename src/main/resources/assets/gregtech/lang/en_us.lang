@@ -6032,6 +6032,7 @@ gregtech.veins.ore.natural_gas_sphere=Natural Gas Sphere
 gregtech.veins.ore.red_granite_sphere=Red Granite Sphere
 gregtech.veins.ore.salts=Salts Vein
 gregtech.veins.ore.sapphire=Sapphire Vein
+gregtech.veins.ore.trona=Trona Vein
 
 gregtech.veins.fluid.lava=Lava Deposit
 gregtech.veins.fluid.natural_gas_nether=Natural Gas Deposit
@@ -6095,6 +6096,7 @@ gregtech.multiblock.universal.batch_enabled=Batch processing: §r\nEqual increas
 gregtech.multiblock.universal.batch_disabled=Batch: §cNo§r\nNormal computational overclocking parallelism without any extra features
 gregtech.multiblock.universal.distinct_not_supported=This Multiblock does not support Distinct Buses
 gregtech.multiblock.universal.no_flex_button=This Multiblock has no additional functionality with this Button.
+gregtech.multiblock.universal.no_multi_recipemap=This Multiblock does not require recipe switching
 gregtech.multiblock.parallel=Max Parallels: %s
 gregtech.multiblock.multiple_recipemaps.header=Machine Mode:
 gregtech.multiblock.multiple_recipemaps.value=Machine Mode: %s

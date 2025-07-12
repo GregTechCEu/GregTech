@@ -430,7 +430,7 @@ public class MultiblockUIFactory {
                     .value(ALWAYS_ON)
                     .overlay(GTGuiTextures.OVERLAY_NO_FLEX)
                     .size(18)
-                    .addTooltipLine(IKey.lang("这个多方块不需要配方切换"));
+                    .addTooltipLine(IKey.lang("gregtech.multiblock.universal.no_multi_recipemap"));
         }
 
         return Flow.column()
@@ -486,19 +486,7 @@ public class MultiblockUIFactory {
     }
     @Nullable
     protected Widget<?> createBatchButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
-        if (mte instanceof IBatch controllable) {
-
-            if (!mte.shouldShowBatchModeButton()) {
-                return new ToggleButton()
-                        .debugName("voiding_none")
-                        .bottom(3*18+4)
-                        .size(18)
-                        .value(ALWAYS_ON)
-                        .size(18)
-                        .overlay(GTGuiTextures.OVERLAY_BATCH[0])
-                        .addTooltipLine(IKey.lang("gregtech.gui.multiblock_batch_not_supported"));
-            }
-
+        if (mte instanceof IBatch controllable && mte.shouldShowBatchModeButton()) {
             return new ToggleButton()
                     .debugName("batch_button")
                     .bottom(3*18+4)
@@ -510,7 +498,14 @@ public class MultiblockUIFactory {
                     .addTooltip(false, IKey.lang("gregtech.multiblock.universal.batch_disabled"));
         }
 
-        return null;
+        return new ToggleButton()
+                .debugName("batch_none")
+                .bottom(3*18+4)
+                .size(18)
+                .value(ALWAYS_ON)
+                .size(18)
+                .overlay(GTGuiTextures.OVERLAY_BATCH[0])
+                .addTooltipLine(IKey.lang("gregtech.gui.multiblock_batch_not_supported"));
     }
     @Nullable
     protected Widget<?> createPowerButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {

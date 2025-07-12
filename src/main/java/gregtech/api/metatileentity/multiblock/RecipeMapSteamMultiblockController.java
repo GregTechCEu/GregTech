@@ -1,7 +1,6 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.capability.IControllable;
-import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -16,7 +15,6 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.KeyUtil;
-import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.resources.I18n;
