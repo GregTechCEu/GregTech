@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.AmongUsWiringTaskWidget;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -366,8 +367,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 .child(IKey.lang(getMetaFullName())
                         .asWidget()
                         .pos(5, 5))
-                // TODO: amongus
-                // .childIf(!isConfigurable && wiringMinigame.getBoolValue(), () -> new FixWiringTaskWidgetButMUI2())
+                .childIf(!isConfigurable && wiringMinigameSync.getBoolValue(),
+                        () -> new AmongUsWiringTaskWidget(this::isAttachedToMultiBlock,
+                                () -> ((IMaintenance) getController()).fixAllMaintenance())
+                                        .pos(48, 15))
                 .childIf(!wiringMinigameSync.getBoolValue(), () -> Flow.column()
                         .top(17)
                         .widthRel(1.0f)

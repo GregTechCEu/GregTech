@@ -646,6 +646,11 @@ public class GTGuiTextures {
     public static final UITexture SPEAKER_ICON = fullImage("textures/gui/widget/speaker.png");
     public static final UITexture MAINTENANCE_ICON = fullImage("textures/gui/widget/button_maintenance.png", true);
 
+    // Maintenance among us minigame textures
+    public static final UITexture AMONG_US_BACKGROUND = fullImage("textures/gui/widget/among_us/background.png");
+    public static final UITexture AMONG_US_WIRE_BASE = fullImage("textures/gui/widget/among_us/wire_base.png", true);
+    public static final UITexture AMONG_US_WIRE = fullImage("textures/gui/widget/among_us/wire.png");
+
     public static void init() {/**/}
 
     private static UITexture fullImage(String path) {

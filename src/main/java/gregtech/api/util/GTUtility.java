@@ -1011,6 +1011,11 @@ public class GTUtility {
         return (r << 16) | (g << 8) | b;
     }
 
+    public static int combineRGB(@Range(from = 0, to = 255) int a, @Range(from = 0, to = 255) int r,
+                                 @Range(from = 0, to = 255) int g, @Range(from = 0, to = 255) int b) {
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
     /**
      * @param map the map to get from
      * @param key the key to retrieve with
@@ -1103,5 +1108,20 @@ public class GTUtility {
         int bFinal = (int) (bStart + (bEnd - bStart) * position);
 
         return (aFinal << 24) | (rFinal << 16) | (gFinal << 8) | bFinal;
+    }
+
+    /**
+     * Swaps int[a] with int[b].
+     */
+    public static void swap(int[] swappingArray, int a, int b) {
+        int tmp = swappingArray[a];
+        swappingArray[a] = swappingArray[b];
+        swappingArray[b] = tmp;
+    }
+
+    public static void shuffle(int[] shufflingArray) {
+        for (int index = shufflingArray.length; index > 1; index--) {
+            swap(shufflingArray, index - 1, GTValues.RNG.nextInt(index));
+        }
     }
 }
