@@ -4,6 +4,7 @@ import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.terminal2.CapeSelectorApp;
+import gregtech.common.terminal2.GuideApp;
 import gregtech.common.terminal2.SettingsApp;
 
 import net.minecraft.util.ResourceLocation;
@@ -33,6 +34,7 @@ public class Terminal2 {
         }
         registerApp(GTUtility.gregtechId("settings"), new SettingsApp());
         registerApp(GTUtility.gregtechId("capes"), new CapeSelectorApp());
+        registerApp(GTUtility.gregtechId("guides"), new GuideApp());
 
         /*
          * TODO potential apps to create/port:
