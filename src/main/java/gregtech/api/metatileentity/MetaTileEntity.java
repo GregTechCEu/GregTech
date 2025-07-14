@@ -101,7 +101,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1050,7 +1049,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         if (dataId == UPDATE_FRONT_FACING) {
-            this.frontFacing = EnumFacing.VALUES[buf.readByte()];
+            setFrontFacing(EnumFacing.byIndex(buf.readByte()));
             scheduleRenderUpdate();
         } else if (dataId == UPDATE_PAINTING_COLOR) {
             this.paintingColor = buf.readInt();
