@@ -3,13 +3,12 @@ package gregtech.api.metatileentity.multiblock;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultipleRecipeMaps;
-import gregtech.api.capability.impl.MultiblockRecipeLogic;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.LocalizationUtils;
+import gregtech.api.util.GTUtility;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,26 +25,16 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
-import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.GTUtility;
-
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class MultiMapMultiblockController extends RecipeMapMultiblockController implements IMultipleRecipeMaps {
+import java.util.List;
+
+public abstract class MultiMapMultiblockController extends RecipeMapMultiblockController
+        implements IMultipleRecipeMaps {
 
     // array of possible recipes, specific to each multi - used when the multi has multiple RecipeMaps
     private final RecipeMap<?>[] recipeMaps;
@@ -187,9 +176,9 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        if (recipeMaps.length > 1)
+            tooltip.add(I18n.format("gregtech.multiblock.multiple_recipemaps_recipes.tooltip", this.recipeMapsToString()));
         super.addInformation(stack, player, tooltip, advanced);
-        if (recipeMaps.length == 1) return;
-        tooltip.add(I18n.format("gregtech.multiblock.multiple_recipemaps_recipes.tooltip", this.recipeMapsToString()));
     }
 
     @SideOnly(Side.CLIENT)

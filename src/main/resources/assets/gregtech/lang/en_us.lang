@@ -595,6 +595,8 @@ metaitem.circuit.integrated.tooltip=Use to open configuration GUI/n/nShift-Right
 metaitem.circuit.integrated.gui=Circuit Configuration
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
+metaitem.tool.mutliblock_preview.name=Multiblock Preview
+
 item.glass.lens=Glass Lens (White)
 metaitem.glass_lens.orange.name=Glass Lens (Orange)
 metaitem.glass_lens.magenta.name=Glass Lens (Magenta)
@@ -5471,6 +5473,14 @@ gregtech.machine.rotor_holder.uxv.name=UXV Rotor Holder
 gregtech.machine.rotor_holder.opv.name=OpV Rotor Holder
 gregtech.machine.rotor_holder.max.name=MAX Rotor Holder
 
+# 批处理系统相关说明
+gregtech.tooltip.batch_avaliable=-Batch support:
+gregtech.tooltip.ctrl=Press and hold CTRL to display the detailed batch work logic
+
+gregtech.machine.batch_process.tooltips.1=This multi-block multiplies recipes that take less than 128 ticks to a maximum of 128 ticks
+gregtech.machine.batch_process.tooltips.2=Batch processing is calculated separately after the recipe is overclocked and parallelized, so the energy consumption remains the same and the parallelism is ignored
+gregtech.machine.batch_process.tooltips.3=The special recipe logic that takes time to modify is calculated after the batch process, which may cause the recipe to actually be less than 128 ticks
+
 gregtech.machine.maintenance_hatch.name=Maintenance Hatch
 gregtech.machine.maintenance_hatch.tooltip=For maintaining Multiblocks
 gregtech.machine.maintenance_hatch_configurable.name=Configurable Maintenance Hatch
@@ -5480,6 +5490,7 @@ gregtech.machine.maintenance_hatch_full_auto.tooltip=For automatically maintaini
 gregtech.machine.maintenance_hatch_cleanroom_auto.name=Automatic Filtration Maintenance Hatch
 gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=For automatically maintaining Multiblocks with Cleaning!
 gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=Cleans as:
+gregtech.machine.maintenance_hatch_sterile_cleanroom_auto.name=Automatic Filtration Sterile Maintenance Hatch
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=Click slot with empty hand when required tools are in inventory to solve problems
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=Insert Tape to prevent problems
 

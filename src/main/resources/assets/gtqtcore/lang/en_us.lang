@@ -542,10 +542,6 @@ gregtech.machine.me_pattern.tooltip.2=Blocking Mode: Only allows item flows matc
 gregtech.machine.me_pattern.tooltip.3=Pattern Optimization: Automatically multiplies patterns according to current thread count, adjusts dynamically with multiblock parallel changes
 gregtech.machine.me_pattern.tooltip.4=Advanced Template Circuit: In Template Reading, if a virtual circuit (without programmable circuits) is read, the value of the current virtual circuit is automatically set to the circuit in the template and the virtual circuit is sent back to the network
 
-gregtech.machine.thread_multiblock.tooltip.1=Supports core expansion via thread hatches for processing different recipe types across batches
-gregtech.machine.thread_multiblock.tooltip.2=Each core has complete independent recipe scheduling system with separate power/overclocking/parallel calculations
-gregtech.machine.thread_multiblock.tooltip.3=Core adjustments only allowed when idle. Excessive threads may cause severe performance impact
-
 gregtech.machine.budget_crib_proxy.tooltip=Shares the inventory of the linked Budget CRIB
 
 gregtech.machine.budget_crib.data_stick_use=Wrote location to data stick

@@ -1,10 +1,10 @@
 package gregtech.api.metatileentity.multiblock.ui;
 
-import gregtech.api.capability.IBatch;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
+import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTLambdaUtils;
@@ -486,7 +486,7 @@ public class MultiblockUIFactory {
     }
     @Nullable
     protected Widget<?> createBatchButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
-        if (mte instanceof IBatch controllable && mte.shouldShowBatchModeButton()) {
+        if (mte instanceof RecipeMapMultiblockController controllable && controllable.shouldShowBatchModeButton()) {
             return new ToggleButton()
                     .debugName("batch_button")
                     .bottom(3*18+4)

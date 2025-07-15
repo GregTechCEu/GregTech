@@ -93,6 +93,7 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPasst
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchLaser;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityReservoirHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityRotorHolder;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntitySterileCleaningMaintenanceHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntitySubstationEnergyHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
@@ -351,6 +352,7 @@ public class MetaTileEntities {
     public static MetaTileEntityMaintenanceHatch CONFIGURABLE_MAINTENANCE_HATCH;
     public static MetaTileEntityAutoMaintenanceHatch AUTO_MAINTENANCE_HATCH;
     public static MetaTileEntityCleaningMaintenanceHatch CLEANING_MAINTENANCE_HATCH;
+    public static MetaTileEntitySterileCleaningMaintenanceHatch STERILE_CLEANING_MAINTENANCE_HATCH;
 
     // MULTIBLOCKS SECTION
     public static MetaTileEntityPrimitiveBlastFurnace PRIMITIVE_BLAST_FURNACE;
@@ -1062,6 +1064,8 @@ public class MetaTileEntities {
                 new MetaTileEntityAutoMaintenanceHatch(gregtechId("maintenance_hatch_full_auto")));
         CLEANING_MAINTENANCE_HATCH = registerMetaTileEntity(1703,
                 new MetaTileEntityCleaningMaintenanceHatch(gregtechId("maintenance_hatch_cleanroom_auto")));
+        STERILE_CLEANING_MAINTENANCE_HATCH = registerMetaTileEntity(1704,
+                new MetaTileEntitySterileCleaningMaintenanceHatch(gregtechId("maintenance_hatch_sterile_cleanroom_auto")));
 
         PASSTHROUGH_HATCH_ITEM = registerMetaTileEntity(1710,
                 new MetaTileEntityPassthroughHatchItem(gregtechId("passthrough_hatch_item"), 3));

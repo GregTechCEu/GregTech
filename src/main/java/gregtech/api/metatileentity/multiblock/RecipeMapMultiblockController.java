@@ -13,14 +13,18 @@ import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.interfaces.IRefreshBeforeConsumption;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -29,6 +33,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -45,8 +50,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider,
-                                                                                                 ICleanroomReceiver, IDistinctBusController,
+                                                                                                 ICleanroomReceiver,
+                                                                                                 IDistinctBusController,
                                                                                                  IControllable, IBatch {
+
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
     protected IItemHandlerModifiable inputInventory;
@@ -68,11 +75,13 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.refreshBeforeConsumptions = new ArrayList<>();
         resetTileAbilities();
     }
+
     public void refreshAllBeforeConsumption() {
         for (IRefreshBeforeConsumption refresh : refreshBeforeConsumptions) {
             refresh.refreshBeforeConsumption();
         }
     }
+
     public IEnergyContainer getEnergyContainer() {
         return energyContainer;
     }
@@ -143,7 +152,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.outputInventory = new ItemHandlerList(outputItems);
         List<IMultipleTankHandler> outputFluids = new ArrayList<>(getAbilities(MultiblockAbility.DUAL_EXPORT));
         outputFluids.add(new FluidTankList(false, getAbilities(MultiblockAbility.EXPORT_FLUIDS)));
-        this.outputFluidInventory = GTQTUtility.mergeTankHandlers(outputFluids, false);;
+        this.outputFluidInventory = GTQTUtility.mergeTankHandlers(outputFluids, false);
 
         List<IEnergyContainer> inputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
         inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
@@ -387,6 +396,24 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     @Override
+    public void addInformation(ItemStack stack,
+                               World player,
+                               List<String> tooltip,
+                               boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        if (shouldShowBatchModeButton()) {
+            tooltip.add(TextFormatting.GREEN + I18n.format("gregtech.tooltip.batch_avaliable"));
+            if (TooltipHelper.isCtrlDown()) {
+                tooltip.add(TextFormatting.GRAY + I18n.format("gregtech.machine.batch_process.tooltips.1"));
+                tooltip.add(TextFormatting.GRAY + I18n.format("gregtech.machine.batch_process.tooltips.2"));
+                tooltip.add(TextFormatting.GRAY + I18n.format("gregtech.machine.batch_process.tooltips.3"));
+            } else {
+                tooltip.add(I18n.format("gregtech.tooltip.ctrl"));
+            }
+        }
+    }
+
+    @Override
     public void unsetCleanroom() {
         this.cleanroom = null;
     }
@@ -401,14 +428,17 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         recipeMapWorkable.setWorkingEnabled(isWorkingAllowed);
     }
 
+    public boolean shouldShowBatchModeButton() {
+        return false;
+    }
+
     @Override
-    public boolean isBatchEnable(){
+    public boolean isBatchEnable() {
         return recipeMapWorkable.isBatchEnable();
     }
 
     @Override
-    public void setBatchEnable(boolean enable)
-    {
+    public void setBatchEnable(boolean enable) {
         recipeMapWorkable.setBatchEnable(enable);
     }
 }

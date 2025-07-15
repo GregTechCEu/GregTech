@@ -23,8 +23,6 @@ import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -33,7 +31,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -475,14 +472,6 @@ public abstract class AdvanceRecipeMapMultiblockController extends RecipeMapMult
         this.cleanroom = null;
     }
 
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
-                               boolean advanced) {
-        super.addInformation(stack, world, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.thread_multiblock.tooltip.1"));
-        tooltip.add(I18n.format("gregtech.machine.thread_multiblock.tooltip.2"));
-        tooltip.add(I18n.format("gregtech.machine.thread_multiblock.tooltip.3"));
-    }
     @Override
     public boolean isWorkingEnabled() {
         for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable)

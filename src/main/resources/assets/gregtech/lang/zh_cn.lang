@@ -595,6 +595,8 @@ metaitem.circuit.integrated.tooltip=右击以打开配置界面/n/n手持并潜�
 metaitem.circuit.integrated.gui=电路配置
 metaitem.circuit.integrated.jei_description=JEI将仅显示匹配当前编程电路配置的配方。/n/n在编程电路配置界面中调整配置以查看对应配方。
 
+metaitem.tool.mutliblock_preview.name=多方块预览器
+
 item.glass.lens=玻璃透镜（白色）
 metaitem.glass_lens.orange.name=玻璃透镜（橙色）
 metaitem.glass_lens.magenta.name=玻璃透镜（品红色）
@@ -5469,6 +5471,14 @@ gregtech.machine.rotor_holder.uxv.name=§eUXV§r转子支架
 gregtech.machine.rotor_holder.opv.name=§9OpV§r转子支架
 gregtech.machine.rotor_holder.max.name=§c§lMAX§r转子支架
 
+# 批处理系统相关说明
+gregtech.tooltip.batch_avaliable=-批处理支持：
+gregtech.tooltip.ctrl=按住CTRL以显示详细批处理工作逻辑
+
+gregtech.machine.batch_process.tooltips.1=本多方块可将耗时短于128tick的配方倍乘到不超过128tick最大数
+gregtech.machine.batch_process.tooltips.2=批处理在配方计算完超频，并行后单独计算，因此耗能不变且无视并行
+gregtech.machine.batch_process.tooltips.3=有关修改耗时的特殊配方逻辑均在批处理后计算，可能会导致配方实际不满128tick
+
 gregtech.machine.maintenance_hatch.name=维护仓
 gregtech.machine.maintenance_hatch.tooltip=用于维护多方块结构
 gregtech.machine.maintenance_hatch_configurable.name=可配置维护仓
@@ -5478,6 +5488,7 @@ gregtech.machine.maintenance_hatch_full_auto.tooltip=可以自动维护多方块
 gregtech.machine.maintenance_hatch_cleanroom_auto.name=自动过滤维护仓
 gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=可以自动维护多方块结构，附带清洁功能！
 gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=清洁方式：
+gregtech.machine.maintenance_hatch_sterile_cleanroom_auto.name=自动无菌过滤维护仓
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=所需工具处于物品栏时空手点击该槽位来维护
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=放入胶带以防止发生故障
 

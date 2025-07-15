@@ -47,6 +47,7 @@ import gregtech.common.items.behaviors.LighterBehaviour;
 import gregtech.common.items.behaviors.MultiblockBuilderBehavior;
 import gregtech.common.items.behaviors.NanoSaberBehavior;
 import gregtech.common.items.behaviors.ProspectorScannerBehavior;
+import gregtech.common.items.behaviors.RenderItemBehavior;
 import gregtech.common.items.behaviors.TooltipBehavior;
 import gregtech.common.items.behaviors.TricorderBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
@@ -1202,5 +1203,8 @@ public class MetaItem1 extends StandardMetaItem {
 
         MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior())
                 .setMaxStackSize(1);
+        MULTIBLOCK_PREVIEW = addItem(1005, "tool.mutliblock_preview").addComponents(new RenderItemBehavior())
+                .setMaxStackSize(1);
+
     }
 }

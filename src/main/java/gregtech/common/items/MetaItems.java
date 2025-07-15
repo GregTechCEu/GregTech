@@ -289,6 +289,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem TOOL_DATA_ORB;
     public static MetaItem<?>.MetaValueItem TOOL_DATA_MODULE;
 
+    public static MetaItem<?>.MetaValueItem MULTIBLOCK_PREVIEW;
+
     public static final Map<MarkerMaterial, MetaValueItem> GLASS_LENSES = new HashMap<>();
 
     public static MetaItem<?>.MetaValueItem SILICON_BOULE;
