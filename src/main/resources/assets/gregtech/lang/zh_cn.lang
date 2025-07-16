@@ -468,6 +468,7 @@ metaitem.electric.motor.uev.name=§aUEV§r电动马达
 metaitem.electric.motor.uiv.name=§2UIV§r电动马达
 metaitem.electric.motor.uxv.name=§eUXV§r电动马达
 metaitem.electric.motor.opv.name=§9OpV§r电动马达
+metaitem.electric.motor.max.name=§c§lMAX§r电动马达
 
 metaitem.electric.pump.lv.name=§7LV§r电动泵
 metaitem.electric.pump.mv.name=§bMV§r电动泵
@@ -482,6 +483,7 @@ metaitem.electric.pump.uev.name=§aUEV§r电动泵
 metaitem.electric.pump.uiv.name=§2UIV§r电动泵
 metaitem.electric.pump.uxv.name=§eUXV§r电动泵
 metaitem.electric.pump.opv.name=§9OpV§r电动泵
+metaitem.electric.pump.max.name=§c§lMAX§r电动泵
 
 metaitem.electric.pump.tooltip=作§f覆盖板§7时以特定速率传输§f流体§7。
 
@@ -493,6 +495,12 @@ metaitem.fluid.regulator.iv.name=§1IV§r流体校准器
 metaitem.fluid.regulator.luv.name=§dLuV§r流体校准器
 metaitem.fluid.regulator.zpm.name=§cZPM§r流体校准器
 metaitem.fluid.regulator.uv.name=§3UV§r流体校准器
+metaitem.fluid.regulator.uhv.name=§4UHV§r流体校准器
+metaitem.fluid.regulator.uev.name=§aUEV§r流体校准器
+metaitem.fluid.regulator.uiv.name=§2UIV§r流体校准器
+metaitem.fluid.regulator.uxv.name=§eUXV§r流体校准器
+metaitem.fluid.regulator.opv.name=§9OpV§r流体校准器
+metaitem.fluid.regulator.max.name=§c§lMAX§r流体校准器
 
 metaitem.fluid.regulator.tooltip=§7作§f覆盖板§7时§7限制§f§f流体§7的流量。
 
@@ -509,6 +517,7 @@ metaitem.conveyor.module.uev.name=§aUEV§r传送带
 metaitem.conveyor.module.uiv.name=§2UIV§r传送带
 metaitem.conveyor.module.uxv.name=§eUXV§r传送带
 metaitem.conveyor.module.opv.name=§9OpV§r传送带
+metaitem.conveyor.module.max.name=§c§lMAX§r传送带
 
 metaitem.conveyor.module.tooltip=作§f覆盖板§7时以特定速率传输§f物品§7。
 
@@ -525,6 +534,7 @@ metaitem.electric.piston.uev.name=§aUEV§r电力活塞
 metaitem.electric.piston.uiv.name=§2UIV§r电力活塞
 metaitem.electric.piston.uxv.name=§eUXV§r电力活塞
 metaitem.electric.piston.opv.name=§9OpV§r电力活塞
+metaitem.electric.piston.max.name=§c§lMAX§r电力活塞
 
 metaitem.robot.arm.lv.name=§7LV§r机械臂
 metaitem.robot.arm.mv.name=§bMV§r机械臂
@@ -539,6 +549,7 @@ metaitem.robot.arm.uev.name=§aUEV§r机械臂
 metaitem.robot.arm.uiv.name=§2UIV§r机械臂
 metaitem.robot.arm.uxv.name=§eUXV§r机械臂
 metaitem.robot.arm.opv.name=§9OpV§r机械臂
+metaitem.robot.arm.max.name=§c§lMAX§r机械臂
 
 metaitem.robot.arm.tooltip=作§f覆盖板§7时限制§f物品§7到特定数量。
 
@@ -555,6 +566,7 @@ metaitem.field.generator.uev.name=§aUEV§r力场发生器
 metaitem.field.generator.uiv.name=§2UIV§r力场发生器
 metaitem.field.generator.uxv.name=§eUXV§r力场发生器
 metaitem.field.generator.opv.name=§9OpV§r力场发生器
+metaitem.field.generator.max.name=§c§lMAX§r力场发生器
 
 metaitem.emitter.lv.name=§7LV§r发射器
 metaitem.emitter.mv.name=§bMV§r发射器
@@ -569,6 +581,7 @@ metaitem.emitter.uev.name=§aUEV§r发射器
 metaitem.emitter.uiv.name=§2UIV§r发射器
 metaitem.emitter.uxv.name=§eUXV§r发射器
 metaitem.emitter.opv.name=§9OpV§r发射器
+metaitem.emitter.max.name=§c§lMAX§r发射器
 
 metaitem.sensor.lv.name=§7LV§r传感器
 metaitem.sensor.mv.name=§bMV§r传感器
@@ -583,6 +596,7 @@ metaitem.sensor.uev.name=§aUEV§r传感器
 metaitem.sensor.uiv.name=§2UIV§r传感器
 metaitem.sensor.uxv.name=§eUXV§r传感器
 metaitem.sensor.opv.name=§9OpV§r传感器
+metaitem.sensor.max.name=§c§lMAX§r传感器
 
 metaitem.tool.datastick.name=闪存
 metaitem.tool.datastick.tooltip=一个小容量的数据存储器

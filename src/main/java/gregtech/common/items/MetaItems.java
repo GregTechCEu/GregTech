@@ -173,6 +173,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UIV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UXV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_OpV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_MAX;
 
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_LV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_MV;
@@ -187,6 +188,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UIV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UXV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_OpV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_MAX;
 
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_LV;
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_MV;
@@ -196,6 +198,12 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_LUV;
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_ZPM;
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UV;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UHV;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UEV;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UIV;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UXV;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_OpV;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_MAX;
 
     public static MetaItem<?>.MetaValueItem FLUID_FILTER;
 
@@ -214,6 +222,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UIV;
     public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UXV;
     public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_OpV;
+    public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_MAX;
 
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_LV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_MV;
@@ -228,6 +237,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UIV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UXV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_OpV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_MAX;
 
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_LV;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_MV;
@@ -242,6 +252,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_UIV;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_UXV;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_OpV;
+    public static MetaItem<?>.MetaValueItem ROBOT_ARM_MAX;
 
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_LV;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_MV;
@@ -256,6 +267,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UIV;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UXV;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_OpV;
+    public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_MAX;
 
     public static MetaItem<?>.MetaValueItem EMITTER_LV;
     public static MetaItem<?>.MetaValueItem EMITTER_MV;
@@ -270,6 +282,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem EMITTER_UIV;
     public static MetaItem<?>.MetaValueItem EMITTER_UXV;
     public static MetaItem<?>.MetaValueItem EMITTER_OpV;
+    public static MetaItem<?>.MetaValueItem EMITTER_MAX;
 
     public static MetaItem<?>.MetaValueItem SENSOR_LV;
     public static MetaItem<?>.MetaValueItem SENSOR_MV;
@@ -284,6 +297,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SENSOR_UIV;
     public static MetaItem<?>.MetaValueItem SENSOR_UXV;
     public static MetaItem<?>.MetaValueItem SENSOR_OpV;
+    public static MetaItem<?>.MetaValueItem SENSOR_MAX;
 
     public static MetaItem<?>.MetaValueItem TOOL_DATA_STICK;
     public static MetaItem<?>.MetaValueItem TOOL_DATA_ORB;

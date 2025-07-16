@@ -525,6 +525,7 @@ public class CraftingComponent {
                     { 11, MetaItems.SENSOR_UIV.getStackForm() },
                     { 12, MetaItems.SENSOR_UXV.getStackForm() },
                     { 13, MetaItems.SENSOR_OpV.getStackForm() },
+                    { 14, MetaItems.SENSOR_MAX.getStackForm() },
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -581,6 +582,7 @@ public class CraftingComponent {
                     { 11, MetaItems.ELECTRIC_PISTON_UIV.getStackForm() },
                     { 12, MetaItems.ELECTRIC_PISTON_UXV.getStackForm() },
                     { 13, MetaItems.ELECTRIC_PISTON_OpV.getStackForm() },
+                    { 14, MetaItems.ELECTRIC_PISTON_MAX.getStackForm() },
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -604,6 +606,7 @@ public class CraftingComponent {
                     { 11, MetaItems.EMITTER_UIV.getStackForm() },
                     { 12, MetaItems.EMITTER_UXV.getStackForm() },
                     { 13, MetaItems.EMITTER_OpV.getStackForm() },
+                    { 14, MetaItems.EMITTER_MAX.getStackForm() },
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -627,6 +630,7 @@ public class CraftingComponent {
                     { 11, MetaItems.CONVEYOR_MODULE_UIV.getStackForm() },
                     { 12, MetaItems.CONVEYOR_MODULE_UXV.getStackForm() },
                     { 13, MetaItems.CONVEYOR_MODULE_OpV.getStackForm() },
+                    { 14, MetaItems.CONVEYOR_MODULE_MAX.getStackForm() },
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -650,6 +654,7 @@ public class CraftingComponent {
                     { 11, MetaItems.ROBOT_ARM_UIV.getStackForm() },
                     { 12, MetaItems.ROBOT_ARM_UXV.getStackForm() },
                     { 13, MetaItems.ROBOT_ARM_OpV.getStackForm() },
+                    { 14, MetaItems.ROBOT_ARM_MAX.getStackForm() },
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -744,6 +749,7 @@ public class CraftingComponent {
                     { 11, MetaItems.FIELD_GENERATOR_UIV.getStackForm() },
                     { 12, MetaItems.FIELD_GENERATOR_UXV.getStackForm() },
                     { 13, MetaItems.FIELD_GENERATOR_OpV.getStackForm() },
+                    { 14, MetaItems.FIELD_GENERATOR_MAX.getStackForm() },
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 

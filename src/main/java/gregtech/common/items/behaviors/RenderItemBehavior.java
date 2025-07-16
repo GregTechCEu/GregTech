@@ -22,13 +22,15 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class RenderItemBehavior implements IItemBehaviour, ItemUIFactory {
+
     MultiblockControllerBase controller;
     private BlockPos initialRelativePos;
     private boolean isFollowing = true;
     private BlockPos fixedPosition;
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
+                                           float hitY, float hitZ, EnumHand hand) {
         if (player.isSneaking()) {
             if (GTUtility.getMetaTileEntity(world, pos) instanceof MetaTileEntity) {
                 MetaTileEntity mte = GTUtility.getMetaTileEntity(world, pos);
@@ -54,8 +56,8 @@ public class RenderItemBehavior implements IItemBehaviour, ItemUIFactory {
             if (player.isSneaking() && player.world.getWorldTime() % 20 == 0) {
                 MultiblockPreviewRenderer.renderMultiBlockPreview(controller, renderPos, 60000);
                 player.sendMessage(new TextComponentString("正在预览下一等级"));
-            }else if(isFollowing){
-                MultiblockPreviewRenderer.renderMultiBlockPreview(controller, renderPos,0, 60000);
+            } else if (isFollowing) {
+                MultiblockPreviewRenderer.renderMultiBlockPreview(controller, renderPos, 0, 60000);
             }
         }
     }
@@ -67,7 +69,7 @@ public class RenderItemBehavior implements IItemBehaviour, ItemUIFactory {
                 fixedPosition = player.getPosition().add(initialRelativePos);
             }
             isFollowing = !isFollowing;
-            player.sendMessage(new TextComponentString("预览跟随模式："+isFollowing));
+            player.sendMessage(new TextComponentString("预览跟随模式：" + isFollowing));
             return pass(player.getHeldItem(hand));
         }
         return pass(player.getHeldItem(hand));

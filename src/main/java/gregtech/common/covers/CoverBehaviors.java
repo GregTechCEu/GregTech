@@ -181,6 +181,8 @@ public final class CoverBehaviors {
                 (def, tile, side) -> new CoverConveyor(def, tile, side, GTValues.UXV, 16 * 64));
         registerBehavior(gregtechId("conveyor.opv"), MetaItems.CONVEYOR_MODULE_OpV,
                 (def, tile, side) -> new CoverConveyor(def, tile, side, GTValues.OpV, 16 * 64));
+        registerBehavior(gregtechId("conveyor.max"), MetaItems.CONVEYOR_MODULE_MAX,
+                (def, tile, side) -> new CoverConveyor(def, tile, side, GTValues.MAX, 16 * 64));
 
         registerBehavior(gregtechId("robotic_arm.uhv"), MetaItems.ROBOT_ARM_UHV,
                 (def, tile, side) -> new CoverRoboticArm(def, tile, side, GTValues.UHV, 16 * 64));
@@ -192,6 +194,8 @@ public final class CoverBehaviors {
                 (def, tile, side) -> new CoverRoboticArm(def, tile, side, GTValues.UXV, 16 * 64));
         registerBehavior(gregtechId("robotic_arm.opv"), MetaItems.ROBOT_ARM_OpV,
                 (def, tile, side) -> new CoverRoboticArm(def, tile, side, GTValues.OpV, 16 * 64));
+        registerBehavior(gregtechId("robotic_arm.max"), MetaItems.ROBOT_ARM_MAX,
+                (def, tile, side) -> new CoverRoboticArm(def, tile, side, GTValues.MAX, 16 * 64));
 
         registerBehavior(gregtechId("pump.uhv"), MetaItems.ELECTRIC_PUMP_UHV,
                 (def, tile, side) -> new CoverPump(def, tile, side, GTValues.UHV, 1280 * 64 * 64 * 4));
@@ -203,6 +207,8 @@ public final class CoverBehaviors {
                 (def, tile, side) -> new CoverPump(def, tile, side, GTValues.UXV, 1280 * 64 * 64 * 4));
         registerBehavior(gregtechId("pump.opv"), MetaItems.ELECTRIC_PUMP_OpV,
                 (def, tile, side) -> new CoverPump(def, tile, side, GTValues.OpV, 1280 * 64 * 64 * 4));
+        registerBehavior(gregtechId("pump.max"), MetaItems.ELECTRIC_PUMP_MAX,
+                (def, tile, side) -> new CoverPump(def, tile, side, GTValues.MAX, 1280 * 64 * 64 * 4));
 
         registerBehavior(gregtechId("fluid_voiding"), MetaItems.COVER_FLUID_VOIDING, CoverFluidVoiding::new);
         registerBehavior(gregtechId("fluid_voiding.advanced"), MetaItems.COVER_FLUID_VOIDING_ADVANCED,

@@ -468,6 +468,7 @@ metaitem.electric.motor.uev.name=UEV Electric Motor
 metaitem.electric.motor.uiv.name=UIV Electric Motor
 metaitem.electric.motor.uxv.name=UXV Electric Motor
 metaitem.electric.motor.opv.name=OpV Electric Motor
+metaitem.electric.motor.max.name=MAX Electric Motor
 
 metaitem.electric.pump.lv.name=LV Electric Pump
 metaitem.electric.pump.mv.name=MV Electric Pump
@@ -482,6 +483,7 @@ metaitem.electric.pump.uev.name=UEV Electric Pump
 metaitem.electric.pump.uiv.name=UIV Electric Pump
 metaitem.electric.pump.uxv.name=UXV Electric Pump
 metaitem.electric.pump.opv.name=OpV Electric Pump
+metaitem.electric.pump.max.name=MAX Electric Pump
 
 metaitem.electric.pump.tooltip=Transfers §fFluids§7 at specific rates as §fCover§7.
 
@@ -493,6 +495,13 @@ metaitem.fluid.regulator.iv.name=IV Fluid Regulator
 metaitem.fluid.regulator.luv.name=LuV Fluid Regulator
 metaitem.fluid.regulator.zpm.name=ZPM Fluid Regulator
 metaitem.fluid.regulator.uv.name=UV Fluid Regulator
+metaitem.fluid.regulator.uhv.name=UHV Fluid Regulator
+metaitem.fluid.regulator.uev.name=UEV Fluid Regulator
+metaitem.fluid.regulator.uiv.name=UIV Fluid Regulator
+metaitem.fluid.regulator.uxv.name=UMV Fluid Regulator
+metaitem.fluid.regulator.opv.name=UXV Fluid Regulator
+metaitem.fluid.regulator.max.name=MAX Fluid Regulator
+
 
 metaitem.fluid.regulator.tooltip=Limits §fFluids§7 to specific quantities as §fCover§7.
 
@@ -509,6 +518,7 @@ metaitem.conveyor.module.uev.name=UEV Conveyor Module
 metaitem.conveyor.module.uiv.name=UIV Conveyor Module
 metaitem.conveyor.module.uxv.name=UXV Conveyor Module
 metaitem.conveyor.module.opv.name=OpV Conveyor Module
+metaitem.conveyor.module.max.name=Max Conveyor Module
 
 metaitem.conveyor.module.tooltip=Transfers §fItems§7 at specific rates as §fCover§7.
 
@@ -525,6 +535,7 @@ metaitem.electric.piston.uev.name=UEV Electric Piston
 metaitem.electric.piston.uiv.name=UIV Electric Piston
 metaitem.electric.piston.uxv.name=UXV Electric Piston
 metaitem.electric.piston.opv.name=OpV Electric Piston
+metaitem.electric.piston.max.name=MAX Electric Piston
 
 metaitem.robot.arm.lv.name=LV Robot Arm
 metaitem.robot.arm.mv.name=MV Robot Arm
@@ -539,6 +550,7 @@ metaitem.robot.arm.uev.name=UEV Robot Arm
 metaitem.robot.arm.uiv.name=UIV Robot Arm
 metaitem.robot.arm.uxv.name=UXV Robot Arm
 metaitem.robot.arm.opv.name=OpV Robot Arm
+metaitem.robot.arm.max.name=Max Robot Arm
 
 metaitem.robot.arm.tooltip=Limits §fItems§7 to specific quantities as §fCover§7.
 
@@ -555,6 +567,7 @@ metaitem.field.generator.uev.name=UEV Field Generator
 metaitem.field.generator.uiv.name=UIV Field Generator
 metaitem.field.generator.uxv.name=UXV Field Generator
 metaitem.field.generator.opv.name=OpV Field Generator
+metaitem.field.generator.max.name=MAX Field Generator
 
 metaitem.emitter.lv.name=LV Emitter
 metaitem.emitter.mv.name=MV Emitter
@@ -569,6 +582,7 @@ metaitem.emitter.uev.name=UEV Emitter
 metaitem.emitter.uiv.name=UIV Emitter
 metaitem.emitter.uxv.name=UXV Emitter
 metaitem.emitter.opv.name=OpV Emitter
+metaitem.emitter.max.name=MAX Emitter
 
 metaitem.sensor.lv.name=LV Sensor
 metaitem.sensor.mv.name=MV Sensor
@@ -583,6 +597,7 @@ metaitem.sensor.uev.name=UEV Sensor
 metaitem.sensor.uiv.name=UIV Sensor
 metaitem.sensor.uxv.name=UXV Sensor
 metaitem.sensor.opv.name=OpV Sensor
+metaitem.sensor.max.name=MAX Sensor
 
 metaitem.tool.datastick.name=Data Stick
 metaitem.tool.datastick.tooltip=Storage for Simple Data

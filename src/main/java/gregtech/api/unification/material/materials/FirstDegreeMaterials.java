@@ -1145,7 +1145,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         CarbonDioxide = new Material.Builder(397, gregtechId("carbon_dioxide"))
-                .gas(new FluidBuilder().customStill())
+                .gas()
                 .liquid(new FluidBuilder()
                         .temperature(195)
                         .color(0x9B9B9B)

@@ -330,6 +330,7 @@ public class MetaItem1 extends StandardMetaItem {
         ELECTRIC_MOTOR_UIV = addItem(137, "electric.motor.uiv").setInvisibleIf(!GregTechAPI.isHighTier());
         ELECTRIC_MOTOR_UXV = addItem(138, "electric.motor.uxv").setInvisibleIf(!GregTechAPI.isHighTier());
         ELECTRIC_MOTOR_OpV = addItem(139, "electric.motor.opv").setInvisibleIf(!GregTechAPI.isHighTier());
+        ELECTRIC_MOTOR_MAX = addItem(140, "electric.motor.max").setInvisibleIf(!GregTechAPI.isHighTier());
 
         // Pumps: ID 141-155
         ELECTRIC_PUMP_LV = addItem(142, "electric.pump.lv").addComponents(new TooltipBehavior(lines -> {
@@ -381,6 +382,10 @@ public class MetaItem1 extends StandardMetaItem {
             lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 4 / 20));
         })).setInvisibleIf(!GregTechAPI.isHighTier());
         ELECTRIC_PUMP_OpV = addItem(154, "electric.pump.opv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 4 / 20));
+        })).setInvisibleIf(!GregTechAPI.isHighTier());
+        ELECTRIC_PUMP_MAX = addItem(155, "electric.pump.max").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.electric.pump.tooltip"));
             lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 4 / 20));
         })).setInvisibleIf(!GregTechAPI.isHighTier());
@@ -438,6 +443,10 @@ public class MetaItem1 extends StandardMetaItem {
             lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
             lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
         })).setInvisibleIf(!GregTechAPI.isHighTier());
+        CONVEYOR_MODULE_MAX = addItem(170, "conveyor.module.max").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        })).setInvisibleIf(!GregTechAPI.isHighTier());
 
         // Pistons: ID 171-185
         ELECTRIC_PISTON_LV = addItem(172, "electric.piston.lv");
@@ -453,6 +462,7 @@ public class MetaItem1 extends StandardMetaItem {
         ELECTRIC_PISTON_UIV = addItem(182, "electric.piston.uiv").setInvisibleIf(!GregTechAPI.isHighTier());
         ELECTRIC_PISTON_UXV = addItem(183, "electric.piston.uxv").setInvisibleIf(!GregTechAPI.isHighTier());
         ELECTRIC_PISTON_OpV = addItem(184, "electric.piston.opv").setInvisibleIf(!GregTechAPI.isHighTier());
+        ELECTRIC_PISTON_MAX = addItem(185, "electric.piston.max").setInvisibleIf(!GregTechAPI.isHighTier());
 
         // Robot Arms: ID 186-200
         ROBOT_ARM_LV = addItem(187, "robot.arm.lv").addComponents(new TooltipBehavior(lines -> {
@@ -507,6 +517,10 @@ public class MetaItem1 extends StandardMetaItem {
             lines.add(I18n.format("metaitem.robot.arm.tooltip"));
             lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
         })).setInvisibleIf(!GregTechAPI.isHighTier());
+        ROBOT_ARM_MAX = addItem(200, "robot.arm.max").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
+        })).setInvisibleIf(!GregTechAPI.isHighTier());
 
         // Field Generators: ID 201-215
         FIELD_GENERATOR_LV = addItem(202, "field.generator.lv");
@@ -522,6 +536,7 @@ public class MetaItem1 extends StandardMetaItem {
         FIELD_GENERATOR_UIV = addItem(212, "field.generator.uiv").setInvisibleIf(!GregTechAPI.isHighTier());
         FIELD_GENERATOR_UXV = addItem(213, "field.generator.uxv").setInvisibleIf(!GregTechAPI.isHighTier());
         FIELD_GENERATOR_OpV = addItem(214, "field.generator.opv").setInvisibleIf(!GregTechAPI.isHighTier());
+        FIELD_GENERATOR_MAX = addItem(215, "field.generator.max").setInvisibleIf(!GregTechAPI.isHighTier());
 
         // Emitters: ID 216-230
         EMITTER_LV = addItem(217, "emitter.lv");
@@ -537,6 +552,7 @@ public class MetaItem1 extends StandardMetaItem {
         EMITTER_UIV = addItem(227, "emitter.uiv").setInvisibleIf(!GregTechAPI.isHighTier());
         EMITTER_UXV = addItem(228, "emitter.uxv").setInvisibleIf(!GregTechAPI.isHighTier());
         EMITTER_OpV = addItem(229, "emitter.opv").setInvisibleIf(!GregTechAPI.isHighTier());
+        EMITTER_MAX = addItem(230, "emitter.max").setInvisibleIf(!GregTechAPI.isHighTier());
 
         // Sensors: ID 231-245
         SENSOR_LV = addItem(232, "sensor.lv");
@@ -552,6 +568,7 @@ public class MetaItem1 extends StandardMetaItem {
         SENSOR_UIV = addItem(242, "sensor.uiv").setInvisibleIf(!GregTechAPI.isHighTier());
         SENSOR_UXV = addItem(243, "sensor.uxv").setInvisibleIf(!GregTechAPI.isHighTier());
         SENSOR_OpV = addItem(244, "sensor.opv").setInvisibleIf(!GregTechAPI.isHighTier());
+        SENSOR_MAX = addItem(245, "sensor.max").setInvisibleIf(!GregTechAPI.isHighTier());
 
         // Fluid Regulators: ID 246-260
         FLUID_REGULATOR_LV = addItem(247, "fluid.regulator.lv").addComponents(new TooltipBehavior(lines -> {
@@ -586,6 +603,31 @@ public class MetaItem1 extends StandardMetaItem {
             lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
             lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 4 / 20));
         }));
+        FLUID_REGULATOR_UHV = addItem(255, "fluid.regulator.uhv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 16 / 20));
+        })).setInvisibleIf(!GregTechAPI.isHighTier());
+        FLUID_REGULATOR_UEV = addItem(256, "fluid.regulator.uev").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 64 / 20));
+        })).setInvisibleIf(!GregTechAPI.isHighTier());
+        FLUID_REGULATOR_UIV = addItem(257, "fluid.regulator.uiv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 64 * 4 / 20));
+        })).setInvisibleIf(!GregTechAPI.isHighTier());
+        FLUID_REGULATOR_UXV = addItem(258, "fluid.regulator.uxv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 64 * 4 / 20));
+        })).setInvisibleIf(!GregTechAPI.isHighTier());
+        FLUID_REGULATOR_OpV = addItem(259, "fluid.regulator.opv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 64 * 4 / 20));
+        })).setInvisibleIf(!GregTechAPI.isHighTier());
+        FLUID_REGULATOR_MAX = addItem(260, "fluid.regulator.max").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+            lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 * 64 * 64 * 64 * 4 / 20));
+        })).setInvisibleIf(!GregTechAPI.isHighTier());
+
 
         // Data Items: ID 261-265
         TOOL_DATA_STICK = addItem(261, "tool.datastick").addComponents(new DataItemBehavior());
