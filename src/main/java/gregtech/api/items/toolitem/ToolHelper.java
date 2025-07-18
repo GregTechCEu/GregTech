@@ -3,8 +3,6 @@ package gregtech.api.items.toolitem;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
@@ -17,7 +15,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.QuintFunction;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import gregtech.common.items.behaviors.spray.OldColorSprayBehaviour;
+import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 import gregtech.tools.enchants.EnchantmentHardHammer;
 
 import net.minecraft.advancements.CriteriaTriggers;
@@ -392,7 +390,7 @@ public final class ToolHelper {
      * @return if the itemstack should be considered a utility item and thus can be put into toolbelts.
      */
     public static boolean isUtilityItem(ItemStack utility) {
-        return isTool(utility) || isSpraycan(utility);
+        return isTool(utility) || isSprayCan(utility);
     }
 
     /**
@@ -403,15 +401,10 @@ public final class ToolHelper {
     }
 
     /**
-     * @return if the itemstack should be considered a spraycan
+     * @return if the itemstack should be considered a spray can
      */
-    public static boolean isSpraycan(ItemStack spraycan) {
-        if (spraycan.getItem() instanceof MetaItem<?>meta) {
-            for (IItemBehaviour behaviour : meta.getBehaviours(spraycan)) {
-                if (behaviour instanceof OldColorSprayBehaviour) return true;
-            }
-        }
-        return false;
+    public static boolean isSprayCan(ItemStack sprayCan) {
+        return AbstractSprayBehavior.getSprayCanBehavior(sprayCan) != null;
     }
 
     /**

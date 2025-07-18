@@ -488,7 +488,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         ToolStackHandler handler = getHandler(player.getHeldItem(hand));
         ItemStack selected = handler.getSelectedStack();
         if (!selected.isEmpty()) {
-            AbstractSprayBehavior spray = AbstractSprayBehavior.getBehavior(selected);
+            AbstractSprayBehavior spray = AbstractSprayBehavior.getSprayCanBehavior(selected);
             if (spray != null) {
                 EnumActionResult result = spray.useFromToolbelt(player, world, pos, hand, facing, selected);
                 if (result != EnumActionResult.PASS) {

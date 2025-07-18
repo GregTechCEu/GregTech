@@ -36,7 +36,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
     public abstract @Nullable EnumDyeColor getColor();
 
-    public static @Nullable AbstractSprayBehavior getBehavior(@NotNull ItemStack stack) {
+    public static @Nullable AbstractSprayBehavior getSprayCanBehavior(@NotNull ItemStack stack) {
         if (!(stack.getItem() instanceof MetaItem<?>metaItem)) return null;
 
         for (IItemBehaviour behaviour : metaItem.getBehaviours(stack)) {
@@ -84,7 +84,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
     public static void handleAutomaticSpray(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos) {
         ItemStack offHand = player.getHeldItem(EnumHand.OFF_HAND);
-        AbstractSprayBehavior sprayBehavior = getBehavior(offHand);
+        AbstractSprayBehavior sprayBehavior = getSprayCanBehavior(offHand);
         if (sprayBehavior == null) return;
         sprayBehavior.onItemUse(player, world, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
     }
