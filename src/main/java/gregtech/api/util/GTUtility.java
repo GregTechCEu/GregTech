@@ -1025,7 +1025,7 @@ public class GTUtility {
     }
 
     /**
-     * Calculate the percentage of durability
+     * Calculate the durability percentage based on how much damage something has taken
      * 
      * @param damageTaken   how many points of durability damage the item has
      * @param maxDurability the maximum durability the item can have
@@ -1036,7 +1036,7 @@ public class GTUtility {
     }
 
     /**
-     * Calculate the percentage of durability
+     * Calculate the durability percentage based on how much durability out of the maximum is remaining
      * 
      * @param remainingDurability how much durability out of the maximum the item has left
      * @param maxDurability       the maximum durability the item can have
