@@ -373,9 +373,12 @@ public final class ToolHelper {
      * @return if any of the specified tool classes exists in the tool
      */
     public static boolean isTool(@NotNull ItemStack tool, String... toolClasses) {
+        if (tool.isEmpty()) return false;
+
         if (toolClasses.length == 1) {
             return tool.getItem().getToolClasses(tool).contains(toolClasses[0]);
         }
+
         for (String toolClass : tool.getItem().getToolClasses(tool)) {
             for (String specified : toolClasses) {
                 if (toolClass.equals(specified)) {
@@ -383,6 +386,7 @@ public final class ToolHelper {
                 }
             }
         }
+
         return false;
     }
 
@@ -397,6 +401,7 @@ public final class ToolHelper {
      * @return if the itemstack should be considered a tool
      */
     public static boolean isTool(@NotNull ItemStack tool) {
+        if (tool.isEmpty()) return false;
         return tool.getItem() instanceof ItemTool || tool.getItem() instanceof IGTTool;
     }
 
@@ -404,6 +409,7 @@ public final class ToolHelper {
      * @return if the itemstack should be considered a spray can
      */
     public static boolean isSprayCan(@NotNull ItemStack sprayCan) {
+        if (sprayCan.isEmpty()) return false;
         return AbstractSprayBehavior.getSprayCanBehavior(sprayCan) != null;
     }
 
@@ -411,9 +417,12 @@ public final class ToolHelper {
      * Return if all the specified tool classes exists in the tool
      */
     public static boolean areTools(@NotNull ItemStack tool, String... toolClasses) {
+        if (tool.isEmpty()) return false;
+
         if (toolClasses.length == 1) {
             return tool.getItem().getToolClasses(tool).contains(toolClasses[0]);
         }
+
         return tool.getItem().getToolClasses(tool).containsAll(new ObjectArraySet<String>(toolClasses));
     }
 
