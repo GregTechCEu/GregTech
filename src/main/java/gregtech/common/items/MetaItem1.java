@@ -221,7 +221,7 @@ public class MetaItem1 extends StandardMetaItem {
         for (EnumDyeColor color : EnumDyeColor.values()) {
             SPRAY_CAN_DYES.put(color, addItem(62 + color.ordinal(), "spray.can.dyes." + color.getName())
                     .setMaxStackSize(1)
-                    .addComponents(new DurabilitySprayBehavior(SPRAY_EMPTY.getStackForm(), 1024, color))
+                    .addComponents(new DurabilitySprayBehavior(SPRAY_EMPTY.getStackForm(), 512, color))
                     .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS));
         }
 
