@@ -9,7 +9,7 @@ import java.awt.*;
 
 public interface IItemDurabilityManager extends IItemComponent {
 
-    /** The durability remaining on this item (double from 0 to 1). */
+    /** The durability remaining on this item (double from 0 to 1 as the durability is used up). */
     double getDurabilityForDisplay(ItemStack itemStack);
 
     /** The first and last colors of a gradient. Default to Green durability gradient (null Pair). */

@@ -34,12 +34,12 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
     private final Pair<Color, Color> durabilityBarColors;
     @NotNull
     private final ItemStack replacementStack;
-    public final int totalUses;
+    public final int maxUses;
 
-    public DurabilitySprayBehavior(@NotNull ItemStack replacementStack, int totalUses, @Nullable EnumDyeColor color) {
+    public DurabilitySprayBehavior(@NotNull ItemStack replacementStack, int maxUses, @Nullable EnumDyeColor color) {
         this.color = color;
         this.replacementStack = replacementStack;
-        this.totalUses = totalUses;
+        this.maxUses = maxUses;
         this.durabilityBarColors = GradientUtil.getGradient(color == null ? 0x969696 : color.colorValue, 10);
     }
 
@@ -75,7 +75,7 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
 
     public void useItemDurability(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull ItemStack stack,
                                   @NotNull ItemStack replacementStack) {
-        int usesLeft = getUsesLeft(stack, totalUses);
+        int usesLeft = getUsesLeft(stack);
         if (!player.capabilities.isCreativeMode) {
             if (--usesLeft <= 0) {
                 if (replacementStack.isEmpty()) {
@@ -92,10 +92,10 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
         }
     }
 
-    protected static int getUsesLeft(@NotNull ItemStack stack, int defaultUsesLeft) {
+    protected int getUsesLeft(@NotNull ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null || !tagCompound.hasKey(NBT_KEY, Constants.NBT.TAG_INT)) {
-            return defaultUsesLeft;
+            return maxUses;
         }
 
         return tagCompound.getInteger(NBT_KEY);
@@ -107,7 +107,7 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
 
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
-        int remainingUses = getUsesLeft(itemStack, totalUses);
+        int remainingUses = getUsesLeft(itemStack);
         EnumDyeColor color = getColor();
 
         if (color != null) {
@@ -125,7 +125,7 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
 
     @Override
     public double getDurabilityForDisplay(ItemStack itemStack) {
-        return (double) getUsesLeft(itemStack, totalUses) / totalUses;
+        return GTUtility.calculateDurabilityFromRemaining(getUsesLeft(itemStack), maxUses);
     }
 
     @Nullable

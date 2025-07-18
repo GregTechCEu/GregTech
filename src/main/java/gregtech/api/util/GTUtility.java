@@ -1023,4 +1023,26 @@ public class GTUtility {
         }
         return map.get(key.toWildcard());
     }
+
+    /**
+     * Calculate the percentage of durability
+     * 
+     * @param damageTaken   how many points of durability damage the item has
+     * @param maxDurability the maximum durability the item can have
+     * @return 0 = full durability, 1 = zero durability
+     */
+    public static double calculateDurabilityFromDamageTaken(int damageTaken, int maxDurability) {
+        return (double) damageTaken / maxDurability;
+    }
+
+    /**
+     * Calculate the percentage of durability
+     * 
+     * @param remainingDurability how much durability out of the maximum the item has left
+     * @param maxDurability       the maximum durability the item can have
+     * @return 0 = full durability, 1 = zero durability
+     */
+    public static double calculateDurabilityFromRemaining(int remainingDurability, int maxDurability) {
+        return (double) (maxDurability - remainingDurability) / maxDurability;
+    }
 }
