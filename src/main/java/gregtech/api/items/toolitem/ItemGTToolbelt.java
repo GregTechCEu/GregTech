@@ -13,7 +13,7 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.TooltipHelper;
-import gregtech.common.items.behaviors.ColorSprayBehaviour;
+import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMaintenanceHatch;
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 
@@ -488,11 +488,12 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         ToolStackHandler handler = getHandler(player.getHeldItem(hand));
         ItemStack selected = handler.getSelectedStack();
         if (!selected.isEmpty()) {
-            ColorSprayBehaviour spray = ColorSprayBehaviour.getBehavior(selected);
+            AbstractSprayBehavior spray = AbstractSprayBehavior.getBehavior(selected);
             if (spray != null) {
-                EnumActionResult result = spray.useFromToolbelt(player, world, pos, hand, facing, hitX, hitY, hitZ,
-                        selected);
-                if (result != EnumActionResult.PASS) return result;
+                EnumActionResult result = spray.useFromToolbelt(player, world, pos, hand, facing, selected);
+                if (result != EnumActionResult.PASS) {
+                    return result;
+                }
             }
         }
         return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);

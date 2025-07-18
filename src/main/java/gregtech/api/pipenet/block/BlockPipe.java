@@ -17,7 +17,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.items.MetaItems;
+import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 import gregtech.integration.ctm.IFacadeWrapper;
 
 import net.minecraft.block.Block;
@@ -180,15 +180,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             setTileEntityData((TileEntityPipeBase<PipeType, NodeDataType>) pipeTile, stack);
 
             // Color pipes/cables on place if holding spray can in off-hand
-            if (placer instanceof EntityPlayer) {
-                ItemStack offhand = placer.getHeldItemOffhand();
-                for (int i = 0; i < EnumDyeColor.values().length; i++) {
-                    if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
-                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
-                                pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
-                        break;
-                    }
-                }
+            if (placer instanceof EntityPlayer player) {
+                AbstractSprayBehavior.handleAutomaticSpray(player, worldIn, pos);
             }
         }
     }

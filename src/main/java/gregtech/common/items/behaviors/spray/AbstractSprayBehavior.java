@@ -1,12 +1,10 @@
-package gregtech.common.items.behaviors;
+package gregtech.common.items.behaviors.spray;
 
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.util.GradientUtil;
 import gregtech.api.util.Mods;
 import gregtech.core.sound.GTSoundEvents;
 
@@ -16,7 +14,6 @@ import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
@@ -32,99 +29,103 @@ import net.minecraft.world.World;
 
 import appeng.api.util.AEColor;
 import appeng.tile.networking.TileCableBus;
-import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-import java.util.List;
+public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
-public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IItemDurabilityManager {
+    public abstract @Nullable EnumDyeColor getColor();
 
-    private final ItemStack empty;
-    private final EnumDyeColor color;
-    private final Pair<Color, Color> durabilityBarColors;
+    public static @Nullable AbstractSprayBehavior getBehavior(@NotNull ItemStack stack) {
+        if (!(stack.getItem() instanceof MetaItem<?>metaItem)) return null;
 
-    public ColorSprayBehaviour(ItemStack empty, int totalUses, int color) {
-        super(totalUses);
-        this.empty = empty;
-        EnumDyeColor[] colors = EnumDyeColor.values();
-        this.color = color >= colors.length || color < 0 ? null : colors[color];
-        // default to a gray color if this.color is null (like for solvent spray)
-        int colorValue = this.color == null ? 0x969696 : this.color.colorValue;
-        this.durabilityBarColors = GradientUtil.getGradient(colorValue, 10);
+        for (IItemBehaviour behaviour : metaItem.getBehaviours(stack)) {
+            if (behaviour instanceof AbstractSprayBehavior sprayBehavior) {
+                return sprayBehavior;
+            }
+        }
+
+        return null;
     }
 
     @Override
     public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
                                              EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
+
         if (!player.canPlayerEdit(pos, facing, stack)) {
             return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
         }
+
         if (!tryPaintBlock(player, world, pos, facing)) {
             return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
         }
-        useItemDurability(player, hand, stack, empty.copy());
+
         world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
                 SoundCategory.PLAYERS, 1.0f, 1.0f);
         return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 
-    @Nullable
-    public static ColorSprayBehaviour getBehavior(ItemStack spraycan) {
-        if (!(spraycan.getItem() instanceof MetaItem<?>meta)) return null;
-        for (IItemBehaviour behaviour : meta.getBehaviours(spraycan)) {
-            if (behaviour instanceof ColorSprayBehaviour spray) return spray;
-        }
-        return null;
-    }
-
-    public EnumActionResult useFromToolbelt(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
-                                            EnumFacing facing, float hitX, float hitY, float hitZ, ItemStack spraycan) {
-        if (!player.canPlayerEdit(pos, facing, spraycan)) {
+    public EnumActionResult useFromToolbelt(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                            @NotNull EnumHand hand, @NotNull EnumFacing facing,
+                                            @NotNull ItemStack sprayCan) {
+        if (!player.canPlayerEdit(pos, facing, sprayCan)) {
             return EnumActionResult.FAIL;
         }
+
         if (!tryPaintBlock(player, world, pos, facing)) {
             return EnumActionResult.PASS;
         }
-        useItemDurability(player, hand, spraycan, empty.copy());
+
         world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
                 SoundCategory.PLAYERS, 1.0f, 1.0f);
         return EnumActionResult.SUCCESS;
     }
 
-    private boolean tryPaintBlock(EntityPlayer player, World world, BlockPos pos, EnumFacing side) {
+    public static void handleAutomaticSpray(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos) {
+        ItemStack offHand = player.getHeldItem(EnumHand.OFF_HAND);
+        AbstractSprayBehavior sprayBehavior = getBehavior(offHand);
+        if (sprayBehavior == null) return;
+        sprayBehavior.onItemUse(player, world, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    protected boolean tryPaintBlock(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                    @NotNull EnumFacing side) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
+
+        EnumDyeColor color = getColor();
         if (color == null) {
             return tryStripBlockColor(player, world, pos, block, side);
         }
-        return block.recolorBlock(world, pos, side, this.color) || tryPaintSpecialBlock(player, world, pos, block);
+
+        return block.recolorBlock(world, pos, side, color) || tryPaintSpecialBlock(player, world, pos, block, color);
     }
 
-    private boolean tryPaintSpecialBlock(EntityPlayer player, World world, BlockPos pos, Block block) {
+    private boolean tryPaintSpecialBlock(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                         @NotNull Block block, @NotNull EnumDyeColor color) {
         if (block == Blocks.GLASS) {
+            // noinspection DataFlowIssue
             IBlockState newBlockState = Blocks.STAINED_GLASS.getDefaultState()
-                    .withProperty(BlockStainedGlass.COLOR, this.color);
+                    .withProperty(BlockStainedGlass.COLOR, color);
             world.setBlockState(pos, newBlockState);
             return true;
-        }
-        if (block == Blocks.GLASS_PANE) {
+        } else if (block == Blocks.GLASS_PANE) {
+            // noinspection DataFlowIssue
             IBlockState newBlockState = Blocks.STAINED_GLASS_PANE.getDefaultState()
-                    .withProperty(BlockStainedGlassPane.COLOR, this.color);
+                    .withProperty(BlockStainedGlassPane.COLOR, color);
             world.setBlockState(pos, newBlockState);
             return true;
-        }
-        if (block == Blocks.HARDENED_CLAY) {
+        } else if (block == Blocks.HARDENED_CLAY) {
+            // noinspection DataFlowIssue
             IBlockState newBlockState = Blocks.STAINED_HARDENED_CLAY.getDefaultState()
-                    .withProperty(BlockColored.COLOR, this.color);
+                    .withProperty(BlockColored.COLOR, color);
             world.setBlockState(pos, newBlockState);
             return true;
-        }
-        if (Mods.AppliedEnergistics2.isModLoaded()) {
+        } else if (Mods.AppliedEnergistics2.isModLoaded()) {
             TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileCableBus) {
-                TileCableBus cable = (TileCableBus) te;
+            if (te instanceof TileCableBus cable) {
                 // do not try to recolor if it already is this color
                 if (cable.getColor().ordinal() != color.ordinal()) {
                     cable.recolourBlock(null, AEColor.values()[color.ordinal()], player);
@@ -132,22 +133,20 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
                 }
             }
         }
+
         return false;
     }
 
-    @SuppressWarnings("unchecked, rawtypes")
-    private static boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block,
-                                              EnumFacing side) {
+    protected static boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block,
+                                                EnumFacing side) {
         // MC special cases
         if (block == Blocks.STAINED_GLASS) {
             world.setBlockState(pos, Blocks.GLASS.getDefaultState());
             return true;
-        }
-        if (block == Blocks.STAINED_GLASS_PANE) {
+        } else if (block == Blocks.STAINED_GLASS_PANE) {
             world.setBlockState(pos, Blocks.GLASS_PANE.getDefaultState());
             return true;
-        }
-        if (block == Blocks.STAINED_HARDENED_CLAY) {
+        } else if (block == Blocks.STAINED_HARDENED_CLAY) {
             world.setBlockState(pos, Blocks.HARDENED_CLAY.getDefaultState());
             return true;
         }
@@ -165,18 +164,18 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         }
 
         // TileEntityPipeBase special case
-        if (te instanceof IPipeTile) {
-            IPipeTile<?, ?> pipe = (IPipeTile<?, ?>) te;
+        if (te instanceof IPipeTile<?, ?>pipe) {
             if (pipe.isPainted()) {
                 pipe.setPaintingColor(-1);
                 return true;
-            } else return false;
+            } else {
+                return false;
+            }
         }
 
         // AE2 cable special case
         if (Mods.AppliedEnergistics2.isModLoaded()) {
-            if (te instanceof TileCableBus) {
-                TileCableBus cable = (TileCableBus) te;
+            if (te instanceof TileCableBus cable) {
                 // do not try to strip color if it is already colorless
                 if (cable.getColor() != AEColor.TRANSPARENT) {
                     cable.recolourBlock(null, AEColor.TRANSPARENT, player);
@@ -187,7 +186,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
 
         // General case
         IBlockState state = world.getBlockState(pos);
-        for (IProperty prop : state.getProperties().keySet()) {
+        for (IProperty<?> prop : state.getProperties().keySet()) {
             if (prop.getName().equals("color") && prop.getValueClass() == EnumDyeColor.class) {
                 IBlockState defaultState = block.getDefaultState();
                 EnumDyeColor defaultColor = EnumDyeColor.WHITE;
@@ -205,36 +204,6 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
             }
         }
 
-        return false;
-    }
-
-    @Override
-    public void addInformation(ItemStack itemStack, List<String> lines) {
-        int remainingUses = getUsesLeft(itemStack);
-        if (color != null) {
-            lines.add(I18n.format("behaviour.paintspray." + this.color.getTranslationKey() + ".tooltip"));
-        } else {
-            lines.add(I18n.format("behaviour.paintspray.solvent.tooltip"));
-        }
-        lines.add(I18n.format("behaviour.paintspray.uses", remainingUses));
-        if (color != null) {
-            lines.add(I18n.format("behaviour.paintspray.offhand"));
-        }
-    }
-
-    @Override
-    public double getDurabilityForDisplay(ItemStack itemStack) {
-        return (double) getUsesLeft(itemStack) / totalUses;
-    }
-
-    @Nullable
-    @Override
-    public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
-        return durabilityBarColors;
-    }
-
-    @Override
-    public boolean doDamagedStateColors(ItemStack itemStack) {
         return false;
     }
 }
