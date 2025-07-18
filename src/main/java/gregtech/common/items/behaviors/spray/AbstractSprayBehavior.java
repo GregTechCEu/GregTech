@@ -34,6 +34,9 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
+    /**
+     * Get the color of the spray can. {@code null} = solvent
+     */
     public abstract @Nullable EnumDyeColor getColor();
 
     public static @Nullable AbstractSprayBehavior getSprayCanBehavior(@NotNull ItemStack stack) {
