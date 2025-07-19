@@ -822,9 +822,10 @@ public class MetaTileEntities {
                 new MetaTileEntityDistillationTower(gregtechId("distillation_tower"), true));
         MULTI_FURNACE = registerMetaTileEntity(1006, new MetaTileEntityMultiSmelter(gregtechId("multi_furnace")));
         LARGE_COMBUSTION_ENGINE = registerMetaTileEntity(1007,
-                new MetaTileEntityLargeCombustionEngine(gregtechId("large_combustion_engine"), GTValues.EV));
+                new MetaTileEntityLargeCombustionEngine(gregtechId("large_combustion_engine"), GTValues.IV));
         EXTREME_COMBUSTION_ENGINE = registerMetaTileEntity(1008,
-                new MetaTileEntityLargeCombustionEngine(gregtechId("extreme_combustion_engine"), GTValues.IV));
+                new MetaTileEntityLargeCombustionEngine(gregtechId("extreme_combustion_engine"), GTValues.LuV));
+
         CRACKER = registerMetaTileEntity(1009, new MetaTileEntityCrackingUnit(gregtechId("cracker")));
 
         LARGE_STEAM_TURBINE = registerMetaTileEntity(1010,

@@ -4961,7 +4961,7 @@ gregtech.machine.large_chemical_reactor.name=大型化学反应釜
 gregtech.machine.large_combustion_engine.name=大型内燃引擎
 gregtech.machine.extreme_combustion_engine.name=极限内燃引擎
 gregtech.machine.large_combustion_engine.tooltip.boost_regular=提供§f20 L/s§7的氧气，并消耗§f双倍§7燃料以产生高达§f%s§7 EU/t的功率。
-gregtech.machine.large_combustion_engine.tooltip.boost_extreme=提供§f80L/s§7的液态氧，并消耗§f双倍§7燃料以产生高达§f%s§7EU/t的功率。
+gregtech.machine.large_combustion_engine.tooltip.boost_extreme=提供§f80L/s§7的液态氧，并消耗§f双倍§7燃料以产生高达§f%s§7 EU/t的功率。
 
 gregtech.machine.large_turbine.steam.name=大型蒸汽涡轮
 gregtech.machine.large_turbine.gas.name=大型燃气涡轮

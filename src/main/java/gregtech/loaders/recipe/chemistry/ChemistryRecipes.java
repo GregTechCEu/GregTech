@@ -118,7 +118,7 @@ public class ChemistryRecipes {
         VACUUM_RECIPES.recipeBuilder()
                 .fluidInputs(material.getFluid(FluidStorageKeys.GAS, 1000))
                 .fluidOutputs(material.getFluid(FluidStorageKeys.LIQUID, 1000))
-                .duration((int) (100*Math.pow(2,i+1))).EUt(VA[i]).buildAndRegister();
+                .duration((int) (60*Math.pow(2,i+1))).EUt(VA[i]).buildAndRegister();
 
         FLUID_HEATER_RECIPES.recipeBuilder()
                 .fluidInputs(material.getFluid(FluidStorageKeys.LIQUID, 4000))

@@ -334,13 +334,13 @@ public class SeparationRecipes {
                 .fluidInputs(Water.getFluid(1000))
                 .fluidOutputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(Oxygen.getFluid(1000))
-                .duration(1500).EUt(VA[LV]).buildAndRegister();
+                .duration(1200).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(DistilledWater.getFluid(1000))
                 .fluidOutputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(Oxygen.getFluid(1000))
-                .duration(1500).EUt(VA[LV]).buildAndRegister();
+                .duration(900).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.DYE, 3))
