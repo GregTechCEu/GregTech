@@ -37,7 +37,19 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
     /**
      * Get the color of the spray can. {@code null} = solvent
      */
-    public abstract @Nullable EnumDyeColor getColor();
+    public @Nullable EnumDyeColor getColor() {
+        return getColor(ItemStack.EMPTY);
+    }
+
+    /**
+     * Get the color of the spray can. {@code null} = solvent
+     */
+    public abstract @Nullable EnumDyeColor getColor(@NotNull ItemStack stack);
+
+    public int getColorOrdinal(@NotNull ItemStack stack) {
+        EnumDyeColor color = getColor(stack);
+        return color == null ? -1 : color.ordinal();
+    }
 
     public static @Nullable AbstractSprayBehavior getSprayCanBehavior(@NotNull ItemStack stack) {
         if (!(stack.getItem() instanceof MetaItem<?>metaItem)) return null;
@@ -60,7 +72,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
             return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
         }
 
-        if (!tryPaintBlock(player, world, pos, facing)) {
+        if (!tryPaintBlock(player, world, pos, facing, hand)) {
             return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
         }
 
@@ -76,7 +88,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
             return EnumActionResult.FAIL;
         }
 
-        if (!tryPaintBlock(player, world, pos, facing)) {
+        if (!tryPaintBlock(player, world, pos, facing, hand)) {
             return EnumActionResult.PASS;
         }
 
@@ -94,11 +106,11 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean tryPaintBlock(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
-                                    @NotNull EnumFacing side) {
+                                    @NotNull EnumFacing side, @NotNull EnumHand hand) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
 
-        EnumDyeColor color = getColor();
+        EnumDyeColor color = getColor(player.getHeldItem(hand));
         if (color == null) {
             return tryStripBlockColor(player, world, pos, block, side);
         }

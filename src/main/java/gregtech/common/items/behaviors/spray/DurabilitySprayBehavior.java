@@ -44,7 +44,7 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
     }
 
     @Override
-    public @Nullable EnumDyeColor getColor() {
+    public @Nullable EnumDyeColor getColor(@NotNull ItemStack stack) {
         return this.color;
     }
 

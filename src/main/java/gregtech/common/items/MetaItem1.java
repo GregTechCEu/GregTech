@@ -58,6 +58,7 @@ import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavi
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.OnlinePicPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.TextPluginBehavior;
+import gregtech.common.items.behaviors.spray.CreativeSprayBehavior;
 import gregtech.common.items.behaviors.spray.DurabilitySprayBehavior;
 import gregtech.core.sound.GTSoundEvents;
 
@@ -89,16 +90,26 @@ public class MetaItem1 extends StandardMetaItem {
         for (MetaItem<?>.MetaValueItem item : metaItems.values()) {
             if (!item.isInCreativeTab(tab)) continue;
 
-            int itemMetaData = item.getMetaValue();
-            if (itemMetaData >= 1006 && itemMetaData <= 1010) continue;
+            int itemMeta = item.getMetaValue();
+            // Skip extra molds, see below
+            if (itemMeta >= 1006 && itemMeta <= 1010) continue;
+            // Skip creative spray can, see below
+            if (itemMeta == 30) continue;
 
             item.getSubItemHandler().getSubItems(item.getStackForm(), tab, subItems);
 
-            if (itemMetaData == 29) {
+            // Add the extra molds after the last 'original'
+            if (itemMeta == 29) {
                 for (MetaItem<?>.MetaValueItem moldItem : SHAPE_MOLDS) {
+                    // Skip the 'original' molds
                     if (moldItem.getMetaValue() < 1006) continue;
                     moldItem.getSubItemHandler().getSubItems(moldItem.getStackForm(), tab, subItems);
                 }
+            }
+
+            // Add the creative spray can after the last normal spray can
+            if (itemMeta == 77) {
+                subItems.add(SPRAY_CREATIVE.getStackForm());
             }
         }
     }
@@ -167,7 +178,8 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_MOLDS[17] = SHAPE_MOLD_ROUND = addItem(29, "shape.mold.round")
                 .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
 
-        SPRAY_CREATIVE = addItem(30, "spray.creative");
+        SPRAY_CREATIVE = addItem(30, "spray.creative")
+                .addComponents(new CreativeSprayBehavior());
 
         // Extruder Shapes: ID 31-59
         SHAPE_EXTRUDERS[0] = SHAPE_EXTRUDER_PLATE = addItem(31, "shape.extruder.plate")

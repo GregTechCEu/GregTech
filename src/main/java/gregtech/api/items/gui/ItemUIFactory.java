@@ -38,6 +38,7 @@ public interface ItemUIFactory extends IItemComponent, IGuiHolder<HandGuiData> {
         return GTGuiTheme.STANDARD;
     }
 
+    // TODO: change to abstract once MUI2 port is complete
     @Override
     default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
         return null;
