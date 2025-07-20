@@ -2,11 +2,13 @@ package gregtech.common.items.behaviors.spray;
 
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemColorProvider;
+import gregtech.api.items.metaitem.stats.IItemNameProvider;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -17,6 +19,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -27,7 +30,8 @@ import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CreativeSprayBehavior extends AbstractSprayBehavior implements ItemUIFactory, IItemColorProvider {
+public class CreativeSprayBehavior extends AbstractSprayBehavior implements ItemUIFactory, IItemColorProvider,
+                                   IItemNameProvider {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
@@ -53,19 +57,23 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                                 "CCCCCCCC")
                         .key('S', new ButtonWidget<>()
                                 .size(18)
-                                .overlay(new ItemDrawable(MetaItems.SPRAY_SOLVENT.getStackForm()))
                                 .onMousePressed(mouse -> {
                                     colorSync.setIntValue(-1);
                                     return true;
-                                }))
-                        .key('C', index -> new ButtonWidget<>()
-                                .size(18)
-                                .overlay(new ItemDrawable(
-                                        MetaItems.SPRAY_CAN_DYES.get(EnumDyeColor.values()[index]).getStackForm()))
-                                .onMousePressed(mouse -> {
-                                    colorSync.setIntValue(index);
-                                    return true;
-                                }))
+                                })
+                                .overlay(new ItemDrawable(MetaItems.SPRAY_SOLVENT.getStackForm()))
+                                .addTooltipLine(IKey.lang("metaitem.spray.creative.solvent")))
+                        .key('C', index -> {
+                            EnumDyeColor color = EnumDyeColor.values()[index];
+                            return new ButtonWidget<>()
+                                    .size(18)
+                                    .onMousePressed(mouse -> {
+                                        colorSync.setIntValue(index);
+                                        return true;
+                                    })
+                                    .overlay(new ItemDrawable(MetaItems.SPRAY_CAN_DYES.get(color).getStackForm()))
+                                    .addTooltipLine(IKey.lang("metaitem.spray.creative." + color));
+                        })
                         .build());
     }
 
@@ -104,5 +112,13 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
 
     public static void setLocked(@NotNull ItemStack stack, boolean locked) {
         GTUtility.getOrCreateNbtCompound(stack).setBoolean("Locked", locked);
+    }
+
+    @Override
+    public String getItemStackDisplayName(ItemStack itemStack, String unlocalizedName) {
+        EnumDyeColor color = getColor(itemStack);
+        String colorString = color == null ? I18n.format("metaitem.spray.creative.solvent") :
+                I18n.format("metaitem.spray.creative." + color);
+        return I18n.format(unlocalizedName, colorString);
     }
 }
