@@ -96,6 +96,8 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         } else if (!tryPaintBlock(player, world, pos, facing, getColor(sprayCan))) {
             return EnumActionResult.PASS;
         } else {
+            world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
+                    SoundCategory.PLAYERS, 1.0f, 1.0f);
             return EnumActionResult.SUCCESS;
         }
     }
