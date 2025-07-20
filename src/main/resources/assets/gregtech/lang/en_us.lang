@@ -362,6 +362,7 @@ metaitem.spray.can.dyes.brown.name=Spray Can (Brown)
 metaitem.spray.can.dyes.green.name=Spray Can (Green)
 metaitem.spray.can.dyes.red.name=Spray Can (Red)
 metaitem.spray.can.dyes.black.name=Spray Can (Black)
+metaitem.spray.creative.name=Creative Spray Can
 
 metaitem.tool.matches.name=Match
 metaitem.tool.matchbox.name=Match Box
