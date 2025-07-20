@@ -9,7 +9,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -49,27 +48,13 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
     }
 
     @Override
-    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
-                                             EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ActionResult<ItemStack> result = super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
-
-        if (result.getType() == EnumActionResult.SUCCESS) {
+    protected @NotNull EnumActionResult spray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                              @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                              @NotNull ItemStack sprayCan) {
+        EnumActionResult result = super.spray(player, hand, world, pos, facing, sprayCan);
+        if (result == EnumActionResult.SUCCESS) {
             useItemDurability(player, hand, player.getHeldItem(hand), replacementStack.copy());
         }
-
-        return result;
-    }
-
-    @Override
-    public EnumActionResult useFromToolbelt(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
-                                            @NotNull EnumHand hand, @NotNull EnumFacing facing,
-                                            @NotNull ItemStack sprayCan) {
-        EnumActionResult result = super.useFromToolbelt(player, world, pos, hand, facing, sprayCan);
-
-        if (result == EnumActionResult.SUCCESS) {
-            useItemDurability(player, hand, sprayCan, replacementStack.copy());
-        }
-
         return result;
     }
 
@@ -97,7 +82,6 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
         if (tagCompound == null || !tagCompound.hasKey(NBT_KEY, Constants.NBT.TAG_INT)) {
             return maxUses;
         }
-
         return tagCompound.getInteger(NBT_KEY);
     }
 

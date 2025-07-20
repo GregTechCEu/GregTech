@@ -6,7 +6,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.Mods;
-import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
@@ -23,7 +22,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -66,51 +64,48 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
     @Override
     public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
                                              EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = player.getHeldItem(hand);
-
-        if (!player.canPlayerEdit(pos, facing, stack)) {
-            return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
-        }
-
-        if (!tryPaintBlock(player, world, pos, facing, hand)) {
-            return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
-        }
-
-        world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
-                SoundCategory.PLAYERS, 1.0f, 1.0f);
-        return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        ItemStack sprayCan = player.getHeldItem(hand);
+        EnumActionResult result = spray(player, hand, world, pos, facing, sprayCan);
+        return ActionResult.newResult(result, sprayCan);
     }
 
-    public EnumActionResult useFromToolbelt(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
-                                            @NotNull EnumHand hand, @NotNull EnumFacing facing,
-                                            @NotNull ItemStack sprayCan) {
+    @SuppressWarnings("UnusedReturnValue")
+    public static @NotNull EnumActionResult handleExternalSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                                                @NotNull World world, @NotNull BlockPos pos,
+                                                                @NotNull EnumFacing facing) {
+        return handleExternalSpray(player, hand, world, pos, facing, player.getHeldItem(hand));
+    }
+
+    public static @NotNull EnumActionResult handleExternalSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                                                @NotNull World world, @NotNull BlockPos pos,
+                                                                @NotNull EnumFacing facing,
+                                                                @NotNull ItemStack sprayCan) {
+        AbstractSprayBehavior sprayBehavior = getSprayCanBehavior(sprayCan);
+        if (sprayBehavior == null) {
+            return EnumActionResult.PASS;
+        } else {
+            return sprayBehavior.spray(player, hand, world, pos, facing, sprayCan);
+        }
+    }
+
+    protected @NotNull EnumActionResult spray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                              @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                              @NotNull ItemStack sprayCan) {
         if (!player.canPlayerEdit(pos, facing, sprayCan)) {
             return EnumActionResult.FAIL;
-        }
-
-        if (!tryPaintBlock(player, world, pos, facing, hand)) {
+        } else if (!tryPaintBlock(player, world, pos, facing, getColor(sprayCan))) {
             return EnumActionResult.PASS;
+        } else {
+            return EnumActionResult.SUCCESS;
         }
-
-        world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
-                SoundCategory.PLAYERS, 1.0f, 1.0f);
-        return EnumActionResult.SUCCESS;
-    }
-
-    public static void handleAutomaticSpray(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos) {
-        ItemStack offHand = player.getHeldItem(EnumHand.OFF_HAND);
-        AbstractSprayBehavior sprayBehavior = getSprayCanBehavior(offHand);
-        if (sprayBehavior == null) return;
-        sprayBehavior.onItemUse(player, world, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean tryPaintBlock(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
-                                    @NotNull EnumFacing side, @NotNull EnumHand hand) {
+                                    @NotNull EnumFacing side, @Nullable EnumDyeColor color) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
 
-        EnumDyeColor color = getColor(player.getHeldItem(hand));
         if (color == null) {
             return tryStripBlockColor(player, world, pos, block, side);
         }

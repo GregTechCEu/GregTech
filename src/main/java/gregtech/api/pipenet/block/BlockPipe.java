@@ -181,7 +181,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
             // Color pipes/cables on place if holding spray can in off-hand
             if (placer instanceof EntityPlayer player) {
-                AbstractSprayBehavior.handleAutomaticSpray(player, worldIn, pos);
+                AbstractSprayBehavior.handleExternalSpray(player, EnumHand.OFF_HAND, worldIn, pos, EnumFacing.UP);
             }
         }
     }

@@ -327,7 +327,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
         // Color machines on place if holding spray can in off-hand
         if (placer instanceof EntityPlayer player) {
-            AbstractSprayBehavior.handleAutomaticSpray(player, worldIn, pos);
+            AbstractSprayBehavior.handleExternalSpray(player, EnumHand.OFF_HAND, worldIn, pos, EnumFacing.UP);
         }
 
         metaTileEntity.onPlacement(placer);
