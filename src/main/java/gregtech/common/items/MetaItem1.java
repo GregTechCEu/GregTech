@@ -180,6 +180,8 @@ public class MetaItem1 extends StandardMetaItem {
 
         SPRAY_CREATIVE = addItem(30, "spray.creative")
                 .addComponents(new CreativeSprayBehavior());
+        SPRAY_CREATIVE.getMetaItem().addPropertyOverride(GTUtility.gregtechId("spray.creative"),
+                (stack, worldIn, entityIn) -> CreativeSprayBehavior.isLocked(stack) ? 1.0f : 0.0f);
 
         // Extruder Shapes: ID 31-59
         SHAPE_EXTRUDERS[0] = SHAPE_EXTRUDER_PLATE = addItem(31, "shape.extruder.plate")

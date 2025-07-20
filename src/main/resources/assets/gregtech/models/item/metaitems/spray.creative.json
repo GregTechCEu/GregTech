@@ -1,0 +1,21 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "gregtech:items/metaitems/spray.creative/base",
+    "layer1": "gregtech:items/metaitems/spray.creative/overlay"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "gregtech:spray.creative": 0.0
+      },
+      "model": "gregtech:item/metaitems/spray.creative/normal"
+    },
+    {
+      "predicate": {
+        "gregtech:spray.creative": 1.0
+      },
+      "model": "gregtech:item/metaitems/spray.creative/locked"
+    }
+  ]
+}

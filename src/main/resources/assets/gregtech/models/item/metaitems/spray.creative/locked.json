@@ -1,0 +1,8 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "gregtech:items/metaitems/spray.creative/base",
+    "layer1": "gregtech:items/metaitems/spray.creative/overlay",
+    "layer2": "gregtech:items/metaitems/spray.creative/lock"
+  }
+}

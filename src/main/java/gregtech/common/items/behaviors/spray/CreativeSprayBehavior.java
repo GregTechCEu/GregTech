@@ -1,6 +1,7 @@
 package gregtech.common.items.behaviors.spray;
 
 import gregtech.api.items.gui.ItemUIFactory;
+import gregtech.api.items.metaitem.stats.IItemColorProvider;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.util.GTUtility;
@@ -26,7 +27,7 @@ import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CreativeSprayBehavior extends AbstractSprayBehavior implements ItemUIFactory {
+public class CreativeSprayBehavior extends AbstractSprayBehavior implements ItemUIFactory, IItemColorProvider {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
@@ -89,5 +90,19 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
         } else {
             setColor(stack, null);
         }
+    }
+
+    @Override
+    public int getItemStackColor(ItemStack itemStack, int tintIndex) {
+        EnumDyeColor color = getColor(itemStack);
+        return color != null && tintIndex == 1 ? color.colorValue : 0xFFFFFF;
+    }
+
+    public static boolean isLocked(@NotNull ItemStack stack) {
+        return GTUtility.getOrCreateNbtCompound(stack).getBoolean("Locked");
+    }
+
+    public static void setLocked(@NotNull ItemStack stack, boolean locked) {
+        GTUtility.getOrCreateNbtCompound(stack).setBoolean("Locked", locked);
     }
 }
