@@ -111,6 +111,7 @@ public class PacketItemMouseEvent implements IPacket, IServerExecutor {
 
     /**
      * Which mouse button is being reported. <br/>
+     * {@code -1} = no click <br/>
      * {@code 0} = left click <br/>
      * {@code 1} = right click <br/>
      * {@code 2} = middle click
