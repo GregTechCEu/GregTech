@@ -431,6 +431,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                                  @NotNull ItemStack stack) {
         if (!ConfigHolder.client.toolbeltConfig.enableToolbeltScrollingCapture) return;
         if (event.getDwheel() != 0 && playerClient.isSneaking()) {
+            // vanilla code in GuiIngame line 1235 does not copy the stack before storing it in the highlighting
+            // item stack, so unless we copy the stack the tool highlight will not refresh.
             ItemStack copy = stack.copy();
             ToolStackHandler handler = getHandler(copy);
             if (event.getDwheel() < 0) {
