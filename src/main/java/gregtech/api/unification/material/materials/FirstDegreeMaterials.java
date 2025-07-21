@@ -1184,6 +1184,7 @@ public class FirstDegreeMaterials {
 
         SulfuricAcid = new Material.Builder(402, gregtechId("sulfuric_acid"))
                 .liquid(new FluidBuilder()
+                        .block()
                         .attribute(FluidAttributes.ACID)
                         .customStill())
                 .color(0xFC5304)
