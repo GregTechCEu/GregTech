@@ -11,6 +11,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 import gregtech.core.network.packets.PacketItemMouseEvent;
 
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -21,6 +22,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.util.Constants;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -127,8 +129,16 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
     }
 
     @Override
+    public void handleMouseEventClient(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
+                                       @NotNull ItemStack stack) {
+        if (event.getButton() != -1 || (event.getDwheel() != 0 && playerClient.isSneaking())) {
+            PacketItemMouseEvent.toServer(event);
+        }
+    }
+
+    @Override
     public void handleMouseEventServer(@NotNull PacketItemMouseEvent packet, @NotNull EntityPlayerMP playerServer,
                                        @NotNull ItemStack stack) {
-        GTLog.logger.info("Received packet %s on item %s for player \"%s\"", packet, stack, playerServer.getName());
+        GTLog.logger.info("Received packet {} on item {} for player \"{}\"", packet, stack, playerServer.getName());
     }
 }

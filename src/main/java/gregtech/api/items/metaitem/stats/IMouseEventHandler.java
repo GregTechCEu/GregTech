@@ -26,26 +26,11 @@ public interface IMouseEventHandler extends IItemComponent {
      * @param stack        the {@link ItemStack} the player is holding in their main hand
      */
     @SideOnly(Side.CLIENT)
-    default void handleMouseEventClient(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
-                                        @NotNull ItemStack stack) {
-        if (event.getButton() != -1 || event.getDwheel() != 0) {
-            PacketItemMouseEvent.toServer(event);
-            if (defaultCancel()) {
-                event.setCanceled(true);
-            }
-        }
-    }
+    void handleMouseEventClient(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
+                                @NotNull ItemStack stack);
 
     /**
-     * If the default {@link #handleMouseEventClient(MouseEvent, EntityPlayerSP, ItemStack)} method should cancel the
-     * event after sending the packet.
-     */
-    default boolean defaultCancel() {
-        return true;
-    }
-
-    /**
-     * Handle the mouse event on the server side.
+     * Handle the received mouse event on the server side.
      *
      * @param packet       the packet containing the data from the client event
      * @param playerServer the server side counterpart of the client player
