@@ -3,13 +3,17 @@ package gregtech.common.items.behaviors.spray;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemColorProvider;
 import gregtech.api.items.metaitem.stats.IItemNameProvider;
+import gregtech.api.items.metaitem.stats.IMouseEventHandler;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
+import gregtech.core.network.packets.PacketItemMouseEvent;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CreativeSprayBehavior extends AbstractSprayBehavior implements ItemUIFactory, IItemColorProvider,
-                                   IItemNameProvider {
+                                   IItemNameProvider, IMouseEventHandler {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
@@ -120,5 +124,11 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
         String colorString = color == null ? I18n.format("metaitem.spray.creative.solvent") :
                 I18n.format("metaitem.spray.creative." + color);
         return I18n.format(unlocalizedName, colorString);
+    }
+
+    @Override
+    public void handleMouseEventServer(@NotNull PacketItemMouseEvent packet, @NotNull EntityPlayerMP playerServer,
+                                       @NotNull ItemStack stack) {
+        GTLog.logger.info("Received packet %s on item %s for player \"%s\"", packet, stack, playerServer.getName());
     }
 }

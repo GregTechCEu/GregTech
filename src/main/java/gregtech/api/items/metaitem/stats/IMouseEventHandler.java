@@ -1,6 +1,9 @@
 package gregtech.api.items.metaitem.stats;
 
+import gregtech.core.network.packets.PacketItemMouseEvent;
+
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -11,12 +14,26 @@ import org.jetbrains.annotations.NotNull;
 public interface IMouseEventHandler extends IItemComponent {
 
     /**
-     * Handle a mouse event
+     * Handle a mouse event on the client side
      * 
      * @param event        the event
      * @param playerClient the player object on the client side
      * @param stack        the {@link ItemStack} the player is holding in their main hand
      */
     @SideOnly(Side.CLIENT)
-    void handleMouseEvent(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient, @NotNull ItemStack stack);
+    default void handleMouseEventClient(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
+                                        @NotNull ItemStack stack) {
+        PacketItemMouseEvent.toServer(event);
+    }
+
+    /**
+     * Handle a mouse event on the server side
+     * 
+     * @param packet       the packet containing the data from the client event
+     * @param playerServer the server side counterpart of the client player
+     * @param stack        the stack the player was holding upon receiving the packet
+     */
+    @SideOnly(Side.SERVER)
+    void handleMouseEventServer(@NotNull PacketItemMouseEvent packet, @NotNull EntityPlayerMP playerServer,
+                                @NotNull ItemStack stack);
 }

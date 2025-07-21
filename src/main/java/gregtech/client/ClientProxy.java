@@ -360,7 +360,7 @@ public class ClientProxy extends CommonProxy {
         if (item instanceof MetaItem<?>metaItem) {
             IMouseEventHandler mouseEventHandler = metaItem.getMouseEventHandler(stack);
             if (mouseEventHandler != null) {
-                mouseEventHandler.handleMouseEvent(event, player, stack);
+                mouseEventHandler.handleMouseEventClient(event, player, stack);
             }
         } else if (item instanceof ItemGTToolbelt toolbelt) {
             toolbelt.handleMouseEvent(event, player, stack);
