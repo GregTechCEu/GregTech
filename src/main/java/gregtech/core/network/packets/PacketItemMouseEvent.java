@@ -27,12 +27,12 @@ public class PacketItemMouseEvent implements IPacket, IServerExecutor {
 
     @Override
     public void encode(PacketBuffer buf) {
-        buf.writeBytes(internalBuffer.array());
+        buf.writeBytes(internalBuffer);
     }
 
     @Override
     public void decode(PacketBuffer buf) {
-        internalBuffer.writeBytes(buf.array());
+        internalBuffer.writeBytes(buf);
     }
 
     public static void toServer(@NotNull Consumer<@NotNull PacketBuffer> bufferWriter) {
