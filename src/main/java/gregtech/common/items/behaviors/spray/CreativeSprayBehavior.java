@@ -45,7 +45,13 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
         ItemStack heldItem = player.getHeldItem(hand);
 
         if (!world.isRemote) {
-            MetaItemGuiFactory.open(player, hand);
+            if (isLocked(heldItem)) {
+                // TODO: lang
+                player.sendStatusMessage(
+                        new TextComponentString("Cannot open selector UI because the spray can is locked"), true);
+            } else {
+                MetaItemGuiFactory.open(player, hand);
+            }
         }
 
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
@@ -162,9 +168,9 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
         int button = buf.readVarInt();
         int scroll = buf.readVarInt();
 
-        if (button == 0) {
-            setColor(stack, getColorOrdinal(stack) + 1);
+        if (button == 0 && !isLocked(stack)) {
             // TODO: sneak click rotates colors the other way
+            setColor(stack, getColorOrdinal(stack) + 1);
         } else if (button == 2) {
             toggleLocked(stack);
             EnumDyeColor color = getColor(stack);
