@@ -11,10 +11,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Implement on your {@link IItemComponent} to handle mouse event while the corresponding item is selected on the main
+ * hotbar. <br/>
+ * By default, it will only send events to the server when a mouse button was pressed or the mouse wheel was scrolled.
+ */
 public interface IMouseEventHandler extends IItemComponent {
 
     /**
-     * Handle a mouse event on the client side
+     * Handle a mouse event on the client side.
      * 
      * @param event        the event
      * @param playerClient the player object on the client side
@@ -23,17 +28,29 @@ public interface IMouseEventHandler extends IItemComponent {
     @SideOnly(Side.CLIENT)
     default void handleMouseEventClient(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
                                         @NotNull ItemStack stack) {
-        PacketItemMouseEvent.toServer(event);
+        if (event.getButton() != -1 || event.getDwheel() != 0) {
+            PacketItemMouseEvent.toServer(event);
+            if (defaultCancel()) {
+                event.setCanceled(true);
+            }
+        }
     }
 
     /**
-     * Handle a mouse event on the server side
-     * 
+     * If the default {@link #handleMouseEventClient(MouseEvent, EntityPlayerSP, ItemStack)} method should cancel the
+     * event after sending the packet.
+     */
+    default boolean defaultCancel() {
+        return true;
+    }
+
+    /**
+     * Handle the mouse event on the server side.
+     *
      * @param packet       the packet containing the data from the client event
      * @param playerServer the server side counterpart of the client player
      * @param stack        the stack the player was holding upon receiving the packet
      */
-    @SideOnly(Side.SERVER)
     void handleMouseEventServer(@NotNull PacketItemMouseEvent packet, @NotNull EntityPlayerMP playerServer,
                                 @NotNull ItemStack stack);
 }
