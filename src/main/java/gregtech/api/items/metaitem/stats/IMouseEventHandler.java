@@ -18,7 +18,9 @@ import org.jetbrains.annotations.NotNull;
 public interface IMouseEventHandler extends IItemComponent {
 
     /**
-     * Handle a mouse event on the client side.
+     * Handle a mouse event on the client side. <br/>
+     * Use {@link PacketItemMouseEvent#toServer(MouseEvent)} to send the event to the server. <br/>
+     * Try to only act on mouse clicks or scrolls as looking around spams this event.
      * 
      * @param event        the event
      * @param playerClient the player object on the client side
