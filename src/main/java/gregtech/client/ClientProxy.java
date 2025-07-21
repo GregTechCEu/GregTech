@@ -2,7 +2,9 @@ package gregtech.client;
 
 import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluidRegistration;
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaOreDictItem;
+import gregtech.api.items.metaitem.stats.IMouseEventHandler;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.unification.OreDictUnifier;
@@ -46,12 +48,12 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -352,19 +354,16 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onMouseEvent(@NotNull MouseEvent event) {
-        if (!ConfigHolder.client.toolbeltConfig.enableToolbeltScrollingCapture) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if (event.getDwheel() != 0 && player.isSneaking()) {
-            ItemStack stack = player.getHeldItemMainhand();
-            if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-                // vanilla code in GuiIngame line 1235 does not copy the stack before storing it in the highlighting
-                // item stack, so unless we copy the stack the tool highlight will not refresh.
-                stack = stack.copy();
-                toolbelt.changeSelectedToolMousewheel(event.getDwheel(), stack);
-                InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
-                inv.mainInventory.set(inv.currentItem, stack);
-                event.setCanceled(true);
+        ItemStack stack = player.getHeldItemMainhand();
+        Item item = stack.getItem();
+        if (item instanceof MetaItem<?>metaItem) {
+            IMouseEventHandler mouseEventHandler = metaItem.getMouseEventHandler(stack);
+            if (mouseEventHandler != null) {
+                mouseEventHandler.handleMouseEvent(event, player, stack);
             }
+        } else if (item instanceof ItemGTToolbelt toolbelt) {
+            toolbelt.handleMouseEvent(event, player, stack);
         }
     }
 

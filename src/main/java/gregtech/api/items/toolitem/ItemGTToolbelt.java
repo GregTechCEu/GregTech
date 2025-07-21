@@ -13,17 +13,21 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.TooltipHelper;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMaintenanceHatch;
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -37,6 +41,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -422,11 +427,22 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     @SideOnly(Side.CLIENT)
-    public void changeSelectedToolMousewheel(int direction, ItemStack stack) {
-        ToolStackHandler handler = getHandler(stack);
-        if (direction < 0) handler.incrementSelectedSlot();
-        else handler.decrementSelectedSlot();
-        PacketToolbeltSelectionChange.toServer(handler.selectedSlot);
+    public void handleMouseEvent(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
+                                 @NotNull ItemStack stack) {
+        if (!ConfigHolder.client.toolbeltConfig.enableToolbeltScrollingCapture) return;
+        if (event.getDwheel() != 0 && playerClient.isSneaking()) {
+            ItemStack copy = stack.copy();
+            ToolStackHandler handler = getHandler(copy);
+            if (event.getDwheel() < 0) {
+                handler.incrementSelectedSlot();
+            } else {
+                handler.decrementSelectedSlot();
+            }
+            PacketToolbeltSelectionChange.toServer(handler.selectedSlot);
+            InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
+            inv.mainInventory.set(inv.currentItem, stack);
+            event.setCanceled(true);
+        }
     }
 
     @SideOnly(Side.CLIENT)
