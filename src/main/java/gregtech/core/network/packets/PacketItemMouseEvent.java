@@ -14,6 +14,7 @@ import net.minecraftforge.client.event.MouseEvent;
 
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public class PacketItemMouseEvent implements IPacket, IServerExecutor {
 
     private int x;
@@ -70,30 +71,59 @@ public class PacketItemMouseEvent implements IPacket, IServerExecutor {
         }
     }
 
+    /**
+     * The absolute X position of the cursor.
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * The absolute Y position of the cursor.
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * The delta of cursor movement on the X axis.
+     */
     public int getDx() {
         return dx;
     }
 
+    /**
+     * The delta of cursor movement on the Y axis.
+     */
     public int getDy() {
         return dy;
     }
 
+    /**
+     * The scroll wheel delta. <br/>
+     * {@code -120} = scrolling down <br/>
+     * {@code 0} = no scrolling <br/>
+     * {@code 120} = scrolling up
+     */
     public int getDwheel() {
         return dwheel;
     }
 
+    /**
+     * Which mouse button is being reported. <br/>
+     * {@code 0} = left click <br/>
+     * {@code 1} = right click <br/>
+     * {@code 2} = middle click
+     */
     public int getButton() {
         return button;
     }
 
+    /**
+     * If the reported mouse button has been pressed down or released. <br/>
+     * {@code true} = pressed <br/>
+     * {@code false} = unpressed
+     */
     public boolean buttonState() {
         return buttonstate;
     }
