@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Implement on your {@link IItemComponent} to handle mouse event while the corresponding item is selected on the main
- * hotbar. <br/>
- * By default, it will only send events to the server when a mouse button was pressed or the mouse wheel was scrolled.
+ * hotbar.
  */
 public interface IMouseEventHandler extends IItemComponent {
 
