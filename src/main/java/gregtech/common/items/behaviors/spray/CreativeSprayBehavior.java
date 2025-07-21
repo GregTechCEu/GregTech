@@ -6,7 +6,6 @@ import gregtech.api.items.metaitem.stats.IItemNameProvider;
 import gregtech.api.items.metaitem.stats.IMouseEventHandler;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 import gregtech.core.network.packets.PacketItemMouseEvent;
@@ -18,9 +17,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.util.Constants;
@@ -94,11 +95,11 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
         return null;
     }
 
-    public void setColor(@NotNull ItemStack stack, @Nullable EnumDyeColor color) {
+    public static void setColor(@NotNull ItemStack stack, @Nullable EnumDyeColor color) {
         GTUtility.getOrCreateNbtCompound(stack).setInteger("color", color == null ? -1 : color.ordinal());
     }
 
-    public void setColor(@NotNull ItemStack stack, int color) {
+    public static void setColor(@NotNull ItemStack stack, int color) {
         if (color >= 0 && color <= 15) {
             setColor(stack, EnumDyeColor.values()[color]);
         } else {
@@ -120,6 +121,10 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
         GTUtility.getOrCreateNbtCompound(stack).setBoolean("Locked", locked);
     }
 
+    public static void toggleLocked(@NotNull ItemStack stack) {
+        setLocked(stack, !isLocked(stack));
+    }
+
     @Override
     public String getItemStackDisplayName(ItemStack itemStack, String unlocalizedName) {
         EnumDyeColor color = getColor(itemStack);
@@ -131,14 +136,42 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
     @Override
     public void handleMouseEventClient(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
                                        @NotNull ItemStack stack) {
-        if (event.getButton() != -1 || (event.getDwheel() != 0 && playerClient.isSneaking())) {
-            PacketItemMouseEvent.toServer(event);
+        if ((event.getButton() != -1 && event.isButtonstate()) || event.getDwheel() != 0) {
+            int button = event.getButton();
+            int scroll = event.getDwheel();
+
+            if (button == 0) {
+                setColor(stack, getColorOrdinal(stack) + 1);
+                event.setCanceled(true);
+                // TODO: sneak click rotates colors the other way
+            } else if (button == 2) {
+                toggleLocked(stack);
+                event.setCanceled(true);
+            }
+
+            sendToServer(buf -> buf
+                    .writeVarInt(button)
+                    .writeVarInt(scroll));
         }
     }
 
     @Override
     public void handleMouseEventServer(@NotNull PacketItemMouseEvent packet, @NotNull EntityPlayerMP playerServer,
                                        @NotNull ItemStack stack) {
-        GTLog.logger.info("Received packet {} on item {} for player \"{}\"", packet, stack, playerServer.getName());
+        PacketBuffer buf = packet.getBuffer();
+        int button = buf.readVarInt();
+        int scroll = buf.readVarInt();
+
+        if (button == 0) {
+            setColor(stack, getColorOrdinal(stack) + 1);
+            // TODO: sneak click rotates colors the other way
+        } else if (button == 2) {
+            toggleLocked(stack);
+            EnumDyeColor color = getColor(stack);
+            // TODO: lang
+            playerServer.sendStatusMessage(new TextComponentString(
+                    isLocked(stack) ? String.format("Locked to %s", color == null ? "solvent" : color) : "Unlocked"),
+                    true);
+        }
     }
 }
