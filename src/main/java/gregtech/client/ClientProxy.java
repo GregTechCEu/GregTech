@@ -356,6 +356,8 @@ public class ClientProxy extends CommonProxy {
     public static void onMouseEvent(@NotNull MouseEvent event) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         ItemStack stack = player.getHeldItemMainhand();
+        if (stack.isEmpty()) return;
+
         Item item = stack.getItem();
         if (item instanceof MetaItem<?>metaItem) {
             IMouseEventHandler mouseEventHandler = metaItem.getMouseEventHandler(stack);
