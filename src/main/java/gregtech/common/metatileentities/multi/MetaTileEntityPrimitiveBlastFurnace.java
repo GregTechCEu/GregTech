@@ -56,6 +56,16 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
 
     private static final TraceabilityPredicate SNOW_PREDICATE = new TraceabilityPredicate(
             bws -> GTUtility.isBlockSnow(bws.getBlockState()));
+    UITexture[] importOverlays = {
+            GTGuiTextures.PRIMITIVE_INGOT_OVERLAY,
+            GTGuiTextures.PRIMITIVE_DUST_OVERLAY,
+            GTGuiTextures.PRIMITIVE_FURNACE_OVERLAY
+    };
+    UITexture[] exportOverlays = {
+            GTGuiTextures.PRIMITIVE_INGOT_OVERLAY,
+            GTGuiTextures.PRIMITIVE_DUST_OVERLAY,
+            GTGuiTextures.PRIMITIVE_DUST_OVERLAY
+    };
 
     public MetaTileEntityPrimitiveBlastFurnace(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.PRIMITIVE_BLAST_FURNACE_RECIPES);
@@ -94,70 +104,48 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
                 .disableDisplay()
                 .disableButtons()
                 .addScreenChildren((parent, syncManager) -> {
-                    UITexture[] importOverlays = {
-                            GTGuiTextures.PRIMITIVE_INGOT_OVERLAY,
-                            GTGuiTextures.PRIMITIVE_DUST_OVERLAY,
-                            GTGuiTextures.PRIMITIVE_FURNACE_OVERLAY
-                    };
-
-                    UITexture[] exportOverlays = {
-                            GTGuiTextures.PRIMITIVE_INGOT_OVERLAY,
-                            GTGuiTextures.PRIMITIVE_DUST_OVERLAY,
-                            GTGuiTextures.PRIMITIVE_DUST_OVERLAY
-                    };
 
                     SlotGroup importGroup = new SlotGroup("import", 1, true);
 
-                    // 标题
-                    parent.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5));
-
-                    // 输入槽位（3个单独创建的槽）
-                    parent.child(new ItemSlot()
-                            .background(GTGuiTextures.SLOT_PRIMITIVE, importOverlays[0])
-                            .slot(new ModularSlot(importItems, 0)
-                                    .slotGroup(importGroup)
-                                    .accessibility(true, true))
-                            .pos(40, 12));
-
-                    parent.child(new ItemSlot()
-                            .background(GTGuiTextures.SLOT_PRIMITIVE, importOverlays[1])
-                            .slot(new ModularSlot(importItems, 1)
-                                    .slotGroup(importGroup)
-                                    .accessibility(true, true))
-                            .pos(40, 30)); // 水平偏移18像素
-
-                    parent.child(new ItemSlot()
-                            .background(GTGuiTextures.SLOT_PRIMITIVE, importOverlays[2])
-                            .slot(new ModularSlot(importItems, 2)
-                                    .slotGroup(importGroup)
-                                    .accessibility(true, true))
-                            .pos(40, 48)); // 水平偏移18像素
-
-                    // 进度条（保持原始位置）
-                    parent.child(new ProgressWidget()
-                            .texture(GTGuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, -1)
-                            .size(20, 15)
-                            .pos(62, 32) // 调整到输入槽右侧
-                            .value(new DoubleSyncValue(recipeMapWorkable::getProgressPercent)));
-
-                    // 输出槽位（3个单独创建的槽）
-                    parent.child(new ItemSlot()
-                            .background(GTGuiTextures.SLOT_PRIMITIVE, exportOverlays[0])
-                            .slot(new ModularSlot(exportItems, 0)
-                                    .accessibility(false, true))
-                            .pos(86, 30)); // 进度条右侧
-
-                    parent.child(new ItemSlot()
-                            .background(GTGuiTextures.SLOT_PRIMITIVE, exportOverlays[1])
-                            .slot(new ModularSlot(exportItems, 1)
-                                    .accessibility(false, true))
-                            .pos(104, 30)); // 水平偏移18像素
-
-                    parent.child(new ItemSlot()
-                            .background(GTGuiTextures.SLOT_PRIMITIVE, exportOverlays[2])
-                            .slot(new ModularSlot(exportItems, 2)
-                                    .accessibility(false, true))
-                            .pos(122, 30)); // 水平偏移18像素
+                    parent.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                            .child(new ItemSlot()
+                                    .background(GTGuiTextures.SLOT_PRIMITIVE, importOverlays[0])
+                                    .slot(new ModularSlot(importItems, 0)
+                                            .slotGroup(importGroup)
+                                            .accessibility(true, true))
+                                    .pos(40, 12))
+                            .child(new ItemSlot()
+                                    .background(GTGuiTextures.SLOT_PRIMITIVE, importOverlays[1])
+                                    .slot(new ModularSlot(importItems, 1)
+                                            .slotGroup(importGroup)
+                                            .accessibility(true, true))
+                                    .pos(40, 30))
+                            .child(new ItemSlot()
+                                    .background(GTGuiTextures.SLOT_PRIMITIVE, importOverlays[2])
+                                    .slot(new ModularSlot(importItems, 2)
+                                            .slotGroup(importGroup)
+                                            .accessibility(true, true))
+                                    .pos(40, 48))
+                            .child(new ProgressWidget()
+                                    .texture(GTGuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, -1)
+                                    .size(20, 15)
+                                    .pos(62, 32)
+                                    .value(new DoubleSyncValue(recipeMapWorkable::getProgressPercent)))
+                            .child(new ItemSlot()
+                                    .background(GTGuiTextures.SLOT_PRIMITIVE, exportOverlays[0])
+                                    .slot(new ModularSlot(exportItems, 0)
+                                            .accessibility(false, true))
+                                    .pos(86, 30))
+                            .child(new ItemSlot()
+                                    .background(GTGuiTextures.SLOT_PRIMITIVE, exportOverlays[1])
+                                    .slot(new ModularSlot(exportItems, 1)
+                                            .accessibility(false, true))
+                                    .pos(104, 30))
+                            .child(new ItemSlot()
+                                    .background(GTGuiTextures.SLOT_PRIMITIVE, exportOverlays[2])
+                                    .slot(new ModularSlot(exportItems, 2)
+                                            .accessibility(false, true))
+                                    .pos(122, 30));
                 });
     }
 

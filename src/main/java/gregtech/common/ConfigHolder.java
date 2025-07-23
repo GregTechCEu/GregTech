@@ -5,8 +5,6 @@ import gregtech.api.GregTechAPI;
 
 import net.minecraftforge.common.config.Config;
 
-import org.jetbrains.annotations.Range;
-
 @Config(modid = GTValues.MODID, name = GTValues.MODID + '/' + GTValues.MODID)
 public class ConfigHolder {
 
@@ -43,6 +41,39 @@ public class ConfigHolder {
     @Config.Name("Worldgen Options")
     @Config.RequiresMcRestart
     public static WorldGenOptions worldgen = new WorldGenOptions();
+
+    //原版优化 Vanilla Optimize
+    @Config.Comment("Config options for Vanilla Optimize")
+    @Config.Name("Vanilla Optimize")
+    public static VanillaOptimizeOptions vanillaOptimizeOptions = new VanillaOptimizeOptions();
+
+    public static class VanillaOptimizeOptions {
+
+        @Config.Comment({"对蝙蝠进行立即处死", })
+        @Config.Name("特定生物处死优化")
+        public boolean killEntityEnable = false;
+
+        @Config.Comment({"对所有动物进行立即处死", })
+        @Config.Name("动物处死优化")
+        public boolean killAnimalEnable = false;
+
+        @Config.Comment({"对林业的蝴蝶进行立即处死", })
+        @Config.Name(" 林业蝴蝶处死优化")
+        public boolean killButterflyEnable = false;
+
+        @Config.Comment({"拒绝地形矿物生成", })
+        @Config.Name("拒绝矿物生成")
+        public boolean disableOreGeneration = false;
+
+        @Config.Comment({"禁用生物随机生成", })
+        @Config.Name("禁用生物随机生成")
+        public boolean disableSpawnEnable = false;
+
+        @Config.Comment({"禁用方块随机更新", })
+        @Config.Name("禁用方块随机更新")
+        public boolean disableUpdateEnable = false;
+    }
+
 
     //简单模式
     @Config.Comment("Config options for Easy Mode")

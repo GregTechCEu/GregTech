@@ -62,6 +62,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityImplosionCompressor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeChemicalReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeMiner;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiAlloyFurnace;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityNetworkSwitch;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
@@ -364,6 +365,7 @@ public class MetaTileEntities {
     public static MetaTileEntityDistillationTower DISTILLATION_TOWER;
     public static MetaTileEntityCrackingUnit CRACKER;
     public static MetaTileEntityMultiSmelter MULTI_FURNACE;
+    public static MetaTileEntityMultiAlloyFurnace MULTI_ALLOY_FURNACE;
     public static MetaTileEntityLargeCombustionEngine LARGE_COMBUSTION_ENGINE;
     public static MetaTileEntityLargeCombustionEngine EXTREME_COMBUSTION_ENGINE;
     public static MetaTileEntityLargeTurbine LARGE_STEAM_TURBINE;
@@ -909,6 +911,7 @@ public class MetaTileEntities {
         ACTIVE_TRANSFORMER = registerMetaTileEntity(1042,
                 new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
 
+        MULTI_ALLOY_FURNACE = registerMetaTileEntity(1050, new MetaTileEntityMultiAlloyFurnace(gregtechId("multi_alloy_furnace")));
         //IO注册
         // Import/Export Buses/Hatches, IDs 1150-1300
         endPos = GregTechAPI.isHighTier() ? ITEM_IMPORT_BUS.length : GTValues.UHV + 1;

@@ -714,7 +714,11 @@ public class MetaTileEntityLoader {
                 MetaBlocks.METAL_CASING.getItemVariant(TUNGSTENSTEEL_ROBUST), 'P',
                 new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.TungstenSteel));
         ModHandler.addShapedRecipe(true, "multi_furnace", MetaTileEntities.MULTI_FURNACE.getStackForm(), "PPP", "ASA",
-                "CAC", 'P', Blocks.FURNACE, 'A', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV), 'S',
+                "CAC", 'P', MetaTileEntities.ELECTRIC_FURNACE[3], 'A', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV), 'S',
+                MetaBlocks.METAL_CASING.getItemVariant(INVAR_HEATPROOF), 'C',
+                new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper));
+        ModHandler.addShapedRecipe(true, "multi_alloy_furnace", MetaTileEntities.MULTI_ALLOY_FURNACE.getStackForm(), "PPP", "ASA",
+                "CAC", 'P', MetaTileEntities.ALLOY_SMELTER[3], 'A', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV), 'S',
                 MetaBlocks.METAL_CASING.getItemVariant(INVAR_HEATPROOF), 'C',
                 new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper));
 

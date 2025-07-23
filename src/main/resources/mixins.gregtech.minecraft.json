@@ -8,16 +8,20 @@
     "maxShiftBy": 10
   },
   "mixins": [
+    "BiomeDecoratorMixin",
     "BlockConcretePowderMixin",
-    "ContainerMixin",
     "BlockRenderLayerMixin",
+    "ContainerMixin",
     "DamageSourceMixin",
     "EnchantmentCanApplyMixin",
-    "MinecraftMixin"
+    "MinecraftMixin",
+    "MixinEntityAnimal",
+    "MixinEntityBat",
+    "WorldEntitySpawnerMixin"
   ],
   "client": [
-    "BlockMixin",
     "BlockFluidBaseMixin",
+    "BlockMixin",
     "EntityRendererMixin",
     "LayerArmorBaseMixin",
     "LayerCustomHeadMixin",
