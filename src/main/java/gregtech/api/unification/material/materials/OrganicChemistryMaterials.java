@@ -153,7 +153,14 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Methane = new Material.Builder(1018, gregtechId("methane"))
-                .gas(new FluidBuilder().translation("gregtech.fluid.gas_generic"))
+                .gas(new FluidBuilder()
+                        .translation("gregtech.fluid.gas_generic"))
+                .liquid(new FluidBuilder()
+                        .block()
+                        .temperature(111)
+                        .color(0x88AAFF)
+                        .name("liquid_methane")
+                        .translation("gregtech.fluid.liquid_generic"))
                 .color(0xFF0078)
                 .components(Carbon, 1, Hydrogen, 4)
                 .build();

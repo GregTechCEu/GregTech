@@ -67,11 +67,13 @@ public class ChemistryRecipes {
                 .duration(80).EUt(VA[IV]).buildAndRegister();
 
         vacuumAir(CarbonDioxide, 1);
+        vacuumAir(Ammonia, 1);
         vacuumAir(Radon, 2);
         vacuumAir(Krypton, 2);
         vacuumAir(Nitrogen, 3);
         vacuumAir(Argon, 3);
         vacuumAir(Xenon, 3);
+        vacuumAir(Methane, 3);
         vacuumAir(Oxygen, 4);
         vacuumAir(Helium, 4);
         vacuumAir(Hydrogen, 4);

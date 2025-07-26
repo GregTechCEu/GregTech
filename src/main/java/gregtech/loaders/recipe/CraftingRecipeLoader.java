@@ -137,6 +137,8 @@ public class CraftingRecipeLoader {
                 new UnificationEntry(OrePrefix.plate, Ruridit), 'C', CARBON_FIBER_PLATE.getStackForm(), 'X',
                 new UnificationEntry(OrePrefix.circuit, Tier.EV), 'E', ENERGIUM_CRYSTAL.getStackForm());
 
+        // Solar Panels
+        /*
         ModHandler.addShapedRecipe("solar_panel_basic", COVER_SOLAR_PANEL.getStackForm(), "WGW", "CPC", 'W',
                 SILICON_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.LV),
                 'P', CARBON_FIBER_PLATE.getStackForm());
@@ -151,6 +153,12 @@ public class CraftingRecipeLoader {
                 'C', new UnificationEntry(OrePrefix.circuit, Tier.LuV), 'P',
                 OreDictUnifier.get(OrePrefix.plate, IndiumGalliumPhosphide), 'A',
                 OreDictUnifier.get(OrePrefix.wireGtHex, Graphene));
+         */
+
+
+
+
+
 
         ModHandler.addShapedRecipe("universal_fluid_cell", FLUID_CELL_UNIVERSAL.getStackForm(), "C ", "  ", 'C',
                 FLUID_CELL);

@@ -437,7 +437,7 @@ public class UnknownCompositionMaterials {
                 .build();
 
         Glowstone = new Material.Builder(1601, gregtechId("glowstone"))
-                .dust(1)
+                .dust(1).ore(true).gem()
                 .liquid(new FluidBuilder().temperature(500))
                 .color(0xFFFF00).iconSet(SHINY)
                 .flags(NO_SMASHING, GENERATE_PLATE, EXCLUDE_PLATE_COMPRESSOR_RECIPE,

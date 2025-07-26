@@ -101,6 +101,18 @@ public final class CoverBehaviors {
                 (def, tile, side) -> new CoverSolarPanel(def, tile, side, V[ZPM]));
         registerBehavior(gregtechId("solar_panel.uv"), MetaItems.COVER_SOLAR_PANEL_UV,
                 (def, tile, side) -> new CoverSolarPanel(def, tile, side, V[UV]));
+        registerBehavior(gregtechId("solar_panel.uhv"), MetaItems.COVER_SOLAR_PANEL_UHV,
+                (def, tile, side) -> new CoverSolarPanel(def, tile, side, V[UHV]));
+        registerBehavior(gregtechId("solar_panel.uev"), MetaItems.COVER_SOLAR_PANEL_UEV,
+                (def, tile, side) -> new CoverSolarPanel(def, tile, side, V[UEV]));
+        registerBehavior(gregtechId("solar_panel.uiv"), MetaItems.COVER_SOLAR_PANEL_UIV,
+                (def, tile, side) -> new CoverSolarPanel(def, tile, side, V[UIV]));
+        registerBehavior(gregtechId("solar_panel.uxv"), MetaItems.COVER_SOLAR_PANEL_UXV,
+                (def, tile, side) -> new CoverSolarPanel(def, tile, side, V[UXV]));
+        registerBehavior(gregtechId("solar_panel.opv"), MetaItems.COVER_SOLAR_PANEL_OPV,
+                (def, tile, side) -> new CoverSolarPanel(def, tile, side, V[OpV]));
+        registerBehavior(gregtechId("solar_panel.max"), MetaItems.COVER_SOLAR_PANEL_MAX,
+                (def, tile, side) -> new CoverSolarPanel(def, tile, side, V[MAX]));
 
         registerBehavior(gregtechId("machine_controller"), MetaItems.COVER_MACHINE_CONTROLLER,
                 CoverMachineController::new);

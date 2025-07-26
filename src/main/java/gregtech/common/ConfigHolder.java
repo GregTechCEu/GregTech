@@ -112,7 +112,7 @@ public class ConfigHolder {
 
         @Config.Comment({ "Whether to enable High-Tier Solar Panels (IV-UV). They will not have recipes.",
                 "Default: false" })
-        public boolean enableHighTierSolars = false;
+        public boolean enableHighTierSolars = true;
 
         @Config.Comment({
                 "Whether to enable World Accelerators, which accelerate ticks for surrounding Tile Entities, Crops, etc.",

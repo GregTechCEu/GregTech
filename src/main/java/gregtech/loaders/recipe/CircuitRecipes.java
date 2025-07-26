@@ -1580,7 +1580,7 @@ public class CircuitRecipes {
                 .input(NOR_MEMORY_CHIP, 16)
                 .input(NAND_MEMORY_CHIP, 32)
                 .input(wireFine, Platinum, 32)
-                .output(TOOL_DATA_STICK)
+                .output(TOOL_DATA_STICK,4)
                 .solderMultiplier(2)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(400).EUt(1200).buildAndRegister();

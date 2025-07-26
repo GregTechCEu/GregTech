@@ -70,6 +70,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import static gregtech.api.GTValues.M;
+import static gregtech.api.GTValues.MAX;
 import static gregtech.api.unification.material.Materials.Steel;
 import static gregtech.api.util.DyeUtil.getOredictColorName;
 import static gregtech.common.items.MetaItems.*;
@@ -757,13 +758,50 @@ public class MetaItem1 extends StandardMetaItem {
             lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.UV],
                     GTValues.VNF[GTValues.UV]));
         }));
-        // MAX-tier solar panel?
+        COVER_SOLAR_PANEL_UHV = addItem(341, "cover.solar.panel.uhv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.UHV],
+                    GTValues.VNF[GTValues.UHV]));
+        }));
+        COVER_SOLAR_PANEL_UEV = addItem(342, "cover.solar.panel.uev").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.UEV],
+                    GTValues.VNF[GTValues.UEV]));
+        }));
+        COVER_SOLAR_PANEL_UIV = addItem(343, "cover.solar.panel.uiv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.UIV],
+                    GTValues.VNF[GTValues.UIV]));
+        }));
+        COVER_SOLAR_PANEL_UXV = addItem(344, "cover.solar.panel.uxv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.UXV],
+                    GTValues.VNF[GTValues.UXV]));
+        }));
+        COVER_SOLAR_PANEL_OPV = addItem(345, "cover.solar.panel.opv").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.OpV],
+                    GTValues.VNF[GTValues.OpV]));
+        }));
+        COVER_SOLAR_PANEL_MAX = addItem(346, "cover.solar.panel.max").addComponents(new TooltipBehavior(lines -> {
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
+            lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[MAX],
+                    GTValues.VNF[GTValues.MAX]));
+        }));
 
         if (!ConfigHolder.machines.enableHighTierSolars) {
-            COVER_SOLAR_PANEL_IV.setInvisible();
-            COVER_SOLAR_PANEL_LUV.setInvisible();
-            COVER_SOLAR_PANEL_ZPM.setInvisible();
-            COVER_SOLAR_PANEL_UV.setInvisible();
+            COVER_SOLAR_PANEL_UHV.setInvisible();
+            COVER_SOLAR_PANEL_UEV.setInvisible();
+            COVER_SOLAR_PANEL_UIV.setInvisible();
+            COVER_SOLAR_PANEL_UXV.setInvisible();
+            COVER_SOLAR_PANEL_OPV.setInvisible();
+            COVER_SOLAR_PANEL_MAX.setInvisible();
         }
 
         // Early Game Brick Related: ID 347-360

@@ -485,6 +485,12 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_LUV;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ZPM;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_UV;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_UHV;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_UEV;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_UIV;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_UXV;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_OPV;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_MAX;
 
     public static MetaItem<?>.MetaValueItem PLUGIN_TEXT;
     public static MetaItem<?>.MetaValueItem PLUGIN_ONLINE_PIC;
