@@ -112,9 +112,9 @@ public class MetaTileEntityMultiAlloyFurnace extends RecipeMapMultiblockControll
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "CCC", " X ")
-                .aisle("XXX", "C C", " M ")
-                .aisle("XSX", "CCC", " X ")
+                .aisle("XXX", "CCC", "XXX")
+                .aisle("XXX", "C#C", "XMX")
+                .aisle("XSX", "CCC", "XXX")
                 .where('S', selfPredicate())
                 .where('X',
                         states(getCasingState()).setMinGlobalLimited(9)
