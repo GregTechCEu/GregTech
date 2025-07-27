@@ -442,7 +442,7 @@ public class MixerRecipes {
                 .output(dust, HSSE, 9)
                 .buildAndRegister();
 
-        MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[IV])
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
                 .input(dust, Niobium)
                 .input(dust, Titanium)
                 .circuitMeta(1)
