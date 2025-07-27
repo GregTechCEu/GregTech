@@ -15,6 +15,7 @@
     "DamageSourceMixin",
     "EnchantmentCanApplyMixin",
     "MinecraftMixin",
+    "MixinEntity",
     "MixinEntityAnimal",
     "MixinEntityBat",
     "WorldEntitySpawnerMixin"

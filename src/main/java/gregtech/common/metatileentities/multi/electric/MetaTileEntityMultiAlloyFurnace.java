@@ -121,7 +121,7 @@ public class MetaTileEntityMultiAlloyFurnace extends RecipeMapMultiblockControll
                                 .or(autoAbilities(true, true, true, true, true, true, false)))
                 .where('M', abilities(MultiblockAbility.MUFFLER_HATCH))
                 .where('C', heatingCoils())
-                .where(' ', any())
+                .where('#', air())
                 .build();
     }
 
