@@ -559,3 +559,7 @@ recipemap.fluid_heater.name=Calentamiento de Fluido
 recipemap.blast_furnace.value=Capacidad de Calentamiento: %s K
 recipemap.bender.name=Conformado
 recipemap.combustion_generator.name=Generación por Combustión
+gregtech.machine.wiremill.lv.tooltip=Produce alambres más eficientemente
+gregtech.machine.wiremill.mv.name=Trefiladora Avanzada
+gregtech.machine.wiremill.mv.tooltip=Produce alambres más eficientemente
+gregtech.machine.wiremill.lv.name=Trefiladora Básica
