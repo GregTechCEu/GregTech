@@ -8,7 +8,6 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.ore.StoneTypes;
-import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.IBlockOre;
 import gregtech.api.worldgen.config.OreConfigUtils;
@@ -24,7 +23,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
@@ -39,7 +37,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import team.chisel.common.util.OreDictionaryUtil;
 
 import java.util.Objects;
 import java.util.Random;
@@ -117,7 +114,7 @@ public class BlockOre extends Block implements IBlockOre {
     @Override
     public int quantityDropped(IBlockState state, int fortune, @NotNull Random random) {
         // 基础掉落数量 = 1 + 时运增幅
-        int base = 1 + random.nextInt(fortune + 1);
+        int base = 1 + random.nextInt(Math.min(fortune,5) + 1);
 
         // 粗矿处理：时运每级增加 1 个额外掉落
         ItemStack rawOreStack = OreDictUnifier.get(OrePrefix.rawOre, this.material);

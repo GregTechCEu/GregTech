@@ -52,9 +52,8 @@ import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
 import gregtech.modules.GregTechModules;
 
-import gtqt.common.GTQTCommonProxy;
-
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemSlab;
@@ -75,6 +74,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import gtqt.common.GTQTCommonProxy;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
@@ -82,6 +82,7 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 import static gregtech.common.blocks.MetaBlocks.*;
+import static net.minecraft.init.Blocks.DIAMOND_BLOCK;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class CommonProxy {
@@ -239,10 +240,12 @@ public class CommonProxy {
     public static void registerRecipeHandlers(RegistryEvent.Register<IRecipe> event) {
         GTQTCommonProxy.registerRecipeHandlers(event);
     }
+
     @SubscribeEvent
     public static void registerCoverBehavior(GregTechAPI.RegisterEvent<CoverDefinition> event) {
         GTQTCommonProxy.registerCoverBehavior();
     }
+
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
         GTLog.logger.info("Registering Items...");
@@ -417,6 +420,10 @@ public class CommonProxy {
             event.setBurnTime(100);
         } else if (block == WOOD_SLAB) {
             event.setBurnTime(150);
+        } else if (block == DIAMOND_BLOCK) {
+            event.setBurnTime(1600 * 64 * 10);
+        } else if (stack.getItem() == Items.DIAMOND) {
+            event.setBurnTime(1600 * 64);
         } else if (block instanceof BlockCompressed) {
             // handle material blocks burn value
             Material material = ((BlockCompressed) block).getGtMaterial(stack);
@@ -440,7 +447,7 @@ public class CommonProxy {
     }
 
     public void onPreLoad() {
-        if(ConfigHolder.easyMode.easyModeEnable&&ConfigHolder.expertMode.expertModeEnable){
+        if (ConfigHolder.easyMode.easyModeEnable && ConfigHolder.expertMode.expertModeEnable) {
             throw new IllegalArgumentException("Easy Mode and Expert Mode cannot be enabled at the same time.");
         }
         GTQTCommonProxy.preInit();

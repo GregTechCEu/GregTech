@@ -1016,7 +1016,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     @MustBeInvokedByOverriders
     protected void setupRecipe(@NotNull Recipe recipe) {
         this.progressTime = 1;
-        this.maxProgressTime = ocResult.duration();
+        setMaxProgress(ocResult.duration());
         this.recipeEUt = ocResult.eut();
         this.showRecipes = recipe;
 
