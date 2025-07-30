@@ -80,6 +80,7 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityObjec
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityOpticalDataHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchFluid;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchItem;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchLaser;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityReservoirHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityRotorHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntitySubstationEnergyHatch;
@@ -995,78 +996,81 @@ final class MetaTileEntityRegistration {
         MetaTileEntities.CLEANING_MAINTENANCE_HATCH = MetaTileEntities.registerMetaTileEntity(11483,
                 new MetaTileEntityCleaningMaintenanceHatch(gregtechId("maintenance_hatch_cleanroom_auto")));
 
-        // Misc Hatches: ID 11495-11524
-        MetaTileEntities.MACHINE_HATCH = MetaTileEntities.registerMetaTileEntity(11495,
-                new MetaTileEntityMachineHatch(gregtechId("machine_hatch"), 5));
-
+        // Passthrough Hatches: ID 11496-11512
         MetaTileEntities.PASSTHROUGH_HATCH_ITEM = MetaTileEntities.registerMetaTileEntity(11496,
                 new MetaTileEntityPassthroughHatchItem(gregtechId("passthrough_hatch_item"), 3));
         MetaTileEntities.PASSTHROUGH_HATCH_FLUID = MetaTileEntities.registerMetaTileEntity(11497,
                 new MetaTileEntityPassthroughHatchFluid(gregtechId("passthrough_hatch_fluid"), 3));
+        MetaTileEntities.PASSTHROUGH_HATCH_LASER = MetaTileEntities.registerMetaTileEntity(11498,
+                new MetaTileEntityPassthroughHatchLaser(gregtechId("passthrough_hatch_laser"), 5));
 
-        MetaTileEntities.DATA_ACCESS_HATCH = MetaTileEntities.registerMetaTileEntity(11498,
+        // Misc Hatches: ID 11513-11549
+        MetaTileEntities.MACHINE_HATCH = MetaTileEntities.registerMetaTileEntity(11513,
+                new MetaTileEntityMachineHatch(gregtechId("machine_hatch"), 5));
+
+        MetaTileEntities.DATA_ACCESS_HATCH = MetaTileEntities.registerMetaTileEntity(11514,
                 new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch"), GTValues.EV, false));
-        MetaTileEntities.ADVANCED_DATA_ACCESS_HATCH = MetaTileEntities.registerMetaTileEntity(11499,
+        MetaTileEntities.ADVANCED_DATA_ACCESS_HATCH = MetaTileEntities.registerMetaTileEntity(11515,
                 new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.advanced"), GTValues.LuV, false));
-        MetaTileEntities.CREATIVE_DATA_HATCH = MetaTileEntities.registerMetaTileEntity(11500,
+        MetaTileEntities.CREATIVE_DATA_HATCH = MetaTileEntities.registerMetaTileEntity(11516,
                 new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.creative"), GTValues.MAX, true));
 
-        MetaTileEntities.OPTICAL_DATA_HATCH_RECEIVER = MetaTileEntities.registerMetaTileEntity(11501,
+        MetaTileEntities.OPTICAL_DATA_HATCH_RECEIVER = MetaTileEntities.registerMetaTileEntity(11517,
                 new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.receiver"), false));
-        MetaTileEntities.OPTICAL_DATA_HATCH_TRANSMITTER = MetaTileEntities.registerMetaTileEntity(11502,
+        MetaTileEntities.OPTICAL_DATA_HATCH_TRANSMITTER = MetaTileEntities.registerMetaTileEntity(11518,
                 new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.transmitter"), true));
-        MetaTileEntities.COMPUTATION_HATCH_RECEIVER = MetaTileEntities.registerMetaTileEntity(11503,
+        MetaTileEntities.COMPUTATION_HATCH_RECEIVER = MetaTileEntities.registerMetaTileEntity(11519,
                 new MetaTileEntityComputationHatch(gregtechId("computation_hatch.receiver"), false));
-        MetaTileEntities.COMPUTATION_HATCH_TRANSMITTER = MetaTileEntities.registerMetaTileEntity(11504,
+        MetaTileEntities.COMPUTATION_HATCH_TRANSMITTER = MetaTileEntities.registerMetaTileEntity(11520,
                 new MetaTileEntityComputationHatch(gregtechId("computation_hatch.transmitter"), true));
 
-        MetaTileEntities.RESERVOIR_HATCH = MetaTileEntities.registerMetaTileEntity(11505,
+        MetaTileEntities.RESERVOIR_HATCH = MetaTileEntities.registerMetaTileEntity(11521,
                 new MetaTileEntityReservoirHatch(gregtechId("reservoir_hatch")));
-        MetaTileEntities.PUMP_OUTPUT_HATCH = MetaTileEntities.registerMetaTileEntity(11506,
+        MetaTileEntities.PUMP_OUTPUT_HATCH = MetaTileEntities.registerMetaTileEntity(11522,
                 new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
 
-        MetaTileEntities.STEAM_EXPORT_BUS = MetaTileEntities.registerMetaTileEntity(11507,
+        MetaTileEntities.STEAM_EXPORT_BUS = MetaTileEntities.registerMetaTileEntity(11523,
                 new MetaTileEntitySteamItemBus(gregtechId("steam_export_bus"), true));
-        MetaTileEntities.STEAM_IMPORT_BUS = MetaTileEntities.registerMetaTileEntity(11508,
+        MetaTileEntities.STEAM_IMPORT_BUS = MetaTileEntities.registerMetaTileEntity(11524,
                 new MetaTileEntitySteamItemBus(gregtechId("steam_import_bus"), false));
-        MetaTileEntities.STEAM_HATCH = MetaTileEntities.registerMetaTileEntity(11509,
+        MetaTileEntities.STEAM_HATCH = MetaTileEntities.registerMetaTileEntity(11525,
                 new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
 
-        MetaTileEntities.OBJECT_HOLDER = MetaTileEntities.registerMetaTileEntity(11510,
+        MetaTileEntities.OBJECT_HOLDER = MetaTileEntities.registerMetaTileEntity(11526,
                 new MetaTileEntityObjectHolder(gregtechId("research_station.object_holder")));
 
-        MetaTileEntities.HPCA_EMPTY_COMPONENT = MetaTileEntities.registerMetaTileEntity(11511,
+        MetaTileEntities.HPCA_EMPTY_COMPONENT = MetaTileEntities.registerMetaTileEntity(11527,
                 new MetaTileEntityHPCAEmpty(gregtechId("hpca.empty_component")));
-        MetaTileEntities.HPCA_COMPUTATION_COMPONENT = MetaTileEntities.registerMetaTileEntity(11512,
+        MetaTileEntities.HPCA_COMPUTATION_COMPONENT = MetaTileEntities.registerMetaTileEntity(11528,
                 new MetaTileEntityHPCAComputation(gregtechId("hpca.computation_component"), false));
-        MetaTileEntities.HPCA_ADVANCED_COMPUTATION_COMPONENT = MetaTileEntities.registerMetaTileEntity(11513,
+        MetaTileEntities.HPCA_ADVANCED_COMPUTATION_COMPONENT = MetaTileEntities.registerMetaTileEntity(11529,
                 new MetaTileEntityHPCAComputation(gregtechId("hpca.advanced_computation_component"), true));
-        MetaTileEntities.HPCA_HEAT_SINK_COMPONENT = MetaTileEntities.registerMetaTileEntity(11514,
+        MetaTileEntities.HPCA_HEAT_SINK_COMPONENT = MetaTileEntities.registerMetaTileEntity(11530,
                 new MetaTileEntityHPCACooler(gregtechId("hpca.heat_sink_component"), false));
-        MetaTileEntities.HPCA_ACTIVE_COOLER_COMPONENT = MetaTileEntities.registerMetaTileEntity(11515,
+        MetaTileEntities.HPCA_ACTIVE_COOLER_COMPONENT = MetaTileEntities.registerMetaTileEntity(11531,
                 new MetaTileEntityHPCACooler(gregtechId("hpca.active_cooler_component"), true));
-        MetaTileEntities.HPCA_BRIDGE_COMPONENT = MetaTileEntities.registerMetaTileEntity(11516,
+        MetaTileEntities.HPCA_BRIDGE_COMPONENT = MetaTileEntities.registerMetaTileEntity(11532,
                 new MetaTileEntityHPCABridge(gregtechId("hpca.bridge_component")));
 
-        MetaTileEntities.WOODEN_TANK_VALVE = MetaTileEntities.registerMetaTileEntity(11523,
+        MetaTileEntities.WOODEN_TANK_VALVE = MetaTileEntities.registerMetaTileEntity(11539,
                 new MetaTileEntityTankValve(gregtechId("tank_valve.wood"), false));
-        MetaTileEntities.STEEL_TANK_VALVE = MetaTileEntities.registerMetaTileEntity(11524,
+        MetaTileEntities.STEEL_TANK_VALVE = MetaTileEntities.registerMetaTileEntity(11540,
                 new MetaTileEntityTankValve(gregtechId("tank_valve.steel"), true));
 
-        // ME Hatches, IDs 11525-11539
+        // ME Hatches, IDs 11541-11549
         if (Mods.AppliedEnergistics2.isModLoaded()) {
-            MetaTileEntities.ITEM_IMPORT_BUS_ME = MetaTileEntities.registerMetaTileEntity(11525,
+            MetaTileEntities.ITEM_IMPORT_BUS_ME = MetaTileEntities.registerMetaTileEntity(11541,
                     new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus")));
-            MetaTileEntities.FLUID_IMPORT_HATCH_ME = MetaTileEntities.registerMetaTileEntity(11526,
+            MetaTileEntities.FLUID_IMPORT_HATCH_ME = MetaTileEntities.registerMetaTileEntity(11542,
                     new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch")));
-            MetaTileEntities.STOCKING_BUS_ME = MetaTileEntities.registerMetaTileEntity(11527,
+            MetaTileEntities.STOCKING_BUS_ME = MetaTileEntities.registerMetaTileEntity(11543,
                     new MetaTileEntityMEStockingBus(gregtechId("me_stocking_item_bus")));
-            MetaTileEntities.STOCKING_HATCH_ME = MetaTileEntities.registerMetaTileEntity(11528,
+            MetaTileEntities.STOCKING_HATCH_ME = MetaTileEntities.registerMetaTileEntity(11544,
                     new MetaTileEntityMEStockingHatch(gregtechId("me_stocking_fluid_hatch")));
             // slots left for CRIB and CRIBuffer in the future for nicer sorting order
-            MetaTileEntities.ITEM_EXPORT_BUS_ME = MetaTileEntities.registerMetaTileEntity(11532,
+            MetaTileEntities.ITEM_EXPORT_BUS_ME = MetaTileEntities.registerMetaTileEntity(11548,
                     new MetaTileEntityMEOutputBus(gregtechId("me_export_item_bus")));
-            MetaTileEntities.FLUID_EXPORT_HATCH_ME = MetaTileEntities.registerMetaTileEntity(11533,
+            MetaTileEntities.FLUID_EXPORT_HATCH_ME = MetaTileEntities.registerMetaTileEntity(11549,
                     new MetaTileEntityMEOutputHatch(gregtechId("me_export_fluid_hatch")));
         }
     }
