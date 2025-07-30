@@ -1,12 +1,15 @@
 package gregtech.api.recipes;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.unification.FluidUnifier;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.RecyclingData;
@@ -15,6 +18,7 @@ import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
 import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
@@ -81,20 +85,46 @@ public class RecyclingHandler {
                 .collect(Collectors.toList()));
     }
 
-    public static @Nullable RecyclingData getRecyclingIngredients(List<GTRecipeInput> inputs, int outputCount) {
+    public static @Nullable RecyclingData getRecyclingIngredients(int outputCount,
+                                                                  @Nullable List<GTRecipeInput> itemInputs,
+                                                                  @Nullable List<GTRecipeInput> fluidInputs) {
         Object2LongMap<Material> materialStacksExploded = new Object2LongOpenHashMap<>();
-        for (GTRecipeInput input : inputs) {
-            if (input == null || input.isNonConsumable()) continue;
-            ItemStack[] inputStacks = input.getInputStacks();
-            if (inputStacks == null || inputStacks.length == 0) continue;
-            ItemStack inputStack = inputStacks[0];
-            addItemStackToMaterialStacks(inputStack, materialStacksExploded, inputStack.getCount());
+        if (itemInputs != null) {
+            populateExplodedMaterialStacks(materialStacksExploded, itemInputs);
+        }
+        if (fluidInputs != null) {
+            populateExplodedMaterialStacks(materialStacksExploded, fluidInputs);
         }
 
-        return new RecyclingData(materialStacksExploded.entrySet().stream()
+        if (materialStacksExploded.isEmpty()) {
+            return null;
+        }
+
+        var materialStacks = materialStacksExploded.entrySet().stream()
                 .map(e -> new MaterialStack(e.getKey(), e.getValue() / outputCount))
                 .sorted(Comparator.comparingLong(m -> -m.amount))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+        return new RecyclingData(materialStacks);
+    }
+
+    private static void populateExplodedMaterialStacks(@NotNull Object2LongMap<Material> materialStacksExploded,
+                                                       @NotNull List<GTRecipeInput> inputs) {
+        for (GTRecipeInput input : inputs) {
+            if (input == null || input.isNonConsumable()) {
+                continue;
+            }
+
+            ItemStack[] inputStacks = input.getInputStacks();
+            if (inputStacks == null) {
+                FluidStack fluidStack = input.getInputFluidStack();
+                if (fluidStack != null && fluidStack.amount > 0) {
+                    addFluidStackToMaterialStacks(fluidStack, materialStacksExploded);
+                }
+            } else if (inputStacks.length != 0) {
+                ItemStack inputStack = inputStacks[0];
+                addItemStackToMaterialStacks(inputStack, materialStacksExploded, inputStack.getCount());
+            }
+        }
     }
 
     private static void addItemStackToMaterialStacks(@NotNull ItemStack itemStack,
@@ -124,6 +154,22 @@ public class RecyclingHandler {
                 addMaterialStack(materialStacksExploded, inputCount, ms);
             }
         }
+    }
+
+    private static void addFluidStackToMaterialStacks(@NotNull FluidStack fluidStack,
+                                                      @NotNull Object2LongMap<Material> materialStacksExploded) {
+        Material material = FluidUnifier.getMaterialFromFluid(fluidStack.getFluid());
+        if (material == null) {
+            return;
+        }
+
+        // must be a solid with a fluid
+        if (!material.hasProperty(PropertyKey.DUST)) {
+            return;
+        }
+
+        long amount = GTValues.M * fluidStack.amount / GTValues.L;
+        addMaterialStack(materialStacksExploded, 1, new MaterialStack(material, amount));
     }
 
     /**
