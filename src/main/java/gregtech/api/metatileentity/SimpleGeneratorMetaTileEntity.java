@@ -10,6 +10,8 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -28,10 +30,16 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide {
@@ -126,6 +134,44 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     protected void renderOverlays(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         this.renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), workable.isActive(),
                 workable.isWorkingEnabled());
+    }
+
+    @Override
+    public boolean usesMui2() {
+        RecipeMap<?> map = getRecipeMap();
+        return map != null && map.getRecipeMapUI().usesMui2();
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        RecipeMap<?> workableRecipeMap = Objects.requireNonNull(workable.getRecipeMap(), "recipe map is null");
+        int yOffset = 0;
+        if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
+                workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
+            yOffset = FONT_HEIGHT;
+        }
+
+        ModularPanel panel = GTGuis.createPanel(this, 176, 166 + yOffset);
+        Widget<?> widget = workableRecipeMap.getRecipeMapUI().buildWidget(workable::getProgressPercent, importItems,
+                exportItems, importFluids, exportFluids, yOffset, guiSyncManager);
+
+        panel.child(widget)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                // .child(new ItemSlot()
+                // .slot(SyncHandlers.itemSlot(chargerInventory, 0))
+                // .pos(79, 62 + yOffset)
+                // .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
+                // .tooltip(t -> t.addLine(IKey.lang("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
+                // GTValues.VNF[getTier()]))))
+                .bindPlayerInventory();
+
+        if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
+            panel.child(new Widget<>()
+                    .size(17)
+                    .pos(152, 63 + yOffset)
+                    .background(GTGuiTextures.getLogo(getUITheme())));
+        }
+        return panel;
     }
 
     @Override
