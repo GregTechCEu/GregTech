@@ -75,8 +75,8 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                         ItemStack item = IntCircuitIngredient.getIntegratedCircuit(finalI);
                         item.setCount(guiData.getUsedItemStack().getCount());
                         circuitPreview.setItem(item);
-                        if (Interactable.hasShiftDown()) panel.animateClose();
                         guiData.getPlayer().setHeldItem(guiData.getHand(), item);
+                        if (Interactable.hasShiftDown()) panel.animateClose();
                     }));
         }
 

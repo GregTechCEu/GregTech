@@ -1029,17 +1029,17 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
 
         // Aluminium from aluminium oxide gems
-        BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, Ruby).output(nugget, Aluminium, 3)
+        BLAST_RECIPES.recipeBuilder().duration(600).EUt(480).input(dust, Ruby).output(nugget, Aluminium, 3)
                 .chancedOutput(dust, Ash, 1111, 0).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, Ruby).output(nugget, Aluminium, 3)
+        BLAST_RECIPES.recipeBuilder().duration(640).EUt(480).input(gem, Ruby).output(nugget, Aluminium, 3)
                 .chancedOutput(dust, Ash, 1111, 0).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, GreenSapphire).output(nugget, Aluminium, 3)
+        BLAST_RECIPES.recipeBuilder().duration(600).EUt(480).input(dust, GreenSapphire).output(nugget, Aluminium, 3)
                 .chancedOutput(dust, Ash, 1111, 0).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, GreenSapphire).output(nugget, Aluminium, 3)
+        BLAST_RECIPES.recipeBuilder().duration(640).EUt(480).input(gem, GreenSapphire).output(nugget, Aluminium, 3)
                 .chancedOutput(dust, Ash, 1111, 0).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, Sapphire).output(nugget, Aluminium, 3)
+        BLAST_RECIPES.recipeBuilder().duration(600).EUt(480).input(dust, Sapphire).output(nugget, Aluminium, 3)
                 .blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, Sapphire).output(nugget, Aluminium, 3)
+        BLAST_RECIPES.recipeBuilder().duration(560).EUt(480).input(gem, Sapphire).output(nugget, Aluminium, 3)
                 .blastFurnaceTemp(1200).buildAndRegister();
 
         // Tempered Glass
