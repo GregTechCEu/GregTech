@@ -36,10 +36,11 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,25 +56,25 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
 
         return GTGuis.createPanel(usedStack, 176, 120)
                 .child(SlotGroupWidget.builder()
-                        .matrix("SCCCCCCC",
+                        .matrix("SCCCCCCCC",
                                 "CCCCCCCC")
-                        .key('S', new ButtonWidget<>()
+                        .key('S', new ToggleButton()
                                 .size(18)
-                                .onMousePressed(mouse -> {
-                                    colorSync.setIntValue(-1);
-                                    return true;
-                                })
-                                .overlay(new ItemDrawable(MetaItems.SPRAY_SOLVENT.getStackForm()))
+                                .value(new BoolValue.Dynamic(() -> colorSync.getIntValue() == -1,
+                                        $ -> colorSync.setIntValue(-1)))
+                                .overlay(new ItemDrawable(MetaItems.SPRAY_SOLVENT.getStackForm())
+                                        .asIcon()
+                                        .margin(2))
                                 .addTooltipLine(IKey.lang("metaitem.spray.creative.solvent")))
                         .key('C', index -> {
                             EnumDyeColor color = EnumDyeColor.values()[index];
-                            return new ButtonWidget<>()
+                            return new ToggleButton()
                                     .size(18)
-                                    .onMousePressed(mouse -> {
-                                        colorSync.setIntValue(index);
-                                        return true;
-                                    })
-                                    .overlay(new ItemDrawable(MetaItems.SPRAY_CAN_DYES.get(color).getStackForm()))
+                                    .value(new BoolValue.Dynamic(() -> colorSync.getIntValue() == index,
+                                            $ -> colorSync.setIntValue(index)))
+                                    .overlay(new ItemDrawable(MetaItems.SPRAY_CAN_DYES.get(color).getStackForm())
+                                            .asIcon()
+                                            .margin(2))
                                     .addTooltipLine(IKey.lang("metaitem.spray.creative." + color));
                         })
                         .build());
@@ -136,6 +137,8 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
             boolean sneaking = playerClient.isSneaking();
 
             if (button == 0) { // Left click
+                if (isLocked(stack)) return;
+
                 int color;
                 if (sneaking) {
                     color = getColorOrdinal(stack) - 1;
@@ -169,11 +172,12 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                             sendToServer(buf -> buf
                                     .writeByte(0)
                                     .writeByte(hitColor.ordinal()));
-                        } else {
-                            // If the player isn't sneaking and also not looking at a colored block, open gui
-                            sendToServer(buf -> buf.writeByte(1));
+                            return;
                         }
                     }
+
+                    // If the player isn't sneaking and wasn't looking at a colored block, open gui
+                    sendToServer(buf -> buf.writeByte(1));
                 }
 
                 event.setCanceled(true);
