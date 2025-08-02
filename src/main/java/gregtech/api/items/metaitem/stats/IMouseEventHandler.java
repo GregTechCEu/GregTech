@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
+// TODO: add EnumHand to the methods/support for offhand items
 /**
  * Implement on your {@link IItemComponent} to handle mouse events while the corresponding item is selected on the main
  * hotbar. <br/>

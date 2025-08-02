@@ -27,10 +27,11 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import appeng.api.implementations.tiles.IColorableTile;
 import appeng.api.util.AEColor;
-import appeng.tile.networking.TileCableBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
@@ -46,7 +47,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
      */
     public abstract @Nullable EnumDyeColor getColor(@NotNull ItemStack stack);
 
-    public int getColorOrdinal(@NotNull ItemStack stack) {
+    public @Range(from = -1, to = 15) int getColorOrdinal(@NotNull ItemStack stack) {
         EnumDyeColor color = getColor(stack);
         return color == null ? -1 : color.ordinal();
     }
@@ -114,11 +115,12 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
             return tryStripBlockColor(player, world, pos, block, side);
         }
 
-        return block.recolorBlock(world, pos, side, color) || tryPaintSpecialBlock(player, world, pos, block, color);
+        return block.recolorBlock(world, pos, side, color) ||
+                tryPaintSpecialBlock(player, world, pos, block, side, color);
     }
 
     private boolean tryPaintSpecialBlock(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
-                                         @NotNull Block block, @NotNull EnumDyeColor color) {
+                                         @NotNull Block block, @NotNull EnumFacing side, @NotNull EnumDyeColor color) {
         if (block == Blocks.GLASS) {
             // noinspection DataFlowIssue
             IBlockState newBlockState = Blocks.STAINED_GLASS.getDefaultState()
@@ -139,10 +141,10 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
             return true;
         } else if (Mods.AppliedEnergistics2.isModLoaded()) {
             TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileCableBus cable) {
-                // do not try to recolor if it already is this color
-                if (cable.getColor().ordinal() != color.ordinal()) {
-                    cable.recolourBlock(null, AEColor.values()[color.ordinal()], player);
+            if (te instanceof IColorableTile colorableTE) {
+                // Do not try to recolor if it already is this color
+                if (colorableTE.getColor().ordinal() != color.ordinal()) {
+                    colorableTE.recolourBlock(side, AEColor.values()[color.ordinal()], player);
                     return true;
                 }
             }
@@ -151,8 +153,8 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         return false;
     }
 
-    protected static boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block,
-                                                EnumFacing side) {
+    protected static boolean tryStripBlockColor(@NotNull EntityPlayer player, @NotNull World world,
+                                                @NotNull BlockPos pos, @NotNull Block block, @NotNull EnumFacing side) {
         // MC special cases
         if (block == Blocks.STAINED_GLASS) {
             world.setBlockState(pos, Blocks.GLASS.getDefaultState());
@@ -167,8 +169,8 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
         // MTE special case
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof IGregTechTileEntity) {
-            MetaTileEntity mte = ((IGregTechTileEntity) te).getMetaTileEntity();
+        if (te instanceof IGregTechTileEntity gtte) {
+            MetaTileEntity mte = gtte.getMetaTileEntity();
             if (mte != null) {
                 if (mte.isPainted()) {
                     mte.setPaintingColor(-1);
@@ -189,10 +191,10 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
         // AE2 cable special case
         if (Mods.AppliedEnergistics2.isModLoaded()) {
-            if (te instanceof TileCableBus cable) {
-                // do not try to strip color if it is already colorless
-                if (cable.getColor() != AEColor.TRANSPARENT) {
-                    cable.recolourBlock(null, AEColor.TRANSPARENT, player);
+            if (te instanceof IColorableTile colorableTE) {
+                // Do not try to strip color if it is already colorless
+                if (colorableTE.getColor() != AEColor.TRANSPARENT) {
+                    colorableTE.recolourBlock(side, AEColor.TRANSPARENT, player);
                     return true;
                 } else return false;
             }
@@ -200,7 +202,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
         // General case
         IBlockState state = world.getBlockState(pos);
-        for (IProperty<?> prop : state.getProperties().keySet()) {
+        for (IProperty<?> prop : state.getPropertyKeys()) {
             if (prop.getName().equals("color") && prop.getValueClass() == EnumDyeColor.class) {
                 IBlockState defaultState = block.getDefaultState();
                 EnumDyeColor defaultColor = EnumDyeColor.WHITE;

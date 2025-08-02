@@ -4,12 +4,17 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemColorProvider;
 import gregtech.api.items.metaitem.stats.IItemNameProvider;
 import gregtech.api.items.metaitem.stats.IMouseEventHandler;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.common.items.MetaItems;
 import gregtech.core.network.packets.PacketItemMouseEvent;
 
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,14 +23,15 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.util.Constants;
 
+import appeng.tile.networking.TileCableBus;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
@@ -39,23 +45,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class CreativeSprayBehavior extends AbstractSprayBehavior implements ItemUIFactory, IItemColorProvider,
                                    IItemNameProvider, IMouseEventHandler {
-
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        ItemStack heldItem = player.getHeldItem(hand);
-
-        if (!world.isRemote) {
-            if (isLocked(heldItem)) {
-                // TODO: lang
-                player.sendStatusMessage(
-                        new TextComponentString("Cannot open selector UI because the spray can is locked"), true);
-            } else {
-                MetaItemGuiFactory.open(player, hand);
-            }
-        }
-
-        return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
-    }
 
     @Override
     public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
@@ -142,22 +131,53 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
     @Override
     public void handleMouseEventClient(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
                                        @NotNull ItemStack stack) {
-        if ((event.getButton() != -1 && event.isButtonstate()) || event.getDwheel() != 0) {
+        if (event.getButton() != -1 && event.isButtonstate()) {
             int button = event.getButton();
-            int scroll = event.getDwheel();
+            boolean sneaking = playerClient.isSneaking();
 
-            if (button == 0) {
-                setColor(stack, getColorOrdinal(stack) + 1);
+            if (button == 0) { // Left click
+                int color;
+                if (sneaking) {
+                    color = getColorOrdinal(stack) - 1;
+                    if (color == -2) color = 15;
+                } else {
+                    color = getColorOrdinal(stack) + 1;
+                }
+
+                setColor(stack, color);
                 event.setCanceled(true);
-                // TODO: sneak click rotates colors the other way
-            } else if (button == 2) {
-                toggleLocked(stack);
+
+                final int finalColor = color; // grr java
+                sendToServer(buf -> buf
+                        .writeByte(0)
+                        .writeByte(finalColor));
+            } else if (button == 2) { // Middle click
+                if (sneaking) {
+                    toggleLocked(stack);
+                } else if (!isLocked(stack)) {
+                    double reach = playerClient.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+
+                    if (!playerClient.capabilities.isCreativeMode) {
+                        reach -= 0.5d;
+                    }
+
+                    RayTraceResult rayTrace = playerClient.rayTrace(reach, 1.0f);
+                    if (rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
+                        EnumDyeColor hitColor = getBlockColor(playerClient.world, rayTrace.getBlockPos());
+                        if (hitColor != null) {
+                            setColor(stack, hitColor);
+                            sendToServer(buf -> buf
+                                    .writeByte(0)
+                                    .writeByte(hitColor.ordinal()));
+                        } else {
+                            // If the player isn't sneaking and also not looking at a colored block, open gui
+                            sendToServer(buf -> buf.writeByte(1));
+                        }
+                    }
+                }
+
                 event.setCanceled(true);
             }
-
-            sendToServer(buf -> buf
-                    .writeVarInt(button)
-                    .writeVarInt(scroll));
         }
     }
 
@@ -165,19 +185,45 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
     public void handleMouseEventServer(@NotNull PacketItemMouseEvent packet, @NotNull EntityPlayerMP playerServer,
                                        @NotNull ItemStack stack) {
         PacketBuffer buf = packet.getBuffer();
-        int button = buf.readVarInt();
-        int scroll = buf.readVarInt();
-
-        if (button == 0 && !isLocked(stack)) {
-            // TODO: sneak click rotates colors the other way
-            setColor(stack, getColorOrdinal(stack) + 1);
-        } else if (button == 2) {
-            toggleLocked(stack);
-            EnumDyeColor color = getColor(stack);
-            // TODO: lang
-            playerServer.sendStatusMessage(new TextComponentString(
-                    isLocked(stack) ? String.format("Locked to %s", color == null ? "solvent" : color) : "Unlocked"),
-                    true);
+        switch (buf.readByte()) {
+            case 0 -> setColor(stack, buf.readByte());
+            case 1 -> MetaItemGuiFactory.open(playerServer, EnumHand.MAIN_HAND);
         }
+    }
+
+    public static @Nullable EnumDyeColor getBlockColor(@NotNull World world, @NotNull BlockPos pos) {
+        if (world.isAirBlock(pos)) return null;
+
+        IBlockState state = world.getBlockState(pos);
+        for (IProperty<?> prop : state.getPropertyKeys()) {
+            if (prop.getValueClass() == EnumDyeColor.class) {
+                // noinspection unchecked
+                return state.getValue((IProperty<EnumDyeColor>) prop);
+            }
+        }
+
+        TileEntity te = world.getTileEntity(pos);
+        if (te != null) {
+            if (te instanceof IGregTechTileEntity gtte) {
+                MetaTileEntity mte = gtte.getMetaTileEntity();
+                // Unfortunately MTEs store their color as an ARGB int instead of just an EnumDyeColor. Thus, this has
+                // to be done because changing MTEs to store/be limited to EnumDyeColor is API breaking and would limit
+                // the colors an MTE could be to 16.
+                int mteColor = mte.getPaintingColor();
+                for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
+                    if (mteColor == dyeColor.colorValue) {
+                        return dyeColor;
+                    }
+                }
+            }
+
+            if (Mods.AppliedEnergistics2.isModLoaded()) {
+                if (te instanceof TileCableBus cable) {
+                    return cable.getColor().dye;
+                }
+            }
+        }
+
+        return null;
     }
 }
