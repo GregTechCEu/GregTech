@@ -1,5 +1,6 @@
 package gregtech.api.metatileentity.multiblock.ui;
 
+import gregtech.api.capability.IBatch;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
@@ -67,6 +68,40 @@ public class MultiblockUIFactory {
         configureDisplayText(builder -> builder.title(mte.getMetaFullName()).structureFormed(mte.isStructureFormed()));
     }
 
+    private static int calculateRows(int count) {
+        if (count <= 3) {
+            return 1;
+        }
+
+        if (count <= 8) {
+            return 2;
+        }
+
+        throw new UnsupportedOperationException("Cannot compute progress bar rows for count " + count);
+    }
+
+    private static int calculateCols(int count, int row) {
+        return switch (count) {
+            case 0, 1, 2, 3 -> count;
+            case 4 -> 2;
+            case 5 -> row == 0 ? 3 : 2;
+            case 6 -> 3;
+            case 7 -> row == 0 ? 4 : 3;
+            case 8 -> 4;
+            default -> throw new UnsupportedOperationException("Cannot compute progress bar cols for count " + count);
+        };
+    }
+
+    public static MultiblockUIBuilder builder() {
+        return new MultiblockUIBuilder();
+    }
+
+    public static MultiblockUIBuilder builder(String key, PanelSyncManager syncManager) {
+        var b = builder();
+        b.sync(key, syncManager);
+        return b;
+    }
+
     private Widget<?> createIndicator(PanelSyncManager syncManager) {
         if (warningText == NO_OP && errorText == NO_OP) {
             return new Widget<>()
@@ -111,9 +146,8 @@ public class MultiblockUIFactory {
     }
 
     /**
-     * Returns a list of text indicating any current warnings in this Multiblock. <br />
-     * Recommended to only display warnings if the structure is already formed. <br />
-     * This is called every tick on the client-side
+     * Returns a list of text indicating any current warnings in this Multiblock. <br /> Recommended to only display
+     * warnings if the structure is already formed. <br /> This is called every tick on the client-side
      */
     public MultiblockUIFactory configureWarningText(boolean merge, Consumer<MultiblockUIBuilder> warningText) {
         this.warningText = merge ? GTLambdaUtils.mergeConsumers(this.warningText, warningText) : warningText;
@@ -121,9 +155,8 @@ public class MultiblockUIFactory {
     }
 
     /**
-     * Returns a list of text indicating any current warnings in this Multiblock. <br />
-     * Recommended to only display warnings if the structure is already formed. <br />
-     * This is called every tick on the client-side
+     * Returns a list of text indicating any current warnings in this Multiblock. <br /> Recommended to only display
+     * warnings if the structure is already formed. <br /> This is called every tick on the client-side
      */
     public MultiblockUIFactory configureWarningText(Consumer<MultiblockUIBuilder> warningText) {
         return configureWarningText(true, warningText);
@@ -135,9 +168,8 @@ public class MultiblockUIFactory {
     }
 
     /**
-     * Returns a list of translation keys indicating any current errors in this Multiblock. <br />
-     * Prioritized over any warnings provided by {@link #configureWarningText(Consumer)}.<br />
-     * This is called every tick on the client-side
+     * Returns a list of translation keys indicating any current errors in this Multiblock. <br /> Prioritized over any
+     * warnings provided by {@link #configureWarningText(Consumer)}.<br /> This is called every tick on the client-side
      */
     public MultiblockUIFactory configureErrorText(boolean merge, Consumer<MultiblockUIBuilder> errorText) {
         this.errorText = merge ? GTLambdaUtils.mergeConsumers(this.errorText, errorText) : errorText;
@@ -145,9 +177,8 @@ public class MultiblockUIFactory {
     }
 
     /**
-     * Returns a list of translation keys indicating any current errors in this Multiblock. <br />
-     * Prioritized over any warnings provided by {@link #configureWarningText(Consumer)}.<br />
-     * This is called every tick on the client-side
+     * Returns a list of translation keys indicating any current errors in this Multiblock. <br /> Prioritized over any
+     * warnings provided by {@link #configureWarningText(Consumer)}.<br /> This is called every tick on the client-side
      */
     public MultiblockUIFactory configureErrorText(Consumer<MultiblockUIBuilder> errorText) {
         return configureErrorText(true, errorText);
@@ -159,10 +190,8 @@ public class MultiblockUIFactory {
     }
 
     /**
-     * Called per tick on client side <br />
-     * Each element of list is displayed on new line <br />
-     * To use translation, use {@link KeyUtil#lang(TextFormatting, String, Object...)}
-     * or {@link KeyUtil#lang(String, Object...)}
+     * Called per tick on client side <br /> Each element of list is displayed on new line <br /> To use translation,
+     * use {@link KeyUtil#lang(TextFormatting, String, Object...)} or {@link KeyUtil#lang(String, Object...)}
      */
     public MultiblockUIFactory configureDisplayText(boolean merge, Consumer<MultiblockUIBuilder> displayText) {
         this.displayText = merge ? GTLambdaUtils.mergeConsumers(this.displayText, displayText) : displayText;
@@ -170,10 +199,8 @@ public class MultiblockUIFactory {
     }
 
     /**
-     * Called per tick on client side <br />
-     * Each element of list is displayed on new line <br />
-     * To use translation, use {@link KeyUtil#lang(TextFormatting, String, Object...)}
-     * or {@link KeyUtil#lang(String, Object...)}
+     * Called per tick on client side <br /> Each element of list is displayed on new line <br /> To use translation,
+     * use {@link KeyUtil#lang(TextFormatting, String, Object...)} or {@link KeyUtil#lang(String, Object...)}
      */
     public MultiblockUIFactory configureDisplayText(Consumer<MultiblockUIBuilder> displayText) {
         return configureDisplayText(true, displayText);
@@ -204,18 +231,19 @@ public class MultiblockUIFactory {
 
     /**
      * Add a custom third button to the Multiblock UI. By default, this is a placeholder stating that there is no
-     * additional functionality for this Multiblock. <br/>
-     * Size will be 18x18. <br/>
-     * Return {@code null} in the function to indicate no flex button
+     * additional functionality for this Multiblock. <br/> Size will be 18x18. <br/> Return {@code null} in the function
+     * to indicate no flex button
      */
     public MultiblockUIFactory createFlexButton(BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton) {
         this.flexButton = flexButton;
         return this;
     }
+
     public MultiblockUIFactory createGcymButton(BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton) {
         this.gcymButton = flexButton;
         return this;
     }
+
     public MultiblockUIFactory setSize(int width, int height) {
         this.width = width;
         this.height = height;
@@ -262,47 +290,24 @@ public class MultiblockUIFactory {
 
         return panel
                 .child(Flow.row()
-                    .debugName("bottom_row")
-                    .bottom(7)
-                    .coverChildrenHeight()
-                    .margin(4, 0)
-                    .crossAxisAlignment(Alignment.CrossAxis.CENTER)
-                    .child(playerInv)
-                    .childIf(!disableButtons, () -> createButtons(panel, panelSyncManager, guiData))
-                )
-                .child(Flow.column()
-                        .debugName("side_row")
-                        .size(18,4*18+4)
+                        .debugName("bottom_row")
                         .bottom(7)
                         .coverChildrenHeight()
-                        .right(-18-7)
+                        .margin(4, 0)
+                        .crossAxisAlignment(Alignment.CrossAxis.CENTER)
+                        .child(playerInv)
+                        .childIf(!disableButtons, () -> createButtons(panel, panelSyncManager, guiData))
+                )
+
+                .childIf(mte instanceof IBatch && ((IBatch) mte).isBatchAllowed(), Flow.column()
+                        .debugName("side_row")
+                        .size(18, 4 * 18 + 4)
+                        .bottom(7)
+                        .coverChildrenHeight()
+                        .right(-18 - 7)
                         .margin(4, 0)
                         .childIf(!disableButtons, () -> createSideButtons(panel, panelSyncManager, guiData))
                 );
-    }
-
-    private static int calculateRows(int count) {
-        if (count <= 3) {
-            return 1;
-        }
-
-        if (count <= 8) {
-            return 2;
-        }
-
-        throw new UnsupportedOperationException("Cannot compute progress bar rows for count " + count);
-    }
-
-    private static int calculateCols(int count, int row) {
-        return switch (count) {
-            case 0, 1, 2, 3 -> count;
-            case 4 -> 2;
-            case 5 -> row == 0 ? 3 : 2;
-            case 6 -> 3;
-            case 7 -> row == 0 ? 4 : 3;
-            case 8 -> 4;
-            default -> throw new UnsupportedOperationException("Cannot compute progress bar cols for count " + count);
-        };
     }
 
     /**
@@ -420,9 +425,10 @@ public class MultiblockUIFactory {
                 .child(flexButton)
                 .childIf(powerButton != null, powerButton);
     }
+
     @NotNull
     protected Flow createSideButtons(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager,
-                                 PosGuiData guiData) {
+                                     PosGuiData guiData) {
         IWidget gcymButton = this.gcymButton.apply(guiData, panelSyncManager);
         if (gcymButton == null) {
             gcymButton = new ToggleButton()
@@ -439,6 +445,7 @@ public class MultiblockUIFactory {
                 .child(createBatchButton(mainPanel, panelSyncManager))
                 .child(gcymButton);
     }
+
     protected IWidget createDistinctButton(@NotNull ModularPanel mainPanel,
                                            @NotNull PanelSyncManager panelSyncManager) {
         if (!(mte instanceof IDistinctBusController distinct) || !distinct.canBeDistinct()) {
@@ -482,14 +489,15 @@ public class MultiblockUIFactory {
                 .stateOverlay(1, GTGuiTextures.MULTIBLOCK_VOID[1])
                 .stateOverlay(2, GTGuiTextures.MULTIBLOCK_VOID[2])
                 .stateOverlay(3, GTGuiTextures.MULTIBLOCK_VOID[3])
-                .tooltipBuilder(t -> t.addLine(IKey.lang(mte.getVoidingModeTooltip(voidingValue.getIntValue()))));
+                .tooltipBuilder(t -> t.addLine(IKey.lang(MultiblockWithDisplayBase.getVoidingModeTooltip(voidingValue.getIntValue()))));
     }
+
     @Nullable
     protected Widget<?> createBatchButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
         if (mte instanceof RecipeMapMultiblockController controllable && controllable.shouldShowBatchModeButton()) {
             return new ToggleButton()
                     .debugName("batch_button")
-                    .bottom(3*18+4)
+                    .bottom(3 * 18 + 4)
                     .size(18)
                     .value(new BooleanSyncValue(controllable::isBatchEnable, controllable::setBatchEnable))
                     .overlay(true, GTGuiTextures.OVERLAY_BATCH[1])
@@ -500,13 +508,14 @@ public class MultiblockUIFactory {
 
         return new ToggleButton()
                 .debugName("batch_none")
-                .bottom(3*18+4)
+                .bottom(3 * 18 + 4)
                 .size(18)
                 .value(ALWAYS_ON)
                 .size(18)
                 .overlay(GTGuiTextures.OVERLAY_BATCH[0])
                 .addTooltipLine(IKey.lang("gregtech.gui.multiblock_batch_not_supported"));
     }
+
     @Nullable
     protected Widget<?> createPowerButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
         if (mte instanceof IControllable controllable) {
@@ -527,6 +536,12 @@ public class MultiblockUIFactory {
         return null;
     }
 
+    @FunctionalInterface
+    public interface ScreenFunction {
+
+        void addWidgets(ParentWidget<?> parent, PanelSyncManager syncManager);
+    }
+
     public static final class Screen {
 
         public static int WIDTH = 190;
@@ -540,21 +555,5 @@ public class MultiblockUIFactory {
         public static int HEIGHT = 7;
 
         private Bars() {}
-    }
-
-    @FunctionalInterface
-    public interface ScreenFunction {
-
-        void addWidgets(ParentWidget<?> parent, PanelSyncManager syncManager);
-    }
-
-    public static MultiblockUIBuilder builder() {
-        return new MultiblockUIBuilder();
-    }
-
-    public static MultiblockUIBuilder builder(String key, PanelSyncManager syncManager) {
-        var b = builder();
-        b.sync(key, syncManager);
-        return b;
     }
 }

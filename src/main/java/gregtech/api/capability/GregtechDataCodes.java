@@ -36,6 +36,10 @@ public class GregtechDataCodes {
     // Drum
     public static final int UPDATE_AUTO_OUTPUT = assignId();
 
+    // Safe
+    public static final int UPDATE_LOCKED_STATE = assignId();
+    public static final int UPDATE_CONTENTS_SEED = assignId();
+
     // Steam Machines
     public static final int NEEDS_VENTING = assignId();
     public static final int VENTING_SIDE = assignId();

@@ -2927,6 +2927,11 @@ gregtech.machine.crate.darmstadtium.name=钅达板条箱
 gregtech.machine.crate.neutronium.name=中子素板条箱
 gregtech.crate.tooltip.taped_movement=可以用胶带打包库存，在破坏时一起带走
 
+# Safe
+gregtech.machine.locked_safe.name=上锁的保险柜
+gregtech.machine.locked_safe.malfunctioning=§c运行故障！
+gregtech.machine.locked_safe.requirements=§7替换部件需求：
+
 # Workbench
 gregtech.machine.workbench.name=合成站
 gregtech.machine.workbench.tooltip1=比林业的好

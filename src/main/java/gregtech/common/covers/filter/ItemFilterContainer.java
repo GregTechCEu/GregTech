@@ -14,6 +14,8 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import static gregtech.common.items.MetaItems.ITEM_FILTER;
+
 public class ItemFilterContainer extends BaseFilterContainer {
 
     public ItemFilterContainer(IDirtyNotifiable dirtyNotifiable) {
@@ -60,6 +62,6 @@ public class ItemFilterContainer extends BaseFilterContainer {
     protected String getFilterName() {
         return hasFilter() ?
                 getFilterStack().getDisplayName() :
-                IKey.lang("metaitem.item_filter.name").get();
+                ITEM_FILTER.getStackForm().getDisplayName();
     }
 }

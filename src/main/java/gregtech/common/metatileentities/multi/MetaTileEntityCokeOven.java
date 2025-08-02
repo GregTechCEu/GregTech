@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockContro
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
+import gregtech.api.mui.widget.RecipeProgressWidget;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
@@ -111,11 +112,13 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
                                     .slot(new ModularSlot(importItems, 0)
                                             .singletonSlotGroup())
                                     .pos(52, 30))
-                            .child(new ProgressWidget()
-                                    .texture(GTGuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, -1)
+                            .child(new RecipeProgressWidget()
+                                    .recipeMap(this.recipeMapWorkable.recipeMap)
                                     .size(20, 15)
                                     .pos(76, 32)
-                                    .value(new DoubleSyncValue(recipeMapWorkable::getProgressPercent)))
+                                    .value(new DoubleSyncValue(recipeMapWorkable::getProgressPercent))
+                                    .texture(GTGuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, -1)
+                                    .direction(ProgressWidget.Direction.RIGHT))
                             .child(new ItemSlot()
                                     .slot(new ModularSlot(exportItems, 0)
                                             .accessibility(false, true))

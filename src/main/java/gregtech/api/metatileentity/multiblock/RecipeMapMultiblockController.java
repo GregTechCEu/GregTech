@@ -431,7 +431,10 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public boolean shouldShowBatchModeButton() {
         return false;
     }
-
+    @Override
+    public boolean isBatchAllowed() {
+        return true;
+    }
     @Override
     public boolean isBatchEnable() {
         return recipeMapWorkable.isBatchEnable();

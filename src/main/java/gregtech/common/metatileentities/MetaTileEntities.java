@@ -130,6 +130,7 @@ import gregtech.common.metatileentities.storage.MetaTileEntityCreativeChest;
 import gregtech.common.metatileentities.storage.MetaTileEntityCreativeEnergy;
 import gregtech.common.metatileentities.storage.MetaTileEntityCreativeTank;
 import gregtech.common.metatileentities.storage.MetaTileEntityDrum;
+import gregtech.common.metatileentities.storage.MetaTileEntityLockedSafe;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumExtender;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumProxy;
@@ -154,7 +155,7 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class MetaTileEntities {
 
     // spotless:off
-
+    public static MetaTileEntityLockedSafe LOCKED_SAFE;
     // HULLS
     public static final MetaTileEntityHull[] HULL = new MetaTileEntityHull[GTValues.V.length];
     public static final MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length -
@@ -457,6 +458,7 @@ public class MetaTileEntities {
     public static void init() {
         GTLog.logger.info("Registering MetaTileEntities");
 
+        LOCKED_SAFE = registerMetaTileEntity(0, new MetaTileEntityLockedSafe(gregtechId("locked_safe")));
         //蒸汽单方块
         STEAM_BOILER_COAL_BRONZE = registerMetaTileEntity(1,
                 new SteamCoalBoiler(gregtechId("steam_boiler_coal_bronze"), false));

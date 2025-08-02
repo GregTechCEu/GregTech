@@ -10,6 +10,9 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import static gregtech.common.items.MetaItems.FLUID_FILTER;
+import static gregtech.common.items.MetaItems.ITEM_FILTER;
+
 public class FluidFilterContainer extends BaseFilterContainer {
 
     public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable) {
@@ -59,6 +62,6 @@ public class FluidFilterContainer extends BaseFilterContainer {
     protected String getFilterName() {
         return hasFilter() ?
                 getFilterStack().getDisplayName() :
-                IKey.lang("metaitem.fluid_filter.name").get();
+                FLUID_FILTER.getStackForm().getDisplayName();
     }
 }

@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockContro
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
+import gregtech.api.mui.widget.RecipeProgressWidget;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.TraceabilityPredicate;
@@ -126,11 +127,13 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
                                             .slotGroup(importGroup)
                                             .accessibility(true, true))
                                     .pos(40, 48))
-                            .child(new ProgressWidget()
-                                    .texture(GTGuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, -1)
+                            .child(new RecipeProgressWidget()
+                                    .recipeMap(this.recipeMapWorkable.recipeMap)
                                     .size(20, 15)
-                                    .pos(62, 32)
-                                    .value(new DoubleSyncValue(recipeMapWorkable::getProgressPercent)))
+                                    .pos(61, 32)
+                                    .value(new DoubleSyncValue(recipeMapWorkable::getProgressPercent))
+                                    .texture(GTGuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, -1)
+                                    .direction(ProgressWidget.Direction.RIGHT))
                             .child(new ItemSlot()
                                     .background(GTGuiTextures.SLOT_PRIMITIVE, exportOverlays[0])
                                     .slot(new ModularSlot(exportItems, 0)

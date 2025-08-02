@@ -16,6 +16,7 @@
     "EnchantmentCanApplyMixin",
     "MinecraftMixin",
     "MixinEntity",
+    "MixinBlockChest",
     "MixinEntityAnimal",
     "MixinEntityBat",
     "WorldEntitySpawnerMixin"

@@ -166,7 +166,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
     private boolean advancedCircuit = false;
     private int parallel;
     private int lastParallel;
-
+    private boolean allowExtraConnections;
     public MetaTileEntityMEPatternProvider(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false);
         this.workingEnabled = true;
@@ -180,7 +180,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         this.fluidTankList = new FluidTankList(false, fluidsHandlers);
 
         patternDetails = new ArrayList<>(Collections.nCopies(getSlotByTier(), null));
-
+        allowExtraConnections=false;
         initializeInventory();
     }
 
@@ -521,7 +521,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         if (this.circuitInventory != null) {
             this.circuitInventory.write(data);
         }
-
+        data.setBoolean("AllowExtraConnections", this.allowExtraConnections);
         return data;
     }
 
@@ -542,6 +542,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         if (this.circuitInventory != null) {
             this.circuitInventory.read(data);
         }
+        this.allowExtraConnections = data.getBoolean("AllowExtraConnections");
     }
 
     @Override
@@ -1143,4 +1144,28 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         return false;
     }
 
+    public EnumSet<EnumFacing> getConnectableSides() {
+        return this.allowExtraConnections ? EnumSet.allOf(EnumFacing.class) : EnumSet.of(getFrontFacing());
+    }
+
+    public void updateConnectableSides() {
+        if (this.networkProxy != null) {
+            this.networkProxy.setValidSides(getConnectableSides());
+        }
+    }
+
+    @Override
+    public boolean onWireCutterClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                     CuboidRayTraceResult hitResult) {
+        this.allowExtraConnections = !this.allowExtraConnections;
+        updateConnectableSides();
+
+        if (!getWorld().isRemote) {
+            playerIn.sendStatusMessage(new TextComponentTranslation(this.allowExtraConnections ?
+                            "gregtech.machine.me.extra_connections.enabled" : "gregtech.machine.me.extra_connections.disabled"),
+                    true);
+        }
+
+        return true;
+    }
 }

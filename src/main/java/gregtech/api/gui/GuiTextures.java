@@ -381,6 +381,8 @@ public class GuiTextures {
             .fullImage("textures/gui/progress_bar/progress_bar_slice.png");
     public static final SteamTexture PROGRESS_BAR_SOLAR_STEAM = SteamTexture
             .fullImage("textures/gui/progress_bar/progress_bar_solar_%s.png");
+    public static final TextureArea PROGRESS_BAR_UNLOCK = TextureArea
+            .fullImage("textures/gui/progress_bar/progress_bar_unlock.png");
     public static final TextureArea PROGRESS_BAR_UNPACKER = TextureArea
             .fullImage("textures/gui/progress_bar/progress_bar_unpacker.png");
     public static final TextureArea PROGRESS_BAR_WIREMILL = TextureArea

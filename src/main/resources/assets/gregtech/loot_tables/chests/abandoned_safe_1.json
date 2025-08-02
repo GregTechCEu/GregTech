@@ -1,0 +1,212 @@
+{
+  "pools": [
+    {
+      "name": "resources_pool",
+      "rolls": {
+        "min": 7,
+        "max": 12
+      },
+      "entries": [
+        {
+          "type": "gregtech:ore_dict",
+          "name": "ingotSteel",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 4,
+                "max": 6
+              }
+            }
+          ],
+          "weight": 10
+        },
+        {
+          "type": "gregtech:ore_dict",
+          "name": "plateSteel",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 4,
+                "max": 6
+              }
+            }
+          ],
+          "weight": 10
+        },
+        {
+          "type": "gregtech:ore_dict",
+          "name": "ingotBronze",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 3,
+                "max": 8
+              }
+            }
+          ],
+          "weight": 10
+        },
+        {
+          "type": "gregtech:ore_dict",
+          "name": "ingotAluminium",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 3,
+                "max": 9
+              }
+            }
+          ],
+          "weight": 5
+        },
+        {
+          "type": "gregtech:ore_dict",
+          "name": "plateAluminium",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 3,
+                "max": 9
+              }
+            }
+          ],
+          "weight": 5
+        },
+        {
+          "type": "item",
+          "name": "minecraft:redstone",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 7,
+                "max": 11
+              }
+            }
+          ],
+          "weight": 5
+        },
+        {
+          "type": "item",
+          "name": "minecraft:gold_ingot",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 2,
+                "max": 5
+              }
+            }
+          ],
+          "weight": 5
+        },
+        {
+          "type": "item",
+          "name": "minecraft:diamond",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ],
+          "weight": 2
+        }
+      ]
+    },
+    {
+      "name": "components_pool",
+      "rolls": 3,
+      "entries": [
+        {
+          "type": "gregtech:meta_item",
+          "name": "electric.motor.lv",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 2,
+                "max": 3
+              }
+            }
+          ],
+          "weight": 20
+        },
+        {
+          "type": "gregtech:meta_item",
+          "name": "conveyor.module.lv",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ],
+          "weight": 15
+        },
+        {
+          "type": "gregtech:meta_item",
+          "name": "electric.pump.lv",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ],
+          "weight": 12
+        },
+        {
+          "type": "gregtech:meta_item",
+          "name": "robot.arm.lv",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": 1
+            }
+          ],
+          "weight": 11
+        },
+        {
+          "type": "gregtech:meta_item",
+          "name": "emitter.lv",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ],
+          "weight": 9
+        },
+        {
+          "type": "gregtech:meta_item",
+          "name": "sensor.lv",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ],
+          "weight": 9
+        }
+      ]
+    }
+  ]
+}

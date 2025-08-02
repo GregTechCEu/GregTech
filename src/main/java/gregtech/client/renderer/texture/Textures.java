@@ -7,19 +7,8 @@ import gregtech.api.util.GTLog;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.UVMirror;
-import gregtech.client.renderer.texture.cube.AlignedOrientedOverlayRenderer;
-import gregtech.client.renderer.texture.cube.LDPipeOverlayRenderer;
-import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer;
-import gregtech.client.renderer.texture.cube.SidedCubeRenderer;
-import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.client.renderer.texture.custom.ClipboardRenderer;
-import gregtech.client.renderer.texture.custom.CrateRenderer;
-import gregtech.client.renderer.texture.custom.DrumRenderer;
-import gregtech.client.renderer.texture.custom.FireboxActiveRenderer;
-import gregtech.client.renderer.texture.custom.LargeTurbineRenderer;
-import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
+import gregtech.client.renderer.texture.cube.*;
+import gregtech.client.renderer.texture.custom.*;
 import gregtech.client.texture.IconRegistrar;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -60,6 +49,7 @@ public class Textures {
     public static final CrateRenderer METAL_CRATE = new CrateRenderer("storage/crates/metal_crate");
     public static final DrumRenderer WOODEN_DRUM = new DrumRenderer("storage/drums/wooden_drum");
     public static final DrumRenderer DRUM = new DrumRenderer("storage/drums/drum");
+    public static final SafeRenderer SAFE = new SafeRenderer("storage/safe");
     public static final LargeTurbineRenderer LARGE_TURBINE_ROTOR_RENDERER = new LargeTurbineRenderer();
     public static final QuantumStorageRenderer QUANTUM_STORAGE_RENDERER = new QuantumStorageRenderer();
 

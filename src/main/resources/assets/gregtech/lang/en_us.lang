@@ -2931,6 +2931,11 @@ gregtech.machine.crate.darmstadtium.name=Darmstadtium Crate
 gregtech.machine.crate.neutronium.name=Neutronium Crate
 gregtech.crate.tooltip.taped_movement=Can be Taped to keep inventory contents when broken
 
+# Safe
+gregtech.machine.locked_safe.name=Locked Safe
+gregtech.machine.locked_safe.malfunctioning=§cMalfunctioning!
+gregtech.machine.locked_safe.requirements=§7Replacements required:
+
 # Workbench
 gregtech.machine.workbench.name=Crafting Station
 gregtech.machine.workbench.tooltip1=Better than Forestry
