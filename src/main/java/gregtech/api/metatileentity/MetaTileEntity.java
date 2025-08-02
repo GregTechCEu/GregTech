@@ -1278,6 +1278,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void setPaintingColor(int paintingColor) {
+        setPaintingColor(paintingColor, null);
+    }
+
+    public void setPaintingColor(int paintingColor, @Nullable EnumFacing side) {
         this.paintingColor = paintingColor;
         if (getWorld() != null && !getWorld().isRemote) {
             notifyBlockUpdate();
