@@ -35,6 +35,8 @@ import org.jetbrains.annotations.Range;
 
 public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
+    public abstract boolean canSpray(@NotNull ItemStack stack);
+
     /**
      * Get the color of the spray can. {@code null} = solvent
      */
@@ -94,15 +96,17 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
     protected @NotNull EnumActionResult spray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
                                               @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                                               @NotNull ItemStack sprayCan) {
-        if (!player.canPlayerEdit(pos, facing, sprayCan)) {
+        if (!canSpray(sprayCan)) {
+            return EnumActionResult.PASS;
+        } else if (!player.canPlayerEdit(pos, facing, sprayCan)) {
             return EnumActionResult.FAIL;
         } else if (!tryPaintBlock(player, world, pos, facing, getColor(sprayCan))) {
             return EnumActionResult.PASS;
-        } else {
-            world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
-                    SoundCategory.PLAYERS, 1.0f, 1.0f);
-            return EnumActionResult.SUCCESS;
         }
+
+        world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
+                SoundCategory.PLAYERS, 1.0f, 1.0f);
+        return EnumActionResult.SUCCESS;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

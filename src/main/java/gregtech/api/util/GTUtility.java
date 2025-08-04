@@ -460,7 +460,7 @@ public class GTUtility {
         };
     }
 
-    public static NBTTagCompound getOrCreateNbtCompound(ItemStack stack) {
+    public static @NotNull NBTTagCompound getOrCreateNbtCompound(@NotNull ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound == null) {
             compound = new NBTTagCompound();

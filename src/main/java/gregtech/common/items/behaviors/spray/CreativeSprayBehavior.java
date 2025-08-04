@@ -81,6 +81,11 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
     }
 
     @Override
+    public boolean canSpray(@NotNull ItemStack stack) {
+        return true;
+    }
+
+    @Override
     public @Nullable EnumDyeColor getColor(@NotNull ItemStack stack) {
         NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(stack);
         if (tag.hasKey("color", Constants.NBT.TAG_INT)) {
@@ -158,8 +163,9 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                 if (sneaking) {
                     toggleLocked(stack);
                 } else if (!isLocked(stack)) {
-                    double reach = playerClient.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+                    event.setCanceled(true);
 
+                    double reach = playerClient.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
                     if (!playerClient.capabilities.isCreativeMode) {
                         reach -= 0.5d;
                     }
@@ -179,8 +185,6 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                     // If the player isn't sneaking and wasn't looking at a colored block, open gui
                     sendToServer(buf -> buf.writeByte(1));
                 }
-
-                event.setCanceled(true);
             }
         }
     }

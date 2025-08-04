@@ -43,6 +43,11 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
     }
 
     @Override
+    public boolean canSpray(@NotNull ItemStack stack) {
+        return getUsesLeft(stack) > 0;
+    }
+
+    @Override
     public @Nullable EnumDyeColor getColor(@NotNull ItemStack stack) {
         return this.color;
     }
@@ -78,8 +83,8 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
     }
 
     protected int getUsesLeft(@NotNull ItemStack stack) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
-        if (tagCompound == null || !tagCompound.hasKey(NBT_KEY, Constants.NBT.TAG_INT)) {
+        NBTTagCompound tagCompound = GTUtility.getOrCreateNbtCompound(stack);
+        if (!tagCompound.hasKey(NBT_KEY, Constants.NBT.TAG_INT)) {
             return maxUses;
         }
         return tagCompound.getInteger(NBT_KEY);
