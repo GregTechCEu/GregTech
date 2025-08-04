@@ -74,18 +74,18 @@ public class AE2ColorContainer extends ColoredBlockContainer {
     public static class AE2BlockManager extends ColoredBlockContainer.ContainerManager {
 
         @Override
+        protected @NotNull ColoredBlockContainer createInstance(@NotNull World world, @NotNull BlockPos pos,
+                                                                @NotNull EnumFacing facing,
+                                                                @NotNull EntityPlayer player) {
+            return new AE2ColorContainer(world, pos, facing, player);
+        }
+
+        @Override
         protected boolean blockMatches(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                                        @NotNull EntityPlayer player) {
             if (!Mods.AppliedEnergistics2.isModLoaded()) return false;
             TileEntity te = world.getTileEntity(pos);
             return te instanceof IColorableTile;
-        }
-
-        @Override
-        protected @NotNull ColoredBlockContainer createInstance(@NotNull World world, @NotNull BlockPos pos,
-                                                                @NotNull EnumFacing facing,
-                                                                @NotNull EntityPlayer player) {
-            return new AE2ColorContainer(world, pos, facing, player);
         }
     }
 }

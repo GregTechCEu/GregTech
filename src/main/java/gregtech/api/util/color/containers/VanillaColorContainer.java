@@ -121,6 +121,13 @@ public class VanillaColorContainer extends ColoredBlockContainer {
     public static class VanillaBlockManager extends ColoredBlockContainer.ContainerManager {
 
         @Override
+        protected @NotNull ColoredBlockContainer createInstance(@NotNull World world, @NotNull BlockPos pos,
+                                                                @NotNull EnumFacing facing,
+                                                                @NotNull EntityPlayer player) {
+            return new VanillaColorContainer(world, pos, facing);
+        }
+
+        @Override
         protected boolean blockMatches(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                                        @NotNull EntityPlayer player) {
             IBlockState blockState = world.getBlockState(pos);
@@ -128,13 +135,6 @@ public class VanillaColorContainer extends ColoredBlockContainer {
 
             return TRANSFORMATIONS.containsKey(block) || TRANSFORMATIONS.containsValue(block) ||
                     block instanceof BlockColored;
-        }
-
-        @Override
-        protected @NotNull ColoredBlockContainer createInstance(@NotNull World world, @NotNull BlockPos pos,
-                                                                @NotNull EnumFacing facing,
-                                                                @NotNull EntityPlayer player) {
-            return new VanillaColorContainer(world, pos, facing);
         }
     }
 }
