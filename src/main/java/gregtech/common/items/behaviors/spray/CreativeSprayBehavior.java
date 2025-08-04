@@ -13,8 +13,6 @@ import gregtech.api.util.Mods;
 import gregtech.common.items.MetaItems;
 import gregtech.core.network.packets.PacketItemMouseEvent;
 
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -201,14 +199,6 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
 
     public static @Nullable EnumDyeColor getBlockColor(@NotNull World world, @NotNull BlockPos pos) {
         if (world.isAirBlock(pos)) return null;
-
-        IBlockState state = world.getBlockState(pos);
-        for (IProperty<?> prop : state.getPropertyKeys()) {
-            if (prop.getValueClass() == EnumDyeColor.class) {
-                // noinspection unchecked
-                return state.getValue((IProperty<EnumDyeColor>) prop);
-            }
-        }
 
         TileEntity te = world.getTileEntity(pos);
         if (te != null) {

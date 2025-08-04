@@ -48,6 +48,11 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
     }
 
     @Override
+    public void onSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull ItemStack sprayCan) {
+        useItemDurability(player, hand, sprayCan, replacementStack.copy());
+    }
+
+    @Override
     public @Nullable EnumDyeColor getColor(@NotNull ItemStack stack) {
         return this.color;
     }
@@ -58,7 +63,7 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
                                               @NotNull ItemStack sprayCan) {
         EnumActionResult result = super.spray(player, hand, world, pos, facing, sprayCan);
         if (result == EnumActionResult.SUCCESS) {
-            useItemDurability(player, hand, player.getHeldItem(hand), replacementStack.copy());
+            onSpray(player, hand, sprayCan);
         }
         return result;
     }
@@ -97,7 +102,7 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
         int remainingUses = getUsesLeft(itemStack);
-        EnumDyeColor color = getColor();
+        EnumDyeColor color = getColor(itemStack);
 
         if (color != null) {
             lines.add(I18n.format("behaviour.paintspray." + color.getTranslationKey() + ".tooltip"));
