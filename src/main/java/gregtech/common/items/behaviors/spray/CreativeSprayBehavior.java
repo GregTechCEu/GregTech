@@ -4,12 +4,10 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemColorProvider;
 import gregtech.api.items.metaitem.stats.IItemNameProvider;
 import gregtech.api.items.metaitem.stats.IMouseEventHandler;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.Mods;
+import gregtech.api.util.color.ColoredBlockContainer;
 import gregtech.common.items.MetaItems;
 import gregtech.core.network.packets.PacketItemMouseEvent;
 
@@ -21,15 +19,11 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.util.Constants;
 
-import appeng.tile.networking.TileCableBus;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
@@ -139,6 +133,7 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
             int button = event.getButton();
             boolean sneaking = playerClient.isSneaking();
 
+            // TODO make changing it in the hand shift scrolling.
             if (button == 0) { // Left click
                 if (isLocked(stack)) return;
 
@@ -170,7 +165,9 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
 
                     RayTraceResult rayTrace = playerClient.rayTrace(reach, 1.0f);
                     if (rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
-                        EnumDyeColor hitColor = getBlockColor(playerClient.world, rayTrace.getBlockPos());
+                        ColoredBlockContainer colorContainer = ColoredBlockContainer.getInstance(playerClient.world,
+                                rayTrace.getBlockPos(), rayTrace.sideHit, playerClient);
+                        EnumDyeColor hitColor = colorContainer.getColor();
                         if (hitColor != null) {
                             setColor(stack, hitColor);
                             sendToServer(buf -> buf
@@ -195,33 +192,5 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
             case 0 -> setColor(stack, buf.readByte());
             case 1 -> MetaItemGuiFactory.open(playerServer, EnumHand.MAIN_HAND);
         }
-    }
-
-    public static @Nullable EnumDyeColor getBlockColor(@NotNull World world, @NotNull BlockPos pos) {
-        if (world.isAirBlock(pos)) return null;
-
-        TileEntity te = world.getTileEntity(pos);
-        if (te != null) {
-            if (te instanceof IGregTechTileEntity gtte) {
-                MetaTileEntity mte = gtte.getMetaTileEntity();
-                // Unfortunately MTEs store their color as an ARGB int instead of just an EnumDyeColor. Thus, this has
-                // to be done because changing MTEs to store/be limited to EnumDyeColor is API breaking and would limit
-                // the colors an MTE could be to 16.
-                int mteColor = mte.getPaintingColor();
-                for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
-                    if (mteColor == dyeColor.colorValue) {
-                        return dyeColor;
-                    }
-                }
-            }
-
-            if (Mods.AppliedEnergistics2.isModLoaded()) {
-                if (te instanceof TileCableBus cable) {
-                    return cable.getColor().dye;
-                }
-            }
-        }
-
-        return null;
     }
 }
