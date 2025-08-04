@@ -1,6 +1,6 @@
 package gregtech.api.util.color;
 
-import gregtech.api.util.color.containers.NullContainer;
+import gregtech.api.util.color.containers.NullColorContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -48,7 +48,7 @@ public abstract class ColoredBlockContainer {
             }
         }
 
-        return NullContainer.NULL_CONTAINER;
+        return NullColorContainer.NULL_CONTAINER;
     }
 
     public static abstract class ContainerManager {

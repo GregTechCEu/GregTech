@@ -30,7 +30,8 @@ import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.Mods;
 import gregtech.api.util.color.ColoredBlockContainer;
-import gregtech.api.util.color.containers.VanillaBlockContainer;
+import gregtech.api.util.color.containers.AE2ColorContainer;
+import gregtech.api.util.color.containers.VanillaColorContainer;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.virtualregistry.VirtualEnderRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -308,7 +309,10 @@ public class CoreModule implements IGregTechModule {
 
         ModHandler.postInit();
 
-        ColoredBlockContainer.registerContainerManager(new VanillaBlockContainer.VanillaBlockManager());
+        ColoredBlockContainer.registerContainerManager(new VanillaColorContainer.VanillaBlockManager());
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
+            ColoredBlockContainer.registerContainerManager(new AE2ColorContainer.AE2BlockManager());
+        }
     }
 
     @Override

@@ -6,9 +6,9 @@ import net.minecraft.item.EnumDyeColor;
 
 import org.jetbrains.annotations.Nullable;
 
-public class NullContainer extends ColoredBlockContainer {
+public class NullColorContainer extends ColoredBlockContainer {
 
-    public static final NullContainer NULL_CONTAINER = new NullContainer();
+    public static final NullColorContainer NULL_CONTAINER = new NullColorContainer();
 
     @Override
     public boolean setColor(@Nullable EnumDyeColor newColor) {

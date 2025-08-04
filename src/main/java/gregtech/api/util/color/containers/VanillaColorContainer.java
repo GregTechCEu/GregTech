@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class VanillaBlockContainer extends ColoredBlockContainer {
+public class VanillaColorContainer extends ColoredBlockContainer {
 
     private static final BiMap<Block, Block> TRANSFORMATIONS = ImmutableBiMap.of(
             Blocks.GLASS, Blocks.STAINED_GLASS,
@@ -42,7 +42,7 @@ public class VanillaBlockContainer extends ColoredBlockContainer {
     @NotNull
     private final EnumFacing facing;
 
-    private VanillaBlockContainer(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing) {
+    private VanillaColorContainer(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing) {
         this.world = world;
         this.pos = pos;
         this.facing = facing;
@@ -134,7 +134,7 @@ public class VanillaBlockContainer extends ColoredBlockContainer {
         protected @NotNull ColoredBlockContainer createInstance(@NotNull World world, @NotNull BlockPos pos,
                                                                 @NotNull EnumFacing facing,
                                                                 @NotNull EntityPlayer player) {
-            return new VanillaBlockContainer(world, pos, facing);
+            return new VanillaColorContainer(world, pos, facing);
         }
     }
 }
