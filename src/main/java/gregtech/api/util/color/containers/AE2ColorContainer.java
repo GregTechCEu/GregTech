@@ -56,6 +56,7 @@ public class AE2ColorContainer extends ColoredBlockContainer {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IColorableTile colorableTile) {
             colorableTile.recolourBlock(facing, AEColor.TRANSPARENT, player);
+            return true;
         }
 
         return false;

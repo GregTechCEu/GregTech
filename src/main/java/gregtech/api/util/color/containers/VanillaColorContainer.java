@@ -62,6 +62,7 @@ public class VanillaColorContainer extends ColoredBlockContainer {
                     .getDefaultState()
                     .withProperty(PROPERTY_MAP.get(block), newColor);
             world.setBlockState(pos, newBlockState);
+            return true;
         }
 
         return block.recolorBlock(world, pos, facing, newColor);
@@ -77,6 +78,7 @@ public class VanillaColorContainer extends ColoredBlockContainer {
                     .get(block)
                     .getDefaultState();
             world.setBlockState(pos, newBlockState);
+            return true;
         } else {
             for (IProperty<?> prop : state.getPropertyKeys()) {
                 if (prop.getName().equals("color") && prop.getValueClass() == EnumDyeColor.class) {
