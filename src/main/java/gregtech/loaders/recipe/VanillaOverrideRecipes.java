@@ -695,7 +695,6 @@ public class VanillaOverrideRecipes {
             ModHandler.removeRecipeByName("minecraft:diamond_block");
             ModHandler.removeRecipeByName("minecraft:diamond");
             ModHandler.removeRecipeByName("minecraft:iron_block");
-            ModHandler.removeRecipeByName("minecraft:iron_nugget");
             ModHandler.removeRecipeByName("minecraft:iron_ingot_from_block");
             ModHandler.removeRecipeByName("minecraft:iron_ingot_from_nuggets");
             ModHandler.removeRecipeByName("minecraft:lapis_block");

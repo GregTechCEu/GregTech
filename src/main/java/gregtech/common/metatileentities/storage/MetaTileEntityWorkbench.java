@@ -390,7 +390,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         List<ItemSlot> list = new ArrayList<>(this.connectedInventory.getSlots());
 
         int rowSize = Math.min(this.connectedInventory.getSlots(), 8);
-        var connected = new SlotGroup("connected_inventory", rowSize, true)
+        var connected = new SlotGroup("connected_inventory", rowSize, false)
                 .setAllowSorting(false);
         syncManager.registerSlotGroup(connected);
 
