@@ -46,30 +46,38 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                 newColor -> setColor(usedStack, newColor));
         guiSyncManager.syncValue("color", 0, colorSync);
 
-        return GTGuis.createPanel(usedStack, 176, 120)
-                .child(SlotGroupWidget.builder()
-                        .matrix("SCCCCCCCC",
-                                "CCCCCCCC")
-                        .key('S', new ToggleButton()
-                                .size(18)
-                                .value(new BoolValue.Dynamic(() -> colorSync.getIntValue() == -1,
-                                        $ -> colorSync.setIntValue(-1)))
-                                .overlay(new ItemDrawable(MetaItems.SPRAY_SOLVENT.getStackForm())
-                                        .asIcon()
-                                        .margin(2))
-                                .addTooltipLine(IKey.lang("metaitem.spray.creative.solvent")))
-                        .key('C', index -> {
-                            EnumDyeColor color = EnumDyeColor.values()[index];
-                            return new ToggleButton()
-                                    .size(18)
-                                    .value(new BoolValue.Dynamic(() -> colorSync.getIntValue() == index,
-                                            $ -> colorSync.setIntValue(index)))
-                                    .overlay(new ItemDrawable(MetaItems.SPRAY_CAN_DYES.get(color).getStackForm())
-                                            .asIcon()
-                                            .margin(2))
-                                    .addTooltipLine(IKey.lang("metaitem.spray.creative." + color));
-                        })
-                        .build());
+        ModularPanel panel = GTGuis.createPanel(usedStack, 176, 120);
+        panel.child(SlotGroupWidget.builder()
+                .matrix("SCCCCCCCC",
+                        "CCCCCCCC")
+                .key('S', new ToggleButton()
+                        .size(18)
+                        .value(new BoolValue.Dynamic(() -> colorSync.getIntValue() == -1,
+                                $ -> {
+                                    colorSync.setIntValue(-1);
+                                    panel.closeIfOpen(true);
+                                }))
+                        .overlay(new ItemDrawable(MetaItems.SPRAY_SOLVENT.getStackForm())
+                                .asIcon()
+                                .margin(2))
+                        .addTooltipLine(IKey.lang("metaitem.spray.creative.solvent")))
+                .key('C', index -> {
+                    EnumDyeColor color = EnumDyeColor.values()[index];
+                    return new ToggleButton()
+                            .size(18)
+                            .value(new BoolValue.Dynamic(() -> colorSync.getIntValue() == index,
+                                    $ -> {
+                                        colorSync.setIntValue(index);
+                                        panel.closeIfOpen(true);
+                                    }))
+                            .overlay(new ItemDrawable(MetaItems.SPRAY_CAN_DYES.get(color).getStackForm())
+                                    .asIcon()
+                                    .margin(2))
+                            .addTooltipLine(IKey.lang("metaitem.spray.creative." + color));
+                })
+                .build());
+
+        return panel;
     }
 
     @Override
