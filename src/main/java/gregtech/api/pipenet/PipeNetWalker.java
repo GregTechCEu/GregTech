@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -30,11 +31,13 @@ import java.util.*;
 public abstract class PipeNetWalker<T extends IPipeTile<?, ?>> {
 
     protected PipeNetWalker<T> root;
+    @NotNull
     private final World world;
     private Set<T> walked;
     private final List<EnumFacing> nextPipeFacings = new ArrayList<>(5);
     private final List<T> nextPipes = new ArrayList<>(5);
     private List<PipeNetWalker<T>> walkers;
+    @NotNull
     private final BlockPos.MutableBlockPos currentPos;
     private T currentPipe;
     private EnumFacing from = null;
@@ -43,7 +46,7 @@ public abstract class PipeNetWalker<T extends IPipeTile<?, ?>> {
     private boolean running;
     private boolean failed = false;
 
-    protected PipeNetWalker(World world, BlockPos sourcePipe, int walkedBlocks) {
+    protected PipeNetWalker(@NotNull World world, @NotNull BlockPos sourcePipe, int walkedBlocks) {
         this.world = Objects.requireNonNull(world);
         this.walkedBlocks = walkedBlocks;
         this.currentPos = new BlockPos.MutableBlockPos(Objects.requireNonNull(sourcePipe));
@@ -189,6 +192,7 @@ public abstract class PipeNetWalker<T extends IPipeTile<?, ?>> {
             if (!getBasePipeClass().isAssignableFrom(thisPipe.getClass())) {
                 return false;
             }
+            // noinspection unchecked
             currentPipe = (T) thisPipe;
         }
         T pipeTile = currentPipe;
@@ -203,6 +207,7 @@ public abstract class PipeNetWalker<T extends IPipeTile<?, ?>> {
 
             TileEntity tile = pipeTile.getNeighbor(accessSide);
             if (tile != null && getBasePipeClass().isAssignableFrom(tile.getClass())) {
+                // noinspection unchecked
                 T otherPipe = (T) tile;
                 if (!otherPipe.isConnected(accessSide.getOpposite()) ||
                         otherPipe.isFaceBlocked(accessSide.getOpposite()) || isWalked(otherPipe))
@@ -233,11 +238,11 @@ public abstract class PipeNetWalker<T extends IPipeTile<?, ?>> {
         return root.running;
     }
 
-    public World getWorld() {
+    public @NotNull World getWorld() {
         return world;
     }
 
-    public BlockPos getCurrentPos() {
+    public @NotNull BlockPos getCurrentPos() {
         return currentPos;
     }
 
