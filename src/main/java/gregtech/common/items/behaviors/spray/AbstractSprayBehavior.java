@@ -98,6 +98,6 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
     protected boolean tryPaintBlock(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
                                     @NotNull EnumFacing side, @NotNull ItemStack sprayCan) {
         ColoredBlockContainer blockContainer = ColoredBlockContainer.getInstance(world, pos, side, player);
-        return blockContainer.setColor(getColor(sprayCan));
+        return blockContainer.isValid() && blockContainer.setColor(getColor(sprayCan));
     }
 }
