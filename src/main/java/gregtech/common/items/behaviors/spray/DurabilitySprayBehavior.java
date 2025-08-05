@@ -52,7 +52,8 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
     public void onSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull ItemStack sprayCan) {
         if (player.capabilities.isCreativeMode) return;
 
-        if (doDamage(sprayCan)) {
+        int usesLeft = getUsesLeft(sprayCan);
+        if (--usesLeft <= 0) {
             GTLog.logger.info("Spray can broke, replacing with replacement stack");
             if (replacementStack.isEmpty()) {
                 // If replacement stack is empty, just shrink resulting stack
@@ -61,7 +62,11 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
                 // Otherwise, update held item to replacement stack
                 player.setHeldItem(hand, replacementStack.copy());
             }
+
+            return;
         }
+
+        setUsesLeft(sprayCan, usesLeft);
     }
 
     @Override
@@ -83,18 +88,6 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
 
     protected static void setUsesLeft(@NotNull ItemStack itemStack, int usesLeft) {
         GTUtility.getOrCreateNbtCompound(itemStack).setInteger(NBT_KEY, usesLeft);
-    }
-
-    /**
-     * Decrement 1 point of durability from a spray can
-     * 
-     * @param stack the stack to damage
-     * @return if it ran out
-     */
-    protected boolean doDamage(@NotNull ItemStack stack) {
-        int usesLeft = getUsesLeft(stack) - 1;
-        setUsesLeft(stack, usesLeft);
-        return usesLeft == 0;
     }
 
     @Override
