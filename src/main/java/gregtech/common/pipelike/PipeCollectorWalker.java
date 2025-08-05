@@ -23,15 +23,15 @@ public class PipeCollectorWalker<T extends IPipeTile<?, ?>> extends PipeNetWalke
     }
 
     // I love type erasure - htmlcsjs
+    @NotNull
     private final Class<T> basePipeClass;
-
     /**
      * Function to run on every pipe
      * If false is returned then halt the walker
      */
     @NotNull
     private final Predicate<IPipeTile<?, ?>> pipeFunction;
-
+    @NotNull
     private BlockPos sourcePipe;
 
     protected PipeCollectorWalker(@NotNull World world, @NotNull BlockPos sourcePipe, int walkedBlocks,
@@ -63,7 +63,7 @@ public class PipeCollectorWalker<T extends IPipeTile<?, ?>> extends PipeNetWalke
                                   @Nullable TileEntity neighbourTile) {}
 
     @Override
-    protected Class<T> getBasePipeClass() {
+    protected @NotNull Class<T> getBasePipeClass() {
         return basePipeClass;
     }
 }

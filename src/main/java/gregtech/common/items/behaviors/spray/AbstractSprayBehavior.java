@@ -125,6 +125,10 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         EnumDyeColor dyeColor = getColor(sprayCan);
         int color = dyeColor == null ? -1 : dyeColor.colorValue;
         PipeCollectorWalker.collectPipeNet(world, startPos, startingPipe, pipe -> {
+            if (pipe.getNumConnections() > 2) {
+                return false;
+            }
+
             if (!canSpray(sprayCan)) {
                 return false;
             }

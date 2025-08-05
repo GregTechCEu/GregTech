@@ -145,7 +145,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public BlockPipe<PipeType, NodeDataType, ?> getPipeBlock() {
         if (pipeBlock == null) {
             Block block = getBlockState().getBlock();
-            // noinspection unchecked
+            // noinspection unchecked,rawtypes
             this.pipeBlock = block instanceof BlockPipe blockPipe ? blockPipe : null;
         }
         return pipeBlock;
