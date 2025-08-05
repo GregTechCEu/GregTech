@@ -1,14 +1,16 @@
 package gregtech.common.items.behaviors.spray;
 
+import gregtech.api.color.ColoredBlockContainer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.util.color.ColoredBlockContainer;
-import gregtech.api.color.ColoredBlockContainer;
+import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.common.pipelike.PipeCollectorWalker;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -86,20 +88,64 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
             return EnumActionResult.PASS;
         } else if (!player.canPlayerEdit(pos, facing, sprayCan)) {
             return EnumActionResult.FAIL;
-        } else if (!tryPaintBlock(player, world, pos, facing, sprayCan)) {
-            return EnumActionResult.PASS;
         }
 
-        onSpray(player, hand, sprayCan);
+        int returnCode = tryPaintBlock(world, pos, player, hand, facing, sprayCan);
+        if (returnCode == 0) {
+            return EnumActionResult.PASS;
+        } else if (returnCode == 1) {
+            onSpray(player, hand, sprayCan);
+        }
+
         world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
                 SoundCategory.PLAYERS, 1.0f, 1.0f);
         return EnumActionResult.SUCCESS;
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    protected boolean tryPaintBlock(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
-                                    @NotNull EnumFacing side, @NotNull ItemStack sprayCan) {
+    /**
+     * Return codes:<br/>
+     * {@code -1}: didn't paint any block(s)<br/>
+     * {@code 0}: colored 1 block</br>
+     * {@code 1+}: colored multiple blocks and {@link #onSpray(EntityPlayer, EnumHand, ItemStack)} was handled already
+     */
+    protected int tryPaintBlock(@NotNull World world, @NotNull BlockPos pos, @NotNull EntityPlayer player,
+                                @NotNull EnumHand hand, @NotNull EnumFacing side, @NotNull ItemStack sprayCan) {
+        if (player.isSneaking()) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof IPipeTile<?, ?>pipeTile) {
+                return traversePipes(world, player, hand, pos, pipeTile, sprayCan);
+            }
+        }
+
         ColoredBlockContainer blockContainer = ColoredBlockContainer.getInstance(world, pos, side, player);
-        return blockContainer.isValid() && blockContainer.setColor(getColor(sprayCan));
+        if (blockContainer.isValid() && blockContainer.setColor(getColor(sprayCan))) {
+            return 0;
+        }
+
+        return -1;
+    }
+
+    protected int traversePipes(@NotNull World world, @NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                @NotNull BlockPos startPos, @NotNull IPipeTile<?, ?> startingPipe,
+                                @NotNull ItemStack sprayCan) {
+        EnumDyeColor dyeColor = getColor(sprayCan);
+        int color = dyeColor == null ? -1 : dyeColor.colorValue;
+        int[] paintedCountHolder = { 0 };
+        PipeCollectorWalker.collectPipeNet(world, startPos, startingPipe, pipe -> {
+            if (!canSpray(sprayCan)) {
+                return false;
+            }
+
+            if (pipe.getPaintingColor() != color) {
+                pipe.setPaintingColor(color);
+                pipe.scheduleRenderUpdate();
+                onSpray(player, hand, sprayCan);
+                paintedCountHolder[0]++;
+            }
+
+            return true;
+        });
+
+        return paintedCountHolder[0];
     }
 }
