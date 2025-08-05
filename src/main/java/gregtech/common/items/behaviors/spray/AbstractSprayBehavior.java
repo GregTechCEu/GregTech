@@ -87,6 +87,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         } else if (!player.canPlayerEdit(pos, facing, sprayCan)) {
             return EnumActionResult.FAIL;
         } else if (!tryPaintBlock(player, world, pos, facing, sprayCan)) {
+            onSpray(player, hand, sprayCan);
             return EnumActionResult.PASS;
         }
 
