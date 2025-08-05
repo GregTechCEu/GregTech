@@ -100,7 +100,8 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
         if (player.isSneaking()) {
             TileEntity te = world.getTileEntity(pos);
-            if (te instanceof IPipeTile<?, ?>pipeTile && pipeTile.getPaintingColor() != getColorInt(sprayCan)) {
+            if (te instanceof IPipeTile<?, ?>pipeTile && (pipeTile.getPaintingColor() != getColorInt(sprayCan) ||
+                    (!pipeTile.isPainted() && getColor(sprayCan) == null))) {
                 traversePipes(world, player, hand, pos, pipeTile, sprayCan);
                 world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
                         SoundCategory.PLAYERS, 1.0f, 1.0f);
