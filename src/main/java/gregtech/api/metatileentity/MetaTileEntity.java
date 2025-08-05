@@ -46,11 +46,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -1281,6 +1283,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         setPaintingColor(paintingColor, null);
     }
 
+    public void setPaintingColor(@Nullable EnumDyeColor color, @Nullable EnumFacing side) {
+        setPaintingColor(color == null ? -1 : color.colorValue, side);
+    }
+
     public void setPaintingColor(int paintingColor, @Nullable EnumFacing side) {
         this.paintingColor = paintingColor;
         if (getWorld() != null && !getWorld().isRemote) {
@@ -1521,6 +1527,12 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     @Nullable
     public UUID getOwner() {
         return owner;
+    }
+
+    public boolean canBeModifiedBy(@NotNull Entity entity) {
+        UUID owner = getOwner();
+        if (owner == null) return true;
+        return owner.equals(entity.getUniqueID());
     }
 
     public final void toggleMuffled() {

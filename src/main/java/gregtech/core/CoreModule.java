@@ -31,6 +31,7 @@ import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.Mods;
 import gregtech.api.util.color.ColoredBlockContainer;
 import gregtech.api.util.color.containers.AE2ColorContainer;
+import gregtech.api.util.color.containers.GTColorContainer;
 import gregtech.api.util.color.containers.VanillaColorContainer;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.virtualregistry.VirtualEnderRegistry;
@@ -310,6 +311,7 @@ public class CoreModule implements IGregTechModule {
         ModHandler.postInit();
 
         ColoredBlockContainer.registerContainerManager(new VanillaColorContainer.VanillaBlockManager());
+        ColoredBlockContainer.registerContainerManager(new GTColorContainer.GTColorManager());
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             ColoredBlockContainer.registerContainerManager(new AE2ColorContainer.AE2BlockManager());
         }

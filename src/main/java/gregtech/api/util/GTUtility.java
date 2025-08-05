@@ -756,10 +756,17 @@ public class GTUtility {
         return result.toString();
     }
 
-    public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
+    /**
+     * Get the {@link MetaTileEntity} at the position in the given world.
+     * 
+     * @param world the world to check
+     * @param pos   the position of the mte
+     * @return the mte if there is one at the position, otherwise null
+     */
+    public static @Nullable MetaTileEntity getMetaTileEntity(@Nullable IBlockAccess world, @Nullable BlockPos pos) {
         if (world == null || pos == null) return null;
         TileEntity te = world.getTileEntity(pos);
-        return te instanceof IGregTechTileEntity ? ((IGregTechTileEntity) te).getMetaTileEntity() : null;
+        return te instanceof IGregTechTileEntity gtte ? gtte.getMetaTileEntity() : null;
     }
 
     public static MetaTileEntity getMetaTileEntity(ItemStack stack) {

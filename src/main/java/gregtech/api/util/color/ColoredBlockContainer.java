@@ -35,6 +35,11 @@ public abstract class ColoredBlockContainer {
 
     public abstract @Nullable EnumDyeColor getColor();
 
+    public int getColorInt() {
+        EnumDyeColor dyeColor = getColor();
+        return dyeColor == null ? -1 : dyeColor.colorValue;
+    }
+
     public boolean isValid() {
         return true;
     }
