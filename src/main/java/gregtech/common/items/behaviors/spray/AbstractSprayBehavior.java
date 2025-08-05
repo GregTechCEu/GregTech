@@ -91,9 +91,9 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         }
 
         int returnCode = tryPaintBlock(world, pos, player, hand, facing, sprayCan);
-        if (returnCode == 0) {
+        if (returnCode == -2) {
             return EnumActionResult.PASS;
-        } else if (returnCode == 1) {
+        } else if (returnCode == -1) {
             onSpray(player, hand, sprayCan);
         }
 
@@ -104,9 +104,9 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
     /**
      * Return codes:<br/>
-     * {@code -1}: didn't paint any block(s)<br/>
-     * {@code 0}: colored 1 block</br>
-     * {@code 1+}: colored multiple blocks and {@link #onSpray(EntityPlayer, EnumHand, ItemStack)} was handled already
+     * {@code -2}: didn't paint any block(s)<br/>
+     * {@code -1}: colored 1 block</br>
+     * {@code 0+}: colored multiple blocks and {@link #onSpray(EntityPlayer, EnumHand, ItemStack)} was handled already
      */
     protected int tryPaintBlock(@NotNull World world, @NotNull BlockPos pos, @NotNull EntityPlayer player,
                                 @NotNull EnumHand hand, @NotNull EnumFacing side, @NotNull ItemStack sprayCan) {
@@ -119,10 +119,10 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
         ColoredBlockContainer blockContainer = ColoredBlockContainer.getInstance(world, pos, side, player);
         if (blockContainer.isValid() && blockContainer.setColor(getColor(sprayCan))) {
-            return 0;
+            return -1;
         }
 
-        return -1;
+        return -2;
     }
 
     protected int traversePipes(@NotNull World world, @NotNull EntityPlayer player, @NotNull EnumHand hand,
