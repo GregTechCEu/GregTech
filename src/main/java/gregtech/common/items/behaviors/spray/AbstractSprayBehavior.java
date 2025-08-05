@@ -61,14 +61,6 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         return null;
     }
 
-    @Override
-    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
-                                             EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack sprayCan = player.getHeldItem(hand);
-        EnumActionResult result = spray(player, hand, world, pos, facing, sprayCan);
-        return ActionResult.newResult(result, sprayCan);
-    }
-
     @SuppressWarnings("UnusedReturnValue")
     public static @NotNull EnumActionResult handleExternalSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
                                                                 @NotNull World world, @NotNull BlockPos pos,
@@ -88,8 +80,17 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         }
     }
 
+    @Override
+    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+                                             EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack sprayCan = player.getHeldItem(hand);
+        EnumActionResult result = spray(player, hand, world, pos, facing, sprayCan);
+        return ActionResult.newResult(result, sprayCan);
+    }
+
     protected @NotNull EnumActionResult spray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
-                                              @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                              @NotNull World world, @NotNull BlockPos pos,
+                                              @NotNull EnumFacing facing,
                                               @NotNull ItemStack sprayCan) {
         if (!canSpray(sprayCan)) {
             return EnumActionResult.PASS;
@@ -97,48 +98,32 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
             return EnumActionResult.FAIL;
         }
 
-        int returnCode = tryPaintBlock(world, pos, player, hand, facing, sprayCan);
-        if (returnCode == -2) {
-            return EnumActionResult.PASS;
-        } else if (returnCode == -1) {
-            onSpray(player, hand, sprayCan);
-        }
-
-        world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
-                SoundCategory.PLAYERS, 1.0f, 1.0f);
-        return EnumActionResult.SUCCESS;
-    }
-
-    /**
-     * Return codes:<br/>
-     * {@code -2}: didn't paint any block(s)<br/>
-     * {@code -1}: colored 1 block</br>
-     * {@code 0+}: colored multiple blocks and {@link #onSpray(EntityPlayer, EnumHand, ItemStack)} was handled already
-     */
-    protected int tryPaintBlock(@NotNull World world, @NotNull BlockPos pos, @NotNull EntityPlayer player,
-                                @NotNull EnumHand hand, @NotNull EnumFacing side, @NotNull ItemStack sprayCan) {
         if (player.isSneaking()) {
             TileEntity te = world.getTileEntity(pos);
-            if (te instanceof IPipeTile<?, ?>pipeTile) {
-                if (pipeTile.getPaintingColor() == getColorInt(sprayCan)) return -2;
-                return traversePipes(world, player, hand, pos, pipeTile, sprayCan);
+            if (te instanceof IPipeTile<?, ?>pipeTile && pipeTile.getPaintingColor() != getColorInt(sprayCan)) {
+                traversePipes(world, player, hand, pos, pipeTile, sprayCan);
+                world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
+                        SoundCategory.PLAYERS, 1.0f, 1.0f);
+                return EnumActionResult.SUCCESS;
             }
         }
 
-        ColoredBlockContainer blockContainer = ColoredBlockContainer.getInstance(world, pos, side, player);
+        ColoredBlockContainer blockContainer = ColoredBlockContainer.getInstance(world, pos, facing, player);
         if (blockContainer.isValid() && blockContainer.setColor(getColor(sprayCan))) {
-            return -1;
+            onSpray(player, hand, sprayCan);
+            world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
+                    SoundCategory.PLAYERS, 1.0f, 1.0f);
+            return EnumActionResult.SUCCESS;
         }
 
-        return -2;
+        return EnumActionResult.PASS;
     }
 
-    protected int traversePipes(@NotNull World world, @NotNull EntityPlayer player, @NotNull EnumHand hand,
-                                @NotNull BlockPos startPos, @NotNull IPipeTile<?, ?> startingPipe,
-                                @NotNull ItemStack sprayCan) {
+    protected void traversePipes(@NotNull World world, @NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                 @NotNull BlockPos startPos, @NotNull IPipeTile<?, ?> startingPipe,
+                                 @NotNull ItemStack sprayCan) {
         EnumDyeColor dyeColor = getColor(sprayCan);
         int color = dyeColor == null ? -1 : dyeColor.colorValue;
-        int[] paintedCountHolder = { 0 };
         PipeCollectorWalker.collectPipeNet(world, startPos, startingPipe, pipe -> {
             if (!canSpray(sprayCan)) {
                 return false;
@@ -148,12 +133,9 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
                 pipe.setPaintingColor(color);
                 pipe.scheduleRenderUpdate();
                 onSpray(player, hand, sprayCan);
-                paintedCountHolder[0]++;
             }
 
             return true;
         });
-
-        return paintedCountHolder[0];
     }
 }

@@ -7,6 +7,7 @@ import gregtech.api.util.GradientUtil;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -52,21 +53,25 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
     public void onSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull ItemStack sprayCan) {
         if (player.capabilities.isCreativeMode) return;
 
-        int usesLeft = getUsesLeft(sprayCan);
-        if (--usesLeft <= 0) {
+        if (damageCan(sprayCan)) {
             GTLog.logger.info("Spray can broke, replacing with replacement stack");
             if (replacementStack.isEmpty()) {
                 // If replacement stack is empty, just shrink resulting stack
                 sprayCan.shrink(1);
             } else {
-                // Otherwise, update held item to replacement stack
-                player.setHeldItem(hand, replacementStack.copy());
+                // Update held item to replacement stack
+                sprayCan.setItemDamage(replacementStack.getItemDamage());
+                // Clear NBT from old can
+                sprayCan.setTagCompound(new NBTTagCompound());
+                player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 1.0f, 1.0f);
             }
-
-            return;
         }
+    }
 
+    protected boolean damageCan(@NotNull ItemStack sprayCan) {
+        int usesLeft = getUsesLeft(sprayCan) - 1;
         setUsesLeft(sprayCan, usesLeft);
+        return usesLeft == 0;
     }
 
     @Override
