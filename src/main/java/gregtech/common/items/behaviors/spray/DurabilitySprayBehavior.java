@@ -54,7 +54,6 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
         if (player.capabilities.isCreativeMode) return;
 
         if (damageCan(sprayCan)) {
-            GTLog.logger.info("Spray can broke, replacing with replacement stack");
             if (replacementStack.isEmpty()) {
                 // If replacement stack is empty, just shrink resulting stack
                 sprayCan.shrink(1);
@@ -63,6 +62,7 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
                 sprayCan.setItemDamage(replacementStack.getItemDamage());
                 // Clear NBT from old can
                 sprayCan.setTagCompound(new NBTTagCompound());
+                // Play sound manually since we aren't using player.setHeldItem(...)
                 player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 1.0f, 1.0f);
             }
         }
