@@ -40,6 +40,10 @@ public class AE2ColorContainer extends ColoredBlockContainer {
             return removeColor();
         }
 
+        if (getColor() == newColor) {
+            return false;
+        }
+
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IColorableTile colorableTile) {
             if (colorableTile.getColor().dye != newColor) {
@@ -54,7 +58,7 @@ public class AE2ColorContainer extends ColoredBlockContainer {
     @Override
     public boolean removeColor() {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof IColorableTile colorableTile) {
+        if (te instanceof IColorableTile colorableTile && colorableTile.getColor() != AEColor.TRANSPARENT) {
             colorableTile.recolourBlock(facing, AEColor.TRANSPARENT, player);
             return true;
         }

@@ -40,6 +40,10 @@ public class GTColorContainer extends ColoredBlockContainer {
             return removeColor();
         }
 
+        if (getColorInt() == newColor.colorValue) {
+            return false;
+        }
+
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IPipeTile<?, ?>pipeTile) {
             pipeTile.setPaintingColor(newColor.colorValue);
@@ -58,12 +62,12 @@ public class GTColorContainer extends ColoredBlockContainer {
     @Override
     public boolean removeColor() {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof IPipeTile<?, ?>pipeTile) {
+        if (te instanceof IPipeTile<?, ?>pipeTile && pipeTile.isPainted()) {
             pipeTile.setPaintingColor(-1);
             return true;
         } else {
             MetaTileEntity mte = getMetaTileEntity(te);
-            if (mte != null && mte.canBeModifiedBy(player)) {
+            if (mte != null && mte.isPainted() && mte.canBeModifiedBy(player)) {
                 mte.setPaintingColor(-1, facing);
                 return true;
             }

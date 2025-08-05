@@ -54,6 +54,10 @@ public class VanillaColorContainer extends ColoredBlockContainer {
             return removeColor();
         }
 
+        if (getColor() == newColor) {
+            return false;
+        }
+
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
@@ -93,8 +97,8 @@ public class VanillaColorContainer extends ColoredBlockContainer {
                         // other mods that have custom behavior can be done as
                         // special cases above on a case-by-case basis
                     }
-                    block.recolorBlock(world, pos, facing, defaultColor);
-                    return true;
+
+                    return block.recolorBlock(world, pos, facing, defaultColor);
                 }
             }
         }
