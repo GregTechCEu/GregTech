@@ -325,7 +325,7 @@ public class MixerRecipes {
                 .input(dust, Nickel)
                 .input(dust, Zinc)
                 .input(dust, Iron, 4)
-                .circuitMeta(2)
+                .circuitMeta(6)
                 .output(dust, FerriteMixture, 6)
                 .buildAndRegister();
 
@@ -576,7 +576,7 @@ public class MixerRecipes {
                 .input(dust, Titanium)
                 .input(dust, Copper, 7)
                 .fluidInputs(Oxygen.getFluid(14000))
-                .circuitMeta(4)
+                .circuitMeta(6)
                 .output(dust, IndiumTinBariumTitaniumCuprate, 16)
                 .buildAndRegister();
 

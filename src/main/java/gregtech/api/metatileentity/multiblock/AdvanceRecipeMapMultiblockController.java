@@ -62,7 +62,7 @@ public abstract class AdvanceRecipeMapMultiblockController extends RecipeMapMult
 
     protected int thread = 1;
 
-    private boolean isDistinct = false;
+    private boolean isDistinct = true;
 
     @Nullable
     private ICleanroomProvider cleanroom;
