@@ -7,7 +7,7 @@ import gregtech.api.items.metaitem.stats.IMouseEventHandler;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.color.ColoredBlockContainer;
+import gregtech.api.color.ColoredBlockContainer;
 import gregtech.common.items.MetaItems;
 import gregtech.core.network.packets.PacketItemMouseEvent;
 

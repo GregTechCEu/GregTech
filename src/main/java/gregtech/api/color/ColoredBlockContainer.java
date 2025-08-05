@@ -1,6 +1,6 @@
-package gregtech.api.util.color;
+package gregtech.api.color;
 
-import gregtech.api.util.color.containers.NullColorContainer;
+import gregtech.api.color.containers.NullColorContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;

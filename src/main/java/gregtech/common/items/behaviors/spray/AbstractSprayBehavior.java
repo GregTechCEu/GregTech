@@ -3,6 +3,7 @@ package gregtech.common.items.behaviors.spray;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.color.ColoredBlockContainer;
+import gregtech.api.color.ColoredBlockContainer;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.entity.player.EntityPlayer;

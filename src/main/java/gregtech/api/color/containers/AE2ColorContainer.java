@@ -1,7 +1,7 @@
-package gregtech.api.util.color.containers;
+package gregtech.api.color.containers;
 
 import gregtech.api.util.Mods;
-import gregtech.api.util.color.ColoredBlockContainer;
+import gregtech.api.color.ColoredBlockContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;

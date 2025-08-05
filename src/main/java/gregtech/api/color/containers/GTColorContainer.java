@@ -1,9 +1,9 @@
-package gregtech.api.util.color.containers;
+package gregtech.api.color.containers;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.util.color.ColoredBlockContainer;
+import gregtech.api.color.ColoredBlockContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
