@@ -216,7 +216,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             }
             TileEntity tile = getNeighbor(side);
             // block connections if Pipe Types do not match
-            if (connected && tile instanceof IPipeTile<?, ?> pipeTile &&
+            if (connected && tile instanceof IPipeTile<?, ?>pipeTile &&
                     pipeTile.getPipeType().getClass() != this.getPipeType().getClass()) {
                 return;
             }
@@ -226,7 +226,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             writeCustomData(UPDATE_CONNECTIONS, buffer -> buffer.writeVarInt(connections));
             markDirty();
 
-            if (!fromNeighbor && tile instanceof IPipeTile<?, ?> pipeTile) {
+            if (!fromNeighbor && tile instanceof IPipeTile<?, ?>pipeTile) {
                 syncPipeConnections(side, pipeTile);
             }
         }
