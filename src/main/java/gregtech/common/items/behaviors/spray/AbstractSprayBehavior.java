@@ -87,10 +87,10 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         } else if (!player.canPlayerEdit(pos, facing, sprayCan)) {
             return EnumActionResult.FAIL;
         } else if (!tryPaintBlock(player, world, pos, facing, sprayCan)) {
-            onSpray(player, hand, sprayCan);
             return EnumActionResult.PASS;
         }
 
+        onSpray(player, hand, sprayCan);
         world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
                 SoundCategory.PLAYERS, 1.0f, 1.0f);
         return EnumActionResult.SUCCESS;
