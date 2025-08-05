@@ -42,6 +42,10 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
         this.durabilityBarColors = GradientUtil.getGradient(color == null ? 0x969696 : color.colorValue, 10);
     }
 
+    public DurabilitySprayBehavior(int maxUses, @Nullable EnumDyeColor color) {
+        this(ItemStack.EMPTY, maxUses, color);
+    }
+
     @Override
     public boolean canSpray(@NotNull ItemStack stack) {
         return getUsesLeft(stack) > 0;
@@ -49,42 +53,26 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
 
     @Override
     public void onSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull ItemStack sprayCan) {
-        useItemDurability(player, hand, sprayCan, replacementStack.copy());
+        int usesLeft = getUsesLeft(sprayCan);
+        if (!player.capabilities.isCreativeMode) {
+            if (--usesLeft <= 0) {
+                if (replacementStack.isEmpty()) {
+                    // If replacement stack is empty, just shrink resulting stack
+                    sprayCan.shrink(1);
+                } else {
+                    // Otherwise, update held item to replacement stack
+                    player.setHeldItem(hand, replacementStack.copy());
+                }
+                return;
+            }
+
+            setUsesLeft(sprayCan, usesLeft);
+        }
     }
 
     @Override
     public @Nullable EnumDyeColor getColor(@NotNull ItemStack stack) {
         return this.color;
-    }
-
-    @Override
-    protected @NotNull EnumActionResult spray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
-                                              @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                                              @NotNull ItemStack sprayCan) {
-        EnumActionResult result = super.spray(player, hand, world, pos, facing, sprayCan);
-        if (result == EnumActionResult.SUCCESS) {
-            onSpray(player, hand, sprayCan);
-        }
-        return result;
-    }
-
-    public void useItemDurability(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull ItemStack stack,
-                                  @NotNull ItemStack replacementStack) {
-        int usesLeft = getUsesLeft(stack);
-        if (!player.capabilities.isCreativeMode) {
-            if (--usesLeft <= 0) {
-                if (replacementStack.isEmpty()) {
-                    // If replacement stack is empty, just shrink resulting stack
-                    stack.shrink(1);
-                } else {
-                    // Otherwise, update held item to replacement stack
-                    player.setHeldItem(hand, replacementStack);
-                }
-                return;
-            }
-
-            setUsesLeft(stack, usesLeft);
-        }
     }
 
     protected int getUsesLeft(@NotNull ItemStack stack) {
