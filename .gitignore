@@ -83,3 +83,6 @@ run/
 logs/
 
 libs/
+
+# un-exclude terminal guide text files
+!/src/main/resources/assets/gregtech/terminal/guides/**/*.txt
