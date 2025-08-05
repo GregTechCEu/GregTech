@@ -49,7 +49,7 @@ public class PipeCollectorWalker<T extends IPipeTile<?, ?>> extends PipeNetWalke
 
     @Override
     protected void checkPipe(T pipeTile, BlockPos pos) {
-        if (this.pipeFunction != null && !this.pipeFunction.apply(pipeTile)) {
+        if (this.pipeFunction != null && !this.pipeFunction.applyAsBoolean(pipeTile)) {
             this.root.stop();
         }
     }

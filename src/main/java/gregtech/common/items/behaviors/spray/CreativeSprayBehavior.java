@@ -73,11 +73,6 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
     }
 
     @Override
-    public boolean canSpray(@NotNull ItemStack stack) {
-        return true;
-    }
-
-    @Override
     public @Nullable EnumDyeColor getColor(@NotNull ItemStack stack) {
         NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(stack);
         if (tag.hasKey("color", Constants.NBT.TAG_INT)) {

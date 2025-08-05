@@ -1,6 +1,7 @@
 package gregtech.common.items.behaviors.spray;
 
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GradientUtil;
 
@@ -49,20 +50,17 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
 
     @Override
     public void onSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull ItemStack sprayCan) {
-        int usesLeft = getUsesLeft(sprayCan);
-        if (!player.capabilities.isCreativeMode) {
-            if (--usesLeft <= 0) {
-                if (replacementStack.isEmpty()) {
-                    // If replacement stack is empty, just shrink resulting stack
-                    sprayCan.shrink(1);
-                } else {
-                    // Otherwise, update held item to replacement stack
-                    player.setHeldItem(hand, replacementStack.copy());
-                }
-                return;
-            }
+        if (player.capabilities.isCreativeMode) return;
 
-            setUsesLeft(sprayCan, usesLeft);
+        if (doDamage(sprayCan)) {
+            GTLog.logger.info("Spray can broke, replacing with replacement stack");
+            if (replacementStack.isEmpty()) {
+                // If replacement stack is empty, just shrink resulting stack
+                sprayCan.shrink(1);
+            } else {
+                // Otherwise, update held item to replacement stack
+                player.setHeldItem(hand, replacementStack.copy());
+            }
         }
     }
 
@@ -72,15 +70,31 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
     }
 
     protected int getUsesLeft(@NotNull ItemStack stack) {
+        if (stack.isItemEqual(replacementStack)) return 0;
+
         NBTTagCompound tagCompound = GTUtility.getOrCreateNbtCompound(stack);
         if (!tagCompound.hasKey(NBT_KEY, Constants.NBT.TAG_INT)) {
+            tagCompound.setInteger(NBT_KEY, maxUses);
             return maxUses;
         }
+
         return tagCompound.getInteger(NBT_KEY);
     }
 
     protected static void setUsesLeft(@NotNull ItemStack itemStack, int usesLeft) {
         GTUtility.getOrCreateNbtCompound(itemStack).setInteger(NBT_KEY, usesLeft);
+    }
+
+    /**
+     * Decrement 1 point of durability from a spray can
+     * 
+     * @param stack the stack to damage
+     * @return if it ran out
+     */
+    protected boolean doDamage(@NotNull ItemStack stack) {
+        int usesLeft = getUsesLeft(stack) - 1;
+        setUsesLeft(stack, usesLeft);
+        return usesLeft == 0;
     }
 
     @Override

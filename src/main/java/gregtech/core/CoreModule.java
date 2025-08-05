@@ -7,7 +7,8 @@ import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.color.ColoredBlockContainer;
 import gregtech.api.color.containers.AE2ColorContainer;
-import gregtech.api.color.containers.GTColorContainer;
+import gregtech.api.color.containers.GTPipeColorContainer;
+import gregtech.api.color.containers.MTEColorContainer;
 import gregtech.api.color.containers.VanillaColorContainer;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverUIFactory;
@@ -311,7 +312,8 @@ public class CoreModule implements IGregTechModule {
         ModHandler.postInit();
 
         ColoredBlockContainer.registerContainerManager(new VanillaColorContainer.VanillaBlockManager());
-        ColoredBlockContainer.registerContainerManager(new GTColorContainer.GTColorManager());
+        ColoredBlockContainer.registerContainerManager(new MTEColorContainer.MTEColorManager());
+        ColoredBlockContainer.registerContainerManager(new GTPipeColorContainer.GTPipeColorManager());
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             ColoredBlockContainer.registerContainerManager(new AE2ColorContainer.AE2BlockManager());
         }

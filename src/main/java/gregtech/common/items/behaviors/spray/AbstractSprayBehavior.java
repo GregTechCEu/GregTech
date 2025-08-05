@@ -30,8 +30,15 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
      */
     public abstract @Nullable EnumDyeColor getColor(@NotNull ItemStack stack);
 
+    public int getColorInt(@NotNull ItemStack stack) {
+        EnumDyeColor color = getColor(stack);
+        return color == null ? -1 : color.colorValue;
+    }
+
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public abstract boolean canSpray(@NotNull ItemStack stack);
+    public boolean canSpray(@NotNull ItemStack stack) {
+        return true;
+    }
 
     public void onSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull ItemStack sprayCan) {
         //
@@ -113,6 +120,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         if (player.isSneaking()) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof IPipeTile<?, ?>pipeTile) {
+                if (pipeTile.getPaintingColor() == getColorInt(sprayCan)) return -2;
                 return traversePipes(world, player, hand, pos, pipeTile, sprayCan);
             }
         }
