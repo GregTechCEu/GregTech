@@ -168,7 +168,7 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                         ColoredBlockContainer colorContainer = ColoredBlockContainer.getInstance(playerClient.world,
                                 rayTrace.getBlockPos(), rayTrace.sideHit, playerClient);
                         EnumDyeColor hitColor = colorContainer.getColor();
-                        if (hitColor != null) {
+                        if (hitColor != null && hitColor != getColor(stack)) {
                             setColor(stack, hitColor);
                             sendToServer(buf -> buf
                                     .writeByte(0)
