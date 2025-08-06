@@ -125,12 +125,9 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
                                  @NotNull ItemStack sprayCan) {
         EnumDyeColor dyeColor = getColor(sprayCan);
         int color = dyeColor == null ? -1 : dyeColor.colorValue;
+        boolean[] metSplit = { false };
         PipeCollectorWalker.collectPipeNet(world, startPos, startingPipe, pipe -> {
-            if (pipe.getNumConnections() > 2) {
-                return false;
-            }
-
-            if (!canSpray(sprayCan)) {
+            if (metSplit[0] || !canSpray(sprayCan)) {
                 return false;
             }
 
@@ -138,6 +135,12 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
                 pipe.setPaintingColor(color);
                 pipe.scheduleRenderUpdate();
                 onSpray(player, hand, sprayCan);
+            }
+
+            if (pipe.getNumConnections() > 2) {
+                // Returning false here will not stop subwalkers from continuing, so make them exit immediately later
+                metSplit[0] = true;
+                return false;
             }
 
             return true;
