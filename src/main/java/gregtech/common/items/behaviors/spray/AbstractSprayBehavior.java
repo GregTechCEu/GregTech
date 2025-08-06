@@ -6,6 +6,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.common.ConfigHolder;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -151,7 +152,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
             return;
         }
 
-        for (int count = 1; count < MAX_PIPE_TRAVERSAL_LENGTH && canSpray(sprayCan); count++) {
+        for (int count = 1; count < ConfigHolder.tools.maxRecursiveSprayLength && canSpray(sprayCan); count++) {
             if (canPipeBePainted(pipeTile, color)) {
                 pipeTile.setPaintingColor(color);
                 onSpray(player, sprayCan);
