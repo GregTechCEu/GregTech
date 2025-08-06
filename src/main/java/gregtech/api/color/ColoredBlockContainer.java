@@ -31,6 +31,15 @@ public abstract class ColoredBlockContainer {
 
     public abstract boolean setColor(@Nullable EnumDyeColor newColor);
 
+    public boolean setColor(int newColor) {
+        // Do nothing
+        return false;
+    }
+
+    public boolean supportsARGB() {
+        return false;
+    }
+
     public abstract boolean removeColor();
 
     public abstract @Nullable EnumDyeColor getColor();

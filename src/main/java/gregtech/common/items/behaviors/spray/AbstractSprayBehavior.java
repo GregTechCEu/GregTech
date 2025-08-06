@@ -113,8 +113,9 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
             }
         }
 
-        ColoredBlockContainer blockContainer = ColoredBlockContainer.getInstance(world, pos, facing, player);
-        if (blockContainer.isValid() && blockContainer.setColor(getColor(sprayCan))) {
+        ColoredBlockContainer colorContainer = ColoredBlockContainer.getInstance(world, pos, facing, player);
+        if (colorContainer.isValid() && colorContainer.supportsARGB() ? colorContainer.setColor(getColorInt(sprayCan)) :
+                colorContainer.setColor(getColor(sprayCan))) {
             onSpray(player, hand, sprayCan);
             world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
                     SoundCategory.PLAYERS, 1.0f, 1.0f);

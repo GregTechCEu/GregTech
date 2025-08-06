@@ -1,6 +1,7 @@
 package gregtech.common.items.behaviors.spray;
 
 import gregtech.api.color.ColoredBlockContainer;
+import gregtech.api.color.containers.GTPipeColorContainer;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemColorProvider;
 import gregtech.api.items.metaitem.stats.IItemNameProvider;
@@ -170,7 +171,8 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                     if (rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
                         ColoredBlockContainer colorContainer = ColoredBlockContainer.getInstance(playerClient.world,
                                 rayTrace.getBlockPos(), rayTrace.sideHit, playerClient);
-                        EnumDyeColor hitColor = colorContainer.getColor();
+                        EnumDyeColor hitColor = colorContainer instanceof GTPipeColorContainer pipeContainer ?
+                                pipeContainer.getPaintingColor() : colorContainer.getColor();
                         if (hitColor != null && hitColor != getColor(stack)) {
                             setColor(stack, hitColor);
                             sendToServer(buf -> buf

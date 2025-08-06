@@ -43,6 +43,29 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
     }
 
     @Override
+    public boolean setColor(int newColor) {
+        if (newColor == -1) {
+            return removeColor();
+        }
+
+        if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile) {
+            if (pipeTile.isPainted() && getColorInt() == newColor) {
+                return false;
+            } else {
+                pipeTile.setPaintingColor(newColor);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean supportsARGB() {
+        return true;
+    }
+
+    @Override
     public boolean removeColor() {
         if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile && pipeTile.isPainted()) {
             pipeTile.setPaintingColor(-1);
@@ -64,9 +87,28 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
         return null;
     }
 
+    public @Nullable EnumDyeColor getPaintingColor() {
+        int mteColor = getPaintingColorInt();
+        for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
+            if (mteColor == dyeColor.colorValue) {
+                return dyeColor;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public int getColorInt() {
         if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile) {
+            return pipeTile.getPaintingColor();
+        }
+
+        return -1;
+    }
+
+    public int getPaintingColorInt() {
+        if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile && pipeTile.isPainted()) {
             return pipeTile.getPaintingColor();
         }
 
