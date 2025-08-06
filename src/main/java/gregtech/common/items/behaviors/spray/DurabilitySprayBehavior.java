@@ -10,7 +10,6 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
 import net.minecraftforge.common.util.Constants;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -49,7 +48,7 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
     }
 
     @Override
-    public void onSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull ItemStack sprayCan) {
+    public void onSpray(@NotNull EntityPlayer player, @NotNull ItemStack sprayCan) {
         if (player.capabilities.isCreativeMode) return;
 
         if (damageCan(sprayCan)) {

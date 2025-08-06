@@ -1,10 +1,10 @@
 package gregtech.common.items.behaviors.spray;
 
 import gregtech.api.color.ColoredBlockContainer;
+import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.common.pipelike.PipeCollectorWalker;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,14 +16,19 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
+import codechicken.lib.raytracer.RayTracer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 public abstract class AbstractSprayBehavior implements IItemBehaviour {
+
+    private static final int MAX_PIPE_TRAVERSAL_LENGTH = 128;
 
     /**
      * Get the color of the spray can. {@code null} = solvent
@@ -35,18 +40,26 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         return color == null ? -1 : color.colorValue;
     }
 
+    public @Range(from = -1, to = 15) int getColorOrdinal(@NotNull ItemStack stack) {
+        EnumDyeColor color = getColor(stack);
+        return color == null ? -1 : color.ordinal();
+    }
+
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean canSpray(@NotNull ItemStack stack) {
         return true;
     }
 
-    public void onSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull ItemStack sprayCan) {
+    public void onSpray(@NotNull EntityPlayer player, @NotNull ItemStack sprayCan) {
         //
     }
 
-    public @Range(from = -1, to = 15) int getColorOrdinal(@NotNull ItemStack stack) {
-        EnumDyeColor color = getColor(stack);
-        return color == null ? -1 : color.ordinal();
+    public boolean hasSpraySound(@NotNull ItemStack sprayCan) {
+        return true;
+    }
+
+    public @NotNull SoundEvent getSpraySound(@NotNull ItemStack sprayCan) {
+        return GTSoundEvents.SPRAY_CAN_TOOL;
     }
 
     public static @Nullable AbstractSprayBehavior getSprayCanBehavior(@NotNull ItemStack stack) {
@@ -69,10 +82,10 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
     public static @NotNull EnumActionResult handleExternalSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
                                                                 @NotNull World world, @NotNull BlockPos pos,
                                                                 @NotNull EnumFacing facing) {
-        return handleExternalSpray(player, hand, world, pos, facing, player.getHeldItem(hand));
+        return handleExternalSpray(player, world, pos, facing, player.getHeldItem(hand));
     }
 
-    public static @NotNull EnumActionResult handleExternalSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+    public static @NotNull EnumActionResult handleExternalSpray(@NotNull EntityPlayer player,
                                                                 @NotNull World world, @NotNull BlockPos pos,
                                                                 @NotNull EnumFacing facing,
                                                                 @NotNull ItemStack sprayCan) {
@@ -80,7 +93,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         if (sprayBehavior == null) {
             return EnumActionResult.PASS;
         } else {
-            return sprayBehavior.spray(player, hand, world, pos, facing, sprayCan);
+            return sprayBehavior.spray(player, world, pos, facing, sprayCan);
         }
     }
 
@@ -88,14 +101,16 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
     public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
                                              EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack sprayCan = player.getHeldItem(hand);
-        EnumActionResult result = spray(player, hand, world, pos, facing, sprayCan);
+        EnumActionResult result = spray(player, world, pos, facing, sprayCan);
+        if (hasSpraySound(sprayCan) && result == EnumActionResult.SUCCESS) {
+            world.playSound(null, player.posX, player.posY, player.posZ, getSpraySound(sprayCan), SoundCategory.PLAYERS,
+                    1.0f, 1.0f);
+        }
         return ActionResult.newResult(result, sprayCan);
     }
 
-    protected @NotNull EnumActionResult spray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
-                                              @NotNull World world, @NotNull BlockPos pos,
-                                              @NotNull EnumFacing facing,
-                                              @NotNull ItemStack sprayCan) {
+    protected @NotNull EnumActionResult spray(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                              @NotNull EnumFacing facing, @NotNull ItemStack sprayCan) {
         if (!canSpray(sprayCan)) {
             return EnumActionResult.PASS;
         } else if (!player.canPlayerEdit(pos, facing, sprayCan)) {
@@ -104,51 +119,65 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
         if (player.isSneaking()) {
             TileEntity te = world.getTileEntity(pos);
-            if (te instanceof IPipeTile<?, ?>pipeTile && (pipeTile.isPainted() ?
-                    pipeTile.getPaintingColor() != getColorInt(sprayCan) : getColor(sprayCan) != null)) {
-                traversePipes(world, player, hand, pos, pipeTile, sprayCan);
-                world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
-                        SoundCategory.PLAYERS, 1.0f, 1.0f);
-                return EnumActionResult.SUCCESS;
+            int color = getColorInt(sprayCan);
+            if (te instanceof IPipeTile<?, ?>firstPipe && (firstPipe.isPainted() ?
+                    firstPipe.getPaintingColor() != color : getColor(sprayCan) != null)) {
+                RayTraceResult hitResult = RayTracer.retraceBlock(world, player, pos);
+                if (hitResult != null) {
+                    EnumFacing hitSide = CoverRayTracer.determineGridSideHit(hitResult);
+                    if (hitSide != null && firstPipe.isConnected(hitSide)) {
+                        firstPipe.setPaintingColor(color);
+                        traversePipes(world, pos, hitSide, player, sprayCan, color);
+                        return EnumActionResult.SUCCESS;
+                    }
+                }
             }
         }
 
         ColoredBlockContainer colorContainer = ColoredBlockContainer.getInstance(world, pos, facing, player);
         if (colorContainer.isValid() && colorContainer.supportsARGB() ? colorContainer.setColor(getColorInt(sprayCan)) :
                 colorContainer.setColor(getColor(sprayCan))) {
-            onSpray(player, hand, sprayCan);
-            world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
-                    SoundCategory.PLAYERS, 1.0f, 1.0f);
+            onSpray(player, sprayCan);
             return EnumActionResult.SUCCESS;
         }
 
         return EnumActionResult.PASS;
     }
 
-    protected void traversePipes(@NotNull World world, @NotNull EntityPlayer player, @NotNull EnumHand hand,
-                                 @NotNull BlockPos startPos, @NotNull IPipeTile<?, ?> startingPipe,
-                                 @NotNull ItemStack sprayCan) {
-        EnumDyeColor dyeColor = getColor(sprayCan);
-        int color = dyeColor == null ? -1 : dyeColor.colorValue;
-        boolean[] metSplit = { false };
-        PipeCollectorWalker.collectPipeNet(world, startPos, startingPipe, pipe -> {
-            if (metSplit[0] || !canSpray(sprayCan)) {
-                return false;
+    protected void traversePipes(@NotNull World world, @NotNull BlockPos startPos, @NotNull EnumFacing facing,
+                                 @NotNull EntityPlayer player, @NotNull ItemStack sprayCan, int color) {
+        startPos = startPos.offset(facing);
+        IPipeTile<?, ?> nextPipeTile;
+        if (world.getTileEntity(startPos) instanceof IPipeTile<?, ?>pipeTile) {
+            nextPipeTile = pipeTile;
+        } else {
+            return;
+        }
+
+        for (int count = 1; count < MAX_PIPE_TRAVERSAL_LENGTH && canSpray(sprayCan); count++) {
+            if (nextPipeTile.isPainted() ? nextPipeTile.getPaintingColor() != color : color != -1) {
+                nextPipeTile.setPaintingColor(color);
+                onSpray(player, sprayCan);
+            } else {
+                break;
             }
 
-            if (pipe.getPaintingColor() != color) {
-                pipe.setPaintingColor(color);
-                pipe.scheduleRenderUpdate();
-                onSpray(player, hand, sprayCan);
+            if (nextPipeTile.getNumConnections() == 2) {
+                int connections = nextPipeTile.getConnections();
+                connections &= ~(1 << facing.getOpposite().getIndex());
+                for (EnumFacing other : EnumFacing.VALUES) {
+                    if ((connections & (1 << other.getIndex())) != 0) {
+                        facing = other;
+                        if (nextPipeTile.getNeighbor(facing) instanceof IPipeTile<?, ?>neighboringPipe) {
+                            nextPipeTile = neighboringPipe;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            } else {
+                break;
             }
-
-            if (pipe.getNumConnections() > 2) {
-                // Returning false here will not stop subwalkers from continuing, so make them exit immediately later
-                metSplit[0] = true;
-                return false;
-            }
-
-            return true;
-        });
+        }
     }
 }
