@@ -562,12 +562,12 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     /**
      * Just returns proper pipe tile entity
      */
-    public IPipeTile<PipeType, NodeDataType> getPipeTileEntity(IBlockAccess world, BlockPos selfPos) {
+    public @Nullable IPipeTile<PipeType, NodeDataType> getPipeTileEntity(IBlockAccess world, BlockPos selfPos) {
         TileEntity tileEntityAtPos = world.getTileEntity(selfPos);
         return getPipeTileEntity(tileEntityAtPos);
     }
 
-    public IPipeTile<PipeType, NodeDataType> getPipeTileEntity(TileEntity tileEntityAtPos) {
+    public @Nullable IPipeTile<PipeType, NodeDataType> getPipeTileEntity(TileEntity tileEntityAtPos) {
         if (tileEntityAtPos instanceof IPipeTile &&
                 isThisPipeBlock(((IPipeTile<PipeType, NodeDataType>) tileEntityAtPos).getPipeBlock())) {
             return (IPipeTile<PipeType, NodeDataType>) tileEntityAtPos;

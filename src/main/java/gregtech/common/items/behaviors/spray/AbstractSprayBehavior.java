@@ -4,13 +4,13 @@ import gregtech.api.color.ColoredBlockContainer;
 import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -21,7 +21,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-import codechicken.lib.raytracer.RayTracer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -118,16 +117,14 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         }
 
         if (player.isSneaking()) {
-            TileEntity te = world.getTileEntity(pos);
             int color = getColorInt(sprayCan);
-            if (te instanceof IPipeTile<?, ?>firstPipe && (firstPipe.isPainted() ?
-                    firstPipe.getPaintingColor() != color : getColor(sprayCan) != null)) {
-                RayTraceResult hitResult = RayTracer.retraceBlock(world, player, pos);
+            if (world.getBlockState(pos).getBlock() instanceof BlockPipe<?, ?, ?>blockPipe) {
+                RayTraceResult hitResult = blockPipe.getServerCollisionRayTrace(player, pos, world);
                 if (hitResult != null) {
                     EnumFacing hitSide = CoverRayTracer.determineGridSideHit(hitResult);
-                    if (hitSide != null && firstPipe.isConnected(hitSide)) {
-                        firstPipe.setPaintingColor(color);
-                        traversePipes(world, pos, hitSide, player, sprayCan, color);
+                    IPipeTile<?, ?> firstPipe = blockPipe.getPipeTileEntity(world, pos);
+                    if (hitSide != null && firstPipe != null && firstPipe.isConnected(hitSide)) {
+                        traversePipes(firstPipe, hitSide, player, sprayCan, color);
                         return EnumActionResult.SUCCESS;
                     }
                 }
@@ -144,32 +141,29 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         return EnumActionResult.PASS;
     }
 
-    protected void traversePipes(@NotNull World world, @NotNull BlockPos startPos, @NotNull EnumFacing facing,
+    protected void traversePipes(@NotNull IPipeTile<?, ?> pipeTile, @NotNull EnumFacing facing,
                                  @NotNull EntityPlayer player, @NotNull ItemStack sprayCan, int color) {
-        startPos = startPos.offset(facing);
-        IPipeTile<?, ?> nextPipeTile;
-        if (world.getTileEntity(startPos) instanceof IPipeTile<?, ?>pipeTile) {
-            nextPipeTile = pipeTile;
+        if (tryPaintPipe(pipeTile, color) && pipeTile.getNeighbor(facing) instanceof IPipeTile<?, ?>nextPipe) {
+            pipeTile = nextPipe;
         } else {
             return;
         }
 
         for (int count = 1; count < MAX_PIPE_TRAVERSAL_LENGTH && canSpray(sprayCan); count++) {
-            if (nextPipeTile.isPainted() ? nextPipeTile.getPaintingColor() != color : color != -1) {
-                nextPipeTile.setPaintingColor(color);
+            if (tryPaintPipe(pipeTile, color)) {
                 onSpray(player, sprayCan);
             } else {
                 break;
             }
 
-            if (nextPipeTile.getNumConnections() == 2) {
-                int connections = nextPipeTile.getConnections();
+            if (pipeTile.getNumConnections() == 2) {
+                int connections = pipeTile.getConnections();
                 connections &= ~(1 << facing.getOpposite().getIndex());
                 for (EnumFacing other : EnumFacing.VALUES) {
                     if ((connections & (1 << other.getIndex())) != 0) {
                         facing = other;
-                        if (nextPipeTile.getNeighbor(facing) instanceof IPipeTile<?, ?>neighboringPipe) {
-                            nextPipeTile = neighboringPipe;
+                        if (pipeTile.getNeighbor(facing) instanceof IPipeTile<?, ?>neighboringPipe) {
+                            pipeTile = neighboringPipe;
                         } else {
                             break;
                         }
@@ -179,5 +173,14 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
                 break;
             }
         }
+    }
+
+    private static boolean tryPaintPipe(@NotNull IPipeTile<?, ?> pipeTile, int color) {
+        if (pipeTile.isPainted() ? pipeTile.getPaintingColor() != color : color != -1) {
+            pipeTile.setPaintingColor(color);
+            return true;
+        }
+
+        return false;
     }
 }
