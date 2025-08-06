@@ -61,6 +61,10 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         return null;
     }
 
+    public static boolean isSprayCan(@NotNull ItemStack stack) {
+        return getSprayCanBehavior(stack) != null;
+    }
+
     @SuppressWarnings("UnusedReturnValue")
     public static @NotNull EnumActionResult handleExternalSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
                                                                 @NotNull World world, @NotNull BlockPos pos,

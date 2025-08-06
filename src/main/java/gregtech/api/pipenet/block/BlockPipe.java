@@ -633,19 +633,27 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return result;
     }
 
-    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, Entity entity) {
-        if (entity instanceof EntityPlayer) {
-            return hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.MAIN_HAND)) ||
-                    hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.OFF_HAND)) ||
-                    entity.isSneaking() && isHoldingPipe((EntityPlayer) entity);
+    public boolean hasPipeCollisionChangingItem(@NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                                @Nullable Entity entity) {
+        if (entity instanceof EntityPlayer entityPlayer) {
+            return hasPipeCollisionChangingItem(world, pos, entityPlayer,
+                    entityPlayer.getHeldItem(EnumHand.MAIN_HAND)) ||
+                    hasPipeCollisionChangingItem(world, pos, entityPlayer,
+                            entityPlayer.getHeldItem(EnumHand.OFF_HAND)) ||
+                    entity.isSneaking() && isHoldingPipe(entityPlayer);
         }
         return false;
     }
 
     public abstract boolean isHoldingPipe(EntityPlayer player);
 
-    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
+    public boolean hasPipeCollisionChangingItem(@NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                                @NotNull EntityPlayer player, @NotNull ItemStack stack) {
         if (isPipeTool(stack)) return true;
+
+        if (player.isSneaking() && AbstractSprayBehavior.isSprayCan(stack)) {
+            return true;
+        }
 
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(world, pos);
         if (pipeTile == null) return false;
