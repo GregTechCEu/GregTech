@@ -143,14 +143,17 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
     protected void traversePipes(@NotNull IPipeTile<?, ?> pipeTile, @NotNull EnumFacing facing,
                                  @NotNull EntityPlayer player, @NotNull ItemStack sprayCan, int color) {
-        if (tryPaintPipe(pipeTile, color) && pipeTile.getNeighbor(facing) instanceof IPipeTile<?, ?>nextPipe) {
+        if (canPipeBePainted(pipeTile, color) && pipeTile.getNeighbor(facing) instanceof IPipeTile<?, ?>nextPipe) {
+            pipeTile.setPaintingColor(color);
+            onSpray(player, sprayCan);
             pipeTile = nextPipe;
         } else {
             return;
         }
 
         for (int count = 1; count < MAX_PIPE_TRAVERSAL_LENGTH && canSpray(sprayCan); count++) {
-            if (tryPaintPipe(pipeTile, color)) {
+            if (canPipeBePainted(pipeTile, color)) {
+                pipeTile.setPaintingColor(color);
                 onSpray(player, sprayCan);
             } else {
                 break;
@@ -175,12 +178,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         }
     }
 
-    private static boolean tryPaintPipe(@NotNull IPipeTile<?, ?> pipeTile, int color) {
-        if (pipeTile.isPainted() ? pipeTile.getPaintingColor() != color : color != -1) {
-            pipeTile.setPaintingColor(color);
-            return true;
-        }
-
-        return false;
+    private static boolean canPipeBePainted(@NotNull IPipeTile<?, ?> pipeTile, int color) {
+        return pipeTile.isPainted() ? pipeTile.getPaintingColor() != color : color != -1;
     }
 }
