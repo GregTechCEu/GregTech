@@ -83,9 +83,14 @@ public class GTTransferUtils {
     }
 
     public static void moveInventoryItems(IItemHandler sourceInventory, IItemHandler targetInventory) {
+        moveInventoryItems(sourceInventory, targetInventory, stack -> true);
+    }
+
+    public static void moveInventoryItems(IItemHandler sourceInventory, IItemHandler targetInventory,
+                                          Predicate<ItemStack> predicate) {
         for (int srcIndex = 0; srcIndex < sourceInventory.getSlots(); srcIndex++) {
             ItemStack sourceStack = sourceInventory.extractItem(srcIndex, Integer.MAX_VALUE, true);
-            if (sourceStack.isEmpty()) {
+            if (sourceStack.isEmpty() || !predicate.test(sourceStack)) {
                 continue;
             }
             ItemStack remainder = insertItem(targetInventory, sourceStack, true);

@@ -18,7 +18,7 @@ public final class EntryTypes<T extends VirtualEntry> {
 
     private static final Map<ResourceLocation, EntryTypes<?>> TYPES_MAP = new Object2ObjectOpenHashMap<>();
     public static final EntryTypes<VirtualTank> ENDER_FLUID = addEntryType(gregtechId("ender_fluid"), VirtualTank::new);
-    // ENDER_ITEM("ender_item", null),
+    public static final EntryTypes<VirtualChest> ENDER_ITEM = addEntryType(gregtechId("ender_item"), VirtualChest::new);
     // ENDER_ENERGY("ender_energy", null),
     // ENDER_REDSTONE("ender_redstone", null);
     private final ResourceLocation location;
