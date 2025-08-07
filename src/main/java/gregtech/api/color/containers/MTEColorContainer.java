@@ -91,6 +91,8 @@ public class MTEColorContainer extends ColoredBlockContainer {
     @Override
     public @Nullable EnumDyeColor getColor() {
         int mteColor = getColorInt();
+        if (mteColor == -1) return null;
+
         for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
             if (mteColor == dyeColor.colorValue) {
                 return dyeColor;
@@ -108,6 +110,12 @@ public class MTEColorContainer extends ColoredBlockContainer {
         }
 
         return -1;
+    }
+
+    @Override
+    public boolean isValid() {
+        MetaTileEntity mte = getMetaTileEntity(world, pos);
+        return mte != null && mte.isValid();
     }
 
     public static class MTEColorManager extends ColoredBlockContainer.ContainerManager {

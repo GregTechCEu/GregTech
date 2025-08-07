@@ -76,6 +76,11 @@ public class AE2ColorContainer extends ColoredBlockContainer {
         return null;
     }
 
+    @Override
+    public boolean isValid() {
+        return world.getTileEntity(pos) instanceof IColorableTile;
+    }
+
     public static class AE2BlockManager extends ColoredBlockContainer.ContainerManager {
 
         @Override

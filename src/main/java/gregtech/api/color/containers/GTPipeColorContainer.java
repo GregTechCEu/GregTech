@@ -78,17 +78,8 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
     @Override
     public @Nullable EnumDyeColor getColor() {
         int mteColor = getColorInt();
-        for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
-            if (mteColor == dyeColor.colorValue) {
-                return dyeColor;
-            }
-        }
+        if (mteColor == -1) return null;
 
-        return null;
-    }
-
-    public @Nullable EnumDyeColor getPaintingColor() {
-        int mteColor = getPaintingColorInt();
         for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
             if (mteColor == dyeColor.colorValue) {
                 return dyeColor;
@@ -100,19 +91,16 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
 
     @Override
     public int getColorInt() {
-        if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile) {
+        if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile && pipeTile.isPainted()) {
             return pipeTile.getPaintingColor();
         }
 
         return -1;
     }
 
-    public int getPaintingColorInt() {
-        if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile && pipeTile.isPainted()) {
-            return pipeTile.getPaintingColor();
-        }
-
-        return -1;
+    @Override
+    public boolean isValid() {
+        return world.getTileEntity(pos) instanceof IPipeTile<?, ?>;
     }
 
     public static class GTPipeColorManager extends ContainerManager {
