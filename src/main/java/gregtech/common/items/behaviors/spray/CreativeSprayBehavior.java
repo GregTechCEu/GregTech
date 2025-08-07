@@ -137,26 +137,7 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
             int button = event.getButton();
             boolean sneaking = playerClient.isSneaking();
 
-            // TODO make changing it in the hand shift scrolling.
-            if (button == 0) { // Left click
-                if (isLocked(stack)) return;
-
-                int color;
-                if (sneaking) {
-                    color = getColorOrdinal(stack) - 1;
-                    if (color == -2) color = 15;
-                } else {
-                    color = getColorOrdinal(stack) + 1;
-                }
-
-                setColor(stack, color);
-                event.setCanceled(true);
-
-                final int finalColor = color; // grr java
-                sendToServer(buf -> buf
-                        .writeByte(0)
-                        .writeByte(finalColor));
-            } else if (button == 2) { // Middle click
+            if (button == 2) { // Middle click
                 if (sneaking) {
                     toggleLocked(stack);
                 } else if (!isLocked(stack)) {
