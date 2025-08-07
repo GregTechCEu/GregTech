@@ -47,6 +47,7 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
         guiSyncManager.syncValue("color", 0, colorSync);
 
         ModularPanel panel = GTGuis.createPanel(usedStack, 176, 120);
+        // noinspection SpellCheckingInspection
         panel.child(SlotGroupWidget.builder()
                 .matrix("SCCCCCCCC",
                         "CCCCCCCC")
