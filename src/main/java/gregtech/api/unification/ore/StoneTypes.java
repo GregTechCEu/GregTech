@@ -16,17 +16,24 @@ import net.minecraft.init.Blocks;
 public class StoneTypes {
 
     // Real Types that drop custom Ores
+    public static final StoneType STONE = StoneType.Builder.create(0, "stone")
+            .soundType(SoundType.STONE)
+            .processingPrefix(OrePrefix.ore)
+            .stoneMaterial(Materials.Stone)
+            .stone(() -> Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, EnumType.STONE))
+            .predicate(state -> state.getBlock() instanceof BlockStone &&
+                    state.getValue(BlockStone.VARIANT) == BlockStone.EnumType.STONE)
+            .shouldBeDroppedAsItem(true)
+            .build();
 
-    public static final StoneType STONE = new StoneType(0, "stone", SoundType.STONE, OrePrefix.ore, Materials.Stone,
-            () -> Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, EnumType.STONE),
-            state -> state.getBlock() instanceof BlockStone &&
-                    state.getValue(BlockStone.VARIANT) == BlockStone.EnumType.STONE,
-            true);
-
-    public static StoneType NETHERRACK = new StoneType(1, "netherrack", SoundType.STONE, OrePrefix.oreNetherrack,
-            Materials.Netherrack,
-            Blocks.NETHERRACK::getDefaultState,
-            state -> state.getBlock() == Blocks.NETHERRACK, true);
+    public static final StoneType NETHERRACK = StoneType.Builder.create(1, "netherrack")
+            .soundType(SoundType.STONE)
+            .processingPrefix(OrePrefix.oreNetherrack)
+            .stoneMaterial(Materials.Netherrack)
+            .stone(Blocks.NETHERRACK::getDefaultState)
+            .predicate(state -> state.getBlock() == Blocks.NETHERRACK)
+            .shouldBeDroppedAsItem(true)
+            .build();
 
     public static StoneType ENDSTONE = new StoneType(2, "endstone", SoundType.STONE, OrePrefix.oreEndstone,
             Materials.Endstone,

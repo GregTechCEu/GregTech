@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -56,25 +57,14 @@ public class ClipboardRenderer implements IconRegistrar {
         Textures.iconRegisters.add(this);
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(@NotNull TextureMap textureMap) {
-        this.textures[0] = textureMap.registerSprite(new ResourceLocation("gregtech:blocks/clipboard/wood"));
-        boxTextureMap.put(boardBox, this.textures[0]);
-        this.textures[1] = textureMap.registerSprite(new ResourceLocation("gregtech:blocks/clipboard/clip"));
-        boxTextureMap.put(clipBox, this.textures[1]);
-        boxTextureMap.put(graspBox, this.textures[1]);
-        this.textures[2] = textureMap.registerSprite(new ResourceLocation("gregtech:blocks/clipboard/page"));
-        boxTextureMap.put(pageBox, this.textures[2]);
-    }
-
     @SideOnly(Side.CLIENT)
     public static void renderBoard(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
                                    EnumFacing rotation, MetaTileEntityClipboard clipboard, float partialTicks) {
         translation.translate(0.5, 0.5, 0.5);
         translation.rotate(Math.toRadians(90.0 * rotations.indexOf(rotation)), Rotation.axes[1]);
         translation.translate(-0.5, -0.5, -0.5);
-
+        World world = clipboard.getWorld();
+        if (world != null) renderState.setBrightness(world, clipboard.getPos());
         // Render Clipboard
         for (EnumFacing renderSide : EnumFacing.VALUES) {
             boxTextureMap.forEach((box, sprite) -> Textures.renderFace(renderState, translation, pipeline, renderSide,
@@ -89,7 +79,17 @@ public class ClipboardRenderer implements IconRegistrar {
         GlStateManager.pushMatrix();
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
+
+        float lx = 240, ly = 240;
+        World world = clipboard.getWorld();
+        if (world != null) {
+            int light = world.getCombinedLight(clipboard.getPos(), 0);
+
+            lx = (float) light % 0x10000;
+            ly = (float) light / 0x10000;
+        }
+
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lx, ly);
         RenderHelper.disableStandardItemLighting();
 
         // All of these are done in reverse order, by the way, if you're reviewing this :P
@@ -115,6 +115,18 @@ public class ClipboardRenderer implements IconRegistrar {
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
         RenderHelper.enableStandardItemLighting();
         GlStateManager.popMatrix();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(@NotNull TextureMap textureMap) {
+        this.textures[0] = textureMap.registerSprite(new ResourceLocation("gregtech:blocks/clipboard/wood"));
+        boxTextureMap.put(boardBox, this.textures[0]);
+        this.textures[1] = textureMap.registerSprite(new ResourceLocation("gregtech:blocks/clipboard/clip"));
+        boxTextureMap.put(clipBox, this.textures[1]);
+        boxTextureMap.put(graspBox, this.textures[1]);
+        this.textures[2] = textureMap.registerSprite(new ResourceLocation("gregtech:blocks/clipboard/page"));
+        boxTextureMap.put(pageBox, this.textures[2]);
     }
 
     @SideOnly(Side.CLIENT)

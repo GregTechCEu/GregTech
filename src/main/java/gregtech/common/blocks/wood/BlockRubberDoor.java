@@ -31,16 +31,11 @@ public class BlockRubberDoor extends BlockWoodenDoor {
         boolean open = !state.getValue(OPEN);
         boolean rh = state.getValue(HINGE) == BlockDoor.EnumHingePosition.RIGHT;
 
-        switch (facing) {
-            case EAST:
-            default:
-                return open ? EAST_AABB : (rh ? NORTH_AABB : SOUTH_AABB);
-            case SOUTH:
-                return open ? SOUTH_AABB : (rh ? EAST_AABB : WEST_AABB);
-            case WEST:
-                return open ? WEST_AABB : (rh ? SOUTH_AABB : NORTH_AABB);
-            case NORTH:
-                return open ? NORTH_AABB : (rh ? WEST_AABB : EAST_AABB);
-        }
+        return switch (facing) {
+            default -> open ? EAST_AABB : (rh ? NORTH_AABB : SOUTH_AABB);
+            case SOUTH -> open ? SOUTH_AABB : (rh ? EAST_AABB : WEST_AABB);
+            case WEST -> open ? WEST_AABB : (rh ? SOUTH_AABB : NORTH_AABB);
+            case NORTH -> open ? NORTH_AABB : (rh ? WEST_AABB : EAST_AABB);
+        };
     }
 }

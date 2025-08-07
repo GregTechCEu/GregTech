@@ -52,11 +52,19 @@ public class OrePrefix {
     private final static AtomicInteger idCounter = new AtomicInteger(0);
 
     // Regular Ore Prefix. Ore -> Material is a Oneway Operation! Introduced by Eloraam
-    public static final OrePrefix ore = new OrePrefix("ore", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION,
-            hasOreProperty);
+    public static final OrePrefix ore = Builder.of("ore", -1)
+            .material(null)
+            .materialIconType(MaterialIconType.ore)
+            .flags(OrePrefix.Flags.ENABLE_UNIFICATION)
+            .condition(OrePrefix.Conditions.hasOreProperty)
+            .build();
     //rawOre
-    public static final OrePrefix rawOre = new OrePrefix("rawOre", -1, null, MaterialIconType.raw, ENABLE_UNIFICATION,
-            hasOreProperty);
+    public static final OrePrefix rawOre = Builder.of("rawOre", -1)
+            .material(null)
+            .materialIconType(MaterialIconType.raw)
+            .flags(OrePrefix.Flags.ENABLE_UNIFICATION)
+            .condition(OrePrefix.Conditions.hasOreProperty)
+            .build();
 
     public static final OrePrefix oreGranite = new OrePrefix("oreGranite", -1, null, MaterialIconType.ore,
             ENABLE_UNIFICATION, hasOreProperty);
@@ -154,7 +162,7 @@ public class OrePrefix {
     // 2 Plates combined in one Item
     public static final OrePrefix plateDouble = new OrePrefix("plateDouble", M * 2, null, MaterialIconType.plateDouble,
             ENABLE_UNIFICATION, hasIngotProperty
-                    .and(mat -> mat.hasFlags(GENERATE_PLATE, GENERATE_DOUBLE_PLATE) && !mat.hasFlag(NO_SMASHING)));
+            .and(mat -> mat.hasFlags(GENERATE_PLATE, GENERATE_DOUBLE_PLATE) && !mat.hasFlag(NO_SMASHING)));
     // Regular Plate made of one Ingot/Dust. Introduced by Calclavia
     public static final OrePrefix plate = new OrePrefix("plate", M, null, MaterialIconType.plate, ENABLE_UNIFICATION,
             mat -> mat.hasFlag(GENERATE_PLATE));
@@ -226,7 +234,7 @@ public class OrePrefix {
     // made of 5 Ingots.
     public static final OrePrefix turbineBlade = new OrePrefix("turbineBlade", M * 10, null,
             MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasRotorProperty
-                    .and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE) && !m.hasProperty(PropertyKey.GEM)));
+            .and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE) && !m.hasProperty(PropertyKey.GEM)));
 
     public static final OrePrefix paneGlass = new OrePrefix("paneGlass", -1, MarkerMaterials.Color.Colorless, null,
             SELF_REFERENCING, null);
@@ -750,4 +758,53 @@ public class OrePrefix {
     public String toString() {
         return name + "/" + id;
     }
+
+    public static class Builder {
+    private final String name;
+    private final long materialAmount;
+    private Material material;
+    private MaterialIconType materialIconType;
+    private long flags;
+    private Predicate<Material> condition;
+    private Function<Material, List<String>> tooltipFunc;
+
+    private Builder(String name, long materialAmount) {
+        this.name = name;
+        this.materialAmount = materialAmount;
+    }
+
+    public static Builder of(String name, long materialAmount) {
+        return new Builder(name, materialAmount);
+    }
+
+    public Builder material(@Nullable Material material) {
+        this.material = material;
+        return this;
+    }
+
+    public Builder materialIconType(@Nullable MaterialIconType materialIconType) {
+        this.materialIconType = materialIconType;
+        return this;
+    }
+
+    public Builder flags(long flags) {
+        this.flags = flags;
+        return this;
+    }
+
+    public Builder condition(@Nullable Predicate<Material> condition) {
+        this.condition = condition;
+        return this;
+    }
+
+    public Builder tooltipFunc(@Nullable Function<Material, List<String>> tooltipFunc) {
+        this.tooltipFunc = tooltipFunc;
+        return this;
+    }
+
+    public OrePrefix build() {
+        return new OrePrefix(name, materialAmount, material, materialIconType, flags, condition, tooltipFunc);
+    }
+}
+
 }

@@ -58,6 +58,9 @@ dependencies {
     compileOnly rfg.deobf("curse.maven:chisel-235279:2915375") // Chisel 1.0.2.45
     compileOnly rfg.deobf("curse.maven:littletiles-257818:4750222") // LittleTiles 1.5.82-1.12.2
     compileOnly rfg.deobf("curse.maven:creativecore-257814:4722163") // Creative Core 1.10.71
+
+    compileOnly rfg.deobf("curse.maven:lolasm-460609:6333774")
+
     implementation rfg.deobf("curse.maven:ae2-fluid-crafting-rework-623955:5751930") // AE2FC 2.6.6
     implementation rfg.deobf("curse.maven:ae2-extended-life-570458:6302098") // AE2FC 2.6.6
     // Mods with Soft compat but which have no need to be in code, such as isModLoaded() checks and getModItem() recipes.

@@ -4,15 +4,30 @@ import gregtech.api.GTValues;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.Mods;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.UVMirror;
-import gregtech.client.renderer.texture.cube.*;
-import gregtech.client.renderer.texture.custom.*;
+import gregtech.client.renderer.texture.cube.AlignedOrientedOverlayRenderer;
+import gregtech.client.renderer.texture.cube.LDPipeOverlayRenderer;
+import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer;
+import gregtech.client.renderer.texture.cube.SidedCubeRenderer;
+import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.client.renderer.texture.custom.ClipboardRenderer;
+import gregtech.client.renderer.texture.custom.CrateRenderer;
+import gregtech.client.renderer.texture.custom.DrumRenderer;
+import gregtech.client.renderer.texture.custom.FireboxActiveRenderer;
+import gregtech.client.renderer.texture.custom.LargeTurbineRenderer;
+import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
+import gregtech.client.renderer.texture.custom.SafeRenderer;
 import gregtech.client.texture.IconRegistrar;
 
+import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -28,6 +43,9 @@ import codechicken.lib.vec.TransformationList;
 import codechicken.lib.vec.uv.IconTransformation;
 import codechicken.lib.vec.uv.UVTransformationList;
 import org.apache.commons.lang3.ArrayUtils;
+import zone.rong.loliasm.client.sprite.ondemand.IAnimatedSpritePrimer;
+import zone.rong.loliasm.client.sprite.ondemand.ICompiledChunkExpander;
+import zone.rong.loliasm.config.LoliConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,10 +57,7 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class Textures {
 
     public static final Map<String, ICubeRenderer> CUBE_RENDERER_REGISTRY = new HashMap<>();
-
-    private static final ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
     public static final List<IconRegistrar> iconRegisters = new ArrayList<>();
-
     // Custom Renderers
     public static final ClipboardRenderer CLIPBOARD_RENDERER = new ClipboardRenderer();
     public static final CrateRenderer WOODEN_CRATE = new CrateRenderer("storage/crates/wooden_crate");
@@ -52,7 +67,6 @@ public class Textures {
     public static final SafeRenderer SAFE = new SafeRenderer("storage/safe");
     public static final LargeTurbineRenderer LARGE_TURBINE_ROTOR_RENDERER = new LargeTurbineRenderer();
     public static final QuantumStorageRenderer QUANTUM_STORAGE_RENDERER = new QuantumStorageRenderer();
-
     // Simple Cube Renderers
     public static final SimpleOverlayRenderer BRONZE_PLATED_BRICKS = new SimpleOverlayRenderer(
             "casings/solid/machine_bronze_plated_bricks");
@@ -104,16 +118,12 @@ public class Textures {
     public static final SimpleOverlayRenderer QUANTUM_EXTENDER = new SimpleOverlayRenderer("casings/quantum/extender");
     public static final SimpleOverlayRenderer QUANTUM_EXTENDER_ACTIVE = new SimpleOverlayRenderer(
             "casings/quantum/extender_active");
-
     public static final SimpleOverlayRenderer QUANTUM_INDICATOR = new SimpleOverlayRenderer(
             "casings/quantum/quantum_indicator_disconnected");
-
     public static final SimpleOverlayRenderer QUANTUM_INDICATOR_CONNECTED = new SimpleOverlayRenderer(
             "casings/quantum/quantum_indicator_connected");
-
     public static final SimpleOverlayRenderer QUANTUM_INDICATOR_POWERED = new SimpleOverlayRenderer(
             "casings/quantum/quantum_indicator_powered");
-
     // Simple Sided Cube Renderers
     public static final SimpleSidedCubeRenderer STEAM_CASING_BRONZE = new SimpleSidedCubeRenderer(
             "casings/steam/bronze");
@@ -130,13 +140,11 @@ public class Textures {
     public static final SimpleSidedCubeRenderer MAGIC_ENERGY_ABSORBER_ACTIVE = new SimpleSidedCubeRenderer(
             "casings/magic/absorber/active");
     public static final SimpleSidedCubeRenderer DRUM_OVERLAY = new SimpleSidedCubeRenderer("storage/drums/drum_top");
-
     // Simple Oriented Cube Renderers
     public static final SimpleOrientedCubeRenderer CRAFTING_TABLE = new SimpleOrientedCubeRenderer(
             "casings/crafting_table");
     public static final SimpleOrientedCubeRenderer GRATE_CASING_STEEL_FRONT = new SimpleOrientedCubeRenderer(
             "casings/pipe/grate_steel_front");
-
     // Oriented Overlay Renderers
     public static final OrientedOverlayRenderer COAL_BOILER_OVERLAY = new OrientedOverlayRenderer(
             "generators/boiler/coal");
@@ -212,7 +220,6 @@ public class Textures {
             "multiblock/network_switch");
     public static final OrientedOverlayRenderer POWER_SUBSTATION_OVERLAY = new OrientedOverlayRenderer(
             "multiblock/power_substation");
-
     public static final OrientedOverlayRenderer ALLOY_SMELTER_OVERLAY = new OrientedOverlayRenderer(
             "machines/alloy_smelter");
     public static final OrientedOverlayRenderer FURNACE_OVERLAY = new OrientedOverlayRenderer("machines/furnace");
@@ -280,7 +287,6 @@ public class Textures {
             "machines/world_accelerator");
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_TE_OVERLAY = new OrientedOverlayRenderer(
             "machines/world_accelerator_te");
-
     // Simple Overlay Renderers
     public static final SimpleOverlayRenderer SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_screen");
     public static final SimpleOverlayRenderer DISPLAY = new SimpleOverlayRenderer("cover/overlay_display");
@@ -330,7 +336,6 @@ public class Textures {
             "overlay/machine/overlay_fluid_output");
     public static final SimpleOverlayRenderer ITEM_OUTPUT_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_item_output");
-
     public static final SimpleOverlayRenderer FLUID_HATCH_OUTPUT_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_fluid_hatch_output");
     public static final SimpleOverlayRenderer FLUID_HATCH_INPUT_OVERLAY = new SimpleOverlayRenderer(
@@ -341,12 +346,10 @@ public class Textures {
             "overlay/machine/overlay_item_hatch_input");
     public static final SimpleOverlayRenderer WATER_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_water");
-
     public static final SimpleOverlayRenderer DUAL_HATCH_OUTPUT_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_dual_hatch_output");
     public static final SimpleOverlayRenderer DUAL_HATCH_INPUT_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_dual_hatch_input");
-
     public static final ICubeRenderer BRONZE_FIREBOX = new SidedCubeRenderer("casings/firebox/overlay/bronze");
     public static final ICubeRenderer BRONZE_FIREBOX_ACTIVE = new FireboxActiveRenderer(
             "casings/firebox/overlay/bronze/active");
@@ -363,10 +366,8 @@ public class Textures {
     public static final ICubeRenderer COMPUTER_CASING = new SidedCubeRenderer("casings/computer/computer_casing");
     public static final ICubeRenderer ADVANCED_COMPUTER_CASING = new SidedCubeRenderer(
             "casings/computer/advanced_computer_casing");
-
     public static final AlignedOrientedOverlayRenderer LD_ITEM_PIPE = new LDPipeOverlayRenderer("pipe/ld_item_pipe");
     public static final AlignedOrientedOverlayRenderer LD_FLUID_PIPE = new LDPipeOverlayRenderer("pipe/ld_fluid_pipe");
-
     public static final SimpleOverlayRenderer ROTOR_HOLDER_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_rotor_holder");
     public static final SimpleOverlayRenderer ADV_PUMP_OVERLAY = new SimpleOverlayRenderer(
@@ -500,7 +501,6 @@ public class Textures {
             "overlay/machine/overlay_alarm_active");
     public static final SimpleOverlayRenderer TAPED_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_ducttape");
-
     public static final SimpleOverlayRenderer COVER_INTERFACE_FLUID = new SimpleOverlayRenderer(
             "cover/cover_interface_fluid");
     public static final SimpleOverlayRenderer COVER_INTERFACE_FLUID_GLASS = new SimpleOverlayRenderer(
@@ -517,12 +517,10 @@ public class Textures {
             "cover/cover_interface_proxy");
     public static final SimpleOverlayRenderer COVER_INTERFACE_WIRELESS = new SimpleOverlayRenderer(
             "cover/cover_interface_wireless");
-
     public static final SimpleOverlayRenderer CONVERTER_FE_OUT = new SimpleOverlayRenderer(
             "overlay/converter/converter_fe_out");
     public static final SimpleOverlayRenderer CONVERTER_FE_IN = new SimpleOverlayRenderer(
             "overlay/converter/converter_fe_in");
-
     public static final SimpleOverlayRenderer ME_OUTPUT_HATCH = new SimpleOverlayRenderer(
             "overlay/appeng/me_output_hatch");
     public static final SimpleOverlayRenderer ME_OUTPUT_HATCH_ACTIVE = new SimpleOverlayRenderer(
@@ -537,19 +535,6 @@ public class Textures {
     public static final SimpleOverlayRenderer ME_INPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_input_bus");
     public static final SimpleOverlayRenderer ME_INPUT_BUS_ACTIVE = new SimpleOverlayRenderer(
             "overlay/appeng/me_input_bus_active");
-
-    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY = new SimpleOverlayRenderer("wireless_hatch/overlay_front");
-    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_4x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.4x");
-    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_16x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.16x");
-    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_64x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.64x");
-    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_256x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.256x");
-    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_1024x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.1024x");
-    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_4096x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.4096x");
-    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_16384x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.16384x");
-    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_65536x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.65536x");
-    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_262144x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.262144x");
-    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_1048576x = new SimpleOverlayRenderer("wireless_hatch/overlay_front.1048576x");
-
     public static final ResourceLocation ACE_CAPE_TEXTURE = gregtechId("textures/capes/acecape.png");
     public static final ResourceLocation AGENDER_CAPE_TEXTURE = gregtechId("textures/capes/agendercape.png");
     public static final ResourceLocation AROMANTIC_CAPE_TEXTURE = gregtechId("textures/capes/aromanticcape.png");
@@ -566,7 +551,29 @@ public class Textures {
     public static final ResourceLocation RED_CAPE_TEXTURE = gregtechId("textures/capes/redcape.png");
     public static final ResourceLocation TRANS_CAPE_TEXTURE = gregtechId("textures/capes/transcape.png");
     public static final ResourceLocation YELLOW_CAPE_TEXTURE = gregtechId("textures/capes/yellowcape.png");
-
+    private static final ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY = new SimpleOverlayRenderer(
+            "wireless_hatch/overlay_front");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_4x = new SimpleOverlayRenderer(
+            "wireless_hatch/overlay_front.4x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_16x = new SimpleOverlayRenderer(
+            "wireless_hatch/overlay_front.16x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_64x = new SimpleOverlayRenderer(
+            "wireless_hatch/overlay_front.64x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_256x = new SimpleOverlayRenderer(
+            "wireless_hatch/overlay_front.256x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_1024x = new SimpleOverlayRenderer(
+            "wireless_hatch/overlay_front.1024x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_4096x = new SimpleOverlayRenderer(
+            "wireless_hatch/overlay_front.4096x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_16384x = new SimpleOverlayRenderer(
+            "wireless_hatch/overlay_front.16384x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_65536x = new SimpleOverlayRenderer(
+            "wireless_hatch/overlay_front.65536x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_262144x = new SimpleOverlayRenderer(
+            "wireless_hatch/overlay_front.262144x");
+    public static SimpleOverlayRenderer MULTIPART_WIRELESS_ENERGY_1048576x = new SimpleOverlayRenderer(
+            "wireless_hatch/overlay_front.1048576x");
     @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite RESTRICTIVE_OVERLAY;
     @SideOnly(Side.CLIENT)
@@ -664,7 +671,6 @@ public class Textures {
             registrar.registerIcons(textureMap);
         }
 
-
         RESTRICTIVE_OVERLAY = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_restrictive"));
         PIPE_TINY = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_tiny_in"));
         PIPE_SMALL = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_small_in"));
@@ -742,6 +748,21 @@ public class Textures {
         }
         renderState.setPipeline(blockFace, 0, blockFace.verts.length,
                 ArrayUtils.addAll(ops, new TransformationList(translation), uvList));
+
+        if (Mods.Loliasm.isModLoaded()) {
+            if (!LoliConfig.instance.onDemandAnimatedTextures || Mods.Optifine.isModLoaded() ||
+                    renderState.getVertexFormat() == DefaultVertexFormats.ITEM) {
+                renderState.render();
+            } else {
+                if (sprite.hasAnimationMetadata()) {
+                    CompiledChunk chunk = IAnimatedSpritePrimer.CURRENT_COMPILED_CHUNK.get();
+                    if (chunk instanceof ICompiledChunkExpander expander) {
+                        expander.resolve(sprite);
+                    }
+                }
+            }
+        }
+
         renderState.render();
     }
 

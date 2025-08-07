@@ -278,6 +278,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public boolean isFaceBlocked(EnumFacing side) {
+        if (side == null) return true;
         return isFaceBlocked(blockedConnections, side);
     }
 

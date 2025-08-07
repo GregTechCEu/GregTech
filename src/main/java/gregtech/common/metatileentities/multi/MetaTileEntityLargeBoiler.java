@@ -237,7 +237,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                         .child(new SliderWidget()
                                 .background(new Rectangle().setColor(Color.BLACK.brighter(2)).asIcon()
                                         .height(8))
-                                .bounds(0, 1)
+                                .bounds(0.2, 1)
                                 .setAxis(GuiAxis.X)
                                 .value(sliderValue)
                                 .widthRel(0.7f)
@@ -255,7 +255,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
                                     try {
                                         long l = Long.parseLong(str);
-                                        if (l < 0) l = 0;
+                                        if (l < 20) l = 20;
                                         else if (l > 100) l = 100;
                                         return String.valueOf(l);
                                     } catch (NumberFormatException ignored) {
@@ -267,7 +267,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     private void setThrottlePercentage(int amount) {
-        this.throttlePercentage = amount;
+        this.throttlePercentage = Math.max(20, Math.min(amount, 100));
     }
 
     private int getThrottlePercentage() {

@@ -76,6 +76,7 @@ public enum Mods {
     Vintagium(Names.VINTAGIUM),
     GTQTCore(Names.GTQT_CORE),
     Alfheim(Names.ALFHEIM),
+    Loliasm(Names.LOLIASM),
 
     // Special Optifine handler, but consolidated here for simplicity
     Optifine(null) {
@@ -148,6 +149,8 @@ public enum Mods {
         public static final String VINTAGIUM = "vintagium";
         public static final String GTQT_CORE = "gtqtcore";
         public static final String ALFHEIM = "alfheim";
+        public static final String LOLIASM = "loliasm";
+        public static final String VINTAGE = "vintagefix";
     }
 
     private final String ID;

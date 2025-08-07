@@ -23,18 +23,21 @@ import java.util.function.Supplier;
  */
 public class StoneType implements Comparable<StoneType> {
 
+    public static final GTControlledRegistry<String, StoneType> STONE_TYPE_REGISTRY = new GTControlledRegistry<>(128);
+    private static final ThreadLocal<Boolean> hasDummyPredicateRan = ThreadLocal.withInitial(() -> false);
+    private static final com.google.common.base.Predicate<IBlockState> dummyPredicate = state -> {
+        hasDummyPredicateRan.set(true);
+        return false;
+    };
     public final String name;
-
     public final OrePrefix processingPrefix;
     public final Material stoneMaterial;
     public final Supplier<IBlockState> stone;
     public final SoundType soundType;
+    public final boolean shouldBeDroppedAsItem;
     // we are using guava predicate because isReplaceableOreGen uses it
     @SuppressWarnings("Guava")
     private final com.google.common.base.Predicate<IBlockState> predicate;
-    public final boolean shouldBeDroppedAsItem;
-
-    public static final GTControlledRegistry<String, StoneType> STONE_TYPE_REGISTRY = new GTControlledRegistry<>(128);
 
     public StoneType(int id, String name, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial,
                      Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
@@ -53,17 +56,6 @@ public class StoneType implements Comparable<StoneType> {
             OreByProduct.addOreByProductPrefix(this.processingPrefix);
         }
     }
-
-    @Override
-    public int compareTo(@NotNull StoneType stoneType) {
-        return STONE_TYPE_REGISTRY.getIDForObject(this) - STONE_TYPE_REGISTRY.getIDForObject(stoneType);
-    }
-
-    private static final ThreadLocal<Boolean> hasDummyPredicateRan = ThreadLocal.withInitial(() -> false);
-    private static final com.google.common.base.Predicate<IBlockState> dummyPredicate = state -> {
-        hasDummyPredicateRan.set(true);
-        return false;
-    };
 
     public static void init() {
         // noinspection ResultOfMethodCallIgnored
@@ -99,6 +91,11 @@ public class StoneType implements Comparable<StoneType> {
     }
 
     @Override
+    public int compareTo(@NotNull StoneType stoneType) {
+        return STONE_TYPE_REGISTRY.getIDForObject(this) - STONE_TYPE_REGISTRY.getIDForObject(stoneType);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -125,4 +122,61 @@ public class StoneType implements Comparable<StoneType> {
         result = 31 * result + (shouldBeDroppedAsItem ? 1 : 0);
         return result;
     }
+
+    public static class Builder {
+
+        private final int id;
+        private final String name;
+        private SoundType soundType;
+        private OrePrefix processingPrefix;
+        private Material stoneMaterial;
+        private Supplier<IBlockState> stone;
+        private Predicate<IBlockState> predicate;
+        private boolean shouldBeDroppedAsItem;
+
+        private Builder(int id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public static Builder create(int id, String name) {
+            return new Builder(id, name);
+        }
+
+        public Builder soundType(SoundType soundType) {
+            this.soundType = soundType;
+            return this;
+        }
+
+        public Builder processingPrefix(OrePrefix processingPrefix) {
+            this.processingPrefix = processingPrefix;
+            return this;
+        }
+
+        public Builder stoneMaterial(Material stoneMaterial) {
+            this.stoneMaterial = stoneMaterial;
+            return this;
+        }
+
+        public Builder stone(Supplier<IBlockState> stone) {
+            this.stone = stone;
+            return this;
+        }
+
+        public Builder predicate(Predicate<IBlockState> predicate) {
+            this.predicate = predicate;
+            return this;
+        }
+
+        public Builder shouldBeDroppedAsItem(boolean shouldBeDroppedAsItem) {
+            this.shouldBeDroppedAsItem = shouldBeDroppedAsItem;
+            return this;
+        }
+
+        public StoneType build() {
+            return new StoneType(id, name, soundType, processingPrefix, stoneMaterial, stone, predicate,
+                    shouldBeDroppedAsItem);
+        }
+    }
+
 }

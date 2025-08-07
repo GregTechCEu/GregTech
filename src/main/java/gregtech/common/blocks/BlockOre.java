@@ -114,7 +114,7 @@ public class BlockOre extends Block implements IBlockOre {
     @Override
     public int quantityDropped(IBlockState state, int fortune, @NotNull Random random) {
         // 基础掉落数量 = 1 + 时运增幅
-        int base = 1 + random.nextInt(Math.min(fortune,5) + 1);
+        int base = 1 + random.nextInt(Math.min(fortune,3) + 1);
 
         // 粗矿处理：时运每级增加 1 个额外掉落
         ItemStack rawOreStack = OreDictUnifier.get(OrePrefix.rawOre, this.material);
