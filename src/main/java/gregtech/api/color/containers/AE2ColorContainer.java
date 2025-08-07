@@ -93,9 +93,7 @@ public class AE2ColorContainer extends ColoredBlockContainer {
         @Override
         protected boolean blockMatches(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                                        @NotNull EntityPlayer player) {
-            if (!Mods.AppliedEnergistics2.isModLoaded()) return false;
-            TileEntity te = world.getTileEntity(pos);
-            return te instanceof IColorableTile;
+            return world.getTileEntity(pos) instanceof IColorableTile;
         }
     }
 }
