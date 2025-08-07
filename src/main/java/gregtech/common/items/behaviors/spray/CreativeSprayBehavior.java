@@ -1,7 +1,6 @@
 package gregtech.common.items.behaviors.spray;
 
 import gregtech.api.color.ColoredBlockContainer;
-import gregtech.api.color.containers.GTPipeColorContainer;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemColorProvider;
 import gregtech.api.items.metaitem.stats.IItemNameProvider;
@@ -110,18 +109,6 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
         return color != null && tintIndex == 1 ? color.colorValue : 0xFFFFFF;
     }
 
-    public static boolean isLocked(@NotNull ItemStack stack) {
-        return GTUtility.getOrCreateNbtCompound(stack).getBoolean("Locked");
-    }
-
-    public static void setLocked(@NotNull ItemStack stack, boolean locked) {
-        GTUtility.getOrCreateNbtCompound(stack).setBoolean("Locked", locked);
-    }
-
-    public static void toggleLocked(@NotNull ItemStack stack) {
-        setLocked(stack, !isLocked(stack));
-    }
-
     @Override
     public String getItemStackDisplayName(ItemStack itemStack, String unlocalizedName) {
         EnumDyeColor color = getColor(itemStack);
@@ -133,39 +120,31 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
     @Override
     public void handleMouseEventClient(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
                                        @NotNull ItemStack stack) {
-        if (event.getButton() != -1 && event.isButtonstate()) {
-            int button = event.getButton();
-            boolean sneaking = playerClient.isSneaking();
+        // Middle click pressed down
+        if (event.getButton() == 2 && event.isButtonstate()) {
+            event.setCanceled(true);
 
-            if (button == 2) { // Middle click
-                if (sneaking) {
-                    toggleLocked(stack);
-                } else if (!isLocked(stack)) {
-                    event.setCanceled(true);
+            double reach = playerClient.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+            if (!playerClient.capabilities.isCreativeMode) {
+                reach -= 0.5d;
+            }
 
-                    double reach = playerClient.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
-                    if (!playerClient.capabilities.isCreativeMode) {
-                        reach -= 0.5d;
-                    }
-
-                    RayTraceResult rayTrace = playerClient.rayTrace(reach, 1.0f);
-                    if (rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
-                        ColoredBlockContainer colorContainer = ColoredBlockContainer.getInstance(playerClient.world,
-                                rayTrace.getBlockPos(), rayTrace.sideHit, playerClient);
-                        EnumDyeColor hitColor = colorContainer.getColor();
-                        if (hitColor != null && hitColor != getColor(stack)) {
-                            setColor(stack, hitColor);
-                            sendToServer(buf -> buf
-                                    .writeByte(0)
-                                    .writeByte(hitColor.ordinal()));
-                            return;
-                        }
-                    }
-
-                    // If the player isn't sneaking and wasn't looking at a colored block, open gui
-                    sendToServer(buf -> buf.writeByte(1));
+            RayTraceResult rayTrace = playerClient.rayTrace(reach, 1.0f);
+            if (rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
+                ColoredBlockContainer colorContainer = ColoredBlockContainer.getInstance(playerClient.world,
+                        rayTrace.getBlockPos(), rayTrace.sideHit, playerClient);
+                EnumDyeColor hitColor = colorContainer.getColor();
+                if (hitColor != null && hitColor != getColor(stack)) {
+                    setColor(stack, hitColor);
+                    sendToServer(buf -> buf
+                            .writeByte(0)
+                            .writeByte(hitColor.ordinal()));
+                    return;
                 }
             }
+
+            // If the player isn't sneaking and wasn't looking at a colored block, open gui
+            sendToServer(buf -> buf.writeByte(1));
         }
     }
 
