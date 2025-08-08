@@ -81,7 +81,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     public void setFrameMaterial(@Nullable Material frameMaterial) {
         this.frameMaterial = frameMaterial;
-        if (world != null && world.isRemote) {
+        if (world != null && !world.isRemote) {
             writeCustomData(UPDATE_FRAME_MATERIAL, buf -> {
                 buf.writeVarInt(frameMaterial == null ? -1 : frameMaterial.getRegistry().getNetworkId());
                 buf.writeVarInt(frameMaterial == null ? -1 : frameMaterial.getId());
@@ -275,6 +275,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public boolean isFaceBlocked(EnumFacing side) {
+        if (side == null) return true; // says hey, you can't insert from nowhere
         return isFaceBlocked(blockedConnections, side);
     }
 
