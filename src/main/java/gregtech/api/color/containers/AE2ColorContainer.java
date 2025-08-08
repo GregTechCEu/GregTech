@@ -16,30 +16,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class AE2ColorContainer extends ColoredBlockContainer {
 
-    @NotNull
-    private final World world;
-    @NotNull
-    private final BlockPos pos;
-    @NotNull
-    private final EnumFacing facing;
-    @NotNull
-    private final EntityPlayer player;
-
-    private AE2ColorContainer(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                              @NotNull EntityPlayer player) {
-        this.world = world;
-        this.pos = pos;
-        this.facing = facing;
-        this.player = player;
-    }
-
     @Override
-    public boolean setColor(@Nullable EnumDyeColor newColor) {
+    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                            @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
         if (newColor == null) {
-            return removeColor();
+            return removeColor(world, pos, facing, player);
         }
 
-        if (getColor() == newColor) {
+        if (getColor(world, pos, facing, player) == newColor) {
             return false;
         }
 
@@ -55,7 +39,8 @@ public class AE2ColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean removeColor() {
+    public boolean removeColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                               @NotNull EntityPlayer player) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IColorableTile colorableTile && colorableTile.getColor() != AEColor.TRANSPARENT) {
             colorableTile.recolourBlock(facing, AEColor.TRANSPARENT, player);
@@ -66,7 +51,8 @@ public class AE2ColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public @Nullable EnumDyeColor getColor() {
+    public @Nullable EnumDyeColor getColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                           @NotNull EntityPlayer player) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IColorableTile colorableTile) {
             return colorableTile.getColor().dye;
@@ -76,23 +62,8 @@ public class AE2ColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean isValid() {
+    public boolean isValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                           @NotNull EntityPlayer player) {
         return world.getTileEntity(pos) instanceof IColorableTile;
-    }
-
-    public static class AE2BlockManager extends ColoredBlockContainer.ContainerManager {
-
-        @Override
-        protected @NotNull ColoredBlockContainer createInstance(@NotNull World world, @NotNull BlockPos pos,
-                                                                @NotNull EnumFacing facing,
-                                                                @NotNull EntityPlayer player) {
-            return new AE2ColorContainer(world, pos, facing, player);
-        }
-
-        @Override
-        protected boolean blockMatches(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                                       @NotNull EntityPlayer player) {
-            return world.getTileEntity(pos) instanceof IColorableTile;
-        }
     }
 }

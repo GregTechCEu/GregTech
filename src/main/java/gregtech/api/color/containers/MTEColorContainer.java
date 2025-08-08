@@ -2,7 +2,6 @@ package gregtech.api.color.containers;
 
 import gregtech.api.color.ColoredBlockContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -17,30 +16,14 @@ import static gregtech.api.util.GTUtility.getMetaTileEntity;
 
 public class MTEColorContainer extends ColoredBlockContainer {
 
-    @NotNull
-    private final World world;
-    @NotNull
-    private final BlockPos pos;
-    @NotNull
-    private final EnumFacing facing;
-    @NotNull
-    private final EntityPlayer player;
-
-    private MTEColorContainer(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                              @NotNull EntityPlayer player) {
-        this.world = world;
-        this.pos = pos;
-        this.facing = facing;
-        this.player = player;
-    }
-
     @Override
-    public boolean setColor(@Nullable EnumDyeColor newColor) {
+    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                            @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
         if (newColor == null) {
-            return removeColor();
+            return removeColor(world, pos, facing, player);
         }
 
-        if (getColorInt() == newColor.colorValue) {
+        if (getColorInt(world, pos, facing, player) == newColor.colorValue) {
             return false;
         }
 
@@ -54,12 +37,13 @@ public class MTEColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean setColor(int newColor) {
+    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                            @NotNull EntityPlayer player, int newColor) {
         if (newColor == -1) {
-            return removeColor();
+            return removeColor(world, pos, facing, player);
         }
 
-        if (getColorInt() == newColor) {
+        if (getColorInt(world, pos, facing, player) == newColor) {
             return false;
         }
 
@@ -73,12 +57,8 @@ public class MTEColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean supportsARGB() {
-        return true;
-    }
-
-    @Override
-    public boolean removeColor() {
+    public boolean removeColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                               @NotNull EntityPlayer player) {
         MetaTileEntity mte = getMetaTileEntity(world, pos);
         if (mte != null && mte.isPainted() && mte.canBeModifiedBy(player)) {
             mte.setPaintingColor(-1, facing);
@@ -89,8 +69,9 @@ public class MTEColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public @Nullable EnumDyeColor getColor() {
-        int mteColor = getColorInt();
+    public @Nullable EnumDyeColor getColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                           @NotNull EntityPlayer player) {
+        int mteColor = getColorInt(world, pos, facing, player);
         if (mteColor == -1) return null;
 
         for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
@@ -103,7 +84,8 @@ public class MTEColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public int getColorInt() {
+    public int getColorInt(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                           @NotNull EntityPlayer player) {
         MetaTileEntity mte = getMetaTileEntity(world, pos);
         if (mte != null) {
             return mte.getPaintingColor();
@@ -113,30 +95,14 @@ public class MTEColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean isValid() {
+    public boolean isValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                           @NotNull EntityPlayer player) {
         MetaTileEntity mte = getMetaTileEntity(world, pos);
         return mte != null && mte.isValid();
     }
 
-    public static class MTEColorManager extends ColoredBlockContainer.ContainerManager {
-
-        @Override
-        protected @NotNull ColoredBlockContainer createInstance(@NotNull World world, @NotNull BlockPos pos,
-                                                                @NotNull EnumFacing facing,
-                                                                @NotNull EntityPlayer player) {
-            return new MTEColorContainer(world, pos, facing, player);
-        }
-
-        @Override
-        protected boolean blockMatches(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                                       @NotNull EntityPlayer player) {
-            if (world.getTileEntity(pos) instanceof IGregTechTileEntity gtte) {
-                MetaTileEntity mte = gtte.getMetaTileEntity();
-                if (mte == null || !mte.isValid()) return false;
-                return mte.canBeModifiedBy(player);
-            }
-
-            return false;
-        }
+    @Override
+    public boolean supportsARGB() {
+        return true;
     }
 }

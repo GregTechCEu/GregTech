@@ -14,23 +14,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class GTPipeColorContainer extends ColoredBlockContainer {
 
-    @NotNull
-    private final World world;
-    @NotNull
-    private final BlockPos pos;
-
-    private GTPipeColorContainer(@NotNull World world, @NotNull BlockPos pos) {
-        this.world = world;
-        this.pos = pos;
-    }
-
     @Override
-    public boolean setColor(@Nullable EnumDyeColor newColor) {
+    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                            @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
         if (newColor == null) {
-            return removeColor();
+            return removeColor(world, pos, facing, player);
         }
 
-        if (getColorInt() == newColor.colorValue) {
+        if (getColorInt(world, pos, facing, player) == newColor.colorValue) {
             return false;
         }
 
@@ -43,13 +34,14 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean setColor(int newColor) {
+    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                            @NotNull EntityPlayer player, int newColor) {
         if (newColor == -1) {
-            return removeColor();
+            return removeColor(world, pos, facing, player);
         }
 
         if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile) {
-            if (pipeTile.isPainted() && getColorInt() == newColor) {
+            if (pipeTile.isPainted() && getColorInt(world, pos, facing, player) == newColor) {
                 return false;
             } else {
                 pipeTile.setPaintingColor(newColor);
@@ -61,12 +53,8 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean supportsARGB() {
-        return true;
-    }
-
-    @Override
-    public boolean removeColor() {
+    public boolean removeColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                               @NotNull EntityPlayer player) {
         if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile && pipeTile.isPainted()) {
             pipeTile.setPaintingColor(-1);
             return true;
@@ -76,8 +64,9 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public @Nullable EnumDyeColor getColor() {
-        int mteColor = getColorInt();
+    public @Nullable EnumDyeColor getColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                           @NotNull EntityPlayer player) {
+        int mteColor = getColorInt(world, pos, facing, player);
         if (mteColor == -1) return null;
 
         for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
@@ -90,7 +79,8 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public int getColorInt() {
+    public int getColorInt(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                           @NotNull EntityPlayer player) {
         if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile && pipeTile.isPainted()) {
             return pipeTile.getPaintingColor();
         }
@@ -99,23 +89,13 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean isValid() {
-        return world.getTileEntity(pos) instanceof IPipeTile<?, ?>;
+    public boolean supportsARGB() {
+        return true;
     }
 
-    public static class GTPipeColorManager extends ContainerManager {
-
-        @Override
-        protected @NotNull ColoredBlockContainer createInstance(@NotNull World world, @NotNull BlockPos pos,
-                                                                @NotNull EnumFacing facing,
-                                                                @NotNull EntityPlayer player) {
-            return new GTPipeColorContainer(world, pos);
-        }
-
-        @Override
-        protected boolean blockMatches(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                                       @NotNull EntityPlayer player) {
-            return world.getTileEntity(pos) instanceof IPipeTile<?, ?>;
-        }
+    @Override
+    public boolean isValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                           @NotNull EntityPlayer player) {
+        return world.getTileEntity(pos) instanceof IPipeTile<?, ?>;
     }
 }

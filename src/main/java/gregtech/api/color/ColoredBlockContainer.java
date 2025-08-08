@@ -1,6 +1,11 @@
 package gregtech.api.color;
 
+import gregtech.api.color.containers.AE2ColorContainer;
+import gregtech.api.color.containers.GTPipeColorContainer;
+import gregtech.api.color.containers.MTEColorContainer;
 import gregtech.api.color.containers.NullColorContainer;
+import gregtech.api.color.containers.VanillaColorContainer;
+import gregtech.api.util.Mods;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -9,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,56 +28,59 @@ import java.util.Set;
  */
 public abstract class ColoredBlockContainer {
 
-    private static final Set<ContainerManager> MANAGERS = new ObjectArraySet<>(3);
+    @NotNull
+    private static final Set<ColoredBlockContainer> CONTAINERS = new ObjectArraySet<>(4);
 
-    public static void registerContainerManager(@NotNull ContainerManager manager) {
-        Objects.requireNonNull(manager);
-        MANAGERS.add(manager);
+    public static void registerContainer(@NotNull ColoredBlockContainer container) {
+        CONTAINERS.add(Objects.requireNonNull(container));
     }
 
-    public abstract boolean setColor(@Nullable EnumDyeColor newColor);
-
-    public boolean setColor(int newColor) {
-        // Do nothing
-        return false;
-    }
-
-    public boolean supportsARGB() {
-        return false;
-    }
-
-    public abstract boolean removeColor();
-
-    public abstract @Nullable EnumDyeColor getColor();
-
-    public int getColorInt() {
-        EnumDyeColor dyeColor = getColor();
-        return dyeColor == null ? -1 : dyeColor.colorValue;
-    }
-
-    public boolean isValid() {
-        return true;
-    }
-
-    public static @NotNull ColoredBlockContainer getInstance(@NotNull World world, @NotNull BlockPos pos,
-                                                             @NotNull EnumFacing facing,
-                                                             @NotNull EntityPlayer player) {
-        for (ContainerManager manager : MANAGERS) {
-            if (manager.blockMatches(world, pos, facing, player)) {
-                return manager.createInstance(world, pos, facing, player);
+    public static @NotNull ColoredBlockContainer getContainer(@NotNull World world, @NotNull BlockPos pos,
+                                                              @NotNull EnumFacing facing,
+                                                              @NotNull EntityPlayer player) {
+        for (ColoredBlockContainer container : CONTAINERS) {
+            if (container.isValid(world, pos, facing, player)) {
+                return container;
             }
         }
 
         return NullColorContainer.NULL_CONTAINER;
     }
 
-    public static abstract class ContainerManager {
+    @ApiStatus.Internal
+    public static void registerCEuContainers() {
+        registerContainer(new VanillaColorContainer());
+        registerContainer(new GTPipeColorContainer());
+        registerContainer(new MTEColorContainer());
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
+            registerContainer(new AE2ColorContainer());
+        }
+    }
 
-        protected abstract @NotNull ColoredBlockContainer createInstance(@NotNull World world, @NotNull BlockPos pos,
-                                                                         @NotNull EnumFacing facing,
-                                                                         @NotNull EntityPlayer player);
+    public abstract boolean isValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                    @NotNull EntityPlayer player);
 
-        protected abstract boolean blockMatches(@NotNull World world, @NotNull BlockPos pos,
-                                                @NotNull EnumFacing facing, @NotNull EntityPlayer player);
+    public abstract boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                     @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor);
+
+    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                            @NotNull EntityPlayer player, int newColor) {
+        return false;
+    }
+
+    public abstract boolean removeColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                        @NotNull EntityPlayer player);
+
+    public abstract @Nullable EnumDyeColor getColor(@NotNull World world, @NotNull BlockPos pos,
+                                                    @NotNull EnumFacing facing, @NotNull EntityPlayer player);
+
+    public int getColorInt(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                           @NotNull EntityPlayer player) {
+        EnumDyeColor dyeColor = getColor(world, pos, facing, player);
+        return dyeColor == null ? -1 : dyeColor.colorValue;
+    }
+
+    public boolean supportsARGB() {
+        return false;
     }
 }

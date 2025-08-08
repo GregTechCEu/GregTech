@@ -19,8 +19,11 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.util.Constants;
 
@@ -132,9 +135,12 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
 
             RayTraceResult rayTrace = playerClient.rayTrace(reach, 1.0f);
             if (rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
-                ColoredBlockContainer colorContainer = ColoredBlockContainer.getInstance(playerClient.world,
-                        rayTrace.getBlockPos(), rayTrace.sideHit, playerClient);
-                EnumDyeColor hitColor = colorContainer.getColor();
+                World world = playerClient.world;
+                BlockPos pos = rayTrace.getBlockPos();
+                EnumFacing facing = rayTrace.sideHit;
+                ColoredBlockContainer colorContainer = ColoredBlockContainer.getContainer(world, pos, facing,
+                        playerClient);
+                EnumDyeColor hitColor = colorContainer.getColor(world, pos, facing, playerClient);
                 if (hitColor != null && hitColor != getColor(stack)) {
                     setColor(stack, hitColor);
                     sendToServer(buf -> buf

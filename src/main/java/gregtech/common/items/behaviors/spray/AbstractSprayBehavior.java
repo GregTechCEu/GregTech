@@ -132,9 +132,9 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
             }
         }
 
-        ColoredBlockContainer colorContainer = ColoredBlockContainer.getInstance(world, pos, facing, player);
-        if (colorContainer.isValid() && colorContainer.supportsARGB() ? colorContainer.setColor(getColorInt(sprayCan)) :
-                colorContainer.setColor(getColor(sprayCan))) {
+        ColoredBlockContainer colorContainer = ColoredBlockContainer.getContainer(world, pos, facing, player);
+        if (colorContainer.supportsARGB() ? colorContainer.setColor(world, pos, facing, player, getColorInt(sprayCan)) :
+                colorContainer.setColor(world, pos, facing, player, getColor(sprayCan))) {
             onSpray(player, sprayCan);
             return EnumActionResult.SUCCESS;
         }

@@ -35,26 +35,14 @@ public class VanillaColorContainer extends ColoredBlockContainer {
             Blocks.GLASS_PANE, BlockStainedGlassPane.COLOR,
             Blocks.HARDENED_CLAY, BlockColored.COLOR);
 
-    @NotNull
-    private final World world;
-    @NotNull
-    private final BlockPos pos;
-    @NotNull
-    private final EnumFacing facing;
-
-    private VanillaColorContainer(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing) {
-        this.world = world;
-        this.pos = pos;
-        this.facing = facing;
-    }
-
     @Override
-    public boolean setColor(@Nullable EnumDyeColor newColor) {
+    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                            @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
         if (newColor == null) {
-            return removeColor();
+            return removeColor(world, pos, facing, player);
         }
 
-        if (getColor() == newColor) {
+        if (getColor(world, pos, facing, player) == newColor) {
             return false;
         }
 
@@ -73,7 +61,8 @@ public class VanillaColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean removeColor() {
+    public boolean removeColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                               @NotNull EntityPlayer player) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
@@ -107,7 +96,8 @@ public class VanillaColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public @Nullable EnumDyeColor getColor() {
+    public @Nullable EnumDyeColor getColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                           @NotNull EntityPlayer player) {
         IBlockState state = world.getBlockState(pos);
         for (IProperty<?> prop : state.getPropertyKeys()) {
             if (prop.getValueClass() == EnumDyeColor.class) {
@@ -120,27 +110,8 @@ public class VanillaColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean isValid() {
+    public boolean isValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                           @NotNull EntityPlayer player) {
         return !world.isAirBlock(pos);
-    }
-
-    public static class VanillaBlockManager extends ColoredBlockContainer.ContainerManager {
-
-        @Override
-        protected @NotNull ColoredBlockContainer createInstance(@NotNull World world, @NotNull BlockPos pos,
-                                                                @NotNull EnumFacing facing,
-                                                                @NotNull EntityPlayer player) {
-            return new VanillaColorContainer(world, pos, facing);
-        }
-
-        @Override
-        protected boolean blockMatches(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                                       @NotNull EntityPlayer player) {
-            IBlockState blockState = world.getBlockState(pos);
-            Block block = blockState.getBlock();
-
-            return TRANSFORMATIONS.containsKey(block) || TRANSFORMATIONS.containsValue(block) ||
-                    block instanceof BlockColored;
-        }
     }
 }
