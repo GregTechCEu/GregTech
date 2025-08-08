@@ -1,4 +1,4 @@
-//version: 1743737794
+//version: 1753288091
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -50,6 +50,8 @@ def out = services.get(StyledTextOutputFactory).create('an-output')
 
 
 // Project properties
+loadProjectProperties()
+
 
 // Required properties: we don't know how to handle these being missing gracefully
 checkPropertyExists("modName")
@@ -870,10 +872,10 @@ if (enableJava17RunTasks.toBoolean()) {
 
     dependencies {
         if (modId != 'lwjgl3ify') {
-            java17Dependencies("io.github.twilightflower:lwjgl3ify:1.0.0")
-        }
-        java17PatchDependencies("io.github.twilightflower:lwjgl3ify:1.0.0:forgePatches") {
+            java17Dependencies("io.github.twilightflower:lwjgl3ify:1.0.1")
+            java17PatchDependencies("io.github.twilightflower:lwjgl3ify:1.0.1:forgePatches") {
             transitive = false
+            }
         }
     }
 
@@ -1009,7 +1011,7 @@ abstract class RunHotswappableMinecraftTask extends RunMinecraftTask {
 
         if (project.usesMixins.toBoolean()) {
             this.extraJvmArgs.addAll(project.provider(() -> {
-                def mixinCfg = project.configurations.detachedConfiguration(project.dependencies.create(mixinProviderSpec))
+                def mixinCfg = project.configurations.detachedConfiguration(project.dependencies.create(project.mixinProviderSpec))
                 mixinCfg.canBeConsumed = false
                 mixinCfg.canBeResolved = true
                 mixinCfg.transitive = false
@@ -1475,7 +1477,7 @@ tasks.register('faq') {
                 "To add new dependencies to your project, place them in 'dependencies.gradle', NOT in 'build.gradle' as they would be replaced when the script updates.\n" +
                 "To add new repositories to your project, place them in 'repositories.gradle'.\n" +
                 "If you need additional gradle code to run, you can place it in a file named 'addon.gradle' (or either of the above, up to you for organization).\n\n" +
-                "If your build fails to recognize the syntax of newer Java versions, enable Jabel in your 'gradle.properties' under the option name 'enableModernJavaSyntax'.\n" +
+                "If your build fails to recognize the syntax of newer Java versions, enable Jabel in your 'buildscript.properties' under the option name 'enableModernJavaSyntax'.\n" +
                 "To see information on how to configure your IDE properly for Java 17, see https://github.com/GregTechCEu/Buildscripts/blob/master/docs/jabel.md\n\n" +
                 "Report any issues or feature requests you have for this build script to https://github.com/GregTechCEu/Buildscripts/issues\n")
     }
@@ -1483,6 +1485,20 @@ tasks.register('faq') {
 
 
 // Helpers
+def loadProjectProperties() {
+    def configFile = file("buildscript.properties")
+    if (configFile.exists()) {
+        configFile.withReader {
+            def prop = new Properties()
+            prop.load(it)
+            new ConfigSlurper().parse(prop).forEach { String k, def v ->
+                project.ext.setProperty(k, v)
+            }
+        }
+    } else {
+        print("Failed to read from buildscript.properties, as it did not exist!")
+    }
+}
 
 def getDefaultArtifactGroup() {
     def lastIndex = project.modGroup.lastIndexOf('.')
@@ -1495,7 +1511,7 @@ def getFile(String relativePath) {
 
 def checkPropertyExists(String propertyName) {
     if (!project.hasProperty(propertyName)) {
-        throw new GradleException("This project requires a property \"" + propertyName + "\"! Please add it your \"gradle.properties\". You can find all properties and their description here: https://github.com/GregTechCEu/Buildscripts/blob/main/gradle.properties")
+        throw new GradleException("This project requires a property \"" + propertyName + "\"! Please add it your \"buildscript.properties\" or \"gradle.properties\". You can find all properties and their description here: https://github.com/GregTechCEu/Buildscripts/blob/main/buildscript.properties and https://github.com/GregTechCEu/Buildscripts/blob/main/gradle.properties")
     }
 }
 
