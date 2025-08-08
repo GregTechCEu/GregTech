@@ -38,4 +38,10 @@ public class NullColorContainer extends ColoredBlockContainer {
                            @NotNull EntityPlayer player) {
         return false;
     }
+
+    @Override
+    public boolean colorMatches(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                @NotNull EntityPlayer player, @Nullable EnumDyeColor color) {
+        return false;
+    }
 }

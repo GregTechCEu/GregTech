@@ -31,20 +31,20 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
     /**
      * Get the color of the spray can. {@code null} = solvent
      */
-    public abstract @Nullable EnumDyeColor getColor(@NotNull ItemStack stack);
+    public abstract @Nullable EnumDyeColor getColor(@NotNull ItemStack sprayCan);
 
-    public int getColorInt(@NotNull ItemStack stack) {
-        EnumDyeColor color = getColor(stack);
+    public int getColorInt(@NotNull ItemStack sprayCan) {
+        EnumDyeColor color = getColor(sprayCan);
         return color == null ? -1 : color.colorValue;
     }
 
-    public @Range(from = -1, to = 15) int getColorOrdinal(@NotNull ItemStack stack) {
-        EnumDyeColor color = getColor(stack);
+    public @Range(from = -1, to = 15) int getColorOrdinal(@NotNull ItemStack sprayCan) {
+        EnumDyeColor color = getColor(sprayCan);
         return color == null ? -1 : color.ordinal();
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean canSpray(@NotNull ItemStack stack) {
+    public boolean canSpray(@NotNull ItemStack sprayCan) {
         return true;
     }
 
@@ -60,10 +60,14 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         return GTSoundEvents.SPRAY_CAN_TOOL;
     }
 
-    public static @Nullable AbstractSprayBehavior getSprayCanBehavior(@NotNull ItemStack stack) {
-        if (!(stack.getItem() instanceof MetaItem<?>metaItem)) return null;
+    public int getMaximumSprayLength(@NotNull ItemStack sprayCan) {
+        return ConfigHolder.tools.maxRecursiveSprayLength;
+    }
 
-        for (IItemBehaviour behaviour : metaItem.getBehaviours(stack)) {
+    public static @Nullable AbstractSprayBehavior getSprayCanBehavior(@NotNull ItemStack sprayCan) {
+        if (!(sprayCan.getItem() instanceof MetaItem<?>metaItem)) return null;
+
+        for (IItemBehaviour behaviour : metaItem.getBehaviours(sprayCan)) {
             if (behaviour instanceof AbstractSprayBehavior sprayBehavior) {
                 return sprayBehavior;
             }
@@ -122,7 +126,8 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
                 if (hitResult != null) {
                     EnumFacing hitSide = CoverRayTracer.determineGridSideHit(hitResult);
                     IPipeTile<?, ?> firstPipe = blockPipe.getPipeTileEntity(world, pos);
-                    if (hitSide != null && firstPipe != null && firstPipe.isConnected(hitSide)) {
+                    if (hitSide != null && firstPipe != null && firstPipe.isConnected(hitSide) &&
+                            (firstPipe.isPainted() ? firstPipe.getPaintingColor() != color : color != -1)) {
                         traversePipes(firstPipe, hitSide, player, sprayCan, color);
                         return EnumActionResult.SUCCESS;
                     }
@@ -150,7 +155,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
             return;
         }
 
-        for (int count = 1; count < ConfigHolder.tools.maxRecursiveSprayLength && canSpray(sprayCan); count++) {
+        for (int count = 1; count < getMaximumSprayLength(sprayCan) && canSpray(sprayCan); count++) {
             if (canPipeBePainted(pipeTile, color)) {
                 pipeTile.setPaintingColor(color);
                 onSpray(player, sprayCan);

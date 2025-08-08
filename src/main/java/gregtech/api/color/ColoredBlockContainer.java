@@ -49,12 +49,12 @@ public abstract class ColoredBlockContainer {
 
     @ApiStatus.Internal
     public static void registerCEuContainers() {
-        registerContainer(new VanillaColorContainer());
         registerContainer(new GTPipeColorContainer());
         registerContainer(new MTEColorContainer());
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             registerContainer(new AE2ColorContainer());
         }
+        registerContainer(new VanillaColorContainer());
     }
 
     public abstract boolean isValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
@@ -76,8 +76,17 @@ public abstract class ColoredBlockContainer {
 
     public int getColorInt(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                            @NotNull EntityPlayer player) {
-        EnumDyeColor dyeColor = getColor(world, pos, facing, player);
-        return dyeColor == null ? -1 : dyeColor.colorValue;
+        return -1;
+    }
+
+    public boolean colorMatches(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                @NotNull EntityPlayer player, @Nullable EnumDyeColor color) {
+        return getColor(world, pos, facing, player) == color;
+    }
+
+    public boolean colorMatches(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                @NotNull EntityPlayer player, int color) {
+        return getColorInt(world, pos, facing, player) == color;
     }
 
     public boolean supportsARGB() {
