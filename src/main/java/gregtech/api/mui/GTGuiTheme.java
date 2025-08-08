@@ -39,6 +39,7 @@ public class GTGuiTheme {
         public static final String BRONZE = gregtech("bronze");
         public static final String STEEL = gregtech("steel");
         public static final String PRIMITIVE = gregtech("primitive");
+        public static final String TERMINAL = gregtech("terminal");
 
         private static String gregtech(String s) {
             return "gregtech:" + s;
@@ -100,6 +101,12 @@ public class GTGuiTheme {
             .color(Colors.PRIMITIVE)
             // .itemSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
             // .fluidSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
+            .build();
+
+    // TODO make this better
+    public static final GTGuiTheme TERMINAL = templateBuilder(Names.TERMINAL)
+            .parent(Names.STANDARD)
+            .textColor(0xFFFDFDFD)
             .build();
 
     protected final String themeId;
