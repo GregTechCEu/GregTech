@@ -202,7 +202,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
-    public SoundEvent getSound() {
+    public @Nullable SoundEvent getSound() {
         return GTSoundEvents.ARC;
     }
 
