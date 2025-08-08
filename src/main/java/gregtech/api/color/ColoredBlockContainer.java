@@ -32,7 +32,7 @@ public abstract class ColoredBlockContainer {
     private static final Set<ColoredBlockContainer> CONTAINERS = new ObjectArraySet<>(4);
 
     public static void registerContainer(@NotNull ColoredBlockContainer container) {
-        CONTAINERS.add(Objects.requireNonNull(container));
+        CONTAINERS.add(Objects.requireNonNull(container, "A null ColoredBlockContainer cannot be registered!"));
     }
 
     public static @NotNull ColoredBlockContainer getContainer(@NotNull World world, @NotNull BlockPos pos,
