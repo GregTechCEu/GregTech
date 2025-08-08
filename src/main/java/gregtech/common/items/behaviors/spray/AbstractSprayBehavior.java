@@ -28,8 +28,6 @@ import org.jetbrains.annotations.Range;
 
 public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
-    private static final int MAX_PIPE_TRAVERSAL_LENGTH = 128;
-
     /**
      * Get the color of the spray can. {@code null} = solvent
      */
