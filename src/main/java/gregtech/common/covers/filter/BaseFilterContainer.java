@@ -101,7 +101,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
     protected abstract boolean isItemValid(ItemStack stack);
 
-    protected abstract String getFilterName();
+    protected abstract @NotNull IKey getFilterKey();
 
     @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
@@ -244,7 +244,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                             }
                             return true;
                         }))
-                .child(IKey.dynamic(this::getFilterName)
+                .child(getFilterKey()
                         .color(CoverWithUI.UI_TEXT_COLOR)
                         .shadow(false)
                         .alignment(Alignment.CenterRight).asWidget()

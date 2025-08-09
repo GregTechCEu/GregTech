@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -59,9 +60,9 @@ public class ItemFilterContainer extends BaseFilterContainer {
     }
 
     @Override
-    protected String getFilterName() {
-        return hasFilter() ?
-                getFilterStack().getDisplayName() :
-                ITEM_FILTER.getStackForm().getDisplayName();
+    protected @NotNull IKey getFilterKey() {
+        return IKey.lang(() -> hasFilter() ?
+                getFilterStack().getTranslationKey() + ".name" :
+                "metaitem.item_filter.name");
     }
 }

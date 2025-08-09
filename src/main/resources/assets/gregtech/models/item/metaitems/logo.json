@@ -8,8 +8,8 @@
 	],
 	"display": {
 		"gui": {
-			"translation": [0.5, -0.5, 0],
-			"scale": [1.0625, 1.0625, 1.0625]
+      "translation": [8, -8, 0],
+      "scale": [2, 2, 1]
 		}
 	}
 }

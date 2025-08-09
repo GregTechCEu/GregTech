@@ -3,9 +3,11 @@ package gregtech.api.metatileentity.multiblock.ui;
 import gregtech.api.capability.IBatch;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDistinctBusController;
+import gregtech.api.metatileentity.multiblock.AdvanceMultiMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.MultiMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
-import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTLambdaUtils;
@@ -299,7 +301,7 @@ public class MultiblockUIFactory {
                         .childIf(!disableButtons, () -> createButtons(panel, panelSyncManager, guiData))
                 )
 
-                .childIf(mte instanceof IBatch && ((IBatch) mte).isBatchAllowed(), Flow.column()
+                .childIf(checkSideButton(mte), Flow.column()
                         .debugName("side_row")
                         .size(18, 4 * 18 + 4)
                         .bottom(7)
@@ -308,6 +310,17 @@ public class MultiblockUIFactory {
                         .margin(4, 0)
                         .childIf(!disableButtons, () -> createSideButtons(panel, panelSyncManager, guiData))
                 );
+    }
+
+    public boolean checkSideButton(MultiblockWithDisplayBase mte) {
+        //GCYM一定是IBatch
+        if(mte instanceof RecipeMapPrimitiveMultiblockController)return false;
+        return true;
+        /*
+        if (mte instanceof IBatch batch) return batch.isBatchAllowed();
+        return false;
+
+         */
     }
 
     /**
@@ -489,31 +502,33 @@ public class MultiblockUIFactory {
                 .stateOverlay(1, GTGuiTextures.MULTIBLOCK_VOID[1])
                 .stateOverlay(2, GTGuiTextures.MULTIBLOCK_VOID[2])
                 .stateOverlay(3, GTGuiTextures.MULTIBLOCK_VOID[3])
-                .tooltipBuilder(t -> t.addLine(IKey.lang(MultiblockWithDisplayBase.getVoidingModeTooltip(voidingValue.getIntValue()))));
+                .tooltipBuilder(t -> t.addLine(
+                        IKey.lang(MultiblockWithDisplayBase.getVoidingModeTooltip(voidingValue.getIntValue()))));
     }
 
-    @Nullable
-    protected Widget<?> createBatchButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
-        if (mte instanceof RecipeMapMultiblockController controllable && controllable.shouldShowBatchModeButton()) {
+    protected IWidget createBatchButton(@NotNull ModularPanel mainPanel,
+                                        @NotNull PanelSyncManager panelSyncManager) {
+        if (!(mte instanceof IBatch controllable) || !controllable.isBatchAllowed()) {
             return new ToggleButton()
-                    .debugName("batch_button")
+                    .debugName("distinct_none")
                     .bottom(3 * 18 + 4)
                     .size(18)
-                    .value(new BooleanSyncValue(controllable::isBatchEnable, controllable::setBatchEnable))
-                    .overlay(true, GTGuiTextures.OVERLAY_BATCH[1])
-                    .overlay(false, GTGuiTextures.OVERLAY_BATCH[0])
-                    .addTooltip(true, IKey.lang("gregtech.multiblock.universal.batch_enabled"))
-                    .addTooltip(false, IKey.lang("gregtech.multiblock.universal.batch_disabled"));
+                    .value(ALWAYS_ON)
+                    .size(18)
+                    .overlay(GTGuiTextures.OVERLAY_BATCH[0])
+                    .addTooltipLine(IKey.lang("gregtech.gui.multiblock_batch_not_supported"));
         }
 
         return new ToggleButton()
-                .debugName("batch_none")
+                .debugName("batch_button")
                 .bottom(3 * 18 + 4)
                 .size(18)
-                .value(ALWAYS_ON)
-                .size(18)
-                .overlay(GTGuiTextures.OVERLAY_BATCH[0])
-                .addTooltipLine(IKey.lang("gregtech.gui.multiblock_batch_not_supported"));
+                .value(new BooleanSyncValue(controllable::isBatchEnable, controllable::setBatchEnable))
+                .disableHoverBackground()
+                .overlay(true, GTGuiTextures.OVERLAY_BATCH[1])
+                .overlay(false, GTGuiTextures.OVERLAY_BATCH[0])
+                .addTooltip(true, IKey.lang("gregtech.multiblock.universal.batch_enabled"))
+                .addTooltip(false, IKey.lang("gregtech.multiblock.universal.batch_disabled"));
     }
 
     @Nullable

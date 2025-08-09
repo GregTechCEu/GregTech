@@ -199,9 +199,4 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             tooltip.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
         }
     }
-
-    @Override
-    public boolean isBatchAllowed() {
-        return false;
-    }
 }

@@ -235,4 +235,9 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
         }
         return capabilityResult;
     }
+
+    @Override
+    public boolean isBatchAllowed() {
+        return true;
+    }
 }

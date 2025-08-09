@@ -401,7 +401,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                                List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        if (shouldShowBatchModeButton()) {
+        if (isBatchAllowed()) {
             tooltip.add(TextFormatting.GREEN + I18n.format("gregtech.tooltip.batch_avaliable"));
             if (TooltipHelper.isCtrlDown()) {
                 tooltip.add(TextFormatting.GRAY + I18n.format("gregtech.machine.batch_process.tooltips.1"));
@@ -428,13 +428,11 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         recipeMapWorkable.setWorkingEnabled(isWorkingAllowed);
     }
 
-    public boolean shouldShowBatchModeButton() {
-        return false;
-    }
     @Override
     public boolean isBatchAllowed() {
-        return true;
+        return false;
     }
+
     @Override
     public boolean isBatchEnable() {
         return recipeMapWorkable.isBatchEnable();
