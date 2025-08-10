@@ -1,5 +1,7 @@
 package gregtech.common.mui.widget.workbench;
 
+import com.cleanroommc.modularui.theme.WidgetSlotTheme;
+
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
@@ -58,6 +60,10 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
             GlStateManager.disableDepth();
             GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
             GlStateManager.enableDepth();
+        }
+
+        if (isHovering() && widgetTheme instanceof WidgetSlotTheme slotTheme) {
+            RenderUtil.drawSlotOverlay(this, slotTheme);
         }
     }
 

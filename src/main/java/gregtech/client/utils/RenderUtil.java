@@ -1,8 +1,11 @@
 package gregtech.client.utils;
 
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
+
+import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 
 import gregtech.api.gui.resources.TextureArea;
 
@@ -718,14 +721,48 @@ public class RenderUtil {
         return getTextureMap().getMissingSprite();
     }
 
-    public static void handleJeiGhostHighlight(IWidget slot) {
-        if (!Mods.JustEnoughItems.isModLoaded()) return;
-        if (!(slot instanceof JeiGhostIngredientSlot<?> ingredientSlot)) return;
-        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() ||
-                ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
+    /**
+     * Draws the green overlay when a valid ingredient for the slot is hovered over in JEI
+     *
+     * @param slot the slot to draw the overlay on
+     * @return true if the overlay was drawn, false if not
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean handleJeiGhostOverlay(@NotNull IWidget slot) {
+        if (!Mods.JustEnoughItems.isModLoaded()) return false;
+        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return false;
+
+        if (ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
             GlStateManager.colorMask(true, true, true, false);
             ingredientSlot.drawHighlight(slot.getArea(), slot.isHovering());
             GlStateManager.colorMask(true, true, true, true);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Draws a gray-ish overlay over the slot 1px inwards from each side. Intended for item slots.
+     *
+     * @param slot the slot to draw the overlay above
+     */
+    public static void drawSlotOverlay(@NotNull IWidget slot, @NotNull WidgetSlotTheme slotTheme) {
+        GlStateManager.colorMask(true, true, true, false);
+        GuiDraw.drawRect(1, 1, slot.getArea().w() - 2, slot.getArea().h() - 2, slotTheme.getSlotHoverColor());
+        GlStateManager.colorMask(true, true, true, true);
+    }
+
+    /**
+     * Handles drawing the green JEI overlay when dragging an item, and if no item is being dragged, the overlay when
+     * mousing over the slot.
+     *
+     * @param slot      the slot to draw the overlay above
+     * @param slotTheme the theme to get the slot overlay color from
+     */
+    public static void handleSlotOverlays(@NotNull IWidget slot, @NotNull WidgetSlotTheme slotTheme) {
+        if (!handleJeiGhostOverlay(slot) && slot.isHovering()) {
+            drawSlotOverlay(slot, slotTheme);
         }
     }
 }

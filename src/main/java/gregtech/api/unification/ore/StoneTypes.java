@@ -35,63 +35,104 @@ public class StoneTypes {
             .shouldBeDroppedAsItem(true)
             .build();
 
-    public static StoneType ENDSTONE = new StoneType(2, "endstone", SoundType.STONE, OrePrefix.oreEndstone,
-            Materials.Endstone,
-            Blocks.END_STONE::getDefaultState,
-            state -> state.getBlock() == Blocks.END_STONE, true);
+    public static final StoneType ENDSTONE = StoneType.Builder.create(2, "endstone")
+            .soundType(SoundType.STONE)
+            .processingPrefix(OrePrefix.oreEndstone)
+            .stoneMaterial(Materials.Endstone)
+            .stone(Blocks.END_STONE::getDefaultState)
+            .predicate(state -> state.getBlock() == Blocks.END_STONE)
+            .shouldBeDroppedAsItem(true)
+            .build();
 
     // Dummy Types used for better world generation
 
-    public static StoneType SANDSTONE = new StoneType(3, "sandstone", SoundType.STONE, OrePrefix.oreSand,
-            Materials.SiliconDioxide,
-            () -> Blocks.SANDSTONE.getDefaultState().withProperty(BlockSandStone.TYPE, BlockSandStone.EnumType.DEFAULT),
-            state -> state.getBlock() instanceof BlockSandStone &&
-                    state.getValue(BlockSandStone.TYPE) == BlockSandStone.EnumType.DEFAULT,
-            false);
+    public static final StoneType SANDSTONE = StoneType.Builder.create(3, "sandstone")
+            .soundType(SoundType.STONE)
+            .processingPrefix(OrePrefix.oreSand)
+            .stoneMaterial(Materials.SiliconDioxide)
+            .stone(() -> Blocks.SANDSTONE.getDefaultState()
+                    .withProperty(BlockSandStone.TYPE, BlockSandStone.EnumType.DEFAULT))
+            .predicate(state -> state.getBlock() instanceof BlockSandStone &&
+                    state.getValue(BlockSandStone.TYPE) == BlockSandStone.EnumType.DEFAULT)
+            .shouldBeDroppedAsItem(true)
+            .build();
 
-    public static StoneType RED_SANDSTONE = new StoneType(4, "red_sandstone", SoundType.STONE, OrePrefix.oreRedSand,
-            Materials.SiliconDioxide,
-            () -> Blocks.RED_SANDSTONE.getDefaultState().withProperty(BlockRedSandstone.TYPE,
-                    BlockRedSandstone.EnumType.DEFAULT),
-            state -> state.getBlock() instanceof BlockRedSandstone &&
-                    state.getValue(BlockRedSandstone.TYPE) == BlockRedSandstone.EnumType.DEFAULT,
-            false);
+    public static final StoneType RED_SANDSTONE = StoneType.Builder.create(4, "red_sandstone")
+            .soundType(SoundType.STONE)
+            .processingPrefix(OrePrefix.oreRedSand)
+            .stoneMaterial(Materials.SiliconDioxide)
+            .stone(() -> Blocks.RED_SANDSTONE.getDefaultState().withProperty(BlockRedSandstone.TYPE,
+                            BlockRedSandstone.EnumType.DEFAULT))
+            .predicate( state -> state.getBlock() instanceof BlockRedSandstone &&
+                    state.getValue(BlockRedSandstone.TYPE) == BlockRedSandstone.EnumType.DEFAULT)
+            .shouldBeDroppedAsItem(true)
+            .build();
 
-    public static StoneType GRANITE = new StoneType(5, "granite", SoundType.STONE, OrePrefix.oreGranite,
-            Materials.Granite,
-            () -> Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, EnumType.GRANITE),
-            state -> state.getBlock() instanceof BlockStone && state.getValue(BlockStone.VARIANT) == EnumType.GRANITE,
-            false);
+    public static final StoneType GRANITE = StoneType.Builder.create(5, "granite")
+            .soundType(SoundType.STONE)
+            .processingPrefix(OrePrefix.oreGranite)
+            .stoneMaterial(Materials.Granite)
+            .stone(() -> Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, EnumType.GRANITE))
+            .predicate(state -> state.getBlock() instanceof BlockStone &&
+                    state.getValue(BlockStone.VARIANT) == EnumType.GRANITE)
+            .shouldBeDroppedAsItem(true)
+            .build();
 
-    public static StoneType DIORITE = new StoneType(6, "diorite", SoundType.STONE, OrePrefix.oreDiorite,
-            Materials.Diorite,
-            () -> Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, EnumType.DIORITE),
-            state -> state.getBlock() instanceof BlockStone && state.getValue(BlockStone.VARIANT) == EnumType.DIORITE,
-            false);
+    public static final StoneType DIORITE = StoneType.Builder.create(6, "diorite")
+            .soundType(SoundType.STONE)
+            .processingPrefix(OrePrefix.oreDiorite)
+            .stoneMaterial(Materials.Diorite)
+            .stone(() -> Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, EnumType.DIORITE))
+            .predicate(state -> state.getBlock() instanceof BlockStone &&
+                    state.getValue(BlockStone.VARIANT) == EnumType.DIORITE)
+            .shouldBeDroppedAsItem(true)
+            .build();
 
-    public static StoneType ANDESITE = new StoneType(7, "andesite", SoundType.STONE, OrePrefix.oreAndesite,
-            Materials.Andesite,
-            () -> Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.ANDESITE),
-            state -> state.getBlock() instanceof BlockStone && state.getValue(BlockStone.VARIANT) == EnumType.ANDESITE,
-            false);
+    public static final StoneType ANDESITE = StoneType.Builder.create(7, "andesite")
+            .soundType(SoundType.STONE)
+            .processingPrefix(OrePrefix.oreAndesite)
+            .stoneMaterial(Materials.Andesite)
+            .stone(() -> Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.ANDESITE))
+            .predicate(state -> state.getBlock() instanceof BlockStone &&
+                    state.getValue(BlockStone.VARIANT) == EnumType.ANDESITE)
+            .shouldBeDroppedAsItem(true)
+            .build();
 
-    public static StoneType BLACK_GRANITE = new StoneType(8, "black_granite", SoundType.STONE,
-            OrePrefix.oreBlackgranite, Materials.GraniteBlack,
-            () -> gtStoneState(StoneVariantBlock.StoneType.BLACK_GRANITE),
-            state -> gtStonePredicate(state, StoneVariantBlock.StoneType.BLACK_GRANITE), false);
+    public static final StoneType BLACK_GRANITE = StoneType.Builder.create(8, "black_granite")
+            .soundType(SoundType.STONE)
+            .processingPrefix(OrePrefix.oreBlackgranite)
+            .stoneMaterial(Materials.GraniteBlack)
+            .stone(() -> gtStoneState(StoneVariantBlock.StoneType.BLACK_GRANITE))
+            .predicate(state -> gtStonePredicate(state, StoneVariantBlock.StoneType.BLACK_GRANITE))
+            .shouldBeDroppedAsItem(false)
+            .build();
 
-    public static StoneType RED_GRANITE = new StoneType(9, "red_granite", SoundType.STONE, OrePrefix.oreRedgranite,
-            Materials.GraniteRed,
-            () -> gtStoneState(StoneVariantBlock.StoneType.RED_GRANITE),
-            state -> gtStonePredicate(state, StoneVariantBlock.StoneType.RED_GRANITE), false);
+    public static final StoneType RED_GRANITE = StoneType.Builder.create(9, "red_granite")
+            .soundType(SoundType.STONE)
+            .processingPrefix(OrePrefix.oreRedgranite)
+            .stoneMaterial(Materials.GraniteRed)
+            .stone(() -> gtStoneState(StoneVariantBlock.StoneType.RED_GRANITE))
+            .predicate(state -> gtStonePredicate(state, StoneVariantBlock.StoneType.RED_GRANITE))
+            .shouldBeDroppedAsItem(false)
+            .build();
 
-    public static StoneType MARBLE = new StoneType(10, "marble", SoundType.STONE, OrePrefix.oreMarble, Materials.Marble,
-            () -> gtStoneState(StoneVariantBlock.StoneType.MARBLE),
-            state -> gtStonePredicate(state, StoneVariantBlock.StoneType.MARBLE), false);
+    public static final StoneType MARBLE = StoneType.Builder.create(10, "marble")
+            .soundType(SoundType.STONE)
+            .processingPrefix(OrePrefix.oreMarble)
+            .stoneMaterial(Materials.Marble)
+            .stone(() -> gtStoneState(StoneVariantBlock.StoneType.MARBLE))
+            .predicate(state -> gtStonePredicate(state, StoneVariantBlock.StoneType.MARBLE))
+            .shouldBeDroppedAsItem(false)
+            .build();
 
-    public static StoneType BASALT = new StoneType(11, "basalt", SoundType.STONE, OrePrefix.oreBasalt, Materials.Basalt,
-            () -> gtStoneState(StoneVariantBlock.StoneType.BASALT),
-            state -> gtStonePredicate(state, StoneVariantBlock.StoneType.BASALT), false);
+    public static final StoneType BASALT = StoneType.Builder.create(11, "basalt")
+            .soundType(SoundType.STONE)
+            .processingPrefix(OrePrefix.oreBasalt)
+            .stoneMaterial(Materials.Basalt)
+            .stone(() -> gtStoneState(StoneVariantBlock.StoneType.BASALT))
+            .predicate(state -> gtStonePredicate(state, StoneVariantBlock.StoneType.BASALT))
+            .shouldBeDroppedAsItem(false)
+            .build();
 
     private static IBlockState gtStoneState(StoneVariantBlock.StoneType stoneType) {
         return MetaBlocks.STONE_BLOCKS.get(StoneVariant.SMOOTH).getState(stoneType);

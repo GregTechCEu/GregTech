@@ -116,13 +116,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             this.textRenderer.draw(amount);
         }
 
-        if (isHovering()) {
-            GlStateManager.colorMask(true, true, true, false);
-            GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2, widgetTheme.getSlotHoverColor());
-            GlStateManager.colorMask(true, true, true, true);
-        }
 
-        RenderUtil.handleJeiGhostHighlight(this);
+        RenderUtil.handleSlotOverlays(this, widgetTheme);
     }
 
     @Override

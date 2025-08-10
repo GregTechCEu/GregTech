@@ -109,9 +109,9 @@ public interface IJetpack {
 
                     /* hover check not needed, because of "flyKeyDown || hover && !player.onGround" check */
                     if (!anyKeyPressed && cancelInertia) {
-                        player.motionX *= 0.75;
-                        player.motionY *= 0.75;
-                        player.motionZ *= 0.75;
+                        player.motionX *= 0.5;
+                        player.motionY *= 0.5;
+                        player.motionZ *= 0.5;
                     }
 
                     if (!player.getEntityWorld().isRemote) {

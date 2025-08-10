@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.crafting.Component;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
@@ -1251,8 +1252,8 @@ public class MetaTileEntityLoader {
 
     private static Object[] prepareRecipe(int tier, Object... recipe) {
         for (int i = 3; i < recipe.length; i++) {
-            if (recipe[i] instanceof Component) {
-                Object component = ((Component) recipe[i]).getIngredient(tier);
+            if (recipe[i] instanceof Component craftingComponent) {
+                Object component = craftingComponent.getIngredient(tier);
                 if (component == null) {
                     return null;
                 }

@@ -9,10 +9,11 @@
     "DragManagerAccessor",
     "GhostDragAccessor",
     "IngredientGridMixin",
+    "ItemStackHelperMixin",
+    "ItemStackRendererMixin",
     "JEITooltipMixin",
     "ModRegistryMixin",
-    "StackHelperMixin",
-    "ItemStackRendererMixin"
+    "StackHelperMixin"
   ],
   "client": [],
   "server": []

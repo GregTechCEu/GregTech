@@ -12,7 +12,9 @@
   ],
   "client": [
     "LangKeyMixin",
-    "MixinRichTextCompiler"
+    "MixinRichTextCompiler",
+    "ModularUIJeiPluginMixin",
+    "ItemSlotMixin"
   ],
   "server": []
 }

@@ -3,6 +3,7 @@ package gregtech.api;
 import gregtech.api.util.random.XoShiRo256PlusPlusRandom;
 import gregtech.common.ConfigHolder;
 
+import gregtech.loaders.recipe.CraftingComponent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.oredict.OreDictionary;
@@ -200,7 +201,7 @@ public class GTValues {
 
     /**
      * Default fallback value used for Map keys.
-     * Currently only used in {@link gregtech.loaders.recipe.CraftingComponent}.
+     * Currently only used in {@link CraftingComponent}.
      */
     public static final int FALLBACK = -1;
 

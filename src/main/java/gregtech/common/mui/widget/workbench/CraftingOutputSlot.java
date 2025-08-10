@@ -1,5 +1,7 @@
 package gregtech.common.mui.widget.workbench;
 
+import com.cleanroommc.modularui.theme.WidgetSlotTheme;
+
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
@@ -75,6 +77,10 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         if (itemstack.isEmpty()) return;
 
         RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
+
+        if (isHovering() && widgetTheme instanceof WidgetSlotTheme slotTheme) {
+            RenderUtil.drawSlotOverlay(this, slotTheme);
+        }
     }
 
     @Override

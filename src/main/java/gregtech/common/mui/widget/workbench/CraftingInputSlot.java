@@ -1,5 +1,7 @@
 package gregtech.common.mui.widget.workbench;
 
+import com.cleanroommc.modularui.theme.WidgetSlotTheme;
+
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
@@ -110,7 +112,9 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
         }
 
-        RenderUtil.handleJeiGhostHighlight(this);
+        if (widgetTheme instanceof WidgetSlotTheme slotTheme) {
+            RenderUtil.handleSlotOverlays(this, slotTheme);
+        }
     }
 
     @Override

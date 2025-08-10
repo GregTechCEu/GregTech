@@ -430,9 +430,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.previousRecipe = null;
         this.latestRecipes.clear();
 
-        //刷新并行
-        parallelLimit= getParallelLimit();
-
         trySearchNewRecipe();
     }
 
