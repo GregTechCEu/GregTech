@@ -70,8 +70,10 @@ public enum RelativeDirection {
             }
             case LEFT -> {
                 EnumFacing facing;
-                if (frontAxis == Axis.Y) {
+                if (frontFacing == EnumFacing.UP) {
                     facing = upwardsFacing.rotateY();
+                } else if (frontFacing == EnumFacing.DOWN) {
+                    facing = upwardsFacing.rotateYCCW();
                 } else {
                     facing = switch (upwardsFacing) {
                         case NORTH -> frontFacing.rotateYCCW();
@@ -84,8 +86,10 @@ public enum RelativeDirection {
             }
             case RIGHT -> {
                 EnumFacing facing;
-                if (frontAxis == Axis.Y) {
+                if (frontFacing == EnumFacing.UP) {
                     facing = upwardsFacing.rotateYCCW();
+                } else if (frontFacing == EnumFacing.DOWN) {
+                    facing = upwardsFacing.rotateY();
                 } else {
                     facing = switch (upwardsFacing) {
                         case NORTH -> frontFacing.rotateY();
