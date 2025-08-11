@@ -763,7 +763,7 @@ public class ElementMaterials {
                 .build();
 
         Promethium = new Material.Builder(85, gregtechId("promethium"))
-                .dust().ingot()
+                .dust().ingot().fluid()
                 .flags(GENERATE_FINE_WIRE)
                 .color(0x74E0A0).iconSet(SHINY)
                 .element(Elements.Pm)
@@ -939,7 +939,7 @@ public class ElementMaterials {
                 .build();
 
         Tellurium = new Material.Builder(106, gregtechId("tellurium"))
-                .dust().ingot()
+                .dust().ingot().fluid()
                 .flags(STD_METAL, GENERATE_FOIL)
                 .color(0xEFDDED).iconSet(METALLIC)
                 .element(Elements.Te)

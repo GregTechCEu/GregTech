@@ -23,6 +23,8 @@ import static gregtech.api.GTValues.*;
 public class CraftingComponent {
 
     public static Component CIRCUIT;
+    public static Component LOW_CIRCUIT;
+    public static Component HIGH_CIRCUIT;
     public static Component BETTER_CIRCUIT;
     public static Component PUMP;
     public static Component WIRE_ELECTRIC;
@@ -43,6 +45,7 @@ public class CraftingComponent {
     public static Component GLASS;
     public static Component PLATE;
     public static Component DOUBLE_PLATE;
+    public static Component DENSE_PLATE;
     public static Component HULL_PLATE;
     public static Component MOTOR;
     public static Component ROTOR;
@@ -91,6 +94,40 @@ public class CraftingComponent {
                 .entry(UXV, OrePrefix.circuit, MarkerMaterials.Tier.UXV)
                 .entry(OpV, OrePrefix.circuit, MarkerMaterials.Tier.OpV)
                 .entry(MAX, OrePrefix.circuit, MarkerMaterials.Tier.MAX)
+                .build();
+
+        LOW_CIRCUIT = new Component.Builder()
+                .entry(0, OrePrefix.circuit, MarkerMaterials.Tier.LV)
+                .entry(1, OrePrefix.circuit, MarkerMaterials.Tier.MV)
+                .entry(2, OrePrefix.circuit, MarkerMaterials.Tier.HV)
+                .entry(3, OrePrefix.circuit, MarkerMaterials.Tier.EV)
+                .entry(4, OrePrefix.circuit, MarkerMaterials.Tier.IV)
+                .entry(5, OrePrefix.circuit, MarkerMaterials.Tier.LuV)
+                .entry(6, OrePrefix.circuit, MarkerMaterials.Tier.ZPM)
+                .entry(7, OrePrefix.circuit, MarkerMaterials.Tier.UV)
+                .entry(8, OrePrefix.circuit, MarkerMaterials.Tier.UHV)
+                .entry(9, OrePrefix.circuit, MarkerMaterials.Tier.UEV)
+                .entry(10, OrePrefix.circuit, MarkerMaterials.Tier.UIV)
+                .entry(11, OrePrefix.circuit, MarkerMaterials.Tier.UXV)
+                .entry(12, OrePrefix.circuit, MarkerMaterials.Tier.OpV)
+                .entry(13, OrePrefix.circuit, MarkerMaterials.Tier.MAX)
+                .build();
+
+        HIGH_CIRCUIT = new Component.Builder()
+                .entry(0, OrePrefix.circuit, MarkerMaterials.Tier.LV)
+                .entry(1, OrePrefix.circuit, MarkerMaterials.Tier.MV)
+                .entry(2, OrePrefix.circuit, MarkerMaterials.Tier.HV)
+                .entry(3, OrePrefix.circuit, MarkerMaterials.Tier.EV)
+                .entry(4, OrePrefix.circuit, MarkerMaterials.Tier.IV)
+                .entry(5, OrePrefix.circuit, MarkerMaterials.Tier.LuV)
+                .entry(6, OrePrefix.circuit, MarkerMaterials.Tier.ZPM)
+                .entry(7, OrePrefix.circuit, MarkerMaterials.Tier.UV)
+                .entry(8, OrePrefix.circuit, MarkerMaterials.Tier.UHV)
+                .entry(9, OrePrefix.circuit, MarkerMaterials.Tier.UEV)
+                .entry(10, OrePrefix.circuit, MarkerMaterials.Tier.UIV)
+                .entry(11, OrePrefix.circuit, MarkerMaterials.Tier.UXV)
+                .entry(12, OrePrefix.circuit, MarkerMaterials.Tier.OpV)
+                .entry(13, OrePrefix.circuit, MarkerMaterials.Tier.MAX)
                 .build();
 
         BETTER_CIRCUIT = new Component.Builder()
@@ -396,6 +433,19 @@ public class CraftingComponent {
                 .entry(ZPM, OrePrefix.plateDouble, Materials.NaquadahAlloy)
                 .entry(UV, OrePrefix.plateDouble, Materials.Darmstadtium)
                 .entry(UHV, OrePrefix.plateDouble, Materials.Neutronium)
+                .build();
+
+        DENSE_PLATE = new Component.Builder()
+                .entry(ULV, OrePrefix.plateDense, Materials.WroughtIron)
+                .entry(LV, OrePrefix.plateDense, Materials.Steel)
+                .entry(MV, OrePrefix.plateDense, Materials.Aluminium)
+                .entry(HV, OrePrefix.plateDense, Materials.StainlessSteel)
+                .entry(EV, OrePrefix.plateDense, Materials.Titanium)
+                .entry(IV, OrePrefix.plateDense, Materials.TungstenSteel)
+                .entry(LuV, OrePrefix.plateDense, Materials.RhodiumPlatedPalladium)
+                .entry(ZPM, OrePrefix.plateDense, Materials.NaquadahAlloy)
+                .entry(UV, OrePrefix.plateDense, Materials.Darmstadtium)
+                .entry(UHV, OrePrefix.plateDense, Materials.Neutronium)
                 .build();
 
         HULL_PLATE = new Component.Builder(OrePrefix.plate, Materials.Polybenzimidazole)
