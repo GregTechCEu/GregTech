@@ -615,6 +615,20 @@ public class MixerRecipes {
                 .output(dust, RTMAlloy, 7)
                 .buildAndRegister();
 
+        MIXER_RECIPES.recipeBuilder().duration(800).EUt(VA[IV])
+                .input(dust, Cadmium, 4)
+                .input(dust, Antimony, 3)
+                .input(dust, Indium)
+                .output(dust, HighGradeSolderingAlloy, 8)
+                .buildAndRegister();
+
+
+        MIXER_RECIPES.recipeBuilder().duration(350).EUt(VA[IV])
+                .input(dust, Antimony, 2)
+                .input(dust, Tellurium, 3)
+                .output(dust, AntimonyTelluride, 5)
+                .buildAndRegister();
+
         MIXER_RECIPES.recipeBuilder().duration(600).EUt(VA[EV])
                 .input(dust, Zirconium, 16)
                 .input(dust, Tin, 2)

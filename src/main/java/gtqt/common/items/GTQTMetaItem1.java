@@ -1,7 +1,5 @@
 package gtqt.common.items;
 
-import gregtech.api.GTValues;
-import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.FilteredFluidStats;
 import gregtech.api.items.metaitem.StandardMetaItem;
 
@@ -13,9 +11,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.RecyclingData;
 import gregtech.common.creativetab.GTCreativeTabs;
-import gregtech.common.items.behaviors.ColorSprayBehaviour;
-
-import gregtech.common.items.behaviors.ProspectorScannerBehavior;
+import gregtech.common.items.behaviors.ColorSprayBehavior;
 
 import gtqt.common.GTQTCommonProxy;
 import gtqt.common.items.behaviors.ProgrammableCircuit;
@@ -131,10 +127,10 @@ public class GTQTMetaItem1 extends StandardMetaItem {
         ENDLESS_SPRAY_EMPTY = addItem(101, "endless_spray.empty");
 
         // out of registry order so it can reference the Empty Spray Can
-        GTQTMetaItems.ENDLESS_SPRAY_SOLVENT = addItem(100, "endless_spray.solvent").setMaxStackSize(1).addComponents(new ColorSprayBehaviour(ENDLESS_SPRAY_EMPTY.getStackForm(), Integer.MAX_VALUE, -1)).setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+        GTQTMetaItems.ENDLESS_SPRAY_SOLVENT = addItem(100, "endless_spray.solvent").setMaxStackSize(1).addComponents(new ColorSprayBehavior(ENDLESS_SPRAY_EMPTY.getStackForm(), Integer.MAX_VALUE, -1)).setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         for (int i = 0; i < EnumDyeColor.values().length; i++) {
-            GTQTMetaItems.ENDLESS_SPRAY_CAN_DYES[i] = addItem(102 + i, "endless_spray.can.dyes." + EnumDyeColor.values()[i].getName()).setMaxStackSize(1).addComponents(new ColorSprayBehaviour(ENDLESS_SPRAY_EMPTY.getStackForm(), Integer.MAX_VALUE, i)).setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+            GTQTMetaItems.ENDLESS_SPRAY_CAN_DYES[i] = addItem(102 + i, "endless_spray.can.dyes." + EnumDyeColor.values()[i].getName()).setMaxStackSize(1).addComponents(new ColorSprayBehavior(ENDLESS_SPRAY_EMPTY.getStackForm(), Integer.MAX_VALUE, i)).setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         }
 
 

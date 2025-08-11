@@ -460,6 +460,8 @@ public class Materials {
     public static Material HafniumTetrachloride;
     public static Material Zircaloy4;
     public static Material Inconel718;
+    public static Material HighGradeSolderingAlloy;
+    public static Material AntimonyTelluride;
 
     /**
      * Organic chemistry
@@ -681,6 +683,7 @@ public class Materials {
     public static Material DecalcifiedBauxiteSludge;
     public static Material BauxiteSlag;
     public static Material Sewage;
+    public static Material MolybdeniteLubricant;
 
     /**
      * Second Degree Compounds
@@ -738,6 +741,7 @@ public class Materials {
     public static Material SaltWater;
     public static Material Clay;
     public static Material Redstone;
+    public static Material ChromiumDopedMolybdenite;
 
     /**
      * Third Degree Materials

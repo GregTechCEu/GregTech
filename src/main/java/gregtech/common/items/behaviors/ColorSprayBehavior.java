@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GradientUtil;
 import gregtech.api.util.Mods;
+import gregtech.common.pipelike.PipeCollectorWalker;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.Block;
@@ -38,13 +39,13 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
 
-public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IItemDurabilityManager {
+public class ColorSprayBehavior extends AbstractUsableBehaviour implements IItemDurabilityManager {
 
     private final ItemStack empty;
     private final EnumDyeColor color;
     private final Pair<Color, Color> durabilityBarColors;
 
-    public ColorSprayBehaviour(ItemStack empty, int totalUses, int color) {
+    public ColorSprayBehavior(ItemStack empty, int totalUses, int color) {
         super(totalUses);
         this.empty = empty;
         EnumDyeColor[] colors = EnumDyeColor.values();
@@ -61,7 +62,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         if (!player.canPlayerEdit(pos, facing, stack)) {
             return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
         }
-        if (!tryPaintBlock(player, world, pos, facing)) {
+        if (!tryPaintBlock(player, world, pos, facing, hand)) {
             return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
         }
         useItemDurability(player, hand, stack, empty.copy());
@@ -70,39 +71,17 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 
-    @Nullable
-    public static ColorSprayBehaviour getBehavior(ItemStack spraycan) {
-        if (!(spraycan.getItem() instanceof MetaItem<?>meta)) return null;
-        for (IItemBehaviour behaviour : meta.getBehaviours(spraycan)) {
-            if (behaviour instanceof ColorSprayBehaviour spray) return spray;
-        }
-        return null;
-    }
-
-    public EnumActionResult useFromToolbelt(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
-                                            EnumFacing facing, float hitX, float hitY, float hitZ, ItemStack spraycan) {
-        if (!player.canPlayerEdit(pos, facing, spraycan)) {
-            return EnumActionResult.FAIL;
-        }
-        if (!tryPaintBlock(player, world, pos, facing)) {
-            return EnumActionResult.PASS;
-        }
-        useItemDurability(player, hand, spraycan, empty.copy());
-        world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
-                SoundCategory.PLAYERS, 1.0f, 1.0f);
-        return EnumActionResult.SUCCESS;
-    }
-
-    private boolean tryPaintBlock(EntityPlayer player, World world, BlockPos pos, EnumFacing side) {
+    private boolean tryPaintBlock(EntityPlayer player, World world, BlockPos pos, EnumFacing side, EnumHand hand) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
         if (color == null) {
-            return tryStripBlockColor(player, world, pos, block, side);
+            return tryStripBlockColor(player, world, pos, block, side, hand);
         }
-        return block.recolorBlock(world, pos, side, this.color) || tryPaintSpecialBlock(player, world, pos, block);
+        return tryPaintSpecialBlock(player, world, pos, block, hand) ||
+                block.recolorBlock(world, pos, side, this.color);
     }
 
-    private boolean tryPaintSpecialBlock(EntityPlayer player, World world, BlockPos pos, Block block) {
+    private boolean tryPaintSpecialBlock(EntityPlayer player, World world, BlockPos pos, Block block, EnumHand hand) {
         if (block == Blocks.GLASS) {
             IBlockState newBlockState = Blocks.STAINED_GLASS.getDefaultState()
                     .withProperty(BlockStainedGlass.COLOR, this.color);
@@ -121,10 +100,12 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
             world.setBlockState(pos, newBlockState);
             return true;
         }
+        TileEntity te = world.getTileEntity(pos);
+        if (player.isSneaking() && te instanceof IPipeTile<?, ?>) {
+            return traversePipes(player, world, hand, pos);
+        }
         if (Mods.AppliedEnergistics2.isModLoaded()) {
-            TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileCableBus) {
-                TileCableBus cable = (TileCableBus) te;
+            if (te instanceof TileCableBus cable) {
                 // do not try to recolor if it already is this color
                 if (cable.getColor().ordinal() != color.ordinal()) {
                     cable.recolourBlock(null, AEColor.values()[color.ordinal()], player);
@@ -135,9 +116,45 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         return false;
     }
 
+    // note: automatically uses durability from recolouring pipes, apart from the last use, as this allows for proper
+    // animation of the item's use
+    private boolean traversePipes(EntityPlayer player, World world, EnumHand hand, BlockPos startPos) {
+        TileEntity connectedTe = world.getTileEntity(startPos);
+        // I LOVE LAMBDAS
+        final boolean[] painted = { false };
+        ItemStack heldItem = player.getHeldItem(hand);
+        int colour = this.color == null ? -1 : this.color.colorValue;
+        if (connectedTe instanceof IPipeTile<?, ?>startPipe) {
+            PipeCollectorWalker.collectPipeNet(world, startPos, startPipe, pipe -> {
+                if (getUsesLeft(heldItem) == 0) {
+                    return false;
+                }
+                if (pipe.getPaintingColor() != colour) {
+                    pipe.setPaintingColor(colour);
+                    pipe.scheduleRenderUpdate();
+                    if (getUsesLeft(heldItem) == 1) {
+                        if (painted[0]) {
+                            useItemDurability(player, hand, heldItem, empty.copy());
+                        }
+                        painted[0] = true;
+                        return false;
+                    }
+                    // Off by one durability as the final use is handled by onItemUse, along with the use animation
+                    if (painted[0]) {
+                        useItemDurability(player, hand, heldItem, empty.copy());
+                    }
+                    painted[0] = true;
+                }
+                return true;
+            });
+
+        }
+        return painted[0];
+    }
+
     @SuppressWarnings("unchecked, rawtypes")
-    private static boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block,
-                                              EnumFacing side) {
+    private boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block,
+                                       EnumFacing side, EnumHand hand) {
         // MC special cases
         if (block == Blocks.STAINED_GLASS) {
             world.setBlockState(pos, Blocks.GLASS.getDefaultState());
@@ -165,18 +182,13 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         }
 
         // TileEntityPipeBase special case
-        if (te instanceof IPipeTile) {
-            IPipeTile<?, ?> pipe = (IPipeTile<?, ?>) te;
-            if (pipe.isPainted()) {
-                pipe.setPaintingColor(-1);
-                return true;
-            } else return false;
+        if (player.isSneaking() && te instanceof IPipeTile<?, ?>) {
+            return traversePipes(player, world, hand, pos);
         }
 
         // AE2 cable special case
         if (Mods.AppliedEnergistics2.isModLoaded()) {
-            if (te instanceof TileCableBus) {
-                TileCableBus cable = (TileCableBus) te;
+            if (te instanceof TileCableBus cable) {
                 // do not try to strip color if it is already colorless
                 if (cable.getColor() != AEColor.TRANSPARENT) {
                     cable.recolourBlock(null, AEColor.TRANSPARENT, player);
@@ -217,9 +229,8 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
             lines.add(I18n.format("behaviour.paintspray.solvent.tooltip"));
         }
         lines.add(I18n.format("behaviour.paintspray.uses", remainingUses));
-        if (color != null) {
-            lines.add(I18n.format("behaviour.paintspray.offhand"));
-        }
+        lines.add(I18n.format("behaviour.paintspray.offhand"));
+        lines.add(I18n.format("behaviour.paintspray.crouch"));
     }
 
     @Override
@@ -236,5 +247,28 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
     @Override
     public boolean doDamagedStateColors(ItemStack itemStack) {
         return false;
+    }
+
+    @Nullable
+    public static ColorSprayBehavior getBehavior(ItemStack spraycan) {
+        if (!(spraycan.getItem() instanceof MetaItem<?> meta)) return null;
+        for (IItemBehaviour behaviour : meta.getBehaviours(spraycan)) {
+            if (behaviour instanceof ColorSprayBehavior spray) return spray;
+        }
+        return null;
+    }
+
+    public EnumActionResult useFromToolbelt(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+                                            EnumFacing facing, float hitX, float hitY, float hitZ, ItemStack spraycan) {
+        if (!player.canPlayerEdit(pos, facing, spraycan)) {
+            return EnumActionResult.FAIL;
+        }
+        if (!tryPaintBlock(player, world, pos, facing,hand)) {
+            return EnumActionResult.PASS;
+        }
+        useItemDurability(player, hand, spraycan, empty.copy());
+        world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
+                SoundCategory.PLAYERS, 1.0f, 1.0f);
+        return EnumActionResult.SUCCESS;
     }
 }

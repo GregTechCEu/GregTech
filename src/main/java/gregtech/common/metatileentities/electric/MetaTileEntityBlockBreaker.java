@@ -13,6 +13,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -44,6 +45,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -80,12 +82,14 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
-            pushItemsIntoNearbyHandlers(getOutputFacing());
-        }
+
         if (!getWorld().isRemote) {
+            if (getOffsetTimer() % 5 == 0) {
+                pushItemsIntoNearbyHandlers(getOutputFacing());
+            }
+
             if (breakProgressTicksLeft > 0) {
-                --this.breakProgressTicksLeft;
+                --breakProgressTicksLeft;
                 if (breakProgressTicksLeft == 0 && energyContainer.getEnergyStored() >= getEnergyPerBlockBreak()) {
                     BlockPos blockPos = getPos().offset(getFrontFacing());
                     IBlockState blockState = getWorld().getBlockState(blockPos);
@@ -97,8 +101,8 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
                         List<ItemStack> drops = attemptBreakBlockAndObtainDrops(blockPos, blockState, entityPlayer);
                         addToInventoryOrDropItems(drops);
                     }
-                    this.breakProgressTicksLeft = 0;
-                    this.currentBlockHardness = 0.0f;
+
+                    currentBlockHardness = 0.0f;
                     energyContainer.removeEnergy(getEnergyPerBlockBreak());
                 }
             }
@@ -109,10 +113,11 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
                 EntityPlayer entityPlayer = GregFakePlayer.get((WorldServer) getWorld());
                 float hardness = blockState.getBlockHardness(getWorld(), blockPos);
                 boolean skipBlock = blockState.getMaterial() == Material.AIR ||
-                        blockState.getBlock().isAir(blockState, getWorld(), getPos());
+                        blockState.getBlock().isAir(blockState, getWorld(), getPos()) ||
+                        blockState.getBlock() instanceof BlockLiquid;
                 if (hardness >= 0.0f && !skipBlock && getWorld().isBlockModifiable(entityPlayer, blockPos)) {
-                    this.breakProgressTicksLeft = getTicksPerBlockBreak(hardness);
-                    this.currentBlockHardness = hardness;
+                    breakProgressTicksLeft = getTicksPerBlockBreak(hardness);
+                    currentBlockHardness = hardness;
                 }
             }
         }
@@ -179,19 +184,19 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacing = EnumFacing.VALUES[buf.readByte()];
@@ -203,7 +208,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     public boolean isValidFrontFacing(EnumFacing facing) {
         // use direct outputFacing field instead of getter method because otherwise
         // it will just return SOUTH for null output facing
-        return super.isValidFrontFacing(facing) && facing != outputFacing;
+        return facing != outputFacing;
     }
 
     public EnumFacing getOutputFacing() {
@@ -290,7 +295,8 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.block_breaker.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_op", getEnergyPerBlockBreak()));

@@ -1962,8 +1962,8 @@ gregtech.material.hafnia=Hafnia
 gregtech.material.hafnium_tetrachloride=Hafnium Tetrachloride
 gregtech.material.zircaloy_4=Zircaloy-4
 gregtech.material.inconel_718=Inconel-718
-
-
+gregtech.material.high_grade_soldering_alloy=High-Grade Soldering Alloy
+gregtech.material.antimony_telluride=Antimony Telluride
 # Organic Chemistry Materials
 gregtech.material.silicone_rubber=Silicone Rubber
 gregtech.material.raw_rubber=Raw Rubber
@@ -2181,6 +2181,7 @@ gregtech.material.bauxite_sludge=Bauxite Sludge
 gregtech.material.decalcified_bauxite_sludge=Decalcified Bauxite Sludge
 gregtech.material.bauxite_slag=Bauxite Slag
 gregtech.material.sewage=Sewage
+gregtech.material.molybdenite_lubricant=Molybdenite Lubricant
 
 # Second Degree Materials
 gregtech.material.glass=Glass
@@ -2236,7 +2237,7 @@ gregtech.material.aqua_regia=Aqua Regia
 gregtech.material.salt_water=Salt Water
 gregtech.material.clay=Clay
 gregtech.material.redstone=Redstone
-
+gregtech.material.chromium_doped_molybdenite=Chromium-Doped Molybdenite
 
 # Third Degree Materials
 gregtech.material.electrotine=Electrotine
@@ -4951,6 +4952,7 @@ behaviour.paintspray.red.tooltip=Can paint things in Red
 behaviour.paintspray.black.tooltip=Can paint things in Black
 behaviour.paintspray.uses=Remaining Uses: %,d
 behaviour.paintspray.offhand=Hold in offhand to color while placing blocks
+behaviour.paintspray.crouch=Crouch to spray connected pipes
 behaviour.prospecting=Usable for Prospecting
 
 # Multiblock machine controllers
@@ -6204,6 +6206,8 @@ gregtech.multiblock.turbine.energy_per_tick=Output EU/t: %s (%s)
 gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed!
 gregtech.multiblock.turbine.obstructed.desc=Turbine must have air space in the 3x3 in front of it.
 gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 adds §f10%% efficiency§7.
+
+gregtech.multiblock.structure_tier=Structure Tier:
 
 gregtech.multiblock.large_boiler.efficiency=Efficiency: %s
 gregtech.multiblock.large_boiler.steam_output=Steam Output: %s

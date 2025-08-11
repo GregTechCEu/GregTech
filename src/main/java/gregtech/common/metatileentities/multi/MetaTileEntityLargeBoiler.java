@@ -21,6 +21,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.util.KeyUtil;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.core.sound.GTSoundEvents;
@@ -307,7 +308,8 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.multiblock.large_boiler.rate_tooltip",
-                (int) (boilerType.steamPerTick() * 20 * boilerType.runtimeBoost(20) / 20.0)));
+                TextFormattingUtil
+                        .formatNumbers((int) (boilerType.steamPerTick() * 20 * boilerType.runtimeBoost(200) / 20.0))));
         tooltip.add(
                 I18n.format("gregtech.multiblock.large_boiler.heat_time_tooltip", boilerType.getTicksToBoiling() / 20));
         tooltip.add(I18n.format("gregtech.universal.tooltip.base_production_fluid", boilerType.steamPerTick()));

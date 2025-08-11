@@ -1958,8 +1958,8 @@ gregtech.material.hafnia=二氧化铪
 gregtech.material.hafnium_tetrachloride=四氯化铪
 gregtech.material.zircaloy_4=锆-4合金
 gregtech.material.inconel_718=因科镍-718
-
-
+gregtech.material.high_grade_soldering_alloy=高级焊接合金
+gregtech.material.antimony_telluride=碲化锑
 # Organic Chemistry Materials
 gregtech.material.silicone_rubber=硅橡胶
 gregtech.material.raw_rubber=生橡胶
@@ -2177,6 +2177,7 @@ gregtech.material.bauxite_sludge=铝土泥渣
 gregtech.material.decalcified_bauxite_sludge=脱钙铝土泥渣
 gregtech.material.bauxite_slag=铝土矿渣
 gregtech.material.sewage=污水
+gregtech.material.molybdenite_lubricant=辉钼润滑剂
 
 # Second Degree Materials
 gregtech.material.glass=玻璃
@@ -2232,7 +2233,7 @@ gregtech.material.aqua_regia=王水
 gregtech.material.salt_water=盐水
 gregtech.material.clay=粘土
 gregtech.material.redstone=红石
-
+gregtech.material.chromium_doped_molybdenite=铬掺杂辉钼矿
 
 # Third Degree Materials
 gregtech.material.electrotine=蓝石
@@ -4948,6 +4949,7 @@ behaviour.paintspray.red.tooltip=可以将方块染成红色
 behaviour.paintspray.black.tooltip=可以将方块染成黑色
 behaviour.paintspray.uses=剩余次数：%,d
 behaviour.paintspray.offhand=副手持握时所放置的方块将立即被染成对应颜色
+behaviour.paintspray.crouch=蹲下喷涂连接的管道
 behaviour.prospecting=适用于探矿
 
 # Multiblock machine controllers
@@ -6201,6 +6203,8 @@ gregtech.multiblock.turbine.energy_per_tick=产能功率：%s/%s EU/t
 gregtech.multiblock.turbine.obstructed=涡轮表面受阻！
 gregtech.multiblock.turbine.obstructed.desc=涡轮前方3x3必须是空气。
 gregtech.multiblock.turbine.efficiency_tooltip=转子支架等级超过%s§7时，每级增加§610%%§7的效率。
+
+gregtech.multiblock.structure_tier=结构等级:
 
 gregtech.multiblock.large_boiler.efficiency=效率：%s
 gregtech.multiblock.large_boiler.steam_output=蒸汽输出：%s

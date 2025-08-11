@@ -96,6 +96,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected Map<ResourceLocation, RecipeBuildAction<R>> ignoredBuildActions;
 
     private boolean withItemRecycling;
+    private boolean withFluidRecycling;
 
     protected RecipeBuilder() {
         this.inputs = new ArrayList<>();
@@ -142,14 +143,33 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             this.ignoredBuildActions = new Object2ObjectOpenHashMap<>(recipeBuilder.ignoredBuildActions);
         }
         this.withItemRecycling = recipeBuilder.hasItemRecycling();
+        this.withFluidRecycling = recipeBuilder.hasFluidRecycling();
     }
     /**
      * Generate Recycling Data based on this recipe's Items
      */
-    public R withRecycling() {
+    public R withItemRecycling() {
         this.withItemRecycling = true;
         return (R) this;
     }
+
+    /**
+     * Generate Recycling Data based on this recipe's Fluids
+     */
+    public R withFluidRecycling() {
+        this.withFluidRecycling = true;
+        return (R) this;
+    }
+
+    /**
+     * Generate Recycling Data based on this recipe's Items and Fluids
+     */
+    public R withFullRecycling() {
+        this.withItemRecycling = true;
+        this.withFluidRecycling = true;
+        return (R) this;
+    }
+
     public R cleanroom(@Nullable CleanroomType cleanroom) {
         if (ConfigHolder.machines.enableCleanroom && cleanroom != null) {
             this.applyProperty(CleanroomProperty.getInstance(), cleanroom);
@@ -1122,11 +1142,22 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             }
         }
         if (hasItemRecycling()) {
-            // ignore input fluids for item-only recycling
-            ItemStack outputStack = getOutputs().get(0);
-            RecyclingData data = RecyclingHandler.getRecyclingIngredients(getInputs(), outputStack.getCount());
+            RecyclingData data;
+            if (hasFluidRecycling()) {
+                data = RecyclingHandler.getRecyclingIngredients(getOutputs().get(0).getCount(),
+                        getInputs(), getFluidInputs());
+            } else {
+                data = RecyclingHandler.getRecyclingIngredients(getOutputs().get(0).getCount(),
+                        getInputs(), null);
+            }
             if (data != null) {
-                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(outputStack, data);
+                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(getOutputs().get(0), data);
+            }
+        } else if (hasFluidRecycling()) {
+            RecyclingData data = RecyclingHandler.getRecyclingIngredients(getOutputs().get(0).getCount(),
+                    null, getFluidInputs());
+            if (data != null) {
+                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(getOutputs().get(0), data);
             }
         }
 
@@ -1136,6 +1167,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public boolean hasItemRecycling() {
         return withItemRecycling;
     }
+
+    public boolean hasFluidRecycling() {
+        return withFluidRecycling;
+    }
+
     ///////////////////
     // Getters //
     ///////////////////
@@ -1228,6 +1264,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 .append("cleanroom", getCleanroom())
                 .append("dimensions", getDimensionIDs().toString())
                 .append("dimensions_blocked", getBlockedDimensionIDs().toString())
+                .append("itemRecycling", withItemRecycling)
+                .append("fluidRecycling", withFluidRecycling)
                 .append("recipeStatus", recipeStatus)
                 .append("ignoresBuildActions", ignoresAllBuildActions())
                 .append("ignoredBuildActions", getIgnoredBuildActions())

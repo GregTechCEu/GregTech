@@ -1474,7 +1474,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_INDUCTOR, 8)
                 .input(ADVANCED_SMD_CAPACITOR, 16)
                 .input(ADVANCED_SMD_DIODE, 8)
-                .fluidInputs(SolderingAlloy.getFluid(L * 10))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(L * 10))
                 .output(CRYSTAL_MAINFRAME_UV)
                 .stationResearch(b -> b
                         .researchStack(CRYSTAL_COMPUTER_ZPM)
@@ -1541,7 +1541,7 @@ public class CircuitRecipes {
                 .input(wireFine, YttriumBariumCuprate, 24)
                 .input(foil, Polybenzimidazole, 32)
                 .input(plate, Europium, 4)
-                .fluidInputs(SolderingAlloy.getFluid(1152))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(1152))
                 .output(WETWARE_SUPER_COMPUTER_UV)
                 .stationResearch(b -> b
                         .researchStack(WETWARE_PROCESSOR_ASSEMBLY_ZPM)
@@ -1561,7 +1561,7 @@ public class CircuitRecipes {
                 .input(RANDOM_ACCESS_MEMORY, 32)
                 .input(wireGtDouble, EnrichedNaquadahTriniumEuropiumDuranide, 16)
                 .input(plate, Europium, 8)
-                .fluidInputs(SolderingAlloy.getFluid(L * 20))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(L * 20))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 8))
                 .output(WETWARE_MAINFRAME_UHV)
                 .stationResearch(b -> b

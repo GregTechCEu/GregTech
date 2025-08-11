@@ -17,7 +17,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.QuintFunction;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import gregtech.common.items.behaviors.ColorSprayBehaviour;
+import gregtech.common.items.behaviors.ColorSprayBehavior;
 import gregtech.tools.enchants.EnchantmentHardHammer;
 
 import net.minecraft.advancements.CriteriaTriggers;
@@ -408,7 +408,7 @@ public final class ToolHelper {
     public static boolean isSpraycan(ItemStack spraycan) {
         if (spraycan.getItem() instanceof MetaItem<?>meta) {
             for (IItemBehaviour behaviour : meta.getBehaviours(spraycan)) {
-                if (behaviour instanceof ColorSprayBehaviour) return true;
+                if (behaviour instanceof ColorSprayBehavior) return true;
             }
         }
         return false;

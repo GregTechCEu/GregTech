@@ -508,5 +508,12 @@ public class SecondDegreeMaterials {
                         EXCLUDE_PLATE_COMPRESSOR_RECIPE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3)
                 .build();
+
+
+        ChromiumDopedMolybdenite = new Material.Builder(2065, gregtechId("chromium_doped_molybdenite"))
+                .dust().color(0x9C5fB5)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Chrome, 1, Molybdenite, 1)
+                .build();
     }
 }

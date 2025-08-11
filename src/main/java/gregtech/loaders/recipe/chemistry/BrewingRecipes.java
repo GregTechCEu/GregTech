@@ -34,6 +34,15 @@ public class BrewingRecipes {
                     .duration(128).EUt(4).buildAndRegister();
         }
 
+        for (Material material : new Material[] { Oil, Creosote, SeedOil }) {
+            BREWING_RECIPES.recipeBuilder()
+                    .input(dust, ChromiumDopedMolybdenite)
+                    .input(dust, Graphite)
+                    .fluidInputs(material.getFluid(1000))
+                    .fluidOutputs(MolybdeniteLubricant.getFluid(1000))
+                    .duration(256).EUt(1920).buildAndRegister();
+        }
+
         // Biomass
         BREWING_RECIPES.recipeBuilder().duration(800).EUt(3).input("treeSapling", 1).fluidInputs(Water.getFluid(100))
                 .fluidOutputs(Biomass.getFluid(100)).buildAndRegister();

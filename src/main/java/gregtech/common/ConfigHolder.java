@@ -58,7 +58,7 @@ public class ConfigHolder {
         public boolean killAnimalEnable = false;
 
         @Config.Comment({"对林业的蝴蝶进行立即处死", })
-        @Config.Name(" 林业蝴蝶处死优化")
+        @Config.Name("林业蝴蝶处死优化")
         public boolean killButterflyEnable = false;
 
         @Config.Comment({"拒绝地形矿物生成", })
