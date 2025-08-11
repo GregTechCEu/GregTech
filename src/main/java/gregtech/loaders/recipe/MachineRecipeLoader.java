@@ -1,7 +1,6 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
-import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.items.OreDictNames;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
@@ -18,11 +17,16 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.Mods;
 import gregtech.common.ConfigHolder;
-import gregtech.common.blocks.*;
+import gregtech.common.blocks.BlockAsphalt;
+import gregtech.common.blocks.BlockCleanroomCasing;
+import gregtech.common.blocks.BlockFusionCasing;
+import gregtech.common.blocks.BlockGlassCasing;
+import gregtech.common.blocks.BlockLamp;
 import gregtech.common.blocks.BlockMachineCasing.MachineCasingType;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
-import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
+import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.StoneVariantBlock;
 import gregtech.common.blocks.StoneVariantBlock.StoneVariant;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -31,8 +35,6 @@ import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 import gregtech.loaders.recipe.chemistry.AssemblerRecipeLoader;
 import gregtech.loaders.recipe.chemistry.ChemistryRecipes;
 
-import gtqt.api.util.recipeUtility;
-
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -40,6 +42,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
+
+import gtqt.api.util.recipeUtility;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -55,10 +59,42 @@ import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.BRONZE_BRI
 import static gregtech.common.blocks.MetaBlocks.METAL_CASING;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
-import static gregtech.loaders.OreDictionaryLoader.OREDICT_BLOCK_FUEL_COKE;
-import static gregtech.loaders.OreDictionaryLoader.OREDICT_FUEL_COKE;
 
 public class MachineRecipeLoader {
+
+    private static final MaterialStack[][] alloySmelterList = {
+            { new MaterialStack(Materials.Copper, 3L), new MaterialStack(Materials.Tin, 1),
+                    new MaterialStack(Materials.Bronze, 4L) },
+            { new MaterialStack(Materials.Copper, 3L), new MaterialStack(Materials.Zinc, 1),
+                    new MaterialStack(Materials.Brass, 4L) },
+            { new MaterialStack(Materials.Copper, 1), new MaterialStack(Materials.Nickel, 1),
+                    new MaterialStack(Materials.Cupronickel, 2L) },
+            { new MaterialStack(Materials.Copper, 1), new MaterialStack(Materials.Redstone, 4L),
+                    new MaterialStack(Materials.RedAlloy, 1) },
+            { new MaterialStack(Materials.AnnealedCopper, 3L), new MaterialStack(Materials.Tin, 1),
+                    new MaterialStack(Materials.Bronze, 4L) },
+            { new MaterialStack(Materials.AnnealedCopper, 3L), new MaterialStack(Materials.Zinc, 1),
+                    new MaterialStack(Materials.Brass, 4L) },
+            { new MaterialStack(Materials.AnnealedCopper, 1), new MaterialStack(Materials.Nickel, 1),
+                    new MaterialStack(Materials.Cupronickel, 2L) },
+            { new MaterialStack(Materials.AnnealedCopper, 1), new MaterialStack(Materials.Redstone, 4L),
+                    new MaterialStack(Materials.RedAlloy, 1) },
+            { new MaterialStack(Materials.Iron, 1), new MaterialStack(Materials.Tin, 1),
+                    new MaterialStack(Materials.TinAlloy, 2L) },
+            { new MaterialStack(Materials.WroughtIron, 1), new MaterialStack(Materials.Tin, 1),
+                    new MaterialStack(Materials.TinAlloy, 2L) },
+            { new MaterialStack(Materials.Iron, 2L), new MaterialStack(Materials.Nickel, 1),
+                    new MaterialStack(Materials.Invar, 3L) },
+            { new MaterialStack(Materials.WroughtIron, 2L), new MaterialStack(Materials.Nickel, 1),
+                    new MaterialStack(Materials.Invar, 3L) },
+            { new MaterialStack(Materials.Lead, 4L), new MaterialStack(Materials.Antimony, 1),
+                    new MaterialStack(Materials.BatteryAlloy, 5L) },
+            { new MaterialStack(Materials.Gold, 1), new MaterialStack(Materials.Silver, 1),
+                    new MaterialStack(Materials.Electrum, 2L) },
+            { new MaterialStack(Materials.Magnesium, 1), new MaterialStack(Materials.Aluminium, 2L),
+                    new MaterialStack(Materials.Magnalium, 3L) },
+            { new MaterialStack(Materials.Silver, 1), new MaterialStack(Materials.Electrotine, 4),
+                    new MaterialStack(Materials.BlueAlloy, 1) } };
 
     private MachineRecipeLoader() {}
 
@@ -209,45 +245,41 @@ public class MachineRecipeLoader {
                 .duration(300).EUt(2).buildAndRegister();
     }
 
-    public static void PrimitiveBlastFurnaceBuilder(Object fuel, Material dustType,double time)
-    {
-        if(fuel instanceof Material materialFuel)
-        {
-            if(materialFuel.hasProperty(PropertyKey.DUST))
-            {
+    public static void PrimitiveBlastFurnaceBuilder(Object fuel, Material dustType, double time) {
+        if (fuel instanceof Material materialFuel) {
+            if (materialFuel.hasProperty(PropertyKey.DUST)) {
                 PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder()
                         .input(ingot, WroughtIron)
-                        .input(dust,materialFuel,2)
+                        .input(dust, materialFuel, 2)
                         .output(ingot, Steel)
                         .output(dustTiny, dustType, 2)
-                        .duration((int) (1000*time))
+                        .duration((int) (1000 * time))
                         .buildAndRegister();
             }
-            if(materialFuel.hasProperty(PropertyKey.GEM))
-            {
+            if (materialFuel.hasProperty(PropertyKey.GEM)) {
                 PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder()
                         .input(ingot, WroughtIron)
-                        .input(gem,materialFuel,2)
+                        .input(gem, materialFuel, 2)
                         .output(ingot, Steel)
                         .output(dustTiny, dustType, 2)
-                        .duration((int) (1200*time))
+                        .duration((int) (1200 * time))
                         .buildAndRegister();
             }
             PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder()
                     .input(block, WroughtIron)
-                    .input(block,materialFuel)
+                    .input(block, materialFuel)
                     .output(block, Steel)
                     .output(dust, dustType)
-                    .duration((int) (9600*time))
+                    .duration((int) (9600 * time))
                     .buildAndRegister();
         }
-        if(fuel instanceof ItemStack itemFuel){
+        if (fuel instanceof ItemStack itemFuel) {
             PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder()
                     .input(ingot, WroughtIron)
                     .inputs(itemFuel.splitStack(2))
                     .output(ingot, Steel)
                     .output(dustTiny, dustType, 2)
-                    .duration((int) (1800*time))
+                    .duration((int) (1800 * time))
                     .buildAndRegister();
 
             PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder()
@@ -255,13 +287,14 @@ public class MachineRecipeLoader {
                     .inputs(itemFuel.splitStack(18))
                     .output(block, Steel)
                     .output(dust, dustType)
-                    .duration((int) (9600*time)).buildAndRegister();
+                    .duration((int) (9600 * time)).buildAndRegister();
         }
     }
+
     private static void registerPrimitiveBlastFurnaceRecipes() {
-        PrimitiveBlastFurnaceBuilder(Coal,DarkAsh,2);
-        PrimitiveBlastFurnaceBuilder(Charcoal,DarkAsh,1.25);
-        PrimitiveBlastFurnaceBuilder(Coke,Ash,1);
+        PrimitiveBlastFurnaceBuilder(Coal, DarkAsh, 2);
+        PrimitiveBlastFurnaceBuilder(Charcoal, DarkAsh, 1.25);
+        PrimitiveBlastFurnaceBuilder(Coke, Ash, 1);
     }
 
     private static void registerCokeOvenRecipes() {
@@ -356,40 +389,6 @@ public class MachineRecipeLoader {
                     .duration(60).EUt(16).buildAndRegister();
         }
     }
-
-    private static final MaterialStack[][] alloySmelterList = {
-            { new MaterialStack(Materials.Copper, 3L), new MaterialStack(Materials.Tin, 1),
-                    new MaterialStack(Materials.Bronze, 4L) },
-            { new MaterialStack(Materials.Copper, 3L), new MaterialStack(Materials.Zinc, 1),
-                    new MaterialStack(Materials.Brass, 4L) },
-            { new MaterialStack(Materials.Copper, 1), new MaterialStack(Materials.Nickel, 1),
-                    new MaterialStack(Materials.Cupronickel, 2L) },
-            { new MaterialStack(Materials.Copper, 1), new MaterialStack(Materials.Redstone, 4L),
-                    new MaterialStack(Materials.RedAlloy, 1) },
-            { new MaterialStack(Materials.AnnealedCopper, 3L), new MaterialStack(Materials.Tin, 1),
-                    new MaterialStack(Materials.Bronze, 4L) },
-            { new MaterialStack(Materials.AnnealedCopper, 3L), new MaterialStack(Materials.Zinc, 1),
-                    new MaterialStack(Materials.Brass, 4L) },
-            { new MaterialStack(Materials.AnnealedCopper, 1), new MaterialStack(Materials.Nickel, 1),
-                    new MaterialStack(Materials.Cupronickel, 2L) },
-            { new MaterialStack(Materials.AnnealedCopper, 1), new MaterialStack(Materials.Redstone, 4L),
-                    new MaterialStack(Materials.RedAlloy, 1) },
-            { new MaterialStack(Materials.Iron, 1), new MaterialStack(Materials.Tin, 1),
-                    new MaterialStack(Materials.TinAlloy, 2L) },
-            { new MaterialStack(Materials.WroughtIron, 1), new MaterialStack(Materials.Tin, 1),
-                    new MaterialStack(Materials.TinAlloy, 2L) },
-            { new MaterialStack(Materials.Iron, 2L), new MaterialStack(Materials.Nickel, 1),
-                    new MaterialStack(Materials.Invar, 3L) },
-            { new MaterialStack(Materials.WroughtIron, 2L), new MaterialStack(Materials.Nickel, 1),
-                    new MaterialStack(Materials.Invar, 3L) },
-            { new MaterialStack(Materials.Lead, 4L), new MaterialStack(Materials.Antimony, 1),
-                    new MaterialStack(Materials.BatteryAlloy, 5L) },
-            { new MaterialStack(Materials.Gold, 1), new MaterialStack(Materials.Silver, 1),
-                    new MaterialStack(Materials.Electrum, 2L) },
-            { new MaterialStack(Materials.Magnesium, 1), new MaterialStack(Materials.Aluminium, 2L),
-                    new MaterialStack(Materials.Magnalium, 3L) },
-            { new MaterialStack(Materials.Silver, 1), new MaterialStack(Materials.Electrotine, 4),
-                    new MaterialStack(Materials.BlueAlloy, 1) } };
 
     private static void registerAlloyRecipes() {
         for (MaterialStack[] stack : alloySmelterList) {
@@ -614,6 +613,17 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plate, EnderPearl, 9)
+                .input(plateDouble, StainlessSteel)
+                .input(SENSOR_HV)
+                .input(EMITTER_HV)
+                .input(CONVEYOR_MODULE_HV)
+                .fluidInputs(Polyethylene.getFluid(L * 2))
+                .output(COVER_ENDER_ITEM_LINK)
+                .EUt(VA[HV]).duration(320)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OreDictNames.chestWood.toString())
                 .input(ELECTRIC_PISTON_LV)
                 .input(plate, Iron)
@@ -692,14 +702,22 @@ public class MachineRecipeLoader {
                 .outputs(METAL_CASING.getItemVariant(BRONZE_BRICKS, ConfigHolder.recipes.casingsPerCraft)).duration(50)
                 .buildAndRegister();
 
-        recipeUtility.registerCasingRecipes(Materials.Invar, MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.INVAR_HEATPROOF),1);
-        recipeUtility.registerCasingRecipes(Materials.Steel, MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.STEEL_SOLID),1);
-        recipeUtility.registerCasingRecipes(Materials.Aluminium, MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.ALUMINIUM_FROSTPROOF),1);
-        recipeUtility.registerCasingRecipes(Materials.StainlessSteel, MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.STAINLESS_CLEAN),1);
-        recipeUtility.registerCasingRecipes(Materials.Titanium, MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.TITANIUM_STABLE),1);
-        recipeUtility.registerCasingRecipes(Materials.TungstenSteel, MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.TUNGSTENSTEEL_ROBUST),1);
-        recipeUtility.registerCasingRecipes(Materials.HSSE, MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.HSSE_STURDY),1);
-        recipeUtility.registerCasingRecipes(Materials.Palladium,Materials.Iridium,MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.PALLADIUM_SUBSTATION),1);
+        recipeUtility.registerCasingRecipes(Materials.Invar,
+                MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.INVAR_HEATPROOF), 1);
+        recipeUtility.registerCasingRecipes(Materials.Steel,
+                MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.STEEL_SOLID), 1);
+        recipeUtility.registerCasingRecipes(Materials.Aluminium,
+                MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.ALUMINIUM_FROSTPROOF), 1);
+        recipeUtility.registerCasingRecipes(Materials.StainlessSteel,
+                MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.STAINLESS_CLEAN), 1);
+        recipeUtility.registerCasingRecipes(Materials.Titanium,
+                MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.TITANIUM_STABLE), 1);
+        recipeUtility.registerCasingRecipes(Materials.TungstenSteel,
+                MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.TUNGSTENSTEEL_ROBUST), 1);
+        recipeUtility.registerCasingRecipes(Materials.HSSE,
+                MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.HSSE_STURDY), 1);
+        recipeUtility.registerCasingRecipes(Materials.Palladium, Materials.Iridium,
+                MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.PALLADIUM_SUBSTATION), 1);
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16)
                 .inputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.STEEL_SOLID))
@@ -812,7 +830,8 @@ public class MachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, TungstenSteel, 4).input(plate, TungstenSteel, 4)
                 .outputs(TUNGSTENSTEEL_CRATE.getStackForm()).duration(200).circuitMeta(1).buildAndRegister();
         //RHODIUM_PLATED_PALLADIUM_CRATE
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, RhodiumPlatedPalladium, 2).input(plate, RhodiumPlatedPalladium, 4)
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, RhodiumPlatedPalladium, 2)
+                .input(plate, RhodiumPlatedPalladium, 4)
                 .outputs(RHODIUM_PLATED_PALLADIUM_CRATE.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
         //NAQUADAH_ALLOY_CRATE
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, NaquadahAlloy, 2).input(plate, NaquadahAlloy, 4)
@@ -844,7 +863,8 @@ public class MachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Copper, 2).input(plate, Copper, 4)
                 .outputs(COPPER_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
         //RHODIUM_PLATED_PALLADIUM_DRUM
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, RhodiumPlatedPalladium, 2).input(plate, RhodiumPlatedPalladium, 4)
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, RhodiumPlatedPalladium, 2)
+                .input(plate, RhodiumPlatedPalladium, 4)
                 .outputs(RHODIUM_PLATED_PALLADIUM_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
         //NAQUADAH_ALLOY_DRUM
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, NaquadahAlloy, 2).input(plate, NaquadahAlloy, 4)
@@ -1307,10 +1327,12 @@ public class MachineRecipeLoader {
                 MetaTileEntities.RHODIUM_PLATED_PALLADIUM_DRUM.getStackForm(),
                 MetaTileEntities.RHODIUM_PLATED_PALLADIUM_DRUM.getStackForm());
         //NAQUADAH_ALLOY_DRUM
-        ModHandler.addShapelessNBTClearingRecipe("drum_nbt_naquadah_alloy", MetaTileEntities.NAQUADAH_ALLOY_DRUM.getStackForm(),
+        ModHandler.addShapelessNBTClearingRecipe("drum_nbt_naquadah_alloy",
+                MetaTileEntities.NAQUADAH_ALLOY_DRUM.getStackForm(),
                 MetaTileEntities.NAQUADAH_ALLOY_DRUM.getStackForm());
         //DARMSTADTIUM_DRUM
-        ModHandler.addShapelessNBTClearingRecipe("drum_nbt_darmstadtium", MetaTileEntities.DARMSTADTIUM_DRUM.getStackForm(),
+        ModHandler.addShapelessNBTClearingRecipe("drum_nbt_darmstadtium",
+                MetaTileEntities.DARMSTADTIUM_DRUM.getStackForm(),
                 MetaTileEntities.DARMSTADTIUM_DRUM.getStackForm());
         //NEUTRONIUM_DRUM
         ModHandler.addShapelessNBTClearingRecipe("drum_nbt_neutronium", MetaTileEntities.NEUTRONIUM_DRUM.getStackForm(),
