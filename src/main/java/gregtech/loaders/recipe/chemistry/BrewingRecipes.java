@@ -5,10 +5,12 @@ import gregtech.api.unification.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Loader;
 
 import static gregtech.api.recipes.RecipeMaps.BREWING_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.api.util.Mods.Names.GTQT_CORE;
 import static gregtech.common.items.MetaItems.BIO_CHAFF;
 
 public class BrewingRecipes {
@@ -33,14 +35,15 @@ public class BrewingRecipes {
                     .fluidOutputs(Lubricant.getFluid(1000))
                     .duration(128).EUt(4).buildAndRegister();
         }
-
-        for (Material material : new Material[] { Oil, Creosote, SeedOil }) {
-            BREWING_RECIPES.recipeBuilder()
-                    .input(dust, ChromiumDopedMolybdenite)
-                    .input(dust, Graphite)
-                    .fluidInputs(material.getFluid(1000))
-                    .fluidOutputs(MolybdeniteLubricant.getFluid(1000))
-                    .duration(256).EUt(1920).buildAndRegister();
+        if (!Loader.isModLoaded(GTQT_CORE)) {
+            for (Material material : new Material[] { Oil, Creosote, SeedOil }) {
+                BREWING_RECIPES.recipeBuilder()
+                        .input(dust, ChromiumDopedMolybdenite)
+                        .input(dust, Graphite)
+                        .fluidInputs(material.getFluid(1000))
+                        .fluidOutputs(MolybdeniteLubricant.getFluid(1000))
+                        .duration(256).EUt(1920).buildAndRegister();
+            }
         }
 
         // Biomass
