@@ -24,6 +24,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 
@@ -44,11 +46,28 @@ public class MetaTileEntityWirelessController extends MetaTileEntityMultiblockPa
 
     //MetaTileEntityWirelessController是MetaTileEntityPowerSubstation内energyBank的代理
 
+    //优先级 100
+    private int priority = 100;
+
+    public int getPriority() {
+        return priority;
+    }
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
     @Override
     public void update(){
         super.update();
     }
-
+    @Override
+    public void onRemoval() {
+        super.onRemoval();
+        NetworkNode node = getNetwork();
+        if (node != null) {
+            node.removeHatch(this);
+        }
+    }
     public MetaTileEntityWirelessController(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
     }
@@ -71,6 +90,17 @@ public class MetaTileEntityWirelessController extends MetaTileEntityMultiblockPa
 
     }
     //无线电网操作////////////////////////////////////////////////////////////////////////////
+    //对外暴露
+    //返回自身即可
+    //激活 向NetworkNode网络发送自己
+    //多方块成型？UI手动？放置时自动？
+    public void sentMTE(){
+        NetworkNode node = getNetwork();
+        node.addNewHatch(this);
+    }
+
+
+    //
     public NetworkNode getNetwork() {
         var world = this.getWorld();
         if(this.getOwnerGT()!=null) {
@@ -159,5 +189,29 @@ public class MetaTileEntityWirelessController extends MetaTileEntityMultiblockPa
     @Override
     public void setEnergyBank(MetaTileEntityPowerSubstation.PowerStationEnergyBank energyBank) {
         if(getPSS()!=null) getPSS().setEnergyBank(energyBank);
+    }
+    //接口实现////////////////////////////////////////////////////////////////////////////
+    @Override
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound data) {
+        data.setInteger("priority", this.priority);
+        return super.writeToNBT(data);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.priority = data.getInteger("priority");
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeInt(this.priority);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.priority = buf.readInt();
     }
 }

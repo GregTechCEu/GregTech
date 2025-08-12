@@ -9,6 +9,7 @@ import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityThreadHat
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityDualHatch;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEDualHatch;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEPatternProvider;
+import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityWirelessController;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityWirelessEnergyHatch;
 
 import static gregtech.api.GTValues.VN;
@@ -46,6 +47,8 @@ public class GTQTMetaTileEntities {
     public static final MetaTileEntityWirelessEnergyHatch[] WIRELESS_OUTPUT_ENERGY_HATCH_262144A = new MetaTileEntityWirelessEnergyHatch[15];
     public static final MetaTileEntityWirelessEnergyHatch[] WIRELESS_INPUT_ENERGY_HATCH_1048576A = new MetaTileEntityWirelessEnergyHatch[15];
     public static final MetaTileEntityWirelessEnergyHatch[] WIRELESS_OUTPUT_ENERGY_HATCH_1048576A = new MetaTileEntityWirelessEnergyHatch[15];
+
+    public static final MetaTileEntityWirelessController[] WIRELESS_CONTROLLERS = new MetaTileEntityWirelessController[15];
     //从2500开始写 与gtceu本体共用一个注册表
     //任务：GTQT内不方便写的内容转移到这里来写
     //例如 高等级的能源仓 激光仓等等
@@ -103,6 +106,10 @@ public class GTQTMetaTileEntities {
             WIRELESS_OUTPUT_ENERGY_HATCH_65536A[i] = registerMetaTileEntity(3000+285 + i, new MetaTileEntityWirelessEnergyHatch(gregtechId("wireless_energy_hatch.output_65536a." + tier), i, 65536, true));
             WIRELESS_OUTPUT_ENERGY_HATCH_262144A[i] = registerMetaTileEntity(3000+300 + i, new MetaTileEntityWirelessEnergyHatch(gregtechId("wireless_energy_hatch.output_262144a." + tier), i, 262144, true));
             WIRELESS_OUTPUT_ENERGY_HATCH_1048576A[i] = registerMetaTileEntity(3000+315 + i, new MetaTileEntityWirelessEnergyHatch(gregtechId("wireless_energy_hatch.output_1048576a." + tier), i, 1048576, true));
+
+
+            //管理单元
+            WIRELESS_CONTROLLERS[i] = registerMetaTileEntity(3000+500 + i, new MetaTileEntityWirelessController(gregtechId("wireless_controller." + tier), i));
         }
     }
 }

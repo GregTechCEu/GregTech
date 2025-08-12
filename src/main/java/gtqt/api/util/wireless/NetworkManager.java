@@ -31,6 +31,59 @@ public class NetworkManager {
     }
 
 
+
+    /// ///////////////////////////////////////////////////////////////////////////////////////
+    /// 新的能源网络只存储 hatches
+    /// 在每次sort时同步刷新有效性与状态（电量 优先级）
+    /// ///////////////////////////////////////////////////////////////////////////////////////
+    public NetworkNode getNetwork(World world, UUID networkID) {
+        Object lock = networkLocks.computeIfAbsent(networkID, k -> new Object());
+        synchronized (lock) {
+            NetworkDatabase db = NetworkDatabase.get(world);
+            return db.getNetworks().get(networkID);
+        }
+    }
+
+    //fill网络 向网络内填充能量
+    public long fill(World world, UUID networkID, BigInteger amount) {
+        if (amount.equals(BigInteger.ZERO)) return 0L;
+        NetworkNode node = getNetwork(world, networkID);
+        return node.fill(amount.longValue());
+    }
+    public long fill(World world, UUID networkID, long amount) {
+        if (amount==0) return 0;
+        NetworkNode node = getNetwork(world, networkID);
+        return node.fill(amount);
+    }
+
+    //drain网络 消耗网络内的能量
+    public long drain(World world, UUID networkID, BigInteger amount) {
+        if (amount.equals(BigInteger.ZERO)) return 0L;
+        NetworkNode node = getNetwork(world, networkID);
+        return node.drain(amount.longValue());
+    }
+
+    public long drain(World world, UUID networkID, long amount) {
+        if (amount==0) return 0;
+        NetworkNode node = getNetwork(world, networkID);
+        return node.drain(amount);
+    }
+
+    //获取总容量
+    public BigInteger getCapacity(World world, UUID networkID) {
+        NetworkNode node = getNetwork(world, networkID);
+        return node.getTotalCapacity();
+    }
+
+    //获取总存储
+    public BigInteger getStored(World world, UUID networkID) {
+        NetworkNode node = getNetwork(world, networkID);
+        return node.getTotalStored();
+    }
+
+    /// ///////////////////////////////////////////////////////////////////////////////////////
+    /// 老方法
+    /// ///////////////////////////////////////////////////////////////////////////////////////
     public long transferEnergy(World world, UUID networkID, BigInteger amount) {
         if (amount.equals(BigInteger.ZERO)) return 0l;
 

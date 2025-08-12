@@ -4,6 +4,7 @@ import gregtech.api.capability.IBatch;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.metatileentity.multiblock.AdvanceMultiMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
 import gregtech.api.metatileentity.multiblock.MultiMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
@@ -315,6 +316,7 @@ public class MultiblockUIFactory {
     public boolean checkSideButton(MultiblockWithDisplayBase mte) {
         //GCYM一定是IBatch
         if(mte instanceof RecipeMapPrimitiveMultiblockController)return false;
+        if(mte instanceof FuelMultiblockController)return false;
         return true;
         /*
         if (mte instanceof IBatch batch) return batch.isBatchAllowed();

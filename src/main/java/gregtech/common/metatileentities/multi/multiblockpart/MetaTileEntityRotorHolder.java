@@ -22,6 +22,7 @@ import gregtech.core.advancement.AdvancementTriggers;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -31,7 +32,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -58,13 +61,15 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
 
     static final int SPEED_INCREMENT = 1;
     static final int SPEED_DECREMENT = 3;
-
+    // 最小推动转速
+    private static final double MIN_SPEED_TO_PUSH = 2000;
     private final InventoryRotorHolder inventory;
     private final int maxSpeed;
     private int currentSpeed;
     private int rotorColor = -1;
     private boolean isRotorSpinning;
     private boolean frontFaceFree;
+
     public MetaTileEntityRotorHolder(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false);
         this.inventory = new InventoryRotorHolder();
@@ -162,11 +167,69 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
             if (getOffsetTimer() % 20 == 0) {
                 damageRotor(1 + controller.getNumMaintenanceProblems());
             }
+
+            // 实现将实体往远离转子的方向推动（检测范围3x3）
+            if (getOffsetTimer() % 5 == 0 && currentSpeed > MIN_SPEED_TO_PUSH) {
+                // 每5tick执行一次推动（避免过于频繁）
+
+                // 获取转子前方方向（推动的反方向）
+                EnumFacing rotorFacing = getFrontFacing();
+                // 计算推动方向（远离转子）
+                EnumFacing pushDirection = rotorFacing.getOpposite();
+
+                // 获取当前位置并创建检测区域
+                AxisAlignedBB pushArea = getAxisAlignedBB(rotorFacing);
+
+                // 获取区域内的所有实体
+                List<Entity> entities = getWorld().getEntitiesWithinAABB(Entity.class, pushArea);
+                if (!entities.isEmpty()) {
+                    // 计算推力（基于转速的线性关系）
+                    double pushStrength = 0.10 * (currentSpeed * 1.0 / 2000);
+                    Vec3d pushVector = new Vec3d(
+                            pushDirection.getXOffset() * pushStrength,
+                            pushDirection.getYOffset() * pushStrength,
+                            pushDirection.getZOffset() * pushStrength
+                    );
+
+                    // 对每个实体施加推力
+                    for (Entity entity : entities) {
+                        // 防止推动自身（机械方块等）
+                        if (entity instanceof IGregTechTileEntity) continue;
+
+                        // 应用推动力并标记速度变化
+                        entity.addVelocity(pushVector.x, pushVector.y, pushVector.z);
+                        entity.velocityChanged = true;
+
+                        applyDamage(entity);
+                        damageRotor(500);
+                    }
+                }
+
+            }
         } else if (!hasRotor()) {
             setCurrentSpeed(0);
         } else if (currentSpeed > 0) {
             setCurrentSpeed(Math.max(0, currentSpeed - SPEED_DECREMENT));
         }
+    }
+
+    private @NotNull AxisAlignedBB getAxisAlignedBB(EnumFacing rotorFacing) {
+        BlockPos centerPos = getPos();
+        // 获取转子正面位置（转子前方第一格）
+        BlockPos frontPos = centerPos.offset(rotorFacing);
+
+        // 沿着转子前方方向延伸7格（包括正面位置）
+        BlockPos farPos = frontPos.offset(rotorFacing, 6);
+
+        // 创建3x3×7的检测区域（沿着转子前方方向）
+        return new AxisAlignedBB(
+                Math.min(frontPos.getX(), farPos.getX()) - (rotorFacing.getAxis() != EnumFacing.Axis.X ? 1 : 0),
+                Math.min(frontPos.getY(), farPos.getY()) - (rotorFacing.getAxis() != EnumFacing.Axis.Y ? 1 : 0),
+                Math.min(frontPos.getZ(), farPos.getZ()) - (rotorFacing.getAxis() != EnumFacing.Axis.Z ? 1 : 0),
+                Math.max(frontPos.getX(), farPos.getX()) + 1 + (rotorFacing.getAxis() != EnumFacing.Axis.X ? 1 : 0),
+                Math.max(frontPos.getY(), farPos.getY()) + 1 + (rotorFacing.getAxis() != EnumFacing.Axis.Y ? 1 : 0),
+                Math.max(frontPos.getZ(), farPos.getZ()) + 1 + (rotorFacing.getAxis() != EnumFacing.Axis.Z ? 1 : 0)
+        );
     }
 
     void setCurrentSpeed(int speed) {
@@ -225,12 +288,16 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
         if (player.isCreative()) return false;
 
         if (!getWorld().isRemote && isRotorSpinning) {
-            float damageApplied = Math.min(1, currentSpeed / 1000);
-            player.attackEntityFrom(DamageSources.getTurbineDamage(), damageApplied);
+            applyDamage(player);
             AdvancementTriggers.ROTOR_HOLDER_DEATH.trigger((EntityPlayerMP) player);
             return true;
         }
         return isRotorSpinning;
+    }
+
+    private void applyDamage(Entity  entity) {
+        float damageApplied = Math.min(1, currentSpeed / 1000);
+        entity.attackEntityFrom(DamageSources.getTurbineDamage(), damageApplied);
     }
 
     /**
