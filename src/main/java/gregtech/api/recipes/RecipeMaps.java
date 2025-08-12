@@ -901,6 +901,29 @@ public final class RecipeMaps {
      * Example:
      *
      * <pre>
+     * RecipeMap.TOOL_CASTER_RECIPES.recipeBuilder()
+     *         .notConsumable(MetaItems.SHAPE_MOLD_CYLINDER)
+     *         .fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L / 8))
+     *         .output(MetaItems.PETRI_DISH, 2)
+     *         .duration(40)
+     *         .EUt(GTValues.VA[GTValues.HV])
+     *         .buildAndRegister();
+     * </pre>
+     */
+    public static final RecipeMap<SimpleRecipeBuilder>  TOOL_CASTER_RECIPES = new RecipeMapBuilder<>(
+            "tool_caster", new SimpleRecipeBuilder())
+            .itemInputs(1)
+            .itemOutputs(9)
+            .fluidInputs(1)
+            .itemSlotOverlay(GuiTextures.MOLD_OVERLAY, false)
+            .progressBar(GuiTextures.PROGRESS_BAR_UNPACKER)
+            .sound(GTSoundEvents.FORGE_HAMMER)
+            .build();
+
+    /**
+     * Example:
+     *
+     * <pre>
      * RecipeMap.FORGE_HAMMER_RECIPES.recipeBuilder()
      *         .inputs(new ItemStack(Blocks.STONE))
      *         .outputs(new ItemStack(Blocks.COBBLESTONE))

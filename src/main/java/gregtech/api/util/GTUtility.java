@@ -29,6 +29,7 @@ import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
@@ -1130,5 +1131,11 @@ public class GTUtility {
         } else {
             return ItemStack.EMPTY;
         }
+    }
+
+    public static String getTableBarNameByItemStack(@NotNull ItemStack stack){
+        if(stack.getItem().getCreativeTab()==null)return  "";
+        String tabelBar= "itemGroup."+stack.getItem().getCreativeTab().tabLabel;
+        return  I18n.format(tabelBar);
     }
 }

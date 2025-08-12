@@ -448,13 +448,24 @@ metaitem.energy.lapotronic_orb.name=Lapotronic Energy Orb
 metaitem.energy.lapotronic_orb.tooltip=Reusable Battery
 metaitem.energy.lapotronic_orb_cluster.name=Lapotronic Energy Orb Cluster
 metaitem.energy.lapotronic_orb_cluster.tooltip=Reusable Battery
-metaitem.zpm.name=Zero Point Module
+metaitem.zero_point_module.name=Zero Point Module
 metaitem.energy.module.name=Energy Module
 metaitem.energy.module.tooltip=Reusable Battery
 metaitem.energy.cluster.name=Energy Cluster
 metaitem.energy.cluster.tooltip=Reusable Battery
-metaitem.max.battery.name=Ultimate Battery
+metaitem.max.battery.name=Genesis Singularity
 metaitem.max.battery.tooltip=Fill this to win Minecraft
+
+metaitem.battery.uhv.quantum_core.name=Quantum Core Battery
+metaitem.battery.uhv.quantum_core.tooltip=Revolutionary design storing energy in quantum superposition states
+metaitem.battery.uev.singularity_cell.name=Singularity Cell Battery
+metaitem.battery.uev.singularity_cell.tooltip=Harnessing gravitational energy from microscopic artificial singularities
+metaitem.battery.uiv.chrono_matrix.name=Chrono Matrix Battery
+metaitem.battery.uiv.chrono_matrix.tooltip=Achieving near-infinite energy density through folded spacetime constructs
+metaitem.battery.uxv.tachyon_reactor.name=Tachyon Reactor Battery
+metaitem.battery.uxv.tachyon_reactor.tooltip=Generating power via superluminal particles in closed timelike curves
+metaitem.battery.opv.cosmic_string.name=Cosmic String Battery
+metaitem.battery.opv.cosmic_string.tooltip=Capturing vibrational energy of primordial cosmic strings, near-creation energy levels
 
 metaitem.electric.motor.lv.name=LV Electric Motor
 metaitem.electric.motor.mv.name=MV Electric Motor
@@ -1082,13 +1093,6 @@ item.gt.tool.hammer_drill_mv.name=%s Hammer Drill (MV)
 item.gt.tool.hammer_drill_hv.name=%s Hammer Drill (HV)
 item.gt.tool.hammer_drill_ev.name=%s Hammer Drill (EV)
 item.gt.tool.hammer_drill_iv.name=%s Hammer Drill (IV)
-item.gt.tool.once_wrench.name=Disposable Wrench
-item.gt.tool.once_hammer.name=Disposable Hammer
-item.gt.tool.once_wire_cutter.name=Disposable Wire Cutter
-item.gt.tool.once_screwdriver.name=Disposable Screwdriver
-item.gt.tool.once_file.name=Disposable File
-item.gt.tool.once_mortar.name=Disposable Mortar
-item.gt.tool.once_saw.name=Disposable Saw
 item.gt.tool.mining_hammer.name=%s Mining Hammer
 item.gt.tool.mining_hammer.tooltip=§8Mines a large area at once (unless you're crouching)
 item.gt.tool.spade.name=%s Spade
@@ -6850,3 +6854,6 @@ gregtech.scanner.forestry.pollen=§oScanned Pollen
 gregtech.mutation.block_of=Block of %s
 
 record.sus=Leonz - Among Us Drip
+
+gtqt.tooltip.quit_message=Are you sure you want to exit the game?
+gtqt.tooltip.modpack_name=GregTech QuantumTransition

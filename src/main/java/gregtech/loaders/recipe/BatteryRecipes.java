@@ -530,6 +530,7 @@ public class BatteryRecipes {
                 .circuitMeta(2)
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
+        /*
         // Ultimate UHV
         CANNER_RECIPES.recipeBuilder()
                 .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_III))
@@ -543,5 +544,7 @@ public class BatteryRecipes {
                 .output(ULTIMATE_BATTERY)
                 .circuitMeta(2)
                 .duration(200).EUt(VA[LV]).buildAndRegister();
+
+         */
     }
 }

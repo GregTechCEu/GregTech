@@ -22,6 +22,7 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.BlockLamp;
@@ -83,6 +84,7 @@ import java.util.function.Function;
 
 import static gregtech.common.blocks.MetaBlocks.*;
 import static net.minecraft.init.Blocks.DIAMOND_BLOCK;
+import static net.minecraft.util.text.TextFormatting.AQUA;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class CommonProxy {

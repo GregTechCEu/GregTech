@@ -67,6 +67,33 @@ public class GTQTMetaItems {
     public static MetaItem<?>.MetaValueItem ENDLESS_SPRAY_SOLVENT;
     public static MetaItem<?>.MetaValueItem ENDLESS_SPRAY_EMPTY;
 
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_EMPTY;
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_SAW;
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_HARD_HAMMER;
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_SOFT_MALLET;
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_WRENCH;
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_FILE;
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_CROWBAR;
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_SCREWDRIVER;
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_MORTAR;
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_WIRE_CUTTER;
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_KNIFE;
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_BUTCHERY_KNIFE;
+     public static MetaItem<?>.MetaValueItem  CASTING_MOLD_ROLLING_PIN;
+    
+    public static MetaItem<?>.MetaValueItem DISPOSABLE_SAW;
+    public static MetaItem<?>.MetaValueItem DISPOSABLE_HARD_HAMMER;
+    public static MetaItem<?>.MetaValueItem DISPOSABLE_SOFT_MALLET;
+    public static MetaItem<?>.MetaValueItem DISPOSABLE_WRENCH;
+    public static MetaItem<?>.MetaValueItem DISPOSABLE_FILE;
+    public static MetaItem<?>.MetaValueItem DISPOSABLE_CROWBAR;
+    public static MetaItem<?>.MetaValueItem DISPOSABLE_SCREWDRIVER;
+    public static MetaItem<?>.MetaValueItem DISPOSABLE_MORTAR;
+    public static MetaItem<?>.MetaValueItem DISPOSABLE_WIRE_CUTTER;
+    public static MetaItem<?>.MetaValueItem DISPOSABLE_KNIFE;
+    public static MetaItem<?>.MetaValueItem DISPOSABLE_BUTCHERY_KNIFE;
+    public static MetaItem<?>.MetaValueItem DISPOSABLE_ROLLING_PIN;
+
     public static GTQTMetaItem1 GTQT_META_ITEM;
 
     public static void initialization() {

@@ -37,6 +37,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
@@ -851,5 +852,38 @@ public final class ToolHelper {
         var tag = stack.getTagCompound();
         if (tag == null || !tag.hasKey(TOOL_TAG_KEY)) return false;
         return tag.getCompoundTag(TOOL_TAG_KEY).hasKey(MATERIAL_KEY);
+    }
+
+    /**
+     * Get maximum durability of material from ToolProperty,
+     * this method is just a lazy method to change ToolProperty#getToolDurability().
+     */
+    public static int getMaxDurability(Material material)
+    {
+        if (!material.hasProperty(PropertyKey.TOOL))
+            System.out.println("Material " + material.getName() + " does not have ToolProperty!");
+        return material.getProperty(PropertyKey.TOOL).getToolDurability();
+    }
+
+    /**
+     * Get maximum crafting durability of material from ToolProperty.
+     * This method is a choice to get crafting durability via material.
+     */
+
+    public static int  getMaxCraftingDurability(Material material)
+    {
+        if (!material.hasProperty(PropertyKey.TOOL))
+            System.out.println("Material " + material.getName() + " does not have ToolProperty!");
+        return material.getProperty(PropertyKey.TOOL).getToolDurability() / 2;
+    }
+
+    /**
+     * Check if the stack has full durability, means it is not damaged (first, it must be
+     * not repairable).
+     */
+    public static Boolean isItemHasFullDurability(ItemStack stack)
+    {
+        Item item = stack.getItem();
+        return !item.isRepairable() || item.getDamage(stack) <= 0;
     }
 }

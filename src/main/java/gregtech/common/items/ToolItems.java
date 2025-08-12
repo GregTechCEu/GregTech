@@ -70,14 +70,6 @@ public final class ToolItems {
     public static IGTTool HARD_HAMMER_EV;
     public static IGTTool HARD_HAMMER_IV;
     public static ItemGTToolbelt TOOLBELT;
-
-    public static IGTTool ONCE_WRENCH;
-    public static IGTTool ONCE_HARD_HAMMER;
-    public static IGTTool ONCE_WIRE_CUTTER;
-    public static IGTTool ONCE_SAW;
-    public static IGTTool ONCE_FILE;
-    public static IGTTool ONCE_SCREWDRIVER;
-    public static IGTTool ONCE_MORTAR;
     private ToolItems() {/**/}
 
     public static List<IGTTool> getAllTools() {
@@ -437,48 +429,6 @@ public final class ToolItems {
                 .oreDict(ToolOreDict.toolHammerDrill)
                 .electric(GTValues.IV)
                 .toolClasses(ToolClasses.PICKAXE, ToolClasses.HARD_HAMMER, ToolClasses.SHOVEL));
-
-        ONCE_WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "once_wrench")
-                .oreDict(ToolOreDict.toolWrench)
-                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
-                .secondaryOreDicts("craftingToolWrench")
-                .toolClasses(ToolClasses.WRENCH));
-
-        ONCE_HARD_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "once_hammer")
-                .oreDict(ToolOreDict.toolHammer)
-                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
-                .secondaryOreDicts("craftingToolHardHammer")
-                .toolClasses(ToolClasses.HARD_HAMMER));
-
-        ONCE_WIRE_CUTTER = register(ItemGTTool.Builder.of(GTValues.MODID, "once_wire_cutter")
-                .oreDict(ToolOreDict.toolWireCutter)
-                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
-                .secondaryOreDicts("craftingToolWireCutter")
-                .toolClasses(ToolClasses.WIRE_CUTTER));
-
-        ONCE_SAW= register(ItemGTTool.Builder.of(GTValues.MODID, "once_saw")
-                .oreDict(ToolOreDict.toolSaw)
-                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
-                .secondaryOreDicts("craftingToolSaw")
-                .toolClasses(ToolClasses.SAW));
-
-        ONCE_FILE= register(ItemGTTool.Builder.of(GTValues.MODID, "once_file")
-                .oreDict(ToolOreDict.toolFile)
-                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
-                .secondaryOreDicts("craftingToolFile")
-                .toolClasses(ToolClasses.FILE));
-
-        ONCE_SCREWDRIVER= register(ItemGTTool.Builder.of(GTValues.MODID, "once_screwdriver")
-                .oreDict(ToolOreDict.toolScrewdriver)
-                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
-                .secondaryOreDicts("craftingToolScrewdriver")
-                .toolClasses(ToolClasses.SCREWDRIVER));
-
-        ONCE_MORTAR= register(ItemGTTool.Builder.of(GTValues.MODID, "once_mortar")
-                .oreDict(ToolOreDict.toolMortar)
-                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(1).baseDurability(0).durabilityMultiplier(0))
-                .secondaryOreDicts("craftingToolMortar")
-                .toolClasses(ToolClasses.MORTAR));
     }
 
     public static IGTTool register(@NotNull ToolBuilder<?> builder) {

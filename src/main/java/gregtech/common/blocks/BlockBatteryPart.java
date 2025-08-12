@@ -65,7 +65,17 @@ public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartT
 
         EMPTY_TIER_III,
         LAPOTRONIC_UV(GTValues.UV, 16_000_000_000L * 6),  // Energy Cluster * 6
-        ULTIMATE_UHV(GTValues.UHV, Long.MAX_VALUE),       // Ultimate Battery
+        QUANTUM_UHV(GTValues.UHV, 153_600_000_000L),  // 1.536万亿
+
+        EMPTY_TIER_IV,
+        SPACETIME_UEV(GTValues.UEV, 2_457_600_000_000L),  // 24.576万亿
+        GRAVITON_UIV(GTValues.UIV, 39_321_600_000_000L),  // 393.216万亿
+
+        EMPTY_TIER_V,
+        CHRONOS_UXV(GTValues.UXV, 629_145_600_000_000L),  // 6.29亿亿
+        COSMIC_OPV(GTValues.OpV, 10_066_329_600_000_000L),  // 100.66亿亿
+
+        ULTIMATE_MAX(GTValues.MAX, Long.MAX_VALUE),       // Ultimate Battery
         ;
 
         private final int tier;

@@ -159,6 +159,11 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB_CLUSTER;
     public static MetaItem<?>.MetaValueItem ZERO_POINT_MODULE;
     public static MetaItem<?>.MetaValueItem ULTIMATE_BATTERY;
+    public static MetaItem<?>.MetaValueItem QUANTUM_CORE;
+    public static MetaItem<?>.MetaValueItem SINGULARITY_CELL;
+    public static MetaItem<?>.MetaValueItem CHRONO_MATRIX;
+    public static MetaItem<?>.MetaValueItem TACHYON_REACTOR;
+    public static MetaItem<?>.MetaValueItem COSMIC_STRING;
 
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_LV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_MV;

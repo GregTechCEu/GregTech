@@ -15,8 +15,8 @@
     "DamageSourceMixin",
     "EnchantmentCanApplyMixin",
     "MinecraftMixin",
-    "MixinEntity",
     "MixinBlockChest",
+    "MixinEntity",
     "MixinEntityAnimal",
     "MixinEntityBat",
     "WorldEntitySpawnerMixin"
@@ -27,11 +27,13 @@
     "EntityRendererMixin",
     "LayerArmorBaseMixin",
     "LayerCustomHeadMixin",
+    "QuitMixin",
     "RecipeRepairItemMixin",
     "RegionRenderCacheBuilderMixin",
     "RenderChunkMixin",
     "RenderGlobalMixin",
-    "RenderItemMixin"
+    "RenderItemMixin",
+    "ItemBlockMixin"
   ],
   "server": []
 }

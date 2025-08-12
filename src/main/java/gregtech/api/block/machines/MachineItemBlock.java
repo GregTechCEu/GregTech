@@ -45,18 +45,24 @@ public class MachineItemBlock extends ItemBlock {
 
     private static final Set<CreativeTabs> ADDITIONAL_CREATIVE_TABS = new ObjectArraySet<>();
 
+    public MachineItemBlock(BlockMachine block) {
+        super(block);
+        setHasSubtypes(true);
+    }
+
     /**
      * Adds another creative tab for the machine item. Additional tabs added by this method are checked along with
      * default tabs ({@link GTCreativeTabs#TAB_GREGTECH_MACHINES} and {@link CreativeTabs#SEARCH}) during
-     * {@link net.minecraft.item.Item#getSubItems(CreativeTabs, NonNullList) Item#getSubItems()} operation.<br>
-     * Note that, for machines to be properly registered on the creative tab, a matching implementation of
+     * {@link net.minecraft.item.Item#getSubItems(CreativeTabs, NonNullList) Item#getSubItems()} operation.<br> Note
+     * that, for machines to be properly registered on the creative tab, a matching implementation of
      * {@link MetaTileEntity#isInCreativeTab(CreativeTabs)} should be provided as well.
      *
      * @param creativeTab Creative tab to be checked during
      *                    {@link net.minecraft.item.Item#getSubItems(CreativeTabs, NonNullList)}
      * @throws NullPointerException     If {@code creativeTab == null}
      * @throws IllegalArgumentException If
-     *                                  {@code creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES || creativeTab == CreativeTabs.SEARCH}
+     *                                  {@code creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES || creativeTab ==
+     *                                  CreativeTabs.SEARCH}
      * @see MetaTileEntity#isInCreativeTab(CreativeTabs)
      */
     public static void addCreativeTab(CreativeTabs creativeTab) {
@@ -69,11 +75,6 @@ public class MachineItemBlock extends ItemBlock {
                     "Adding " + CreativeTabs.SEARCH.tabLabel + " as additional creative tab is redundant.");
         }
         ADDITIONAL_CREATIVE_TABS.add(creativeTab);
-    }
-
-    public MachineItemBlock(BlockMachine block) {
-        super(block);
-        setHasSubtypes(true);
     }
 
     @NotNull
@@ -153,9 +154,9 @@ public class MachineItemBlock extends ItemBlock {
     @SideOnly(Side.CLIENT)
     public void addInformation(@NotNull ItemStack stack, @Nullable World worldIn, @NotNull List<String> tooltip,
                                @NotNull ITooltipFlag flagIn) {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         if (metaTileEntity == null) return;
-
         // item specific tooltip like: gregtech.machine.lathe.lv.tooltip
         String tooltipLocale = metaTileEntity.getMetaName() + ".tooltip";
         if (I18n.hasKey(tooltipLocale)) {
