@@ -25,17 +25,15 @@ public class EnergyContainerWireless extends EnergyContainerHandler {
         if(!this.metaTileEntity.getWorld().isRemote){
             var world = metaTileEntity.getWorld();
             if(this.metaTileEntity.getOwnerGT()!=null){
-                int id = ((MetaTileEntityWirelessEnergyHatch)metaTileEntity).WirelessId;
-                if(id==-1 || id==0)
-                    return;
+                UUID id = this.metaTileEntity.getOwnerGT();
                 // 安全获取网络示例
                 NetworkDatabase db = NetworkDatabase.get(world);
-                NetworkNode node = db.getNetwork(((MetaTileEntityWirelessEnergyHatch)metaTileEntity).WirelessId);
+                NetworkNode node = db.getNetwork(id);
 
                 if (node == null) {
                     NetworkManager.INSTANCE.createNetwork(world,metaTileEntity.getOwnerGT(),"无线网络");
                     db = NetworkDatabase.get(world);
-                    node = db.getNetwork(((MetaTileEntityWirelessEnergyHatch)metaTileEntity).WirelessId);
+                    node = db.getNetwork(id);
                 }
                 //是动力舱 给网络增加能量
                 if(this.getInputVoltage()==0)
@@ -45,7 +43,7 @@ public class EnergyContainerWireless extends EnergyContainerHandler {
                         var b1 =BigInteger.valueOf(this.energyStored);
                         if(node!=null)
                         {
-                            long added = NetworkManager.INSTANCE.transferEnergy(world,node.getNetworkID(),b1);
+                            long added = NetworkManager.INSTANCE.transferEnergy(world,id,b1);
                             this.removeEnergy(added);
                         }
 
@@ -56,7 +54,7 @@ public class EnergyContainerWireless extends EnergyContainerHandler {
                     long needEnergy = this.getEnergyCapacity()-this.getEnergyStored();
                     if(node!=null)
                     {
-                        long added = NetworkManager.INSTANCE.transferEnergy(world,node.getNetworkID(),BigInteger.valueOf(-needEnergy));
+                        long added = NetworkManager.INSTANCE.transferEnergy(world,id,BigInteger.valueOf(-needEnergy));
                         this.addEnergy(Math.abs(added));
                     }
                 }

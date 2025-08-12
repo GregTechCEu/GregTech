@@ -1,24 +1,18 @@
 package gtqt.api.util.wireless;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class NetworkNode {
     private final UUID ownerUUID;
-    private final int networkID;
+    //private final int networkID;
     private String networkName;
     private BigInteger energy;
     private boolean isOpen;
 
-    public NetworkNode(UUID owner, int id, String name) {
+    public NetworkNode(UUID owner,  String name) {
         this.ownerUUID = owner;
-        this.networkID = id;
+        //this.networkID = id;
         this.networkName = name;
         this.energy = BigInteger.ZERO;
         this.isOpen=true;
@@ -28,9 +22,9 @@ public class NetworkNode {
         return ownerUUID;
     }
 
-    public int getNetworkID() {
-        return networkID;
-    }
+//    public int getNetworkID() {
+//        return networkID;
+//    }
 
     public String getNetworkName() {
         return networkName;

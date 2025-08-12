@@ -122,7 +122,7 @@ public class MetaTileEntityWirelessEnergyHatch extends MetaTileEntityMultiblockP
         textList.add(new TextComponentString("正在访问>ID：" + WirelessId + "的网络"));
         if (this.getOwnerGT() != null) {
             NetworkDatabase db = NetworkDatabase.get(getWorld());
-            NetworkNode node = db.getNetwork(WirelessId);
+            NetworkNode node = db.getNetwork(this.getOwnerGT());
             if (node != null) {
                 textList.add(new TextComponentString("网络名称:" + node.getNetworkName()));
                 textList.add(new TextComponentString("存储能量: " +
@@ -176,7 +176,7 @@ public class MetaTileEntityWirelessEnergyHatch extends MetaTileEntityMultiblockP
                 var node = db.getNetwork(x);
                 if (node != null) {
                     textList.add(new TextComponentString("--------------------"));
-                    textList.add(new TextComponentString(">>ID:" + node.getNetworkID()));
+                    textList.add(new TextComponentString(">>ID:" + this.getOwnerGT()));
                     textList.add(new TextComponentString(this.getOwnerGT().toString()));
                     textList.add(new TextComponentString("网络名称:" + node.getNetworkName()));
                     textList.add(new TextComponentString("存储能量:" + node.getEnergy().toString()));

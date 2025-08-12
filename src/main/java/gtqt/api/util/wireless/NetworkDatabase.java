@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class NetworkDatabase extends WorldSavedData {
     private static final String DATA_NAME = "gtqt_network_data";
-    private Map<Integer, NetworkNode> networks = new HashMap<>();
+    private Map<UUID, NetworkNode> networks = new HashMap<>();
 
     public NetworkDatabase() {
         super(DATA_NAME);
@@ -33,13 +33,13 @@ public class NetworkDatabase extends WorldSavedData {
             NBTTagCompound nodeTag = (NBTTagCompound) tag;
             NetworkNode node = new NetworkNode(
                     UUID.fromString(nodeTag.getString("owner")),
-                    nodeTag.getInteger("id"),
+                    //nodeTag.getInteger("id"),
                     nodeTag.getString("name")
             );
             node.setEnergy(new BigInteger(nodeTag.getString("energy")));
             node.setOpen(nodeTag.getBoolean("isOpen"));
 
-            networks.put(node.getNetworkID(), node);
+            networks.put(node.getOwnerUUID(), node);
         }
     }
 
@@ -50,7 +50,7 @@ public class NetworkDatabase extends WorldSavedData {
         for (NetworkNode node : networks.values()) {
             NBTTagCompound nodeTag = new NBTTagCompound();
             nodeTag.setString("owner", node.getOwnerUUID().toString());
-            nodeTag.setInteger("id", node.getNetworkID());
+            //nodeTag.setInteger("id", node.getNetworkID());
             nodeTag.setString("name", node.getNetworkName());
             nodeTag.setString("energy", node.getEnergy().toString());
             nodeTag.setBoolean("isOpen", node.isOpen());
@@ -60,17 +60,29 @@ public class NetworkDatabase extends WorldSavedData {
         return nbt;
     }
     // 新增Getter方法（线程安全）
-    public Map<Integer, NetworkNode> getNetworks() {
+    public Map<UUID, NetworkNode> getNetworks() {
         return Collections.unmodifiableMap(networks); // 返回不可修改的视图
     }
 
     // 新增直接操作方法（替代直接访问Map）
     public void addNetwork(NetworkNode node) {
-        networks.put(node.getNetworkID(), node);
+        networks.put(node.getOwnerUUID(), node);
         markDirty();
     }
 
-    public NetworkNode getNetwork(int id) {
+    public NetworkNode getNetwork(UUID id) {
+        UUID find=null;
+        var list = NetworkManager.getPartList(id);
+        for (var x : list)
+        {
+            if(networks.containsKey(x))
+            {
+                find = x;
+                break;
+            }
+        }
+        if(find==null)
+            return null;
         return networks.get(id);
     }
 
