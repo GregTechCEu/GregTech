@@ -92,6 +92,11 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<DualHandler> DUAL_IMPORT = ability(
             "dual_import", DualHandler.class);
 
+    //无线管理
+    public static final MultiblockAbility<IWirelessController> WIRELESS_CONTROLLER = ability(
+            "wireless_controller", IWirelessController.class);
+
+
     public static final MultiblockAbility<IThreadHatch> THREAD_HATCH = new MultiblockAbility<>("thread_hatch", IThreadHatch.class);
 
 

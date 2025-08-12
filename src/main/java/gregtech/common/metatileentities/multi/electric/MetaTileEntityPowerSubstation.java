@@ -97,6 +97,10 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     {
         return energyBank;
     }
+    public void setEnergyBank(PowerStationEnergyBank energyBank)
+    {
+        this.energyBank = energyBank;
+    }
 
     private EnergyContainerList inputHatches;
     private EnergyContainerList outputHatches;
@@ -258,6 +262,9 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                 .where('C', states(getCasingState()))
                 .where('X', states(getCasingState()).setMinGlobalLimited(MIN_CASINGS)
                         .or(maintenancePredicate())
+
+                        .or(abilities(MultiblockAbility.WIRELESS_CONTROLLER).setMaxGlobalLimited(1))
+
                         .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY,
                                 MultiblockAbility.INPUT_LASER).setMinGlobalLimited(1))
                         .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY,
