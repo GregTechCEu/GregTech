@@ -1,5 +1,11 @@
 package gtqt.api.util.wireless;
 
+import gregtech.api.metatileentity.MetaTileEntity;
+
+import gregtech.api.util.GTUtility;
+
+import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityWirelessController;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -38,7 +44,26 @@ public class NetworkDatabase extends WorldSavedData {
             );
             node.setEnergy(new BigInteger(nodeTag.getString("energy")));
             node.setOpen(nodeTag.getBoolean("isOpen"));
-
+            NBTTagList listMtes = nodeTag.getTagList("Mtes", 10);
+            node.hatches.clear(); // 清空原有数据
+            //*****************************//
+            for (int i = 0; i < listMtes.tagCount(); i++) {
+                NBTTagCompound entry = listMtes.getCompoundTagAt(i);
+                int dim = entry.getInteger("dim");
+                BlockPos pos = new BlockPos(
+                        entry.getInteger("x"),
+                        entry.getInteger("y"),
+                        entry.getInteger("z")
+                );
+                World world = NetworkManager.getWorldByDimension(dim);
+                if (world != null) {
+                    MetaTileEntity mte = GTUtility.getMetaTileEntity(world,pos);
+                    if (mte != null) {
+                        node.hatches.add((MetaTileEntityWirelessController)mte);
+                    }
+                }
+            }
+            //*****************************//
             networks.put(node.getOwnerUUID(), node);
         }
     }
@@ -54,6 +79,19 @@ public class NetworkDatabase extends WorldSavedData {
             nodeTag.setString("name", node.getNetworkName());
             nodeTag.setString("energy", node.getEnergy().toString());
             nodeTag.setBoolean("isOpen", node.isOpen());
+            //*****************************//
+            NBTTagList listMte = new NBTTagList();
+            for (var i : node.hatches) {
+                if (i.getWorld() == null) continue; // 跳过无效的 world
+                NBTTagCompound entry = new NBTTagCompound();
+                entry.setInteger("dim", i.getWorld().provider.getDimension());
+                entry.setInteger("x", i.getPos().getX());
+                entry.setInteger("y", i.getPos().getY());
+                entry.setInteger("z", i.getPos().getZ());
+                listMte.appendTag(entry);
+            }
+            nodeTag.setTag("Mtes", listMte);
+            //*****************************//
             list.appendTag(nodeTag);
         }
         nbt.setTag("networks", list);
