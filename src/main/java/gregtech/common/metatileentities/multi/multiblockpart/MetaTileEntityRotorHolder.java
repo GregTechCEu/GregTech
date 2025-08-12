@@ -15,6 +15,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
@@ -169,7 +170,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
             }
 
             // 实现将实体往远离转子的方向推动（检测范围3x3）
-            if (getOffsetTimer() % 5 == 0 && currentSpeed > MIN_SPEED_TO_PUSH) {
+            if (ConfigHolder.machines.enableRotorDamage && getOffsetTimer() % 5 == 0 && currentSpeed > MIN_SPEED_TO_PUSH) {
                 // 每5tick执行一次推动（避免过于频繁）
 
                 // 获取转子前方方向（推动的反方向）

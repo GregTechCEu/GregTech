@@ -1,5 +1,7 @@
 package gregtech.mixins.minecraft;
 
+import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
@@ -35,6 +37,7 @@ public class QuitMixin {
     @Overwrite
     public void shutdown()
     {
+        if (ConfigHolder.worldgen.allUniqueStoneTypes)this.running = false;
         if (gtqt$isCloseRequested)
             return;
         if (!gtqt$waitingDialogQuit)
