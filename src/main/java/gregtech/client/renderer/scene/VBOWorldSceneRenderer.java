@@ -56,6 +56,9 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
         if (this.isDirty) {
             uploadVBO();
         }
+        if (beforeRender != null) {
+            beforeRender.accept(this);
+        }
 
         Minecraft mc = Minecraft.getMinecraft();
         GlStateManager.enableCull();
@@ -96,6 +99,10 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
         GlStateManager.enableDepth();
         GlStateManager.disableBlend();
         GlStateManager.depthMask(true);
+
+        if (afterRender != null) {
+            afterRender.accept(this);
+        }
     }
 
     @Override
