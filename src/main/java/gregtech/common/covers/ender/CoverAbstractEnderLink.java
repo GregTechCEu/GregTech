@@ -212,9 +212,9 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .coverChildrenHeight()
                 .child(new ToggleButton()
                         .value(new BooleanSyncValue(this::isIoEnabled, this::setIoEnabled))
-                        .overlay(IKey.dynamic(() -> IKey.lang(this.ioEnabled ?
+                        .overlay(IKey.lang(() -> this.ioEnabled ?
                                 "behaviour.soft_hammer.enabled" :
-                                "behaviour.soft_hammer.disabled").get())
+                                "behaviour.soft_hammer.disabled")
                                 .color(Color.WHITE.darker(1)))
                         .widthRel(0.6f)
                         .left(0));
