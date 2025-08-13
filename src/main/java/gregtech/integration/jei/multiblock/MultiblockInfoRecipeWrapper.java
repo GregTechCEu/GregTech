@@ -14,6 +14,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
+import gregtech.client.renderer.scene.VBOWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TrackedDummyWorld;
@@ -63,11 +64,18 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
 import javax.vecmath.Vector3f;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static gregtech.api.GregTechAPI.MULTIBLOCK_INFO_CACHE;
 
@@ -596,7 +604,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         }
 
         TrackedDummyWorld world = new TrackedDummyWorld();
-        ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
+        ImmediateWorldSceneRenderer worldSceneRenderer = new VBOWorldSceneRenderer(world);
         worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
         world.addBlocks(blockMap);
 

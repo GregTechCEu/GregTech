@@ -2,6 +2,6 @@
   "parent": "item/handheld",
   "textures": {
     "layer0": "gregtech:items/void",
-    "layer1": "gregtech:items/tools/choocher"
+    "layer1": "gregtech:items/tools/combination_wrench"
   }
 }

@@ -144,6 +144,38 @@ metaitem.endless_spray.can.dyes.green.name=Endless Spray Can (Green)
 metaitem.endless_spray.can.dyes.red.name=Endless Spray Can (Red)
 metaitem.endless_spray.can.dyes.black.name=Endless Spray Can (Black)
 #hatch
+gregtech.machine.super_item_bus.import.ulv.name=ULV Super Input Bus
+gregtech.machine.super_item_bus.import.lv.name=LV Super Input Bus
+gregtech.machine.super_item_bus.import.mv.name=MV Super Input Bus
+gregtech.machine.super_item_bus.import.hv.name=HV Super Input Bus
+gregtech.machine.super_item_bus.import.ev.name=EV Super Input Bus
+gregtech.machine.super_item_bus.import.iv.name=IV Super Input Bus
+gregtech.machine.super_item_bus.import.luv.name=LuV Super Input Bus
+gregtech.machine.super_item_bus.import.zpm.name=ZPM Super Input Bus
+gregtech.machine.super_item_bus.import.uv.name=UV Super Input Bus
+gregtech.machine.super_item_bus.import.uhv.name=UHV Super Input Bus
+gregtech.machine.super_item_bus.import.uev.name=UEV Super Input Bus
+gregtech.machine.super_item_bus.import.uiv.name=UIV Super Input Bus
+gregtech.machine.super_item_bus.import.uxv.name=UXV Super Input Bus
+gregtech.machine.super_item_bus.import.opv.name=OpV Super Input Bus
+gregtech.machine.super_item_bus.import.max.name=MAX Super Input Bus
+
+gregtech.machine.super_item_bus.export.ulv.name=ULV Super Output Bus
+gregtech.machine.super_item_bus.export.lv.name=LV Super Output Bus
+gregtech.machine.super_item_bus.export.mv.name=MV Super Output Bus
+gregtech.machine.super_item_bus.export.hv.name=HV Super Output Bus
+gregtech.machine.super_item_bus.export.ev.name=EV Super Output Bus
+gregtech.machine.super_item_bus.export.iv.name=IV Super Output Bus
+gregtech.machine.super_item_bus.export.luv.name=LuV Super Output Bus
+gregtech.machine.super_item_bus.export.zpm.name=ZPM Super Output Bus
+gregtech.machine.super_item_bus.export.uv.name=UV Super Output Bus
+gregtech.machine.super_item_bus.export.uhv.name=UHV Super Output Bus
+gregtech.machine.super_item_bus.export.uev.name=UEV Super Output Bus
+gregtech.machine.super_item_bus.export.uiv.name=UIV Super Output Bus
+gregtech.machine.super_item_bus.export.uxv.name=UXV Super Output Bus
+gregtech.machine.super_item_bus.export.opv.name=OpV Super Output Bus
+gregtech.machine.super_item_bus.export.max.name=MAX Super Output Bus
+
 gregtech.machine.dual_hatch.import.ulv.name=§8ULV§rDual Input Hatch
 gregtech.machine.dual_hatch.import.lv.name=§7LV§rDual Input Hatch
 gregtech.machine.dual_hatch.import.mv.name=§bMV§rDual Input Hatch
@@ -588,6 +620,8 @@ gregtech.gui.dual_auto_collapse.tooltip.enabled=Item/Fluid Stack Auto-Collapse (
 gregtech.gui.dual_auto_collapse.tooltip.disabled=Item/Fluid Stack Auto-Collapse (Disabled)
 
 # Tooltips
+gregtech.machine.super_item_bus.tooltip=Single Tank Capacity: INT MAX
+
 gregtech.machine.me_pattern.tooltip.1=Built-in pattern provider: Directly orders machines after marking recipes with patterns
 gregtech.machine.me_pattern.tooltip.2=Blocking Mode: Only allows item flows matching cached recipes in bus, blocks other recipe items
 gregtech.machine.me_pattern.tooltip.3=Pattern Optimization: Automatically multiplies patterns according to current thread count, adjusts dynamically with multiblock parallel changes

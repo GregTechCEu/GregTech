@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "gregtech:items/tools/universal_spade",
+    "layer1": "gregtech:items/tools/universal_spade_overlay"
+  }
+}

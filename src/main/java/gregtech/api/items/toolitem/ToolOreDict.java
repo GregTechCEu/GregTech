@@ -24,5 +24,6 @@ public enum ToolOreDict {
     toolDrill,
     toolChainsaw,
     toolBuzzsaw,
+    toolFlintAndSteel,
     toolPlunger
 }

@@ -145,6 +145,38 @@ metaitem.tool.disposable.butchery_knife.tooltip=仅用于合成的一次性工�
 metaitem.tool.disposable.rolling_pin.name=一次性擀面杖
 metaitem.tool.disposable.rolling_pin.tooltip=仅用于合成的一次性工具
 #仓口
+gregtech.machine.super_item_bus.import.ulv.name=§8ULV§r超级输入总线
+gregtech.machine.super_item_bus.import.lv.name=§7LV§r超级输入总线
+gregtech.machine.super_item_bus.import.mv.name=§bMV§r超级输入总线
+gregtech.machine.super_item_bus.import.hv.name=§6HV§r超级输入总线
+gregtech.machine.super_item_bus.import.ev.name=§5EV§r超级输入总线
+gregtech.machine.super_item_bus.import.iv.name=§1IV§r超级输入总线
+gregtech.machine.super_item_bus.import.luv.name=§dLuV§r超级输入总线
+gregtech.machine.super_item_bus.import.zpm.name=§cZPM§r超级输入总线
+gregtech.machine.super_item_bus.import.uv.name=§3UV§r超级输入总线
+gregtech.machine.super_item_bus.import.uhv.name=§4UHV§r超级输入总线
+gregtech.machine.super_item_bus.import.uev.name=§aUEV§r超级输入总线
+gregtech.machine.super_item_bus.import.uiv.name=§2UIV§r超级输入总线
+gregtech.machine.super_item_bus.import.uxv.name=§eUXV§r超级输入总线
+gregtech.machine.super_item_bus.import.opv.name=§9OpV§r超级输入总线
+gregtech.machine.super_item_bus.import.max.name=§c§lMAX§r超级输入总线
+
+gregtech.machine.super_item_bus.export.ulv.name=§8ULV§r超级输出总线
+gregtech.machine.super_item_bus.export.lv.name=§7LV§r超级输出总线
+gregtech.machine.super_item_bus.export.mv.name=§bMV§r超级输出总线
+gregtech.machine.super_item_bus.export.hv.name=§6HV§r超级输出总线
+gregtech.machine.super_item_bus.export.ev.name=§5EV§r超级输出总线
+gregtech.machine.super_item_bus.export.iv.name=§1IV§r超级输出总线
+gregtech.machine.super_item_bus.export.luv.name=§dLuV§r超级输出总线
+gregtech.machine.super_item_bus.export.zpm.name=§cZPM§r超级输出总线
+gregtech.machine.super_item_bus.export.uv.name=§3UV§r超级输出总线
+gregtech.machine.super_item_bus.export.uhv.name=§4UHV§r超级输出总线
+gregtech.machine.super_item_bus.export.uev.name=§aUEV§r超级输出总线
+gregtech.machine.super_item_bus.export.uiv.name=§2UIV§r超级输出总线
+gregtech.machine.super_item_bus.export.uxv.name=§eUXV§r超级输出总线
+gregtech.machine.super_item_bus.export.opv.name=§9OpV§r超级输出总线
+gregtech.machine.super_item_bus.export.max.name=§c§lMAX§r超级输出总线
+
 gregtech.machine.dual_hatch.import.ulv.name=§8ULV§r输入总成
 gregtech.machine.dual_hatch.import.lv.name=§7LV§r输入总成
 gregtech.machine.dual_hatch.import.mv.name=§bMV§r输入总成
@@ -582,6 +614,8 @@ gregtech.gui.dual_auto_collapse.tooltip.enabled=物品/流体堆叠自动合并�
 gregtech.gui.dual_auto_collapse.tooltip.disabled=物品/流体堆叠自动合并已禁用
 
 #tooltip
+gregtech.machine.super_item_bus.tooltip=单槽容量：INT MAX
+
 gregtech.machine.me_pattern.tooltip.1=内置样板供应器，使用样板标记配方后可直接下单至机器
 gregtech.machine.me_pattern.tooltip.2=阻挡模式：只允许与总成缓存的相同配方物品流进入总成，其他配方的物品流将被阻挡
 gregtech.machine.me_pattern.tooltip.3=样板优化：将样板自动倍乘到当前并行数量，多方块并行变更也会导致样板倍乘自动变更

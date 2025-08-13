@@ -1,7 +1,11 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IGhostSlotConfigurable;
+import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
@@ -179,7 +183,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         }
     }
 
-    private int getInventorySize() {
+    public int getInventorySize() {
         int sizeRoot = 1 + Math.min(GTValues.UHV, getTier());
         return sizeRoot * sizeRoot;
     }

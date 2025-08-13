@@ -134,7 +134,6 @@ public class ToolRecipeHandler {
         UnificationEntry plate = new UnificationEntry(OrePrefix.plate, material);
         UnificationEntry ingot = new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot,
                 material);
-
         if (material.hasFlag(GENERATE_PLATE)) {
             addToolRecipe(material, ToolItems.MINING_HAMMER, true,
                     "PPf", "PPS", "PPh",
@@ -204,15 +203,15 @@ public class ToolRecipeHandler {
                     "PhP", " P ", " P ",
                     'P', plate);
 
+            // Combination Wrench
+            addToolRecipe(material, ToolItems.COMBINATION_WRENCH, true,
+                    "PhP", "IPI", "fP ",
+                    'I', ingot,
+                    'P', plate);
+
         }
         if (material.hasFlag(GENERATE_ROD)) {
             UnificationEntry rod = new UnificationEntry(OrePrefix.stick, material);
-
-            addToolRecipe(material, ToolItems.CHOOCHER, false,
-                    "PhP", "SPS", " P ",
-                    'P', plate,
-                    'S', rod);
-
             if (material.hasFlag(GENERATE_PLATE)) {
                 addToolRecipe(material, ToolItems.BUTCHERY_KNIFE, false,
                         "PPf", "PP ", "Sh ",
@@ -245,6 +244,27 @@ public class ToolRecipeHandler {
                     "hDS", "DSD", "SDf",
                     'S', rod,
                     'D', new UnificationEntry(OrePrefix.dye, MarkerMaterials.Color.Blue));
+        }
+
+        if (material.hasFlags(GENERATE_PLATE) && material.hasFlags(GENERATE_ROD)) {
+            // Universal Spade
+            addToolRecipe(material, ToolItems.UNIVERSAL_SPADE, true,
+                    "hPP", "DRP", "RDf",
+                    'P', plate,
+                    'R', stick,
+                    'D', new UnificationEntry(OrePrefix.dye, MarkerMaterials.Color.Blue));
+        }
+
+        if (material.hasFlags(GENERATE_SPRING_SMALL) && material.hasFlags(GENERATE_SMALL_GEAR)
+                && material !=
+                Materials.Steel) // Do not generate Steel Flint And Steel because the vanilla Flint And Steel is Steel yet.
+        {
+            // Flint And Steel
+            addToolRecipe(material, ToolItems.FLINT_AND_STEEL, false,
+                    " G ", " F ", " S ",
+                    'G', new UnificationEntry(OrePrefix.gearSmall, material),
+                    'S', new UnificationEntry(OrePrefix.springSmall, material),
+                    'F', new ItemStack(Items.FLINT));
         }
     }
 

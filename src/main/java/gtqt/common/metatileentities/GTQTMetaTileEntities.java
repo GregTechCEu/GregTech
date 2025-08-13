@@ -1,14 +1,13 @@
 package gtqt.common.metatileentities;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
-
-import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEPatternProviderProxy;
-import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityThreadHatch;
 
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityDualHatch;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEDualHatch;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEPatternProvider;
+import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEPatternProviderProxy;
+import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntitySuperItemBus;
+import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityThreadHatch;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityWirelessController;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityWirelessEnergyHatch;
 
@@ -25,6 +24,14 @@ public class GTQTMetaTileEntities {
     public static MetaTileEntityMEDualHatch ME_DUAL_IMPORT_HATCH;
     public static MetaTileEntityMEDualHatch ME_DUAL_EXPORT_HATCH;
     public static MetaTileEntityMEPatternProviderProxy ME_PATTERN_PROVIDER_PROXY;
+
+    public static final MetaTileEntitySuperItemBus[] SUPER_ITEM_IMPORT_BUS = new MetaTileEntitySuperItemBus[
+            GTValues.V.length -
+                    1]; // All tiers but MAX
+    public static final MetaTileEntitySuperItemBus[] SUPER_ITEM_EXPORT_BUS = new MetaTileEntitySuperItemBus[
+            GTValues.V.length -
+                    1]; // All tiers but MAX
+
     public static final MetaTileEntityWirelessEnergyHatch[] WIRELESS_INPUT_ENERGY_HATCH = new MetaTileEntityWirelessEnergyHatch[15];
     public static final MetaTileEntityWirelessEnergyHatch[] WIRELESS_OUTPUT_ENERGY_HATCH = new MetaTileEntityWirelessEnergyHatch[15];
     public static final MetaTileEntityWirelessEnergyHatch[] WIRELESS_INPUT_ENERGY_HATCH_4A = new MetaTileEntityWirelessEnergyHatch[15];
@@ -80,9 +87,20 @@ public class GTQTMetaTileEntities {
         registerMetaTileEntity(2701, ME_DUAL_EXPORT_HATCH);
         registerMetaTileEntity(2702, ME_PATTERN_PROVIDER_PROXY);
 
+        for (int i = 0; i < 14; i++) {
+            String voltageName = GTValues.VN[i].toLowerCase();
+            SUPER_ITEM_IMPORT_BUS[i] = new MetaTileEntitySuperItemBus(
+                    gregtechId("super_item_bus.import." + voltageName), i, false);
+            SUPER_ITEM_EXPORT_BUS[i] = new MetaTileEntitySuperItemBus(
+                    gregtechId("super_item_bus.export." + voltageName), i, true);
+
+            registerMetaTileEntity(2800 + i, SUPER_ITEM_IMPORT_BUS[i]);
+            registerMetaTileEntity(2815 + i, SUPER_ITEM_EXPORT_BUS[i]);
+        }
         //无线能源仓注册 ID 3000+
         for (int i = 0; i < 15; i++) {
             String tier = VN[i].toLowerCase();
+
             WIRELESS_INPUT_ENERGY_HATCH[i] = registerMetaTileEntity(3000+i, new MetaTileEntityWirelessEnergyHatch(gregtechId("wireless_energy_hatch.input." + tier), i, 2, false));
             WIRELESS_INPUT_ENERGY_HATCH_4A[i] = registerMetaTileEntity(3000+15 + i, new MetaTileEntityWirelessEnergyHatch(gregtechId("wireless_energy_hatch.input_4a." + tier), i, 4, false));
             WIRELESS_INPUT_ENERGY_HATCH_16A[i] = registerMetaTileEntity(3000+30 + i, new MetaTileEntityWirelessEnergyHatch(gregtechId("wireless_energy_hatch.input_16a." + tier), i, 16, false));

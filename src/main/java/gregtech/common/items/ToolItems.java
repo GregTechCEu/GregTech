@@ -1,11 +1,32 @@
 package gregtech.common.items;
 
 import gregtech.api.GTValues;
-import gregtech.api.items.toolitem.*;
+import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ItemGTAxe;
+import gregtech.api.items.toolitem.ItemGTHoe;
+import gregtech.api.items.toolitem.ItemGTSword;
+import gregtech.api.items.toolitem.ItemGTTool;
+import gregtech.api.items.toolitem.ItemGTToolbelt;
+import gregtech.api.items.toolitem.ToolBuilder;
+import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.items.toolitem.ToolHelper;
+import gregtech.api.items.toolitem.ToolOreDict;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.client.renderer.handler.ToolbeltRenderer;
-import gregtech.common.items.tool.*;
+import gregtech.common.items.tool.BlockRotatingBehavior;
+import gregtech.common.items.tool.DisableShieldBehavior;
+import gregtech.common.items.tool.EntityDamageBehavior;
+import gregtech.common.items.tool.FlintAndSteelToolBehavior;
+import gregtech.common.items.tool.GrassPathBehavior;
+import gregtech.common.items.tool.HarvestCropsBehavior;
+import gregtech.common.items.tool.HarvestIceBehavior;
+import gregtech.common.items.tool.HoeGroundBehavior;
+import gregtech.common.items.tool.OpenGUIBehavior;
+import gregtech.common.items.tool.PlungerBehavior;
+import gregtech.common.items.tool.RotateRailBehavior;
+import gregtech.common.items.tool.TorchPlaceBehavior;
+import gregtech.common.items.tool.TreeFellingBehavior;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.client.Minecraft;
@@ -40,7 +61,6 @@ public final class ToolItems {
     public static IGTTool MINING_HAMMER;
     public static IGTTool SPADE;
     public static IGTTool WRENCH;
-    public static IGTTool CHOOCHER;
     public static IGTTool FILE;
     public static IGTTool CROWBAR;
     public static IGTTool SCREWDRIVER;
@@ -69,7 +89,13 @@ public final class ToolItems {
     public static IGTTool HARD_HAMMER_HV;
     public static IGTTool HARD_HAMMER_EV;
     public static IGTTool HARD_HAMMER_IV;
+
+    public static IGTTool COMBINATION_WRENCH;
+    public static IGTTool UNIVERSAL_SPADE;
+    public static IGTTool FLINT_AND_STEEL;
+
     public static ItemGTToolbelt TOOLBELT;
+
     private ToolItems() {/**/}
 
     public static List<IGTTool> getAllTools() {
@@ -152,14 +178,6 @@ public final class ToolItems {
                 .secondaryOreDicts("craftingToolWrench")
                 .symbol('w')
                 .toolClasses(ToolClasses.WRENCH));
-
-        CHOOCHER = register(ItemGTTool.Builder.of(GTValues.MODID, "choocher")
-                .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
-                        .attackDamage(1.0F).attackSpeed(-2.8F)
-                        .behaviors(BlockRotatingBehavior.INSTANCE, new EntityDamageBehavior(3.0F, EntityGolem.class)))
-                .sound(GTSoundEvents.WRENCH_TOOL, true)
-                .secondaryOreDicts(ToolOreDict.toolPickaxe, ToolOreDict.toolShovel)
-                .toolClasses(ToolClasses.WRENCH,ToolClasses.HARD_HAMMER));
 
         FILE = register(ItemGTTool.Builder.of(GTValues.MODID, "file")
                 .toolStats(b -> b.crafting().damagePerCraftingAction(4)
@@ -379,7 +397,7 @@ public final class ToolItems {
                 .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(2)
                         .attackDamage(1.0F).attackSpeed(3.2F).aoe(1, 1, 2)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV)
-                        .defaultEnchantment(Enchantments.FORTUNE,1)
+                        .defaultEnchantment(Enchantments.FORTUNE, 1)
                         .behaviors(TorchPlaceBehavior.INSTANCE))
                 .sound(SoundEvents.BLOCK_ANVIL_LAND)
                 .oreDict(ToolOreDict.toolHammerDrill)
@@ -390,7 +408,7 @@ public final class ToolItems {
                 .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(2)
                         .attackDamage(5.0F).attackSpeed(3.6F).aoe(2, 2, 4)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_MV)
-                        .defaultEnchantment(Enchantments.FORTUNE,1)
+                        .defaultEnchantment(Enchantments.FORTUNE, 1)
                         .behaviors(TorchPlaceBehavior.INSTANCE))
                 .sound(SoundEvents.BLOCK_ANVIL_LAND)
                 .oreDict(ToolOreDict.toolHammerDrill)
@@ -401,7 +419,7 @@ public final class ToolItems {
                 .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(2)
                         .attackDamage(7.0F).attackSpeed(4.2F).aoe(3, 3, 6)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_HV)
-                        .defaultEnchantment(Enchantments.FORTUNE,2)
+                        .defaultEnchantment(Enchantments.FORTUNE, 2)
                         .behaviors(TorchPlaceBehavior.INSTANCE))
                 .sound(SoundEvents.BLOCK_ANVIL_LAND)
                 .oreDict(ToolOreDict.toolHammerDrill)
@@ -412,7 +430,7 @@ public final class ToolItems {
                 .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(2)
                         .attackDamage(9.0F).attackSpeed(4.8F).aoe(4, 4, 8)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_EV)
-                        .defaultEnchantment(Enchantments.FORTUNE,2)
+                        .defaultEnchantment(Enchantments.FORTUNE, 2)
                         .behaviors(TorchPlaceBehavior.INSTANCE))
                 .sound(SoundEvents.BLOCK_ANVIL_LAND)
                 .oreDict(ToolOreDict.toolHammerDrill)
@@ -423,12 +441,42 @@ public final class ToolItems {
                 .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(2)
                         .attackDamage(11.0F).attackSpeed(5.6F).aoe(9, 9, 0)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_IV)
-                        .defaultEnchantment(Enchantments.FORTUNE,3)
+                        .defaultEnchantment(Enchantments.FORTUNE, 3)
                         .behaviors(TorchPlaceBehavior.INSTANCE))
                 .sound(SoundEvents.BLOCK_ANVIL_LAND)
                 .oreDict(ToolOreDict.toolHammerDrill)
                 .electric(GTValues.IV)
                 .toolClasses(ToolClasses.PICKAXE, ToolClasses.HARD_HAMMER, ToolClasses.SHOVEL));
+
+        // Combination wrench has many functions, consists of hard hammer and wrench, the original idea
+        // of this tool is from GregTech 5 Unofficial.
+        COMBINATION_WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "combination_wrench")
+                .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
+                        .attackDamage(1.0F).attackSpeed(-2.8F)
+                        .behaviors(BlockRotatingBehavior.INSTANCE, new EntityDamageBehavior(3.0F, EntityGolem.class)))
+                .oreDict(ToolOreDict.toolWrench)
+                .secondaryOreDicts("toolHammer", "craftingToolWrench", "craftingToolHardHammer")
+                .toolClasses(ToolClasses.WRENCH, ToolClasses.HARD_HAMMER)
+                .sound(GTSoundEvents.WRENCH_TOOL, true));
+
+        // Universal spade has many functions, consists of crowbar, spade and saw, the original idea
+        // of this tool is from GregTech 6 and Gregicality Legacy.
+        UNIVERSAL_SPADE = register(ItemGTTool.Builder.of(GTValues.MODID, "universal_spade")
+                .toolStats(b -> b.blockBreaking().crafting().sneakBypassUse()
+                        .attackDamage(3.0F).attackSpeed(-2.4F)
+                        .behaviors(GrassPathBehavior.INSTANCE, RotateRailBehavior.INSTANCE))
+                .oreDict(ToolOreDict.toolShovel)
+                .secondaryOreDicts("toolCrowbar", "toolSpade", "toolSaw", "craftingToolSaw")
+                .toolClasses(ToolClasses.CROWBAR, ToolClasses.SHOVEL, ToolClasses.SAW)
+                .sound(SoundEvents.ENTITY_ITEM_BREAK));
+
+        // Flint And Steel is extended version of vanilla items, it is another choice with Gregtech
+        // lighter (for lighter, it consumed some chemistry gases, but this is just vanilla usage).
+        FLINT_AND_STEEL = register(ItemGTTool.Builder.of(GTValues.MODID, "flint_and_steel")
+                .toolStats(b -> b.behaviors(FlintAndSteelToolBehavior.INSTANCE))
+                .oreDict(ToolOreDict.toolFlintAndSteel)
+                .toolClasses(ToolClasses.FLINT_AND_STEEL));
+
     }
 
     public static IGTTool register(@NotNull ToolBuilder<?> builder) {

@@ -14,13 +14,11 @@ import net.minecraft.item.ItemStack;
 import java.util.ArrayList;
 
 import static gregtech.api.GTValues.*;
-import static gregtech.api.recipes.RecipeMaps.TOOL_CASTER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.FORMING_PRESS_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.TOOL_CASTER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.plate;
-import static gregtech.api.util.Mods.Names.GREGTECH_FOOD_OPTION;
 import static gtqt.common.items.GTQTMetaItems.*;
-import static net.minecraftforge.fml.common.Loader.isModLoaded;
 
 public class OnceToolHandler {
 
@@ -197,17 +195,17 @@ public class OnceToolHandler {
         // Casting Mold (Butchery Knife)
         ModHandler.addShapedRecipe(true, "casting_mold.butchery_knife", CASTING_MOLD_BUTCHERY_KNIFE.getStackForm(),
                 "rB ", " Pk", " M ",
-                'B', "toolButcheryKnife", // 注意：直接使用字符串oreDict
+                'B', "toolButcheryKnife",
                 'P', new UnificationEntry(plate, Materials.Clay),
                 'M', CASTING_MOLD_EMPTY.getStackForm());
 
         // Casting Mold (Rolling Pin)
-        if (isModLoaded(GREGTECH_FOOD_OPTION)) {
-            ModHandler.addShapedRecipe(true, "casting_mold.rolling_pin", CASTING_MOLD_ROLLING_PIN.getStackForm(),
-                    "rp ", " Pk", " M ",
-                    'P', new UnificationEntry(plate, Materials.Clay),
-                    'M', CASTING_MOLD_EMPTY.getStackForm());
-        }
+        ModHandler.addShapedRecipe(true, "casting_mold.rolling_pin", CASTING_MOLD_ROLLING_PIN.getStackForm(),
+                "rB ", " Pk", " M ",
+                'B', "craftingToolRollingPin",
+                'P', new UnificationEntry(plate, Materials.Clay),
+                'M', CASTING_MOLD_EMPTY.getStackForm());
+
     }
 
     public static void formingPressRecipes() {

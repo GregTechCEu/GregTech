@@ -8,7 +8,11 @@ import gregtech.client.utils.RenderUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -30,14 +34,13 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
+import javax.vecmath.Vector3f;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Collection;
 import java.util.function.Consumer;
-
-import javax.vecmath.Vector3f;
 
 /**
  * Created with IntelliJ IDEA.
@@ -62,8 +65,8 @@ public abstract class WorldSceneRenderer {
 
     public final World world;
     public final Collection<BlockPos> renderedBlocks = new ObjectOpenHashSet<>();
-    private Consumer<WorldSceneRenderer> beforeRender;
-    private Consumer<WorldSceneRenderer> afterRender;
+    protected Consumer<WorldSceneRenderer> beforeRender;
+    protected Consumer<WorldSceneRenderer> afterRender;
     private Consumer<RayTraceResult> onLookingAt;
     private int clearColor;
     private RayTraceResult lastTraceResult;
@@ -237,23 +240,8 @@ public abstract class WorldSceneRenderer {
 
         try { // render block in each layer
             for (BlockRenderLayer layer : BlockRenderLayer.values()) {
-                ForgeHooksClient.setRenderLayer(layer);
-                int pass = layer == BlockRenderLayer.TRANSLUCENT ? 1 : 0;
-                setDefaultPassRenderState(pass);
 
-                BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-                buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-                BlockRendererDispatcher blockrendererdispatcher = mc.getBlockRendererDispatcher();
-
-                for (BlockPos pos : renderedBlocks) {
-                    IBlockState state = world.getBlockState(pos);
-                    Block block = state.getBlock();
-                    if (block == Blocks.AIR) continue;
-                    state = state.getActualState(world, pos);
-                    if (block.canRenderInLayer(state, layer)) {
-                        blockrendererdispatcher.renderBlock(state, pos, world, buffer);
-                    }
-                }
+                renderBlockLayer(layer);
 
                 Tessellator.getInstance().draw();
                 Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
@@ -262,14 +250,44 @@ public abstract class WorldSceneRenderer {
             ForgeHooksClient.setRenderLayer(oldRenderLayer);
         }
 
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.enableLighting();
+        renderTESR(); // Handles TileEntities
 
-        // render TESR
+        GlStateManager.enableDepth();
+        GlStateManager.disableBlend();
+        GlStateManager.depthMask(true);
+
+        if (afterRender != null) {
+            afterRender.accept(this);
+        }
+    }
+
+    protected void renderBlockLayer(BlockRenderLayer layer) {
+        ForgeHooksClient.setRenderLayer(layer);
+        int pass = layer == BlockRenderLayer.TRANSLUCENT ? 1 : 0;
+        setDefaultPassRenderState(pass);
+
+        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+
+        for (BlockPos pos : renderedBlocks) {
+            IBlockState state = world.getBlockState(pos);
+            Block block = state.getBlock();
+            state = state.getActualState(world, pos);
+            if (block == Blocks.AIR) continue;
+            if (block.canRenderInLayer(state, layer)) {
+                blockrendererdispatcher.renderBlock(state, pos, world, buffer);
+            }
+        }
+    }
+
+    protected void renderTESR() {
+        RenderHelper.enableStandardItemLighting();
         for (int pass = 0; pass < 2; pass++) {
             ForgeHooksClient.setRenderPass(pass);
             setDefaultPassRenderState(pass);
-            for (BlockPos pos : renderedBlocks) {
+
+            for (BlockPos pos : renderedBlocks) { // This
                 TileEntity tile = world.getTileEntity(pos);
                 if (tile != null) {
                     if (tile.shouldRenderInPass(pass)) {
@@ -279,13 +297,7 @@ public abstract class WorldSceneRenderer {
             }
         }
         ForgeHooksClient.setRenderPass(-1);
-        GlStateManager.enableDepth();
-        GlStateManager.disableBlend();
-        GlStateManager.depthMask(true);
-
-        if (afterRender != null) {
-            afterRender.accept(this);
-        }
+        RenderHelper.disableStandardItemLighting();
     }
 
     public static void setDefaultPassRenderState(int pass) {
@@ -391,7 +403,7 @@ public abstract class WorldSceneRenderer {
     /***
      * For better performance, You'd better handle the event {@link #setOnLookingAt(Consumer)} or
      * {@link #getLastTraceResult()}
-     * 
+     *
      * @param mouseX xPos in Texture
      * @param mouseY yPos in Texture
      * @return RayTraceResult Hit
@@ -413,7 +425,7 @@ public abstract class WorldSceneRenderer {
 
     /***
      * For better performance, You'd better do project in {@link #setAfterWorldRender(Consumer)}
-     * 
+     *
      * @param pos   BlockPos
      * @param depth should pass Depth Test
      * @return x, y, z

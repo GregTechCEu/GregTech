@@ -131,6 +131,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.rotor_holder.tooltip1"));
         tooltip.add(I18n.format("gregtech.machine.rotor_holder.tooltip2"));
+        tooltip.add(I18n.format("gregtech.machine.rotor_holder.tooltip3"));
         tooltip.add(I18n.format("gregtech.universal.disabled"));
     }
 
@@ -219,8 +220,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
         // 获取转子正面位置（转子前方第一格）
         BlockPos frontPos = centerPos.offset(rotorFacing);
 
-        // 沿着转子前方方向延伸7格（包括正面位置）
-        BlockPos farPos = frontPos.offset(rotorFacing, 6);
+        // 沿着转子前方方向延伸5格（包括正面位置）
+        BlockPos farPos = frontPos.offset(rotorFacing, 4);
 
         // 创建3x3×7的检测区域（沿着转子前方方向）
         return new AxisAlignedBB(
