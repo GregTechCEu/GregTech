@@ -59,8 +59,8 @@ public abstract class WorldSceneRenderer {
 
     public final World world;
     public final Collection<BlockPos> renderedBlocks = new ObjectOpenHashSet<>();
-    private Consumer<WorldSceneRenderer> beforeRender;
-    private Consumer<WorldSceneRenderer> afterRender;
+    protected Consumer<WorldSceneRenderer> beforeRender;
+    protected Consumer<WorldSceneRenderer> afterRender;
     private Consumer<RayTraceResult> onLookingAt;
     private int clearColor;
     private RayTraceResult lastTraceResult;
