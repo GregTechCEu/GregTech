@@ -13,6 +13,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
+import gregtech.client.renderer.scene.VBOWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TrackedDummyWorld;
@@ -585,7 +586,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         }
 
         TrackedDummyWorld world = new TrackedDummyWorld();
-        ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
+        ImmediateWorldSceneRenderer worldSceneRenderer = new VBOWorldSceneRenderer(world);
         worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
         world.addBlocks(blockMap);
 
