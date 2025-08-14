@@ -23,20 +23,13 @@ import gregtech.api.util.GTHashMaps;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
-import gregtech.common.metatileentities.MetaTileEntities;
-
-import gtqt.common.metatileentities.GTQTMetaTileEntities;
-import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityDualHatch;
-
 import net.minecraft.client.resources.I18n;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -83,6 +76,44 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         super(metaTileEntityId, tier, isExportHatch);
         this.workingEnabled = true;
         initializeInventory();
+    }
+
+    private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {
+        // Gather a snapshot of the provided inventory
+        Object2IntMap<ItemStack> inventoryContents = GTHashMaps.fromItemHandler(inventory, true);
+
+        List<ItemStack> inventoryItemContents = new ArrayList<>();
+
+        // Populate the list of item stacks in the inventory with apportioned item stacks, for easy replacement
+        for (Object2IntMap.Entry<ItemStack> e : inventoryContents.object2IntEntrySet()) {
+            ItemStack stack = e.getKey();
+            int count = e.getIntValue();
+            int maxStackSize = stack.getMaxStackSize();
+            while (count >= maxStackSize) {
+                ItemStack copy = stack.copy();
+                copy.setCount(maxStackSize);
+                inventoryItemContents.add(copy);
+                count -= maxStackSize;
+            }
+            if (count > 0) {
+                ItemStack copy = stack.copy();
+                copy.setCount(count);
+                inventoryItemContents.add(copy);
+            }
+        }
+
+        for (int i = 0; i < inventory.getSlots(); i++) {
+            ItemStack stackToMove;
+            // Ensure that we are not exceeding the List size when attempting to populate items
+            if (i >= inventoryItemContents.size()) {
+                stackToMove = ItemStack.EMPTY;
+            } else {
+                stackToMove = inventoryItemContents.get(i);
+            }
+
+            // Populate the slots
+            inventory.setStackInSlot(i, stackToMove);
+        }
     }
 
     @Override
@@ -157,17 +188,17 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
+    public boolean isWorkingEnabled() {
+        return workingEnabled;
+    }
+
+    @Override
     public void setWorkingEnabled(boolean workingEnabled) {
         this.workingEnabled = workingEnabled;
         World world = getWorld();
         if (world != null && !world.isRemote) {
             writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
         }
-    }
-
-    @Override
-    public boolean isWorkingEnabled() {
-        return workingEnabled;
     }
 
     @Override
@@ -345,44 +376,6 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     public boolean hasGhostCircuitInventory() {
         return !this.isExportHatch;
-    }
-
-    private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {
-        // Gather a snapshot of the provided inventory
-        Object2IntMap<ItemStack> inventoryContents = GTHashMaps.fromItemHandler(inventory, true);
-
-        List<ItemStack> inventoryItemContents = new ArrayList<>();
-
-        // Populate the list of item stacks in the inventory with apportioned item stacks, for easy replacement
-        for (Object2IntMap.Entry<ItemStack> e : inventoryContents.object2IntEntrySet()) {
-            ItemStack stack = e.getKey();
-            int count = e.getIntValue();
-            int maxStackSize = stack.getMaxStackSize();
-            while (count >= maxStackSize) {
-                ItemStack copy = stack.copy();
-                copy.setCount(maxStackSize);
-                inventoryItemContents.add(copy);
-                count -= maxStackSize;
-            }
-            if (count > 0) {
-                ItemStack copy = stack.copy();
-                copy.setCount(count);
-                inventoryItemContents.add(copy);
-            }
-        }
-
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            ItemStack stackToMove;
-            // Ensure that we are not exceeding the List size when attempting to populate items
-            if (i >= inventoryItemContents.size()) {
-                stackToMove = ItemStack.EMPTY;
-            } else {
-                stackToMove = inventoryItemContents.get(i);
-            }
-
-            // Populate the slots
-            inventory.setStackInSlot(i, stackToMove);
-        }
     }
 
     @Override
