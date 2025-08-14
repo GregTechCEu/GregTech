@@ -91,12 +91,12 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
         CUPRONICKEL("cupronickel", 1800, 1, 1, Materials.Cupronickel),
         KANTHAL("kanthal", 2700, 2, 1, Materials.Kanthal),
-        NICHROME("nichrome", 3600, 2, 2, Materials.Nichrome),
-        RTM_ALLOY("rtm_alloy", 4500, 4, 2, Materials.RTMAlloy),
-        HSS_G("hss_g", 5400, 4, 4, Materials.HSSG),
-        NAQUADAH("naquadah", 7200, 8, 4, Materials.Naquadah),
-        TRINIUM("trinium", 9001, 8, 8, Materials.Trinium),
-        TRITANIUM("tritanium", 10800, 16, 8, Materials.Tritanium);
+        NICHROME("nichrome", 3600, 3, 3, Materials.Nichrome),
+        RTM_ALLOY("rtm_alloy", 4500, 4, 4, Materials.RTMAlloy),
+        HSS_G("hss_g", 5400, 5, 5, Materials.HSSG),
+        NAQUADAH("naquadah", 7200, 6, 6, Materials.Naquadah),
+        TRINIUM("trinium", 9001, 7, 7, Materials.Trinium),
+        TRITANIUM("tritanium", 10800, 8, 8, Materials.Tritanium);
 
         private final String name;
         // electric blast furnace properties

@@ -29,26 +29,39 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
 
     private void uploadVBO() {
         BlockRenderLayer oldRenderLayer = MinecraftForgeClient.getRenderLayer();
-
-        try { // render block in each layer
+        try {
             for (BlockRenderLayer layer : BlockRenderLayer.values()) {
+                int index = layer.ordinal();
+                // 释放现有VBO资源
+                if (vbos[index] != null) {
+                    vbos[index].deleteGlBuffers();
+                    vbos[index] = null;
+                }
 
-                var vbo = this.vbos[layer.ordinal()] = new VertexBuffer(DefaultVertexFormats.BLOCK);
+                VertexBuffer vbo = new VertexBuffer(DefaultVertexFormats.BLOCK);
+                this.vbos[index] = vbo;
 
                 renderBlockLayer(layer);
 
-                // Get the buffer again
                 BufferBuilder buffer = Tessellator.getInstance().getBuffer();
                 buffer.finishDrawing();
-                buffer.reset();
-
-                ByteBuffer data = buffer.getByteBuffer();
-                vbo.bufferData(data);
+                vbo.bufferData(buffer.getByteBuffer());
+                buffer.reset();  // 重置缓冲区
             }
         } finally {
             ForgeHooksClient.setRenderLayer(oldRenderLayer);
         }
         this.isDirty = false;
+    }
+
+    public void unload() {
+        for (int i = 0; i < vbos.length; i++) {
+            if (vbos[i] != null) {
+                vbos[i].deleteGlBuffers();  // 释放GL内存
+                vbos[i] = null;             // 清除引用
+            }
+        }
+        this.isDirty = true;  // 标记需要重新上传
     }
 
     @Override

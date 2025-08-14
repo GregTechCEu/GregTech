@@ -156,7 +156,6 @@ public class MultiblockPreviewRenderer {
                         controllerPos = new BlockPos(x, y, z);
                         previewFacing = metaTE.getFrontFacing();
                         mte = (MultiblockControllerBase) metaTE;
-                        break;
                     }
                 }
             }
