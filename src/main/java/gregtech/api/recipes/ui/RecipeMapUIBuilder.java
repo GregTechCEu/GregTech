@@ -54,7 +54,7 @@ public class RecipeMapUIBuilder {
     public @NotNull RecipeMapUIBuilder itemSlotOverlay(@NotNull IDrawable texture, boolean isOutput) {
         int max = getMax(false, isOutput);
         for (int i = 0; i < max; i++) {
-            itemSlotOverlay(texture, i, isOutput);
+            slotOverlay(texture, i, false, isOutput);
         }
         return this;
     }
@@ -95,7 +95,7 @@ public class RecipeMapUIBuilder {
                                                         boolean isOutput) {
         int max = getMax(true, isOutput);
         for (int i = 0; i < max; i++) {
-            fluidSlotOverlay(texture, i, isOutput);
+            slotOverlay(texture, i, true, isOutput);
         }
         return this;
     }
