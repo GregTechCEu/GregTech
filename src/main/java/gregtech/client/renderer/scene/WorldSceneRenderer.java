@@ -1,11 +1,10 @@
 package gregtech.client.renderer.scene;
 
-import codechicken.lib.vec.Vector3;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;
 import gregtech.api.util.Size;
 import gregtech.client.utils.RenderUtil;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -24,17 +23,21 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.vec.Vector3;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
-import javax.vecmath.Vector3f;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Collection;
 import java.util.function.Consumer;
+
+import javax.vecmath.Vector3f;
 
 /**
  * Created with IntelliJ IDEA.
@@ -244,7 +247,7 @@ public abstract class WorldSceneRenderer {
             ForgeHooksClient.setRenderLayer(oldRenderLayer);
         }
 
-        renderTESR(); // Handles TileEntities
+        renderTileEntities(); // Handle TileEntities
 
         GlStateManager.enableDepth();
         GlStateManager.disableBlend();
@@ -275,7 +278,7 @@ public abstract class WorldSceneRenderer {
         }
     }
 
-    protected void renderTESR() {
+    protected void renderTileEntities() {
         RenderHelper.enableStandardItemLighting();
         for (int pass = 0; pass < 2; pass++) {
             ForgeHooksClient.setRenderPass(pass);
