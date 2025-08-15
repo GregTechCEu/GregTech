@@ -138,14 +138,6 @@ public class SteamLavaBoiler extends SteamBoiler {
                                 GTGuiTextures.PROGRESS_BAR_BOILER_EMPTY_BRONZE));
     }
 
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return createUITemplate(entityPlayer)
-                .widget(new TankWidget(fuelFluidTank, 119, 26, 10, 54)
-                        .setBackgroundTexture(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure)))
-                .build(getHolder(), entityPlayer);
-    }
-
     @SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick() {

@@ -111,18 +111,6 @@ public class SteamCoalBoiler extends SteamBoiler implements ICategoryOverride {
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        return createUITemplate(player)
-                .slot(this.importItems, 0, 115, 62,
-                        GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.COAL_OVERLAY_STEAM.get(isHighPressure))
-                .slot(this.exportItems, 0, 115, 26, true, false,
-                        GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.DUST_OVERLAY_STEAM.get(isHighPressure))
-                .progressBar(this::getFuelLeftPercent, 115, 44, 18, 18,
-                        GuiTextures.PROGRESS_BAR_BOILER_FUEL.get(isHighPressure), MoveType.VERTICAL)
-                .build(getHolder(), player);
-    }
-
-    @Override
     public @NotNull String @NotNull [] getJEICategoryOverrides() {
         return new String[] { "minecraft.fuel" };
     }

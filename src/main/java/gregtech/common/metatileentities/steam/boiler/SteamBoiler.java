@@ -413,30 +413,6 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
         return IDrawable.of(base, overlay);
     }
 
-    public ModularUI.Builder createUITemplate(EntityPlayer player) {
-        return ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(isHighPressure), 176, 166)
-                .label(6, 6, getMetaFullName()).shouldColor(false)
-                .widget(new gregtech.api.gui.widgets.ProgressWidget(this::getTemperaturePercent, 96, 26, 10, 54)
-                        .setProgressBar(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure),
-                                GuiTextures.PROGRESS_BAR_BOILER_HEAT,
-                                gregtech.api.gui.widgets.ProgressWidget.MoveType.VERTICAL))
-
-                .widget(new gregtech.api.gui.widgets.TankWidget(waterFluidTank, 83, 26, 10, 54)
-                        .setBackgroundTexture(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure)))
-                .widget(new gregtech.api.gui.widgets.TankWidget(steamFluidTank, 70, 26, 10, 54)
-                        .setBackgroundTexture(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure)))
-
-                .widget(new gregtech.api.gui.widgets.FluidContainerSlotWidget(containerInventory, 0, 43, 26, true)
-                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(isHighPressure),
-                                GuiTextures.IN_SLOT_OVERLAY_STEAM.get(isHighPressure)))
-                .slot(containerInventory, 1, 43, 62, true, false,
-                        GuiTextures.SLOT_STEAM.get(isHighPressure),
-                        GuiTextures.OUT_SLOT_OVERLAY_STEAM.get(isHighPressure))
-                .image(43, 44, 18, 18, GuiTextures.CANISTER_OVERLAY_STEAM.get(isHighPressure))
-
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT_STEAM.get(isHighPressure), 0);
-    }
-
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(String.format("%s %s",
