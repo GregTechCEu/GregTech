@@ -622,19 +622,19 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 .slot(SyncHandlers.itemSlot(itemHandler, slotIndex)
                         .slotGroup(group)
                         .accessibility(!isOutputs, true))
-                .background(getOverlaysForSlotNew(isOutputs, false, slotIndex));
+                .background(getDrawableOverlaysForSlot(isOutputs, false, slotIndex));
     }
 
     protected GTFluidSlot makeFluidSlot(int slotIndex, FluidTankList fluidHandler, boolean isOutputs) {
         return new GTFluidSlot()
                 .syncHandler(GTFluidSlot.sync(fluidHandler.getTankAt(slotIndex))
-                        .accessibility(true, !isOutputs))
-                // todo show always full, should be implemented with mui2 multis
-                .background(getOverlaysForSlotNew(isOutputs, true, slotIndex));
+                        .accessibility(true, !isOutputs)
+                        .drawAlwaysFull(true))
+                .background(getDrawableOverlaysForSlot(isOutputs, true, slotIndex));
     }
 
     @ApiStatus.Experimental
-    protected IDrawable getOverlaysForSlotNew(boolean isOutput, boolean isFluid, int index) {
+    protected IDrawable getDrawableOverlaysForSlot(boolean isOutput, boolean isFluid, int index) {
         UITexture base = isFluid ? GTGuiTextures.FLUID_SLOT : GTGuiTextures.SLOT;
         var overlays = getOverlayMap(isOutput, isFluid);
         if (overlays.containsKey(index)) {
