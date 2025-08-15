@@ -65,14 +65,6 @@ public class SteamSolarBoiler extends SteamBoiler {
                                 GTGuiTextures.PROGRESS_BAR_SOLAR_BRONZE, -1));
     }
 
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return createUITemplate(entityPlayer)
-                .progressBar(() -> GTUtility.canSeeSunClearly(getWorld(), getPos()) ? 1.0 : 0.0, 114, 44, 20, 20,
-                        GuiTextures.PROGRESS_BAR_SOLAR_STEAM.get(isHighPressure), MoveType.HORIZONTAL)
-                .build(getHolder(), entityPlayer);
-    }
-
     @SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick() {
