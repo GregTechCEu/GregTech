@@ -74,8 +74,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     private boolean usesMui2 = false;
     private UITexture progressTexture = GTGuiTextures.PROGRESS_BAR_ARROW;
     private ProgressWidget.Direction progressDirection = ProgressWidget.Direction.RIGHT;
-    // todo sus name
-    private @Nullable IDrawable specialTextureNew;
+    private @Nullable IDrawable specialDrawableTexture;
 
     /**
      * @param recipeMap          the recipemap corresponding to this ui
@@ -538,8 +537,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 .direction(progressDirection));
         addInventorySlotGroup(group, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(group, exportItems, exportFluids, true, yOffset);
-        if (specialTextureNew != null) {
-            group.child(specialTextureNew.asWidget()
+        if (specialDrawableTexture != null) {
+            group.child(specialDrawableTexture.asWidget()
                     .debugName("special_texture")
                     .pos(specialTexturePosition.x(), specialTexturePosition.y())
                     .size(specialTexturePosition.w(), specialTexturePosition.h()));
@@ -689,7 +688,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param position       the position of the texture: [x, y, width, height]
      */
     public void setSpecialTexture(@NotNull IDrawable specialTexture, @NotNull Area position) {
-        this.specialTextureNew = specialTexture;
+        this.specialDrawableTexture = specialTexture;
         this.specialTexturePosition = position;
     }
 
