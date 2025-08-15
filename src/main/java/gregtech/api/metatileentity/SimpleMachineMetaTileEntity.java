@@ -510,6 +510,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                 exportItems, importFluids, exportFluids, yOffset, guiSyncManager);
 
         BooleanSyncValue hasEnergy = new BooleanSyncValue(workable::isHasNotEnoughEnergy);
+        guiSyncManager.syncValue("has_energy", hasEnergy);
 
         panel.child(widget)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
@@ -523,8 +524,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                         .size(18, 18)
                         .pos(79, 42 + yOffset)
                         .background(GTGuiTextures.INDICATOR_NO_ENERGY)
-                        // todo flicker appears on ui open even when it has enough energy
-                        // will need to test this
                         .setEnabledIf($ -> hasEnergy.getBoolValue()))
                 .bindPlayerInventory();
 
