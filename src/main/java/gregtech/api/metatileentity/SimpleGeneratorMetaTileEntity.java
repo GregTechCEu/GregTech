@@ -157,12 +157,6 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
 
         panel.child(widget)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                // .child(new ItemSlot()
-                // .slot(SyncHandlers.itemSlot(chargerInventory, 0))
-                // .pos(79, 62 + yOffset)
-                // .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
-                // .tooltip(t -> t.addLine(IKey.lang("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
-                // GTValues.VNF[getTier()]))))
                 .bindPlayerInventory();
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
