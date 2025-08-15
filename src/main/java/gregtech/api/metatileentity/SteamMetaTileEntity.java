@@ -148,8 +148,6 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
 
         ModularPanel modularPanel = GTGuis.defaultPanel(this);
 
-        // todo this method needs options to ignore certain handlers
-        // actually, steam machines manually construct their ui instead of using the recipe map ui
         Widget<?> widget = map.getRecipeMapUI().buildWidget(workableHandler::getProgressPercent, importItems,
                 exportItems, EMPTY, exportFluids, 0, guiSyncManager);
 
