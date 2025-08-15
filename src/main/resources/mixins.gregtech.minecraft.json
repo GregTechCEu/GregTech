@@ -33,7 +33,7 @@
     "RenderChunkMixin",
     "RenderGlobalMixin",
     "RenderItemMixin",
-    "ItemBlockMixin"
+    "ItemMixin"
   ],
   "server": []
 }

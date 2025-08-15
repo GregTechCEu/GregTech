@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -12,15 +13,15 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.lwjgl.opengl.GL11;
 
-import java.nio.ByteBuffer;
 import java.util.Collection;
 
 @SideOnly(Side.CLIENT)
 public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
 
-    protected final VertexBuffer[] vbos = new VertexBuffer[BlockRenderLayer.values().length];
+    protected static final VertexBuffer[] VBOS = new VertexBuffer[BlockRenderLayer.values().length];
     protected boolean isDirty = true;
 
     public VBOWorldSceneRenderer(World world) {
@@ -29,39 +30,26 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
 
     private void uploadVBO() {
         BlockRenderLayer oldRenderLayer = MinecraftForgeClient.getRenderLayer();
-        try {
-            for (BlockRenderLayer layer : BlockRenderLayer.values()) {
-                int index = layer.ordinal();
-                // 释放现有VBO资源
-                if (vbos[index] != null) {
-                    vbos[index].deleteGlBuffers();
-                    vbos[index] = null;
-                }
 
-                VertexBuffer vbo = new VertexBuffer(DefaultVertexFormats.BLOCK);
-                this.vbos[index] = vbo;
+        try { // render block in each layer
+            for (BlockRenderLayer layer : BlockRenderLayer.values()) {
 
                 renderBlockLayer(layer);
 
+                // Get the buffer again
                 BufferBuilder buffer = Tessellator.getInstance().getBuffer();
                 buffer.finishDrawing();
+                buffer.reset();
+
+                int i = layer.ordinal();
+                var vbo = VBOS[i];
+                if (vbo == null) vbo = VBOS[i] = new VertexBuffer(DefaultVertexFormats.BLOCK);
                 vbo.bufferData(buffer.getByteBuffer());
-                buffer.reset();  // 重置缓冲区
             }
         } finally {
             ForgeHooksClient.setRenderLayer(oldRenderLayer);
         }
         this.isDirty = false;
-    }
-
-    public void unload() {
-        for (int i = 0; i < vbos.length; i++) {
-            if (vbos[i] != null) {
-                vbos[i].deleteGlBuffers();  // 释放GL内存
-                vbos[i] = null;             // 清除引用
-            }
-        }
-        this.isDirty = true;  // 标记需要重新上传
     }
 
     @Override
@@ -93,19 +81,20 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
 
             GlStateManager.pushMatrix();
             {
-                var vbo = this.vbos[layer.ordinal()];
+                int i = layer.ordinal();
+                var vbo = VBOS[i];
                 vbo.bindBuffer();
-                setupClientStates();
+                enableClientStates();
                 setupArrayPointers();
                 vbo.drawArrays(GL11.GL_QUADS);
-                resetClientStates();
+                disableClientStates();
                 vbo.unbindBuffer();
             }
             GlStateManager.popMatrix();
         }
         ForgeHooksClient.setRenderLayer(oldRenderLayer);
 
-        renderTESR(); // Handles TileEntities
+        renderTileEntities(); // Handle TileEntities
 
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         RenderHelper.enableStandardItemLighting();
@@ -124,7 +113,7 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
         return super.addRenderedBlocks(blocks);
     }
 
-    protected void setupClientStates() {
+    protected void enableClientStates() {
         GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
         OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
         GlStateManager.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
@@ -134,11 +123,19 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
         GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY);
     }
 
-    protected void resetClientStates() {
-        GlStateManager.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-        GlStateManager.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-        GlStateManager.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-        GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY);
+    protected void disableClientStates() {
+        for (VertexFormatElement element : DefaultVertexFormats.BLOCK.getElements()) {
+            switch (element.getUsage()) {
+                case POSITION -> GlStateManager.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+                case COLOR -> GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY);
+                case UV -> {
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + element.getIndex());
+                    GlStateManager.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+                }
+                default -> {}
+            }
+        }
     }
 
     protected void setupArrayPointers() {

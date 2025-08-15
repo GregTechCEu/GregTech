@@ -3,6 +3,7 @@ package gregtech.mixins.minecraft;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 
 import net.minecraft.item.ItemStack;
@@ -20,8 +21,8 @@ import java.util.List;
 
 import static net.minecraft.util.text.TextFormatting.AQUA;
 
-@Mixin(ItemBlock.class)
-public abstract class ItemBlockMixin {
+@Mixin(Item.class)
+public abstract class ItemMixin {
     @Inject(method = "addInformation", at = @At("HEAD"), remap = false)
     private void injectAddInformation(ItemStack stack, @NotNull World worldIn, List<String> tooltip, ITooltipFlag flagIn, CallbackInfo ci) {
         tooltip.add(AQUA + GTUtility.getTableBarNameByItemStack(stack));

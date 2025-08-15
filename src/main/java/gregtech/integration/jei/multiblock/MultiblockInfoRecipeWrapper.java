@@ -256,7 +256,6 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     private void switchRenderPage(int amount) {
-        getCurrentRenderer().unload();
         int maxIndex = patterns.length - 1;
         int newIndex = Math.max(0, Math.min(currentRendererPage + amount, maxIndex));
         if (currentRendererPage != newIndex) {
