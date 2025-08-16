@@ -240,29 +240,38 @@ public abstract class AdvanceRecipeMapMultiblockController extends RecipeMapMult
 
     @Override
     protected void configureDisplayText(MultiblockUIBuilder builder) {
-        builder.addEnergyUsageLine(this.getEnergyContainer())
-                .addCustom(this::addCustomCapacity)
-                .addCustom((list, syncer) -> {
-                    if (isStructureFormed()) {
-                        list.add(KeyUtil.lang(TextFormatting.GOLD, "总线程数：%s",
-                                syncer.syncInt(recipeMapWorkable.size())));
-                    }
-                });
-        for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable) {
-            if (!recipeMapWorkable.isActive()) continue;
-            builder.addCustom((list, syncer) -> {
-                        if (isStructureFormed()) {
-                            list.add(KeyUtil.lang(TextFormatting.GOLD, ">>线程："));
-                        }
-                    })
-                    .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                    .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                    .addParallelsLine(recipeMapWorkable.getParallelLimit())
+        if (recipeMapWorkable.size() == 1) {
+            builder.setWorkingStatus(recipeMapWorkable.get(0).isWorkingEnabled(), recipeMapWorkable.get(0).isActive())
+                    .addEnergyUsageLine(this.getEnergyContainer())
+                    .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.get(0).getMaxVoltage()))
+                    .addParallelsLine(recipeMapWorkable.get(0).getParallelLimit())
                     .addWorkingStatusLine()
-                    .addProgressLine(recipeMapWorkable.getProgress(), recipeMapWorkable.getMaxProgress())
-                    .addRecipeOutputLine(recipeMapWorkable)
-                    .addEmptyLine();
+                    .addProgressLine(recipeMapWorkable.get(0).getProgress(), recipeMapWorkable.get(0).getMaxProgress())
+                    .addRecipeOutputLine(recipeMapWorkable.get(0));
+        } else {
+            builder.addEnergyUsageLine(this.getEnergyContainer())
+                    .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.get(0).getMaxVoltage()))
+                    .addParallelsLine(recipeMapWorkable.get(0).getParallelLimit())
+                    .addCustom(this::addCustomCapacity)
+                    .addCustom((list, syncer) -> {
+                        if (isStructureFormed()) {
+                            list.add(KeyUtil.lang(TextFormatting.GOLD, "总线程数：%s",
+                                    syncer.syncInt(recipeMapWorkable.size())));
+                        }
+                    });
+            for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable) {
+                if (!recipeMapWorkable.isActive()) continue;
+                builder.addCustom((list, syncer) -> {
+                            if (isStructureFormed()) {
+                                list.add(KeyUtil.lang(TextFormatting.GOLD, ">>线程："));
+                            }
+                        })
+                        .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                        .addWorkingStatusLine()
+                        .addProgressLine(recipeMapWorkable.getProgress(), recipeMapWorkable.getMaxProgress())
+                        .addEmptyLine();
 
+            }
         }
 
     }
@@ -475,7 +484,7 @@ public abstract class AdvanceRecipeMapMultiblockController extends RecipeMapMult
     @Override
     public boolean isWorkingEnabled() {
         for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable)
-            if(recipeMapWorkable.isWorkingEnabled())
+            if (recipeMapWorkable.isWorkingEnabled())
                 return true;
         return false;
     }
@@ -492,16 +501,15 @@ public abstract class AdvanceRecipeMapMultiblockController extends RecipeMapMult
     }
 
     @Override
-    public boolean isBatchEnable(){
+    public boolean isBatchEnable() {
         for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable)
-            if(recipeMapWorkable.isBatchEnable())
+            if (recipeMapWorkable.isBatchEnable())
                 return true;
         return false;
     }
 
     @Override
-    public void setBatchEnable(boolean enable)
-    {
+    public void setBatchEnable(boolean enable) {
         for (MultiblockRecipeLogic recipeMapWorkable : recipeMapWorkable)
             recipeMapWorkable.setBatchEnable(enable);
     }

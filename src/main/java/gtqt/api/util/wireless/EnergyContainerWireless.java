@@ -58,7 +58,6 @@ public class EnergyContainerWireless extends EnergyContainerHandler {
                         this.addEnergy(Math.abs(added));
                     }
                 }
-
             }
         }
     }
