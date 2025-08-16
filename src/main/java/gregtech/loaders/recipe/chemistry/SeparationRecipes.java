@@ -24,8 +24,10 @@ import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.api.util.Mods.Names.GTQT_CORE;
 import static gregtech.common.items.MetaItems.PLANT_BALL;
 import static gregtech.common.items.MetaItems.STICKY_RESIN;
+import static net.minecraftforge.fml.common.Loader.isModLoaded;
 
 public class SeparationRecipes {
 
@@ -91,8 +93,7 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         for (Item item : ForgeRegistries.ITEMS.getValuesCollection()) {
-            if (item instanceof ItemFood) {
-                ItemFood itemFood = (ItemFood) item;
+            if (item instanceof ItemFood itemFood) {
                 for (ItemStack itemStack : GTUtility.getAllSubItems(item)) {
                     int healAmount = itemFood.getHealAmount(itemStack);
                     float saturationModifier = itemFood.getSaturationModifier(itemStack);
@@ -208,15 +209,17 @@ public class SeparationRecipes {
                 .chancedOutput(dust, Tantalite, 125, 35)
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(64).EUt(20)
-                .input(dust, RareEarth)
-                .chancedOutput(dustSmall, Cadmium, 2500, 400)
-                .chancedOutput(dustSmall, Neodymium, 2500, 400)
-                .chancedOutput(dustSmall, Samarium, 2500, 400)
-                .chancedOutput(dustSmall, Cerium, 2500, 400)
-                .chancedOutput(dustSmall, Yttrium, 2500, 400)
-                .chancedOutput(dustSmall, Lanthanum, 2500, 400)
-                .buildAndRegister();
+        if (!isModLoaded(GTQT_CORE)) {
+            CENTRIFUGE_RECIPES.recipeBuilder().duration(64).EUt(20)
+                    .input(dust, RareEarth)
+                    .chancedOutput(dustSmall, Cadmium, 2500, 400)
+                    .chancedOutput(dustSmall, Neodymium, 2500, 400)
+                    .chancedOutput(dustSmall, Samarium, 2500, 400)
+                    .chancedOutput(dustSmall, Cerium, 2500, 400)
+                    .chancedOutput(dustSmall, Yttrium, 2500, 400)
+                    .chancedOutput(dustSmall, Lanthanum, 2500, 400)
+                    .buildAndRegister();
+        }
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .inputs(new ItemStack(Blocks.SAND, 1, 1))
@@ -367,14 +370,14 @@ public class SeparationRecipes {
                 .output(dust, SodaAsh, 6)
                 .output(dust, SodiumBicarbonate, 6)
                 .fluidOutputs(Water.getFluid(2000))
-                .duration(784).EUt(VA[LV] * 2).buildAndRegister();
+                .duration(784).EUt(VA[LV] * 2L).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, Bauxite, 15)
                 .output(dust, Aluminium, 6)
                 .output(dust, Rutile)
                 .fluidOutputs(Oxygen.getFluid(9000))
-                .duration(270).EUt(VA[LV] * 2).buildAndRegister();
+                .duration(270).EUt(VA[LV] * 2L).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, Zeolite, 41)
@@ -409,7 +412,7 @@ public class SeparationRecipes {
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, Sugar, 24)
-                .output(dust, Carbon,6)
+                .output(dust, Carbon, 6)
                 .fluidOutputs(Hydrogen.getFluid(12000))
                 .fluidOutputs(Oxygen.getFluid(6000))
                 .duration(300).EUt(VA[LV]).buildAndRegister();

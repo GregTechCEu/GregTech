@@ -13,7 +13,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-import mcjty.theoneprobe.api.*;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.IProbeInfoProvider;
+import mcjty.theoneprobe.api.NumberFormat;
+import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.theoneprobe.api.TextStyleClass;
 
 public class SteamBoilerInfoProvider implements IProbeInfoProvider {
 
@@ -53,6 +58,17 @@ public class SteamBoilerInfoProvider implements IProbeInfoProvider {
                             probeInfo.text(TextStyleClass.INFO.toString() + TextFormatting.RED +
                                     "{*gregtech.top.steam_heating_up*} " +
                                     TextFormattingUtil.formatNumbers(boiler.getCurrentTemperature()) + "%");
+                        }
+
+                        //配方时间
+
+                        if (boiler.isBurning()) {
+                            int color = boiler.isBurning() ? 0xFF4CBB17 : 0xFFBB1C28;
+                            probeInfo.progress((int)(boiler.getFuelLeftPercent()*100.0), 100, probeInfo.defaultProgressStyle()
+                                    .suffix(" %-Fuel remains")
+                                    .filledColor(color)
+                                    .alternateFilledColor(color)
+                                    .borderColor(0xFF555555).numberFormat(NumberFormat.COMMAS));
                         }
 
                         // No water

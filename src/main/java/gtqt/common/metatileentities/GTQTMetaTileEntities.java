@@ -13,7 +13,9 @@ import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityWirelessE
 
 import static gregtech.api.GTValues.VN;
 import static gregtech.api.util.GTUtility.gregtechId;
+import static gregtech.api.util.Mods.Names.BETTER_QUESTING;
 import static gregtech.common.metatileentities.MetaTileEntities.registerMetaTileEntity;
+import static net.minecraftforge.fml.common.Loader.isModLoaded;
 
 public class GTQTMetaTileEntities {
 
@@ -98,7 +100,7 @@ public class GTQTMetaTileEntities {
             registerMetaTileEntity(2815 + i, SUPER_ITEM_EXPORT_BUS[i]);
         }
         //无线能源仓注册 ID 3000+
-        for (int i = 0; i < 15; i++) {
+        if(isModLoaded(BETTER_QUESTING))for (int i = 0; i < 15; i++) {
             String tier = VN[i].toLowerCase();
 
             WIRELESS_INPUT_ENERGY_HATCH[i] = registerMetaTileEntity(3000+i, new MetaTileEntityWirelessEnergyHatch(gregtechId("wireless_energy_hatch.input." + tier), i, 2, false));
