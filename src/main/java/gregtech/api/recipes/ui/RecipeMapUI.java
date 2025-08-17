@@ -23,6 +23,7 @@ import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
@@ -549,70 +550,72 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     protected void addInventorySlotGroup(@NotNull ParentWidget<?> group,
                                          @NotNull IItemHandlerModifiable itemHandler,
                                          @NotNull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
-        int itemInputsCount = itemHandler.getSlots();
-        int fluidInputsCount = fluidHandler.getTanks();
-        boolean invertFluids = false;
-        if (itemInputsCount == 0) {
-            int tmp = itemInputsCount;
-            itemInputsCount = fluidInputsCount;
-            fluidInputsCount = tmp;
-            invertFluids = true;
-        }
-        int[] inputSlotGrid = determineSlotsGrid(itemInputsCount);
-        int itemSlotsToLeft = inputSlotGrid[0];
-        int itemSlotsToDown = inputSlotGrid[1];
-        int startInputsX = isOutputs ? 106 : 70 - itemSlotsToLeft * 18;
-        int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
-        boolean wasGroup = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
-        if (wasGroup) startInputsY -= 9;
-        else if (itemHandler.getSlots() >= 6 && fluidHandler.getTanks() >= 2 && !isOutputs) startInputsY -= 9;
+        final int itemInputsCount = itemHandler.getSlots();
+        boolean onlyFluids = itemInputsCount == 0;
+        final int fluidInputsCount = fluidHandler.getTanks();
+        if (fluidInputsCount == 0 && onlyFluids)
+            return; // nothing to do here
 
-        SlotGroup slotGroup = new SlotGroup(isOutputs ? "output_items" : "input_items", itemSlotsToLeft, 1, !isOutputs);
+        int[] inputSlotGrid = determineSlotsGrid(onlyFluids ? fluidInputsCount : itemInputsCount);
+        int slotsToLeft = inputSlotGrid[0];
+        int slotsToDown = inputSlotGrid[1];
 
-        for (int i = 0; i < itemSlotsToDown; i++) {
-            for (int j = 0; j < itemSlotsToLeft; j++) {
-                int slotIndex = i * itemSlotsToLeft + j;
-                if (slotIndex >= itemInputsCount) break;
-                int x = startInputsX + 18 * j;
-                int y = startInputsY + 18 * i;
-                if (invertFluids) {
-                    group.child(makeFluidSlot(slotIndex, fluidHandler, isOutputs)
-                            .pos(x, y));
-                } else {
-                    group.child(makeItemSlot(slotGroup, slotIndex, itemHandler, isOutputs)
-                            .pos(x, y));
-                }
-            }
+        int startX = isOutputs ? 106 : 70 - slotsToLeft * 18;
+        int startY = 33 - (int) (slotsToDown / 2.0 * 18) + yOffset;
+
+        // note: is 'wasGroup' for the electrolyzer/centrifuge?
+        // it's the only thing I can think of that has 12 of item and fluid slots
+        boolean wasGroup = itemInputsCount + fluidInputsCount == 12;
+        if (wasGroup || itemInputsCount >= 6 && fluidInputsCount >= 2 && !isOutputs) {
+            startY -= 9;
         }
-        if (wasGroup) startInputsY += 2;
-        if (fluidInputsCount > 0 || invertFluids) {
-            if (itemSlotsToDown >= fluidInputsCount && itemSlotsToLeft < 3) {
-                int startSpecX = isOutputs ? startInputsX + itemSlotsToLeft * 18 : startInputsX - 18;
-                for (int i = 0; i < fluidInputsCount; i++) {
-                    int y = startInputsY + 18 * i;
-                    if (!invertFluids) {
-                        group.child(makeFluidSlot(i, fluidHandler, isOutputs)
-                                .pos(startSpecX, y));
-                    } else {
-                        group.child(makeItemSlot(slotGroup, i, itemHandler, isOutputs)
-                                .pos(startSpecX, y));
-                    }
-                }
-            } else {
-                int startSpecY = startInputsY + itemSlotsToDown * 18;
-                for (int i = 0; i < fluidInputsCount; i++) {
-                    int x = isOutputs ? startInputsX + 18 * (i % 3) :
-                            startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
-                    int y = startSpecY + (i / 3) * 18;
-                    if (!invertFluids) {
-                        group.child(makeFluidSlot(i, fluidHandler, isOutputs)
-                                .pos(x, y));
-                    } else {
-                        group.child(makeItemSlot(slotGroup, i, itemHandler, isOutputs)
-                                .pos(x, y));
-                    }
-                }
+
+        SlotGroup slotGroup = new SlotGroup(isOutputs ? "output_items" : "input_items", slotsToLeft, 1, !isOutputs);
+        group.child(new Grid()
+                .mapTo(slotsToLeft, onlyFluids ? fluidInputsCount : itemInputsCount,
+                        i -> onlyFluids ? makeFluidSlot(i, fluidHandler, isOutputs) :
+                                makeItemSlot(slotGroup, i, itemHandler, isOutputs))
+                .pos(startX, startY)
+                .coverChildren());
+
+        // we only have fluid slots, so we're done here
+        if (onlyFluids) return;
+
+        int oldDown = slotsToDown;
+        int oldLeft = slotsToLeft;
+        inputSlotGrid = determineSlotsGrid(fluidInputsCount);
+        slotsToLeft = inputSlotGrid[0];
+        slotsToDown = inputSlotGrid[1];
+
+        // otherwise, now we add the fluid slots
+        if (wasGroup) startY += 2; // this is responsible for the spacing between the slots on the electrolyzer
+
+        if (oldDown >= fluidInputsCount && oldLeft < 3) {
+            // we have enough room to place fluid slots to the left of the item slots
+            // import has fluid slots left of item slots
+            // export has fluid slots right of item slots
+            int startSpecX = isOutputs ? startX + oldLeft * 18 : startX - 18;
+            group.child(new Grid()
+                    .mapTo(slotsToLeft, fluidInputsCount, i -> makeFluidSlot(i, fluidHandler, isOutputs))
+                    .pos(startSpecX, startY)
+                    .coverChildren());
+        } else {
+            // otherwise place them below the item slots
+            int startSpecY = startY + oldDown * 18;
+            int x = startX;
+            if (!isOutputs) {
+                if (oldLeft == 3)
+                    // for assembler machine input fluid slot
+                    x += (18 * oldLeft) - 18;
+
+                if (fluidInputsCount > oldLeft)
+                    // to move chem reactor fluid input to the left
+                    x -= 18;
             }
+            group.child(new Grid() // hardcode 3 for now
+                    .mapTo(slotsToLeft, fluidInputsCount, i -> makeFluidSlot(i, fluidHandler, isOutputs))
+                    .pos(x, startSpecY)
+                    .coverChildren());
         }
     }
 
