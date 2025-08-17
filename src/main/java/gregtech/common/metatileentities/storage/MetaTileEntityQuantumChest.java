@@ -15,7 +15,9 @@ import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -26,6 +28,7 @@ import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -44,6 +47,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -60,32 +64,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
+import static net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer;
 
 public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IItemHandler>
-                                        implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
+        implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
 
-    private final int tier;
-    protected final long maxStoredItems;
-    /** The ItemStack that the Quantum Chest is storing */
-    protected ItemStack virtualItemStack = ItemStack.EMPTY;
-    protected long itemsStoredInside = 0L;
-    private boolean autoOutputItems;
-    private EnumFacing outputFacing;
-    private boolean allowInputFromOutputSide = false;
     private static final String NBT_ITEMSTACK = "ItemStack";
     private static final String NBT_PARTIALSTACK = "PartialStack";
     private static final String NBT_ITEMCOUNT = "ItemAmount";
     private static final String IS_VOIDING = "IsVoiding";
+    protected final long maxStoredItems;
+    private final int tier;
+    /** The ItemStack that the Quantum Chest is storing */
+    protected ItemStack virtualItemStack = ItemStack.EMPTY;
+    protected long itemsStoredInside = 0L;
     protected IItemHandler outputItemInventory;
-    private ItemHandlerList combinedInventory;
     protected ItemStack previousStack;
     protected long previousStackSize;
     protected boolean voiding;
+    private boolean autoOutputItems;
+    private EnumFacing outputFacing;
+    private boolean allowInputFromOutputSide = false;
+    private ItemHandlerList combinedInventory;
+    private int coolDown = 0;
 
     public MetaTileEntityQuantumChest(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
         super(metaTileEntityId);
         this.tier = tier;
         this.maxStoredItems = maxStoredItems;
+    }
+
+    protected static boolean areItemStackIdentical(ItemStack first, ItemStack second) {
+        return ItemStack.areItemsEqual(first, second) &&
+                ItemStack.areItemStackTagsEqual(first, second);
     }
 
     @Override
@@ -125,11 +136,23 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
         return Pair.of(Textures.VOLTAGE_CASINGS[tier].getParticleSprite(), getPaintingColorForRendering());
     }
 
+    public int getCoolDown() {
+        return this.coolDown;
+    }
+
+    public void refreshCoolDown() {
+        this.coolDown = 5;
+    }
+
     @Override
     public void update() {
         super.update();
         EnumFacing currentOutputFacing = getOutputFacing();
         if (!getWorld().isRemote) {
+            if (this.coolDown > 0) {
+                this.coolDown--;
+            }
+
             if (itemsStoredInside < maxStoredItems) {
                 ItemStack inputStack = importItems.getStackInSlot(0);
                 ItemStack outputStack = exportItems.getStackInSlot(0);
@@ -171,11 +194,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 previousStackSize = itemsStoredInside;
             }
         }
-    }
-
-    protected static boolean areItemStackIdentical(ItemStack first, ItemStack second) {
-        return ItemStack.areItemsEqual(first, second) &&
-                ItemStack.areItemStackTagsEqual(first, second);
     }
 
     protected void addDisplayInformation(List<ITextComponent> textList) {
@@ -253,7 +271,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 if (compound == null) return true;
                 return outStackMatch && !(compound.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) ||
                         compound.hasKey("Fluid", NBT.TAG_COMPOUND)); // prevents inserting items with NBT to the Quantum
-                                                                     // Chest
+                // Chest
             }
         };
     }
@@ -345,12 +363,12 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
                 .widget(new ToggleButtonWidget(7, 64, 18, 18,
                         GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
-                                .shouldUseBaseBackground()
-                                .setTooltipText("gregtech.gui.item_auto_output.tooltip"))
+                        .shouldUseBaseBackground()
+                        .setTooltipText("gregtech.gui.item_auto_output.tooltip"))
                 .widget(new ToggleButtonWidget(25, 64, 18, 18,
                         GuiTextures.BUTTON_ITEM_VOID, this::isVoiding, this::setVoiding)
-                                .setTooltipText("gregtech.gui.item_voiding.tooltip")
-                                .shouldUseBaseBackground())
+                        .setTooltipText("gregtech.gui.item_voiding.tooltip")
+                        .shouldUseBaseBackground())
                 .bindPlayerInventory(entityPlayer.inventory);
 
         builder.widget(createConnectedGui(64));
@@ -441,14 +459,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
         }
     }
 
-    public void setAutoOutputItems(boolean autoOutputItems) {
-        this.autoOutputItems = autoOutputItems;
-        if (!getWorld().isRemote) {
-            writeCustomData(UPDATE_AUTO_OUTPUT_ITEMS, buf -> buf.writeBoolean(autoOutputItems));
-            markDirty();
-        }
-    }
-
     protected boolean isVoiding() {
         return this.voiding;
     }
@@ -503,6 +513,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
 
     public boolean isAutoOutputItems() {
         return autoOutputItems;
+    }
+
+    public void setAutoOutputItems(boolean autoOutputItems) {
+        this.autoOutputItems = autoOutputItems;
+        if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_AUTO_OUTPUT_ITEMS, buf -> buf.writeBoolean(autoOutputItems));
+            markDirty();
+        }
     }
 
     @Override
@@ -567,6 +585,84 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(getPos());
+    }
+
+    @Override
+    public boolean needsSneakToRotate() {
+        return true;
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public int getLightOpacity() {
+        return 0;
+    }
+
+    @Override
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                CuboidRayTraceResult hitResult) {
+        if (facing == this.getFrontFacing()) {
+
+            if (playerIn.isSneaking() && openGUIOnRightClick()) {
+                if (getWorld() != null && !getWorld().isRemote) {
+                    if (usesMui2()) {
+                        MetaTileEntityGuiFactory.open(playerIn, this);
+                    } else {
+                        MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                    }
+                }
+                return true;
+            }
+
+            IItemHandler qChestInv = this.getCombinedInventory();
+            //如果没有连续点击：放入手持物品
+            //如果连续点击：放入所有与抽屉内容物相同的物品
+            if (getCoolDown() > 0) {
+                refreshCoolDown();
+
+                ItemStack candidate = qChestInv.extractItem(0, 1, true);
+                if (candidate.isEmpty()) return true;
+
+                //全部转移就是转移玩家背包
+                var playerInv = new PlayerMainInvWrapper(playerIn.inventory);
+                GTTransferUtils.moveInventoryItems(playerInv, qChestInv);
+            } else {
+                refreshCoolDown();
+
+                //应该插入玩家手持物品
+                ItemStack sourceStack = playerIn.getHeldItem(hand);
+
+                ItemStack candidate = qChestInv.insertItem(1, sourceStack, true);
+                if (sourceStack.getCount() == candidate.getCount()) return true;
+
+                ItemStack remining = qChestInv.insertItem(1, sourceStack, false);
+                sourceStack.setCount(remining.getCount());
+            }
+            return true;
+        }
+
+        return super.onRightClick(playerIn, hand, facing, hitResult);
+    }
+
+    @Override
+    public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
+
+        if (facing == this.getFrontFacing()) {
+            ItemStack candidate = getOutputItemInventory().extractItem(0, 1, true);
+            //没有按住shift:取出超级箱的一个物品
+            //按住shift:取出超级箱一组(最大)物品
+            refreshCoolDown();
+            ItemStack stack = getOutputItemInventory().extractItem(0,
+                    player.isSneaking() ? candidate.getMaxStackSize() : 1, false);
+            giveItemToPlayer(player, stack, player.inventory.currentItem);
+
+        }
+
+        super.onLeftClick(player, facing, hitResult);
     }
 
     private class QuantumChestItemHandler implements IItemHandler {
@@ -670,20 +766,5 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 return remainingStack;
             }
         }
-    }
-
-    @Override
-    public boolean needsSneakToRotate() {
-        return true;
-    }
-
-    @Override
-    public boolean isOpaqueCube() {
-        return false;
-    }
-
-    @Override
-    public int getLightOpacity() {
-        return 0;
     }
 }
