@@ -65,7 +65,7 @@ public class SteamBoilerInfoProvider implements IProbeInfoProvider {
                         if (boiler.isBurning()) {
                             int color = boiler.isBurning() ? 0xFF4CBB17 : 0xFFBB1C28;
                             probeInfo.progress((int)(boiler.getFuelLeftPercent()*100.0), 100, probeInfo.defaultProgressStyle()
-                                    .suffix(" %-Fuel remains")
+                                    .suffix(" % Fuel remains")
                                     .filledColor(color)
                                     .alternateFilledColor(color)
                                     .borderColor(0xFF555555).numberFormat(NumberFormat.COMMAS));

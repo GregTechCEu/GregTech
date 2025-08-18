@@ -14,6 +14,8 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityProcessingArray;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -134,7 +136,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
     private boolean isSlotBlocked() {
         if (getController() instanceof RecipeMapMultiblockController controller) {
-            return controller.isActive();
+            return controller.isWorkingEnabled();
         }
         return false;
     }
@@ -207,9 +209,9 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
                     ItemStackHashStrategy.comparingAllButCount().equals(this.getStackInSlot(slot), stack);
 
             MultiblockControllerBase controller = getController();
-            if (controller instanceof IMachineHatchMultiblock)
+            if (controller instanceof MetaTileEntityProcessingArray processingArray)
                 return slotMatches && GTUtility.isMachineValidForMachineHatch(stack,
-                        ((IMachineHatchMultiblock) controller).getBlacklist());
+                        processingArray.getBlacklist());
 
             // If the controller is null, this part is not attached to any Multiblock
             return slotMatches;

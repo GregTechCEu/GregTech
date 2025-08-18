@@ -5807,7 +5807,7 @@ gregtech.machine.laser_hatch.target.tooltip1=远距离接收能量
 gregtech.machine.laser_hatch.tooltip2=§c激光传导线缆必须直线摆放！§7
 
 gregtech.machine.fluid_tank.max_multiblock=多方块结构最大尺寸：%,dx%,dx%,d
-gregtech.machine.fluid_tank.fluid=含有%s L%s
+gregtech.machine.fluid_tank.fluid=§9含有:§f%s L %s
 
 # ME Parts
 gregtech.machine.me_import_item_bus.name=ME输入总线

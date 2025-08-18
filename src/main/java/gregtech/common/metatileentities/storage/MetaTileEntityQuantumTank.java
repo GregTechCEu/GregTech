@@ -50,6 +50,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -676,6 +677,10 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         return 0;
     }
 
+    public int getTankSize() {
+        return maxFluidCapacity;
+    }
+
     private class QuantumFluidTank extends FluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
 
         public QuantumFluidTank(int capacity) {
@@ -717,6 +722,16 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         public int getPriority() {
             return !locked || lockedFluid == null ? IFilter.noPriority() : IFilter.whitelistPriority(1);
         }
+    }
+
+    @Override
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                CuboidRayTraceResult hitResult) {
+        if (playerIn.getHeldItem(hand).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+            return getWorld().isRemote ||
+                    (!playerIn.isSneaking() && FluidUtil.interactWithFluidHandler(playerIn, hand, fluidTank));
+        }
+        return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override

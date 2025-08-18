@@ -601,9 +601,7 @@ public class MultiblockUIBuilder {
      */
     public MultiblockUIBuilder addRecipeOutputLine(AbstractRecipeLogic arl, int maxLines) {
         // todo recipe is null on first load, fix in the future
-        Recipe recipe;
-        if(arl.isBatchEnable())recipe = arl.getShowRecipes();
-        else recipe = arl.getPreviousRecipe();
+        Recipe recipe = arl.getShowRecipes();
 
         if (getSyncer().syncBoolean(recipe == null)) return this;
         RecipeMap<?> map = arl.getRecipeMap();
@@ -615,10 +613,7 @@ public class MultiblockUIBuilder {
             trimmed = Recipe.trimRecipeOutputs(recipe, map, mte.getItemOutputLimit(), mte.getFluidOutputLimit());
         }
         int p=1;
-        if(arl.isBatchEnable()){
-
-        }
-        else {
+        if(!arl.isBatchEnable()){
             p = getSyncer().syncInt(arl.getParallelRecipesPerformed());
             if (p == 0) p = 1;
         }

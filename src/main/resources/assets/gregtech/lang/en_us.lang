@@ -5809,7 +5809,7 @@ gregtech.machine.laser_hatch.target.tooltip1=Receiving power from distance
 gregtech.machine.laser_hatch.tooltip2=§cLaser Cables must be in a straight line!§7
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
-gregtech.machine.fluid_tank.fluid=Contains %s L of %s
+gregtech.machine.fluid_tank.fluid=§9Contains§f %s L of %s
 
 # ME Parts
 gregtech.machine.me_import_item_bus.name=ME Input Bus

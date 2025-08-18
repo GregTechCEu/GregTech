@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT;
+import static net.minecraft.util.text.TextFormatting.AQUA;
 
 public class MetaTileEntityDrum extends MetaTileEntity {
 
@@ -272,7 +273,17 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", tankSize));
+
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound != null && tagCompound.hasKey("Fluid", Constants.NBT.TAG_COMPOUND)) {
+            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(tagCompound.getCompoundTag("Fluid"));
+            if (fluidStack == null) return;
+            tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_stored", fluidStack.getLocalizedName(),
+                    fluidStack.amount));
+        }
+
         this.fluidFilter.appendTooltips(tooltip, true, true);
 
         if (TooltipHelper.isShiftDown()) {
@@ -281,13 +292,6 @@ public class MetaTileEntityDrum extends MetaTileEntity {
             tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
         }
 
-        NBTTagCompound tagCompound = stack.getTagCompound();
-        if (tagCompound != null && tagCompound.hasKey("Fluid", Constants.NBT.TAG_COMPOUND)) {
-            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(tagCompound.getCompoundTag("Fluid"));
-            if (fluidStack == null) return;
-            tooltip.add(I18n.format("gregtech.machine.fluid_tank.fluid", fluidStack.amount,
-                    fluidStack.getFluid().getLocalizedName(fluidStack)));
-        }
     }
 
     // Override this so that we can control the "Hold SHIFT" tooltip manually
@@ -314,5 +318,9 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     protected boolean shouldSerializeInventories() {
         return false;
+    }
+
+    public int getTankSize() {
+        return tankSize;
     }
 }
