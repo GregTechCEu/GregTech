@@ -57,9 +57,9 @@ public class RenderItemMixin {
     }
 
     /*
+     * 圣人说这是抄袭的他的，既然他是圣人那我只能服从圣人了
      * 如果某人觉得我这个又是抄袭https://github.com/MCTian-mi/SussyPatches/commit/e13ea32afac6d7bfd07d3c107713098e9d73a03a
-     * 那我只能笑嘻了
-     *
+     * 作者：MCTian-mi
      */
     @Unique
     private static void gregTechCEu$renderDrumBar(@NotNull ItemStack stack, int xPosition, int yPosition) {

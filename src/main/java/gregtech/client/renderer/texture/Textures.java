@@ -731,7 +731,11 @@ public class Textures {
         }
         return mask;
     }
-
+    /*
+     * 圣人说这是抄袭的他的，既然他是圣人那我只能服从圣人了
+     * 如果某人觉得我这个又是抄袭https://github.com/MCTian-mi/SussyPatches/commit/6764e47ba7d803a5a956baf46e5a3d1ceabd94f6
+     * 作者：MCTian-mi
+     */
     @SideOnly(Side.CLIENT)
     public static void renderFace(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops,
                                   EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite, BlockRenderLayer layer) {

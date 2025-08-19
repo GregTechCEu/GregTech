@@ -602,6 +602,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
         return 0;
     }
 
+    /*
+     * 圣人说这是抄袭的他的，既然他是圣人那我只能服从圣人了
+     * from：https://github.com/MCTian-mi/SussyPatches/commit/9d3ce70093b026ca6ed7d5ab8ea7daaa23b8e3ba
+     * 作者：MCTian-mi
+     */
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                 CuboidRayTraceResult hitResult) {
