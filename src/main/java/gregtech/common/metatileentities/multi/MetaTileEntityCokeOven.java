@@ -23,6 +23,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.mui.widget.GTFluidSlot;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -174,5 +175,11 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
             }
         }
         return super.onRightClick(playerIn, hand, facing, hitResult);
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return SoundType.STONE;
     }
 }

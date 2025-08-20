@@ -10,8 +10,10 @@ import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.ToolChargeBarRenderer;
 
 import gregtech.common.MetaEntities;
+import gregtech.common.metatileentities.storage.MetaTileEntityCrate;
 import gregtech.common.metatileentities.storage.MetaTileEntityDrum;
 
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -53,12 +55,13 @@ public class RenderItemMixin {
             gregTechCEu$renderElectricBar(stack, xPosition, yPosition);
             gregTechCEu$renderDrumBar(stack, xPosition, yPosition);
             gregTechCEu$renderQuantumTankBar(stack, xPosition, yPosition);
+            gregTechCEu$renderQuantumChestBar(stack, xPosition, yPosition);
         }
     }
 
     /*
      * 圣人说这是抄袭的他的，既然他是圣人那我只能服从圣人了
-     * 如果某人觉得我这个又是抄袭https://github.com/MCTian-mi/SussyPatches/commit/e13ea32afac6d7bfd07d3c107713098e9d73a03a
+     * 原链接：https://github.com/MCTian-mi/SussyPatches/commit/e13ea32afac6d7bfd07d3c107713098e9d73a03a
      * 作者：MCTian-mi
      */
     @Unique
@@ -92,6 +95,21 @@ public class RenderItemMixin {
         double fillRate = fluid.amount / (double) tankCapacity;
 
         Color color = new Color(GTUtility.convertRGBtoOpaqueRGBA_MC(RenderUtil.getFluidColor(fluid)));
+        ToolChargeBarRenderer.render(fillRate, xPosition, yPosition, 0, true, color, color, false);
+    }
+
+    @Unique
+    private static void gregTechCEu$renderQuantumChestBar(@NotNull ItemStack stack, int xPosition, int yPosition) {
+        if (stack.getCount() > 1) return; //忽视堆叠项目
+
+        MetaTileEntity mte = GTUtility.getMetaTileEntity(stack);
+        if (!(mte instanceof MetaTileEntityQuantumChest chest)) return;
+
+        long itemCapacity = chest.getMaxStoredItems();
+        long itemStore = chest.getStoredItemCountFromNBT( stack)+chest.getExportItemCountFromNBT(stack);
+        double fillRate = itemStore / (double) itemCapacity;
+
+        Color color = Color.BLUE;
         ToolChargeBarRenderer.render(fillRate, xPosition, yPosition, 0, true, color, color, false);
     }
 

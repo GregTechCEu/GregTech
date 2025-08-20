@@ -1102,6 +1102,11 @@ public class MetaTileEntityLoader {
                 "PFP", "CGC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.IV), 'P',
                 new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel), 'F',
                 MetaTileEntities.TUNGSTENSTEEL_CRATE.getStackForm(), 'G', MetaItems.FIELD_GENERATOR_HV.getStackForm());
+        ModHandler.addShapedRecipe(true, "quantum_chest_iv", MetaTileEntities.QUANTUM_CHEST[5].getStackForm(), "CPC",
+                "PHP", "CFC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.IV), 'P',
+                new UnificationEntry(OrePrefix.plateDense, Materials.TungstenSteel), 'F',
+                MetaItems.FIELD_GENERATOR_EV.getStackForm(), 'H',
+                MetaTileEntities.TUNGSTENSTEEL_CRATE.getStackForm());
         ModHandler.addShapedRecipe(true, "quantum_chest_luv", MetaTileEntities.QUANTUM_CHEST[6].getStackForm(), "CPC",
                 "PHP", "CFC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.LuV), 'P',
                 new UnificationEntry(OrePrefix.plateDense, Materials.RhodiumPlatedPalladium), 'F',

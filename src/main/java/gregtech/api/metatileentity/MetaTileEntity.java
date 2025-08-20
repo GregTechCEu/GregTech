@@ -41,6 +41,7 @@ import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -919,6 +920,13 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return registry.getBlock();
     }
 
+    /**
+     * @return The sound type used when this block is broken, placed, stepped on, hit, or fallen on.
+     */
+    @NotNull
+    public SoundType getSoundType() {
+        return SoundType.METAL;
+    }
     /**
      * Add special drops which this meta tile entity contains here
      * Meta tile entity item is ALREADY added into this list

@@ -13,6 +13,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -322,5 +323,11 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     public int getTankSize() {
         return tankSize;
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return this.isWood ? SoundType.WOOD : SoundType.METAL;
     }
 }

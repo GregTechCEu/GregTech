@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Mixin(RecipeRepairItem.class)
@@ -56,14 +57,15 @@ public class RecipeRepairItemMixin {
         ItemStack stack1 = list.get(0);
         ItemStack stack2 = list.get(1);
 
-        if (!(stack1.getItem() instanceof IGTTool first) || stack1.getItem() instanceof ItemGTToolbelt)
+        if (!(stack1.getItem() instanceof IGTTool) || stack1.getItem() instanceof ItemGTToolbelt)
             return false;
 
         // items must be the same at this point
+        IGTTool first = (IGTTool) stack1.getItem();
         IGTTool second = (IGTTool) stack2.getItem();
 
         // must be same material
-        if (first.getToolMaterial(stack1) != second.getToolMaterial(stack2))
+        if (!Objects.equals(first.getToolMaterial(stack1), second.getToolMaterial(stack2)))
             return false;
 
         // must not be electric
@@ -103,12 +105,9 @@ public class RecipeRepairItemMixin {
                                                          @Local(ordinal = 3) int itemDamage,
                                                          @Local(ordinal = 0) ItemStack itemstack2,
                                                          @Local(ordinal = 1) ItemStack itemstack3) {
-        if (itemstack2.getItem() instanceof IGTTool first && itemstack3.getItem() instanceof IGTTool second) {
+        if (itemstack2.getItem() instanceof IGTTool first && itemstack3.getItem() instanceof IGTTool) {
             // do not allow repairing tools if both are full durability
             if (itemstack2.getItemDamage() == 0 && itemstack3.getItemDamage() == 0) {
-                return ItemStack.EMPTY;
-                //再判断一次
-            } else if (first.getToolMaterial(itemstack2) != second.getToolMaterial(itemstack3)) {
                 return ItemStack.EMPTY;
             } else {
                 ItemStack output = first.get(first.getToolMaterial(itemstack2));

@@ -18,6 +18,7 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMulti
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 import gregtech.common.mui.widget.GTFluidSlot;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -190,5 +191,11 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart
     @Override
     public int getDefaultPaintingColor() {
         return 0xFFFFFF;
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return SoundType.WOOD;
     }
 }

@@ -271,8 +271,9 @@ public class VanillaStandardRecipes {
                 Items.WHEAT);
         ModHandler.addShapelessRecipe("gravel_to_flint", new ItemStack(Items.FLINT), 'm', Blocks.GRAVEL);
         ModHandler.addShapelessRecipe("bone_to_bone_meal", new ItemStack(Items.DYE, 4, 15), 'm', Items.BONE);
-        ModHandler.addShapelessRecipe("blaze_rod_to_powder", new ItemStack(Items.BLAZE_POWDER, 3), 'm',
-                Items.BLAZE_ROD);
+
+        ModHandler.addShapelessRecipe("blaze_rod_to_powder", OreDictUnifier.get(dustSmall, Blaze), 'm', Items.BLAZE_ROD);
+        ModHandler.removeRecipeByName("minecraft:blaze_powder");
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.DYE, 1, EnumDyeColor.BROWN.getDyeDamage()))

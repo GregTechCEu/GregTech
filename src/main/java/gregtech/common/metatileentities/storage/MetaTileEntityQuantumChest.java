@@ -12,6 +12,7 @@ import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
+import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -97,6 +98,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     protected static boolean areItemStackIdentical(ItemStack first, ItemStack second) {
         return ItemStack.areItemsEqual(first, second) &&
                 ItemStack.areItemStackTagsEqual(first, second);
+    }
+
+    public long getMaxStoredItems() {
+        return maxStoredItems;
+    }
+
+    public long getPreviousStackSize() {
+        return previousStackSize;
     }
 
     @Override
@@ -211,24 +220,59 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_total", maxStoredItems));
 
-        NBTTagCompound compound = stack.getTagCompound();
-        if (compound != null) {
-            String translationKey = null;
-            long count = 0;
-            int exportCount = 0;
-            if (compound.hasKey(NBT_ITEMSTACK)) {
-                count = compound.getLong(NBT_ITEMCOUNT);
-            }
-            if (compound.hasKey(NBT_PARTIALSTACK)) {
-                ItemStack tempStack = new ItemStack(compound.getCompoundTag(NBT_PARTIALSTACK));
-                translationKey = tempStack.getDisplayName();
-                exportCount = tempStack.getCount();
-            }
-            if (translationKey != null) {
-                tooltip.add(I18n.format("gregtech.universal.tooltip.item_stored",
-                        I18n.format(translationKey), count, exportCount));
-            }
+        long count = getStoredItemCountFromNBT(stack);
+        int exportCount = getExportItemCountFromNBT(stack);
+        String translationKey = getExportItemNameFromNBT(stack);
+
+        if (translationKey != null) {
+            tooltip.add(I18n.format("gregtech.universal.tooltip.item_stored",
+                    I18n.format(translationKey), count, exportCount));
         }
+    }
+
+    /**
+     * 从物品栈的NBT数据中获取存储的物品数量
+     *
+     * @param stack 包含量子箱数据的物品栈
+     * @return 存储的物品总数，如果无数据则返回0
+     */
+    public long getStoredItemCountFromNBT(ItemStack stack) {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound != null && compound.hasKey(NBT_ITEMSTACK)) {
+            return compound.getLong(NBT_ITEMCOUNT);
+        }
+        return 0L;
+    }
+
+    /**
+     * 从物品栈的NBT数据中获取导出槽位的物品数量
+     *
+     * @param stack 包含量子箱数据的物品栈
+     * @return 导出槽位中的物品数量，如果无数据则返回0
+     */
+    public int getExportItemCountFromNBT(ItemStack stack) {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound != null && compound.hasKey(NBT_PARTIALSTACK)) {
+            ItemStack tempStack = new ItemStack(compound.getCompoundTag(NBT_PARTIALSTACK));
+            return tempStack.getCount();
+        }
+        return 0;
+    }
+
+    /**
+     * 从物品栈的NBT数据中获取导出槽位物品的显示名称
+     *
+     * @param stack 包含量子箱数据的物品栈
+     * @return 导出物品的显示名称，如果无数据则返回null
+     */
+    @Nullable
+    public String getExportItemNameFromNBT(ItemStack stack) {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound != null && compound.hasKey(NBT_PARTIALSTACK)) {
+            ItemStack tempStack = new ItemStack(compound.getCompoundTag(NBT_PARTIALSTACK));
+            return tempStack.getDisplayName();
+        }
+        return null;
     }
 
     @Override

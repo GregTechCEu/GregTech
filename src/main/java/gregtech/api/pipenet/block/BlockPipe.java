@@ -136,6 +136,15 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     public abstract ItemStack getDropItem(IPipeTile<PipeType, NodeDataType> pipeTile);
 
+    @NotNull
+    @Override
+    @SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
+    public ItemStack getItem(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state) {
+        var te = world.getTileEntity(pos);
+        if (!(te instanceof IPipeTile pipeTile)) return ItemStack.EMPTY;
+        return getDropItem((IPipeTile<PipeType, NodeDataType>) pipeTile);
+    }
+
     protected abstract NodeDataType getFallbackType();
 
     // TODO this has no reason to need an ItemStack parameter

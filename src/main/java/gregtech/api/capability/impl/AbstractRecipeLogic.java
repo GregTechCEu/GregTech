@@ -880,7 +880,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         if (eut >= 0) {
             // Power Consumption case
             // ensure it can run for at least 8 ticks. Arbitrary value, but should prevent instant failures
-            return getEnergyStored() >= (eut << 3);
+            //return getEnergyStored() >= (eut << 3);
+
+            //why 8tick
+            return getEnergyStored() >= eut;
         } else {
             // Power Generation case
             // Return true if we can fit at least 1A of energy into the energy output
