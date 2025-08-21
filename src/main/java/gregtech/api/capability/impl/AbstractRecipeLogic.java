@@ -16,6 +16,10 @@ import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
+import gregtech.api.recipes.chance.output.ChancedOutput;
+import gregtech.api.recipes.chance.output.ChancedOutputList;
+import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
@@ -38,6 +42,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,11 +51,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 import static gregtech.api.GTValues.ULV;
 import static gregtech.api.recipes.logic.OverclockingLogic.*;
 
-public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
+public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic,AccessorAbstractRecipeLogic {
 
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
@@ -1041,6 +1047,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         } else {
             this.setActive(true);
         }
+
+        // At this point, recipe outputs are already trimmed (in prepareRecipe), so we can use the actual values
+        nonChancedItemAmt = recipe.getOutputs().size();
+        nonChancedFluidAmt = recipe.getFluidOutputs().size();
+
+        chancedItemOutputs = fillChancedOutputsMap(recipe.getChancedOutputs(), getRecipeMap().getChanceFunction(),
+                recipeTier, machineTier);
+        chancedFluidOutputs = fillChancedOutputsMap(recipe.getChancedFluidOutputs(),
+                getRecipeMap().getChanceFunction(),
+                recipeTier, machineTier);
     }
 
     /**
@@ -1057,6 +1073,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.wasActiveAndNeedsUpdate = true;
         this.parallelRecipesPerformed = 0;
         this.ocResult.reset();
+
+        nonChancedItemAmt = 0;
+        chancedItemOutputs = null;
+        nonChancedFluidAmt = 0;
+        chancedFluidOutputs = null;
     }
 
     /**
@@ -1314,6 +1335,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             compound.setTag("ItemOutputs", itemOutputsList);
             compound.setTag("FluidOutputs", fluidOutputsList);
         }
+        if (progressTime <= 0) return compound;
+        compound.setInteger("nonChancedItemAmt", nonChancedItemAmt);
+        compound.setInteger("nonChancedFluidAmt", nonChancedFluidAmt);
+
+        addChancedToTag(compound, "chancedItemOutputs", chancedItemOutputs,
+                (entry) -> entry.getKey().writeToNBT(new NBTTagCompound()), Pair::getValue);
+        addChancedToTag(compound, "chancedFluidOutputs", chancedFluidOutputs,
+                (entry) -> entry.getKey().writeToNBT(new NBTTagCompound()), Pair::getValue);
         return compound;
     }
 
@@ -1341,5 +1370,113 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 this.fluidOutputs.add(FluidStack.loadFluidStackFromNBT(fluidOutputsList.getCompoundTagAt(i)));
             }
         }
+
+        if (progressTime <= 0) return;
+
+        nonChancedItemAmt = compound.getInteger("nonChancedItemAmt");
+        nonChancedFluidAmt = compound.getInteger("nonChancedFluidAmt");
+
+        NBTTagList items = compound.getTagList("chancedItemOutputs", Constants.NBT.TAG_COMPOUND);
+        chancedItemOutputs = new ArrayList<>();
+        for (var item : items) {
+            var tag = (NBTTagCompound) item;
+            chancedItemOutputs.add(Pair.of(new ItemStack(tag), tag.getInteger("chance")));
+        }
+
+        NBTTagList fluids = compound.getTagList("chancedFluidOutputs", Constants.NBT.TAG_COMPOUND);
+        chancedFluidOutputs = new ArrayList<>();
+        for (var fluid : fluids) {
+            var tag = (NBTTagCompound) fluid;
+            chancedFluidOutputs
+                    .add(Pair.of(FluidStack.loadFluidStackFromNBT(tag), tag.getInteger("chance")));
+        }
+    }
+
+    /*
+      From <a href=
+      "https://github.com/Nomi-CEu/Nomi-Labs/blob/main/src/main/java/com/nomiceu/nomilabs/mixin/gregtech/AbstractRecipeLogicMixin.java">NomiLabs</a>.
+     */
+    //
+    /**
+     * List of non-chanced item outputs.The actual non-chanced item outputs are taken from the item outputs saved list,
+     * taking the first n elements.
+     */
+    private int nonChancedItemAmt = 0;
+
+    /**
+     * Map of chanced item outputs to their boosted chance, for this recipe.
+     */
+    private List<Pair<ItemStack, Integer>> chancedItemOutputs = null;
+
+    /**
+     * Number of non-chanced fluid outputs. The actual non-chanced fluid outputs are taken from the fluid outputs saved
+     * list, taking the first n elements.
+     */
+    private int nonChancedFluidAmt = 0;
+
+    /**
+     * Map of chanced item outputs to their boosted chance, for this recipe.
+     */
+    private List<Pair<FluidStack, Integer>> chancedFluidOutputs = null;
+    @Override
+    public boolean isValidForOutputTOP() {
+        return getEUt() >= 0 && getRecipeMap() != null;
+    }
+
+    @Override
+    public long getEUt() {
+        return recipeEUt;
+    }
+
+    @Override
+    public int getNonChancedItemAmt() {
+        return nonChancedItemAmt;
+    }
+
+    @Override
+    public List<Pair<ItemStack, Integer>> getChancedItemOutputs() {
+        if (chancedItemOutputs == null) {
+            return new ArrayList<>();
+        }
+        return chancedItemOutputs;
+    }
+
+    @Override
+    public int getNonChancedFluidAmt() {
+        return nonChancedFluidAmt;
+    }
+
+    @Override
+    public List<Pair<FluidStack, Integer>> getChancedFluidOutputs() {
+        if (chancedFluidOutputs == null) {
+            return new ArrayList<>();
+        }
+        return chancedFluidOutputs;
+    }
+
+    private <T> List<Pair<T, Integer>> fillChancedOutputsMap(ChancedOutputList<T, ? extends ChancedOutput<T>> list,
+                                                                   ChanceBoostFunction function, int recipeTier,
+                                                                   int machineTier) {
+        List<Pair<T, Integer>> result = new ArrayList<>();
+        if (list.getChancedEntries().isEmpty()) return result;
+
+        for (var entry : list.getChancedEntries()) {
+            result.add(Pair.of(entry.getIngredient(), Math.min(ChancedOutputLogic.getMaxChancedValue(),
+                    ChancedOutputLogic.getChance(entry, function, recipeTier, machineTier))));
+        }
+        return result;
+    }
+
+    private <T> void addChancedToTag(NBTTagCompound nbt, String key, List<T> list,
+                                           Function<T, NBTTagCompound> createTag, Function<T, Integer> getChance) {
+        if (list == null) return;
+
+        var entries = new NBTTagList();
+        for (var entry : list) {
+            NBTTagCompound tag = createTag.apply(entry);
+            tag.setInteger("chance", getChance.apply(entry));
+            entries.appendTag(tag);
+        }
+        nbt.setTag(key, entries);
     }
 }

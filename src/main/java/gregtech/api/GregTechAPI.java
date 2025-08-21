@@ -39,6 +39,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GregTechAPI {
 
@@ -71,8 +72,15 @@ public class GregTechAPI {
     private static boolean highTier;
     private static boolean highTierInitialized;
 
-    public static Map<ResourceLocation, MBPattern[]> MULTIBLOCK_INFO_CACHE = new HashMap<>();
+    private static final Map<ResourceLocation, MBPattern[]> MULTIBLOCK_INFO_CACHE = new ConcurrentHashMap<>();
 
+    public static MBPattern[] getPatterns(ResourceLocation key) {
+        return MULTIBLOCK_INFO_CACHE.get(key);
+    }
+
+    public static void addPatterns(ResourceLocation key, MBPattern[] patterns) {
+        MULTIBLOCK_INFO_CACHE.put(key, patterns);
+    }
 
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(
             Short.MAX_VALUE);

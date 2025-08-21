@@ -1,5 +1,6 @@
 package gregtech.integration.jei.multiblock;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -76,8 +77,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static gregtech.api.GregTechAPI.MULTIBLOCK_INFO_CACHE;
-
 public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
     private static final int MAX_PARTS = 18;
@@ -146,7 +145,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         this.buttonNextPattern.visible = !isPagesDisabled;
         this.predicates = new ArrayList<>();
         this.nextTierButton.visible = controller.getMaxStructureTier() > 0;
-        MULTIBLOCK_INFO_CACHE.put(controller.metaTileEntityId, patterns);
+        GregTechAPI.addPatterns(controller.metaTileEntityId, patterns);
     }
 
     @Override
