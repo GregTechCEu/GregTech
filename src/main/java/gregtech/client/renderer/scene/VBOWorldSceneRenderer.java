@@ -1,5 +1,8 @@
 package gregtech.client.renderer.scene;
 
+import gregtech.api.util.Mods;
+import gregtech.client.utils.OptiFineHelper;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -13,6 +16,7 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.optifine.shaders.ShadersRender;
 
 import org.lwjgl.opengl.GL11;
 
@@ -34,6 +38,8 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
         try { // render block in each layer
             for (BlockRenderLayer layer : BlockRenderLayer.values()) {
 
+                OptiFineHelper.preRenderChunkLayer(layer);
+
                 renderBlockLayer(layer);
 
                 // Get the buffer again
@@ -45,6 +51,8 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
                 var vbo = VBOS[i];
                 if (vbo == null) vbo = VBOS[i] = new VertexBuffer(DefaultVertexFormats.BLOCK);
                 vbo.bufferData(buffer.getByteBuffer());
+
+                OptiFineHelper.postRenderChunkLayer(layer);
             }
         } finally {
             ForgeHooksClient.setRenderLayer(oldRenderLayer);
@@ -79,6 +87,8 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
             int pass = layer == BlockRenderLayer.TRANSLUCENT ? 1 : 0;
             setDefaultPassRenderState(pass);
 
+            OptiFineHelper.preRenderChunkLayer(layer);
+
             GlStateManager.pushMatrix();
             {
                 int i = layer.ordinal();
@@ -91,6 +101,8 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
                 vbo.unbindBuffer();
             }
             GlStateManager.popMatrix();
+
+            OptiFineHelper.postRenderChunkLayer(layer);
         }
         ForgeHooksClient.setRenderLayer(oldRenderLayer);
 
@@ -139,12 +151,16 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
     }
 
     protected void setupArrayPointers() {
-        // 28 == DefaultVertexFormats.BLOCK.getSize();
-        GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 28, 0);
-        GlStateManager.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 28, 12);
-        GlStateManager.glTexCoordPointer(2, GL11.GL_FLOAT, 28, 16);
-        OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.glTexCoordPointer(2, GL11.GL_SHORT, 28, 24);
-        OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+        if (Mods.Optifine.isModLoaded()) {
+            ShadersRender.setupArrayPointersVbo();
+        } else {
+            // 28 == DefaultVertexFormats.BLOCK.getSize();
+            GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 28, 0);
+            GlStateManager.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 28, 12);
+            GlStateManager.glTexCoordPointer(2, GL11.GL_FLOAT, 28, 16);
+            OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
+            GlStateManager.glTexCoordPointer(2, GL11.GL_SHORT, 28, 24);
+            OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+        }
     }
 }
