@@ -679,7 +679,6 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_ENERGY_DETECTOR = addItem(306, "cover.energy.detector");
         COVER_ENERGY_DETECTOR_ADVANCED = addItem(318, "cover.energy.detector.advanced");
         COVER_SCREEN = addItem(307, "cover.screen");
-        // FREE ID 308
         COVER_ENDER_ITEM_LINK = addItem(308, "cover.ender_item_link");
         COVER_SHUTTER = addItem(309, "cover.shutter");
         COVER_INFINITE_WATER = addItem(310, "cover.infinite_water").addComponents(new TooltipBehavior(lines -> {
@@ -695,7 +694,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_ITEM_VOIDING_ADVANCED = addItem(317, "cover.item.voiding.advanced");
         COVER_STORAGE = addItem(321, "cover.storage");
         COVER_MAINTENANCE_DETECTOR = addItem(322, "cover.maintenance.detector");
-
+        COVER_AIR_VENT = addItem(323, "cover.air_vent");
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 
         // Solar Panels: ID 331-346

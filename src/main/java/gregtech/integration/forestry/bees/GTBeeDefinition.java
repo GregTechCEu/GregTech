@@ -47,6 +47,7 @@ import java.util.function.Supplier;
 
 import static forestry.api.apiculture.EnumBeeChromosome.*;
 import static gregtech.api.unification.material.Materials.*;
+import static gregtech.common.blocks.MetaBlocks.RUBBER_LOG;
 
 public enum GTBeeDefinition implements IBeeDefinition {
 
@@ -134,7 +135,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(SLIMEBALL, PEAT, 15);
-                mutation.requireResource("logRubber");
+                mutation.requireResource(RUBBER_LOG.getDefaultState());
             }),
     COAL(GTBranchDefinition.GT_ORGANIC, "Carbo", true, 0x666666, 0x525252,
             beeSpecies -> {

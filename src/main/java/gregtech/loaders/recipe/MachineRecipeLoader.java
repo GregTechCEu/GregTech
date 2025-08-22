@@ -601,6 +601,13 @@ public class MachineRecipeLoader {
                 .EUt(VA[HV]).duration(100)
                 .buildAndRegister();
 
+        // Air Vent
+        ModHandler.addShapedRecipe(true, "air_vent", COVER_AIR_VENT.getStackForm(),
+                "SPS", "SRS", "SwS",
+                'R', new UnificationEntry(rotor, Steel),
+                'S', new UnificationEntry(stick, Steel),
+                'P', new UnificationEntry(pipeSmallFluid, Bronze));
+
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, EnderPearl, 9)
                 .input(plateDouble, StainlessSteel)

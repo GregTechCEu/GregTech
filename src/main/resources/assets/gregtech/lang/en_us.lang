@@ -983,6 +983,10 @@ metaitem.cover.ender_fluid_link.name=Ender Fluid Link Cover
 metaitem.cover.ender_item_link.name=Ender Item Link Cover
 metaitem.cover.ender_fluid_link.tooltip=Transports §fFluids§7 with a §fWireless §dEnder§f Connection§7 as §fCover§7.
 
+metaitem.cover.air_vent.name=Air Vent
+metaitem.cover.air_vent.tooltip.1=When making §f covering plate§7, air is introduced into the pipe or machine §f§7, and the type of air depends on the current §f dimension§7.
+metaitem.cover.air_vent.tooltip.2=§bTransfer Rate: §f%,d L/s
+
 metaitem.gelled_toluene.name=Gelled Toluene
 metaitem.gelled_toluene.tooltip=Raw Explosive
 
