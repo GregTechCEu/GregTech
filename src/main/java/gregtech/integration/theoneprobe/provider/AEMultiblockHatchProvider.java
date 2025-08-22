@@ -1,7 +1,7 @@
 package gregtech.integration.theoneprobe.provider;
 
+import gregtech.api.metatileentity.IAEStatusProvider;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityAEHostablePart;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,11 +24,15 @@ public class AEMultiblockHatchProvider implements IProbeInfoProvider {
                              IBlockState blockState, IProbeHitData probeHitData) {
         if (blockState.getBlock().hasTileEntity(blockState) &&
                 world.getTileEntity(probeHitData.getPos()) instanceof IGregTechTileEntity gtte &&
-                gtte.getMetaTileEntity() instanceof MetaTileEntityAEHostablePart<?>aeHostablePart) {
-            if (aeHostablePart.isOnline()) {
+                gtte.getMetaTileEntity() instanceof IAEStatusProvider aeStatusProvider) {
+            if (aeStatusProvider.isOnline()) {
                 probeInfo.text("{*gregtech.gui.me_network.online*}");
             } else {
                 probeInfo.text("{*gregtech.gui.me_network.offline*}");
+            }
+
+            if (aeStatusProvider.allowsExtraConnections()) {
+                probeInfo.text("{*gregtech.machine.me.extra_connections.enabled*}");
             }
         }
     }
