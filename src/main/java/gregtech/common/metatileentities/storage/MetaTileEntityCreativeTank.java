@@ -9,10 +9,12 @@ import gregtech.api.gui.widgets.PhantomFluidWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,6 +35,12 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,6 +84,23 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityCreativeTank(this.metaTileEntityId);
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        return appendCreativeUI(GTGuis.createPanel(this, 176, 166), true,
+                new BoolValue.Dynamic(() -> active, b -> active = b),
+                new IntSyncValue(() -> mBPerCycle, v -> mBPerCycle = v),
+                new IntSyncValue(() -> ticksPerCycle, v -> ticksPerCycle = v))
+                        .child(IKey.lang("gregtech.creative.tank.fluid").asWidget()
+                                .pos(7, 9))
+                        .child(new GTFluidSlot()
+                                .syncHandler(GTFluidSlot.sync(this.fluidTank)
+                                        .phantom(true)
+                                        .showAmount(false, false))
+                                .pos(36, 6))
+                        .child(createConnectionButton()
+                                .top(6));
     }
 
     @Override
