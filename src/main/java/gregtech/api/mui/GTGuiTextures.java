@@ -267,6 +267,8 @@ public class GTGuiTextures {
     public static final UITexture MENU_OVERLAY = fullImage("textures/gui/overlay/menu_overlay.png");
 
     public static final UITexture RECIPE_LOCK = fullImage("textures/gui/widget/lock.png");
+    public static final UITexture RECIPE_LOCK_WHITE = fullImage("textures/gui/widget/lock_white.png");
+
     public static final UITexture PRIMITIVE_FURNACE_OVERLAY = fullImage(
             "textures/gui/primitive/overlay_primitive_furnace.png");
     public static final UITexture PRIMITIVE_DUST_OVERLAY = fullImage(
@@ -282,6 +284,11 @@ public class GTGuiTextures {
             "textures/gui/primitive/primitive_large_fluid_tank_overlay.png");
     public static final UITexture PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR = fullImage(
             "textures/gui/primitive/progress_bar_primitive_blast_furnace.png");
+
+    public static final UITexture TERMINAL_FRAME = fullImage("textures/gui/terminal/terminal_frame.png");
+    public static final UITexture HOME_BUTTON = fullImage("textures/gui/terminal/home_button.png");
+    public static final UITexture HOME_BUTTON_HOVER = fullImage("textures/gui/terminal/home_button_hover.png");
+    public static final UITexture CAPES_APP_ICON = fullImage("textures/gui/terminal/capes/icon.png");
 
     // todo bronze/steel/primitive fluid slots?
 
