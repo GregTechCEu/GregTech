@@ -81,10 +81,25 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     @Override
     @NotNull
     protected BlockPattern createStructurePattern() {
+        String s1 = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+        String s2 = "XXXXXXXXXXXXXXXXXXXXXXXXSXXXXXXXXXXXXXXXXXXXXXXXX";
+        String[] sa1 = new String[] {
+                s1, s1, s1, s1, s1, s1, s1, s1, s1, s1,
+                s1, s1, s1, s1, s1, s1, s1, s1, s1, s1,
+                s1, s1, s1, s1, s1, s1, s1, s1, s1, s1,
+                s1, s1, s1, s1, s1, s1, s1, s1, s1, s1,
+                s1, s1, s1, s1, s1, s1, s1, s1, s1,
+        };
+        String[] sa2 = new String[] {
+                s1, s1, s1, s1, s1, s1, s1, s1, s1, s1,
+                s1, s1, s1, s1, s1, s1, s1, s1, s1, s1,
+                s1, s1, s1, s1, s2, s1, s1, s1, s1, s1,
+                s1, s1, s1, s1, s1, s1, s1, s1, s1, s1,
+                s1, s1, s1, s1, s1, s1, s1, s1, s1,
+        };
         return FactoryBlockPattern.start()
-                .aisle("XXX", "XXX", "XXX")
-                .aisle("XXX", "X X", "XXX")
-                .aisle("XXX", "XSX", "XXX")
+                .aisle(sa1).setRepeatable(48)
+                .aisle(sa2)
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(23)
                         .or(metaTileEntities(getValve()).setMaxGlobalLimited(2)))
