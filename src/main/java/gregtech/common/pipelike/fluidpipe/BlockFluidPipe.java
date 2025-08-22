@@ -37,14 +37,7 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
-
-    private final SortedMap<Material, FluidPipeProperties> enabledMaterials = new TreeMap<>();
 
     public BlockFluidPipe(FluidPipeType pipeType, MaterialRegistry registry) {
         super(pipeType, registry);
@@ -58,10 +51,6 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null,
                 "material %s is not registered", material);
         this.enabledMaterials.put(material, fluidPipeProperties);
-    }
-
-    public Collection<Material> getEnabledMaterials() {
-        return Collections.unmodifiableSet(enabledMaterials.keySet());
     }
 
     @Override
