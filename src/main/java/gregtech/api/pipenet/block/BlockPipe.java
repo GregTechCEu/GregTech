@@ -139,7 +139,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @SuppressWarnings({ "deprecation", "unchecked" })
     public ItemStack getItem(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state) {
         var te = world.getTileEntity(pos);
-        if (!(te instanceof IPipeTile<?, ?> pipeTile)) return ItemStack.EMPTY;
+        if (!(te instanceof IPipeTile<?, ?>pipeTile)) return ItemStack.EMPTY;
         return getDropItem((IPipeTile<PipeType, NodeDataType>) pipeTile);
     }
 
