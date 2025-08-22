@@ -33,14 +33,7 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipeProperties, WorldItemPipeNet> {
-
-    private final Map<Material, ItemPipeProperties> enabledMaterials = new HashMap<>();
 
     public BlockItemPipe(ItemPipeType itemPipeType, MaterialRegistry registry) {
         super(itemPipeType, registry);
@@ -92,10 +85,6 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     @Override
     public PipeRenderer getPipeRenderer() {
         return ItemPipeRenderer.INSTANCE;
-    }
-
-    public Collection<Material> getEnabledMaterials() {
-        return Collections.unmodifiableSet(enabledMaterials.keySet());
     }
 
     @Override

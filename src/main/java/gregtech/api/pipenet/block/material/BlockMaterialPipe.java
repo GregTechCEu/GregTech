@@ -24,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+import java.util.*;
 
 public abstract class BlockMaterialPipe<
         PipeType extends Enum<PipeType> & IPipeType<NodeDataType> & IMaterialPipeType<NodeDataType>, NodeDataType,
@@ -32,11 +32,17 @@ public abstract class BlockMaterialPipe<
                                        extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
 
     protected final PipeType pipeType;
+    protected final Map<Material, NodeDataType> enabledMaterials;
     private final MaterialRegistry registry;
 
     public BlockMaterialPipe(@NotNull PipeType pipeType, @NotNull MaterialRegistry registry) {
         this.pipeType = pipeType;
+        this.enabledMaterials = new TreeMap<>();
         this.registry = registry;
+    }
+
+    public Collection<Material> getEnabledMaterials() {
+        return Collections.unmodifiableSet(enabledMaterials.keySet());
     }
 
     @Override

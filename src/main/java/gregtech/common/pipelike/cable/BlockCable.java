@@ -42,15 +42,8 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.TreeMap;
-
 public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, WorldENet>
                         implements ITileEntityProvider {
-
-    private final Map<Material, WireProperties> enabledMaterials = new TreeMap<>();
 
     public BlockCable(Insulation cableType, MaterialRegistry registry) {
         super(cableType, registry);
@@ -66,10 +59,6 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         if (!pipeType.orePrefix.isIgnored(material)) {
             this.enabledMaterials.put(material, wireProperties);
         }
-    }
-
-    public Collection<Material> getEnabledMaterials() {
-        return Collections.unmodifiableSet(enabledMaterials.keySet());
     }
 
     @Override
