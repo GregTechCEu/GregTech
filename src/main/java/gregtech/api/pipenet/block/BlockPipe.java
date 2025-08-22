@@ -18,6 +18,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
+import gregtech.integration.fluidlogged_api.IFluidloggableWrapper;
 import gregtech.integration.ctm.IFacadeWrapper;
 
 import net.minecraft.block.Block;
@@ -66,7 +67,7 @@ import static gregtech.api.metatileentity.MetaTileEntity.FULL_CUBE_COLLISION;
 @SuppressWarnings("deprecation")
 public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType,
         WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BuiltInRenderBlock
-                               implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
+                               implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance, IFluidloggableWrapper {
 
     protected final ThreadLocal<IPipeTile<PipeType, NodeDataType>> tileEntities = new ThreadLocal<>();
 
