@@ -363,7 +363,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
         if (recipeMap.getSmallRecipeMap() != null) {
             registry.addRecipeCatalyst(metaTileEntity.getStackForm(),
-                    GTValues.MODID + ":" + recipeMap.getSmallRecipeMap().unlocalizedName);
+                    GTValues.MODID + "." + recipeMap.getSmallRecipeMap().unlocalizedName);
             return;
         }
 
