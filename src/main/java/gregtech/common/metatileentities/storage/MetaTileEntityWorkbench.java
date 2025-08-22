@@ -17,6 +17,7 @@ import gregtech.common.mui.widget.workbench.CraftingInputSlot;
 import gregtech.common.mui.widget.workbench.CraftingOutputSlot;
 import gregtech.common.mui.widget.workbench.RecipeMemorySlot;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
@@ -486,5 +487,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     public boolean showToolUsages() {
         return false;
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return SoundType.WOOD;
     }
 }
