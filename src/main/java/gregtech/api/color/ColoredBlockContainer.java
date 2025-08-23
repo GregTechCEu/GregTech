@@ -76,7 +76,8 @@ public abstract class ColoredBlockContainer {
 
     public int getColorInt(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                            @NotNull EntityPlayer player) {
-        return -1;
+        EnumDyeColor dyeColor = getColor(world, pos, facing, player);
+        return dyeColor == null ? -1 : dyeColor.colorValue;
     }
 
     public boolean colorMatches(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,

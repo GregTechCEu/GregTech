@@ -29,6 +29,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -1051,5 +1052,17 @@ public class GTUtility {
      */
     public static double calculateDurabilityFromRemaining(int remainingDurability, int maxDurability) {
         return (double) (maxDurability - remainingDurability) / maxDurability;
+    }
+
+    public static @Nullable EnumDyeColor getDyeColorFromARGB(int color) {
+        if (color == -1) return null;
+
+        for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
+            if (color == dyeColor.colorValue) {
+                return dyeColor;
+            }
+        }
+
+        return null;
     }
 }

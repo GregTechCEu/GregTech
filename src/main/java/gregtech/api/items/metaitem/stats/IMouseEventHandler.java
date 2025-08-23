@@ -1,16 +1,20 @@
 package gregtech.api.items.metaitem.stats;
 
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.core.network.packets.PacketItemMouseEvent;
 
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -43,23 +47,35 @@ public interface IMouseEventHandler extends IItemComponent {
      * 
      * @param event        the event
      * @param playerClient the player object on the client side
-     * @param stack        the {@link ItemStack} the player is holding in their main hand
+     * @param stack        the stack the player is holding in their main hand
      */
     @SideOnly(Side.CLIENT)
     void handleMouseEventClient(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
-                                @NotNull ItemStack stack);
+                                @NotNull EnumHand hand, @NotNull ItemStack stack);
 
-    default void sendToServer(@NotNull Consumer<@NotNull PacketBuffer> bufferWriter) {
-        PacketItemMouseEvent.toServer(bufferWriter);
+    default void sendToServer(@NotNull EnumHand hand, @NotNull Consumer<@NotNull PacketBuffer> bufferWriter) {
+        PacketItemMouseEvent.toServer(bufferWriter, hand);
     }
 
     /**
      * Handle the received mouse event on the server side.
      *
-     * @param packet       the packet containing the data from the client event
+     * @param buf          the packet containing the data from the client event
      * @param playerServer the server side counterpart of the client player
      * @param stack        the stack the player was holding upon receiving the packet
      */
-    void handleMouseEventServer(@NotNull PacketItemMouseEvent packet, @NotNull EntityPlayerMP playerServer,
-                                @NotNull ItemStack stack);
+    void handleMouseEventServer(@NotNull PacketBuffer buf, @NotNull EntityPlayerMP playerServer,
+                                @NotNull EnumHand hand, @NotNull ItemStack stack);
+
+    static @Nullable IMouseEventHandler getHandler(@NotNull ItemStack stack) {
+        Item item = stack.getItem();
+
+        if (item instanceof MetaItem<?>metaItem) {
+            return metaItem.getMouseEventHandler(stack);
+        } else if (item instanceof IMouseEventHandler itemHandler) {
+            return itemHandler;
+        }
+
+        return null;
+    }
 }

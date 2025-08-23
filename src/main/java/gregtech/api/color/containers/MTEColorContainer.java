@@ -2,6 +2,7 @@ package gregtech.api.color.containers;
 
 import gregtech.api.color.ColoredBlockContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.util.GTUtility;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -71,16 +72,7 @@ public class MTEColorContainer extends ColoredBlockContainer {
     @Override
     public @Nullable EnumDyeColor getColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                                            @NotNull EntityPlayer player) {
-        int mteColor = getColorInt(world, pos, facing, player);
-        if (mteColor == -1) return null;
-
-        for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
-            if (mteColor == dyeColor.colorValue) {
-                return dyeColor;
-            }
-        }
-
-        return null;
+        return GTUtility.getDyeColorFromARGB(getColorInt(world, pos, facing, player));
     }
 
     @Override

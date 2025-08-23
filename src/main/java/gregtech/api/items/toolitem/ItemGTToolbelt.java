@@ -3,6 +3,7 @@ package gregtech.api.items.toolitem;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.IDyeableItem;
 import gregtech.api.items.gui.ItemUIFactory;
+import gregtech.api.items.metaitem.stats.IMouseEventHandler;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.mui.GTGuiTextures;
@@ -17,6 +18,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMaintenanceHatch;
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
+import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -34,9 +36,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
@@ -79,7 +83,7 @@ import java.util.function.Supplier;
 
 import static gregtech.api.items.toolitem.ToolHelper.MATERIAL_KEY;
 
-public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
+public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem, IMouseEventHandler {
 
     private static final ThreadLocal<Integer> lastSlot = ThreadLocal.withInitial(() -> -999);
     private static final ThreadLocal<EntityPlayerMP> lastPlayer = ThreadLocal.withInitial(() -> null);
@@ -427,9 +431,9 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     @SideOnly(Side.CLIENT)
-    public void handleMouseEvent(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
-                                 @NotNull ItemStack stack) {
-        if (!ConfigHolder.client.toolbeltConfig.enableToolbeltScrollingCapture) return;
+    public void handleMouseEventClient(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
+                                       @NotNull EnumHand hand, @NotNull ItemStack stack) {
+        if (!ConfigHolder.client.toolbeltConfig.enableToolbeltScrollingCapture || hand != EnumHand.MAIN_HAND) return;
         if (event.getDwheel() != 0 && playerClient.isSneaking()) {
             // vanilla code in GuiIngame line 1235 does not copy the stack before storing it in the highlighting
             // item stack, so unless we copy the stack the tool highlight will not refresh.
@@ -440,10 +444,23 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             } else {
                 handler.decrementSelectedSlot();
             }
-            PacketToolbeltSelectionChange.toServer(handler.selectedSlot);
+
+            sendToServer(hand, buf -> buf.writeInt(handler.selectedSlot));
             InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
             inv.mainInventory.set(inv.currentItem, stack);
             event.setCanceled(true);
+        }
+    }
+
+    @Override
+    public void handleMouseEventServer(@NotNull PacketBuffer buf, @NotNull EntityPlayerMP playerServer,
+                                       @NotNull EnumHand hand, @NotNull ItemStack stack) {
+        // Should never happen, but just in case.
+        if (hand != EnumHand.MAIN_HAND) return;
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            playerServer.getServerWorld().playSound(null, playerServer.posX, playerServer.posY, playerServer.posZ,
+                    GTSoundEvents.CLICK, SoundCategory.PLAYERS, 2F, 1F);
+            toolbelt.setSelectedTool(buf.readInt(), stack);
         }
     }
 

@@ -2,7 +2,6 @@ package gregtech.client;
 
 import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluidRegistration;
-import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.metaitem.stats.IMouseEventHandler;
 import gregtech.api.items.toolitem.IGTTool;
@@ -53,10 +52,10 @@ import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -355,17 +354,19 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onMouseEvent(@NotNull MouseEvent event) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        ItemStack stack = player.getHeldItemMainhand(); // Todo main hand first, then try offhand
-        if (stack.isEmpty()) return;
 
-        Item item = stack.getItem();
-        if (item instanceof MetaItem<?>metaItem) {
-            IMouseEventHandler mouseEventHandler = metaItem.getMouseEventHandler(stack);
-            if (mouseEventHandler != null) {
-                mouseEventHandler.handleMouseEventClient(event, player, stack);
-            }
-        } else if (item instanceof ItemGTToolbelt toolbelt) {
-            toolbelt.handleMouseEvent(event, player, stack);
+        handleItemEvent(event, player, EnumHand.MAIN_HAND);
+        if (!event.isCanceled()) {
+            handleItemEvent(event, player, EnumHand.OFF_HAND);
+        }
+    }
+
+    private static void handleItemEvent(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
+                                        @NotNull EnumHand hand) {
+        ItemStack heldStack = playerClient.getHeldItem(hand);
+        IMouseEventHandler mouseEventHandler = IMouseEventHandler.getHandler(heldStack);
+        if (mouseEventHandler != null) {
+            mouseEventHandler.handleMouseEventClient(event, playerClient, hand, heldStack);
         }
     }
 

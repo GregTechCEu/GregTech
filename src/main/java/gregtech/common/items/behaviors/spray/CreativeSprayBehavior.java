@@ -9,7 +9,6 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
-import gregtech.core.network.packets.PacketItemMouseEvent;
 
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.resources.I18n;
@@ -25,6 +24,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.raytracer.RayTracer;
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -145,9 +146,10 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
         return I18n.format(unlocalizedName, colorString);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void handleMouseEventClient(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
-                                       @NotNull ItemStack sprayCan) {
+                                       @NotNull EnumHand hand, @NotNull ItemStack sprayCan) {
         // Middle click pressed down
         if (event.getButton() == 2 && event.isButtonstate()) {
             event.setCanceled(true);
@@ -163,32 +165,33 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                 if (usesARGB(sprayCan) && container.supportsARGB() &&
                         !container.colorMatches(world, pos, facing, playerClient, getColorInt(sprayCan))) {
                     int color = container.getColorInt(world, pos, facing, playerClient);
-                    if (color == -1) return;
-                    setColor(sprayCan, color);
-                    sendToServer(buf -> buf
-                            .writeByte(1)
-                            .writeInt(color));
-                    return;
+                    if (color != -1) {
+                        setColor(sprayCan, color);
+                        sendToServer(hand, buf -> buf
+                                .writeByte(1)
+                                .writeInt(color));
+                        return;
+                    }
                 } else if (!container.colorMatches(world, pos, facing, playerClient, getColor(sprayCan))) {
                     EnumDyeColor color = container.getColor(world, pos, facing, playerClient);
-                    if (color == null) return;
-                    setColor(sprayCan, color);
-                    sendToServer(buf -> buf
-                            .writeByte(2)
-                            .writeByte(color.ordinal()));
-                    return;
+                    if (color != null) {
+                        setColor(sprayCan, color);
+                        sendToServer(hand, buf -> buf
+                                .writeByte(2)
+                                .writeByte(color.ordinal()));
+                        return;
+                    }
                 }
             }
 
             // If the player isn't sneaking and wasn't looking at a colored block, open gui
-            sendToServer(buf -> buf.writeByte(0));
+            sendToServer(hand, buf -> buf.writeByte(0));
         }
     }
 
     @Override
-    public void handleMouseEventServer(@NotNull PacketItemMouseEvent packet, @NotNull EntityPlayerMP playerServer,
-                                       @NotNull ItemStack sprayCan) {
-        PacketBuffer buf = packet.getBuffer();
+    public void handleMouseEventServer(@NotNull PacketBuffer buf, @NotNull EntityPlayerMP playerServer,
+                                       @NotNull EnumHand hand, @NotNull ItemStack sprayCan) {
         switch (buf.readByte()) {
             case 0 -> MetaItemGuiFactory.open(playerServer, EnumHand.MAIN_HAND);
             case 1 -> setColor(sprayCan, EnumDyeColor.values()[buf.readByte()]);
