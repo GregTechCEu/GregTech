@@ -754,20 +754,35 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         modifyOverclockPost(ocResult, recipe.propertyStorage());
 
         if(enableBatch){
-            if(ocResult.duration()<=64) {
-                //在这里运用批处理
+            if (ocResult.duration() <= 64) {
+                // 保存原始配方，以便批处理失败时恢复
+                Recipe originalRecipe = recipe;
                 int baseDuration = ocResult.duration();
-                // 计算批处理倍数（向上取整）
+                // 计算初始批处理倍数（向上取整）
                 int batchMultiplier = (int) Math.ceil(128.0 / baseDuration);
-                // 创建新配方（等比增加输入/输出/耗时）
-                RecipeBuilder<?> batchBuilder = new RecipeBuilder<>(recipe, recipeMap)
-                        .batch(recipe, batchMultiplier,baseDuration);
 
-                Recipe batchedRecipe = batchBuilder.build().getResult();
-                if (batchedRecipe != null) {
-                    recipe = batchedRecipe;
+                // 初始化批处理配方
+                Recipe batchedRecipe = null;
+                RecipeBuilder<?> batchBuilder = null;
+
+                // 循环从初始倍数开始向下尝试，直到找到匹配的倍数或倍数降到0
+                while (batchMultiplier >= 1) {
+                    batchBuilder = new RecipeBuilder<>(originalRecipe, recipeMap)
+                            .batch(originalRecipe, batchMultiplier, baseDuration);
+                    batchedRecipe = batchBuilder.build().getResult();
+                    if (batchedRecipe != null && batchedRecipe.matches(false, importInventory, importFluids)) {
+                        // 找到匹配的配方，退出循环
+                        recipe = batchedRecipe;
+                        break;
+                    }
+                    batchMultiplier--; // 尝试降低倍数
                 }
-                ocResult.setDuration(baseDuration*batchMultiplier);
+
+                if (batchMultiplier >= 1) {
+                    // 成功找到批处理倍数
+                    ocResult.setDuration(baseDuration * batchMultiplier);
+                }
+                //如果找不到则继续原本的配方
             }
 
         }

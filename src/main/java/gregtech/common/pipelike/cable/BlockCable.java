@@ -50,8 +50,6 @@ import java.util.TreeMap;
 public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, WorldENet>
                         implements ITileEntityProvider {
 
-    private final Map<Material, WireProperties> enabledMaterials = new TreeMap<>();
-
     public BlockCable(Insulation cableType, MaterialRegistry registry) {
         super(cableType, registry);
         setCreativeTab(GTCreativeTabs.TAB_GREGTECH_CABLES);
@@ -66,10 +64,6 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         if (!pipeType.orePrefix.isIgnored(material)) {
             this.enabledMaterials.put(material, wireProperties);
         }
-    }
-
-    public Collection<Material> getEnabledMaterials() {
-        return Collections.unmodifiableSet(enabledMaterials.keySet());
     }
 
     @Override

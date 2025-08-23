@@ -40,8 +40,6 @@ import java.util.Map;
 
 public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipeProperties, WorldItemPipeNet> {
 
-    private final Map<Material, ItemPipeProperties> enabledMaterials = new HashMap<>();
-
     public BlockItemPipe(ItemPipeType itemPipeType, MaterialRegistry registry) {
         super(itemPipeType, registry);
         setCreativeTab(GTCreativeTabs.TAB_GREGTECH_PIPES);
@@ -92,10 +90,6 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     @Override
     public PipeRenderer getPipeRenderer() {
         return ItemPipeRenderer.INSTANCE;
-    }
-
-    public Collection<Material> getEnabledMaterials() {
-        return Collections.unmodifiableSet(enabledMaterials.keySet());
     }
 
     @Override
