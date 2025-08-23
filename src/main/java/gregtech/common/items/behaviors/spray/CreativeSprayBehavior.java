@@ -33,14 +33,20 @@ import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static gregtech.api.cover.CoverWithUI.UI_TITLE_COLOR;
+import static gregtech.api.util.ColorUtil.*;
 
 public class CreativeSprayBehavior extends AbstractSprayBehavior implements ItemUIFactory, IItemColorProvider,
                                    IItemNameProvider, IMouseEventHandler {
@@ -56,41 +62,79 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                 newColor -> setColorOrdinal(usedStack, newColor));
         guiSyncManager.syncValue("color", 0, colorSync);
         BooleanSyncValue arbgSync = SyncHandlers.bool(() -> usesARGB(usedStack), bool -> useARGB(usedStack, bool));
-        guiSyncManager.syncValue("uses_argb", arbgSync);
+        IntSyncValue argb = SyncHandlers.intNumber(() -> getColorInt(usedStack),
+                newColor -> setColor(usedStack, newColor));
+        guiSyncManager.syncValue("argb", 0, argb);
 
-        ModularPanel panel = GTGuis.createPanel(usedStack, 176, 120);
         // noinspection SpellCheckingInspection
-        panel.child(SlotGroupWidget.builder()
-                .matrix("SCCCCCCCC",
-                        "CCCCCCCC")
-                .key('S', new ToggleButton()
-                        .size(18)
-                        .value(new BoolValue.Dynamic(() -> colorSync.getIntValue() == -1,
-                                $ -> {
-                                    colorSync.setIntValue(-1);
-                                    panel.closeIfOpen(true);
-                                }))
-                        .overlay(new ItemDrawable(MetaItems.SPRAY_SOLVENT.getStackForm())
-                                .asIcon()
-                                .margin(2))
-                        .addTooltipLine(IKey.lang("metaitem.spray.creative.solvent")))
-                .key('C', index -> {
-                    EnumDyeColor color = EnumDyeColor.values()[index];
-                    return new ToggleButton()
-                            .size(18)
-                            .value(new BoolValue.Dynamic(() -> colorSync.getIntValue() == index,
-                                    $ -> {
-                                        colorSync.setIntValue(index);
-                                        panel.closeIfOpen(true);
-                                    }))
-                            .overlay(new ItemDrawable(MetaItems.SPRAY_CAN_DYES.get(color).getStackForm())
-                                    .asIcon()
-                                    .margin(2))
-                            .addTooltipLine(IKey.lang("metaitem.spray.creative." + color));
-                })
-                .build());
-
-        return panel;
+        return GTGuis.createPanel(usedStack, 176, 120)
+                .child(Flow.row()
+                        .pos(4, 4)
+                        .coverChildrenWidth()
+                        .height(16)
+                        .child(new ItemDrawable(usedStack).asWidget().size(16).marginRight(4))
+                        .child(IKey.lang("metaitem.spray.creative.name_base")
+                                .color(UI_TITLE_COLOR)
+                                .asWidget().heightRel(1.0f)))
+                .child(SlotGroupWidget.builder()
+                        .matrix("SCCCCCCCC",
+                                "CCCCCCCC")
+                        .key('S', new ToggleButton()
+                                .size(18)
+                                .value(new BoolValue.Dynamic(
+                                        () -> colorSync.getIntValue() == -1 && !arbgSync.getBoolValue(),
+                                        $ -> {
+                                            if (!arbgSync.getBoolValue()) colorSync.setIntValue(-1);
+                                        }))
+                                .overlay(new ItemDrawable(MetaItems.SPRAY_SOLVENT.getStackForm())
+                                        .asIcon()
+                                        .margin(2))
+                                .addTooltipLine(IKey.lang("metaitem.spray.creative.solvent")))
+                        .key('C', index -> {
+                            EnumDyeColor color = EnumDyeColor.values()[index];
+                            return new ToggleButton()
+                                    .size(18)
+                                    .value(new BoolValue.Dynamic(
+                                            () -> colorSync.getIntValue() == index && !arbgSync.getBoolValue(),
+                                            $ -> {
+                                                if (!arbgSync.getBoolValue()) colorSync.setIntValue(index);
+                                            }))
+                                    .overlay(new ItemDrawable(MetaItems.SPRAY_CAN_DYES.get(color).getStackForm())
+                                            .asIcon()
+                                            .margin(2))
+                                    .addTooltipLine(IKey.lang("metaitem.spray.creative." + color));
+                        })
+                        .build()
+                        .left(4)
+                        .top(24))
+                .child(Flow.row()
+                        .left(4)
+                        .top(24 + 18 * 2 + 8)
+                        .coverChildren()
+                        .child(new ToggleButton()
+                                .size(18)
+                                .value(arbgSync))
+                        .child(new TextFieldWidget()
+                                .width(30)
+                                .setNumbers(0, 255)
+                                .value(new IntValue.Dynamic(
+                                        () -> ARGBHelper.RED.getFromInt(argb.getIntValue()),
+                                        newR -> argb.setIntValue(
+                                                ARGBHelper.RED.setInInt(argb.getIntValue(), newR)))))
+                        .child(new TextFieldWidget()
+                                .width(30)
+                                .setNumbers(0, 255)
+                                .value(new IntValue.Dynamic(
+                                        () -> ARGBHelper.GREEN.getFromInt(argb.getIntValue()),
+                                        newG -> argb.setIntValue(
+                                                ARGBHelper.GREEN.setInInt(argb.getIntValue(), newG)))))
+                        .child(new TextFieldWidget()
+                                .width(30)
+                                .setNumbers(0, 255)
+                                .value(new IntValue.Dynamic(
+                                        () -> ARGBHelper.BLUE.getFromInt(argb.getIntValue()),
+                                        newB -> argb.setIntValue(
+                                                ARGBHelper.BLUE.setInInt(argb.getIntValue(), newB))))));
     }
 
     @Override
@@ -101,14 +145,14 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
             if (color < 0 || color > 15) return null;
             return EnumDyeColor.values()[color];
         }
+
         return null;
     }
 
     @Override
     public int getColorInt(@NotNull ItemStack sprayCan) {
         NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(sprayCan);
-        return tag.hasKey(NBT_KEY_USESARGB, Constants.NBT.TAG_INT) ? tag.getInteger(NBT_KEY_ARGB_COLOR) :
-                super.getColorInt(sprayCan);
+        return tag.getBoolean(NBT_KEY_USESARGB) ? tag.getInteger(NBT_KEY_ARGB_COLOR) : super.getColorInt(sprayCan);
     }
 
     public static void setColor(@NotNull ItemStack sprayCan, @Nullable EnumDyeColor color) {
@@ -134,8 +178,14 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
 
     @Override
     public int getItemStackColor(ItemStack sprayCan, int tintIndex) {
-        EnumDyeColor color = getColor(sprayCan);
-        return color != null && tintIndex == 1 ? color.colorValue : 0xFFFFFF;
+        if (tintIndex != 1) return 0xFFFFFF;
+
+        if (usesARGB(sprayCan)) {
+            return getColorInt(sprayCan);
+        } else {
+            EnumDyeColor color = getColor(sprayCan);
+            return color != null ? color.colorValue : 0xFFFFFF;
+        }
     }
 
     @Override

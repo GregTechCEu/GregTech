@@ -228,7 +228,7 @@ public class TricorderBehavior implements IItemBehaviour {
                 }
                 // if (workable.wasShutdown()) { //todo
                 // list.add(new TextComponentTranslation("behavior.tricorder.machine_power_loss").setStyle(new
-                // Style().setColor(TextFormatting.RED)));
+                // Style().setInInt(TextFormatting.RED)));
                 // }
                 energyCost += 400;
                 if (workable.getMaxProgress() > 0) {

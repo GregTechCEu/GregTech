@@ -29,7 +29,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -64,7 +63,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -798,7 +796,7 @@ public class GTUtility {
         return world.isDaytime();
     }
 
-    public static MapColor getMapColor(int rgb) {
+    public static @NotNull MapColor getMapColor(int rgb) {
         MapColor color = MapColor.BLACK;
         int originalR = (rgb >> 16) & 0xFF;
         int originalG = (rgb >> 8) & 0xFF;
@@ -1010,11 +1008,6 @@ public class GTUtility {
         return Math.min(voltage, GTValues.VA[workingTier]);
     }
 
-    public static int combineRGB(@Range(from = 0, to = 255) int r, @Range(from = 0, to = 255) int g,
-                                 @Range(from = 0, to = 255) int b) {
-        return (r << 16) | (g << 8) | b;
-    }
-
     /**
      * @param map the map to get from
      * @param key the key to retrieve with
@@ -1052,17 +1045,5 @@ public class GTUtility {
      */
     public static double calculateDurabilityFromRemaining(int remainingDurability, int maxDurability) {
         return (double) (maxDurability - remainingDurability) / maxDurability;
-    }
-
-    public static @Nullable EnumDyeColor getDyeColorFromARGB(int color) {
-        if (color == -1) return null;
-
-        for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
-            if (color == dyeColor.colorValue) {
-                return dyeColor;
-            }
-        }
-
-        return null;
     }
 }

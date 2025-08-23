@@ -331,6 +331,7 @@ metaitem.shape.extruder.rotor.tooltip=Extruder Shape for making Rotors
 metaitem.spray.empty.name=Spray Can (Empty)
 metaitem.spray.empty.tooltip=Can be filled with sprays of various colors
 metaitem.spray.creative.name=Creative Spray Can (%s)
+metaitem.spray.creative.name_base=Creative Spray Can
 metaitem.spray.creative.solvent=Solvent
 metaitem.spray.creative.white=White
 metaitem.spray.creative.orange=Orange

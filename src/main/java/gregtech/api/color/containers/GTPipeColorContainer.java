@@ -2,7 +2,7 @@ package gregtech.api.color.containers;
 
 import gregtech.api.color.ColoredBlockContainer;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.ColorUtil;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -67,7 +67,7 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
     @Override
     public @Nullable EnumDyeColor getColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                                            @NotNull EntityPlayer player) {
-        return GTUtility.getDyeColorFromARGB(getColorInt(world, pos, facing, player));
+        return ColorUtil.getDyeColorFromRGB(getColorInt(world, pos, facing, player));
     }
 
     @Override
