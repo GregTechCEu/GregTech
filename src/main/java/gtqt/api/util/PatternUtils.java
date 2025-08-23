@@ -2,7 +2,6 @@ package gtqt.api.util;
 
 import appeng.api.implementations.ICraftingPatternItem;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
-import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEPatternProvider;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

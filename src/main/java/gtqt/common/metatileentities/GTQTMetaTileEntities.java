@@ -3,6 +3,7 @@ package gtqt.common.metatileentities;
 import gregtech.api.GTValues;
 
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityDualHatch;
+import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityHugeMEPatternProvider;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEDualHatch;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEPatternProvider;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEPatternProviderProxy;
@@ -22,7 +23,11 @@ public class GTQTMetaTileEntities {
     public static final MetaTileEntityDualHatch[] DUAL_IMPORT_HATCH = new MetaTileEntityDualHatch[GTValues.V.length - 2]; // All tiers but MAX
     public static final MetaTileEntityDualHatch[] DUAL_EXPORT_HATCH = new MetaTileEntityDualHatch[GTValues.V.length - 2];
     public static final MetaTileEntityMEPatternProvider[] ME_PATTERN_PROVIDER = new MetaTileEntityMEPatternProvider[GTValues.V.length - 2];
+    public static final MetaTileEntityHugeMEPatternProvider[] HUGE_ME_PATTERN_PROVIDER = new MetaTileEntityHugeMEPatternProvider[GTValues.V.length - 2];
+
     public static MetaTileEntityThreadHatch[] THREAD_HATCH = new MetaTileEntityThreadHatch[GTValues.V.length-1];
+
+
     public static MetaTileEntityMEDualHatch ME_DUAL_IMPORT_HATCH;
     public static MetaTileEntityMEDualHatch ME_DUAL_EXPORT_HATCH;
     public static MetaTileEntityMEPatternProviderProxy ME_PATTERN_PROVIDER_PROXY;
@@ -68,10 +73,12 @@ public class GTQTMetaTileEntities {
             DUAL_IMPORT_HATCH[i] = new MetaTileEntityDualHatch(gregtechId("dual_hatch.import." + voltageName), i+1, false);
             DUAL_EXPORT_HATCH[i] = new MetaTileEntityDualHatch(gregtechId("dual_hatch.export." + voltageName), i+1, true);
             ME_PATTERN_PROVIDER[i] = new MetaTileEntityMEPatternProvider(gregtechId("me_pattern_provider." + voltageName), i+1);
+            HUGE_ME_PATTERN_PROVIDER[i] = new MetaTileEntityHugeMEPatternProvider(gregtechId("huge_me_pattern_provider." + voltageName), i+1);
 
             registerMetaTileEntity(2500 + i, DUAL_IMPORT_HATCH[i]);
             registerMetaTileEntity(2515 + i, DUAL_EXPORT_HATCH[i]);
             registerMetaTileEntity(2530 + i, ME_PATTERN_PROVIDER[i]);
+            registerMetaTileEntity(2545 + i, HUGE_ME_PATTERN_PROVIDER[i]);
 
 
         }

@@ -224,6 +224,22 @@ gregtech.machine.me_pattern_provider.uxv.name=§eUXV§rDual Pattern Hatch
 gregtech.machine.me_pattern_provider.opv.name=§9OpV§rDual Pattern Hatch
 gregtech.machine.me_pattern_provider.max.name=§c§lMAX§rDual Pattern Hatch
 
+gregtech.machine.huge_me_pattern_provider.ulv.name=§8ULV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.lv.name=§7LV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.mv.name=§bMV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.hv.name=§6HV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.ev.name=§5EV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.iv.name=§1IV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.luv.name=§dLuV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.zpm.name=§cZPM§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.uv.name=§3UV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.uhv.name=§4UHV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.uev.name=§aUEV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.uiv.name=§2UIV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.uxv.name=§eUXV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.opv.name=§9OpV§rHuge Dual Pattern Hatch
+gregtech.machine.huge_me_pattern_provider.max.name=§c§lMAX§rHuge Dual Pattern Hatch
+
 gregtech.machine.thread_hatch.lv.name=Thread Hatch(LV)
 gregtech.machine.thread_hatch.mv.name=Thread Hatch(MV)
 gregtech.machine.thread_hatch.hv.name=Thread Hatch(HV)

@@ -122,6 +122,8 @@ import gregtech.common.metatileentities.steam.SteamRockBreaker;
 import gregtech.common.metatileentities.steam.boiler.SteamCoalBoiler;
 import gregtech.common.metatileentities.steam.boiler.SteamLavaBoiler;
 import gregtech.common.metatileentities.steam.boiler.SteamSolarBoiler;
+import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntityHugeSteamHatch;
+import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntityHugeSteamItemBus;
 import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntitySteamHatch;
 import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntitySteamItemBus;
 import gregtech.common.metatileentities.storage.MetaTileEntityBuffer;
@@ -347,8 +349,11 @@ public class MetaTileEntities {
     public static MetaTileEntityPrimitiveWaterPump PRIMITIVE_WATER_PUMP;
     public static MetaTileEntityMagicEnergyAbsorber MAGIC_ENERGY_ABSORBER;
     public static MetaTileEntityCokeOvenHatch COKE_OVEN_HATCH;
+    public static MetaTileEntityHugeSteamItemBus HUGE_STEAM_EXPORT_BUS;
+    public static MetaTileEntityHugeSteamItemBus HUGE_STEAM_IMPORT_BUS;
     public static MetaTileEntitySteamItemBus STEAM_EXPORT_BUS;
     public static MetaTileEntitySteamItemBus STEAM_IMPORT_BUS;
+    public static MetaTileEntityHugeSteamHatch HUGE_STEAM_HATCH;
     public static MetaTileEntitySteamHatch STEAM_HATCH;
     public static MetaTileEntityMaintenanceHatch MAINTENANCE_HATCH;
     public static MetaTileEntityMaintenanceHatch CONFIGURABLE_MAINTENANCE_HATCH;
@@ -1198,6 +1203,11 @@ public class MetaTileEntities {
         CREATIVE_ENERGY = registerMetaTileEntity(2003, new MetaTileEntityCreativeEnergy());
 
         // Steam Hatches/Buses
+        HUGE_STEAM_EXPORT_BUS = registerMetaTileEntity(2005,
+                new MetaTileEntityHugeSteamItemBus(gregtechId("huge_steam_export_bus"), true));
+        HUGE_STEAM_IMPORT_BUS = registerMetaTileEntity(2006,
+                new MetaTileEntityHugeSteamItemBus(gregtechId("huge_steam_import_bus"), false));
+        HUGE_STEAM_HATCH = registerMetaTileEntity(2007, new MetaTileEntityHugeSteamHatch(gregtechId("huge_steam_hatch")));
 
         STEAM_EXPORT_BUS = registerMetaTileEntity(2010,
                 new MetaTileEntitySteamItemBus(gregtechId("steam_export_bus"), true));

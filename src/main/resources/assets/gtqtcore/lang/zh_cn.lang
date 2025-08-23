@@ -225,6 +225,22 @@ gregtech.machine.me_pattern_provider.uxv.name=§eUXV§r样板总成
 gregtech.machine.me_pattern_provider.opv.name=§9OpV§r样板总成
 gregtech.machine.me_pattern_provider.max.name=§c§lMAX§r样板总成
 
+gregtech.machine.huge_me_pattern_provider.ulv.name=§8ULV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.lv.name=§7LV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.mv.name=§bMV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.hv.name=§6HV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.ev.name=§5EV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.iv.name=§1IV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.luv.name=§dLuV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.zpm.name=§cZPM§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.uv.name=§3UV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.uhv.name=§4UHV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.uev.name=§aUEV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.uiv.name=§2UIV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.uxv.name=§eUXV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.opv.name=§9OpV§r巨型样板总成
+gregtech.machine.huge_me_pattern_provider.max.name=§c§lMAX§r巨型样板总成
+
 gregtech.machine.thread_hatch.lv.name=线程控制仓(LV)
 gregtech.machine.thread_hatch.mv.name=线程控制仓(MV)
 gregtech.machine.thread_hatch.hv.name=线程控制仓(HV)
