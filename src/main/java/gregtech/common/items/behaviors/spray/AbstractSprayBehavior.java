@@ -12,7 +12,6 @@ import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -100,15 +99,15 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
-                                             EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
+                                           float hitY, float hitZ, EnumHand hand) {
         ItemStack sprayCan = player.getHeldItem(hand);
-        EnumActionResult result = spray(player, world, pos, facing, sprayCan);
+        EnumActionResult result = spray(player, world, pos, side, sprayCan);
         if (hasSpraySound(sprayCan) && result == EnumActionResult.SUCCESS) {
             world.playSound(null, player.posX, player.posY, player.posZ, getSpraySound(sprayCan), SoundCategory.PLAYERS,
                     1.0f, 1.0f);
         }
-        return ActionResult.newResult(result, sprayCan);
+        return result;
     }
 
     protected @NotNull EnumActionResult spray(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
@@ -120,12 +119,12 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         }
 
         if (player.isSneaking()) {
-            int color = getColorInt(sprayCan);
             if (world.getBlockState(pos).getBlock() instanceof BlockPipe<?, ?, ?>blockPipe) {
                 RayTraceResult hitResult = blockPipe.getServerCollisionRayTrace(player, pos, world);
                 if (hitResult != null) {
                     EnumFacing hitSide = CoverRayTracer.determineGridSideHit(hitResult);
                     IPipeTile<?, ?> firstPipe = blockPipe.getPipeTileEntity(world, pos);
+                    int color = getColorInt(sprayCan);
                     if (hitSide != null && firstPipe != null && firstPipe.isConnected(hitSide) &&
                             (firstPipe.isPainted() ? firstPipe.getPaintingColor() != color : color != -1)) {
                         traversePipes(firstPipe, hitSide, player, sprayCan, color);
