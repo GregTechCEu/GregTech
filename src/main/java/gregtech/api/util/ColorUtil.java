@@ -54,6 +54,10 @@ public class ColorUtil {
             return (originalARGB & invertedOverlay) | (replacementColor << shift);
         }
 
+        public int setInInt(@Range(from = 0, to = 0xFF) int color) {
+            return color << shift;
+        }
+
         public int addInInt(int originalARGB, @Range(from = 0, to = 0xFF) int addingColor) {
             return setInInt(originalARGB, (getFromInt(originalARGB) + addingColor) & 0xFF);
         }

@@ -32,18 +32,23 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.DoubleValue;
 import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.BooleanSupplier;
 
 import static gregtech.api.cover.CoverWithUI.UI_TITLE_COLOR;
 import static gregtech.api.util.ColorUtil.*;
@@ -61,13 +66,13 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
         IntSyncValue colorSync = SyncHandlers.intNumber(() -> getColorOrdinal(usedStack),
                 newColor -> setColorOrdinal(usedStack, newColor));
         guiSyncManager.syncValue("color", 0, colorSync);
-        BooleanSyncValue arbgSync = SyncHandlers.bool(() -> usesARGB(usedStack), bool -> useARGB(usedStack, bool));
-        IntSyncValue argb = SyncHandlers.intNumber(() -> getColorInt(usedStack),
+        BooleanSyncValue usesARGBSync = SyncHandlers.bool(() -> usesARGB(usedStack), bool -> useARGB(usedStack, bool));
+        IntSyncValue argbColorSync = SyncHandlers.intNumber(() -> getColorInt(usedStack),
                 newColor -> setColor(usedStack, newColor));
-        guiSyncManager.syncValue("argb", 0, argb);
+        guiSyncManager.syncValue("argbColor", 0, argbColorSync);
 
         // noinspection SpellCheckingInspection
-        return GTGuis.createPanel(usedStack, 176, 120)
+        return GTGuis.createPanel(usedStack, 175, 175)
                 .child(Flow.row()
                         .pos(4, 4)
                         .coverChildrenWidth()
@@ -82,9 +87,9 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                         .key('S', new ToggleButton()
                                 .size(18)
                                 .value(new BoolValue.Dynamic(
-                                        () -> colorSync.getIntValue() == -1 && !arbgSync.getBoolValue(),
+                                        () -> colorSync.getIntValue() == -1 && !usesARGBSync.getBoolValue(),
                                         $ -> {
-                                            if (!arbgSync.getBoolValue()) colorSync.setIntValue(-1);
+                                            if (!usesARGBSync.getBoolValue()) colorSync.setIntValue(-1);
                                         }))
                                 .overlay(new ItemDrawable(MetaItems.SPRAY_SOLVENT.getStackForm())
                                         .asIcon()
@@ -95,9 +100,9 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                             return new ToggleButton()
                                     .size(18)
                                     .value(new BoolValue.Dynamic(
-                                            () -> colorSync.getIntValue() == index && !arbgSync.getBoolValue(),
+                                            () -> colorSync.getIntValue() == index && !usesARGBSync.getBoolValue(),
                                             $ -> {
-                                                if (!arbgSync.getBoolValue()) colorSync.setIntValue(index);
+                                                if (!usesARGBSync.getBoolValue()) colorSync.setIntValue(index);
                                             }))
                                     .overlay(new ItemDrawable(MetaItems.SPRAY_CAN_DYES.get(color).getStackForm())
                                             .asIcon()
@@ -107,35 +112,75 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                         .build()
                         .left(4)
                         .top(24))
-                .child(Flow.column())
-                .child(Flow.row()
-                        .left(4)
+                .child(Flow.column()
+                        .margin(4, 0)
                         .top(24 + 18 * 2 + 8)
-                        .coverChildren()
+                        .coverChildrenHeight()
+                        .expanded()
+                        .crossAxisAlignment(Alignment.CrossAxis.START)
                         .child(new ToggleButton()
                                 .size(18)
-                                .value(arbgSync))
-                        .child(new TextFieldWidget()
-                                .width(30)
-                                .setNumbers(0, 255)
-                                .value(new IntValue.Dynamic(
-                                        () -> ARGBHelper.RED.getFromInt(argb.getIntValue()),
-                                        newR -> argb.setIntValue(
-                                                ARGBHelper.RED.setInInt(argb.getIntValue(), newR)))))
-                        .child(new TextFieldWidget()
-                                .width(30)
-                                .setNumbers(0, 255)
-                                .value(new IntValue.Dynamic(
-                                        () -> ARGBHelper.GREEN.getFromInt(argb.getIntValue()),
-                                        newG -> argb.setIntValue(
-                                                ARGBHelper.GREEN.setInInt(argb.getIntValue(), newG)))))
-                        .child(new TextFieldWidget()
-                                .width(30)
-                                .setNumbers(0, 255)
-                                .value(new IntValue.Dynamic(
-                                        () -> ARGBHelper.BLUE.getFromInt(argb.getIntValue()),
-                                        newB -> argb.setIntValue(
-                                                ARGBHelper.BLUE.setInInt(argb.getIntValue(), newB))))));
+                                .value(usesARGBSync))
+                        .child(Flow.row()
+                                .coverChildrenHeight()
+                                .expanded()
+                                .child(new TextFieldWidget()
+                                        .width(30)
+                                        .setNumbers(0, 255)
+                                        .value(createRGBIntValue(ARGBHelper.RED, argbColorSync,
+                                                usesARGBSync::getBoolValue)))
+                                .child(new SliderWidget()
+                                        .width(100)
+                                        .bounds(0.0D, 255.0D)
+                                        .value(createRGBDoubleValue(ARGBHelper.RED, argbColorSync,
+                                                usesARGBSync::getBoolValue))))
+                        .child(Flow.row()
+                                .coverChildrenHeight()
+                                .expanded()
+                                .child(new TextFieldWidget()
+                                        .width(30)
+                                        .setNumbers(0, 255)
+                                        .value(createRGBIntValue(ARGBHelper.GREEN, argbColorSync,
+                                                usesARGBSync::getBoolValue)))
+                                .child(new SliderWidget()
+                                        .width(100)
+                                        .bounds(0.0D, 255.0D)
+                                        .value(createRGBDoubleValue(ARGBHelper.GREEN, argbColorSync,
+                                                usesARGBSync::getBoolValue))))
+                        .child(Flow.row()
+                                .coverChildrenHeight()
+                                .expanded()
+                                .child(new TextFieldWidget()
+                                        .width(30)
+                                        .setNumbers(0, 255)
+                                        .value(createRGBIntValue(ARGBHelper.BLUE, argbColorSync,
+                                                usesARGBSync::getBoolValue)))
+                                .child(new SliderWidget()
+                                        .width(100)
+                                        .bounds(0.0D, 255.0D)
+                                        .value(createRGBDoubleValue(ARGBHelper.BLUE, argbColorSync,
+                                                usesARGBSync::getBoolValue)))));
+    }
+
+    private static IntValue.Dynamic createRGBIntValue(@NotNull ARGBHelper helper, @NotNull IntSyncValue argbSync,
+                                                      @NotNull BooleanSupplier allowSetting) {
+        return new IntValue.Dynamic(() -> helper.getFromInt(argbSync.getIntValue()),
+                newSingleColor -> {
+                    if (allowSetting.getAsBoolean()) {
+                        argbSync.setIntValue(helper.setInInt(argbSync.getIntValue(), newSingleColor));
+                    }
+                });
+    }
+
+    private static DoubleValue.Dynamic createRGBDoubleValue(@NotNull ARGBHelper helper,
+                                                            @NotNull IntSyncValue argbSync,
+                                                            @NotNull BooleanSupplier allowSetting) {
+        return new DoubleValue.Dynamic(() -> helper.getFromInt(argbSync.getIntValue()),
+                newSingleColor -> {
+                    if (allowSetting.getAsBoolean()) {
+                        argbSync.setIntValue(helper.setInInt(argbSync.getIntValue(), (int) newSingleColor));
+                    }
+                });
     }
 
     @Override
@@ -206,24 +251,26 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                 ColoredBlockContainer container = ColoredBlockContainer.getContainer(world, pos, facing,
                         playerClient);
 
-                if (usesARGB(sprayCan) && container.supportsARGB() &&
-                        !container.colorMatches(world, pos, facing, playerClient, getColorInt(sprayCan))) {
-                    int color = container.getColorInt(world, pos, facing, playerClient);
-                    if (color != -1) {
-                        setColor(sprayCan, color);
-                        sendToServer(hand, buf -> buf
-                                .writeByte(1)
-                                .writeInt(color));
-                        return;
-                    }
-                } else if (!container.colorMatches(world, pos, facing, playerClient, getColor(sprayCan))) {
-                    EnumDyeColor color = container.getColor(world, pos, facing, playerClient);
-                    if (color != null) {
-                        setColor(sprayCan, color);
-                        sendToServer(hand, buf -> buf
-                                .writeByte(2)
-                                .writeByte(color.ordinal()));
-                        return;
+                if (container.isValid(world, pos, facing, playerClient)) {
+                    if (usesARGB(sprayCan) && container.supportsARGB() &&
+                            !container.colorMatches(world, pos, facing, playerClient, getColorInt(sprayCan))) {
+                        int color = container.getColorInt(world, pos, facing, playerClient);
+                        if (color != -1) {
+                            setColor(sprayCan, color);
+                            sendToServer(hand, buf -> buf
+                                    .writeByte(1)
+                                    .writeInt(color));
+                            return;
+                        }
+                    } else if (!container.colorMatches(world, pos, facing, playerClient, getColor(sprayCan))) {
+                        EnumDyeColor color = container.getColor(world, pos, facing, playerClient);
+                        if (color != null) {
+                            setColor(sprayCan, color);
+                            sendToServer(hand, buf -> buf
+                                    .writeByte(2)
+                                    .writeByte(color.ordinal()));
+                            return;
+                        }
                     }
                 }
             }
@@ -238,8 +285,8 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                                        @NotNull EnumHand hand, @NotNull ItemStack sprayCan) {
         switch (buf.readByte()) {
             case 0 -> MetaItemGuiFactory.open(playerServer, EnumHand.MAIN_HAND);
-            case 1 -> setColor(sprayCan, EnumDyeColor.values()[buf.readByte()]);
-            case 2 -> setColor(sprayCan, buf.readInt());
+            case 1 -> setColor(sprayCan, buf.readInt());
+            case 2 -> setColor(sprayCan, EnumDyeColor.values()[buf.readByte()]);
         }
     }
 }
