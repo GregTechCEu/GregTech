@@ -179,14 +179,7 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
 
     @Override
     public int getItemStackColor(ItemStack sprayCan, int tintIndex) {
-        if (tintIndex != 1) return 0xFFFFFF;
-
-        if (usesARGB(sprayCan)) {
-            return getColorInt(sprayCan);
-        } else {
-            EnumDyeColor color = getColor(sprayCan);
-            return color != null ? color.colorValue : 0xFFFFFF;
-        }
+        return tintIndex == 1 ? getColorInt(sprayCan) : 0xFFFFFF;
     }
 
     @Override
