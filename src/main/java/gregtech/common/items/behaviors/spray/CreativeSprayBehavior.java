@@ -107,6 +107,7 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                         .build()
                         .left(4)
                         .top(24))
+                .child(Flow.column())
                 .child(Flow.row()
                         .left(4)
                         .top(24 + 18 * 2 + 8)

@@ -12,6 +12,11 @@ public class ColorUtil {
         return (r << 16) | (g << 8) | b;
     }
 
+    public static int combineARGB(@Range(from = 0, to = 255) int a, @Range(from = 0, to = 255) int r,
+                                  @Range(from = 0, to = 255) int g, @Range(from = 0, to = 255) int b) {
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
     public static @Nullable EnumDyeColor getDyeColorFromRGB(int color) {
         if (color == -1) return null;
 
@@ -47,6 +52,14 @@ public class ColorUtil {
 
         public int setInInt(int originalARGB, @Range(from = 0, to = 0xFF) int replacementColor) {
             return (originalARGB & invertedOverlay) | (replacementColor << shift);
+        }
+
+        public int addInInt(int originalARGB, @Range(from = 0, to = 0xFF) int addingColor) {
+            return setInInt(originalARGB, (getFromInt(originalARGB) + addingColor) & 0xFF);
+        }
+
+        public int subtractFromInt(int originalARGB, @Range(from = 0, to = 0xFF) int subtractingColor) {
+            return setInInt(originalARGB, (getFromInt(originalARGB) - subtractingColor) & 0xFF);
         }
     }
 }
