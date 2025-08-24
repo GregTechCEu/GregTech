@@ -229,9 +229,15 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
 
     @Override
     public String getItemStackDisplayName(ItemStack sprayCan, String unlocalizedName) {
-        EnumDyeColor color = getColor(sprayCan);
-        String colorString = color == null ? I18n.format("metaitem.spray.creative.solvent") :
-                I18n.format("metaitem.spray.creative." + color);
+        String colorString;
+        if (usesARGB(sprayCan)) {
+            colorString = String.format("0x%06X", getColorInt(sprayCan) & 0xFFFFFF);
+        } else {
+            EnumDyeColor color = getColor(sprayCan);
+            colorString = color == null ? I18n.format("metaitem.spray.creative.solvent") :
+                    I18n.format("metaitem.spray.creative." + color);
+        }
+
         return I18n.format(unlocalizedName, colorString);
     }
 
