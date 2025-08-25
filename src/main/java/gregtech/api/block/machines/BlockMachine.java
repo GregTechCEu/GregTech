@@ -19,7 +19,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.creativetab.GTCreativeTabs;
-import gregtech.common.items.MetaItems;
+import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 import gregtech.integration.ctm.IFacadeWrapper;
 
 import net.minecraft.block.Block;
@@ -257,9 +257,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public boolean recolorBlock(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing side,
                                 @NotNull EnumDyeColor color) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        if (metaTileEntity == null || metaTileEntity.getPaintingColor() == color.colorValue)
+        if (metaTileEntity == null || metaTileEntity.getPaintingColor() == color.colorValue) {
             return false;
-        metaTileEntity.setPaintingColor(color.colorValue);
+        }
+        metaTileEntity.setPaintingColor(color.colorValue, side);
         return true;
     }
 
@@ -326,15 +327,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         }
 
         // Color machines on place if holding spray can in off-hand
-        if (placer instanceof EntityPlayer) {
-            ItemStack offhand = placer.getHeldItemOffhand();
-            for (int i = 0; i < EnumDyeColor.values().length; i++) {
-                if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
-                    MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
-                            pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
-                    break;
-                }
-            }
+        if (placer instanceof EntityPlayer player) {
+            AbstractSprayBehavior.handleExternalSpray(player, EnumHand.OFF_HAND, worldIn, pos, EnumFacing.UP);
         }
 
         metaTileEntity.onPlacement(placer);

@@ -227,13 +227,14 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
             IFluidHandlerItem fluidHandlerItem = itemStack
                     .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem == null) return 0.0;
-            IFluidTankProperties properties = fluidHandlerItem.getTankProperties()[0];
-            FluidStack fluidStack = properties.getContents();
-            return fluidStack == null ? 0.0 : (double) fluidStack.amount / (double) properties.getCapacity();
+            IFluidTankProperties fluidTankProperties = fluidHandlerItem.getTankProperties()[0];
+            FluidStack fluidStack = fluidTankProperties.getContents();
+            return fluidStack == null ? 0.0 :
+                    GTUtility.calculateDurabilityFromRemaining(fluidStack.amount, fluidTankProperties.getCapacity());
         }
         if (hasMultipleUses) {
             // Matchbox
-            return (double) getUsesLeft(itemStack) / (double) maxUses;
+            return GTUtility.calculateDurabilityFromRemaining(getUsesLeft(itemStack), maxUses);
         }
         // no durability for Match
         return 0.0;
