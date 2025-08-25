@@ -46,24 +46,51 @@ public class ColorUtil {
             this.shift = shift;
         }
 
-        public @Range(from = 0, to = 0xFF) int getFromInt(int sourceARGB) {
-            return (sourceARGB >> shift) & 0xFF;
+        /**
+         * Isolate this channel as an integer from 0 to 255. <br/>
+         * Example: {@code GREEN.isolateAndShift(0xDEADBEEF)} will return {@code 0xBE} or {@code 190}.
+         */
+        public @Range(from = 0, to = 0xFF) int isolateAndShift(int value) {
+            return (value >> shift) & 0xFF;
         }
 
-        public int setInInt(int originalARGB, @Range(from = 0, to = 0xFF) int replacementColor) {
-            return (originalARGB & invertedOverlay) | (replacementColor << shift);
+        /**
+         * Remove the other two colors from the integer encoded ARGB and set the alpha to 255. <br/>
+         * Will always return {@code 0xFF000000} if called on {@link #ALPHA}. <br/>
+         * Unlike {@link #isolateAndShift(int)}, this will not be between 0 and 255. <br/>
+         * Example: {@code GREEN.isolateWithFullAlpha(0xDEADBEEF)} will return {@code 0xFF00BE00} or {@code 4278238720}.
+         */
+        public int isolateWithFullAlpha(int value) {
+            return (value & overlay) | 0xFF000000;
         }
 
-        public int setInInt(@Range(from = 0, to = 0xFF) int color) {
-            return color << shift;
+        /**
+         * Set the value of this channel in an integer encoded ARGB value.
+         */
+        public int replace(int originalARGB, @Range(from = 0, to = 0xFF) int value) {
+            return (originalARGB & invertedOverlay) | (value << shift);
         }
 
-        public int addInInt(int originalARGB, @Range(from = 0, to = 0xFF) int addingColor) {
-            return setInInt(originalARGB, (getFromInt(originalARGB) + addingColor) & 0xFF);
+        /**
+         * The same as {@link #replace(int, int)} but will just return the value shifted to this channel.
+         */
+        public int replace(@Range(from = 0, to = 0xFF) int value) {
+            return value << shift;
         }
 
-        public int subtractFromInt(int originalARGB, @Range(from = 0, to = 0xFF) int subtractingColor) {
-            return setInInt(originalARGB, (getFromInt(originalARGB) - subtractingColor) & 0xFF);
+        /**
+         * Add a value to this channel's value. Can overflow in this channel, but will not affect the other channels.
+         */
+        public int add(int originalARGB, @Range(from = 0, to = 0xFF) int value) {
+            return replace(originalARGB, (isolateAndShift(originalARGB) + value) & 0xFF);
+        }
+
+        /**
+         * Subtract a value from this channel's value. Can underflow in this channel, but will not affect the other
+         * channels.
+         */
+        public int subtract(int originalARGB, @Range(from = 0, to = 0xFF) int value) {
+            return replace(originalARGB, (isolateAndShift(originalARGB) - value) & 0xFF);
         }
     }
 }

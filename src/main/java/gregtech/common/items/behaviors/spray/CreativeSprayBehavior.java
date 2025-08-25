@@ -7,6 +7,7 @@ import gregtech.api.items.metaitem.stats.IItemNameProvider;
 import gregtech.api.items.metaitem.stats.IMouseEventHandler;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.drawable.DynamicColorRectangle;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.mui.sync.PagedWidgetSyncHandler;
 import gregtech.api.util.GTUtility;
@@ -144,66 +145,43 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                         .addPage(Flow.column()
                                 .widthRel(1.0f)
                                 .heightRel(1.0f)
-                                .child(Flow.row()
-                                        .widthRel(1.0f)
-                                        .coverChildrenHeight()
-                                        .child(new TextFieldWidget()
-                                                .width(30)
-                                                .setNumbers(0, 255)
-                                                .value(createRGBIntValue(ARGBHelper.RED, rgbColorSync,
-                                                        usesRGBSync::getBoolValue)))
-                                        .child(new SliderWidget()
-                                                .width(132)
-                                                .bounds(0.0D, 255.0d)
-                                                .value(createRGBDoubleValue(ARGBHelper.RED, rgbColorSync,
-                                                        usesRGBSync::getBoolValue))))
-                                .child(Flow.row()
-                                        .widthRel(1.0f)
-                                        .coverChildrenHeight()
-                                        .child(new TextFieldWidget()
-                                                .width(30)
-                                                .setNumbers(0, 255)
-                                                .value(createRGBIntValue(ARGBHelper.GREEN, rgbColorSync,
-                                                        usesRGBSync::getBoolValue)))
-                                        .child(new SliderWidget()
-                                                .width(132)
-                                                .bounds(0.0D, 255.0d)
-                                                .value(createRGBDoubleValue(ARGBHelper.GREEN, rgbColorSync,
-                                                        usesRGBSync::getBoolValue))))
-                                .child(Flow.row()
-                                        .widthRel(1.0f)
-                                        .coverChildrenHeight()
-                                        .child(new TextFieldWidget()
-                                                .width(30)
-                                                .setNumbers(0, 255)
-                                                .value(createRGBIntValue(ARGBHelper.BLUE, rgbColorSync,
-                                                        usesRGBSync::getBoolValue)))
-                                        .child(new SliderWidget()
-                                                .width(132)
-                                                .bounds(0.0D, 255.0d)
-                                                .value(createRGBDoubleValue(ARGBHelper.BLUE, rgbColorSync,
-                                                        usesRGBSync::getBoolValue))))));
+                                .child(createColorRow(ARGBHelper.RED, rgbColorSync, usesRGBSync::getBoolValue))
+                                .child(createColorRow(ARGBHelper.GREEN, rgbColorSync, usesRGBSync::getBoolValue))
+                                .child(createColorRow(ARGBHelper.BLUE, rgbColorSync, usesRGBSync::getBoolValue))));
     }
 
-    private static IntValue.Dynamic createRGBIntValue(@NotNull ARGBHelper helper, @NotNull IntSyncValue argbSync,
-                                                      @NotNull BooleanSupplier allowSetting) {
-        return new IntValue.Dynamic(() -> helper.getFromInt(argbSync.getIntValue()),
-                newSingleColor -> {
-                    if (allowSetting.getAsBoolean()) {
-                        argbSync.setIntValue(helper.setInInt(argbSync.getIntValue(), newSingleColor));
-                    }
-                });
-    }
-
-    private static DoubleValue.Dynamic createRGBDoubleValue(@NotNull ARGBHelper helper,
-                                                            @NotNull IntSyncValue argbSync,
-                                                            @NotNull BooleanSupplier allowSetting) {
-        return new DoubleValue.Dynamic(() -> helper.getFromInt(argbSync.getIntValue()),
-                newSingleColor -> {
-                    if (allowSetting.getAsBoolean()) {
-                        argbSync.setIntValue(helper.setInInt(argbSync.getIntValue(), (int) newSingleColor));
-                    }
-                });
+    private static Flow createColorRow(@NotNull ARGBHelper helper, @NotNull IntSyncValue rgbColorSync,
+                                       @NotNull BooleanSupplier allowSetting) {
+        return Flow.row()
+                .widthRel(1.0f)
+                .coverChildrenHeight()
+                .child(new TextFieldWidget()
+                        .width(30)
+                        .setNumbers(0, 255)
+                        .value(new IntValue.Dynamic(() -> helper.isolateAndShift(rgbColorSync.getIntValue()),
+                                colorDigit -> {
+                                    if (allowSetting.getAsBoolean()) {
+                                        int newColor = helper.replace(rgbColorSync.getIntValue(), colorDigit);
+                                        rgbColorSync.setIntValue(newColor);
+                                    }
+                                })))
+                .child(new SliderWidget()
+                        .width(132)
+                        .bounds(0.0D, 255.0d)
+                        .value(new DoubleValue.Dynamic(
+                                () -> (double) helper.isolateAndShift(rgbColorSync.getIntValue()),
+                                colorDigit -> {
+                                    if (allowSetting.getAsBoolean()) {
+                                        int newColor = helper.replace(rgbColorSync.getIntValue(), (int) colorDigit);
+                                        rgbColorSync.setIntValue(newColor);
+                                    }
+                                }))
+                        .background(
+                                new DynamicColorRectangle(() -> helper.isolateWithFullAlpha(rgbColorSync.getIntValue()))
+                                        .asIcon()
+                                        .margin(4, 0)
+                                        .height(8))
+                        .addTooltipLine(IKey.lang("metaitem.spray.creative.tip." + helper.toString().toLowerCase())));
     }
 
     @Override
