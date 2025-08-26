@@ -149,10 +149,7 @@ public class GTBoatEntity extends EntityBoat {
     }
 
     public GTBoatType getGTBoatType() {
-        return switch (this.dataManager.get(GT_BOAT_TYPE)) {
-            case 1 -> GTBoatType.TREATED_WOOD_BOAT;
-            default -> GTBoatType.RUBBER_WOOD_BOAT;
-        };
+        return dataManager.get(GT_BOAT_TYPE) == 1 ? GTBoatType.TREATED_WOOD_BOAT : GTBoatType.RUBBER_WOOD_BOAT;
     }
 
     @Override
