@@ -33,6 +33,8 @@ import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import com.cleanroommc.modularui.theme.WidgetSlotTheme;
+import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.utils.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -744,22 +746,25 @@ public class RenderUtil {
      * 
      * @param slot the slot to draw the overlay above
      */
-    public static void drawSlotOverlay(@NotNull IWidget slot, @NotNull WidgetSlotTheme slotTheme) {
+    public static void drawSlotOverlay(@NotNull IWidget slot, int overlayColor) {
         GlStateManager.colorMask(true, true, true, false);
-        GuiDraw.drawRect(1, 1, slot.getArea().w() - 2, slot.getArea().h() - 2, slotTheme.getSlotHoverColor());
+        GuiDraw.drawRect(1, 1, slot.getArea().w() - 2, slot.getArea().h() - 2, overlayColor);
         GlStateManager.colorMask(true, true, true, true);
     }
+
+    private static final int defaultSlotHoverColor = Color.withAlpha(Color.WHITE.main, 0x60);
 
     /**
      * Handles drawing the green JEI overlay when dragging an item, and if no item is being dragged, the overlay when
      * mousing over the slot.
      * 
-     * @param slot      the slot to draw the overlay above
-     * @param slotTheme the theme to get the slot overlay color from
+     * @param slot        the slot to draw the overlay above
+     * @param widgetTheme the theme to attempt to get the slot overlay color from
      */
-    public static void handleSlotOverlays(@NotNull IWidget slot, @NotNull WidgetSlotTheme slotTheme) {
+    public static void handleSlotOverlay(@NotNull IWidget slot, @NotNull WidgetTheme widgetTheme) {
         if (!handleJeiGhostOverlay(slot) && slot.isHovering()) {
-            drawSlotOverlay(slot, slotTheme);
+            drawSlotOverlay(slot, widgetTheme instanceof WidgetSlotTheme slotTheme ? slotTheme.getSlotHoverColor() :
+                    defaultSlotHoverColor);
         }
     }
 }

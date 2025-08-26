@@ -16,7 +16,6 @@ import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
@@ -111,9 +110,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
         }
 
-        if (widgetTheme instanceof WidgetSlotTheme slotTheme) {
-            RenderUtil.handleSlotOverlays(this, slotTheme);
-        }
+        RenderUtil.handleSlotOverlay(this, widgetTheme);
     }
 
     @Override
