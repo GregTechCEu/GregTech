@@ -83,9 +83,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 209)
                 .bindPlayerInventory(entityPlayer.inventory, 126);
         builder.widget(new PhantomFluidWidget(36, 6, 18, 18,
-                () -> this.fluidTank.getFluid(), data -> {
-                    this.fluidTank.setFluid(data);
-                }).showTip(false));
+                () -> this.fluidTank.getFluid(), data -> this.fluidTank.setFluid(data))
+                        .showTip(false));
         builder.label(7, 9, "gregtech.creative.tank.fluid");
         builder.widget(new ImageWidget(7, 45, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 47, 152, 10, () -> String.valueOf(mBPerCycle), value -> {
