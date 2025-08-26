@@ -20,7 +20,7 @@ import static net.minecraft.util.EnumFacing.*;
 
 /**
  * Mostly based on and (copied from) ThermalDynamics with minor tweaks
- * https://github.com/CoFH/ThermalDynamics/
+ * <a href="https://github.com/CoFH/ThermalDynamics/">https://github.com/CoFH/ThermalDynamics/</a>
  */
 @SideOnly(Side.CLIENT)
 public class FacadeBlockAccess implements IBlockAccess {

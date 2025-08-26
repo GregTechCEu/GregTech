@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * server-safe and doesn't use client-side code.
  * <p>
  * Mostly based on and (copied from) CoFHCore with minor tweaks
- * https://github.com/CoFH/CoFHCore/
+ * <a href="https://github.com/CoFH/CoFHCore/">https://github.com/CoFH/CoFHCore/</a>
  */
 public interface IBlockAppearance {
 

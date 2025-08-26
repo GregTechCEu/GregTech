@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Logic from SimplyJetpacks2:
- * https://github.com/Tomson124/SimplyJetpacks2/blob/1.12/src/main/java/tonius/simplyjetpacks/item/ItemJetpack.java
+ * <a href=
+ * "https://github.com/Tomson124/SimplyJetpacks2/blob/1.12/src/main/java/tonius/simplyjetpacks/item/ItemJetpack.java">https://github.com/Tomson124/SimplyJetpacks2/blob/1.12/src/main/java/tonius/simplyjetpacks/item/ItemJetpack.java</a>
  */
 public interface IJetpack {
 

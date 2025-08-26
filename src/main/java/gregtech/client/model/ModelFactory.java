@@ -26,7 +26,8 @@ import java.util.function.UnaryOperator;
 import javax.vecmath.Vector3f;
 
 /**
- * Revamped from https://github.com/LoliKingdom/Zairyou/blob/main/src/main/java/zone/rong/zairyou/api/client/Bakery.java
+ * Revamped from <a href=
+ * "https://github.com/LoliKingdom/Zairyou/blob/main/src/main/java/zone/rong/zairyou/api/client/Bakery.java">https://github.com/LoliKingdom/Zairyou/blob/main/src/main/java/zone/rong/zairyou/api/client/Bakery.java</a>
  */
 @SideOnly(Side.CLIENT)
 public class ModelFactory {
