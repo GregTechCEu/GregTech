@@ -293,6 +293,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
             return false;
         }
 
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         @Override
         protected @Nullable Recipe setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
                                                                @NotNull IItemHandlerModifiable importInventory) {
