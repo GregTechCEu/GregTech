@@ -159,7 +159,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
         BlockPipe<?, ?, ?> blockFluidPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stack.getItem()).getBlock();
         IPipeType<?> pipeType = blockFluidPipe.getItemPipeType(stack);
-        Material material = blockFluidPipe instanceof BlockMaterialPipe blockMaterialPipe ?
+        Material material = blockFluidPipe instanceof BlockMaterialPipe<?, ?, ?>blockMaterialPipe ?
                 blockMaterialPipe.getItemMaterial(stack) : null;
         if (pipeType != null) {
             // 12 == 0b1100 is North and South connection (index 2 & 3)

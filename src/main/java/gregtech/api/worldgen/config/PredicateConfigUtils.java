@@ -34,12 +34,10 @@ public class PredicateConfigUtils {
                     throw new IllegalArgumentException(
                             "Couldn't parse property " + property.getName() + " value " + valueElement);
                 }
+
                 // idk what this is
-                @SuppressWarnings("UnnecessaryLocalVariable")
-                IProperty propertyVar = property;
-                Comparable comparableVar = (Comparable) parsedValue.get();
-                // noinspection unchecked
-                blockState = blockState.withProperty(propertyVar, comparableVar);
+                // noinspection unchecked,rawtypes
+                blockState = blockState.withProperty((IProperty) property, (Comparable) parsedValue.get());
             }
         }
         return blockState;

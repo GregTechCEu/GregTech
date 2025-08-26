@@ -84,7 +84,7 @@ public class PipeCoverableImplementation implements CoverHolder {
         holder.markAsDirty();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public @NotNull ItemStack getStackForm() {
         BlockPipe pipeBlock = holder.getPipeBlock();

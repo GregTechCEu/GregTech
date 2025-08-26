@@ -399,9 +399,9 @@ public final class ModHandler {
      */
     @NotNull
     public static Object finalizeIngredient(@NotNull Object ingredient) {
-        if (ingredient instanceof MetaItem.MetaValueItem metaValueItem) {
+        if (ingredient instanceof MetaItem<?>.MetaValueItem metaValueItem) {
             ingredient = metaValueItem.getStackForm();
-        } else if (ingredient instanceof Enum anEnum) {
+        } else if (ingredient instanceof Enum<?>anEnum) {
             ingredient = anEnum.name();
         } else if (ingredient instanceof OrePrefix orePrefix) {
             ingredient = orePrefix.name();

@@ -52,7 +52,7 @@ import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT;
 
 public class MetaTileEntityDrum extends MetaTileEntity {
 
-    private final IPropertyFluidFilter fluidFilter;
+    private final IPropertyFluidFilter<?> fluidFilter;
     private final boolean isWood;
     private final int color;
     private final int tankSize;
@@ -68,7 +68,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
      */
     public MetaTileEntityDrum(ResourceLocation metaTileEntityId, @NotNull Material material, int tankSize) {
         super(metaTileEntityId);
-        IPropertyFluidFilter filter = material.getProperty(PropertyKey.FLUID_PIPE);
+        IPropertyFluidFilter<?> filter = material.getProperty(PropertyKey.FLUID_PIPE);
         if (filter == null) {
             throw new IllegalArgumentException("Material " + material + " requires FluidPipeProperty for Drums");
         }
@@ -87,7 +87,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
      * @param color            the color of the drum in RGB format
      * @param tankSize         the size of the storage tank
      */
-    public MetaTileEntityDrum(ResourceLocation metaTileEntityId, @NotNull IPropertyFluidFilter fluidFilter,
+    public MetaTileEntityDrum(ResourceLocation metaTileEntityId, @NotNull IPropertyFluidFilter<?> fluidFilter,
                               boolean isWood, int color, int tankSize) {
         super(metaTileEntityId);
         this.fluidFilter = fluidFilter;
