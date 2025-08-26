@@ -70,8 +70,8 @@ public class MultiblockShapeInfo {
             this.structureDir[1] = Objects.requireNonNull(two);
             this.structureDir[2] = Objects.requireNonNull(three);
             int flags = 0;
-            for (int i = 0; i < this.structureDir.length; i++) {
-                switch (structureDir[i]) {
+            for (RelativeDirection relativeDirection : this.structureDir) {
+                switch (relativeDirection) {
                     case UP, DOWN -> flags |= 0x1;
                     case LEFT, RIGHT -> flags |= 0x2;
                     case FRONT, BACK -> flags |= 0x4;
