@@ -118,7 +118,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
             IItemHandlerModifiable importItems = boiler.getImportItems();
             for (int i = 0; i < importItems.getSlots(); i++) {
                 ItemStack stack = importItems.getStackInSlot(i);
-                int fuelBurnTime = (int) Math.ceil(TileEntityFurnace.getItemBurnTime(stack));
+                int fuelBurnTime = TileEntityFurnace.getItemBurnTime(stack);
                 if (fuelBurnTime / 80 > 0) { // try to ensure this fuel can burn for at least 1 tick
                     if (FluidUtil.getFluidHandler(stack) != null) continue;
                     this.excessFuel += fuelBurnTime % 80;
