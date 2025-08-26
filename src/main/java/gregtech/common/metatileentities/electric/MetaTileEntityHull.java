@@ -16,7 +16,6 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMulti
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
