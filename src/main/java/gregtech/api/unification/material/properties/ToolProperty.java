@@ -107,80 +107,90 @@ public class ToolProperty {
         return harvestSpeed;
     }
 
-    public void setToolSpeed(float toolSpeed) {
+    public ToolProperty setToolSpeed(float toolSpeed) {
         this.harvestSpeed = toolSpeed;
+        return this;
     }
 
     public float getToolAttackDamage() {
         return attackDamage;
     }
 
-    public void setToolAttackDamage(float toolAttackDamage) {
+    public ToolProperty setToolAttackDamage(float toolAttackDamage) {
         this.attackDamage = toolAttackDamage;
+        return this;
     }
 
     public float getToolAttackSpeed() {
         return attackSpeed;
     }
 
-    public void setToolAttackSpeed(float toolAttackSpeed) {
+    public ToolProperty setToolAttackSpeed(float toolAttackSpeed) {
         this.attackSpeed = toolAttackSpeed;
+        return this;
     }
 
     public int getToolDurability() {
         return durability;
     }
 
-    public void setToolDurability(int toolDurability) {
+    public ToolProperty setToolDurability(int toolDurability) {
         this.durability = toolDurability;
+        return this;
     }
 
     public int getToolHarvestLevel() {
         return this.harvestLevel;
     }
 
-    public void setToolHarvestLevel(int toolHarvestLevel) {
+    public ToolProperty setToolHarvestLevel(int toolHarvestLevel) {
         this.harvestLevel = toolHarvestLevel;
+        return this;
     }
 
     public int getToolEnchantability() {
         return enchantability;
     }
 
-    public void setToolEnchantability(int toolEnchantability) {
+    public ToolProperty setToolEnchantability(int toolEnchantability) {
         this.enchantability = toolEnchantability;
+        return this;
     }
 
     public boolean getShouldIgnoreCraftingTools() {
         return ignoreCraftingTools;
     }
 
-    public void setShouldIgnoreCraftingTools(boolean ignore) {
+    public ToolProperty setShouldIgnoreCraftingTools(boolean ignore) {
         this.ignoreCraftingTools = ignore;
+        return this;
     }
 
     public boolean getUnbreakable() {
         return isUnbreakable;
     }
 
-    public void setUnbreakable(boolean isUnbreakable) {
+    public ToolProperty setUnbreakable(boolean isUnbreakable) {
         this.isUnbreakable = isUnbreakable;
+        return this;
     }
 
     public Object2ObjectMap<Enchantment, EnchantmentLevel> getEnchantments() {
         return enchantments;
     }
 
-    public void setMagnetic(boolean isMagnetic) {
+    public ToolProperty setMagnetic(boolean isMagnetic) {
         this.isMagnetic = isMagnetic;
+        return this;
     }
 
     public boolean isMagnetic() {
         return isMagnetic;
     }
 
-    public void setDurabilityMultiplier(int multiplier) {
+    public ToolProperty setDurabilityMultiplier(int multiplier) {
         this.durabilityMultiplier = multiplier;
+        return this;
     }
 
     public int getDurabilityMultiplier() {

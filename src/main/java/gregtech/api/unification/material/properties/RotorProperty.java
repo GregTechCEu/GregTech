@@ -35,27 +35,30 @@ public class RotorProperty implements IMaterialProperty {
         return speed;
     }
 
-    public void setSpeed(float speed) {
+    public RotorProperty setSpeed(float speed) {
         if (speed <= 0) throw new IllegalArgumentException("Rotor Speed must be greater than zero!");
         this.speed = speed;
+        return this;
     }
 
     public float getDamage() {
         return damage;
     }
 
-    public void setDamage(float damage) {
+    public RotorProperty setDamage(float damage) {
         if (damage <= 0) throw new IllegalArgumentException("Rotor Attack Damage must be greater than zero!");
         this.damage = damage;
+        return this;
     }
 
     public int getDurability() {
         return durability;
     }
 
-    public void setDurability(int durability) {
+    public RotorProperty setDurability(int durability) {
         if (durability <= 0) throw new IllegalArgumentException("Rotor Durability must be greater than zero!");
         this.durability = durability;
+        return this;
     }
 
     @Override

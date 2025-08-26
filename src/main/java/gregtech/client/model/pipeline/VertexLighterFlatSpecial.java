@@ -170,16 +170,6 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
         tint = -1;
     }
 
-    // This was copied over from VertexLighterFlat because the tint parameter shouldn't be a float
-    protected static void updateColor(float[] normal, float[] color, float x, float y, float z, int tint,
-                                      int multiplier) {
-        if (tint != -1) {
-            color[0] *= (float) (multiplier >> 0x10 & 0xFF) / 0xFF;
-            color[1] *= (float) (multiplier >> 0x8 & 0xFF) / 0xFF;
-            color[2] *= (float) (multiplier & 0xFF) / 0xFF;
-        }
-    }
-
     @Override
     public void setQuadTint(int tint) {
         this.tint = tint;
