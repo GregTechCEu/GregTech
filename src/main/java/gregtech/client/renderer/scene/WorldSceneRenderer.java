@@ -1,5 +1,7 @@
 package gregtech.client.renderer.scene;
 
+import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;
 import gregtech.api.util.Size;
@@ -25,6 +27,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Vector3;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -35,6 +38,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.vecmath.Vector3f;
@@ -60,6 +64,8 @@ public abstract class WorldSceneRenderer {
     protected static final FloatBuffer OBJECT_POS_BUFFER = ByteBuffer.allocateDirect(3 * 4)
             .order(ByteOrder.nativeOrder()).asFloatBuffer();
 
+    // In most cases this would be empty
+    protected static final Map<BlockPos, TileEntity> TILE_ENTITIES = new Object2ObjectArrayMap<>();
     public final World world;
     public final Collection<BlockPos> renderedBlocks = new ObjectOpenHashSet<>();
     protected Consumer<WorldSceneRenderer> beforeRender;
@@ -88,6 +94,15 @@ public abstract class WorldSceneRenderer {
     public WorldSceneRenderer addRenderedBlocks(@Nullable Collection<BlockPos> blocks) {
         if (blocks != null) {
             this.renderedBlocks.addAll(blocks);
+            TILE_ENTITIES.clear();
+            blocks.forEach(pos -> {
+                TileEntity tile = world.getTileEntity(pos);
+                if (tile != null && (!(tile instanceof IGregTechTileEntity gtte) ||
+                        // Put MTEs only when it has FastRenderer
+                        gtte.getMetaTileEntity() instanceof IFastRenderMetaTileEntity)) {
+                    TILE_ENTITIES.put(pos, tile);
+                }
+            });
         }
         return this;
     }
@@ -280,18 +295,17 @@ public abstract class WorldSceneRenderer {
 
     protected void renderTileEntities() {
         RenderHelper.enableStandardItemLighting();
+        var dispatcher = TileEntityRendererDispatcher.instance;
         for (int pass = 0; pass < 2; pass++) {
             ForgeHooksClient.setRenderPass(pass);
             setDefaultPassRenderState(pass);
 
-            for (BlockPos pos : renderedBlocks) { // This
-                TileEntity tile = world.getTileEntity(pos);
-                if (tile != null) {
-                    if (tile.shouldRenderInPass(pass)) {
-                        TileEntityRendererDispatcher.instance.render(tile, pos.getX(), pos.getY(), pos.getZ(), 0);
-                    }
+            int finalPass = pass;
+            TILE_ENTITIES.forEach((pos, tile) -> {
+                if (tile.shouldRenderInPass(finalPass)) {
+                    dispatcher.render(tile, pos.getX(), pos.getY(), pos.getZ(), 0);
                 }
-            }
+            });
         }
         ForgeHooksClient.setRenderPass(-1);
         RenderHelper.disableStandardItemLighting();
