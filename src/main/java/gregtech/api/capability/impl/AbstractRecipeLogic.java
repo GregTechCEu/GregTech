@@ -56,7 +56,8 @@ import java.util.function.Function;
 import static gregtech.api.GTValues.ULV;
 import static gregtech.api.recipes.logic.OverclockingLogic.*;
 
-public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic,AccessorAbstractRecipeLogic {
+public abstract class AbstractRecipeLogic extends MTETrait
+        implements IWorkable, IParallelableRecipeLogic, AccessorAbstractRecipeLogic {
 
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
@@ -65,6 +66,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private final OCParams ocParams = new OCParams();
     private final OCResult ocResult = new OCResult();
     protected Recipe previousRecipe;
+    protected Recipe batchRecipes;
     protected Recipe showRecipes;
     protected LinkedList<Recipe> latestRecipes = new LinkedList<>();
     protected int parallelRecipesPerformed;
@@ -93,6 +95,24 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * DO NOT use the parallelLimit field directly, EVER use {@link AbstractRecipeLogic#setParallelLimit(int)} instead
      */
     private int parallelLimit = 1;
+    /**
+     * List of non-chanced item outputs.The actual non-chanced item outputs are taken from the item outputs saved list,
+     * taking the first n elements.
+     */
+    private int nonChancedItemAmt = 0;
+    /**
+     * Map of chanced item outputs to their boosted chance, for this recipe.
+     */
+    private List<Pair<ItemStack, Integer>> chancedItemOutputs = null;
+    /**
+     * Number of non-chanced fluid outputs. The actual non-chanced fluid outputs are taken from the fluid outputs saved
+     * list, taking the first n elements.
+     */
+    private int nonChancedFluidAmt = 0;
+    /**
+     * Map of chanced item outputs to their boosted chance, for this recipe.
+     */
+    private List<Pair<FluidStack, Integer>> chancedFluidOutputs = null;
 
     public AbstractRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap) {
         super(tileEntity);
@@ -130,6 +150,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 (ItemStack.areItemsEqual(stackA, stackB) &&
                         ItemStack.areItemStackTagsEqual(stackA, stackB));
     }
+
     public List<ItemStack> getItemOutputs() {
         return itemOutputs;
     }
@@ -434,6 +455,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     public void forceRecipeRecheck() {
         this.previousRecipe = null;
+        this.batchRecipes = null;
         this.latestRecipes.clear();
 
         trySearchNewRecipe();
@@ -449,12 +471,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         IMultipleTankHandler importFluids = getInputTank();
 
         // see if the last recipe we used still works
-        if (checkPreviousRecipe()) {
+        if (enableBatch && checkBatchRecipes()) {
+            currentRecipe = this.batchRecipes;
+            // If there is no active recipe, then we need to find one.
+        } else if (!enableBatch && checkPreviousRecipe()) {
             currentRecipe = this.previousRecipe;
             // If there is no active recipe, then we need to find one.
         }
         // 若无效则遍历历史记录寻找其他有效配方
-        else {
+        else if (!enableBatch) {
             for (int i = latestRecipes.size() - 2; i >= 0; i--) { // 从倒数第二个开始
                 Recipe recipe = latestRecipes.get(i);
                 if (recipe == null) continue;
@@ -469,13 +494,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         if (currentRecipe == null) {
             currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
         }
+
+
+        // 批处理无用
         // If a recipe was found, then inputs were valid. Cache found recipe.
-        if (currentRecipe != null) {
+        if (!enableBatch && currentRecipe != null) {
             //最临近配方
             this.previousRecipe = currentRecipe;
             //热点配方
             addToPreviousRecipes(currentRecipe);
         }
+
+
         this.invalidInputsForRecipes = (currentRecipe == null);
 
         // proceed if we have a usable recipe.
@@ -502,6 +532,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         if (this.previousRecipe == null) return false;
         if (this.previousRecipe.getEUt() > this.getMaxVoltage()) return false;
         return this.previousRecipe.matches(false, getInputInventory(), getInputTank());
+    }
+
+    protected boolean checkBatchRecipes() {
+        if (this.batchRecipes == null) return false;
+        if (this.batchRecipes.getEUt() > this.getMaxVoltage()) return false;
+        if(this.batchRecipes.getDuration()>128)return false;
+        return this.batchRecipes.matches(false, getInputInventory(), getInputTank());
     }
 
     /**
@@ -753,7 +790,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         modifyOverclockPost(ocResult, recipe.propertyStorage());
 
-        if(enableBatch){
+        if (ocResult.parallel() > 1) {
+            recipe = subTickOC(ocResult, recipe, importInventory, importFluids);
+            if (recipe == null) {
+                invalidateInputs();
+                return null;
+            }
+        }
+
+        if (enableBatch) {
             if (ocResult.duration() <= 64) {
                 // 保存原始配方，以便批处理失败时恢复
                 Recipe originalRecipe = recipe;
@@ -784,14 +829,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 }
                 //如果找不到则继续原本的配方
             }
-
-        }
-        if (ocResult.parallel() > 1) {
-            recipe = subTickOC(ocResult, recipe, importInventory, importFluids);
-            if (recipe == null) {
-                invalidateInputs();
-                return null;
-            }
         }
 
         if (!hasEnoughPower(ocResult.eut(), ocResult.duration())) {
@@ -803,6 +840,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             this.isOutputsFull = false;
             if (recipe.matches(true, importInventory, importFluids)) {
                 this.metaTileEntity.addNotifiedInput(importInventory);
+                this.batchRecipes = recipe;
                 return recipe;
             }
         }
@@ -1180,12 +1218,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     public void setBatchEnable(boolean enable) {
         enableBatch = enable;
         metaTileEntity.markDirty();
+        invalidate();
         World world = metaTileEntity.getWorld();
         if (world != null && !world.isRemote) {
             writeCustomData(GregtechDataCodes.WORKING_BATCH, buf -> buf.writeBoolean(enableBatch));
         }
     }
-
 
     @Override
     public boolean isActive() {
@@ -1286,6 +1324,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     @MustBeInvokedByOverriders
     public void invalidate() {
         previousRecipe = null;
+        batchRecipes = null;
         progressTime = 0;
         maxProgressTime = 0;
         recipeEUt = 0;
@@ -1311,6 +1350,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             getMetaTileEntity().scheduleRenderUpdate();
         }
     }
+
+    /*
+      From <a href=
+      "https://github.com/Nomi-CEu/Nomi-Labs/blob/main/src/main/java/com/nomiceu/nomilabs/mixin/gregtech/AbstractRecipeLogicMixin.java">NomiLabs</a>.
+     */
+    //
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
@@ -1407,32 +1452,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
     }
 
-    /*
-      From <a href=
-      "https://github.com/Nomi-CEu/Nomi-Labs/blob/main/src/main/java/com/nomiceu/nomilabs/mixin/gregtech/AbstractRecipeLogicMixin.java">NomiLabs</a>.
-     */
-    //
-    /**
-     * List of non-chanced item outputs.The actual non-chanced item outputs are taken from the item outputs saved list,
-     * taking the first n elements.
-     */
-    private int nonChancedItemAmt = 0;
-
-    /**
-     * Map of chanced item outputs to their boosted chance, for this recipe.
-     */
-    private List<Pair<ItemStack, Integer>> chancedItemOutputs = null;
-
-    /**
-     * Number of non-chanced fluid outputs. The actual non-chanced fluid outputs are taken from the fluid outputs saved
-     * list, taking the first n elements.
-     */
-    private int nonChancedFluidAmt = 0;
-
-    /**
-     * Map of chanced item outputs to their boosted chance, for this recipe.
-     */
-    private List<Pair<FluidStack, Integer>> chancedFluidOutputs = null;
     @Override
     public boolean isValidForOutputTOP() {
         return getEUt() >= 0 && getRecipeMap() != null;
@@ -1470,8 +1489,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     private <T> List<Pair<T, Integer>> fillChancedOutputsMap(ChancedOutputList<T, ? extends ChancedOutput<T>> list,
-                                                                   ChanceBoostFunction function, int recipeTier,
-                                                                   int machineTier) {
+                                                             ChanceBoostFunction function, int recipeTier,
+                                                             int machineTier) {
         List<Pair<T, Integer>> result = new ArrayList<>();
         if (list.getChancedEntries().isEmpty()) return result;
 
@@ -1483,7 +1502,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     private <T> void addChancedToTag(NBTTagCompound nbt, String key, List<T> list,
-                                           Function<T, NBTTagCompound> createTag, Function<T, Integer> getChance) {
+                                     Function<T, NBTTagCompound> createTag, Function<T, Integer> getChance) {
         if (list == null) return;
 
         var entries = new NBTTagList();

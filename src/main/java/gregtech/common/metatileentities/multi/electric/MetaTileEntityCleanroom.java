@@ -190,7 +190,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         }
         super.checkStructurePattern();
         if (isStructureFormed()) {
-            checkDoors();
+            if(doors!=null)checkDoors();
         }
     }
 

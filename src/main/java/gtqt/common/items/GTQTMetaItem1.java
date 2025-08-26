@@ -11,7 +11,6 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.RecyclingData;
 import gregtech.common.creativetab.GTCreativeTabs;
-import gregtech.common.items.behaviors.ColorSprayBehavior;
 
 import net.minecraft.item.EnumDyeColor;
 
@@ -20,7 +19,6 @@ import gtqt.common.items.behaviors.ProgrammableCircuit;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.unification.material.Materials.*;
-import static gtqt.common.items.GTQTMetaItems.ENDLESS_SPRAY_EMPTY;
 
 public class GTQTMetaItem1 extends StandardMetaItem {
 
@@ -219,20 +217,6 @@ public class GTQTMetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(32)
                 .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Neutronium, M * 8))) // ingot * 8
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
-        // Spray Cans: ID 60-77
-        ENDLESS_SPRAY_EMPTY = addItem(101, "endless_spray.empty");
-
-        // out of registry order so it can reference the Empty Spray Can
-        GTQTMetaItems.ENDLESS_SPRAY_SOLVENT = addItem(100, "endless_spray.solvent").setMaxStackSize(1)
-                .addComponents(new ColorSprayBehavior(ENDLESS_SPRAY_EMPTY.getStackForm(), Integer.MAX_VALUE, -1))
-                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
-
-        for (int i = 0; i < EnumDyeColor.values().length; i++) {
-            GTQTMetaItems.ENDLESS_SPRAY_CAN_DYES[i] = addItem(102 + i,
-                    "endless_spray.can.dyes." + EnumDyeColor.values()[i].getName()).setMaxStackSize(1)
-                    .addComponents(new ColorSprayBehavior(ENDLESS_SPRAY_EMPTY.getStackForm(), Integer.MAX_VALUE, i))
-                    .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
-        }
 
         // 51-70: Vanadium Steel Molds & Extruders.
         GTQTMetaItems.CASTING_MOLD_EMPTY = addItem(200, "shape.mold.vanadium_steel.empty")

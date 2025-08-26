@@ -189,14 +189,22 @@ public class Recipe {
         Pair<Boolean, int[]> fluids = null;
         Pair<Boolean, int[]> items = null;
 
-        if (!fluidInputs.getFluidTanks().isEmpty()) {
+        // Handle fluid inputs only if the recipe has fluid inputs
+        if (!getFluidInputs().isEmpty()) {
+            if (fluidInputs == null || fluidInputs.getFluidTanks().isEmpty()) {
+                return false;
+            }
             fluids = matchesFluid(GTUtility.fluidHandlerToList(fluidInputs));
             if (!fluids.getKey()) {
                 return false;
             }
         }
 
-        if (inputs.getSlots() > 0) {
+        // Handle item inputs only if the recipe has item inputs
+        if (!getInputs().isEmpty()) {
+            if (inputs == null || inputs.getSlots() == 0) {
+                return false;
+            }
             items = matchesItems(GTUtility.itemHandlerToList(inputs));
             if (!items.getKey()) {
                 return false;

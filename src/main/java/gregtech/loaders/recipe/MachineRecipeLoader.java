@@ -445,7 +445,7 @@ public class MachineRecipeLoader {
             CANNER_RECIPES.recipeBuilder()
                     .inputs(MetaItems.SPRAY_EMPTY.getStackForm())
                     .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L * 4))
-                    .outputs(MetaItems.SPRAY_CAN_DYES[i].getStackForm())
+                    .outputs(SPRAY_CAN_DYES.get(EnumDyeColor.values()[i]).getStackForm())
                     .EUt(VA[ULV]).duration(200)
                     .buildAndRegister();
 

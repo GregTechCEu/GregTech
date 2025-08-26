@@ -74,25 +74,6 @@ metaitem.large_fluid_cell.iridium.name=%s铱单元
 metaitem.large_fluid_cell.naquadah_alloy.name=%s硅岩合金单元
 metaitem.large_fluid_cell.neutronium.name=%s中子素单元
 
-metaitem.endless_spray.empty.name=无尽喷漆罐（空）
-metaitem.endless_spray.solvent.name=无尽喷漆罐（溶剂）
-metaitem.endless_spray.can.dyes.white.name=无尽喷漆罐（白色）
-metaitem.endless_spray.can.dyes.orange.name=无尽喷漆罐（橙色）
-metaitem.endless_spray.can.dyes.magenta.name=无尽喷漆罐（品红色）
-metaitem.endless_spray.can.dyes.light_blue.name=无尽喷漆罐（淡蓝色）
-metaitem.endless_spray.can.dyes.yellow.name=无尽喷漆罐（黄色）
-metaitem.endless_spray.can.dyes.lime.name=无尽喷漆罐（黄绿色）
-metaitem.endless_spray.can.dyes.pink.name=无尽喷漆罐（粉红色）
-metaitem.endless_spray.can.dyes.gray.name=无尽喷漆罐（灰色）
-metaitem.endless_spray.can.dyes.silver.name=无尽喷漆罐（淡灰色）
-metaitem.endless_spray.can.dyes.cyan.name=无尽喷漆罐（青色）
-metaitem.endless_spray.can.dyes.purple.name=无尽喷漆罐（紫色）
-metaitem.endless_spray.can.dyes.blue.name=无尽喷漆罐（蓝色）
-metaitem.endless_spray.can.dyes.brown.name=无尽喷漆罐（棕色）
-metaitem.endless_spray.can.dyes.green.name=无尽喷漆罐（绿色）
-metaitem.endless_spray.can.dyes.red.name=无尽喷漆罐（红色）
-metaitem.endless_spray.can.dyes.black.name=无尽喷漆罐（黑色）
-
 metaitem.shape.mold.vanadium_steel.empty.name=空铸造模具
 metaitem.shape.mold.vanadium_steel.empty.tooltip=用以制作一次性工具的模具
 metaitem.shape.mold.vanadium_steel.saw.name=铸造模具（锯）

@@ -82,6 +82,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Function;
 
+import static gregtech.api.color.ColoredBlockContainer.registerCEuContainers;
 import static gregtech.common.blocks.MetaBlocks.*;
 import static net.minecraft.init.Blocks.DIAMOND_BLOCK;
 import static net.minecraft.util.text.TextFormatting.AQUA;
@@ -458,6 +459,7 @@ public class CommonProxy {
     public void onLoad() {
         GTDataFixers.init();
         GTQTCommonProxy.init();
+        registerCEuContainers();
     }
 
     public void onPostLoad() {

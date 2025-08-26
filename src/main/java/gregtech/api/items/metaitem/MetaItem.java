@@ -99,7 +99,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
+import gregtech.api.items.metaitem.stats.IMouseEventHandler;
 /**
  * MetaItem is item that can have up to Short.MAX_VALUE items inside one id. These items even can be edible, have custom
  * behaviours, be electric or act like fluid containers! They can also have different burn time, plus be handheld,
@@ -641,7 +641,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     fluid == null ? "" : fluid.getLocalizedName()));
 
             if (fluidHandler instanceof IFilteredFluidContainer filtered &&
-                    filtered.getFilter() instanceof IPropertyFluidFilter propertyFilter) {
+                    filtered.getFilter() instanceof IPropertyFluidFilter<?>propertyFilter) {
                 propertyFilter.appendTooltips(lines, false, true);
             }
         }
@@ -655,6 +655,14 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
     }
 
+    @Nullable
+    public IMouseEventHandler getMouseEventHandler(@NotNull ItemStack stack) {
+        T metaItemValue = getItem(stack);
+        if (metaItemValue != null) {
+            return metaItemValue.getMouseEventHandler();
+        }
+        return null;
+    }
     private static void addDischargeItemTooltip(List<String> tooltip, long maxCharge, long currentCharge, int tier) {
         if (currentCharge == 0) { // do not display when empty
             tooltip.add(I18n.format("metaitem.generic.electric_item.tooltip", currentCharge, maxCharge,
@@ -787,6 +795,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private IItemColorProvider colorProvider;
         private IItemDurabilityManager durabilityManager;
         private IEnchantabilityHelper enchantabilityHelper;
+        private IMouseEventHandler mouseEventHandler;
         private EnumRarity rarity;
 
         private int burnValue = 0;
@@ -890,42 +899,46 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
         protected void addItemComponentsInternal(IItemComponent... stats) {
             for (IItemComponent itemComponent : stats) {
-                if (itemComponent instanceof IItemNameProvider) {
-                    this.nameProvider = (IItemNameProvider) itemComponent;
+                if (itemComponent instanceof IItemNameProvider iItemNameProvider) {
+                    this.nameProvider = iItemNameProvider;
                 }
-                if (itemComponent instanceof IItemMaxStackSizeProvider) {
-                    this.stackSizeProvider = (IItemMaxStackSizeProvider) itemComponent;
+                if (itemComponent instanceof IItemMaxStackSizeProvider iItemMaxStackSizeProvider) {
+                    this.stackSizeProvider = iItemMaxStackSizeProvider;
                 }
-                if (itemComponent instanceof ISubItemHandler) {
-                    this.subItemHandler = (ISubItemHandler) itemComponent;
+                if (itemComponent instanceof ISubItemHandler iSubItemHandler) {
+                    this.subItemHandler = iSubItemHandler;
                 }
-                if (itemComponent instanceof IItemContainerItemProvider) {
-                    this.containerItemProvider = (IItemContainerItemProvider) itemComponent;
+                if (itemComponent instanceof IItemContainerItemProvider iItemContainerItemProvider) {
+                    this.containerItemProvider = iItemContainerItemProvider;
                 }
-                if (itemComponent instanceof IItemDurabilityManager) {
-                    this.durabilityManager = (IItemDurabilityManager) itemComponent;
+                if (itemComponent instanceof IItemDurabilityManager iItemDurabilityManager) {
+                    this.durabilityManager = iItemDurabilityManager;
                 }
-                if (itemComponent instanceof IItemUseManager) {
-                    this.useManager = (IItemUseManager) itemComponent;
+                if (itemComponent instanceof IItemUseManager iItemUseManager) {
+                    this.useManager = iItemUseManager;
                 }
-                if (itemComponent instanceof IFoodBehavior) {
-                    this.useManager = new FoodUseManager((IFoodBehavior) itemComponent);
+                if (itemComponent instanceof IFoodBehavior iFoodBehavior) {
+                    this.useManager = iFoodBehavior.createFoodUseManager();
                 }
-                if (itemComponent instanceof ItemUIFactory) {
-                    this.uiManager = (ItemUIFactory) itemComponent;
+                if (itemComponent instanceof ItemUIFactory itemUIFactory) {
+                    this.uiManager = itemUIFactory;
                 }
-                if (itemComponent instanceof IFilter.Factory) {
-                    this.filterBehavior = (IFilter.Factory) itemComponent;
+                if (itemComponent instanceof IFilter.Factory filterFactory) {
+                    this.filterBehavior = filterFactory;
                 }
-                if (itemComponent instanceof IItemColorProvider) {
-                    this.colorProvider = (IItemColorProvider) itemComponent;
+                if (itemComponent instanceof IItemColorProvider iItemColorProvider) {
+                    this.colorProvider = iItemColorProvider;
                 }
-                if (itemComponent instanceof IItemBehaviour) {
-                    this.behaviours.add((IItemBehaviour) itemComponent);
-                    ((IItemBehaviour) itemComponent).addPropertyOverride(getMetaItem());
+                if (itemComponent instanceof IItemBehaviour iItemBehaviour) {
+                    this.behaviours.add(iItemBehaviour);
+                    iItemBehaviour.addPropertyOverride(getMetaItem());
                 }
-                if (itemComponent instanceof IEnchantabilityHelper) {
-                    this.enchantabilityHelper = (IEnchantabilityHelper) itemComponent;
+                if (itemComponent instanceof IEnchantabilityHelper iEnchantabilityHelper) {
+                    this.enchantabilityHelper = iEnchantabilityHelper;
+                }
+                // noinspection PatternVariableHidesField
+                if (itemComponent instanceof IMouseEventHandler mouseEventHandler) {
+                    this.mouseEventHandler = mouseEventHandler;
                 }
                 this.allStats.add(itemComponent);
             }
@@ -985,6 +998,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         @Nullable
         public IEnchantabilityHelper getEnchantabilityHelper() {
             return enchantabilityHelper;
+        }
+
+        @Nullable
+        public IMouseEventHandler getMouseEventHandler() {
+            return mouseEventHandler;
         }
 
         public int getBurnValue() {

@@ -1,9 +1,12 @@
 package gregtech.api.items.metaitem.stats;
 
+import gregtech.api.items.metaitem.FoodUseManager;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -23,4 +26,9 @@ public interface IFoodBehavior extends IItemComponent {
     }
 
     void addInformation(ItemStack itemStack, List<String> lines);
+
+    @NotNull
+    default FoodUseManager createFoodUseManager() {
+        return new FoodUseManager(this);
+    }
 }

@@ -3,8 +3,6 @@ package gregtech.api.items.toolitem;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
@@ -17,7 +15,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.QuintFunction;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import gregtech.common.items.behaviors.ColorSprayBehavior;
+import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 import gregtech.tools.enchants.EnchantmentHardHammer;
 
 import net.minecraft.advancements.CriteriaTriggers;
@@ -375,10 +373,13 @@ public final class ToolHelper {
     /**
      * @return if any of the specified tool classes exists in the tool
      */
-    public static boolean isTool(ItemStack tool, String... toolClasses) {
+    public static boolean isTool(@NotNull ItemStack tool, String... toolClasses) {
+        if (tool.isEmpty()) return false;
+
         if (toolClasses.length == 1) {
             return tool.getItem().getToolClasses(tool).contains(toolClasses[0]);
         }
+
         for (String toolClass : tool.getItem().getToolClasses(tool)) {
             for (String specified : toolClasses) {
                 if (toolClass.equals(specified)) {
@@ -386,42 +387,43 @@ public final class ToolHelper {
                 }
             }
         }
+
         return false;
     }
 
     /**
      * @return if the itemstack should be considered a utility item and thus can be put into toolbelts.
      */
-    public static boolean isUtilityItem(ItemStack utility) {
-        return isTool(utility) || isSpraycan(utility);
+    public static boolean isUtilityItem(@NotNull ItemStack utility) {
+        return isTool(utility) || isSprayCan(utility);
     }
 
     /**
      * @return if the itemstack should be considered a tool
      */
-    public static boolean isTool(ItemStack tool) {
+    public static boolean isTool(@NotNull ItemStack tool) {
+        if (tool.isEmpty()) return false;
         return tool.getItem() instanceof ItemTool || tool.getItem() instanceof IGTTool;
     }
 
     /**
-     * @return if the itemstack should be considered a spraycan
+     * @return if the itemstack should be considered a spray can
      */
-    public static boolean isSpraycan(ItemStack spraycan) {
-        if (spraycan.getItem() instanceof MetaItem<?>meta) {
-            for (IItemBehaviour behaviour : meta.getBehaviours(spraycan)) {
-                if (behaviour instanceof ColorSprayBehavior) return true;
-            }
-        }
-        return false;
+    public static boolean isSprayCan(@NotNull ItemStack sprayCan) {
+        if (sprayCan.isEmpty()) return false;
+        return AbstractSprayBehavior.getSprayCanBehavior(sprayCan) != null;
     }
 
     /**
      * Return if all the specified tool classes exists in the tool
      */
-    public static boolean areTools(ItemStack tool, String... toolClasses) {
+    public static boolean areTools(@NotNull ItemStack tool, String... toolClasses) {
+        if (tool.isEmpty()) return false;
+
         if (toolClasses.length == 1) {
             return tool.getItem().getToolClasses(tool).contains(toolClasses[0]);
         }
+
         return tool.getItem().getToolClasses(tool).containsAll(new ObjectArraySet<String>(toolClasses));
     }
 

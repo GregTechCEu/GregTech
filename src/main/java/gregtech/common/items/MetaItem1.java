@@ -6,6 +6,7 @@ import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.FilteredFluidStats;
 import gregtech.api.items.metaitem.FoodStats;
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MusicDiscStats;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
@@ -33,7 +34,6 @@ import gregtech.common.covers.filter.SmartItemFilter;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.entities.GTBoatEntity.GTBoatType;
 import gregtech.common.items.behaviors.ClipboardBehavior;
-import gregtech.common.items.behaviors.ColorSprayBehavior;
 import gregtech.common.items.behaviors.DataItemBehavior;
 import gregtech.common.items.behaviors.DoorBehavior;
 import gregtech.common.items.behaviors.DynamiteBehaviour;
@@ -59,15 +59,21 @@ import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavi
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.OnlinePicPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.TextPluginBehavior;
+import gregtech.common.items.behaviors.spray.CreativeSprayBehavior;
+import gregtech.common.items.behaviors.spray.DurabilitySprayBehavior;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+
+import org.jetbrains.annotations.NotNull;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.GTValues.MAX;
@@ -80,6 +86,28 @@ public class MetaItem1 extends StandardMetaItem {
     public MetaItem1() {
         super();
     }
+
+    @Override
+    public void getSubItems(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> subItems) {
+        if (!isInCreativeTab(tab)) return;
+        for (MetaItem<?>.MetaValueItem item : metaItems.values()) {
+            if (!item.isInCreativeTab(tab)) continue;
+
+            int itemMeta = item.getMetaValue();
+            // Skip extra molds, see below
+            if (itemMeta >= 1006 && itemMeta <= 1010) continue;
+            // Skip creative spray can, see below
+            if (itemMeta == 88) continue;
+
+            item.getSubItemHandler().getSubItems(item.getStackForm(), tab, subItems);
+
+            // Add the creative spray can after the last normal spray can
+            if (itemMeta == 77) {
+                subItems.add(SPRAY_CREATIVE.getStackForm());
+            }
+        }
+    }
+
 
     @Override
     public void registerSubItems() {
@@ -200,14 +228,14 @@ public class MetaItem1 extends StandardMetaItem {
 
         // out of registry order so it can reference the Empty Spray Can
         SPRAY_SOLVENT = addItem(60, "spray.solvent").setMaxStackSize(1)
-                .addComponents(new ColorSprayBehavior(SPRAY_EMPTY.getStackForm(), 1024, -1))
+                .addComponents(new DurabilitySprayBehavior(SPRAY_EMPTY.getStackForm(), 1024, null))
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
-        for (int i = 0; i < EnumDyeColor.values().length; i++) {
-            SPRAY_CAN_DYES[i] = addItem(62 + i, "spray.can.dyes." + EnumDyeColor.values()[i].getName())
+        for (EnumDyeColor color : EnumDyeColor.values()) {
+            SPRAY_CAN_DYES.put(color, addItem(62 + color.ordinal(), "spray.can.dyes." + color.getName())
                     .setMaxStackSize(1)
-                    .addComponents(new ColorSprayBehavior(SPRAY_EMPTY.getStackForm(), 512, i))
-                    .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+                    .addComponents(new DurabilitySprayBehavior(SPRAY_EMPTY.getStackForm(), 512, color))
+                    .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS));
         }
 
         // Fluid Cells: ID 78-88
@@ -268,6 +296,8 @@ public class MetaItem1 extends StandardMetaItem {
                 .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Glass, M / 4))) // small dust
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
+        SPRAY_CREATIVE = addItem(88, "spray.creative")
+                .addComponents(new CreativeSprayBehavior());
         // Limited-Use Items: ID 89-95
 
         TOOL_MATCHES = addItem(89, "tool.matches")

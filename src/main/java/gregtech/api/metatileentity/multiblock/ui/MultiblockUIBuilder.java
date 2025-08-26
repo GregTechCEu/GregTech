@@ -612,11 +612,6 @@ public class MultiblockUIBuilder {
             MetaTileEntity mte = arl.getMetaTileEntity();
             trimmed = Recipe.trimRecipeOutputs(recipe, map, mte.getItemOutputLimit(), mte.getFluidOutputLimit());
         }
-        int p=1;
-        if(!arl.isBatchEnable()){
-            p = getSyncer().syncInt(arl.getParallelRecipesPerformed());
-            if (p == 0) p = 1;
-        }
 
         long eut = getSyncer().syncLong(trimmed == null ? 0 : trimmed.getEUt());
         long maxVoltage = getSyncer().syncLong(arl.getMaximumOverclockVoltage());
@@ -652,14 +647,14 @@ public class MultiblockUIBuilder {
         Object2IntMap<ItemStack> itemMap = GTHashMaps.fromItemStackCollection(itemOutputs);
 
         for (var stack : itemMap.keySet()) {
-            addItemOutputLine(stack, (long) itemMap.getInt(stack) * p, maxProgress);
+            addItemOutputLine(stack, (long) itemMap.getInt(stack), maxProgress);
         }
 
         for (var chancedItemOutput : chancedItemOutputs) {
             // noinspection DataFlowIssue
             int chance = getSyncer()
                     .syncInt(() -> map.chanceFunction.getBoostedChance(chancedItemOutput, recipeTier, machineTier));
-            int count = chancedItemOutput.getIngredient().getCount() * p;
+            int count = chancedItemOutput.getIngredient().getCount();
             addChancedItemOutputLine(chancedItemOutput, count, chance, maxProgress);
         }
 
@@ -675,7 +670,7 @@ public class MultiblockUIBuilder {
             // noinspection DataFlowIssue
             int chance = getSyncer()
                     .syncInt(() -> map.chanceFunction.getBoostedChance(chancedFluidOutput, recipeTier, machineTier));
-            int count = chancedFluidOutput.getIngredient().amount * p;
+            int count = chancedFluidOutput.getIngredient().amount;
             addChancedFluidOutputLine(chancedFluidOutput, count, chance, maxProgress);
         }
         return this;

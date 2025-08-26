@@ -345,6 +345,30 @@ metaitem.shape.extruder.drill_head.tooltip=Extruder Shape for making Drill Head
 
 metaitem.spray.empty.name=Spray Can (Empty)
 metaitem.spray.empty.tooltip=Can be filled with sprays of various colors
+metaitem.spray.creative.name=Creative Spray Can (%s)
+metaitem.spray.creative.name_base=Creative Spray Can
+metaitem.spray.creative.mode.normal=Normal Mode
+metaitem.spray.creative.mode.rgb=RGB Mode
+metaitem.spray.creative.tip.red=Red
+metaitem.spray.creative.tip.green=Green
+metaitem.spray.creative.tip.blue=Blue
+metaitem.spray.creative.solvent=Solvent
+metaitem.spray.creative.white=White
+metaitem.spray.creative.orange=Orange
+metaitem.spray.creative.magenta=Magenta
+metaitem.spray.creative.lightBlue=Light Blue
+metaitem.spray.creative.yellow=Yellow
+metaitem.spray.creative.lime=Lime
+metaitem.spray.creative.pink=Pink
+metaitem.spray.creative.gray=Gray
+metaitem.spray.creative.silver=Gray
+metaitem.spray.creative.cyan=Cyan
+metaitem.spray.creative.purple=Purple
+metaitem.spray.creative.blue=Blue
+metaitem.spray.creative.brown=Brown
+metaitem.spray.creative.green=Green
+metaitem.spray.creative.red=Red
+metaitem.spray.creative.black=Black
 
 metaitem.plant.ball.name=Plantball
 

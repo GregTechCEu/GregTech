@@ -7,6 +7,7 @@ import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
@@ -18,6 +19,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 import gregtech.integration.ctm.IFacadeWrapper;
 
 import gtqt.common.items.GTQTMetaItems;
@@ -64,6 +66,7 @@ import java.util.List;
 import java.util.Random;
 
 import static gregtech.api.metatileentity.MetaTileEntity.FULL_CUBE_COLLISION;
+import static gregtech.api.util.GTUtility.getMetaTileEntity;
 
 @SuppressWarnings("deprecation")
 public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType,
@@ -82,36 +85,22 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         disableStats();
     }
 
-    public static Cuboid6 getSideBox(EnumFacing side, float thickness) {
+    public static Cuboid6 getSideBox(@Nullable EnumFacing side, float thickness) {
         float min = (1.0f - thickness) / 2.0f, max = min + thickness;
         float faceMin = 0f, faceMax = 1f;
 
         if (side == null)
             return new Cuboid6(min, min, min, max, max, max);
-        Cuboid6 cuboid;
-        switch (side) {
-            case WEST:
-                cuboid = new Cuboid6(faceMin, min, min, min, max, max);
-                break;
-            case EAST:
-                cuboid = new Cuboid6(max, min, min, faceMax, max, max);
-                break;
-            case NORTH:
-                cuboid = new Cuboid6(min, min, faceMin, max, max, min);
-                break;
-            case SOUTH:
-                cuboid = new Cuboid6(min, min, max, max, max, faceMax);
-                break;
-            case UP:
-                cuboid = new Cuboid6(min, max, min, max, faceMax, max);
-                break;
-            case DOWN:
-                cuboid = new Cuboid6(min, faceMin, min, max, min, max);
-                break;
-            default:
-                cuboid = new Cuboid6(min, min, min, max, max, max);
-        }
-        return cuboid;
+        return switch (side) {
+            case WEST -> new Cuboid6(faceMin, min, min, min, max, max);
+            case EAST -> new Cuboid6(max, min, min, faceMax, max, max);
+            case NORTH -> new Cuboid6(min, min, faceMin, max, max, min);
+            case SOUTH -> new Cuboid6(min, min, max, max, max, faceMax);
+            case UP -> new Cuboid6(min, max, min, max, faceMax, max);
+            case DOWN -> new Cuboid6(min, faceMin, min, max, min, max);
+            // noinspection UnnecessaryDefault
+            default -> new Cuboid6(min, min, min, max, max, max);
+        };
     }
 
     /**
@@ -191,20 +180,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             setTileEntityData((TileEntityPipeBase<PipeType, NodeDataType>) pipeTile, stack);
 
             // Color pipes/cables on place if holding spray can in off-hand
-            if (placer instanceof EntityPlayer) {
-                ItemStack offhand = placer.getHeldItemOffhand();
-                for (int i = 0; i < EnumDyeColor.values().length; i++) {
-                    if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
-                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
-                                pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
-                        break;
-                    }
-                    if (offhand.isItemEqual(GTQTMetaItems.ENDLESS_SPRAY_CAN_DYES[i].getStackForm())) {
-                        GTQTMetaItems.ENDLESS_SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
-                                pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
-                        break;
-                    }
-                }
+            if (placer instanceof EntityPlayer player) {
+                AbstractSprayBehavior.handleExternalSpray(player, EnumHand.OFF_HAND, worldIn, pos, EnumFacing.UP);
             }
         }
     }
@@ -582,14 +559,12 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @Override
     public boolean recolorBlock(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing side,
                                 @NotNull EnumDyeColor color) {
-        IPipeTile<PipeType, NodeDataType> tileEntityPipe = getPipeTileEntity(world, pos);
-        if (tileEntityPipe != null && tileEntityPipe.getPipeType() != null &&
-                tileEntityPipe.getPipeType().isPaintable() &&
-                tileEntityPipe.getPaintingColor() != color.colorValue) {
-            tileEntityPipe.setPaintingColor(color.colorValue);
-            return true;
+        MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
+        if (metaTileEntity == null || metaTileEntity.getPaintingColor() == color.colorValue) {
+            return false;
         }
-        return false;
+        metaTileEntity.setPaintingColor(color.colorValue, side);
+        return true;
     }
 
     protected boolean isThisPipeBlock(Block block) {
@@ -599,7 +574,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     /**
      * Just returns proper pipe tile entity
      */
-    public IPipeTile<PipeType, NodeDataType> getPipeTileEntity(IBlockAccess world, BlockPos selfPos) {
+    public @Nullable IPipeTile<PipeType, NodeDataType> getPipeTileEntity(IBlockAccess world, BlockPos selfPos) {
         TileEntity tileEntityAtPos = world.getTileEntity(selfPos);
         return getPipeTileEntity(tileEntityAtPos);
     }
@@ -670,19 +645,27 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return result;
     }
 
-    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, Entity entity) {
-        if (entity instanceof EntityPlayer) {
-            return hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.MAIN_HAND)) ||
-                    hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.OFF_HAND)) ||
-                    entity.isSneaking() && isHoldingPipe((EntityPlayer) entity);
+    public boolean hasPipeCollisionChangingItem(@NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                                @Nullable Entity entity) {
+        if (entity instanceof EntityPlayer entityPlayer) {
+            return hasPipeCollisionChangingItem(world, pos, entityPlayer,
+                    entityPlayer.getHeldItem(EnumHand.MAIN_HAND)) ||
+                    hasPipeCollisionChangingItem(world, pos, entityPlayer,
+                            entityPlayer.getHeldItem(EnumHand.OFF_HAND)) ||
+                    entity.isSneaking() && isHoldingPipe(entityPlayer);
         }
         return false;
     }
 
     public abstract boolean isHoldingPipe(EntityPlayer player);
 
-    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
+    public boolean hasPipeCollisionChangingItem(@NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                                @NotNull EntityPlayer player, @NotNull ItemStack stack) {
         if (isPipeTool(stack)) return true;
+
+        if (player.isSneaking() && AbstractSprayBehavior.isSprayCan(stack)) {
+            return true;
+        }
 
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(world, pos);
         if (pipeTile == null) return false;

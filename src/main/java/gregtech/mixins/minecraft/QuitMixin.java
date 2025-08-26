@@ -37,7 +37,7 @@ public class QuitMixin {
     @Overwrite
     public void shutdown()
     {
-        if (ConfigHolder.worldgen.allUniqueStoneTypes)this.running = false;
+        if (ConfigHolder.client.runQuit)this.running = false;
         if (gtqt$isCloseRequested)
             return;
         if (!gtqt$waitingDialogQuit)

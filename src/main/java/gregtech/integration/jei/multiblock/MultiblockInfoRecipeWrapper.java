@@ -14,6 +14,7 @@ import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
 import gregtech.client.renderer.scene.VBOWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
@@ -197,7 +198,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         updateParts();
     }
 
-    public VBOWorldSceneRenderer getCurrentRenderer() {
+    public WorldSceneRenderer getCurrentRenderer() {
         return patterns[currentRendererPage].getSceneRenderer();
     }
 
@@ -206,7 +207,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     private void toggleNextLayer() {
-        VBOWorldSceneRenderer renderer = getCurrentRenderer();
+        WorldSceneRenderer renderer = getCurrentRenderer();
         int height = (int) ((TrackedDummyWorld) renderer.world).getSize().getY() - 1;
         if (++this.layerIndex > height) {
             // if current layer index is more than max height, reset it
@@ -230,7 +231,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private void setNextLayer(int newLayer) {
         this.layerIndex = newLayer;
         this.nextLayerButton.displayString = "L:" + (layerIndex == -1 ? "A" : Integer.toString(layerIndex + 1));
-        VBOWorldSceneRenderer renderer = getCurrentRenderer();
+        WorldSceneRenderer renderer = getCurrentRenderer();
         if (renderer != null) {
             TrackedDummyWorld world = ((TrackedDummyWorld) renderer.world);
             resetCenter(world);
@@ -298,7 +299,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void drawInfo(@NotNull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-        VBOWorldSceneRenderer renderer = getCurrentRenderer();
+        WorldSceneRenderer renderer = getCurrentRenderer();
         int sceneHeight = recipeHeight - PARTS_HEIGHT;
 
         renderer.render(recipeLayout.getPosX(), recipeLayout.getPosY(), recipeWidth, sceneHeight,
@@ -602,7 +603,14 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         }
 
         TrackedDummyWorld world = new TrackedDummyWorld();
-        VBOWorldSceneRenderer worldSceneRenderer = new VBOWorldSceneRenderer(world);
+
+        WorldSceneRenderer worldSceneRenderer;
+        if(ConfigHolder.client.useVBO) {
+            worldSceneRenderer = new VBOWorldSceneRenderer(world);
+        } else {
+            worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
+        }
+
         worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
         world.addBlocks(blockMap);
 

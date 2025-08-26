@@ -104,6 +104,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem SPRAY_SOLVENT;
     public static MetaItem<?>.MetaValueItem SPRAY_EMPTY;
+    public static MetaItem<?>.MetaValueItem SPRAY_CREATIVE;
 
     public static MetaItem<?>.MetaValueItem FLUID_CELL;
     public static MetaItem<?>.MetaValueItem FLUID_CELL_UNIVERSAL;
@@ -550,8 +551,8 @@ public final class MetaItems {
 
     public static final MetaItem<?>.MetaValueItem[] DYE_ONLY_ITEMS = new MetaItem.MetaValueItem[EnumDyeColor
             .values().length];
-    public static final MetaItem<?>.MetaValueItem[] SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor
-            .values().length];
+    public static final EnumMap<EnumDyeColor, MetaItem<?>.MetaValueItem> SPRAY_CAN_DYES = new EnumMap<>(
+            EnumDyeColor.class);
 
     public static MetaItem<?>.MetaValueItem TURBINE_ROTOR;
 

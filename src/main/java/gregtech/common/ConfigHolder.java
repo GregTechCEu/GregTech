@@ -552,6 +552,10 @@ public class ConfigHolder {
         @Config.Comment({ "Whether to prefer the Material Tree over other categories in JEI", "Default: false" })
         public boolean preferMaterialTreeInJEI = false;
 
+        @Config.Comment({ "是否使用VBO优化多方块渲染？与光影不兼容!",
+                "Default: true" })
+        public boolean useVBO = true;
+
         //是否运行Quit插件
         @Config.Comment({ "是否运行Quit插件", "Default: true" })
         public boolean runQuit = true;
@@ -805,6 +809,11 @@ public class ConfigHolder {
         @Config.RangeInt(min = 1, max = 100)
         @Config.SlidingOption
         public int magnetDelay = 10;
+
+
+        @Config.Comment({ "The maximum amount of pipes a recursive spray can do at once", "Default: 128 blocks" })
+        @Config.RangeInt(min = 1, max = 1024)
+        public int maxRecursiveSprayLength = 128;
     }
 
     public static class ArmorHud {

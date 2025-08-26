@@ -3,6 +3,7 @@ package gregtech.client;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.items.metaitem.MetaOreDictItem;
+import gregtech.api.items.metaitem.stats.IMouseEventHandler;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.unification.OreDictUnifier;
@@ -55,6 +56,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -355,19 +357,20 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onMouseEvent(@NotNull MouseEvent event) {
-        if (!ConfigHolder.client.toolbeltConfig.enableToolbeltScrollingCapture) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if (event.getDwheel() != 0 && player.isSneaking()) {
-            ItemStack stack = player.getHeldItemMainhand();
-            if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-                // vanilla code in GuiIngame line 1235 does not copy the stack before storing it in the highlighting
-                // item stack, so unless we copy the stack the tool highlight will not refresh.
-                stack = stack.copy();
-                toolbelt.changeSelectedToolMousewheel(event.getDwheel(), stack);
-                InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
-                inv.mainInventory.set(inv.currentItem, stack);
-                event.setCanceled(true);
-            }
+
+        handleItemEvent(event, player, EnumHand.MAIN_HAND);
+        if (!event.isCanceled()) {
+            handleItemEvent(event, player, EnumHand.OFF_HAND);
+        }
+    }
+
+    private static void handleItemEvent(@NotNull MouseEvent event, @NotNull EntityPlayerSP playerClient,
+                                        @NotNull EnumHand hand) {
+        ItemStack heldStack = playerClient.getHeldItem(hand);
+        IMouseEventHandler mouseEventHandler = IMouseEventHandler.getHandler(heldStack);
+        if (mouseEventHandler != null) {
+            mouseEventHandler.handleMouseEventClient(event, playerClient, hand, heldStack);
         }
     }
 
