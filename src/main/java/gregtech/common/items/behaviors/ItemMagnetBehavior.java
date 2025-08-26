@@ -100,12 +100,13 @@ public class ItemMagnetBehavior implements IItemBehaviour {
                 }
 
                 NBTTagCompound itemTag = itemEntity.getEntityData();
-                if (itemTag != null && itemTag.hasKey("PreventRemoteMovement")) {
+                if (itemTag.hasKey("PreventRemoteMovement")) {
                     continue;
                 }
 
-                if (itemEntity.getThrower() != null && itemEntity.getThrower().equals(entity.getName()) &&
-                        itemEntity.pickupDelay > 0) {
+                String thrower = itemEntity.getThrower();
+                // noinspection ConstantValue
+                if (thrower != null && thrower.equals(entity.getName()) && itemEntity.pickupDelay > 0) {
                     continue;
                 }
 

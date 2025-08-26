@@ -190,11 +190,9 @@ public class TankWidget extends Widget implements IIngredientSlot {
 
                 // Add various tooltips from the material
                 List<String> formula = FluidTooltipUtil.getFluidTooltip(lastFluidInTank);
-                if (formula != null) {
-                    for (String s : formula) {
-                        if (s.isEmpty()) continue;
-                        tooltips.add(s);
-                    }
+                for (String s : formula) {
+                    if (s.isEmpty()) continue;
+                    tooltips.add(s);
                 }
 
                 // Add tooltip showing how many "ingot moles" (increments of 144) this fluid is if shift is held

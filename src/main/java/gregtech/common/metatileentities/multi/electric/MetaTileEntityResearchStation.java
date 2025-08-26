@@ -328,7 +328,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
             holder.setHeldItem(ItemStack.EMPTY);
 
             ItemStack outputItem = ItemStack.EMPTY;
-            if (itemOutputs != null && itemOutputs.size() >= 1) {
+            if (itemOutputs.size() >= 1) {
                 outputItem = itemOutputs.get(0);
             }
             holder.setDataItem(outputItem);

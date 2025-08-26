@@ -107,7 +107,6 @@ public class CustomTexture {
 
         @Override
         public void put(int element, float @NotNull... data) {
-            if (data == null) return;
             float[] copy = new float[data.length];
             System.arraycopy(data, 0, copy, 0, data.length);
             VertexFormatElement ele = vertexFormat.getElement(element);

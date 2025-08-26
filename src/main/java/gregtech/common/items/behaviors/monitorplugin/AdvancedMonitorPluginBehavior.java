@@ -138,6 +138,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                     continue;
                 }
                 RayTraceResult hit = blockState.collisionRayTrace(renderer.world, core, eyePos, endPos);
+                // noinspection ConstantValue
                 if (hit != null && hit.typeOfHit != RayTraceResult.Type.MISS) {
                     double dist = eyePos.distanceTo(new Vec3d(hit.getBlockPos()));
                     if (dist < min) {
@@ -156,9 +157,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                 BlockPos pos = entry.getKey();
                 Vector3f winPos = WorldSceneRenderer.project(pos);
                 entry.getValue().setValue(winPos);
-                if (winPos != null) {
-                    renderBlockOverLay(pos);
-                }
+                renderBlockOverLay(pos);
             }
         }
     }

@@ -21,11 +21,9 @@ public class JEITooltipMixin {
                            CallbackInfoReturnable<List<String>> cir) {
         if (ingredient instanceof FluidStack) {
             List<String> formula = FluidTooltipUtil.getFluidTooltip((FluidStack) ingredient);
-            if (formula != null) {
-                for (String s : formula) {
-                    if (s.isEmpty()) continue;
-                    tooltip.add(s);
-                }
+            for (String s : formula) {
+                if (s.isEmpty()) continue;
+                tooltip.add(s);
             }
         }
     }

@@ -4,23 +4,24 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public interface IFoodBehavior extends IItemComponent {
 
-    int getFoodLevel(ItemStack itemStack, @Nullable EntityPlayer player);
+    int getFoodLevel(@NotNull ItemStack itemStack, @Nullable EntityPlayer player);
 
-    float getSaturation(ItemStack itemStack, @Nullable EntityPlayer player);
+    float getSaturation(@NotNull ItemStack itemStack, @Nullable EntityPlayer player);
 
-    boolean alwaysEdible(ItemStack itemStack, @Nullable EntityPlayer player);
+    boolean alwaysEdible(@NotNull ItemStack itemStack, @Nullable EntityPlayer player);
 
-    EnumAction getFoodAction(ItemStack itemStack);
+    EnumAction getFoodAction(@NotNull ItemStack itemStack);
 
-    default ItemStack onFoodEaten(ItemStack stack, EntityPlayer player) {
+    default ItemStack onFoodEaten(@NotNull ItemStack stack, @NotNull EntityPlayer player) {
         return stack;
     }
 
-    void addInformation(ItemStack itemStack, List<String> lines);
+    void addInformation(@NotNull ItemStack itemStack, List<String> lines);
 }

@@ -63,7 +63,7 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
         var tag = new NBTTagCompound();
         tag.setString(COLOR_KEY, this.colorStr);
 
-        if (description != null && !description.isEmpty())
+        if (!description.isEmpty())
             tag.setString(DESC_KEY, this.description);
 
         return tag;

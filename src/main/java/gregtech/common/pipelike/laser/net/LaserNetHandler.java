@@ -11,11 +11,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class LaserNetHandler implements ILaserContainer {
 
+    @NotNull
     private LaserPipeNet net;
+    @NotNull
     private final TileEntityLaserPipe pipe;
+    @Nullable
     private final EnumFacing facing;
 
-    public LaserNetHandler(LaserPipeNet net, @NotNull TileEntityLaserPipe pipe, @Nullable EnumFacing facing) {
+    public LaserNetHandler(@NotNull LaserPipeNet net, @NotNull TileEntityLaserPipe pipe, @Nullable EnumFacing facing) {
         this.net = net;
         this.pipe = pipe;
         this.facing = facing;
@@ -33,9 +36,8 @@ public class LaserNetHandler implements ILaserContainer {
         }
     }
 
-    @Nullable
-    private ILaserContainer getInnerContainer() {
-        if (net == null || pipe == null || pipe.isInvalid() || facing == null) {
+    private @Nullable ILaserContainer getInnerContainer() {
+        if (pipe.isInvalid() || facing == null) {
             return null;
         }
 
@@ -101,7 +103,7 @@ public class LaserNetHandler implements ILaserContainer {
         return 0;
     }
 
-    public LaserPipeNet getNet() {
+    public @NotNull LaserPipeNet getNet() {
         return net;
     }
 

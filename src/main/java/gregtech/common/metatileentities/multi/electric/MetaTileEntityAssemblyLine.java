@@ -361,6 +361,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
 
         if (!ConfigHolder.machines.enableResearch || !recipe.hasProperty(ResearchProperty.getInstance())) {
+            // noinspection ConstantValue
             return super.checkRecipe(recipe, consumeIfSuccess);
         }
 

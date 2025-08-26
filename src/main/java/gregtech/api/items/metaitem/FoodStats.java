@@ -9,6 +9,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -50,27 +51,27 @@ public class FoodStats implements IFoodBehavior {
     }
 
     @Override
-    public int getFoodLevel(ItemStack itemStack, EntityPlayer player) {
+    public int getFoodLevel(@NotNull ItemStack itemStack, EntityPlayer player) {
         return foodLevel;
     }
 
     @Override
-    public float getSaturation(ItemStack itemStack, EntityPlayer player) {
+    public float getSaturation(@NotNull ItemStack itemStack, EntityPlayer player) {
         return saturation;
     }
 
     @Override
-    public boolean alwaysEdible(ItemStack itemStack, EntityPlayer player) {
+    public boolean alwaysEdible(@NotNull ItemStack itemStack, EntityPlayer player) {
         return alwaysEdible;
     }
 
     @Override
-    public EnumAction getFoodAction(ItemStack itemStack) {
+    public EnumAction getFoodAction(@NotNull ItemStack itemStack) {
         return isDrink ? EnumAction.DRINK : EnumAction.EAT;
     }
 
     @Override
-    public ItemStack onFoodEaten(ItemStack itemStack, EntityPlayer player) {
+    public ItemStack onFoodEaten(@NotNull ItemStack itemStack, @NotNull EntityPlayer player) {
         if (!player.world.isRemote) {
             for (RandomPotionEffect potionEffect : potionEffects) {
                 if (GTValues.RNG.nextDouble() * 100 > potionEffect.chance) {
@@ -80,14 +81,13 @@ public class FoodStats implements IFoodBehavior {
 
             if (containerItem != null) {
                 ItemStack containerItemCopy = containerItem.copy(); // Get the copy
-                if (player == null || !player.capabilities.isCreativeMode) {
+                if (!player.capabilities.isCreativeMode) {
                     if (itemStack.isEmpty()) {
                         return containerItemCopy;
                     }
 
-                    if (player != null) {
-                        if (!player.inventory.addItemStackToInventory(containerItemCopy))
-                            player.dropItem(containerItemCopy, false, false);
+                    if (!player.inventory.addItemStackToInventory(containerItemCopy)) {
+                        player.dropItem(containerItemCopy, false, false);
                     }
                 }
             }
@@ -96,7 +96,7 @@ public class FoodStats implements IFoodBehavior {
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, List<String> lines) {
+    public void addInformation(@NotNull ItemStack itemStack, List<String> lines) {
         if (potionEffects.length > 0) {
             PotionEffect[] effects = new PotionEffect[potionEffects.length];
             for (int i = 0; i < potionEffects.length; i++) {

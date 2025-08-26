@@ -16,6 +16,7 @@ public class EnchantmentCanApplyMixin {
     @ModifyReturnValue(method = "canApply", at = @At("RETURN"))
     private boolean enchantmentCanApply(boolean originalResult, @Local(ordinal = 0) ItemStack stack) {
         if (stack.getItem() instanceof IGTTool) {
+            // noinspection ConstantValue
             return originalResult && stack.getItem().canApplyAtEnchantingTable(stack, ((Enchantment) (Object) this));
         }
         return originalResult;

@@ -247,7 +247,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
         }
         // Don't write tape NBT if not taped, to stack with ones from JEI
         if (isTaped) {
-            data.setBoolean(TAPED_NBT, isTaped);
+            data.setBoolean(TAPED_NBT, true);
             data.setTag("Inventory", inventory.serializeNBT());
         }
     }

@@ -433,8 +433,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public int getWeakPower(@NotNull IBlockState blockState, @NotNull IBlockAccess blockAccess, @NotNull BlockPos pos,
                             @NotNull EnumFacing side) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(blockAccess, pos);
-        return metaTileEntity == null ? 0 :
-                metaTileEntity.getOutputRedstoneSignal(side == null ? null : side.getOpposite());
+        return metaTileEntity == null ? 0 : metaTileEntity.getOutputRedstoneSignal(side.getOpposite());
     }
 
     @Override

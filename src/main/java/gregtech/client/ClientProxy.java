@@ -196,7 +196,7 @@ public class ClientProxy extends CommonProxy {
             tooltips = FluidTooltipUtil.getFluidTooltip(itemStack.getTagCompound().getString("FluidName"));
 
             // GTCE Cells, Forestry cans, some other containers
-            if (tooltips == null || tooltips.size() == 0) {
+            if (tooltips.size() == 0) {
                 // if (itemStack.getItem() instanceof ItemBlock && ((ItemBlock) itemStack.getItem()).getBlock() ==
                 // GregTechAPI.MACHINE && itemStack.getItemDamage())
                 NBTTagCompound compound = itemStack.getTagCompound();
@@ -214,11 +214,9 @@ public class ClientProxy extends CommonProxy {
             tooltips = FluidTooltipUtil.getFluidTooltip(Materials.Lava.getFluid());
         }
 
-        if (tooltips != null) {
-            for (String s : tooltips) {
-                if (s == null || s.isEmpty()) continue;
-                event.getToolTip().add(s);
-            }
+        for (String s : tooltips) {
+            if (s == null || s.isEmpty()) continue;
+            event.getToolTip().add(s);
         }
     }
 
