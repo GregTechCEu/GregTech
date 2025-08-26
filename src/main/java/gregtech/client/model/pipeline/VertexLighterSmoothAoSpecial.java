@@ -120,6 +120,7 @@ public class VertexLighterSmoothAoSpecial extends VertexLighterFlatSpecial {
         return l;
     }
 
+    @SuppressWarnings("PointlessArithmeticExpression")
     protected float getAo(float x, float y, float z) {
         int sx = x < 0 ? 1 : 2;
         int sy = y < 0 ? 1 : 2;
