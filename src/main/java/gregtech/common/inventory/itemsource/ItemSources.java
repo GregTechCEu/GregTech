@@ -48,15 +48,13 @@ public class ItemSources implements IItemList {
             is.computeItemHandler();
             is.update();
         });
-        this.handlerInfoList.forEach(source -> {
-            source.getStoredItems().forEach((stack, amount) -> {
-                itemInfoMap.putIfAbsent(stack, new NetworkItemInfo(stack));
-                itemInfoMap.computeIfPresent(stack, (stackKey1, itemInfo) -> {
-                    itemInfo.addToSource(source, source.getStoredItems().get(stack));
-                    return itemInfo;
-                });
+        this.handlerInfoList.forEach(source -> source.getStoredItems().forEach((stack, amount) -> {
+            itemInfoMap.putIfAbsent(stack, new NetworkItemInfo(stack));
+            itemInfoMap.computeIfPresent(stack, (stackKey1, itemInfo) -> {
+                itemInfo.addToSource(source, source.getStoredItems().get(stack));
+                return itemInfo;
             });
-        });
+        }));
     }
 
     @Override

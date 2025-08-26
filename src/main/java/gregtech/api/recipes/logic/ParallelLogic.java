@@ -183,17 +183,17 @@ public abstract class ParallelLogic {
 
         Object2IntMap<ItemStack> appendedResultMap = new Object2IntLinkedOpenCustomHashMap<>(recipeOutputs,
                 ItemStackHashStrategy.comparingAllButCount());
-        recipeOutputsToAppend
-                .forEach((stackKey, amt) -> appendedResultMap.merge(stackKey, amt * multiplier, Integer::sum));
+        recipeOutputsToAppend.forEach((stack, amount) -> appendedResultMap.merge(stack,
+                amount * multiplier, Integer::sum));
 
         while (minMultiplier != maxMultiplier) {
             overlayedItemHandler.reset();
 
             if (currentMultiplier != previousMultiplier) {
                 int diff = currentMultiplier - previousMultiplier;
-                recipeOutputsToAppend.forEach((sk, amt) -> {
-                    appendedResultMap.put(sk, appendedResultMap.get(sk) + (amt * diff));
-                });
+
+                recipeOutputsToAppend.forEach((stack, amount) -> appendedResultMap.merge(stack,
+                        amount * diff, Integer::sum));
                 previousMultiplier = currentMultiplier;
             }
 

@@ -211,9 +211,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     public void initializeClipboard(ItemStack stack) {
         ((InaccessibleItemStackHandler) this.itemInventory).setStackInSlot(0, stack.copy());
-        writeCustomData(INIT_CLIPBOARD_NBT, buf -> {
-            buf.writeCompoundTag(stack.getTagCompound());
-        });
+        writeCustomData(INIT_CLIPBOARD_NBT, buf -> buf.writeCompoundTag(stack.getTagCompound()));
     }
 
     public void setClipboard(ItemStack stack) {

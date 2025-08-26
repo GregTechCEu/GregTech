@@ -394,9 +394,7 @@ public final class ToolItems {
             if (tool.getOreDictName() != null) {
                 OreDictUnifier.registerOre(stack, tool.getOreDictName());
             }
-            tool.getSecondaryOreDicts().forEach(oreDict -> {
-                OreDictUnifier.registerOre(stack, oreDict);
-            });
+            tool.getSecondaryOreDicts().forEach(oreDict -> OreDictUnifier.registerOre(stack, oreDict));
         });
     }
 }

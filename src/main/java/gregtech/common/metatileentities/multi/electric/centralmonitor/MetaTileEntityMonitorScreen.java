@@ -480,9 +480,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             public ItemStack extractItem(int slot, int amount, boolean simulate) {
                 if (!getWorld().isRemote && !getStackInSlot(slot).isEmpty() && !simulate) {
                     unloadPlugin();
-                    writeCustomData(GregtechDataCodes.UPDATE_PLUGIN_ITEM, packetBuffer -> {
-                        packetBuffer.writeItemStack(ItemStack.EMPTY);
-                    });
+                    writeCustomData(GregtechDataCodes.UPDATE_PLUGIN_ITEM,
+                            packetBuffer -> packetBuffer.writeItemStack(ItemStack.EMPTY));
                 }
                 return super.extractItem(slot, amount, simulate);
             }

@@ -177,9 +177,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
         }
 
         if (stateChanged) {
-            writeCustomData(GregtechDataCodes.PIPE_OPTICAL_ACTIVE, buf -> {
-                buf.writeBoolean(this.isActive);
-            });
+            writeCustomData(GregtechDataCodes.PIPE_OPTICAL_ACTIVE, buf -> buf.writeBoolean(this.isActive));
             notifyBlockUpdate();
             markDirty();
         }

@@ -48,9 +48,8 @@ public class RecyclingRecipes {
     // TODO - Work on durations and EUt's
 
     public static void init() {
-        GregTechAPI.RECYCLING_MANAGER.iterate((itemAndMetadata, materialInfo) -> {
-            registerRecyclingRecipes(itemAndMetadata.toItemStack(), materialInfo.getMaterials(), false, null);
-        });
+        GregTechAPI.RECYCLING_MANAGER.iterate((itemAndMetadata, materialInfo) -> registerRecyclingRecipes(
+                itemAndMetadata.toItemStack(), materialInfo.getMaterials(), false, null));
     }
 
     public static void registerRecyclingRecipes(ItemStack input, List<MaterialStack> components,

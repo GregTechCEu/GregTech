@@ -263,9 +263,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void setFaceBlocked(EnumFacing side, boolean blocked) {
         if (!world.isRemote && canHaveBlockedFaces()) {
             blockedConnections = withSideConnection(blockedConnections, side, blocked);
-            writeCustomData(UPDATE_BLOCKED_CONNECTIONS, buf -> {
-                buf.writeVarInt(blockedConnections);
-            });
+            writeCustomData(UPDATE_BLOCKED_CONNECTIONS, buf -> buf.writeVarInt(blockedConnections));
             markDirty();
             WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
             PipeNet<?> net = worldPipeNet.getNetFromPos(pos);
