@@ -409,7 +409,7 @@ public class GTUtility {
      *         modifications in list will reflect on item handler and wise-versa
      */
     public static List<ItemStack> itemHandlerToList(IItemHandlerModifiable inputs) {
-        return new AbstractList<ItemStack>() {
+        return new AbstractList<>() {
 
             @Override
             public ItemStack set(int index, ItemStack element) {
@@ -436,7 +436,7 @@ public class GTUtility {
      */
     public static List<FluidStack> fluidHandlerToList(IMultipleTankHandler fluidInputs) {
         List<IMultipleTankHandler.ITankEntry> backedList = fluidInputs.getFluidTanks();
-        return new AbstractList<FluidStack>() {
+        return new AbstractList<>() {
 
             @Override
             public FluidStack set(int index, FluidStack element) {

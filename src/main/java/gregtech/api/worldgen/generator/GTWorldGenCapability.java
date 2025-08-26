@@ -66,7 +66,7 @@ public class GTWorldGenCapability {
 
     public static final Callable<GTWorldGenCapability> FACTORY = GTWorldGenCapability::new;
 
-    public static final IStorage<GTWorldGenCapability> STORAGE = new IStorage<GTWorldGenCapability>() {
+    public static final IStorage<GTWorldGenCapability> STORAGE = new IStorage<>() {
 
         @Override
         public NBTBase writeNBT(Capability<GTWorldGenCapability> capability, GTWorldGenCapability instance,

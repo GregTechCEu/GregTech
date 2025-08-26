@@ -18,7 +18,7 @@ public class SimpleCapabilityManager {
      * Forge is stupid enough to disallow null storage and factory
      */
     public static <T> void registerCapabilityWithNoDefault(Class<T> capabilityClass) {
-        CapabilityManager.INSTANCE.register(capabilityClass, new Capability.IStorage<T>() {
+        CapabilityManager.INSTANCE.register(capabilityClass, new Capability.IStorage<>() {
 
             @Override
             public NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side) {
