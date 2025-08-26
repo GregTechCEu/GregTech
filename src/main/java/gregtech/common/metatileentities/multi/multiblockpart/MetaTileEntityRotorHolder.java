@@ -447,7 +447,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
         private void damageRotor(int damageAmount) {
             if (!hasRotor()) return;
 
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             if (getTurbineBehavior().getPartMaxDurability(getTurbineStack()) <=
                     AbstractMaterialPartBehavior.getPartDamage(getTurbineStack()) + damageAmount) {
                 var holder = (MultiblockFuelRecipeLogic) getController().getRecipeLogic();
