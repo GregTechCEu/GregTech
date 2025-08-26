@@ -420,7 +420,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
         private int getRotorColor() {
             if (!hasRotor()) return -1;
             // noinspection ConstantConditions
-            return getTurbineBehavior().getPartMaterial(getStackInSlot(0)).getMaterialRGB();
+            return AbstractMaterialPartBehavior.getPartMaterial(getStackInSlot(0)).getMaterialRGB();
         }
 
         private int getRotorDurabilityPercent() {
@@ -434,19 +434,20 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
             if (!hasRotor()) return -1;
 
             // noinspection ConstantConditions
-            return getTurbineBehavior().getRotorEfficiency(getTurbineStack());
+            return TurbineRotorBehavior.getRotorEfficiency(getTurbineStack());
         }
 
         private int getRotorPower() {
             if (!hasRotor()) return -1;
 
             // noinspection ConstantConditions
-            return getTurbineBehavior().getRotorPower(getTurbineStack());
+            return TurbineRotorBehavior.getRotorPower(getTurbineStack());
         }
 
         private void damageRotor(int damageAmount) {
             if (!hasRotor()) return;
 
+            //noinspection ConstantConditions
             if (getTurbineBehavior().getPartMaxDurability(getTurbineStack()) <=
                     AbstractMaterialPartBehavior.getPartDamage(getTurbineStack()) + damageAmount) {
                 var holder = (MultiblockFuelRecipeLogic) getController().getRecipeLogic();
