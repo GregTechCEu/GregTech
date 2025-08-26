@@ -21,13 +21,11 @@ public class GTBoatRenderer extends RenderBoat {
 
     @Override
     protected ResourceLocation getEntityTexture(EntityBoat entity) {
-        if (entity instanceof GTBoatEntity) {
-            switch (((GTBoatEntity) entity).getGTBoatType()) {
-                case RUBBER_WOOD_BOAT:
-                    return RUBBER_WOOD_BOAT_TEXTURE;
-                case TREATED_WOOD_BOAT:
-                    return TREATED_WOOD_BOAT_TEXTURE;
-            }
+        if (entity instanceof GTBoatEntity gtBoatEntity) {
+            return switch (gtBoatEntity.getGTBoatType()) {
+                case RUBBER_WOOD_BOAT -> RUBBER_WOOD_BOAT_TEXTURE;
+                case TREATED_WOOD_BOAT -> TREATED_WOOD_BOAT_TEXTURE;
+            };
         }
         return super.getEntityTexture(entity);
     }

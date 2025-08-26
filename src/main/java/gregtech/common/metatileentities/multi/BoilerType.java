@@ -93,16 +93,11 @@ public enum BoilerType {
     }
 
     public int runtimeBoost(int ticks) {
-        switch (this) {
-            case BRONZE:
-                return ticks * 2;
-            case STEEL:
-                return ticks * 150 / 100;
-            case TITANIUM:
-                return ticks * 120 / 100;
-            case TUNGSTENSTEEL:
-                return ticks;
-        }
-        return 0;
+        return switch (this) {
+            case BRONZE -> ticks * 2;
+            case STEEL -> ticks * 150 / 100;
+            case TITANIUM -> ticks * 120 / 100;
+            case TUNGSTENSTEEL -> ticks;
+        };
     }
 }

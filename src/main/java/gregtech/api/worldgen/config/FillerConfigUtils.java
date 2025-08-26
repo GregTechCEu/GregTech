@@ -40,14 +40,11 @@ public class FillerConfigUtils {
             }
             Preconditions.checkArgument(object.has("type"), "Missing required type for block state predicate");
             String predicateType = object.get("type").getAsString();
-            switch (predicateType) {
-                case "weight_random":
-                    return createWeightRandomStateFiller(object);
-                case "state_match":
-                    return createStateMatchFiller(object);
-                default:
-                    throw new IllegalArgumentException("Unknown filler match type: " + predicateType);
-            }
+            return switch (predicateType) {
+                case "weight_random" -> createWeightRandomStateFiller(object);
+                case "state_match" -> createStateMatchFiller(object);
+                default -> throw new IllegalArgumentException("Unknown filler match type: " + predicateType);
+            };
         } else {
             throw new IllegalArgumentException("Unknown block state type " + element);
         }

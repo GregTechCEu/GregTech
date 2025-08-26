@@ -294,38 +294,22 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public void addCollisionBoundingBox(List<IndexedCuboid6> collisionList) {
-        AxisAlignedBB aabb;
-        switch (this.getFrontFacing()) {
-            case SOUTH:
-                aabb = CLIPBOARD_AABB_SOUTH;
-                break;
-            case WEST:
-                aabb = CLIPBOARD_AABB_WEST;
-                break;
-            case EAST:
-                aabb = CLIPBOARD_AABB_EAST;
-                break;
-            default:
-                aabb = CLIPBOARD_AABB_NORTH;
-        }
+        AxisAlignedBB aabb = switch (this.getFrontFacing()) {
+            case SOUTH -> CLIPBOARD_AABB_SOUTH;
+            case WEST -> CLIPBOARD_AABB_WEST;
+            case EAST -> CLIPBOARD_AABB_EAST;
+            default -> CLIPBOARD_AABB_NORTH;
+        };
         collisionList.add(new IndexedCuboid6(null, aabb));
     }
 
     public IndexedCuboid6 getPageCuboid() {
-        AxisAlignedBB aabb;
-        switch (this.getFrontFacing()) {
-            case SOUTH:
-                aabb = PAGE_AABB_SOUTH;
-                break;
-            case WEST:
-                aabb = PAGE_AABB_WEST;
-                break;
-            case EAST:
-                aabb = PAGE_AABB_EAST;
-                break;
-            default:
-                aabb = PAGE_AABB_NORTH;
-        }
+        AxisAlignedBB aabb = switch (this.getFrontFacing()) {
+            case SOUTH -> PAGE_AABB_SOUTH;
+            case WEST -> PAGE_AABB_WEST;
+            case EAST -> PAGE_AABB_EAST;
+            default -> PAGE_AABB_NORTH;
+        };
         return new IndexedCuboid6(null, aabb);
     }
 

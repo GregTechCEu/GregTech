@@ -153,16 +153,12 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
     }
 
     private static EntityEquipmentSlot getSlotByIndex(int index) {
-        switch (index) {
-            case 0:
-                return EntityEquipmentSlot.FEET;
-            case 1:
-                return EntityEquipmentSlot.LEGS;
-            case 2:
-                return EntityEquipmentSlot.CHEST;
-            default:
-                return EntityEquipmentSlot.HEAD;
-        }
+        return switch (index) {
+            case 0 -> EntityEquipmentSlot.FEET;
+            case 1 -> EntityEquipmentSlot.LEGS;
+            case 2 -> EntityEquipmentSlot.CHEST;
+            default -> EntityEquipmentSlot.HEAD;
+        };
     }
 
     public class ArmorMetaValueItem extends MetaValueItem {
@@ -225,17 +221,12 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
             return false;
         }
 
-        switch (slot) {
-            case HEAD:
-                return enchantment.type.canEnchantItem(Items.DIAMOND_HELMET);
-            case CHEST:
-                return enchantment.type.canEnchantItem(Items.DIAMOND_CHESTPLATE);
-            case LEGS:
-                return enchantment.type.canEnchantItem(Items.DIAMOND_LEGGINGS);
-            case FEET:
-                return enchantment.type.canEnchantItem(Items.DIAMOND_BOOTS);
-            default:
-                return enchantment.isAllowedOnBooks();
-        }
+        return switch (slot) {
+            case HEAD -> enchantment.type.canEnchantItem(Items.DIAMOND_HELMET);
+            case CHEST -> enchantment.type.canEnchantItem(Items.DIAMOND_CHESTPLATE);
+            case LEGS -> enchantment.type.canEnchantItem(Items.DIAMOND_LEGGINGS);
+            case FEET -> enchantment.type.canEnchantItem(Items.DIAMOND_BOOTS);
+            default -> enchantment.isAllowedOnBooks();
+        };
     }
 }

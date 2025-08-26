@@ -117,14 +117,12 @@ public class GTBoatEntity extends EntityBoat {
 
     @Override
     public ItemStack getPickedResult(RayTraceResult ray) {
-        switch (getGTBoatType()) {
-            case RUBBER_WOOD_BOAT:
-                return MetaItems.RUBBER_WOOD_BOAT.getStackForm();
-            case TREATED_WOOD_BOAT:
-                return MetaItems.TREATED_WOOD_BOAT.getStackForm();
-            default:
-                return ItemStack.EMPTY;
-        }
+        return switch (getGTBoatType()) {
+            case RUBBER_WOOD_BOAT -> MetaItems.RUBBER_WOOD_BOAT.getStackForm();
+            case TREATED_WOOD_BOAT -> MetaItems.TREATED_WOOD_BOAT.getStackForm();
+            // noinspection UnnecessaryDefault
+            default -> ItemStack.EMPTY;
+        };
     }
 
     /**
@@ -151,13 +149,10 @@ public class GTBoatEntity extends EntityBoat {
     }
 
     public GTBoatType getGTBoatType() {
-        switch (this.dataManager.get(GT_BOAT_TYPE)) {
-            case 1:
-                return GTBoatType.TREATED_WOOD_BOAT;
-            case 0:
-            default:
-                return GTBoatType.RUBBER_WOOD_BOAT;
-        }
+        return switch (this.dataManager.get(GT_BOAT_TYPE)) {
+            case 1 -> GTBoatType.TREATED_WOOD_BOAT;
+            default -> GTBoatType.RUBBER_WOOD_BOAT;
+        };
     }
 
     @Override

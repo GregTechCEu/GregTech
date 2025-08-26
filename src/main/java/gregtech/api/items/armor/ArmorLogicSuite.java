@@ -134,16 +134,11 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic, IItemHUDPro
     }
 
     protected float getAbsorption(ItemStack itemStack) {
-        switch (this.getEquipmentSlot(itemStack)) {
-            case HEAD:
-            case FEET:
-                return 0.15F;
-            case CHEST:
-                return 0.4F;
-            case LEGS:
-                return 0.3F;
-            default:
-                return 0.0F;
-        }
+        return switch (this.getEquipmentSlot(itemStack)) {
+            case HEAD, FEET -> 0.15F;
+            case CHEST -> 0.4F;
+            case LEGS -> 0.3F;
+            default -> 0.0F;
+        };
     }
 }

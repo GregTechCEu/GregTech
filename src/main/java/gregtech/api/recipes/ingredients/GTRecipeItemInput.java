@@ -229,16 +229,13 @@ public class GTRecipeItemInput extends GTRecipeInput {
 
     @Override
     public String toString() {
-        switch (this.inputStacks.length) {
-            case 0:
-                return amount + "x[]";
-            case 1:
-                return amount + "x" + toStringWithoutQuantity(this.inputStacks[0]);
-            default:
-                return amount + "x[" + Arrays.stream(this.inputStacks)
-                        .map(GTRecipeItemInput::toStringWithoutQuantity)
-                        .collect(Collectors.joining("|")) + "]";
-        }
+        return switch (this.inputStacks.length) {
+            case 0 -> amount + "x[]";
+            case 1 -> amount + "x" + toStringWithoutQuantity(this.inputStacks[0]);
+            default -> amount + "x[" + Arrays.stream(this.inputStacks)
+                    .map(GTRecipeItemInput::toStringWithoutQuantity)
+                    .collect(Collectors.joining("|")) + "]";
+        };
     }
 
     private static String toStringWithoutQuantity(ItemStack stack) {

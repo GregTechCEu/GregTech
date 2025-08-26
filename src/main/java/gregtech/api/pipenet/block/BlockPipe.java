@@ -86,30 +86,16 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
         if (side == null)
             return new Cuboid6(min, min, min, max, max, max);
-        Cuboid6 cuboid;
-        switch (side) {
-            case WEST:
-                cuboid = new Cuboid6(faceMin, min, min, min, max, max);
-                break;
-            case EAST:
-                cuboid = new Cuboid6(max, min, min, faceMax, max, max);
-                break;
-            case NORTH:
-                cuboid = new Cuboid6(min, min, faceMin, max, max, min);
-                break;
-            case SOUTH:
-                cuboid = new Cuboid6(min, min, max, max, max, faceMax);
-                break;
-            case UP:
-                cuboid = new Cuboid6(min, max, min, max, faceMax, max);
-                break;
-            case DOWN:
-                cuboid = new Cuboid6(min, faceMin, min, max, min, max);
-                break;
-            default:
-                cuboid = new Cuboid6(min, min, min, max, max, max);
-        }
-        return cuboid;
+        return switch (side) {
+            case WEST -> new Cuboid6(faceMin, min, min, min, max, max);
+            case EAST -> new Cuboid6(max, min, min, faceMax, max, max);
+            case NORTH -> new Cuboid6(min, min, faceMin, max, max, min);
+            case SOUTH -> new Cuboid6(min, min, max, max, max, faceMax);
+            case UP -> new Cuboid6(min, max, min, max, faceMax, max);
+            case DOWN -> new Cuboid6(min, faceMin, min, max, min, max);
+            // noinspection UnnecessaryDefault
+            default -> new Cuboid6(min, min, min, max, max, max);
+        };
     }
 
     /**
