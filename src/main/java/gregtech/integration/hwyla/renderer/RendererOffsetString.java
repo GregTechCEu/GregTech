@@ -16,7 +16,7 @@ public class RendererOffsetString implements IWailaTooltipRenderer {
     public Dimension getSize(String[] params, IWailaCommonAccessor accessor) {
         int x = Integer.parseInt(params[1]);
         int y = Integer.parseInt(params[2]);
-        return new Dimension(x + DisplayUtil.getDisplayWidth(params[0]), y + (params[0].equals("") ? 0 : 8));
+        return new Dimension(x + DisplayUtil.getDisplayWidth(params[0]), y + (params[0].isEmpty() ? 0 : 8));
     }
 
     @Override
