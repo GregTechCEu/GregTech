@@ -76,8 +76,7 @@ public class ToolEventHandlers {
     public static void onPlayerDestroyItem(@NotNull PlayerDestroyItemEvent event) {
         ItemStack original = event.getOriginal();
         Item item = original.getItem();
-        if (item instanceof IGTTool) {
-            IGTTool def = (IGTTool) item;
+        if (item instanceof IGTTool def) {
             ItemStack brokenStack = def.getToolStats().getBrokenStack();
             // Transfer over remaining charge to power units
             if (brokenStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null) && def.isElectric()) {
@@ -115,13 +114,11 @@ public class ToolEventHandlers {
         /*
          * Handle item frame power unit duping
          */
-        if (item instanceof IGTTool) {
+        if (item instanceof IGTTool def) {
             Entity entity = event.getTarget();
-            if (entity instanceof EntityItemFrame) {
-                IGTTool def = (IGTTool) item;
+            if (entity instanceof EntityItemFrame itemFrame) {
                 ItemStack brokenStack = def.getToolStats().getBrokenStack();
                 if (!brokenStack.isEmpty()) {
-                    EntityItemFrame itemFrame = (EntityItemFrame) entity;
                     itemFrame.processInitialInteract(event.getEntityPlayer(), event.getHand());
 
                     event.setCanceled(true);
@@ -385,8 +382,7 @@ public class ToolEventHandlers {
             rColour = gColour = bColour = 0.2F +
                     (float) Math.sin((float) (System.currentTimeMillis() % (Math.PI * 800)) / 800) / 2;
 
-            if (tile instanceof TileEntityPipeBase) {
-                TileEntityPipeBase<?, ?> tepb = (TileEntityPipeBase<?, ?>) tile;
+            if (tile instanceof TileEntityPipeBase<?, ?>tepb) {
                 drawGridOverlays(facing, box, face -> tepb.isConnected(face) ||
                         tepb.getCoverableImplementation().getCoverAtSide(face) != null);
             } else if (tile instanceof MetaTileEntityHolder) {

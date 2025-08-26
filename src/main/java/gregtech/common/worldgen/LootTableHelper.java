@@ -99,8 +99,7 @@ public class LootTableHelper {
 
         @Override
         public JsonElement serialize(LootEntry src, Type typeOfSrc, JsonSerializationContext context) {
-            if (src instanceof SerializableLootEntry) {
-                SerializableLootEntry entry = (SerializableLootEntry) src;
+            if (src instanceof SerializableLootEntry entry) {
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("weight", entry.getWeight());
                 jsonObject.addProperty("quality", entry.getQuality());

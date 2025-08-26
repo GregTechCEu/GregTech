@@ -23,8 +23,7 @@ public class FacadeRegistryPlugin implements IRecipeRegistryPlugin {
     @NotNull
     @Override
     public <V> List<String> getRecipeCategoryUids(IFocus<V> focus) {
-        if (focus.getValue() instanceof ItemStack) {
-            ItemStack itemStack = (ItemStack) focus.getValue();
+        if (focus.getValue() instanceof ItemStack itemStack) {
             if (focus.getMode() == Mode.OUTPUT) {
                 if (MetaItems.COVER_FACADE.isItemEqual(itemStack)) {
                     // looking up recipes of facade cover

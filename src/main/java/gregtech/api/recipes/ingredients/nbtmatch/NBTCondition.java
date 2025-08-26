@@ -56,8 +56,7 @@ public class NBTCondition {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof NBTCondition) {
-            NBTCondition o = (NBTCondition) obj;
+        if (obj instanceof NBTCondition o) {
             return this.tagType == o.tagType && this.nbtKey.equals(o.nbtKey) && this.value.equals(o.value);
         }
         return false;

@@ -27,8 +27,7 @@ public class FluidKey {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FluidKey)) return false;
-        FluidKey fluidKey = (FluidKey) o;
+        if (!(o instanceof FluidKey fluidKey)) return false;
         if (!Objects.equals(fluid, fluidKey.fluid))
             return false;
         if (tag == null && fluidKey.tag != null) return false;

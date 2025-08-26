@@ -144,10 +144,9 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof BedrockFluidDepositDefinition))
+        if (!(obj instanceof BedrockFluidDepositDefinition objDeposit))
             return false;
 
-        BedrockFluidDepositDefinition objDeposit = (BedrockFluidDepositDefinition) obj;
         if (this.weight != objDeposit.getWeight())
             return false;
         if (this.getMinimumYield() != objDeposit.getMinimumYield())

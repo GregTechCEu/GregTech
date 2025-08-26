@@ -48,8 +48,7 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
             long eut = capability.getInfoProviderEUt();
             String text = null;
 
-            if (tileEntity instanceof IGregTechTileEntity) {
-                IGregTechTileEntity gtTileEntity = (IGregTechTileEntity) tileEntity;
+            if (tileEntity instanceof IGregTechTileEntity gtTileEntity) {
                 MetaTileEntity mte = gtTileEntity.getMetaTileEntity();
                 if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler ||
                         mte instanceof RecipeMapSteamMultiblockController) {

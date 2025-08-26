@@ -41,8 +41,7 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
     private NBTTagCompound nbtTagCompound;
 
     public static MonitorPluginBaseBehavior getBehavior(ItemStack itemStack) {
-        if (itemStack.getItem() instanceof MetaItem<?>) {
-            MetaItem<?> item = (MetaItem<?>) itemStack.getItem();
+        if (itemStack.getItem() instanceof MetaItem<?>item) {
             for (IItemBehaviour behaviour : item.getBehaviours(itemStack)) {
                 if (behaviour instanceof MonitorPluginBaseBehavior) {
                     return (MonitorPluginBaseBehavior) behaviour;

@@ -35,8 +35,7 @@ public class EnchantmentTableTweaks {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public static void onGuiOpen(GuiOpenEvent event) {
-        if (event.getGui() instanceof GuiContainer) {
-            GuiContainer guiContainer = (GuiContainer) event.getGui();
+        if (event.getGui() instanceof GuiContainer guiContainer) {
             onContainerOpen(guiContainer.inventorySlots);
         }
     }

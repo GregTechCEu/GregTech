@@ -153,8 +153,7 @@ public class SmartItemFilter extends BaseFilter {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof ItemAndMetadataAndStackSize)) return false;
-            ItemAndMetadataAndStackSize that = (ItemAndMetadataAndStackSize) o;
+            if (!(o instanceof ItemAndMetadataAndStackSize that)) return false;
             return itemAndMetadata.equals(that.itemAndMetadata);
         }
 

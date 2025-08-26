@@ -247,8 +247,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                     }
                 }
             } else { // check multi-block valid
-                if (holder != null && holder.getMetaTileEntity() instanceof MultiblockControllerBase) {
-                    MultiblockControllerBase entity = (MultiblockControllerBase) holder.getMetaTileEntity();
+                if (holder != null && holder.getMetaTileEntity() instanceof MultiblockControllerBase entity) {
                     if (entity.isStructureFormed()) {
                         if (!isValid) {
                             PatternMatchContext result = entity.structurePattern.checkPatternFastAt(

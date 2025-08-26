@@ -407,8 +407,7 @@ public class BlockPattern {
                                                                                                                  // controller
                                                                                                                  // first
         blocks.forEach((pos, block) -> { // adjust facing
-            if (block instanceof MetaTileEntity) {
-                MetaTileEntity metaTileEntity = (MetaTileEntity) block;
+            if (block instanceof MetaTileEntity metaTileEntity) {
                 boolean find = false;
                 for (EnumFacing enumFacing : facings) {
                     if (metaTileEntity.isValidFrontFacing(enumFacing)) {

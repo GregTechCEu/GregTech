@@ -124,8 +124,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     @Override
     protected boolean canWorkWithInputs() {
         MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-        if (controller instanceof RecipeMapMultiblockController) {
-            RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
+        if (controller instanceof RecipeMapMultiblockController distinctController) {
 
             if (distinctController.canBeDistinct() && distinctController.isDistinct() &&
                     getInputInventory().getSlots() > 0) {
@@ -190,8 +189,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         }
 
         // Distinct buses only apply to some multiblocks, so check the controller against a lower class
-        if (controller instanceof RecipeMapMultiblockController) {
-            RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
+        if (controller instanceof RecipeMapMultiblockController distinctController) {
 
             if (distinctController.canBeDistinct() && distinctController.isDistinct() &&
                     getInputInventory().getSlots() > 0) {

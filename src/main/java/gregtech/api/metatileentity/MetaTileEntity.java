@@ -1131,8 +1131,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
                 break;
             }
         }
-        if (side != null && capabilityResult instanceof IEnergyContainer) {
-            IEnergyContainer energyContainer = (IEnergyContainer) capabilityResult;
+        if (side != null && capabilityResult instanceof IEnergyContainer energyContainer) {
             if (!energyContainer.inputsEnergy(side) && !energyContainer.outputsEnergy(side)) {
                 return null; // do not provide energy container if it can't input or output energy at all
             }

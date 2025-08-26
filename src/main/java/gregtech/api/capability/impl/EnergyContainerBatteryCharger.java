@@ -55,13 +55,11 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
             long distributed = energy / batteries.size();
 
             for (Object item : batteries) {
-                if (item instanceof IElectricItem) {
-                    IElectricItem electricItem = (IElectricItem) item;
+                if (item instanceof IElectricItem electricItem) {
                     energy -= electricItem.charge(
                             Math.min(distributed, GTValues.V[electricItem.getTier()] * AMPS_PER_BATTERY), getTier(),
                             true, false);
-                } else if (item instanceof IEnergyStorage) {
-                    IEnergyStorage energyStorage = (IEnergyStorage) item;
+                } else if (item instanceof IEnergyStorage energyStorage) {
                     energy -= FeCompat.insertEu(energyStorage,
                             Math.min(distributed, GTValues.V[getTier()] * AMPS_PER_BATTERY));
                 }

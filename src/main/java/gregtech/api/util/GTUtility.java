@@ -891,8 +891,7 @@ public class GTUtility {
     public static FluidStack getFluidFromContainer(Object ingredient) {
         if (ingredient instanceof FluidStack) {
             return (FluidStack) ingredient;
-        } else if (ingredient instanceof ItemStack) {
-            ItemStack itemStack = (ItemStack) ingredient;
+        } else if (ingredient instanceof ItemStack itemStack) {
             IFluidHandlerItem fluidHandler = itemStack
                     .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandler != null)

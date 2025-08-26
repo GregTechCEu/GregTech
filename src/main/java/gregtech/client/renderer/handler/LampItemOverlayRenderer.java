@@ -15,8 +15,7 @@ public class LampItemOverlayRenderer {
         Item item = stack.getItem();
         if (item instanceof ItemBlock) {
             Block block = ((ItemBlock) item).getBlock();
-            if (block instanceof BlockLamp) {
-                BlockLamp lamp = (BlockLamp) block;
+            if (block instanceof BlockLamp lamp) {
                 return getOverlayType(lamp.isLightEnabled(stack), lamp.isBloomEnabled(stack));
             }
         }

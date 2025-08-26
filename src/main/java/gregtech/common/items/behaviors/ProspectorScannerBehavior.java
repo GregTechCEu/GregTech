@@ -169,10 +169,8 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
 
     @Override
     public void onUpdate(ItemStack itemStack, Entity entity) {
-        if (entity instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) entity;
-            if (player.openContainer instanceof ModularUIContainer) {
-                ModularUIContainer modularUIContainer = (ModularUIContainer) player.openContainer;
+        if (entity instanceof EntityPlayer player) {
+            if (player.openContainer instanceof ModularUIContainer modularUIContainer) {
                 if (modularUIContainer.getModularUI().holder instanceof PlayerInventoryHolder) {
                     if (((PlayerInventoryHolder) (modularUIContainer).getModularUI().holder).getCurrentItem() ==
                             itemStack) {

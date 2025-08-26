@@ -32,8 +32,7 @@ public class MapOreDictNBTIngredient extends MapOreDictIngredient {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof MapOreDictNBTIngredient) {
-            MapOreDictNBTIngredient other = (MapOreDictNBTIngredient) obj;
+        if (obj instanceof MapOreDictNBTIngredient other) {
             if (this.matcher != null && other.matcher != null) {
                 if (!this.matcher.equals(other.matcher)) {
                     return false;

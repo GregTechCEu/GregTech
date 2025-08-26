@@ -372,8 +372,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (!tagCompound.isEmpty())
             itemStack.setTagCompound(tagCompound);
         // TODO Clean this up
-        if (metaTileEntity.getHolder() instanceof MetaTileEntityHolder) {
-            MetaTileEntityHolder holder = (MetaTileEntityHolder) metaTileEntity.getHolder();
+        if (metaTileEntity.getHolder() instanceof MetaTileEntityHolder holder) {
             if (holder.hasCustomName()) {
                 itemStack.setStackDisplayName(holder.getName());
             }

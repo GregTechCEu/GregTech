@@ -56,11 +56,10 @@ public class RecipeRepairItemMixin {
         ItemStack stack1 = list.get(0);
         ItemStack stack2 = list.get(1);
 
-        if (!(stack1.getItem() instanceof IGTTool) || stack1.getItem() instanceof ItemGTToolbelt)
+        if (!(stack1.getItem() instanceof IGTTool first) || stack1.getItem() instanceof ItemGTToolbelt)
             return false;
 
         // items must be the same at this point
-        IGTTool first = (IGTTool) stack1.getItem();
         IGTTool second = (IGTTool) stack2.getItem();
 
         // must be same material

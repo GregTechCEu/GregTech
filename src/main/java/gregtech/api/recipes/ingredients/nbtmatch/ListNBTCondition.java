@@ -38,8 +38,7 @@ public class ListNBTCondition extends NBTCondition {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof ListNBTCondition) {
-            ListNBTCondition o = (ListNBTCondition) obj;
+        if (obj instanceof ListNBTCondition o) {
             return this.tagType == o.tagType && this.nbtKey.equals(o.nbtKey) && this.value.equals(o.value) &&
                     this.listTagType == o.listTagType;
         }

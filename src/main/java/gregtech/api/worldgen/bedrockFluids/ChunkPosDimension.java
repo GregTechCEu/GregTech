@@ -19,10 +19,9 @@ public class ChunkPosDimension extends ChunkPos {
         if (this == object)
             return true;
 
-        if (!(object instanceof ChunkPosDimension))
+        if (!(object instanceof ChunkPosDimension coordinatePair))
             return false;
 
-        ChunkPosDimension coordinatePair = (ChunkPosDimension) object;
         return this.dimension == coordinatePair.dimension && this.x == coordinatePair.x && this.z == coordinatePair.z;
     }
 

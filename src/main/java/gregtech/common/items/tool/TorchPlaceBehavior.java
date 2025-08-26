@@ -77,8 +77,7 @@ public class TorchPlaceBehavior implements IToolBehavior {
                                               EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!slotStack.isEmpty()) {
             Item slotItem = slotStack.getItem();
-            if (slotItem instanceof ItemBlock) {
-                ItemBlock slotItemBlock = (ItemBlock) slotItem;
+            if (slotItem instanceof ItemBlock slotItemBlock) {
                 Block slotBlock = slotItemBlock.getBlock();
                 if (slotBlock == Blocks.TORCH ||
                         OreDictUnifier.hasOreDictionary(slotStack, "torch") ||

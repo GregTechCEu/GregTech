@@ -59,8 +59,7 @@ public class PropertyMaterial extends PropertyHelper<Material> {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj instanceof PropertyMaterial) {
-            PropertyMaterial propertyMaterial = (PropertyMaterial) obj;
+        } else if (obj instanceof PropertyMaterial propertyMaterial) {
             return this.allowedValues.equals(propertyMaterial.allowedValues);
         } else {
             return false;

@@ -481,8 +481,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         width = width / height;
         screens = new MetaTileEntityMonitorScreen[width][height];
         for (IMultiblockPart part : this.getMultiblockParts()) {
-            if (part instanceof MetaTileEntityMonitorScreen) {
-                MetaTileEntityMonitorScreen screen = (MetaTileEntityMonitorScreen) part;
+            if (part instanceof MetaTileEntityMonitorScreen screen) {
                 screens[screen.getX()][screen.getY()] = screen;
             }
         }
@@ -569,9 +568,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                     for (BlockPos pos : parts) {
                         TileEntity tileEntity = getWorld().getTileEntity(pos);
                         if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity)
-                                .getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-                            MetaTileEntityMonitorScreen screen = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity)
-                                    .getMetaTileEntity();
+                                .getMetaTileEntity() instanceof MetaTileEntityMonitorScreen screen) {
                             screen.addToMultiBlock(this);
                             int sx = screen.getX(), sy = screen.getY();
                             if (sx < 0 || sx >= width || sy < 0 || sy >= height) {
@@ -649,9 +646,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 parts.forEach(partPos -> {
                     TileEntity tileEntity = this.getWorld().getTileEntity(partPos);
                     if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity)
-                            .getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-                        MetaTileEntityMonitorScreen part = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity)
-                                .getMetaTileEntity();
+                            .getMetaTileEntity() instanceof MetaTileEntityMonitorScreen part) {
                         int x = part.getX();
                         int y = part.getY();
                         screenGrids[x][y].setScreen(part);

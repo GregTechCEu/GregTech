@@ -785,8 +785,7 @@ public final class ToolHelper {
             tool = toolbeltPassthrough(tool);
             World world = player.world;
             IBlockState state = world.getBlockState(pos);
-            if (state.getBlock() instanceof IShearable) {
-                IShearable shearable = (IShearable) state.getBlock();
+            if (state.getBlock() instanceof IShearable shearable) {
                 if (shearable.isShearable(tool, world, pos)) {
                     List<ItemStack> shearedDrops = shearable.onSheared(tool, world, pos,
                             EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, tool));

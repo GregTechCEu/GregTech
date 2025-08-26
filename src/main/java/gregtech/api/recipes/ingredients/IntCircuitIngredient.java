@@ -93,16 +93,14 @@ public class IntCircuitIngredient extends GTRecipeInput {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof IntCircuitIngredient)) return false;
-        IntCircuitIngredient other = (IntCircuitIngredient) obj;
+        if (!(obj instanceof IntCircuitIngredient other)) return false;
         return this.isConsumable == other.isConsumable && this.matchingConfigurations == other.matchingConfigurations;
     }
 
     @Override
     public boolean equalIgnoreAmount(GTRecipeInput input) {
         if (this == input) return true;
-        if (!(input instanceof IntCircuitIngredient)) return false;
-        IntCircuitIngredient other = (IntCircuitIngredient) input;
+        if (!(input instanceof IntCircuitIngredient other)) return false;
         return this.matchingConfigurations == other.matchingConfigurations;
     }
 

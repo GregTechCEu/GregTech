@@ -22,8 +22,7 @@ public class LampInfoProvider implements IProbeInfoProvider {
     @Override
     public void addProbeInfo(ProbeMode mode, IProbeInfo info, EntityPlayer player, World world, IBlockState state,
                              IProbeHitData hitData) {
-        if (state.getBlock() instanceof BlockLamp) {
-            BlockLamp lamp = (BlockLamp) state.getBlock();
+        if (state.getBlock() instanceof BlockLamp lamp) {
             boolean inverted = lamp.isInverted(state);
             boolean bloomEnabled = lamp.isBloomEnabled(state);
             boolean lightEnabled = lamp.isLightEnabled(state);

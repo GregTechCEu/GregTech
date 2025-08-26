@@ -166,10 +166,9 @@ public class OreDepositDefinition implements IWorldgenDefinition {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof OreDepositDefinition))
+        if (!(obj instanceof OreDepositDefinition objDeposit))
             return false;
 
-        OreDepositDefinition objDeposit = (OreDepositDefinition) obj;
         if (this.weight != objDeposit.getWeight())
             return false;
         if (this.density != objDeposit.getDensity())

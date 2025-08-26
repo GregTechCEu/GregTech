@@ -30,8 +30,7 @@ public class SimpleItemInfo implements IItemInfo {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SimpleItemInfo)) return false;
-        SimpleItemInfo that = (SimpleItemInfo) o;
+        if (!(o instanceof SimpleItemInfo that)) return false;
         return itemStack.equals(that.itemStack);
     }
 

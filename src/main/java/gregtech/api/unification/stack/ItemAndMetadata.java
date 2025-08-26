@@ -45,9 +45,7 @@ public final class ItemAndMetadata {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ItemAndMetadata)) return false;
-
-        ItemAndMetadata that = (ItemAndMetadata) o;
+        if (!(o instanceof ItemAndMetadata that)) return false;
 
         if (itemDamage != that.itemDamage) return false;
         return item.equals(that.item);

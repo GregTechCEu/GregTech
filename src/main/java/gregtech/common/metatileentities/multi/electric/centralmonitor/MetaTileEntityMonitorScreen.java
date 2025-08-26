@@ -770,15 +770,11 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                     rayTraceResult.sideHit == controller.getFrontFacing()) {
                 int i, j;
                 TileEntity tileEntity = this.getWorld().getTileEntity(rayTraceResult.getBlockPos());
-                if (tileEntity instanceof IGregTechTileEntity &&
-                        ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-                    MetaTileEntityMonitorScreen screenHit = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity)
-                            .getMetaTileEntity();
+                if (tileEntity instanceof IGregTechTileEntity gtte &&
+                        gtte.getMetaTileEntity() instanceof MetaTileEntityMonitorScreen screenHit) {
                     if (controller == screenHit.getController()) {
-                        i = ((MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity())
-                                .getX() - this.getX();
-                        j = ((MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity())
-                                .getY() - this.getY();
+                        i = screenHit.getX() - this.getX();
+                        j = screenHit.getY() - this.getY();
                         double[] pos = handleRayTraceResult(rayTraceResult);
                         if ((i >= 0 && j >= 0)) {
                             pos[0] = (pos[0] + i) / this.scale;

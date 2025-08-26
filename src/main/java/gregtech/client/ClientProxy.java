@@ -180,8 +180,7 @@ public class ClientProxy extends CommonProxy {
         // Test for Items
         UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
 
-        if (itemStack.getItem() instanceof MetaOreDictItem) { // Test for OreDictItems
-            MetaOreDictItem oreDictItem = (MetaOreDictItem) itemStack.getItem();
+        if (itemStack.getItem() instanceof MetaOreDictItem oreDictItem) { // Test for OreDictItems
             Optional<String> oreDictName = OreDictUnifier.getOreDictionaryNames(itemStack).stream().findFirst();
             if (oreDictName.isPresent() && oreDictItem.OREDICT_TO_FORMULA.containsKey(oreDictName.get()) &&
                     !oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get()).isEmpty()) {

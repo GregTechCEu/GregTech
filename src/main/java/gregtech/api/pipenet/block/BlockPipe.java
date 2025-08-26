@@ -325,12 +325,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             }
         }
 
-        if (itemStack.getItem() instanceof ItemBlockPipe) {
+        if (itemStack.getItem() instanceof ItemBlockPipe<?, ?>itemBlockPipe) {
             IBlockState blockStateAtSide = world.getBlockState(pos.offset(side));
-            if (blockStateAtSide.getBlock() instanceof BlockFrame) {
-                ItemBlockPipe<?, ?> itemBlockPipe = (ItemBlockPipe<?, ?>) itemStack.getItem();
+            if (blockStateAtSide.getBlock() instanceof BlockFrame frameBlock) {
                 if (itemBlockPipe.blockPipe.getItemPipeType(itemStack) == getItemPipeType(itemStack)) {
-                    BlockFrame frameBlock = (BlockFrame) blockStateAtSide.getBlock();
                     boolean wasPlaced = frameBlock.replaceWithFramedPipe(world, pos.offset(side), blockStateAtSide,
                             entityPlayer, itemStack, side);
                     if (wasPlaced) {

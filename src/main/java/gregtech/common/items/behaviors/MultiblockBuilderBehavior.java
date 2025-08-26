@@ -35,9 +35,8 @@ public class MultiblockBuilderBehavior implements IItemBehaviour {
         TileEntity tileEntity = world.getTileEntity(pos);
         if (!(tileEntity instanceof IGregTechTileEntity)) return EnumActionResult.PASS;
         MetaTileEntity mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
-        if (!(mte instanceof MultiblockControllerBase)) return EnumActionResult.PASS;
+        if (!(mte instanceof MultiblockControllerBase multiblock)) return EnumActionResult.PASS;
         if (!player.canPlayerEdit(pos, side, player.getHeldItem(hand))) return EnumActionResult.FAIL;
-        MultiblockControllerBase multiblock = (MultiblockControllerBase) mte;
         if (world.isRemote) return EnumActionResult.SUCCESS;
 
         if (player.isSneaking()) {

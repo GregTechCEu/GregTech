@@ -54,8 +54,7 @@ public class PropertyStoneType extends PropertyHelper<StoneType> {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj instanceof PropertyStoneType) {
-            PropertyStoneType propertyStoneType = (PropertyStoneType) obj;
+        } else if (obj instanceof PropertyStoneType propertyStoneType) {
             return this.allowedValues.equals(propertyStoneType.allowedValues);
         } else {
             return false;

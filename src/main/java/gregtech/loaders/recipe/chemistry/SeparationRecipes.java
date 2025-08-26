@@ -91,8 +91,7 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         for (Item item : ForgeRegistries.ITEMS.getValuesCollection()) {
-            if (item instanceof ItemFood) {
-                ItemFood itemFood = (ItemFood) item;
+            if (item instanceof ItemFood itemFood) {
                 for (ItemStack itemStack : GTUtility.getAllSubItems(item)) {
                     int healAmount = itemFood.getHealAmount(itemStack);
                     float saturationModifier = itemFood.getSaturationModifier(itemStack);

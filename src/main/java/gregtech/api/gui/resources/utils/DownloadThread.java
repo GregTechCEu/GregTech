@@ -141,8 +141,7 @@ public class DownloadThread extends Thread {
         connection.addRequestProperty("User-Agent",
                 "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
         int responseCode = -1;
-        if (connection instanceof HttpURLConnection) {
-            HttpURLConnection httpConnection = (HttpURLConnection) connection;
+        if (connection instanceof HttpURLConnection httpConnection) {
             if (entry != null) {
                 if (entry.getEtag() != null) {
                     httpConnection.setRequestProperty("If-None-Match", entry.getEtag());

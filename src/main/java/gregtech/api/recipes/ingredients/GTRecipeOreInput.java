@@ -144,10 +144,9 @@ public class GTRecipeOreInput extends GTRecipeInput {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof GTRecipeOreInput)) {
+        if (!(obj instanceof GTRecipeOreInput other)) {
             return false;
         }
-        GTRecipeOreInput other = (GTRecipeOreInput) obj;
 
         if (this.amount != other.amount || this.isConsumable != other.isConsumable) return false;
         if (!Objects.equals(this.nbtMatcher, other.nbtMatcher)) return false;
@@ -158,10 +157,9 @@ public class GTRecipeOreInput extends GTRecipeInput {
     @Override
     public boolean equalIgnoreAmount(GTRecipeInput input) {
         if (this == input) return true;
-        if (!(input instanceof GTRecipeOreInput)) {
+        if (!(input instanceof GTRecipeOreInput other)) {
             return false;
         }
-        GTRecipeOreInput other = (GTRecipeOreInput) input;
 
         if (!Objects.equals(this.nbtMatcher, other.nbtMatcher)) return false;
         if (!Objects.equals(this.nbtCondition, other.nbtCondition)) return false;

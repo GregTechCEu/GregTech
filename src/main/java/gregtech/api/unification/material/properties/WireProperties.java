@@ -150,8 +150,7 @@ public class WireProperties implements IMaterialProperty {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof WireProperties)) return false;
-        WireProperties that = (WireProperties) o;
+        if (!(o instanceof WireProperties that)) return false;
         return voltage == that.voltage &&
                 amperage == that.amperage &&
                 lossPerBlock == that.lossPerBlock &&

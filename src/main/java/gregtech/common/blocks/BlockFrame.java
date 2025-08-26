@@ -149,8 +149,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
 
     public boolean removeFrame(World world, BlockPos pos, EntityPlayer player, ItemStack stack) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileEntityPipeBase<?, ?>) {
-            TileEntityPipeBase<?, ?> pipeTile = (TileEntityPipeBase<?, ?>) te;
+        if (te instanceof TileEntityPipeBase<?, ?>pipeTile) {
             Material frameMaterial = pipeTile.getFrameMaterial();
             if (frameMaterial != null) {
                 pipeTile.setFrameMaterial(null);

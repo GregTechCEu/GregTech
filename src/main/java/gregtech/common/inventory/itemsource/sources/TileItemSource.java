@@ -67,8 +67,7 @@ public class TileItemSource extends InventoryItemSource {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TileItemSource)) return false;
-        TileItemSource that = (TileItemSource) o;
+        if (!(o instanceof TileItemSource that)) return false;
         return blockPos.equals(that.blockPos) &&
                 accessSide == that.accessSide;
     }

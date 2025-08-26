@@ -123,8 +123,7 @@ public class TricorderBehavior implements IItemBehaviour {
                         new TextComponentTranslation(prop.getValue().toString())
                                 .setStyle(new Style().setColor(TextFormatting.AQUA))));
             }
-            if (state instanceof IExtendedBlockState) {
-                IExtendedBlockState extState = (IExtendedBlockState) state;
+            if (state instanceof IExtendedBlockState extState) {
                 for (Map.Entry<IUnlistedProperty<?>, Optional<?>> prop : extState.getUnlistedProperties().entrySet()) {
                     if (prop.getValue().isPresent()) {
                         list.add(new TextComponentTranslation("behavior.tricorder.state",
@@ -310,9 +309,8 @@ public class TricorderBehavior implements IItemBehaviour {
                 }
             }
 
-        } else if (tileEntity instanceof IPipeTile) {
+        } else if (tileEntity instanceof IPipeTile<?, ?>pipeTile) {
             // pipes need special name handling
-            IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
 
             if (pipeTile.getPipeBlock().getRegistryName() != null) {
                 list.add(new TextComponentTranslation("behavior.tricorder.block_name",
@@ -325,8 +323,7 @@ public class TricorderBehavior implements IItemBehaviour {
             }
 
             // pipe-specific info
-            if (tileEntity instanceof IDataInfoProvider) {
-                IDataInfoProvider provider = (IDataInfoProvider) tileEntity;
+            if (tileEntity instanceof IDataInfoProvider provider) {
 
                 list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
@@ -337,8 +334,7 @@ public class TricorderBehavior implements IItemBehaviour {
                 // getting fluid info always costs 500
                 energyCost += 500;
             }
-        } else if (tileEntity instanceof IDataInfoProvider) {
-            IDataInfoProvider provider = (IDataInfoProvider) tileEntity;
+        } else if (tileEntity instanceof IDataInfoProvider provider) {
 
             list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 

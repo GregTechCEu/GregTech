@@ -48,8 +48,7 @@ public class PositionedRect {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PositionedRect)) return false;
-        PositionedRect that = (PositionedRect) o;
+        if (!(o instanceof PositionedRect that)) return false;
         return position.equals(that.position) &&
                 size.equals(that.size);
     }

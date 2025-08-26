@@ -44,8 +44,7 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof MapItemStackNBTIngredient) {
-            MapItemStackNBTIngredient other = (MapItemStackNBTIngredient) obj;
+        if (obj instanceof MapItemStackNBTIngredient other) {
             if (this.stack.getItem() != other.stack.getItem()) {
                 return false;
             }

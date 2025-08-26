@@ -262,10 +262,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 .toArray(IBlockState[]::new))
                         .or(new TraceabilityPredicate(blockWorldState -> {
                             TileEntity tileEntity = blockWorldState.getTileEntity();
-                            if (!(tileEntity instanceof IPipeTile)) {
+                            if (!(tileEntity instanceof IPipeTile<?, ?>pipeTile)) {
                                 return false;
                             }
-                            IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
                             return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial());
                         }));
     }

@@ -148,11 +148,10 @@ public class ArmorUtils {
      * @return result of eating food
      */
     public static ActionResult<ItemStack> canEat(EntityPlayer player, ItemStack food) {
-        if (!(food.getItem() instanceof ItemFood)) {
+        if (!(food.getItem() instanceof ItemFood foodItem)) {
             return new ActionResult<>(EnumActionResult.FAIL, food);
         }
 
-        ItemFood foodItem = (ItemFood) food.getItem();
         if (player.getFoodStats().needFood()) {
             if (!player.isCreative()) {
                 food.setCount(food.getCount() - 1);

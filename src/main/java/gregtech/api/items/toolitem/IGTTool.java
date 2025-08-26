@@ -732,8 +732,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     @SideOnly(Side.CLIENT)
     default void definition$addInformation(@NotNull ItemStack stack, @Nullable World world,
                                            @NotNull List<String> tooltip, ITooltipFlag flag) {
-        if (!(stack.getItem() instanceof IGTTool)) return;
-        IGTTool tool = (IGTTool) stack.getItem();
+        if (!(stack.getItem() instanceof IGTTool tool)) return;
 
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) return;
