@@ -57,7 +57,7 @@ public class ColorUtility {
 
         private double[] params;
 
-        private WhitePoint(double X, double Y, double Z) {
+        WhitePoint(double X, double Y, double Z) {
             params = new double[] { X, Y, Z };
         }
 
