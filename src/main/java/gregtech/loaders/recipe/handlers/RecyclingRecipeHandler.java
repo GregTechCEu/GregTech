@@ -39,6 +39,7 @@ public class RecyclingRecipeHandler {
                 if (object instanceof OrePrefix)
                     return object == orePrefix;
                 else if (object instanceof Predicate)
+                    // noinspection unchecked
                     return ((Predicate<OrePrefix>) object).test(orePrefix);
                 else return false;
             })) orePrefix.addProcessingHandler(PropertyKey.DUST, RecyclingRecipeHandler::processCrushing);

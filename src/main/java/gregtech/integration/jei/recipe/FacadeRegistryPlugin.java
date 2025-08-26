@@ -11,7 +11,6 @@ import gregtech.common.items.behaviors.FacadeItem;
 
 import net.minecraft.item.ItemStack;
 
-import com.google.common.collect.Lists;
 import mezz.jei.api.recipe.*;
 import mezz.jei.api.recipe.IFocus.Mode;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +40,7 @@ public class FacadeRegistryPlugin implements IRecipeRegistryPlugin {
         return Collections.emptyList();
     }
 
+    @SuppressWarnings("unchecked")
     @NotNull
     @Override
     public <T extends IRecipeWrapper, V> List<T> getRecipeWrappers(IRecipeCategory<T> recipeCategory,
@@ -48,8 +48,8 @@ public class FacadeRegistryPlugin implements IRecipeRegistryPlugin {
         if (!VanillaRecipeCategoryUid.CRAFTING.equals(recipeCategory.getUid())) {
             return Collections.emptyList();
         }
-        if (focus.getValue() instanceof ItemStack) {
-            ItemStack itemStack = (ItemStack) focus.getValue();
+
+        if (focus.getValue() instanceof ItemStack itemStack) {
             if (focus.getMode() == Mode.OUTPUT) {
                 if (MetaItems.COVER_FACADE.isItemEqual(itemStack)) {
                     // looking up recipes of facade cover
@@ -64,11 +64,12 @@ public class FacadeRegistryPlugin implements IRecipeRegistryPlugin {
                 }
             }
         }
+
         return Collections.emptyList();
     }
 
     private static List<IRecipeWrapper> createFacadeRecipes(ItemStack itemStack) {
-        return Lists.newArrayList(createFacadeRecipe(itemStack, Materials.Iron, 4));
+        return Collections.singletonList(createFacadeRecipe(itemStack, Materials.Iron, 4));
     }
 
     private static IRecipeWrapper createFacadeRecipe(ItemStack itemStack, Material material, int facadeAmount) {

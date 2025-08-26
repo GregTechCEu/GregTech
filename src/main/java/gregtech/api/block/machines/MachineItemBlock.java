@@ -95,9 +95,11 @@ public class MachineItemBlock extends ItemBlock {
         if (superVal && !world.isRemote) {
             BlockPos possiblePipe = pos.offset(side.getOpposite());
             Block block = world.getBlockState(possiblePipe).getBlock();
-            if (block instanceof BlockPipe) {
-                IPipeTile pipeTile = ((BlockPipe<?, ?, ?>) block).getPipeTileEntity(world, possiblePipe);
-                if (pipeTile != null && ((BlockPipe<?, ?, ?>) block).canPipeConnectToBlock(pipeTile, side.getOpposite(),
+            if (block instanceof BlockPipe<?, ?, ?>blockPipe) {
+                // noinspection rawtypes
+                IPipeTile pipeTile = blockPipe.getPipeTileEntity(world, possiblePipe);
+                // noinspection unchecked
+                if (pipeTile != null && blockPipe.canPipeConnectToBlock(pipeTile, side.getOpposite(),
                         world.getTileEntity(pos))) {
                     pipeTile.setConnection(side, true, false);
                 }

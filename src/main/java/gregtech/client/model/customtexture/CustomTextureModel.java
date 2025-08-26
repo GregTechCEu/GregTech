@@ -181,16 +181,12 @@ public class CustomTextureModel implements IModel {
     @Override
     @NotNull
     public Optional<ModelBlock> asVanillaModel() {
-        return Optional.ofNullable(_asVanillaModel)
-                .<Optional<ModelBlock>>map(mh -> {
-                    try {
-                        return (Optional<ModelBlock>) mh.invokeExact(getVanillaParent());
-                    } catch (Throwable e1) {
-                        return Optional.empty();
-                    }
-                })
-                .filter(Optional::isPresent)
-                .orElse(Optional.ofNullable(modelInfo));
+        try {
+            // noinspection unchecked
+            return (Optional<ModelBlock>) _asVanillaModel.invokeExact(getVanillaParent());
+        } catch (Throwable ignored) {
+            return Optional.ofNullable(modelInfo);
+        }
     }
 
     private IModel deepCopyOrMissing(IModel newParent, Boolean ao, Boolean gui3d) {

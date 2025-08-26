@@ -157,6 +157,7 @@ public class ElectricItem implements IElectricItem, ICapabilityProvider {
     @Nullable
     @Override
     public <T> T getCapability(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
-        return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM ? (T) this : null;
+        return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM ?
+                GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM.cast(this) : null;
     }
 }

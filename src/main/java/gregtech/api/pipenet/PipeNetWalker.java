@@ -189,6 +189,7 @@ public abstract class PipeNetWalker<T extends IPipeTile<?, ?>> {
             if (!getBasePipeClass().isAssignableFrom(thisPipe.getClass())) {
                 return false;
             }
+            // noinspection unchecked
             currentPipe = (T) thisPipe;
         }
         T pipeTile = currentPipe;
@@ -203,6 +204,7 @@ public abstract class PipeNetWalker<T extends IPipeTile<?, ?>> {
 
             TileEntity tile = pipeTile.getNeighbor(accessSide);
             if (tile != null && getBasePipeClass().isAssignableFrom(tile.getClass())) {
+                // noinspection unchecked
                 T otherPipe = (T) tile;
                 if (!otherPipe.isConnected(accessSide.getOpposite()) ||
                         otherPipe.isFaceBlocked(accessSide.getOpposite()) || isWalked(otherPipe))

@@ -574,6 +574,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return getPipeTileEntity(tileEntityAtPos);
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     public IPipeTile<PipeType, NodeDataType> getPipeTileEntity(TileEntity tileEntityAtPos) {
         if (tileEntityAtPos instanceof IPipeTile &&
@@ -595,6 +596,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             cover = ((IPipeTile<?, ?>) other).getCoverableImplementation().getCoverAtSide(facing.getOpposite());
             if (cover != null && !cover.canPipePassThrough())
                 return false;
+            // noinspection unchecked
             return canPipesConnect(selfTile, facing, (IPipeTile<PipeType, NodeDataType>) other);
         }
         return canPipeConnectToBlock(selfTile, facing, other);
