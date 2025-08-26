@@ -75,11 +75,6 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     }
 
     @Override
-    public boolean hasFrontFacing() {
-        return true;
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             if (fluidInventory.getTankProperties().length > 0) {

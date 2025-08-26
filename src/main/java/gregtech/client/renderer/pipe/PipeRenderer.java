@@ -406,11 +406,6 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
-        return true;
-    }
-
-    @Override
     public boolean isAmbientOcclusion() {
         return true;
     }

@@ -31,10 +31,6 @@ public class EnchantmentHardHammer extends Enchantment {
         return 60;
     }
 
-    public int getMaxLevel() {
-        return 1;
-    }
-
     @Override
     public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack) {
         return super.canApplyAtEnchantingTable(stack) &&

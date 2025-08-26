@@ -124,11 +124,6 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
-        return true;
-    }
-
-    @Override
     public void renderBrightness(IBlockState state, float brightness) {}
 
     @Override

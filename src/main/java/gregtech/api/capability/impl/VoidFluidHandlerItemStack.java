@@ -66,11 +66,6 @@ public class VoidFluidHandlerItemStack extends FluidHandlerItemStack {
     }
 
     @Override
-    public boolean canFillFluidType(FluidStack fluid) {
-        return true;
-    }
-
-    @Override
     public boolean canDrainFluidType(FluidStack fluid) {
         return false;
     }

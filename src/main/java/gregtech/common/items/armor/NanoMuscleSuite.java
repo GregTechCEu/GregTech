@@ -117,11 +117,6 @@ public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist {
     }
 
     @Override
-    public EntityEquipmentSlot getEquipmentSlot(ItemStack itemStack) {
-        return SLOT;
-    }
-
-    @Override
     public void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage,
                             EntityEquipmentSlot equipmentSlot) {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);

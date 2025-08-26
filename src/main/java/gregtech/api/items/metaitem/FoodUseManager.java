@@ -23,9 +23,6 @@ public class FoodUseManager implements IItemBehaviour, IItemUseManager {
     }
 
     @Override
-    public void onItemUseStart(ItemStack stack, EntityPlayer player) {}
-
-    @Override
     public boolean canStartUsing(ItemStack stack, EntityPlayer player) {
         return player.getFoodStats().needFood() || foodStats.alwaysEdible(stack, player);
     }
@@ -39,12 +36,6 @@ public class FoodUseManager implements IItemBehaviour, IItemUseManager {
     public int getMaxItemUseDuration(ItemStack itemStack) {
         return 32;
     }
-
-    @Override
-    public void onItemUsingTick(ItemStack stack, EntityPlayer player, int count) {}
-
-    @Override
-    public void onPlayerStoppedItemUsing(ItemStack stack, EntityPlayer player, int timeLeft) {}
 
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, EntityPlayer player) {

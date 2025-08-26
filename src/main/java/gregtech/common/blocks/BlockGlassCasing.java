@@ -37,12 +37,6 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     }
 
     @Override
-    @NotNull
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
-    }
-
-    @Override
     public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
         return getState(state) == CasingType.TEMPERED_GLASS ? layer == BlockRenderLayer.TRANSLUCENT :
                 super.canRenderInLayer(state, layer);

@@ -62,11 +62,6 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public boolean isValidFrontFacing(EnumFacing facing) {
-        return true;
-    }
-
-    @Override
     protected boolean openGUIOnRightClick() {
         return false;
     }
