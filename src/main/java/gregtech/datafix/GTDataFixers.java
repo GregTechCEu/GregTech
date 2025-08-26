@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.IntStream;
 
-import static gregtech.api.GTValues.*;
-import static gregtech.common.metatileentities.MetaTileEntities.*;
-
 public final class GTDataFixers {
 
     public static final Logger LOGGER = LogManager.getLogger("GregTech DataFixers");
