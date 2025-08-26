@@ -1166,11 +1166,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             return recipeMap.getBuildActions();
         }
 
-        if (ignoredBuildActions == null) {
-            return Collections.emptyMap();
-        }
-
-        return ignoredBuildActions;
+        return ignoredBuildActions == null ? Collections.emptyMap() : ignoredBuildActions;
     }
 
     public boolean hasItemRecycling() {

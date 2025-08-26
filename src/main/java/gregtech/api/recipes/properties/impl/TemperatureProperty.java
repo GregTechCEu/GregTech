@@ -80,10 +80,6 @@ public final class TemperatureProperty extends RecipeProperty<Integer> {
      */
     public static void registerCoilType(int temperature, Material coilMaterial, String coilName) {
         Validate.notNull(coilName);
-        if (coilMaterial == null) {
-            registeredCoilTypes.put(temperature, coilName);
-        } else {
-            registeredCoilTypes.put(temperature, coilMaterial);
-        }
+        registeredCoilTypes.put(temperature, coilMaterial == null ? coilName : coilMaterial);
     }
 }
