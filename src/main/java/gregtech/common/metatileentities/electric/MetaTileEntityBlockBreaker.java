@@ -9,6 +9,7 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.util.BlockUtility;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GregFakePlayer;
+import gregtech.api.util.Mods;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 
@@ -45,6 +46,9 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.feed_the_beast.ftblib.lib.math.ChunkDimPos;
+import com.feed_the_beast.ftbutilities.data.ClaimedChunk;
+import com.feed_the_beast.ftbutilities.data.ClaimedChunks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,22 +87,32 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     public void update() {
         super.update();
 
-        if (!getWorld().isRemote) {
-            if (getOffsetTimer() % 5 == 0) {
-                pushItemsIntoNearbyHandlers(getOutputFacing());
+        World world = getWorld();
+        if (!world.isRemote) {
+            EntityPlayer fakePlayer = GregFakePlayer.get((WorldServer) world, getOwner());
+            BlockPos selfPos = getPos();
+            BlockPos lookingAtPos = selfPos.offset(getFrontFacing());
+
+            boolean canEditBlock = world.isBlockModifiable(fakePlayer, lookingAtPos);
+            if (Mods.FTB_UTILITIES.isModLoaded()) {
+                ClaimedChunks instance = ClaimedChunks.instance;
+                ClaimedChunk claimedChunk = instance
+                        .getChunk(new ChunkDimPos(lookingAtPos, world.provider.getDimension()));
+                if (claimedChunk != null) {
+                    canEditBlock &= claimedChunk.getTeam()
+                            .hasStatus(instance.universe.getPlayer(getOwner()),
+                                    claimedChunk.getData().getEditBlocksStatus());
+                }
             }
 
             if (breakProgressTicksLeft > 0) {
                 --breakProgressTicksLeft;
                 if (breakProgressTicksLeft == 0 && energyContainer.getEnergyStored() >= getEnergyPerBlockBreak()) {
-                    BlockPos blockPos = getPos().offset(getFrontFacing());
-                    IBlockState blockState = getWorld().getBlockState(blockPos);
-                    EntityPlayer entityPlayer = GregFakePlayer.get((WorldServer) getWorld());
-                    float hardness = blockState.getBlockHardness(getWorld(), blockPos);
+                    IBlockState blockState = getWorld().getBlockState(lookingAtPos);
+                    float hardness = blockState.getBlockHardness(getWorld(), lookingAtPos);
 
-                    if (hardness >= 0.0f && getWorld().isBlockModifiable(entityPlayer, blockPos) &&
-                            Math.abs(hardness - currentBlockHardness) < 0.5f) {
-                        List<ItemStack> drops = attemptBreakBlockAndObtainDrops(blockPos, blockState, entityPlayer);
+                    if (hardness >= 0.0f && canEditBlock && Math.abs(hardness - currentBlockHardness) < 0.5f) {
+                        List<ItemStack> drops = attemptBreakBlockAndObtainDrops(lookingAtPos, blockState, fakePlayer);
                         addToInventoryOrDropItems(drops);
                     }
 
@@ -107,18 +121,20 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
                 }
             }
 
-            if (breakProgressTicksLeft == 0 && isBlockRedstonePowered()) {
-                BlockPos blockPos = getPos().offset(getFrontFacing());
-                IBlockState blockState = getWorld().getBlockState(blockPos);
-                EntityPlayer entityPlayer = GregFakePlayer.get((WorldServer) getWorld());
-                float hardness = blockState.getBlockHardness(getWorld(), blockPos);
+            if (breakProgressTicksLeft == 0 && isBlockRedstonePowered() && canEditBlock) {
+                IBlockState blockState = getWorld().getBlockState(lookingAtPos);
+                float hardness = blockState.getBlockHardness(getWorld(), lookingAtPos);
                 boolean skipBlock = blockState.getMaterial() == Material.AIR ||
                         blockState.getBlock().isAir(blockState, getWorld(), getPos()) ||
                         blockState.getBlock() instanceof BlockLiquid;
-                if (hardness >= 0.0f && !skipBlock && getWorld().isBlockModifiable(entityPlayer, blockPos)) {
+                if (!skipBlock && hardness >= 0.0f) {
                     breakProgressTicksLeft = getTicksPerBlockBreak(hardness);
                     currentBlockHardness = hardness;
                 }
+            }
+
+            if (getOffsetTimer() % 5 == 0) {
+                pushItemsIntoNearbyHandlers(getOutputFacing());
             }
         }
     }
