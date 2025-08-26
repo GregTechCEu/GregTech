@@ -44,6 +44,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -179,19 +180,19 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacing = EnumFacing.VALUES[buf.readByte()];
@@ -290,7 +291,8 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.block_breaker.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_op", getEnergyPerBlockBreak()));

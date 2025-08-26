@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
 import mcjty.theoneprobe.TheOneProbe;
 import mcjty.theoneprobe.api.ITheOneProbe;
+import org.jetbrains.annotations.NotNull;
 
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_TOP,
@@ -23,7 +24,7 @@ import mcjty.theoneprobe.api.ITheOneProbe;
 public class TheOneProbeModule extends IntegrationSubmodule {
 
     @Override
-    public void init(FMLInitializationEvent event) {
+    public void init(@NotNull FMLInitializationEvent event) {
         getLogger().info("TheOneProbe found. Enabling integration...");
         ITheOneProbe oneProbe = TheOneProbe.theOneProbeImp;
         oneProbe.registerProvider(new ElectricContainerInfoProvider());

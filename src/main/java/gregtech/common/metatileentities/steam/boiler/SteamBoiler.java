@@ -150,19 +150,19 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isBurning);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isBurning = buf.readBoolean();
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == IS_WORKING) {
             this.isBurning = buf.readBoolean();
@@ -356,7 +356,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(String.format("%s %s",
                 I18n.format("gregtech.universal.tooltip.produces_fluid", getBaseSteamOutput() / 20),
                 Materials.Steam.getLocalizedName()));

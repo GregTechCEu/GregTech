@@ -40,13 +40,13 @@ public class CraftTweakerModule extends IntegrationSubmodule {
     }
 
     @Override
-    public void preInit(FMLPreInitializationEvent event) {
+    public void preInit(@NotNull FMLPreInitializationEvent event) {
         CT_OREDICT_ITEM = new MetaOreDictItem((short) 0);
         CT_OREDICT_ITEM.setRegistryName("meta_oredict_item_ct");
     }
 
     @Override
-    public void loadComplete(FMLLoadCompleteEvent event) {
+    public void loadComplete(@NotNull FMLLoadCompleteEvent event) {
         MetaItemBracketHandler.clearComponentRegistry();
     }
 

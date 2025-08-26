@@ -305,7 +305,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     }
 
     @Override
-    public void receiveCustomData(int discriminator, PacketBuffer buf) {
+    public void receiveCustomData(int discriminator, @NotNull PacketBuffer buf) {
         if (discriminator == CABLE_TEMPERATURE) {
             setTemperature(buf.readVarInt());
         } else {

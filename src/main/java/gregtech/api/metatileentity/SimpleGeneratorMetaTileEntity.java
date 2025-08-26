@@ -75,7 +75,7 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             if (fluidInventory.getTankProperties().length > 0) {
                 return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidInventory);

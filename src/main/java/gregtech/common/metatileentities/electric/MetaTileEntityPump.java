@@ -44,6 +44,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
@@ -97,21 +98,21 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeVarInt(pumpHeadY);
         buf.writeBoolean(locked);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.pumpHeadY = buf.readVarInt();
         this.locked = buf.readBoolean();
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == PUMP_HEAD_LEVEL) {
             this.pumpHeadY = buf.readVarInt();
@@ -135,7 +136,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         return (side == null || side.getAxis() != Axis.Y) ? super.getCapability(capability, side) : null;
     }
 
@@ -396,7 +397,8 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.pump.tooltip"));
         tooltip.add(

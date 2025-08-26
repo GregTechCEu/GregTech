@@ -438,14 +438,13 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         this.isPowered = data.getBoolean("isPowered");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (isPowered()) {
             if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && handler.hasItemHandlers()) {
-                return (T) handler.getItemDelegate();
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(handler.getItemDelegate());
             } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && handler.hasFluidTanks()) {
-                return (T) handler.getFluidDelegate();
+                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(handler.getFluidDelegate());
             }
         }
 

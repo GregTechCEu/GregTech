@@ -84,19 +84,19 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isWorking);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isWorking = buf.readBoolean();
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == IS_WORKING) {
             this.isWorking = buf.readBoolean();
@@ -173,7 +173,8 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.item_collector.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick", getEnergyConsumedPerTick()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.max_voltage_in", energyContainer.getInputVoltage(),
@@ -202,7 +203,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         return canPlaceCoverOnSide(side) ? super.getCapability(capability, side) : null;
     }
 

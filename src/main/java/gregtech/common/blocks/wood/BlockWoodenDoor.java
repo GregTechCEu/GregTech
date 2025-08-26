@@ -12,6 +12,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Supplier;
 
 public class BlockWoodenDoor extends BlockDoor {
@@ -28,12 +30,13 @@ public class BlockWoodenDoor extends BlockDoor {
     }
 
     @Override
-    public ItemStack getItem(World world, BlockPos pos, IBlockState state) {
+    public @NotNull ItemStack getItem(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state) {
         return this.itemSupplier.get();
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
+    public void getDrops(@NotNull NonNullList<ItemStack> drops, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                         IBlockState state,
                          int fortune) {
         if (state.getValue(HALF) == EnumDoorHalf.LOWER) {
             drops.add(itemSupplier.get());

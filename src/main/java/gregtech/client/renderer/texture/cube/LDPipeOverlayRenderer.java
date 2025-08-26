@@ -34,7 +34,7 @@ public class LDPipeOverlayRenderer extends AlignedOrientedOverlayRenderer {
      */
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureMap textureMap) {
+    public void registerIcons(@NotNull TextureMap textureMap) {
         this.sprites = new EnumMap<>(OverlayFace.class);
         String modID = GTValues.MODID;
         String basePath = this.basePath;

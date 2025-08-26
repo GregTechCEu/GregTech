@@ -14,6 +14,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 
 public class SimpleCubeRenderer implements ICubeRenderer {
 
@@ -28,7 +29,7 @@ public class SimpleCubeRenderer implements ICubeRenderer {
     }
 
     @Override
-    public void registerIcons(TextureMap textureMap) {
+    public void registerIcons(@NotNull TextureMap textureMap) {
         String modID = GTValues.MODID;
         String basePath = this.basePath;
         String[] split = this.basePath.split(":");

@@ -290,7 +290,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    public RecipeMap<? extends RecipeBuilder<?>> getSmallRecipeMap() {
+    public @Nullable RecipeMap<? extends RecipeBuilder<?>> getSmallRecipeMap() {
         return smallRecipeMap;
     }
 

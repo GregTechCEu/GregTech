@@ -24,6 +24,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import static gregtech.api.capability.GregtechDataCodes.SYNC_CONTROLLER;
 
@@ -106,7 +107,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         MultiblockControllerBase controller = getController();
         buf.writeBoolean(controller != null);
@@ -116,7 +117,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         if (buf.readBoolean()) {
             this.controllerPos = buf.readBlockPos();
@@ -125,7 +126,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == SYNC_CONTROLLER) {
             if (buf.readBoolean()) {

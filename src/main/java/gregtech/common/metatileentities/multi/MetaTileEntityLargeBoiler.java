@@ -368,13 +368,13 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeVarInt(throttlePercentage);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         throttlePercentage = buf.readVarInt();
     }

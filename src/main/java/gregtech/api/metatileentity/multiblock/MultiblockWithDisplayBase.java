@@ -431,7 +431,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(maintenance_problems);
         buf.writeInt(timeActive);
@@ -441,7 +441,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         maintenance_problems = buf.readByte();
         timeActive = buf.readInt();
@@ -451,7 +451,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == STORE_TAPED) {
             storedTaped = buf.readBoolean();
@@ -491,7 +491,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         T capabilityResult = super.getCapability(capability, side);
         if (capabilityResult != null) return capabilityResult;
         if (capability == GregtechTileCapabilities.CAPABILITY_MAINTENANCE) {

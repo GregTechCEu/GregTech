@@ -294,7 +294,7 @@ public class PipeCoverableImplementation implements CoverHolder {
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         return holder.getCapabilityInternal(capability, side);
     }
 }

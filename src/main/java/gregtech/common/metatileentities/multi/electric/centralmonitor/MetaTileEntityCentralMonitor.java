@@ -62,6 +62,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
@@ -335,7 +336,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeInt(width);
         buf.writeInt(height);
@@ -345,7 +346,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.width = buf.readInt();
         this.height = buf.readInt();
@@ -355,7 +356,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    public void receiveCustomData(int id, PacketBuffer buf) {
+    public void receiveCustomData(int id, @NotNull PacketBuffer buf) {
         super.receiveCustomData(id, buf);
         if (id == GregtechDataCodes.UPDATE_ALL) {
             this.width = buf.readInt();
@@ -436,7 +437,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    protected BlockPattern createStructurePattern() {
+    protected @NotNull BlockPattern createStructurePattern() {
         StringBuilder start = new StringBuilder("AS");
         StringBuilder slice = new StringBuilder("BB");
         StringBuilder end = new StringBuilder("AA");
@@ -494,7 +495,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (side == this.frontFacing.getOpposite() && capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(IEnergyContainer.DEFAULT);
         }
@@ -660,7 +661,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.1"));
         tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.2", MAX_WIDTH, MAX_HEIGHT));

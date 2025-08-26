@@ -35,6 +35,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -99,7 +100,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         if (dataId == SYNC_TILE_MODE) {
             converterTrait.setFeToEu(buf.readBoolean());
             scheduleRenderUpdate();
@@ -120,13 +121,13 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         buf.writeBoolean(converterTrait.isFeToEu());
         super.writeInitialSyncData(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         converterTrait.setFeToEu(buf.readBoolean());
         super.receiveInitialSyncData(buf);
     }
@@ -167,7 +168,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
             return side != (!converterTrait.isFeToEu() ? frontFacing : null) ?
                     GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(converterTrait.getEnergyEUContainer()) : null;
@@ -188,7 +189,8 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         long voltage = converterTrait.getVoltage();
         long amps = converterTrait.getBaseAmps();
         tooltip.add(I18n.format("gregtech.machine.energy_converter.description"));

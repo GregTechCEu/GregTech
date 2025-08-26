@@ -204,19 +204,19 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isLocked);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isLocked = buf.readBoolean();
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.LOCK_OBJECT_HOLDER) {
             this.isLocked = buf.readBoolean();

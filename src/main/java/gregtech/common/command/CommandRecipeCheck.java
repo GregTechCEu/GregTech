@@ -58,7 +58,8 @@ public class CommandRecipeCheck extends CommandBase {
     }
 
     @Override
-    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String[] args) {
+    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender,
+                        @NotNull String @NotNull [] args) {
         sender.sendMessage(new TextComponentTranslation("gregtech.command.recipecheck.begin"));
 
         Object2ObjectOpenHashMap<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, Set<Recipe>>> mismatchedRecipes = new Object2ObjectOpenHashMap<>();

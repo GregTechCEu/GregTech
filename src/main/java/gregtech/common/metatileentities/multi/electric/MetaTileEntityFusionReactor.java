@@ -305,19 +305,19 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeVarInt(this.fusionRingColor);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.fusionRingColor = buf.readVarInt();
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         if (dataId == GregtechDataCodes.UPDATE_COLOR) {
             this.fusionRingColor = buf.readVarInt();
         } else {

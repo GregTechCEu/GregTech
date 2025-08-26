@@ -271,7 +271,8 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", tankSize));
         this.fluidFilter.appendTooltips(tooltip, true, true);
 

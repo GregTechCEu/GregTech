@@ -6,6 +6,7 @@ import net.minecraft.client.util.ITooltipFlag;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mezz.jei.api.ingredients.IIngredientRenderer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
@@ -37,19 +38,20 @@ public class CompositeRenderer<T> implements IIngredientRenderer<T> {
     }
 
     @Override
-    public void render(Minecraft minecraft, int xPosition, int yPosition, @Nullable T ingredient) {
+    public void render(@NotNull Minecraft minecraft, int xPosition, int yPosition, @Nullable T ingredient) {
         for (RenderNode<T> step : steps) {
             step.render(minecraft, xPosition, yPosition, ingredient);
         }
     }
 
     @Override
-    public List<String> getTooltip(Minecraft minecraft, T ingredient, ITooltipFlag tooltipFlag) {
+    public List<String> getTooltip(@NotNull Minecraft minecraft, @NotNull T ingredient,
+                                   @NotNull ITooltipFlag tooltipFlag) {
         return tooltipSupplier.getTooltip(minecraft, ingredient, tooltipFlag);
     }
 
     @Override
-    public FontRenderer getFontRenderer(Minecraft minecraft, T ingredient) {
+    public FontRenderer getFontRenderer(@NotNull Minecraft minecraft, @NotNull T ingredient) {
         return fontRendererSupplier.getFontRenderer(minecraft, ingredient);
     }
 

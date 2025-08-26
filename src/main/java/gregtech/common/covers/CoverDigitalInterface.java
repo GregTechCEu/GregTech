@@ -196,7 +196,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setByte("cdiMode", (byte) this.mode.ordinal());
         tagCompound.setByte("cdiSpin", (byte) this.spin.ordinal());
@@ -208,7 +208,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.mode = tagCompound.hasKey("cdiMode") ? MODE.VALUES[tagCompound.getByte("cdiMode")] : MODE.PROXY;
         this.spin = tagCompound.hasKey("cdiSpin") ? EnumFacing.byIndex(tagCompound.getByte("cdiSpin")) :
@@ -912,8 +912,9 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     }
 
     @Override
-    public void renderCover(CCRenderState ccRenderState, Matrix4 translation, IVertexOperation[] ops, Cuboid6 cuboid6,
-                            BlockRenderLayer blockRenderLayer) {
+    public void renderCover(@NotNull CCRenderState ccRenderState, @NotNull Matrix4 translation, IVertexOperation[] ops,
+                            @NotNull Cuboid6 cuboid6,
+                            @NotNull BlockRenderLayer blockRenderLayer) {
         codechicken.lib.vec.Rotation rotation = new codechicken.lib.vec.Rotation(0, 0, 1, 0);
         if (this.getAttachedSide().getAxis().isVertical()) {
             if (this.spin == EnumFacing.WEST) {

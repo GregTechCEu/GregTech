@@ -7,6 +7,8 @@ import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.NotNull;
+
 @SideOnly(Side.CLIENT)
 public class PortalModel extends ModelBase {
 
@@ -22,7 +24,8 @@ public class PortalModel extends ModelBase {
     }
 
     @Override
-    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+    public void render(@NotNull Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+                       float netHeadYaw,
                        float headPitch, float scale) {
         renderer.render(scale);
     }

@@ -58,7 +58,7 @@ public class LampBakedModel implements IBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public @NotNull List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
 
         if (state == null || layer == null) {

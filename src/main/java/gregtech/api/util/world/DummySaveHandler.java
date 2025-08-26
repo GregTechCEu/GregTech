@@ -98,7 +98,7 @@ public class DummySaveHandler implements ISaveHandler, IPlayerFileData, IChunkLo
 
     @NotNull
     @Override
-    public String[] getAvailablePlayerDat() {
+    public String @NotNull [] getAvailablePlayerDat() {
         return new String[0];
     }
 }

@@ -102,7 +102,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.rotor_holder.tooltip1"));
         tooltip.add(I18n.format("gregtech.machine.rotor_holder.tooltip2"));
@@ -339,7 +340,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.IS_ROTOR_LOOPING) {
             this.isRotorSpinning = buf.readBoolean();
@@ -350,7 +351,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isRotorSpinning);
         buf.writeInt(rotorColor);
@@ -358,7 +359,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isRotorSpinning = buf.readBoolean();
         this.rotorColor = buf.readInt();

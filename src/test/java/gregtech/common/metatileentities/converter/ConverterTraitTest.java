@@ -13,6 +13,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import org.hamcrest.MatcherAssert;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -236,7 +237,7 @@ public class ConverterTraitTest {
 
         @SuppressWarnings("unchecked")
         @Override
-        public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
             if (side == null) return (T) converterTrait;
             if (isFeToEu()) {
                 return (T) (side == getFrontFacing() ? converterTrait.getEnergyEUContainer() :

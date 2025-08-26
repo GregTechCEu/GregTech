@@ -57,7 +57,7 @@ public class BlockPattern {
     public int[] formedRepetitionCount;
 
     public BlockPattern(@NotNull TraceabilityPredicate[][][] predicatesIn, @NotNull RelativeDirection[] structureDir,
-                        @NotNull int[][] aisleRepetitions) {
+                        int[] @NotNull [] aisleRepetitions) {
         this.blockMatches = predicatesIn;
         this.globalCount = new HashMap<>();
         this.layerCount = new HashMap<>();

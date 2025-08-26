@@ -41,7 +41,7 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface {
     public void setMode(MODE mode, int slot, EnumFacing spin) {}
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         if (this.remote != null) {
             tagCompound.setTag("cdiRemote", NBTUtil.createPosTag(this.remote));
@@ -49,14 +49,14 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.remote = tagCompound.hasKey("cdiRemote") ? NBTUtil.getPosFromTag(tagCompound.getCompoundTag("cdiRemote")) :
                 null;
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer packetBuffer) {
+    public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         packetBuffer.writeBoolean(remote != null);
         if (remote != null) {
             packetBuffer.writeBlockPos(remote);
@@ -65,7 +65,7 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface {
     }
 
     @Override
-    public void readInitialSyncData(PacketBuffer packetBuffer) {
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         if (packetBuffer.readBoolean()) {
             this.remote = packetBuffer.readBlockPos();
         }
@@ -106,8 +106,9 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface {
     }
 
     @Override
-    public void renderCover(CCRenderState ccRenderState, Matrix4 translation, IVertexOperation[] ops, Cuboid6 cuboid6,
-                            BlockRenderLayer blockRenderLayer) {
+    public void renderCover(@NotNull CCRenderState ccRenderState, @NotNull Matrix4 translation, IVertexOperation[] ops,
+                            @NotNull Cuboid6 cuboid6,
+                            @NotNull BlockRenderLayer blockRenderLayer) {
         Textures.COVER_INTERFACE_WIRELESS.renderSided(getAttachedSide(), cuboid6, ccRenderState, ops, translation);
     }
 }

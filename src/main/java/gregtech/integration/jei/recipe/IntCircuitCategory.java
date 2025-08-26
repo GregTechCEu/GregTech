@@ -29,6 +29,7 @@ import mezz.jei.api.ingredients.IIngredientRenderer;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
@@ -145,7 +146,8 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
             .toArray(int[][]::new);
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, IntCircuitRecipeWrapper recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, IntCircuitRecipeWrapper recipeWrapper,
+                          @NotNull IIngredients ingredients) {
         IGuiItemStackGroup stacks = recipeLayout.getItemStacks();
         stacks.init(0, recipeWrapper.input, firstItemRenderer.get(), 0, 0, SLOT_SIZE * FIRST_SLOT_SCALE,
                 SLOT_SIZE * FIRST_SLOT_SCALE, FIRST_SLOT_SCALE, FIRST_SLOT_SCALE);

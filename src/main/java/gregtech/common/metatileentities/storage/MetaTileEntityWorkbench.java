@@ -451,7 +451,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.workbench.tooltip1"));
         tooltip.add(I18n.format("gregtech.machine.workbench.tooltip2"));
     }

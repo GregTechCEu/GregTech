@@ -81,7 +81,7 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
     }
 
     @Override
-    default Iterator<ITankEntry> iterator() {
+    default @NotNull Iterator<ITankEntry> iterator() {
         return getFluidTanks().iterator();
     }
 

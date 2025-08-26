@@ -29,7 +29,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
         }
 
         @Override
-        public IFilter<FluidStack> negate() {
+        public @NotNull IFilter<FluidStack> negate() {
             return DISALLOW_ALL;
         }
     },
@@ -46,7 +46,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
         }
 
         @Override
-        public IFilter<FluidStack> negate() {
+        public @NotNull IFilter<FluidStack> negate() {
             return ALLOW_ALL;
         }
     },

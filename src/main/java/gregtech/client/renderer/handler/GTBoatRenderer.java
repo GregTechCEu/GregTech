@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.util.ResourceLocation;
 
+import org.jetbrains.annotations.NotNull;
+
 public class GTBoatRenderer extends RenderBoat {
 
     public static final ResourceLocation RUBBER_WOOD_BOAT_TEXTURE = GTUtility
@@ -20,7 +22,7 @@ public class GTBoatRenderer extends RenderBoat {
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(EntityBoat entity) {
+    protected @NotNull ResourceLocation getEntityTexture(@NotNull EntityBoat entity) {
         if (entity instanceof GTBoatEntity gtBoatEntity) {
             return switch (gtBoatEntity.getGTBoatType()) {
                 case RUBBER_WOOD_BOAT -> RUBBER_WOOD_BOAT_TEXTURE;

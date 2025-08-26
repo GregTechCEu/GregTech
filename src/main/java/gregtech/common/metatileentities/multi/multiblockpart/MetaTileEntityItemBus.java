@@ -160,7 +160,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
@@ -202,14 +202,14 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(workingEnabled);
         buf.writeBoolean(autoCollapse);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.workingEnabled = buf.readBoolean();
         this.autoCollapse = buf.readBoolean();
@@ -241,7 +241,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS) {
             this.autoCollapse = buf.readBoolean();

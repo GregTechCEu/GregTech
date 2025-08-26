@@ -5,6 +5,8 @@ import gregtech.api.util.Mods;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.math.MathHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 // This is a verbatim copy of VertexLighterSmoothAo except with a custom base class.
 // Ao Features are disabled when the shader is active.
 public class VertexLighterSmoothAoSpecial extends VertexLighterFlatSpecial {
@@ -14,7 +16,7 @@ public class VertexLighterSmoothAoSpecial extends VertexLighterFlatSpecial {
     }
 
     @Override
-    protected void updateLightmap(float[] normal, float[] lightmap, float x, float y, float z) {
+    protected void updateLightmap(float @NotNull [] normal, float @NotNull [] lightmap, float x, float y, float z) {
         if (Mods.Optifine.isModLoaded()) {
             super.updateLightmap(normal, lightmap, x, y, z);
             return;
@@ -25,7 +27,8 @@ public class VertexLighterSmoothAoSpecial extends VertexLighterFlatSpecial {
     }
 
     @Override
-    protected void updateColor(float[] normal, float[] color, float x, float y, float z, float tint, int multiplier) {
+    protected void updateColor(float @NotNull [] normal, float @NotNull [] color, float x, float y, float z, float tint,
+                               int multiplier) {
         super.updateColor(normal, color, x, y, z, tint, multiplier);
 
         if (Mods.Optifine.isModLoaded()) {

@@ -25,6 +25,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 
+import org.jetbrains.annotations.NotNull;
 import team.chisel.common.carving.Carving;
 
 import java.util.Objects;
@@ -38,7 +39,7 @@ import java.util.Objects;
 public class ChiselModule extends IntegrationSubmodule {
 
     @Override
-    public void init(FMLInitializationEvent event) {
+    public void init(@NotNull FMLInitializationEvent event) {
         // GT custom groups
         addVariations("gt_warning_sign", MetaBlocks.WARNING_SIGN, BlockWarningSign.SignType.values());
         addVariations("gt_warning_sign", MetaBlocks.WARNING_SIGN_1, BlockWarningSign1.SignType.values());

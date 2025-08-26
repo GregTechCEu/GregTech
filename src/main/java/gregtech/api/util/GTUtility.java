@@ -217,7 +217,7 @@ public class GTUtility {
      * @return Index of the nearest value lesser or equal than {@code value},
      *         or {@code -1} if there's no entry matching the condition
      */
-    public static int nearestLesserOrEqual(@NotNull long[] array, long value) {
+    public static int nearestLesserOrEqual(long @NotNull [] array, long value) {
         int low = 0, high = array.length - 1;
         while (true) {
             int median = (low + high) / 2;
@@ -237,7 +237,7 @@ public class GTUtility {
      * @return Index of the nearest value lesser than {@code value},
      *         or {@code -1} if there's no entry matching the condition
      */
-    public static int nearestLesser(@NotNull long[] array, long value) {
+    public static int nearestLesser(long @NotNull [] array, long value) {
         int low = 0, high = array.length - 1;
         while (true) {
             int median = (low + high) / 2;

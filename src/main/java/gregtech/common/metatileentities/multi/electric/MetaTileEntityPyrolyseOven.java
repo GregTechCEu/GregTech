@@ -52,7 +52,7 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
     }
 
     @Override
-    protected BlockPattern createStructurePattern() {
+    protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XXX", "XXX")
                 .aisle("CCC", "C#C", "CCC")
@@ -134,7 +134,8 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.pyrolyse_oven.tooltip.1"));
     }

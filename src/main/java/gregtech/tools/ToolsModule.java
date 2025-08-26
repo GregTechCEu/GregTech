@@ -42,7 +42,7 @@ public class ToolsModule extends BaseGregTechModule {
     }
 
     @Override
-    public void preInit(FMLPreInitializationEvent event) {
+    public void preInit(@NotNull FMLPreInitializationEvent event) {
         CustomBlockRotations.init();
     }
 

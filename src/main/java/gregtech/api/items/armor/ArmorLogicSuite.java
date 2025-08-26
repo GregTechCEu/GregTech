@@ -53,7 +53,7 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic, IItemHUDPro
     }
 
     @Override
-    public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
+    public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
         IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (item == null) return 0;
         if (item.getCharge() >= energyPerUse) {

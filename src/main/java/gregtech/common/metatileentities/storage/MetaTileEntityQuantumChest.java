@@ -189,7 +189,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_total", maxStoredItems));
 
@@ -462,7 +463,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE) {
             if (side == getOutputFacing()) {
                 return GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE.cast(this);

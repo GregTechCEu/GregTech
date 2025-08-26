@@ -253,7 +253,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
 
         if (dataId == IS_TAPED) {
@@ -269,7 +269,8 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
         tooltip.add(I18n.format("gregtech.crate.tooltip.taped_movement"));
     }

@@ -179,7 +179,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
                 I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
         // do not append the normal tooltips
@@ -216,12 +217,12 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         }
 
         @Override
-        protected int getStackLimit(int slot, ItemStack stack) {
+        protected int getStackLimit(int slot, @NotNull ItemStack stack) {
             return 1;
         }
 
         @Override
-        public void setStackInSlot(int slot, ItemStack stack) {
+        public void setStackInSlot(int slot, @NotNull ItemStack stack) {
             super.setStackInSlot(slot, stack);
             virtualItemStack = GTUtility.copy(1, stack);
         }

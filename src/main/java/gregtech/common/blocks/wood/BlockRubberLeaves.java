@@ -36,7 +36,7 @@ public class BlockRubberLeaves extends BlockLeaves {
     }
 
     @Override
-    public EnumType getWoodType(int meta) {
+    public @NotNull EnumType getWoodType(int meta) {
         return null;
     }
 

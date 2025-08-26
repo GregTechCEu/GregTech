@@ -186,8 +186,9 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
-                            Cuboid6 plateBox, BlockRenderLayer layer) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline,
+                            @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         this.texture.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 

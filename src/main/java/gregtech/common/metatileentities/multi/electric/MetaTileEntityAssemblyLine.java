@@ -212,19 +212,19 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         writeParticles(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         readParticles(buf);
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         if (dataId == GregtechDataCodes.UPDATE_PARTICLE) {
             readParticles(buf);
         } else {

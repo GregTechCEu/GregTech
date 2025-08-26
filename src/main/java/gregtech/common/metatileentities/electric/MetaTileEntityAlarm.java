@@ -139,7 +139,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_ACTIVE) {
             this.isActive = buf.readBoolean();
@@ -159,7 +159,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isActive = buf.readBoolean();
         this.selectedSound = SoundEvent.REGISTRY.getObject(buf.readResourceLocation());
@@ -167,7 +167,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(this.isActive);
         buf.writeResourceLocation(getResourceLocationOfSound(this.selectedSound));

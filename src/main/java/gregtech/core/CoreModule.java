@@ -132,7 +132,7 @@ public class CoreModule implements IGregTechModule {
     }
 
     @Override
-    public void preInit(FMLPreInitializationEvent event) {
+    public void preInit(@NotNull FMLPreInitializationEvent event) {
         GregTechAPIInternal.preInit();
         GregTechAPI.advancementManager = AdvancementManager.getInstance();
         AdvancementTriggers.register();
@@ -249,7 +249,7 @@ public class CoreModule implements IGregTechModule {
     }
 
     @Override
-    public void init(FMLInitializationEvent event) {
+    public void init(@NotNull FMLInitializationEvent event) {
         // freeze once addon preInit is finished
         for (MTERegistry registry : mteManager.getRegistries()) {
             registry.freeze();
@@ -288,7 +288,7 @@ public class CoreModule implements IGregTechModule {
     }
 
     @Override
-    public void postInit(FMLPostInitializationEvent event) {
+    public void postInit(@NotNull FMLPostInitializationEvent event) {
         proxy.onPostLoad();
         BedrockFluidVeinHandler.recalculateChances(true);
         // registers coil types for the BlastTemperatureProperty used in Blast Furnace Recipes
@@ -306,12 +306,12 @@ public class CoreModule implements IGregTechModule {
     }
 
     @Override
-    public void loadComplete(FMLLoadCompleteEvent event) {
+    public void loadComplete(@NotNull FMLLoadCompleteEvent event) {
         proxy.onLoadComplete();
     }
 
     @Override
-    public void serverStarting(FMLServerStartingEvent event) {
+    public void serverStarting(@NotNull FMLServerStartingEvent event) {
         CommandManager commandManager = CommandManager.getInstance();
         GregTechAPI.commandManager = commandManager;
         commandManager.registerServerCommand(event);
@@ -329,7 +329,7 @@ public class CoreModule implements IGregTechModule {
     }
 
     @Override
-    public void serverStarted(FMLServerStartedEvent event) {
+    public void serverStarted(@NotNull FMLServerStartedEvent event) {
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
             World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
             if (!world.isRemote) {
@@ -347,7 +347,7 @@ public class CoreModule implements IGregTechModule {
     }
 
     @Override
-    public void serverStopped(FMLServerStoppedEvent event) {
+    public void serverStopped(@NotNull FMLServerStoppedEvent event) {
         VirtualEnderRegistry.clearMaps();
         CapesRegistry.clearMaps();
     }

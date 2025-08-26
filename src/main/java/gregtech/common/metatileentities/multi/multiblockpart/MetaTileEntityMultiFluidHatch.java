@@ -109,7 +109,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
@@ -117,7 +117,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(workingEnabled);
         for (var tank : fluidTankList.getFluidTanks()) {
@@ -126,7 +126,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.workingEnabled = buf.readBoolean();
         for (var tank : fluidTankList.getFluidTanks()) {
@@ -136,7 +136,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.workingEnabled = buf.readBoolean();
@@ -168,7 +168,8 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format(isExportHatch ? "gregtech.machine.fluid_hatch.export.tooltip" :
                 "gregtech.machine.fluid_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", numSlots, tankSize));

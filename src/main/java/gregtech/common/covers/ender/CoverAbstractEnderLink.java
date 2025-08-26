@@ -249,12 +249,12 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer packetBuffer) {
+    public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         packetBuffer.writeString(this.playerUUID == null ? "null" : this.playerUUID.toString());
     }
 
     @Override
-    public void readInitialSyncData(PacketBuffer packetBuffer) {
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         // does client even need uuid info? just in case
         String uuidStr = packetBuffer.readString(36);
         this.playerUUID = uuidStr.equals("null") ? null : UUID.fromString(uuidStr);

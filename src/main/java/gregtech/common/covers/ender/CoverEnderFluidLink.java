@@ -160,20 +160,20 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
         tagCompound.setTag("Filter", fluidFilter.serializeNBT());
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.pumpMode = CoverPump.PumpMode.values()[tagCompound.getInteger("PumpMode")];
         this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
     }
 
-    public <T> T getCapability(Capability<T> capability, T defaultValue) {
+    public <T> T getCapability(@NotNull Capability<T> capability, T defaultValue) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(this.activeEntry);
         }

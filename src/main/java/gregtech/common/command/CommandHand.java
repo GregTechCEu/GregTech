@@ -48,7 +48,7 @@ public class CommandHand extends CommandBase {
 
     @Override
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender,
-                        @NotNull String[] args) throws CommandException {
+                        @NotNull String @NotNull [] args) throws CommandException {
         if (sender instanceof EntityPlayerMP player) {
             ItemStack stackInHand = player.getHeldItemMainhand();
             if (stackInHand.isEmpty()) {

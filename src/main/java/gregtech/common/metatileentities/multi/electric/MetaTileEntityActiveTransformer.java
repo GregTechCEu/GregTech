@@ -246,14 +246,14 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.isWorkingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isActive = buf.readBoolean();
         this.isWorkingEnabled = buf.readBoolean();
@@ -272,7 +272,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }

@@ -24,6 +24,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -84,7 +85,7 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isTransformUp);
         if (hasMultipleAmperages()) {
@@ -93,7 +94,7 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isTransformUp = buf.readBoolean();
         if (hasMultipleAmperages()) {
@@ -102,7 +103,7 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == SYNC_TILE_MODE) {
             this.isTransformUp = buf.readBoolean();
@@ -247,7 +248,8 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         String lowerTierName = GTValues.VNF[getTier()];
         String higherTierName = GTValues.VNF[getTier() + 1];
         long lowerVoltage = energyContainer.getOutputVoltage();

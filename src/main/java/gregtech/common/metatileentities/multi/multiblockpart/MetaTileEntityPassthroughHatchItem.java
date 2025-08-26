@@ -209,7 +209,8 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
@@ -232,7 +233,7 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         // enforce strict sided-ness for item IO
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (side == getFrontFacing()) {
@@ -247,14 +248,14 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
 
         buf.writeBoolean(workingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
 
         this.workingEnabled = buf.readBoolean();

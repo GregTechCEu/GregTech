@@ -197,7 +197,8 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", getTier() + 1, TANK_SIZE));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
@@ -220,7 +221,7 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         // enforce strict sided-ness for fluid IO
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             if (side == getFrontFacing()) {
@@ -235,14 +236,14 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
 
         buf.writeBoolean(workingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
 
         this.workingEnabled = buf.readBoolean();

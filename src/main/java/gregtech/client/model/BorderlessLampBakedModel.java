@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.EnumFacing;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class BorderlessLampBakedModel extends LampBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public @NotNull List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         int index = (side == null ? 6 : side.getIndex());
         if (this.quads[index] == null) {
             List<BakedQuad> quads = new ArrayList<>();

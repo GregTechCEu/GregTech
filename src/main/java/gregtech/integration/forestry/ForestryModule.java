@@ -94,7 +94,7 @@ public class ForestryModule extends IntegrationSubmodule {
     }
 
     @Override
-    public void preInit(FMLPreInitializationEvent event) {
+    public void preInit(@NotNull FMLPreInitializationEvent event) {
         forestryMetaItem = new StandardMetaItem();
         forestryMetaItem.setRegistryName("forestry_meta_item");
 
@@ -146,7 +146,7 @@ public class ForestryModule extends IntegrationSubmodule {
     }
 
     @Override
-    public void init(FMLInitializationEvent event) {
+    public void init(@NotNull FMLInitializationEvent event) {
         // Yes, this recipe stuff has to be done in init. Because Forestry refuses to move their recipes
         // to the event, causing removals to need to be done in init instead of registry event.
         // See https://github.com/ForestryMC/ForestryMC/issues/2599
@@ -184,7 +184,7 @@ public class ForestryModule extends IntegrationSubmodule {
     }
 
     @Override
-    public void postInit(FMLPostInitializationEvent event) {
+    public void postInit(@NotNull FMLPostInitializationEvent event) {
         if (Mods.ForestryApiculture.isModLoaded()) {
             getLogger().info("Copying Forestry Centrifuge recipes to GT Centrifuge");
             CombRecipes.initForestryCombs();

@@ -101,7 +101,7 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             // allow both importing and exporting from the tank
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidTank);
@@ -241,13 +241,13 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeVarInt(this.circuitInventory.getCircuitValue());
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         setGhostCircuitConfig(buf.readVarInt());
     }

@@ -66,7 +66,8 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         String tierName = GTValues.VNF[getTier()];
         tooltip.add(I18n.format("gregtech.machine.hull.tooltip"));
         tooltip.add(

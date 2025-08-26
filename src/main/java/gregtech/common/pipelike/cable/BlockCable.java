@@ -162,7 +162,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public void onEntityCollision(World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
+    public void onEntityCollision(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
                                   @NotNull Entity entityIn) {
         super.onEntityCollision(worldIn, pos, state, entityIn);
         if (worldIn.isRemote) return;

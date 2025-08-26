@@ -108,7 +108,7 @@ public class SerializableFluidList implements IItemList<IAEFluidStack>, INBTSeri
     }
 
     @Override
-    public Iterator<IAEFluidStack> iterator() {
+    public @NotNull Iterator<IAEFluidStack> iterator() {
         return new MeaningfulFluidIterator<>(this.records.values().iterator());
     }
 

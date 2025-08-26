@@ -115,7 +115,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         return super.getCapability(capability, side);
     }
 }

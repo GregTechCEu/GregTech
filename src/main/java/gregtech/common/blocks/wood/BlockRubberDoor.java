@@ -10,6 +10,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Supplier;
 
 public class BlockRubberDoor extends BlockWoodenDoor {
@@ -25,7 +27,8 @@ public class BlockRubberDoor extends BlockWoodenDoor {
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+    public @NotNull AxisAlignedBB getBoundingBox(@NotNull IBlockState state, @NotNull IBlockAccess source,
+                                                 @NotNull BlockPos pos) {
         state = state.getActualState(source, pos);
         EnumFacing facing = state.getValue(FACING);
         boolean open = !state.getValue(OPEN);

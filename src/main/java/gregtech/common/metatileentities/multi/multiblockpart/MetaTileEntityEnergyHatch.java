@@ -124,7 +124,8 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         String tierName = GTValues.VNF[getTier()];
         addDescriptorTooltip(stack, world, tooltip, advanced);
 
@@ -241,7 +242,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_CONTROLLER_POS) {
             this.controllerPos = buf.readBlockPos();
@@ -255,7 +256,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(controllerPos != null);
         if (controllerPos != null) {
@@ -264,7 +265,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         if (buf.readBoolean()) {
             controllerPos = buf.readBlockPos();

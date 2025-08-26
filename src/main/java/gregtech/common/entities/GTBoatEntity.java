@@ -20,6 +20,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
+import org.jetbrains.annotations.NotNull;
+
 public class GTBoatEntity extends EntityBoat {
 
     private static final DataParameter<Integer> GT_BOAT_TYPE = EntityDataManager.createKey(GTBoatEntity.class,
@@ -57,7 +59,7 @@ public class GTBoatEntity extends EntityBoat {
 
     // override to change boat drop
     @Override
-    public boolean attackEntityFrom(DamageSource source, float amount) {
+    public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
         if (this.isEntityInvulnerable(source)) {
             return false;
         }
@@ -87,7 +89,7 @@ public class GTBoatEntity extends EntityBoat {
 
     // override to change boat drop
     @Override
-    protected void updateFallState(double y, boolean onGroundIn, IBlockState state, BlockPos pos) {
+    protected void updateFallState(double y, boolean onGroundIn, @NotNull IBlockState state, @NotNull BlockPos pos) {
         this.lastYd = this.motionY;
 
         if (!this.isRiding()) {
@@ -116,7 +118,7 @@ public class GTBoatEntity extends EntityBoat {
     }
 
     @Override
-    public ItemStack getPickedResult(RayTraceResult ray) {
+    public @NotNull ItemStack getPickedResult(@NotNull RayTraceResult ray) {
         return switch (getGTBoatType()) {
             case RUBBER_WOOD_BOAT -> MetaItems.RUBBER_WOOD_BOAT.getStackForm();
             case TREATED_WOOD_BOAT -> MetaItems.TREATED_WOOD_BOAT.getStackForm();
@@ -131,7 +133,7 @@ public class GTBoatEntity extends EntityBoat {
      */
     @Deprecated
     @Override
-    public void setBoatType(Type type) {
+    public void setBoatType(@NotNull Type type) {
         super.setBoatType(type);
     }
 
@@ -140,7 +142,7 @@ public class GTBoatEntity extends EntityBoat {
      */
     @Deprecated
     @Override
-    public Type getBoatType() {
+    public @NotNull Type getBoatType() {
         return super.getBoatType();
     }
 

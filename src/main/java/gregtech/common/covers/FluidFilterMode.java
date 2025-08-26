@@ -2,6 +2,8 @@ package gregtech.common.covers;
 
 import net.minecraft.util.IStringSerializable;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum FluidFilterMode implements IStringSerializable {
 
     FILTER_FILL("cover.fluid_filter.mode.filter_fill"),
@@ -16,7 +18,7 @@ public enum FluidFilterMode implements IStringSerializable {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return this.localeName;
     }
 }

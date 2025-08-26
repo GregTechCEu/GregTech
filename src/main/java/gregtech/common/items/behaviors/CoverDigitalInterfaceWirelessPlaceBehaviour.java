@@ -21,6 +21,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverItemBehavior {
@@ -61,7 +63,8 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverItemBehavi
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
+    public EnumActionResult onItemUseFirst(EntityPlayer player, @NotNull World world, BlockPos pos, EnumFacing side,
+                                           float hitX,
                                            float hitY, float hitZ, EnumHand hand) {
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof IGregTechTileEntity &&

@@ -398,7 +398,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeInt(this.lDist);
         buf.writeInt(this.rDist);
@@ -409,7 +409,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.lDist = buf.readInt();
         this.rDist = buf.readInt();
@@ -420,7 +420,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_STRUCTURE_SIZE) {
             this.lDist = buf.readInt();
@@ -473,7 +473,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_WORKABLE) {
             return GregtechTileCapabilities.CAPABILITY_WORKABLE.cast(this);
         }

@@ -103,13 +103,13 @@ public class DummyWorld extends World {
 
     @Override
     @Method(modid = Mods.Names.ALFHEIM)
-    public World init() {
+    public @NotNull World init() {
         return this;
     }
 
     @Override
     @Method(modid = Mods.Names.ALFHEIM)
-    public int getLightFromNeighborsFor(EnumSkyBlock type, BlockPos pos) {
+    public int getLightFromNeighborsFor(@NotNull EnumSkyBlock type, @NotNull BlockPos pos) {
         return 15;
     }
 

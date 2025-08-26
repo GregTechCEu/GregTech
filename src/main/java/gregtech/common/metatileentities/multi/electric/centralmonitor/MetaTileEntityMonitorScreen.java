@@ -369,7 +369,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         writeSync(buf);
         buf.writeItemStack(this.inventory.getStackInSlot(0));
@@ -379,7 +379,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         readSync(buf);
         try {
@@ -398,7 +398,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_ALL) {
             readSync(buf);
@@ -509,7 +509,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY ||
                 capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             Cover cover = getCoverFromPosSide(this.coverPos);
@@ -836,7 +836,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.multiblock.monitor_screen.tooltip.1"));
         tooltip.add(I18n.format("gregtech.multiblock.monitor_screen.tooltip.2"));

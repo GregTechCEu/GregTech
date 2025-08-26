@@ -460,8 +460,9 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
-                            Cuboid6 plateBox, BlockRenderLayer layer) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline,
+                            @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         if (conveyorMode == ConveyorMode.EXPORT) {
             Textures.CONVEYOR_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         } else {
@@ -480,7 +481,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, T defaultValue) {
+    public <T> T getCapability(@NotNull Capability<T> capability, T defaultValue) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (defaultValue == null) {
                 return null;

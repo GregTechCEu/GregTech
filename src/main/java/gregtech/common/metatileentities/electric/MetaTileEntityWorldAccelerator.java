@@ -36,6 +36,7 @@ import codechicken.lib.vec.Matrix4;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -82,7 +83,8 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.world_accelerator.description"));
         tooltip.add(I18n.format("gregtech.machine.world_accelerator.power_usage", getRandomTickModeAmperage(),
                 getTEModeAmperage()));
@@ -278,7 +280,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(tileMode);
         buf.writeBoolean(isPaused);
@@ -286,7 +288,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.tileMode = buf.readBoolean();
         this.isPaused = buf.readBoolean();
@@ -294,7 +296,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == IS_WORKING) {
             this.isActive = buf.readBoolean();
@@ -330,7 +332,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }

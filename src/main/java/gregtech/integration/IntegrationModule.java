@@ -44,7 +44,7 @@ public class IntegrationModule extends BaseGregTechModule {
     }
 
     @Override
-    public void init(FMLInitializationEvent event) {
+    public void init(@NotNull FMLInitializationEvent event) {
         super.init(event);
 
         if (Mods.ImmersiveEngineering.isModLoaded()) {

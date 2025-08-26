@@ -62,8 +62,7 @@ public class EnergyContainerList implements IEnergyContainer {
      *
      * @return [newVoltage, newAmperage]
      */
-    @NotNull
-    private static long[] calculateVoltageAmperage(long voltage, long amperage) {
+    private static long @NotNull [] calculateVoltageAmperage(long voltage, long amperage) {
         if (voltage > 1 && amperage > 1) {
             // don't operate if there is no voltage or no amperage
             if (hasPrimeFactorGreaterThanTwo(amperage)) {

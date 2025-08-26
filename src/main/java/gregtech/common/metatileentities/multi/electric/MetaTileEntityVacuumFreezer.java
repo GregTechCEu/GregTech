@@ -33,7 +33,7 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
     }
 
     @Override
-    protected BlockPattern createStructurePattern() {
+    protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XXX", "XXX")
                 .aisle("XXX", "X#X", "XXX")

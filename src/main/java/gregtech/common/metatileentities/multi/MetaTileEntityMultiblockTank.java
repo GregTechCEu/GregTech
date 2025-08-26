@@ -181,7 +181,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             if (isStructureFormed()) {
                 return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidInventory);

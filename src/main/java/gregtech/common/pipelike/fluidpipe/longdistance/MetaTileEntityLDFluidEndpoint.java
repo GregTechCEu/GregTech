@@ -56,7 +56,7 @@ public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEnd
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             if (getWorld().isRemote || side != getFrontFacing() || !isInput()) {
                 return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(DEFAULT_TANK);

@@ -71,7 +71,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {}
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         if (this.aeProxy != null) {
             buf.writeBoolean(true);
@@ -87,7 +87,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         if (buf.readBoolean()) {
             NBTTagCompound nbtTagCompound;
@@ -107,7 +107,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_ONLINE_STATUS) {
             boolean isOnline = buf.readBoolean();

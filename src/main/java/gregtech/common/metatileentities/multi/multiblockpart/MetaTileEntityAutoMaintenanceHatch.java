@@ -43,7 +43,8 @@ public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblock
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.disabled"));
     }

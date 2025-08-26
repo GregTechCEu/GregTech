@@ -36,6 +36,7 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -445,18 +446,18 @@ public class CraftingRecipeLogic extends SyncHandler {
         return new InventoryCrafting(new DummyContainer(), 3, 3) {
 
             @Override
-            public ItemStack getStackInRowAndColumn(int row, int column) {
+            public @NotNull ItemStack getStackInRowAndColumn(int row, int column) {
                 int index = row + (3 * column);
                 return handler.getStackInSlot(index);
             }
 
             @Override
-            public ItemStack getStackInSlot(int index) {
+            public @NotNull ItemStack getStackInSlot(int index) {
                 return handler.getStackInSlot(index);
             }
 
             @Override
-            public void setInventorySlotContents(int index, ItemStack stack) {
+            public void setInventorySlotContents(int index, @NotNull ItemStack stack) {
                 handler.setStackInSlot(index, GTUtility.copy(1, stack));
             }
         };

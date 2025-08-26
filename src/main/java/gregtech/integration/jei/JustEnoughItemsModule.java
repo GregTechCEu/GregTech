@@ -107,7 +107,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
     public static IGuiHelper guiHelper;
 
     @Override
-    public void loadComplete(FMLLoadCompleteEvent event) {
+    public void loadComplete(@NotNull FMLLoadCompleteEvent event) {
         if (event.getSide() == Side.CLIENT) {
             setupInputHandler();
         }

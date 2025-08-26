@@ -12,6 +12,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class EmissiveOreBakedModel extends OreBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public @NotNull List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
 
         if (state == null || layer == null || !ConfigHolder.client.shader.useShader) {

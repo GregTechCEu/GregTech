@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +30,7 @@ public class IntCircuitRecipeWrapper implements IRecipeWrapper {
     }
 
     @Override
-    public void getIngredients(IIngredients ingredients) {
+    public void getIngredients(@NotNull IIngredients ingredients) {
         List<ItemStack> stacks = IntStream.range(0, IntCircuitIngredient.CIRCUIT_MAX + 1)
                 .mapToObj(IntCircuitIngredient::getIntegratedCircuit)
                 .collect(Collectors.toList());

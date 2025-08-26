@@ -200,7 +200,7 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         if (canBeDamaged()) {
             buf.writeBoolean(damaged);
@@ -208,7 +208,7 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         if (canBeDamaged()) {
             this.damaged = buf.readBoolean();
@@ -216,7 +216,7 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (canBeDamaged() && dataId == GregtechDataCodes.DAMAGE_STATE) {
             this.damaged = buf.readBoolean();

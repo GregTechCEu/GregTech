@@ -442,7 +442,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(structureFormed);
         buf.writeByte(upwardsFacing.getIndex());
@@ -450,7 +450,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.structureFormed = buf.readBoolean();
         this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
@@ -458,7 +458,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == STRUCTURE_FORMED) {
             this.structureFormed = buf.readBoolean();
@@ -474,7 +474,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         T result = super.getCapability(capability, side);
         if (result != null)
             return result;

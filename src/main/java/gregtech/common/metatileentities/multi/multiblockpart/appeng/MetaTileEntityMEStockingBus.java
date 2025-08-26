@@ -249,7 +249,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_AUTO_PULL) {
             this.autoPull = buf.readBoolean();
@@ -294,13 +294,13 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(autoPull);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.autoPull = buf.readBoolean();
     }

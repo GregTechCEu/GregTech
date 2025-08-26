@@ -22,6 +22,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<DualHandler> {
@@ -67,7 +68,7 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<Dua
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ||
                 capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             var controller = getPoweredController();

@@ -79,7 +79,7 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
@@ -182,7 +182,8 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         String tierName = GTValues.VNF[getTier()];
 
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));

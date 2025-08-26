@@ -9,6 +9,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -24,7 +26,7 @@ public class MaterialStateMapper implements IStateMapper {
     }
 
     @Override
-    public Map<IBlockState, ModelResourceLocation> putStateModelLocations(Block block) {
+    public @NotNull Map<IBlockState, ModelResourceLocation> putStateModelLocations(Block block) {
         return block.getBlockState().getValidStates().stream().collect(Collectors.toMap(
                 s -> s,
                 s -> MaterialBlockModelLoader.registerBlockModel(

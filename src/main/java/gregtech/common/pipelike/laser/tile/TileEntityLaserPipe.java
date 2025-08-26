@@ -182,7 +182,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     }
 
     @Override
-    public void receiveCustomData(int discriminator, PacketBuffer buf) {
+    public void receiveCustomData(int discriminator, @NotNull PacketBuffer buf) {
         super.receiveCustomData(discriminator, buf);
         if (discriminator == GregtechDataCodes.PIPE_LASER_ACTIVE) {
             this.isActive = buf.readBoolean();
@@ -191,7 +191,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(this.isActive);
 
@@ -203,7 +203,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isActive = buf.readBoolean();
         scheduleChunkForRenderUpdate();

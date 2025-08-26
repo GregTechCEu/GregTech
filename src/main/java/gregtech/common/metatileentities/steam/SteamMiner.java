@@ -171,7 +171,8 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick_steam", energyPerTick) + TextFormatting.GRAY +
                 ", " + I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getSpeed() / 20));
         int maxArea = getWorkingArea(minerLogic.getMaximumRadius());
@@ -228,7 +229,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(this.needsVenting);
         buf.writeBoolean(this.ventingStuck);
@@ -236,7 +237,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.needsVenting = buf.readBoolean();
         this.ventingStuck = buf.readBoolean();
@@ -244,7 +245,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.NEEDS_VENTING) {
             this.needsVenting = buf.readBoolean();
@@ -282,7 +283,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }

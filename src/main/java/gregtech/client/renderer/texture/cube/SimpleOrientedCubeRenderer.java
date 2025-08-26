@@ -21,6 +21,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class SimpleOrientedCubeRenderer implements ICubeRenderer {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureMap textureMap) {
+    public void registerIcons(@NotNull TextureMap textureMap) {
         String modID = GTValues.MODID;
         String basePath = this.basePath;
         String[] split = this.basePath.split(":");

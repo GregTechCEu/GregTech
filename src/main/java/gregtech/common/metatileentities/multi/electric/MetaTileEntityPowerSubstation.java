@@ -491,14 +491,14 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isActive);
         buf.writeBoolean(isWorkingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         isActive = buf.readBoolean();
         isWorkingEnabled = buf.readBoolean();
@@ -517,7 +517,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }

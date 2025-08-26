@@ -439,7 +439,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         writePipeProperties(buf);
         buf.writeVarInt(connections);
         buf.writeVarInt(blockedConnections);
@@ -450,7 +450,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         if (this.tickingPipe != null) {
             this.tickingPipe.receiveInitialSyncData(buf);
             return;
@@ -474,7 +474,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
-    public void receiveCustomData(int discriminator, PacketBuffer buf) {
+    public void receiveCustomData(int discriminator, @NotNull PacketBuffer buf) {
         if (this.tickingPipe != null) {
             this.tickingPipe.receiveCustomData(discriminator, buf);
             return;

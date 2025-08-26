@@ -10,6 +10,7 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
 import appeng.util.item.AEItemStack;
 import appeng.util.item.ItemList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -51,7 +52,7 @@ public class SerializableItemList implements IItemList<IAEItemStack>, INBTSerial
     }
 
     @Override
-    public Iterator<IAEItemStack> iterator() {
+    public @NotNull Iterator<IAEItemStack> iterator() {
         return this.parent.iterator();
     }
 

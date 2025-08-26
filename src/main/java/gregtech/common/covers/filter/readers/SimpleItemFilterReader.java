@@ -74,7 +74,7 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack) {
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         if (validateSlotIndex(slot)) {
             if (!stack.isEmpty()) {
                 stack.setCount(Math.min(stack.getCount(), isBlacklistFilter() ? 1 : getMaxTransferRate()));

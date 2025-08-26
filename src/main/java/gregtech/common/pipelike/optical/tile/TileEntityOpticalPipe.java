@@ -184,7 +184,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     }
 
     @Override
-    public void receiveCustomData(int discriminator, PacketBuffer buf) {
+    public void receiveCustomData(int discriminator, @NotNull PacketBuffer buf) {
         super.receiveCustomData(discriminator, buf);
         if (discriminator == GregtechDataCodes.PIPE_OPTICAL_ACTIVE) {
             this.isActive = buf.readBoolean();

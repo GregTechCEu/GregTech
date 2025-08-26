@@ -14,6 +14,7 @@ import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import com.mojang.authlib.GameProfile;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
@@ -48,36 +49,36 @@ public class GregFakePlayer extends EntityPlayer {
     }
 
     @Override
-    public Vec3d getPositionVector() {
+    public @NotNull Vec3d getPositionVector() {
         return new Vec3d(0, 0, 0);
     }
 
     @Override
-    public boolean canUseCommand(int i, String s) {
+    public boolean canUseCommand(int i, @NotNull String s) {
         return false;
     }
 
     @Override
-    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z) {}
+    public void openGui(@NotNull Object mod, int modGuiId, @NotNull World world, int x, int y, int z) {}
 
     @Override
-    public boolean isEntityInvulnerable(DamageSource source) {
+    public boolean isEntityInvulnerable(@NotNull DamageSource source) {
         return true;
     }
 
     @Override
-    public boolean canAttackPlayer(EntityPlayer player) {
+    public boolean canAttackPlayer(@NotNull EntityPlayer player) {
         return false;
     }
 
     @Override
-    public void onDeath(DamageSource source) {/**/}
+    public void onDeath(@NotNull DamageSource source) {/**/}
 
     @Override
     public void onUpdate() {/**/}
 
     @Override
-    public Entity changeDimension(int dim, ITeleporter teleporter) {
+    public Entity changeDimension(int dim, @NotNull ITeleporter teleporter) {
         return this;
     }
 
@@ -87,5 +88,5 @@ public class GregFakePlayer extends EntityPlayer {
     }
 
     @Override
-    protected void playEquipSound(ItemStack stack) {}
+    protected void playEquipSound(@NotNull ItemStack stack) {}
 }

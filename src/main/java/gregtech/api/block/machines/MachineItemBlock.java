@@ -193,7 +193,7 @@ public class MachineItemBlock extends ItemBlock {
     }
 
     @Override
-    public CreativeTabs[] getCreativeTabs() {
+    public CreativeTabs @NotNull [] getCreativeTabs() {
         CreativeTabs[] tabs = ADDITIONAL_CREATIVE_TABS.toArray(new CreativeTabs[ADDITIONAL_CREATIVE_TABS.size() + 1]);
         tabs[tabs.length - 1] = getCreativeTab();
         return tabs;

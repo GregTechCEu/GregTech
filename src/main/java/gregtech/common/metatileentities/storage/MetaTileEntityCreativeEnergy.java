@@ -91,7 +91,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(this);
         } else if (capability == GregtechTileCapabilities.CAPABILITY_LASER) {
@@ -168,7 +168,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
                 I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
     }

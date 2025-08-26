@@ -1119,7 +1119,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
      * @return Float representing the factor the usual drop chance is to be multiplied by.
      */
     @Override
-    default float getSaplingModifier(ItemStack stack, World world, EntityPlayer player, BlockPos pos) {
+    default float getSaplingModifier(@NotNull ItemStack stack, @NotNull World world, @NotNull EntityPlayer player,
+                                     @NotNull BlockPos pos) {
         return getToolClasses(stack).contains(ToolClasses.GRAFTER) ? 100F : 1.0F;
     }
 

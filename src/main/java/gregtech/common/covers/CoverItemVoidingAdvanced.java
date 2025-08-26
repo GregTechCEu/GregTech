@@ -127,8 +127,9 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
-                            Cuboid6 plateBox, BlockRenderLayer layer) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline,
+                            @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.ITEM_VOIDING_ADVANCED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
@@ -155,13 +156,13 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("VoidMode", voidingMode.ordinal());
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         this.voidingMode = VoidingMode.VALUES[tagCompound.getInteger("VoidMode")];
         this.itemFilterContainer.setMaxTransferSize(this.voidingMode.maxStackSize);
         super.readFromNBT(tagCompound);

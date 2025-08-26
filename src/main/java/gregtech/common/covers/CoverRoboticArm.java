@@ -47,8 +47,9 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
-                            Cuboid6 plateBox, BlockRenderLayer layer) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline,
+                            @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         if (conveyorMode == ConveyorMode.EXPORT) {
             Textures.ARM_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         } else {
@@ -249,13 +250,13 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferMode", transferMode.ordinal());
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         this.transferMode = TransferMode.VALUES[tagCompound.getInteger("TransferMode")];
         this.itemFilterContainer.setMaxTransferSize(this.transferMode.maxStackSize);
         super.readFromNBT(tagCompound);

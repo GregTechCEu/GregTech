@@ -18,6 +18,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class BakedModelHandler {
     private static final StateMapperBase SIMPLE_STATE_MAPPER = new StateMapperBase() {
 
         @Override
-        protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+        protected @NotNull ModelResourceLocation getModelResourceLocation(IBlockState state) {
             return getSimpleModelLocation(state.getBlock());
         }
     };

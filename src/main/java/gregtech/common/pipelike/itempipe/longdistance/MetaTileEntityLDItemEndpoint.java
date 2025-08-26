@@ -56,7 +56,7 @@ public class MetaTileEntityLDItemEndpoint extends MetaTileEntityLongDistanceEndp
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (getWorld().isRemote || side != getFrontFacing() || !isInput()) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(DEFAULT_INVENTORY);

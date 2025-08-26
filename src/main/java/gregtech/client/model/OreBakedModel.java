@@ -59,7 +59,7 @@ public class OreBakedModel implements IBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public @NotNull List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         // a way to guarantee one variant on random models with arbitrary entries.
         // this essentially prevents z-fighting issues as long as the first model defined in weighted baked model
         // does not have any rotation applied.

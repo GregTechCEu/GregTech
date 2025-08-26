@@ -28,6 +28,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
@@ -218,12 +219,12 @@ public class MultiblockPreviewRenderer {
         }
 
         @Override
-        public int getCombinedLight(BlockPos pos, int lightValue) {
+        public int getCombinedLight(@NotNull BlockPos pos, int lightValue) {
             return 15;
         }
 
         @Override
-        public IBlockState getBlockState(BlockPos pos) {
+        public @NotNull IBlockState getBlockState(BlockPos pos) {
             return pos.equals(BlockPos.ORIGIN) ? delegate.getBlockState(targetPos) : Blocks.AIR.getDefaultState();
         }
 
@@ -233,22 +234,22 @@ public class MultiblockPreviewRenderer {
         }
 
         @Override
-        public Biome getBiome(BlockPos pos) {
+        public @NotNull Biome getBiome(@NotNull BlockPos pos) {
             return delegate.getBiome(targetPos);
         }
 
         @Override
-        public int getStrongPower(BlockPos pos, EnumFacing direction) {
+        public int getStrongPower(@NotNull BlockPos pos, @NotNull EnumFacing direction) {
             return 0;
         }
 
         @Override
-        public WorldType getWorldType() {
+        public @NotNull WorldType getWorldType() {
             return delegate.getWorldType();
         }
 
         @Override
-        public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
+        public boolean isSideSolid(BlockPos pos, @NotNull EnumFacing side, boolean _default) {
             return pos.equals(BlockPos.ORIGIN) && delegate.isSideSolid(targetPos, side, _default);
         }
     }

@@ -2,6 +2,8 @@ package gregtech.common.covers;
 
 import net.minecraft.util.IStringSerializable;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum ItemFilterMode implements IStringSerializable {
 
     FILTER_INSERT("cover.filter.mode.filter_insert"),
@@ -16,7 +18,7 @@ public enum ItemFilterMode implements IStringSerializable {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return this.localeName;
     }
 }

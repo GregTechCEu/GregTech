@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 import javax.vecmath.Vector3f;
@@ -22,7 +24,7 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
     }
 
     @Override
-    public void setVertexFormat(VertexFormat format) {
+    public void setVertexFormat(@NotNull VertexFormat format) {
         if (!Objects.equals(format, baseFormat)) {
             baseFormat = format;
 

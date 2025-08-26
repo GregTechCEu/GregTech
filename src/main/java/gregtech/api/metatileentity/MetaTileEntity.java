@@ -1113,7 +1113,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return originalCapability;
     }
 
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_COVER_HOLDER) {
             return GregtechTileCapabilities.CAPABILITY_COVER_HOLDER.cast(this);
         }

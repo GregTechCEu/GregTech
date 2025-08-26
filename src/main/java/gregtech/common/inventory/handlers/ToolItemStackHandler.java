@@ -13,7 +13,7 @@ public class ToolItemStackHandler extends SingleItemStackHandler {
     }
 
     @Override
-    public boolean isItemValid(int slot, ItemStack stack) {
+    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
         return ToolHelper.isTool(stack);
     }
 
