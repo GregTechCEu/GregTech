@@ -6,6 +6,7 @@ import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.FilteredFluidStats;
 import gregtech.api.items.metaitem.FoodStats;
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MusicDiscStats;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
@@ -19,8 +20,8 @@ import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RandomPotionEffect;
 import gregtech.common.ConfigHolder;
@@ -61,12 +62,16 @@ import gregtech.common.items.behaviors.monitorplugin.TextPluginBehavior;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+
+import org.jetbrains.annotations.NotNull;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.util.DyeUtil.getOredictColorName;
@@ -76,6 +81,26 @@ public class MetaItem1 extends StandardMetaItem {
 
     public MetaItem1() {
         super();
+    }
+
+    @Override
+    public void getSubItems(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> subItems) {
+        if (!isInCreativeTab(tab)) return;
+        for (MetaItem<?>.MetaValueItem item : metaItems.values()) {
+            if (!item.isInCreativeTab(tab)) continue;
+
+            int itemMetaData = item.getMetaValue();
+            if (itemMetaData >= 1006 && itemMetaData <= 1010) continue;
+
+            item.getSubItemHandler().getSubItems(item.getStackForm(), tab, subItems);
+
+            if (itemMetaData == 29) {
+                for (MetaItem<?>.MetaValueItem moldItem : SHAPE_MOLDS) {
+                    if (moldItem.getMetaValue() < 1006) continue;
+                    moldItem.getSubItemHandler().getSubItems(moldItem.getStackForm(), tab, subItems);
+                }
+            }
+        }
     }
 
     @Override
@@ -91,87 +116,99 @@ public class MetaItem1 extends StandardMetaItem {
         CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium").setRarity(EnumRarity.EPIC);
 
         COIN_GOLD_ANCIENT = addItem(8, "coin.gold.ancient")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, M / 4)))
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Gold, M / 4)))
                 .setRarity(EnumRarity.RARE);
         COIN_DOGE = addItem(9, "coin.doge")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Brass, M / 4)))
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Brass, M / 4)))
                 .setRarity(EnumRarity.EPIC);
         COIN_CHOCOLATE = addItem(10, "coin.chocolate")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, M / 4)))
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Gold, M / 4)))
                 .addComponents(new FoodStats(1, 0.1F, false, true, OreDictUnifier.get(OrePrefix.foil, Materials.Gold),
                         new RandomPotionEffect(MobEffects.SPEED, 200, 1, 10)));
 
         // Solidifier Shapes: ID 11-30
         SHAPE_EMPTY = addItem(11, "shape.empty")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
 
         SHAPE_MOLDS[0] = SHAPE_MOLD_PLATE = addItem(12, "shape.mold.plate")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[1] = SHAPE_MOLD_GEAR = addItem(13, "shape.mold.gear")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[2] = SHAPE_MOLD_CREDIT = addItem(14, "shape.mold.credit")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[3] = SHAPE_MOLD_BOTTLE = addItem(15, "shape.mold.bottle")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[4] = SHAPE_MOLD_INGOT = addItem(16, "shape.mold.ingot")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[5] = SHAPE_MOLD_BALL = addItem(17, "shape.mold.ball")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[6] = SHAPE_MOLD_BLOCK = addItem(18, "shape.mold.block")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[7] = SHAPE_MOLD_NUGGET = addItem(19, "shape.mold.nugget")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[8] = SHAPE_MOLD_CYLINDER = addItem(20, "shape.mold.cylinder")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[9] = SHAPE_MOLD_ANVIL = addItem(21, "shape.mold.anvil")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[10] = SHAPE_MOLD_NAME = addItem(22, "shape.mold.name")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[11] = SHAPE_MOLD_GEAR_SMALL = addItem(23, "shape.mold.gear.small")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[12] = SHAPE_MOLD_ROTOR = addItem(24, "shape.mold.rotor")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[13] = SHAPE_MOLD_RING = addItem(25, "shape.mold.ring")
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[14] = SHAPE_MOLD_BOLT = addItem(26, "shape.mold.bolt")
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[15] = SHAPE_MOLD_ROD = addItem(27, "shape.mold.rod")
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[16] = SHAPE_MOLD_ROD_LONG = addItem(28, "shape.mold.rod_long")
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[17] = SHAPE_MOLD_ROUND = addItem(29, "shape.mold.round")
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
+
+        // Free ID: 30
 
         // Extruder Shapes: ID 31-59
         SHAPE_EXTRUDERS[0] = SHAPE_EXTRUDER_PLATE = addItem(31, "shape.extruder.plate")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[1] = SHAPE_EXTRUDER_ROD = addItem(32, "shape.extruder.rod")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[2] = SHAPE_EXTRUDER_BOLT = addItem(33, "shape.extruder.bolt")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[3] = SHAPE_EXTRUDER_RING = addItem(34, "shape.extruder.ring")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[4] = SHAPE_EXTRUDER_CELL = addItem(35, "shape.extruder.cell")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[5] = SHAPE_EXTRUDER_INGOT = addItem(36, "shape.extruder.ingot")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[6] = SHAPE_EXTRUDER_WIRE = addItem(37, "shape.extruder.wire")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[7] = SHAPE_EXTRUDER_PIPE_TINY = addItem(38, "shape.extruder.pipe.tiny")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[8] = SHAPE_EXTRUDER_PIPE_SMALL = addItem(39, "shape.extruder.pipe.small")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[9] = SHAPE_EXTRUDER_PIPE_NORMAL = addItem(40, "shape.extruder.pipe.normal")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[10] = SHAPE_EXTRUDER_PIPE_LARGE = addItem(41, "shape.extruder.pipe.large")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[11] = SHAPE_EXTRUDER_PIPE_HUGE = addItem(42, "shape.extruder.pipe.huge")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[12] = SHAPE_EXTRUDER_BLOCK = addItem(43, "shape.extruder.block")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         // Extruder Shapes index 13-20 (inclusive), id 44-51 (inclusive) are unused
         SHAPE_EXTRUDERS[21] = SHAPE_EXTRUDER_GEAR = addItem(52, "shape.extruder.gear")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[22] = SHAPE_EXTRUDER_BOTTLE = addItem(53, "shape.extruder.bottle")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[23] = SHAPE_EXTRUDER_FOIL = addItem(54, "shape.extruder.foil")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[24] = SHAPE_EXTRUDER_GEAR_SMALL = addItem(55, "shape.extruder.gear_small")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[25] = SHAPE_EXTRUDER_ROD_LONG = addItem(56, "shape.extruder.rod_long")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[26] = SHAPE_EXTRUDER_ROTOR = addItem(57, "shape.extruder.rotor")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
 
         // Spray Cans: ID 60-77
         SPRAY_EMPTY = addItem(61, "spray.empty");
@@ -204,7 +241,7 @@ public class MetaItem1 extends StandardMetaItem {
                         Materials.Steel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false,
                         false, false, true),
                         new ItemFluidContainer(true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4))) // ingot * 4
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4))) // ingot * 4
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
@@ -212,7 +249,7 @@ public class MetaItem1 extends StandardMetaItem {
                         Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false,
                         false, false, true),
                         new ItemFluidContainer(true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, M * 4))) // ingot * 4
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Aluminium, M * 4))) // ingot * 4
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
@@ -220,7 +257,7 @@ public class MetaItem1 extends StandardMetaItem {
                         Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true,
                         true, true, false, true),
                         new ItemFluidContainer(true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, M * 6))) // ingot * 6
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.StainlessSteel, M * 6))) // ingot * 6
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
@@ -228,7 +265,7 @@ public class MetaItem1 extends StandardMetaItem {
                         Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, true,
                         false, false, true),
                         new ItemFluidContainer(true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, M * 6))) // ingot * 6
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Titanium, M * 6))) // ingot * 6
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
@@ -237,13 +274,13 @@ public class MetaItem1 extends StandardMetaItem {
                         true, false, false, true),
                         new ItemFluidContainer(true))
                 .setMaxStackSize(32)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 8))) // ingot * 8
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.TungstenSteel, M * 8))) // ingot * 8
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_GLASS_VIAL = addItem(85, "fluid_cell.glass_vial")
                 .addComponents(new FilteredFluidStats(1000, 1200, false, true, false, false, true),
                         new ItemFluidContainer())
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Glass, M / 4))) // small dust
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Glass, M / 4))) // small dust
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         // Limited-Use Items: ID 89-95
@@ -256,13 +293,13 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(1)
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         TOOL_LIGHTER_INVAR = addItem(91, "tool.lighter.invar")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Invar, M * 2)))
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Invar, M * 2)))
                 .addComponents(new LighterBehaviour(GTUtility.gregtechId("lighter_open"), true, true, true))
                 .addComponents(new FilteredFluidStats(100, true, CommonFluidFilters.LIGHTER_FUEL))
                 .setMaxStackSize(1)
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         TOOL_LIGHTER_PLATINUM = addItem(92, "tool.lighter.platinum")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, M * 2)))
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Platinum, M * 2)))
                 .addComponents(new LighterBehaviour(GTUtility.gregtechId("lighter_open"), true, true, true))
                 .addComponents(new FilteredFluidStats(1000, true, CommonFluidFilters.LIGHTER_FUEL))
                 .setMaxStackSize(1)
@@ -273,24 +310,24 @@ public class MetaItem1 extends StandardMetaItem {
                 new ItemStack(Items.GLASS_BOTTLE), new RandomPotionEffect(MobEffects.HASTE, 800, 1, 90)));
 
         // Voltage Coils: ID 96-110
-        VOLTAGE_COIL_ULV = addItem(96, "voltage_coil.ulv").setMaterialInfo(new ItemMaterialInfo(
+        VOLTAGE_COIL_ULV = addItem(96, "voltage_coil.ulv").setRecyclingData(new RecyclingData(
                 new MaterialStack(Materials.Lead, M * 2), new MaterialStack(Materials.IronMagnetic, M / 2)));
-        VOLTAGE_COIL_LV = addItem(97, "voltage_coil.lv").setMaterialInfo(new ItemMaterialInfo(
+        VOLTAGE_COIL_LV = addItem(97, "voltage_coil.lv").setRecyclingData(new RecyclingData(
                 new MaterialStack(Materials.Steel, M * 2), new MaterialStack(Materials.IronMagnetic, M / 2)));
-        VOLTAGE_COIL_MV = addItem(98, "voltage_coil.mv").setMaterialInfo(new ItemMaterialInfo(
+        VOLTAGE_COIL_MV = addItem(98, "voltage_coil.mv").setRecyclingData(new RecyclingData(
                 new MaterialStack(Materials.Aluminium, M * 2), new MaterialStack(Materials.SteelMagnetic, M / 2)));
-        VOLTAGE_COIL_HV = addItem(99, "voltage_coil.hv").setMaterialInfo(new ItemMaterialInfo(
+        VOLTAGE_COIL_HV = addItem(99, "voltage_coil.hv").setRecyclingData(new RecyclingData(
                 new MaterialStack(Materials.BlackSteel, M * 2), new MaterialStack(Materials.SteelMagnetic, M / 2)));
         VOLTAGE_COIL_EV = addItem(100, "voltage_coil.ev")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, M * 2),
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Platinum, M * 2),
                         new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
-        VOLTAGE_COIL_IV = addItem(101, "voltage_coil.iv").setMaterialInfo(new ItemMaterialInfo(
+        VOLTAGE_COIL_IV = addItem(101, "voltage_coil.iv").setRecyclingData(new RecyclingData(
                 new MaterialStack(Materials.Iridium, M * 2), new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
-        VOLTAGE_COIL_LuV = addItem(102, "voltage_coil.luv").setMaterialInfo(new ItemMaterialInfo(
+        VOLTAGE_COIL_LuV = addItem(102, "voltage_coil.luv").setRecyclingData(new RecyclingData(
                 new MaterialStack(Materials.Osmiridium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
-        VOLTAGE_COIL_ZPM = addItem(103, "voltage_coil.zpm").setMaterialInfo(new ItemMaterialInfo(
+        VOLTAGE_COIL_ZPM = addItem(103, "voltage_coil.zpm").setRecyclingData(new RecyclingData(
                 new MaterialStack(Materials.Europium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
-        VOLTAGE_COIL_UV = addItem(104, "voltage_coil.uv").setMaterialInfo(new ItemMaterialInfo(
+        VOLTAGE_COIL_UV = addItem(104, "voltage_coil.uv").setRecyclingData(new RecyclingData(
                 new MaterialStack(Materials.Tritanium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
 
         // ???: ID 111-125
@@ -573,16 +610,16 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Special Machine Components: ID 266-280
         COMPONENT_GRINDER_DIAMOND = addItem(266, "component.grinder.diamond")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 8),
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 8),
                         new MaterialStack(Materials.Diamond, M * 5)));
         COMPONENT_GRINDER_TUNGSTEN = addItem(267, "component.grinder.tungsten")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tungsten, M * 4),
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Tungsten, M * 4),
                         new MaterialStack(Materials.VanadiumSteel, M * 8), new MaterialStack(Materials.Diamond, M)));
 
         IRON_MINECART_WHEELS = addItem(268, "minecart_wheels.iron")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Iron, M)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Iron, M)));
         STEEL_MINECART_WHEELS = addItem(269, "minecart_wheels.steel")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M)));
 
         // Special Eyes/Stars: ID 281-289
         QUANTUM_EYE = addItem(281, "quantumeye");
@@ -591,17 +628,17 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Filters: ID 290-300
         FLUID_FILTER = addItem(290, "fluid_filter")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)))
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Zinc, M * 2)))
                 .addComponents(new SimpleFluidFilterUIManager(), IFilter.factory(SimpleFluidFilter::new));
         ITEM_FILTER = addItem(291, "item_filter")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2),
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Zinc, M * 2),
                         new MaterialStack(Materials.Steel, M)))
                 .addComponents(new SimpleFilterUIManager(), IFilter.factory(SimpleItemFilter::new));
         ORE_DICTIONARY_FILTER = addItem(292, "ore_dictionary_filter")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)))
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Zinc, M * 2)))
                 .addComponents(new OreDictFilterUIManager(), IFilter.factory(OreDictionaryItemFilter::new));
         SMART_FILTER = addItem(293, "smart_item_filter")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 3 / 2)))
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Zinc, M * 3 / 2)))
                 .addComponents(new SmartFilterUIManager(), IFilter.factory(SmartItemFilter::new));
 
         // Functional Covers: ID 301-330
@@ -707,15 +744,15 @@ public class MetaItem1 extends StandardMetaItem {
         WOODEN_FORM_EMPTY = addItem(347, "wooden_form.empty");
         WOODEN_FORM_BRICK = addItem(348, "wooden_form.brick").addComponents(selfContainerItemProvider);
         COMPRESSED_CLAY = addItem(349, "compressed.clay")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Clay, M)));
         COMPRESSED_COKE_CLAY = addItem(350, "compressed.coke_clay")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Clay, M)));
         COMPRESSED_FIRECLAY = addItem(351, "compressed.fireclay")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Fireclay, M)));
         FIRECLAY_BRICK = addItem(352, "brick.fireclay")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Fireclay, M)));
         COKE_OVEN_BRICK = addItem(353, "brick.coke")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Clay, M)));
 
         if (!ConfigHolder.recipes.harderBrickRecipes)
             COMPRESSED_CLAY.setInvisible();
@@ -856,7 +893,7 @@ public class MetaItem1 extends StandardMetaItem {
         // Circuit Components: ID 516-565
         VACUUM_TUBE = addItem(516, "circuit.vacuum_tube").setUnificationData(OrePrefix.circuit, Tier.ULV);
         GLASS_TUBE = addItem(517, "component.glass.tube")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Glass, M)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Glass, M)));
         TRANSISTOR = addItem(518, "component.transistor").setUnificationData(OrePrefix.component, Component.Transistor);
         RESISTOR = addItem(519, "component.resistor").setUnificationData(OrePrefix.component, Component.Resistor);
         CAPACITOR = addItem(520, "component.capacitor").setUnificationData(OrePrefix.component, Component.Capacitor);
@@ -996,21 +1033,21 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Battery Hulls: ID 716-730
         BATTERY_HULL_LV = addItem(717, "battery.hull.lv")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, M))); // plate
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.BatteryAlloy, M))); // plate
         BATTERY_HULL_MV = addItem(718, "battery.hull.mv")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, M * 3))); // plate * 3
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.BatteryAlloy, M * 3))); // plate * 3
         BATTERY_HULL_HV = addItem(719, "battery.hull.hv")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, M * 9))); // plate * 9
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.BatteryAlloy, M * 9))); // plate * 9
         BATTERY_HULL_SMALL_VANADIUM = addItem(720, "battery.hull.ev")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.RedSteel, M * 2)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.RedSteel, M * 2)));
         BATTERY_HULL_MEDIUM_VANADIUM = addItem(721, "battery.hull.iv")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.RoseGold, M * 6)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.RoseGold, M * 6)));
         BATTERY_HULL_LARGE_VANADIUM = addItem(722, "battery.hull.luv")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BlueSteel, M * 18)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.BlueSteel, M * 18)));
         BATTERY_HULL_MEDIUM_NAQUADRIA = addItem(723, "battery.hull.zpm")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Europium, M * 6)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Europium, M * 6)));
         BATTERY_HULL_LARGE_NAQUADRIA = addItem(724, "battery.hull.uv")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Americium, M * 18)));
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Americium, M * 18)));
 
         // Batteries: 731-775
         BATTERY_ULV_TANTALUM = addItem(731, "battery.re.ulv.tantalum")
@@ -1148,5 +1185,17 @@ public class MetaItem1 extends StandardMetaItem {
 
         MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior())
                 .setMaxStackSize(1);
+
+        // Extra molds 1006-1010
+        SHAPE_MOLDS[18] = SHAPE_MOLD_PIPE_TINY = addItem(1006, "shape.mold.pipe.tiny")
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[19] = SHAPE_MOLD_PIPE_SMALL = addItem(1007, "shape.mold.pipe.small")
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[20] = SHAPE_MOLD_PIPE_NORMAL = addItem(1008, "shape.mold.pipe.normal")
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[21] = SHAPE_MOLD_PIPE_LARGE = addItem(1009, "shape.mold.pipe.large")
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[22] = SHAPE_MOLD_PIPE_HUGE = addItem(1010, "shape.mold.pipe.huge")
+                .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
     }
 }

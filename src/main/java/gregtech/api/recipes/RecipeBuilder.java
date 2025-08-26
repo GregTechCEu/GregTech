@@ -1,6 +1,7 @@
 package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -25,6 +26,7 @@ import gregtech.api.recipes.properties.impl.DimensionProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -93,6 +95,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected boolean ignoreAllBuildActions = false;
     protected Map<ResourceLocation, RecipeBuildAction<R>> ignoredBuildActions;
 
+    private boolean withItemRecycling;
+
     protected RecipeBuilder() {
         this.inputs = new ArrayList<>();
         this.outputs = new ArrayList<>();
@@ -137,6 +141,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (recipeBuilder.ignoredBuildActions != null) {
             this.ignoredBuildActions = new Object2ObjectOpenHashMap<>(recipeBuilder.ignoredBuildActions);
         }
+        this.withItemRecycling = recipeBuilder.hasItemRecycling();
     }
 
     public R cleanroom(@Nullable CleanroomType cleanroom) {
@@ -964,6 +969,14 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    /**
+     * Generate Recycling Data based on this recipe's Items
+     */
+    public R withRecycling() {
+        this.withItemRecycling = true;
+        return (R) this;
+    }
+
     public ValidationResult<Recipe> build() {
         EnumValidationResult result = recipePropertyStorageErrored ? EnumValidationResult.INVALID : validate();
         return ValidationResult.newResult(result, new Recipe(inputs, outputs,
@@ -1071,6 +1084,15 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 buildAction.getValue().accept((R) this);
             }
         }
+        if (hasItemRecycling()) {
+            // ignore input fluids for item-only recycling
+            ItemStack outputStack = getOutputs().get(0);
+            RecyclingData data = RecyclingHandler.getRecyclingIngredients(getInputs(), outputStack.getCount());
+            if (data != null) {
+                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(outputStack, data);
+            }
+        }
+
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);
     }
@@ -1149,6 +1171,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
 
         return ignoredBuildActions;
+    }
+
+    public boolean hasItemRecycling() {
+        return withItemRecycling;
     }
 
     @Override

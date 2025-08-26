@@ -175,7 +175,6 @@ public class ElementMaterials {
         Cobalt = new Material.Builder(23, gregtechId("cobalt"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1768))
-                .ore() // leave for TiCon ore processing
                 .color(0x5050FA).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FINE_WIRE)
                 .element(Elements.Co)

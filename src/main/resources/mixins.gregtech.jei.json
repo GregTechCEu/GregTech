@@ -10,6 +10,7 @@
     "GhostDragAccessor",
     "IngredientGridMixin",
     "JEITooltipMixin",
+    "ModRegistryMixin",
     "StackHelperMixin"
   ],
   "client": [],

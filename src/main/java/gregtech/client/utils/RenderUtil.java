@@ -1,6 +1,7 @@
 package gregtech.client.utils;
 
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.util.Mods;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -27,6 +28,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.MCHelper;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
+import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -710,5 +714,16 @@ public class RenderUtil {
      */
     public static @NotNull TextureAtlasSprite getMissingSprite() {
         return getTextureMap().getMissingSprite();
+    }
+
+    public static void handleJeiGhostHighlight(IWidget slot) {
+        if (!Mods.JustEnoughItems.isModLoaded()) return;
+        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return;
+        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() ||
+                ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
+            GlStateManager.colorMask(true, true, true, false);
+            ingredientSlot.drawHighlight(slot.getArea(), slot.isHovering());
+            GlStateManager.colorMask(true, true, true, true);
+        }
     }
 }

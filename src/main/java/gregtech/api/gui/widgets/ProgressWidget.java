@@ -5,6 +5,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.api.util.function.impl.TimedProgressSupplier;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -293,40 +294,6 @@ public class ProgressWidget extends Widget {
             if (!hoverList.isEmpty()) {
                 drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
             }
-        }
-    }
-
-    public static class TimedProgressSupplier implements DoubleSupplier {
-
-        private final int msPerCycle;
-        private final int maxValue;
-        private final boolean countDown;
-        private long startTime;
-
-        public TimedProgressSupplier(int ticksPerCycle, int maxValue, boolean countDown) {
-            this.msPerCycle = ticksPerCycle * 50;
-            this.maxValue = maxValue;
-            this.countDown = countDown;
-            this.startTime = System.currentTimeMillis();
-        }
-
-        public void resetCountdown() {
-            startTime = System.currentTimeMillis();
-        }
-
-        @Override
-        public double getAsDouble() {
-            return calculateTime();
-        }
-
-        private double calculateTime() {
-            long currentTime = System.currentTimeMillis();
-            long msPassed = (currentTime - startTime) % msPerCycle;
-            double currentValue = 1.0 * msPassed * maxValue / msPerCycle;
-            if (countDown) {
-                return (maxValue - currentValue) / maxValue;
-            }
-            return currentValue / maxValue;
         }
     }
 }

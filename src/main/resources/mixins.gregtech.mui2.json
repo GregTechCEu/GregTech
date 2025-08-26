@@ -8,7 +8,11 @@
     "maxShiftBy": 10
   },
   "mixins": [
-    "ModularPanelMixin"
+    "AbstractCycleButtonWidgetMixin",
+    "IconMixin",
+    "IconMixin$DelegateMixin",
+    "ModularPanelMixin",
+    "RichTextCompilerMixin"
   ],
   "client": [
     "LangKeyMixin"
