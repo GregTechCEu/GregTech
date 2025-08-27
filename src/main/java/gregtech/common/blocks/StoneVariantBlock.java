@@ -12,11 +12,8 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.Item;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,12 +46,6 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
         this.VARIANT = PROPERTY;
         this.VALUES = StoneType.values();
         return new BlockStateContainer(this, VARIANT);
-    }
-
-    @Override
-    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
-                                    @NotNull EntityLiving.SpawnPlacementType type) {
-        return false;
     }
 
     @Override
