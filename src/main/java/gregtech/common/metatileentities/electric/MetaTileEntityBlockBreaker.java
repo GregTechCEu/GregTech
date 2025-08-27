@@ -16,6 +16,7 @@ import gregtech.client.utils.RenderUtil;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockSkull;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
@@ -191,14 +192,27 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
                                                                        @NotNull EntityPlayer entityPlayer) {
         TileEntity tileEntity = world.getTileEntity(lookingAtPos);
         Block block = blockState.getBlock();
-        boolean result = block.removedByPlayer(blockState, world, lookingAtPos, entityPlayer, true);
-        if (result) {
-            world.playEvent(null, 2001, lookingAtPos, Block.getStateId(blockState));
-            block.onPlayerDestroy(world, lookingAtPos, blockState);
-
+        if (block instanceof BlockSkull) {
             BlockUtility.startCaptureDrops();
-            block.harvestBlock(world, entityPlayer, lookingAtPos, blockState, tileEntity, ItemStack.EMPTY);
-            return BlockUtility.stopCaptureDrops();
+            boolean result = block.removedByPlayer(blockState, world, lookingAtPos, entityPlayer, true);
+            List<ItemStack> drops = BlockUtility.stopCaptureDrops();
+
+            if (result) {
+                world.playEvent(null, 2001, lookingAtPos, Block.getStateId(blockState));
+                block.onPlayerDestroy(world, lookingAtPos, blockState);
+
+                block.harvestBlock(world, entityPlayer, lookingAtPos, blockState, tileEntity, ItemStack.EMPTY);
+                return drops;
+            }
+        } else {
+            if (block.removedByPlayer(blockState, world, lookingAtPos, entityPlayer, true)) {
+                world.playEvent(null, 2001, lookingAtPos, Block.getStateId(blockState));
+                block.onPlayerDestroy(world, lookingAtPos, blockState);
+
+                BlockUtility.startCaptureDrops();
+                block.harvestBlock(world, entityPlayer, lookingAtPos, blockState, tileEntity, ItemStack.EMPTY);
+                return BlockUtility.stopCaptureDrops();
+            }
         }
 
         return Collections.emptyList();
