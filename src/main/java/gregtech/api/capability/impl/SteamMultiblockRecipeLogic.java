@@ -67,8 +67,13 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
         steamFluidTank = getSteamFluidTank();
         if (steamFluidTank == null)
             steamFluidTankCombined = new FluidTank(0);
-        else {
+        else if (steamFluidTank.getTanks() == 0) {
             int capacity = steamFluidTank.getTanks() * 64000;
+            steamFluidTankCombined = new FluidTank(capacity);
+            steamFluidTankCombined.fill(steamFluidTank.drain(capacity, false), true);
+        } else if (steamFluidTank.getTanks() == 1) {
+            IMultipleTankHandler.ITankEntry tankHatch = steamFluidTank.getTankAt(0);
+            int capacity = tankHatch.getCapacity();
             steamFluidTankCombined = new FluidTank(capacity);
             steamFluidTankCombined.fill(steamFluidTank.drain(capacity, false), true);
         }

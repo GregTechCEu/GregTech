@@ -5,6 +5,7 @@ import gregtech.common.items.MetaItems;
 import net.minecraftforge.fml.common.Loader;
 
 import static gregtech.api.GTValues.*;
+import static gregtech.api.recipes.RecipeMaps.CHEMICAL_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.DISTILLATION_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
@@ -24,11 +25,23 @@ public class DistillationRecipes {
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .duration(600).EUt(64).buildAndRegister();
 
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Water.getFluid(1000))
+                .fluidInputs(HydrochloricAcid.getFluid(1000))
+                .fluidOutputs(DilutedHydrochloricAcid.getFluid(2000))
+                .duration(200).EUt(16).buildAndRegister();
+
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(DilutedSulfuricAcid.getFluid(3000))
                 .fluidOutputs(SulfuricAcid.getFluid(2000))
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(600).EUt(VA[MV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(SulfuricAcid.getFluid(2000))
+                .fluidInputs(Water.getFluid(1000))
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(3000))
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(CharcoalByproducts.getFluid(1000))

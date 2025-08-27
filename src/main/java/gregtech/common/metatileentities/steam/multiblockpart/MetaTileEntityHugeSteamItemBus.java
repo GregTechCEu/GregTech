@@ -60,11 +60,6 @@ public class MetaTileEntityHugeSteamItemBus extends MetaTileEntityItemBus {
         return isExportHatch ? MultiblockAbility.STEAM_EXPORT_ITEMS : MultiblockAbility.STEAM_IMPORT_ITEMS;
     }
 
-    @Override
-    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
-        abilityInstances.add(isExportHatch ? this.exportItems : this.importItems);
-    }
-
     // Override base texture to have a bus with 4 slots, but ULV textures
     @Override
     public ICubeRenderer getBaseTexture() {
