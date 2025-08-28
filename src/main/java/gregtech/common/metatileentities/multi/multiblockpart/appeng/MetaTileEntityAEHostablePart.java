@@ -56,6 +56,14 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     }
 
     @Override
+    public void onRemoval() {
+        super.onRemoval();
+        if (this.aeProxy != null) {
+            this.aeProxy.invalidate();
+        }
+    }
+
+    @Override
     public void update() {
         super.update();
         if (!this.getWorld().isRemote) {
@@ -249,4 +257,5 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
         super.readFromNBT(data);
         this.allowExtraConnections = data.getBoolean("AllowExtraConnections");
     }
+
 }
