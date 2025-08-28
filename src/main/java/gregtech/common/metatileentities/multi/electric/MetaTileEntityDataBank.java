@@ -91,6 +91,12 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     @Override
     protected void updateFormedValid() {
+        if(!isWorkingEnabled) {
+            this.hasNotEnoughEnergy = false;
+            setActive(false);
+            return;
+        }
+
         int energyToConsume = this.getEnergyUsage();
         boolean hasMaintenance = ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics();
         if (hasMaintenance) {
@@ -250,12 +256,14 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     @Override
     protected void configureDisplayText(MultiblockUIBuilder builder) {
-        builder.setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
+        builder.setWorkingStatus(isWorkingEnabled(), isActive())
                 .setWorkingStatusKeys("gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.data_bank.providing")
-                .addEnergyUsageExactLine(getEnergyUsage())
                 .addWorkingStatusLine();
+
+        if(isWorkingEnabled() && isActive())
+            builder.addEnergyUsageExactLine(getEnergyUsage());
     }
 
     @Override
