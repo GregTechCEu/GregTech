@@ -28,6 +28,8 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gtqt.common.items.behaviors.ProgrammableCircuit;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityDualHatch;
+import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityHugeDualHatch;
+import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityHugeItemBus;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityHugeMEPatternProvider;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEPatternProvider;
 
@@ -104,6 +106,42 @@ public class CoverProgrammableHatch extends CoverBase implements CoverWithUI, IT
                     }
                 }
             } else if (mte instanceof MetaTileEntityMEPatternProvider itemBus) {
+                IItemHandlerModifiable importItems = itemBus.getImportItems();
+
+                for (int i = 0; i < importItems.getSlots(); i++) {
+                    ItemStack itemStack = importItems.getStackInSlot(i);
+                    if (itemStack != ItemStack.EMPTY && isItemValid(itemStack)) {
+                        if (getProgrammableCircuit(itemStack).getName().equals("programmable_circuit")) {
+
+                            itemBus.setGhostCircuitConfig(getProgrammableCircuit(itemStack).getType());
+                            importItems.extractItem(i, itemStack.getCount(), false);
+                            if (itemBus.getController() instanceof RecipeMapMultiblockController controller) {
+                                if (controller.getOutputInventory() == null) return;
+                                GTTransferUtils.addItemsToItemHandler(controller.getOutputInventory(), false,
+                                        Collections.singletonList(itemStack));
+                            }
+                        }
+                    }
+                }
+            } else if (mte instanceof MetaTileEntityHugeItemBus itemBus) {
+                IItemHandlerModifiable importItems = itemBus.getImportItems();
+
+                for (int i = 0; i < importItems.getSlots(); i++) {
+                    ItemStack itemStack = importItems.getStackInSlot(i);
+                    if (itemStack != ItemStack.EMPTY && isItemValid(itemStack)) {
+                        if (getProgrammableCircuit(itemStack).getName().equals("programmable_circuit")) {
+
+                            itemBus.setGhostCircuitConfig(getProgrammableCircuit(itemStack).getType());
+                            importItems.extractItem(i, itemStack.getCount(), false);
+                            if (itemBus.getController() instanceof RecipeMapMultiblockController controller) {
+                                if (controller.getOutputInventory() == null) return;
+                                GTTransferUtils.addItemsToItemHandler(controller.getOutputInventory(), false,
+                                        Collections.singletonList(itemStack));
+                            }
+                        }
+                    }
+                }
+            } else if (mte instanceof MetaTileEntityHugeDualHatch itemBus) {
                 IItemHandlerModifiable importItems = itemBus.getImportItems();
 
                 for (int i = 0; i < importItems.getSlots(); i++) {

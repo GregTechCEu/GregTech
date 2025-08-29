@@ -3,11 +3,12 @@ package gtqt.common.metatileentities;
 import gregtech.api.GTValues;
 
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityDualHatch;
+import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityHugeDualHatch;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityHugeMEPatternProvider;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEDualHatch;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEPatternProvider;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityMEPatternProviderProxy;
-import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntitySuperItemBus;
+import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityHugeItemBus;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityThreadHatch;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityWirelessController;
 import gtqt.common.metatileentities.multi.multiblockpart.MetaTileEntityWirelessEnergyHatch;
@@ -22,6 +23,10 @@ public class GTQTMetaTileEntities {
 
     public static final MetaTileEntityDualHatch[] DUAL_IMPORT_HATCH = new MetaTileEntityDualHatch[GTValues.V.length - 2]; // All tiers but MAX
     public static final MetaTileEntityDualHatch[] DUAL_EXPORT_HATCH = new MetaTileEntityDualHatch[GTValues.V.length - 2];
+
+    public static final MetaTileEntityHugeDualHatch[] HUGE_DUAL_IMPORT_HATCH = new MetaTileEntityHugeDualHatch[GTValues.V.length - 2]; // All tiers but MAX
+    public static final MetaTileEntityHugeDualHatch[] HUGE_DUAL_EXPORT_HATCH = new MetaTileEntityHugeDualHatch[GTValues.V.length - 2];
+
     public static final MetaTileEntityMEPatternProvider[] ME_PATTERN_PROVIDER = new MetaTileEntityMEPatternProvider[GTValues.V.length - 2];
     public static final MetaTileEntityHugeMEPatternProvider[] HUGE_ME_PATTERN_PROVIDER = new MetaTileEntityHugeMEPatternProvider[GTValues.V.length - 2];
 
@@ -32,12 +37,8 @@ public class GTQTMetaTileEntities {
     public static MetaTileEntityMEDualHatch ME_DUAL_EXPORT_HATCH;
     public static MetaTileEntityMEPatternProviderProxy ME_PATTERN_PROVIDER_PROXY;
 
-    public static final MetaTileEntitySuperItemBus[] SUPER_ITEM_IMPORT_BUS = new MetaTileEntitySuperItemBus[
-            GTValues.V.length -
-                    1]; // All tiers but MAX
-    public static final MetaTileEntitySuperItemBus[] SUPER_ITEM_EXPORT_BUS = new MetaTileEntitySuperItemBus[
-            GTValues.V.length -
-                    1]; // All tiers but MAX
+    public static final MetaTileEntityHugeItemBus[] HUGE_ITEM_IMPORT_BUS = new MetaTileEntityHugeItemBus[GTValues.V.length - 1]; // All tiers but MAX
+    public static final MetaTileEntityHugeItemBus[] HUGE_ITEM_EXPORT_BUS = new MetaTileEntityHugeItemBus[GTValues.V.length - 1]; // All tiers but MAX
 
     public static final MetaTileEntityWirelessEnergyHatch[] WIRELESS_INPUT_ENERGY_HATCH = new MetaTileEntityWirelessEnergyHatch[15];
     public static final MetaTileEntityWirelessEnergyHatch[] WIRELESS_OUTPUT_ENERGY_HATCH = new MetaTileEntityWirelessEnergyHatch[15];
@@ -67,21 +68,28 @@ public class GTQTMetaTileEntities {
     //任务：GTQT内不方便写的内容转移到这里来写
     //例如 高等级的能源仓 激光仓等等
     public static void initialization() {
+        //总成类 maxTier-2
         for(int i=0;i<DUAL_IMPORT_HATCH.length;i++)
         {
             String voltageName = GTValues.VN[i+1].toLowerCase();
             DUAL_IMPORT_HATCH[i] = new MetaTileEntityDualHatch(gregtechId("dual_hatch.import." + voltageName), i+1, false);
             DUAL_EXPORT_HATCH[i] = new MetaTileEntityDualHatch(gregtechId("dual_hatch.export." + voltageName), i+1, true);
             ME_PATTERN_PROVIDER[i] = new MetaTileEntityMEPatternProvider(gregtechId("me_pattern_provider." + voltageName), i+1);
+
+            HUGE_DUAL_IMPORT_HATCH[i] = new MetaTileEntityHugeDualHatch(gregtechId("huge_dual_hatch.import." + voltageName), i+1, false);
+            HUGE_DUAL_EXPORT_HATCH[i] = new MetaTileEntityHugeDualHatch(gregtechId("huge_dual_hatch.export." + voltageName), i+1, true);
             HUGE_ME_PATTERN_PROVIDER[i] = new MetaTileEntityHugeMEPatternProvider(gregtechId("huge_me_pattern_provider." + voltageName), i+1);
 
             registerMetaTileEntity(2500 + i, DUAL_IMPORT_HATCH[i]);
             registerMetaTileEntity(2515 + i, DUAL_EXPORT_HATCH[i]);
             registerMetaTileEntity(2530 + i, ME_PATTERN_PROVIDER[i]);
-            registerMetaTileEntity(2545 + i, HUGE_ME_PATTERN_PROVIDER[i]);
+            registerMetaTileEntity(2545 + i, HUGE_DUAL_IMPORT_HATCH[i]);
+            registerMetaTileEntity(2560 + i, HUGE_DUAL_EXPORT_HATCH[i]);
+            registerMetaTileEntity(2575 + i, HUGE_ME_PATTERN_PROVIDER[i]);
 
 
         }
+        //线程仓
         for (int i = 0; i < THREAD_HATCH.length; i++) {
             int tier = i+1;
             THREAD_HATCH[i] = registerMetaTileEntity(2600 + i, new MetaTileEntityThreadHatch(
@@ -96,15 +104,17 @@ public class GTQTMetaTileEntities {
         registerMetaTileEntity(2701, ME_DUAL_EXPORT_HATCH);
         registerMetaTileEntity(2702, ME_PATTERN_PROVIDER_PROXY);
 
+
+        //巨型总线
         for (int i = 0; i < 14; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
-            SUPER_ITEM_IMPORT_BUS[i] = new MetaTileEntitySuperItemBus(
-                    gregtechId("super_item_bus.import." + voltageName), i, false);
-            SUPER_ITEM_EXPORT_BUS[i] = new MetaTileEntitySuperItemBus(
-                    gregtechId("super_item_bus.export." + voltageName), i, true);
+            HUGE_ITEM_IMPORT_BUS[i] = new MetaTileEntityHugeItemBus(
+                    gregtechId("huge_item_bus.import." + voltageName), i, false);
+            HUGE_ITEM_EXPORT_BUS[i] = new MetaTileEntityHugeItemBus(
+                    gregtechId("huge_item_bus.export." + voltageName), i, true);
 
-            registerMetaTileEntity(2800 + i, SUPER_ITEM_IMPORT_BUS[i]);
-            registerMetaTileEntity(2815 + i, SUPER_ITEM_EXPORT_BUS[i]);
+            registerMetaTileEntity(2800 + i, HUGE_ITEM_IMPORT_BUS[i]);
+            registerMetaTileEntity(2815 + i, HUGE_ITEM_EXPORT_BUS[i]);
         }
         //无线能源仓注册 ID 3000+
 

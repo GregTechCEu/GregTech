@@ -7,7 +7,10 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 
+import static gregtech.api.GTValues.EV;
+import static gregtech.api.GTValues.VA;
 import static gregtech.api.recipes.RecipeMaps.BREWING_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.CHEMICAL_BATH_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
 import static gregtech.api.util.Mods.Names.GTQT_CORE;
@@ -36,6 +39,12 @@ public class BrewingRecipes {
                     .duration(128).EUt(4).buildAndRegister();
         }
         if (!Loader.isModLoaded(GTQT_CORE)) {
+            CHEMICAL_BATH_RECIPES.recipeBuilder()
+                    .input(dust, Molybdenite)
+                    .fluidInputs(Chrome.getFluid(72))
+                    .output(dust, ChromiumDopedMolybdenite)
+                    .duration(120).EUt(VA[EV]).buildAndRegister();
+
             for (Material material : new Material[] { Oil, Creosote, SeedOil }) {
                 BREWING_RECIPES.recipeBuilder()
                         .input(dust, ChromiumDopedMolybdenite)

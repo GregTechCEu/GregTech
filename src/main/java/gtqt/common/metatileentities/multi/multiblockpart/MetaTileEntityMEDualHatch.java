@@ -713,9 +713,9 @@ public class MetaTileEntityMEDualHatch extends MetaTileEntityMultiblockNotifiabl
     public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         if (this.isExportHatch)
-            tooltip.add(I18n.format("gregtech.machine.item_bus.export.tooltip"));
+            tooltip.add(I18n.format("gregtech.machine.dual_hatch.import.tooltip"));
         else
-            tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
+            tooltip.add(I18n.format("gregtech.machine.dual_hatch.export.tooltip"));
         tooltip.add(I18n.format(isExportHatch ? "gregtech.machine.fluid_hatch.export.tooltip" :
                 "gregtech.machine.fluid_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));

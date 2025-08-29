@@ -158,7 +158,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
     private AENetworkProxy networkProxy;
     private ItemStackHandler patternSlot;
     private boolean needPatternSync = true;
-    private IItemHandlerModifiable extraItem;
+    private ItemStackHandler extraItem;
     // Controls blocking
     private boolean isBlockedMode = true;
 
@@ -509,6 +509,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("Pattern", this.patternSlot.serializeNBT());
+        data.setTag("ExtraItem", this.extraItem.serializeNBT());
 
         data.setBoolean("workingEnabled", workingEnabled);
         data.setBoolean("BlockingEnabled", this.isBlockedMode);
@@ -530,6 +531,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         super.readFromNBT(data);
         this.patternSlot.deserializeNBT(data.getCompoundTag("Pattern"));
         setPatternDetails();
+        this.extraItem.deserializeNBT(data.getCompoundTag("ExtraItem"));
 
         this.workingEnabled = data.getBoolean("workingEnabled");
         this.isBlockedMode = data.getBoolean("BlockingEnabled");
@@ -1112,8 +1114,7 @@ public class MetaTileEntityMEPatternProvider extends MetaTileEntityMultiblockNot
         tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.3"));
         tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.4"));
-        tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.fluid_hatch.import.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.dual_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getSlotByTier()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", numSlots, tankSize));
         tooltip.add(I18n.format("gregtech.universal.enabled"));

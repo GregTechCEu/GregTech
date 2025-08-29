@@ -1,5 +1,54 @@
 package gtqt.common.metatileentities.multi.multiblockpart;
 
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
+
+import gregtech.api.capability.DualHandler;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IGhostSlotConfigurable;
+import gregtech.api.capability.INotifiableHandler;
+import gregtech.api.capability.impl.FluidHandlerProxy;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
+import gregtech.api.capability.impl.ItemHandlerList;
+import gregtech.api.capability.impl.ItemHandlerProxy;
+import gregtech.api.capability.impl.LargeSlotItemStackHandler;
+import gregtech.api.capability.impl.NotifiableFluidTank;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.GhostCircuitSlotWidget;
+import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockNotifiablePart;
+import gregtech.common.mui.widget.GTFluidSlot;
+
+import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -19,59 +68,7 @@ import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
-
-import gregtech.api.capability.DualHandler;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
-import gregtech.api.capability.IGhostSlotConfigurable;
-import gregtech.api.capability.INotifiableHandler;
-import gregtech.api.capability.impl.FluidHandlerProxy;
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
-import gregtech.api.capability.impl.ItemHandlerList;
-import gregtech.api.capability.impl.ItemHandlerProxy;
-import gregtech.api.capability.impl.NotifiableFluidTank;
-import gregtech.api.capability.impl.NotifiableItemStackHandler;
-import gregtech.api.items.itemhandlers.GTItemStackHandler;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.AbilityInstances;
-import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.widget.GhostCircuitSlotWidget;
-import gregtech.api.util.GTHashMaps;
-import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.texture.Textures;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockNotifiablePart;
-
-import gregtech.common.mui.widget.GTFluidSlot;
-
 import gtqt.common.metatileentities.GTQTMetaTileEntities;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-
-import net.minecraft.client.resources.I18n;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,18 +76,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiablePart
+import static net.minecraft.util.text.TextFormatting.GREEN;
+
+public class MetaTileEntityHugeDualHatch extends MetaTileEntityMultiblockNotifiablePart
         implements IMultiblockAbilityPart<DualHandler>, IControllable, IGhostSlotConfigurable {
     //item
     @Nullable
     protected GhostCircuitItemStackHandler circuitInventory;
+    private LargeSlotItemStackHandler largeSlotItemStackHandler;
     private IItemHandlerModifiable actualImportItems;
 
     private boolean workingEnabled;
     private boolean autoCollapse;
-
-    //fluid
-    private static final int BASE_TANK_SIZE = 8000;
 
     private final int numSlots;
     private final int tankSize;
@@ -98,12 +95,12 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
     // only holding this for convenience
     private final FluidTankList fluidTankList;
 
-    public MetaTileEntityDualHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
+    public MetaTileEntityHugeDualHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
         this.workingEnabled = true;
 
         this.numSlots = getTier();
-        this.tankSize = BASE_TANK_SIZE * (1 << tier) / (numSlots == 4 ? 4 : 8);
+        this.tankSize = Integer.MAX_VALUE;
         FluidTank[] fluidsHandlers = new FluidTank[numSlots];
         for (int i = 0; i < fluidsHandlers.length; i++) {
             fluidsHandlers[i] = new NotifiableFluidTank(tankSize, this, isExportHatch);
@@ -118,18 +115,19 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
     }
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityDualHatch(metaTileEntityId, getTier(), isExportHatch);
+        return new MetaTileEntityHugeDualHatch(metaTileEntityId, getTier(), isExportHatch);
     }
     @Override
     protected void initializeInventory() {
         this.importItems = createImportItemHandler();
         this.exportItems = createExportItemHandler();
         this.itemInventory = new ItemHandlerProxy(importItems, exportItems);
+        this.largeSlotItemStackHandler = new LargeSlotItemStackHandler(this, getInventorySize(), null, false, () -> Integer.MAX_VALUE);
 
         if (this.hasGhostCircuitInventory()) {
             this.circuitInventory = new GhostCircuitItemStackHandler(this);
             this.circuitInventory.addNotifiableMetaTileEntity(this);
-            this.actualImportItems = new ItemHandlerList(Arrays.asList(super.getImportItems(), this.circuitInventory));
+            this.actualImportItems = new ItemHandlerList(Arrays.asList(largeSlotItemStackHandler, this.circuitInventory));
         } else {
             this.actualImportItems = null;
         }
@@ -142,7 +140,7 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
 
     @Override
     public IItemHandlerModifiable getImportItems() {
-        return this.actualImportItems == null ? super.getImportItems() : this.actualImportItems;
+        return this.actualImportItems == null ? largeSlotItemStackHandler : this.actualImportItems;
     }
 
     @Override
@@ -192,7 +190,7 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
             if (isAutoCollapse()) {
                 // Exclude the ghost circuit inventory from the auto collapse, so it does not extract any ghost circuits
                 // from the slot
-                IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : super.getImportItems());
+                IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : largeSlotItemStackHandler);
                 if (!isAttachedToMultiBlock() || (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) :
                         this.getNotifiedItemInputList().contains(inventory))) {
                     GTUtility.collapseInventorySlotContents(inventory);
@@ -246,14 +244,14 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return isExportHatch ? new NotifiableItemStackHandler(this, getInventorySize(), getController(), true) :
+        return isExportHatch ? new LargeSlotItemStackHandler(this, getInventorySize(), getController(), true) :
                 new GTItemStackHandler(this, 0);
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         return isExportHatch ? new GTItemStackHandler(this, 0) :
-                new NotifiableItemStackHandler(this, getInventorySize(), getController(), false);
+                new LargeSlotItemStackHandler(this, getInventorySize(), getController(), false);
     }
     @Override
     protected FluidTankList createImportFluidHandler() {
@@ -359,7 +357,14 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                 IItemHandlerModifiable handler = isExportHatch ? exportItems : importItems;
                 widgets.get(i)
                         .add(new ItemSlot()
-                                .slot(SyncHandlers.itemSlot(handler, index)
+                                .slot(new ModularSlot(handler, index) {
+
+                                    @Override
+                                    public int getSlotStackLimit() {
+                                        return Integer.MAX_VALUE;
+                                    }
+                                }
+                                        .ignoreMaxStackSize(true)
                                         .slotGroup("item_inv")
                                         .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                             if (onlyAmountChanged &&
@@ -462,7 +467,7 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
                     addNotifiedOutput(this.getExportItems());
                     addNotifiedOutput(this.getExportFluids());
                 } else {
-                    addNotifiedInput(super.getImportItems());
+                    addNotifiedInput(largeSlotItemStackHandler);
                     addNotifiedInput(this.getImportFluids());
                 }
             }
@@ -491,9 +496,11 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
             tooltip.add(I18n.format("gregtech.machine.dual_hatch.import.tooltip"));
         else
             tooltip.add(I18n.format("gregtech.machine.dual_hatch.export.tooltip"));
+
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", numSlots, tankSize));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
+        tooltip.add(GREEN + I18n.format("gregtech.machine.super_item_bus.tooltip"));
     }
 
     @Override
@@ -508,14 +515,14 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         // override here is gross, but keeps things in order despite
         // IDs being out of order, due to UEV+ being added later
-        if (this == GTQTMetaTileEntities.DUAL_IMPORT_HATCH[0]) {
-            for (var hatch : GTQTMetaTileEntities.DUAL_IMPORT_HATCH) {
+        if (this == GTQTMetaTileEntities.HUGE_DUAL_IMPORT_HATCH[0]) {
+            for (var hatch : GTQTMetaTileEntities.HUGE_DUAL_IMPORT_HATCH) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
             }
-            for (var hatch : GTQTMetaTileEntities.DUAL_EXPORT_HATCH) {
+            for (var hatch : GTQTMetaTileEntities.HUGE_DUAL_EXPORT_HATCH) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
             }
-        } else if (this.getClass() != MetaTileEntityDualHatch.class) {
+        } else if (this.getClass() != MetaTileEntityHugeDualHatch.class) {
             // let subclasses fall through this override
             super.getSubItems(creativeTab, subItems);
         }

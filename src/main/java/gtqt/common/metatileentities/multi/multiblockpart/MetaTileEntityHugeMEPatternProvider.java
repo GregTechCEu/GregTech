@@ -69,6 +69,7 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
+import gregtech.api.capability.impl.LargeSlotItemStackHandler;
 import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
@@ -153,6 +154,7 @@ public class MetaTileEntityHugeMEPatternProvider extends MetaTileEntityMultibloc
         //item
         @Nullable
         protected GhostCircuitItemStackHandler circuitInventory;
+        private LargeSlotItemStackHandler largeSlotItemStackHandler;
         //AE
         protected boolean isOnline;
         boolean export;
@@ -218,6 +220,7 @@ public class MetaTileEntityHugeMEPatternProvider extends MetaTileEntityMultibloc
                 }
             };
             this.extraItem = new NotifiableItemStackHandler(this, getTier() + 1, null, false);
+            this.largeSlotItemStackHandler = new LargeSlotItemStackHandler(this, getSlotByTier(), null, false, () -> Integer.MAX_VALUE);
 
             this.importItems = createImportItemHandler();
             this.exportItems = createExportItemHandler();
@@ -227,7 +230,7 @@ public class MetaTileEntityHugeMEPatternProvider extends MetaTileEntityMultibloc
                 this.circuitInventory = new GhostCircuitItemStackHandler(this);
                 this.circuitInventory.addNotifiableMetaTileEntity(this);
                 this.actualImportItems = new ItemHandlerList(
-                        Arrays.asList(super.getImportItems(), this.circuitInventory, extraItem));
+                        Arrays.asList(largeSlotItemStackHandler, this.circuitInventory, extraItem));
             } else {
                 this.actualImportItems = null;
             }
@@ -240,7 +243,7 @@ public class MetaTileEntityHugeMEPatternProvider extends MetaTileEntityMultibloc
 
         @Override
         public IItemHandlerModifiable getImportItems() {
-            return this.actualImportItems == null ? super.getImportItems() : this.actualImportItems;
+            return this.actualImportItems == null ? largeSlotItemStackHandler : this.actualImportItems;
         }
 
         public IItemHandlerModifiable getActualImportItems() {
@@ -308,7 +311,7 @@ public class MetaTileEntityHugeMEPatternProvider extends MetaTileEntityMultibloc
             if (isAutoCollapse()) {
                 // Exclude the ghost circuit inventory from the auto collapse, so it does not extract any ghost circuits
                 // from the slot
-                IItemHandlerModifiable inventory = (super.getImportItems());
+                IItemHandlerModifiable inventory = (largeSlotItemStackHandler);
                 if (!isAttachedToMultiBlock() || (this.getNotifiedItemInputList().contains(inventory))) {
                     GTUtility.collapseInventorySlotContents(inventory);
                 }
@@ -451,7 +454,7 @@ public class MetaTileEntityHugeMEPatternProvider extends MetaTileEntityMultibloc
 
         @Override
         protected IItemHandlerModifiable createImportItemHandler() {
-            return new NotifiableItemStackHandler(this, getSlotByTier(), getController(), false);
+            return new LargeSlotItemStackHandler(this, getSlotByTier(), getController(), false);
         }
 
         @Override
@@ -869,7 +872,7 @@ public class MetaTileEntityHugeMEPatternProvider extends MetaTileEntityMultibloc
             autoCollapse = inverted;
             if (!getWorld().isRemote) {
                 if (autoCollapse) {
-                    addNotifiedInput(super.getImportItems());
+                    addNotifiedInput(largeSlotItemStackHandler);
                     addNotifiedInput(this.getImportFluids());
                 }
                 writeCustomData(GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS,
@@ -1123,8 +1126,7 @@ public class MetaTileEntityHugeMEPatternProvider extends MetaTileEntityMultibloc
             tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.2"));
             tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.3"));
             tooltip.add(I18n.format("gregtech.machine.me_pattern.tooltip.4"));
-            tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
-            tooltip.add(I18n.format("gregtech.machine.fluid_hatch.import.tooltip"));
+            tooltip.add(I18n.format("gregtech.machine.dual_hatch.import.tooltip"));
             tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getSlotByTier()));
             tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", numSlots, tankSize));
             tooltip.add(I18n.format("gregtech.universal.enabled"));

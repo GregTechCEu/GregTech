@@ -52,12 +52,6 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
     }
 
     @Override
-    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
-                                    @NotNull EntityLiving.SpawnPlacementType type) {
-        return false;
-    }
-
-    @Override
     protected boolean canSilkHarvest() {
         return this.stoneVariant == StoneVariant.SMOOTH;
     }

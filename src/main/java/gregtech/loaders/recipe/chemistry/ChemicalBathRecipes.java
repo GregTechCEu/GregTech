@@ -139,10 +139,5 @@ public class ChemicalBathRecipes {
                 .output(ingot, BlueSteel)
                 .duration(250).EUt(VA[MV]).buildAndRegister();
 
-        CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(dust, Molybdenite)
-                .fluidInputs(Chrome.getFluid(72))
-                .output(dust, ChromiumDopedMolybdenite)
-                .duration(120).EUt(VA[EV]).buildAndRegister();
     }
 }
