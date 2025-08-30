@@ -2480,6 +2480,7 @@ recipemap.fluid_heater.name=流体加热器
 recipemap.distillery.name=蒸馏室
 recipemap.fermenter.name=发酵槽
 recipemap.fluid_solidifier.name=流体固化器
+recipemap.tool_caster.name=工具铸造器
 recipemap.fusion_reactor.name=核聚变反应堆
 recipemap.fusion_reactor.value=启动耗能：%s EU
 recipemap.centrifuge.name=离心机

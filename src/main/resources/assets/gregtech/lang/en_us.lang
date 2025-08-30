@@ -2484,6 +2484,7 @@ recipemap.fluid_heater.name=Fluid Heater
 recipemap.distillery.name=Distillery
 recipemap.fermenter.name=Fermenter
 recipemap.fluid_solidifier.name=Fluid Solidifier
+recipemap.tool_caster.name=Tool Caster
 recipemap.fusion_reactor.name=Fusion Reactor
 recipemap.fusion_reactor.value=Start: %s EU
 recipemap.centrifuge.name=Centrifuge

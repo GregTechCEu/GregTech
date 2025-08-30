@@ -60,6 +60,8 @@ import static gregtech.common.blocks.MetaBlocks.METAL_CASING;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
 import static gregtech.common.metatileentities.MetaTileEntities.HUGE_STEAM_IMPORT_BUS;
+import static gtqt.common.metatileentities.GTQTMetaTileEntities.HUGE_ITEM_EXPORT_BUS;
+import static gtqt.common.metatileentities.GTQTMetaTileEntities.HUGE_ITEM_IMPORT_BUS;
 
 public class MachineRecipeLoader {
 
@@ -1413,6 +1415,13 @@ public class MachineRecipeLoader {
                 ModHandler.addShapedRecipe("item_bus_input_to_output_" + ITEM_EXPORT_BUS[i].getTier(),
                         ITEM_EXPORT_BUS[i].getStackForm(),
                         "d", "B", 'B', ITEM_IMPORT_BUS[i].getStackForm());
+
+                ModHandler.addShapedRecipe("huge_item_bus_output_to_input_" + HUGE_ITEM_IMPORT_BUS[i].getTier(),
+                        HUGE_ITEM_IMPORT_BUS[i].getStackForm(),
+                        "d", "B", 'B', HUGE_ITEM_EXPORT_BUS[i].getStackForm());
+                ModHandler.addShapedRecipe("huge_item_bus_input_to_output_" + HUGE_ITEM_EXPORT_BUS[i].getTier(),
+                        HUGE_ITEM_EXPORT_BUS[i].getStackForm(),
+                        "d", "B", 'B', HUGE_ITEM_IMPORT_BUS[i].getStackForm());
             }
         }
 

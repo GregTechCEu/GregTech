@@ -901,13 +901,13 @@ public final class RecipeMaps {
      * Example:
      *
      * <pre>
-     * RecipeMap.TOOL_CASTER_RECIPES.recipeBuilder()
-     *         .notConsumable(MetaItems.SHAPE_MOLD_CYLINDER)
-     *         .fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L / 8))
-     *         .output(MetaItems.PETRI_DISH, 2)
-     *         .duration(40)
-     *         .EUt(GTValues.VA[GTValues.HV])
-     *         .buildAndRegister();
+     RecipeMap.TOOL_CASTER_RECIPES.recipeBuilder()
+             .notConsumable(getCastingMoldByToolStack(toolStack.getStackForm()))
+             .fluidInputs(material.getFluid(L))
+             .outputs(outputStacks)
+             .EUt(VA[MV])
+             .duration(10 * SECOND)
+             .buildAndRegister();
      * </pre>
      */
     public static final RecipeMap<SimpleRecipeBuilder>  TOOL_CASTER_RECIPES = new RecipeMapBuilder<>(

@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static gregtech.api.unification.material.info.MaterialFlags.*;
+import static gregtech.api.util.Mods.Names.GTQT_CORE;
+import static net.minecraftforge.fml.common.Loader.isModLoaded;
 
 /**
  * Material Registration.
@@ -91,7 +93,7 @@ public class Materials {
         };
 
         // Register soft tools
-        SoftToolAddition.register();
+        if(!isModLoaded(GTQT_CORE))SoftToolAddition.register();
 
         OrePrefix.init();
     }

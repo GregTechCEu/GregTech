@@ -116,7 +116,7 @@ public class OrganicChemistryMaterials {
                 .color(0xC8C8C8)
                 .flags(GENERATE_FOIL)
                 .components(Carbon, 2, Hydrogen, 4)
-                .fluidPipeProperties(370, 60, true)
+                .fluidPipeProperties(450, 80, true)
                 .build();
 
         Epoxy = new Material.Builder(1013, gregtechId("epoxy"))
@@ -495,6 +495,7 @@ public class OrganicChemistryMaterials {
                 .color(0x000000).iconSet(SHINY)
                 .flags(GENERATE_GEAR, GENERATE_RING, GENERATE_FOIL, GENERATE_BOLT_SCREW)
                 .components(Carbon, 5, Hydrogen, 8)
+                .fluidPipeProperties(370, 60, true)
                 .build();
 
         Cyclohexane = new Material.Builder(1069, gregtechId("cyclohexane"))
