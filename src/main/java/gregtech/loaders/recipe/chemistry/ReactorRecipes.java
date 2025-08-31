@@ -281,6 +281,7 @@ public class ReactorRecipes {
                 .duration(100).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .circuitMeta(1)
                 .fluidInputs(CarbonMonoxide.getFluid(1000))
                 .fluidInputs(Methanol.getFluid(1000))
                 .fluidOutputs(AceticAcid.getFluid(1000))
