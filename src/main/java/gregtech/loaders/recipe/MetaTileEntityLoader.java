@@ -408,7 +408,7 @@ public class MetaTileEntityLoader {
                 'M', MetaTileEntities.AUTO_MAINTENANCE_HATCH.getStackForm(),
                 'R', ROBOT_ARM.getIngredient(GTValues.IV),
                 'H', MetaTileEntities.HULL[GTValues.IV].getStackForm(),
-                'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.VanadiumGallium));
+                'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Platinum));
 
         ModHandler.addShapedRecipe(true, "sterile_cleaning_maintenance_hatch",
                 MetaTileEntities.STERILE_CLEANING_MAINTENANCE_HATCH.getStackForm(),
@@ -417,7 +417,7 @@ public class MetaTileEntityLoader {
                 'M', MetaTileEntities.CLEANING_MAINTENANCE_HATCH.getStackForm(),
                 'R', ROBOT_ARM.getIngredient(GTValues.UV),
                 'H', MetaTileEntities.HULL[GTValues.UV].getStackForm(),
-                'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Neutronium));
+                'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Europium));
 
         ModHandler.addShapedRecipe(true, "machine_access_interface", MetaTileEntities.MACHINE_HATCH.getStackForm(),
                 "CHS", 'C', new UnificationEntry(OrePrefix.circuit, Tier.MV), 'H',
