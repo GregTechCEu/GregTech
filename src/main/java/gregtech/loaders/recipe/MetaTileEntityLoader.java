@@ -401,18 +401,23 @@ public class MetaTileEntityLoader {
                 CIRCUIT.getIngredient(GTValues.HV), 'M', MetaTileEntities.MAINTENANCE_HATCH.getStackForm(), 'R',
                 ROBOT_ARM.getIngredient(GTValues.HV), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm());
 
-        ModHandler.addShapedRecipe(true, "maintenance_hatch_cleaning",
-                MetaTileEntities.CLEANING_MAINTENANCE_HATCH.getStackForm(), "CMC", "RHR", "WCW", 'C',
-                CIRCUIT.getIngredient(GTValues.ZPM), 'M', MetaTileEntities.AUTO_MAINTENANCE_HATCH.getStackForm(), 'R',
-                ROBOT_ARM.getIngredient(GTValues.ZPM), 'H', MetaTileEntities.HULL[GTValues.ZPM].getStackForm(), 'W',
-                new UnificationEntry(OrePrefix.cableGtSingle, Materials.YttriumBariumCuprate));
+        ModHandler.addShapedRecipe(true, "cleaning_maintenance_hatch",
+                MetaTileEntities.CLEANING_MAINTENANCE_HATCH.getStackForm(),
+                "CMC", "RHR", "WCW",
+                'C', CIRCUIT.getIngredient(GTValues.IV),
+                'M', MetaTileEntities.AUTO_MAINTENANCE_HATCH.getStackForm(),
+                'R', ROBOT_ARM.getIngredient(GTValues.IV),
+                'H', MetaTileEntities.HULL[GTValues.IV].getStackForm(),
+                'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.VanadiumGallium));
 
-        ModHandler.addShapedRecipe(true, "maintenance_hatch_cleaning",
-                MetaTileEntities.STERILE_CLEANING_MAINTENANCE_HATCH.getStackForm(), "CMC", "RHR", "WCW", 'C',
-                CIRCUIT.getIngredient(GTValues.UHV), 'M', MetaTileEntities.CLEANING_MAINTENANCE_HATCH.getStackForm(),
-                'R',
-                ROBOT_ARM.getIngredient(GTValues.UHV), 'H', MetaTileEntities.HULL[GTValues.UHV].getStackForm(), 'W',
-                new UnificationEntry(OrePrefix.cableGtSingle, Materials.Neutronium));
+        ModHandler.addShapedRecipe(true, "sterile_cleaning_maintenance_hatch",
+                MetaTileEntities.STERILE_CLEANING_MAINTENANCE_HATCH.getStackForm(),
+                "CMC", "RHR", "WCW",
+                'C', CIRCUIT.getIngredient(GTValues.UV),
+                'M', MetaTileEntities.CLEANING_MAINTENANCE_HATCH.getStackForm(),
+                'R', ROBOT_ARM.getIngredient(GTValues.UV),
+                'H', MetaTileEntities.HULL[GTValues.UV].getStackForm(),
+                'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Neutronium));
 
         ModHandler.addShapedRecipe(true, "machine_access_interface", MetaTileEntities.MACHINE_HATCH.getStackForm(),
                 "CHS", 'C', new UnificationEntry(OrePrefix.circuit, Tier.MV), 'H',

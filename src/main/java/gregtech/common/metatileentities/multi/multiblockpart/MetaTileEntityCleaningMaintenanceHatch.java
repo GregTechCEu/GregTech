@@ -59,7 +59,7 @@ public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMa
 
     @Override
     public int getTier() {
-        return GTValues.UV;
+        return GTValues.IV;
     }
 
     @Override

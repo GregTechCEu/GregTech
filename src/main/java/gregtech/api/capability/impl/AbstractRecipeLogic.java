@@ -803,32 +803,40 @@ public abstract class AbstractRecipeLogic extends MTETrait
                 // 保存原始配方，以便批处理失败时恢复
                 Recipe originalRecipe = recipe;
                 int baseDuration = ocResult.duration();
-                // 计算初始批处理倍数（向上取整）
-                int batchMultiplier = (int) Math.ceil(128.0 / baseDuration);
 
-                // 初始化批处理配方
-                Recipe batchedRecipe = null;
-                RecipeBuilder<?> batchBuilder = null;
+                // 计算最大可能的批处理倍数（不超过128 ticks）
+                int maxMultiplier = (int) Math.floor(128.0 / baseDuration);
+                int minMultiplier = 1;
+                int bestMultiplier = 1; // 默认使用原始倍数
 
-                // 循环从初始倍数开始向下尝试，直到找到匹配的倍数或倍数降到0
-                while (batchMultiplier >= 1) {
-                    batchBuilder = new RecipeBuilder<>(originalRecipe, recipeMap)
-                            .batch(originalRecipe, batchMultiplier, baseDuration);
-                    batchedRecipe = batchBuilder.build().getResult();
+                // 寻找最大可行的批处理倍数
+                while (minMultiplier <= maxMultiplier) {
+                    int midMultiplier = minMultiplier + (maxMultiplier - minMultiplier) / 2;
+                    RecipeBuilder<?> batchBuilder = new RecipeBuilder<>(originalRecipe, recipeMap)
+                            .batch(originalRecipe, midMultiplier, baseDuration);
+                    Recipe batchedRecipe = batchBuilder.build().getResult();
+
                     if (batchedRecipe != null && batchedRecipe.matches(false, importInventory, importFluids)) {
-                        // 找到匹配的配方，退出循环
-                        recipe = batchedRecipe;
-                        break;
+                        // 当前倍数可行，尝试更大的倍数
+                        bestMultiplier = midMultiplier;
+                        minMultiplier = midMultiplier + 1;
+                    } else {
+                        // 当前倍数不可行，尝试更小的倍数
+                        maxMultiplier = midMultiplier - 1;
                     }
-                    batchMultiplier--; // 尝试降低倍数
                 }
 
-                if (batchMultiplier >= 1) {
-                    // 成功找到批处理倍数
-                    ocResult.setDuration(baseDuration * batchMultiplier);
+                // 如果找到可行的批处理倍数（大于1），则应用批处理
+                if (bestMultiplier > 1) {
+                    RecipeBuilder<?> batchBuilder = new RecipeBuilder<>(originalRecipe, recipeMap)
+                            .batch(originalRecipe, bestMultiplier, baseDuration);
+                    recipe = batchBuilder.build().getResult();
+
                 }
-                //如果找不到则继续原本的配方
+                // 否则保持原始配方不变
             }
+            //提升到128运用批处理
+            ocResult.setDuration(128);
         }
 
         if (!hasEnoughPower(ocResult.eut(), ocResult.duration())) {

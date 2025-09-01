@@ -137,7 +137,6 @@ public class OnceToolHandler {
                 'P', new UnificationEntry(plate, Materials.Clay),
                 'M', CASTING_MOLD_EMPTY.getStackForm());
 
-        // 重复相同模式的其他配方...
         // Casting Mold (Hard Hammer)
         ModHandler.addShapedRecipe(true, "casting_mold.hard_hammer", CASTING_MOLD_HARD_HAMMER.getStackForm(),
                 "rh ", " Pk", " M ",

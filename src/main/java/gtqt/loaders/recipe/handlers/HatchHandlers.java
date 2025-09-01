@@ -70,7 +70,7 @@ public class HatchHandlers {
             //巨型 普通仓+一堆超级缸超级箱
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(DUAL_IMPORT_HATCH[i])
-                    .input(QUANTUM_CHEST[9],i*i)
+                    .input(QUANTUM_CHEST[9],(int) Math.pow(i+1,2))
                     .input(circuit, MarkerMaterial.create(GTValues.VN[i+1].toLowerCase()), 16)
                     .fluidInputs(Plastic.get(i).getFluid(L * 4))
                     .output(HUGE_DUAL_IMPORT_HATCH[i])
@@ -78,7 +78,7 @@ public class HatchHandlers {
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(DUAL_EXPORT_HATCH[i+1])
-                    .input(QUANTUM_TANK[9],i*i)
+                    .input(QUANTUM_TANK[9],(int) Math.pow(i+1,2))
                     .input(circuit, MarkerMaterial.create(GTValues.VN[i+1].toLowerCase()), 16)
                     .fluidInputs(Plastic.get(i).getFluid(L * 4))
                     .output(HUGE_DUAL_EXPORT_HATCH[i])
@@ -86,8 +86,8 @@ public class HatchHandlers {
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(ME_PATTERN_PROVIDER[i])
-                    .input(QUANTUM_CHEST[9],i*i)
-                    .input(QUANTUM_TANK[9],i*i)
+                    .input(QUANTUM_CHEST[9],(int) Math.pow(i+1,2))
+                    .input(QUANTUM_TANK[9],(int) Math.pow(i+1,2))
                     .input(circuit, MarkerMaterial.create(GTValues.VN[i+1].toLowerCase()), 32)
                     .fluidInputs(Plastic.get(i).getFluid(L * 4))
                     .output(HUGE_ME_PATTERN_PROVIDER[i])
@@ -95,16 +95,16 @@ public class HatchHandlers {
 
             //巨型
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(ITEM_IMPORT_BUS[i+1])
-                    .input(QUANTUM_CHEST[9],i*i)
+                    .input(ITEM_IMPORT_BUS[i])
+                    .input(QUANTUM_CHEST[9],(int) Math.pow(i+1,2))
                     .input(circuit, MarkerMaterial.create(GTValues.VN[i+1].toLowerCase()), 8)
                     .fluidInputs(Plastic.get(i).getFluid(L * 4))
                     .output(HUGE_ITEM_IMPORT_BUS[i])
                     .duration(400).EUt(VA[ULV + i]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(ITEM_EXPORT_BUS[i+1])
-                    .input(QUANTUM_TANK[9],i*i)
+                    .input(ITEM_EXPORT_BUS[i])
+                    .input(QUANTUM_TANK[9],(int) Math.pow(i+1,2))
                     .input(circuit, MarkerMaterial.create(GTValues.VN[i+1].toLowerCase()), 8)
                     .fluidInputs(Plastic.get(i).getFluid(L * 4))
                     .output(HUGE_ITEM_EXPORT_BUS[i])
