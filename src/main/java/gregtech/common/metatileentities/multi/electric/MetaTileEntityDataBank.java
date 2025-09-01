@@ -91,7 +91,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     @Override
     protected void updateFormedValid() {
-        if(!isWorkingEnabled) {
+        if (!this.isWorkingEnabled) {
             this.hasNotEnoughEnergy = false;
             setActive(false);
             return;
@@ -262,7 +262,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
                         "gregtech.multiblock.data_bank.providing")
                 .addWorkingStatusLine();
 
-        if(isWorkingEnabled() && isActive())
+        if (isWorkingEnabled() && isActive())
             builder.addEnergyUsageExactLine(getEnergyUsage());
     }
 
