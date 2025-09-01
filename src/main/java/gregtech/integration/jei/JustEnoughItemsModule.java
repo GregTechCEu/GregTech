@@ -201,46 +201,41 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             }
         }
 
-        for (MTERegistry mteRegistry : GregTechAPI.mteManager.getRegistries()) {
-            for (ResourceLocation metaTileEntityId : mteRegistry.getKeys()) {
-                MetaTileEntity metaTileEntity = mteRegistry.getObject(metaTileEntityId);
-                assert metaTileEntity != null;
+        for (MetaTileEntity metaTileEntity : getAllMetaTileEntities()) {
+            if (metaTileEntity instanceof ICategoryOverride override && override.shouldOverride()) {
+                for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
+                    registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
+                }
+                if (override.getJEICategoryOverrides().length != 0)
+                    registry.addRecipeCatalyst(metaTileEntity.getStackForm(), override.getJEICategoryOverrides());
+                if (override.shouldReplace()) continue;
+            }
 
-                if (metaTileEntity instanceof ICategoryOverride override && override.shouldOverride()) {
+            if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
+                IControllable workableCapability = metaTileEntity
+                        .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+
+                if (workableCapability instanceof ICategoryOverride override && override.shouldOverride()) {
                     for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
                         registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                     }
                     if (override.getJEICategoryOverrides().length != 0)
-                        registry.addRecipeCatalyst(metaTileEntity.getStackForm(), override.getJEICategoryOverrides());
+                        registry.addRecipeCatalyst(metaTileEntity.getStackForm(),
+                                override.getJEICategoryOverrides());
                     if (override.shouldReplace()) continue;
                 }
 
-                if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
-                    IControllable workableCapability = metaTileEntity
-                            .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
-
-                    if (workableCapability instanceof ICategoryOverride override && override.shouldOverride()) {
-                        for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
+                if (workableCapability instanceof AbstractRecipeLogic logic) {
+                    if (metaTileEntity instanceof IMultipleRecipeMaps multiMapMetaTileEntity) {
+                        for (RecipeMap<?> recipeMap : multiMapMetaTileEntity.getAvailableRecipeMaps()) {
                             registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                         }
-                        if (override.getJEICategoryOverrides().length != 0)
-                            registry.addRecipeCatalyst(metaTileEntity.getStackForm(),
-                                    override.getJEICategoryOverrides());
-                        if (override.shouldReplace()) continue;
-                    }
-
-                    if (workableCapability instanceof AbstractRecipeLogic logic) {
-                        if (metaTileEntity instanceof IMultipleRecipeMaps) {
-                            for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity)
-                                    .getAvailableRecipeMaps()) {
-                                registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
-                            }
-                        } else if (logic.getRecipeMap() != null) {
-                            registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
-                        }
+                    } else if (logic.getRecipeMap() != null) {
+                        registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
                     }
                 }
             }
+
         }
 
         List<OreByProduct> oreByproductList = new ArrayList<>();
@@ -421,4 +416,40 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             return Integer.MAX_VALUE;
         });
     }
+
+    /**
+     * Extracted {@link MetaTileEntity} from all {@link MTERegistry} and sorted them.
+     * <p>
+     * This method arrange {@link MetaTileEntity} from additional mods after the ones from GregTech.
+     *
+     * @return the sorted list of all {@link MetaTileEntity}.
+     */
+    @ApiStatus.Internal
+    public static @NotNull List<MetaTileEntity> getAllMetaTileEntities() {
+        List<MetaTileEntity> metaTileEntities = new ArrayList<>();
+        for (MTERegistry mteRegistry : GregTechAPI.mteManager.getRegistries()) {
+            for (ResourceLocation metaTileEntityId : mteRegistry.getKeys()) {
+                MetaTileEntity metaTileEntity = mteRegistry.getObject(metaTileEntityId);
+                if (metaTileEntity != null) {
+                    metaTileEntities.add(metaTileEntity);
+                }
+            }
+        }
+
+        metaTileEntities.sort((a, b) -> {
+            String namespaceA = a.metaTileEntityId.getNamespace();
+            String namespaceB = b.metaTileEntityId.getNamespace();
+
+            boolean isGregTechA = namespaceA.equals(GTValues.MODID);
+            boolean isGregTechB = namespaceB.equals(GTValues.MODID);
+
+            if (isGregTechA && !isGregTechB) return -1;
+            if (!isGregTechA && isGregTechB) return 1;
+
+            return namespaceA.compareTo(namespaceB);
+        });
+
+        return metaTileEntities;
+    }
+
 }
