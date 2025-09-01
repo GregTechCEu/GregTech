@@ -131,7 +131,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
                                     @NotNull EntityLiving.SpawnPlacementType type) {
         if (getState(state) instanceof IStateSpawnControl stateSpawnControl) {
-            return stateSpawnControl.canCreatureSpawn(state);
+            return stateSpawnControl.canCreatureSpawn(state, world, pos, type);
         }
         return super.canCreatureSpawn(state, world, pos, type);
     }
