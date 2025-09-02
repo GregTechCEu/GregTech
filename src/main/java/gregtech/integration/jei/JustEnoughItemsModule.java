@@ -451,5 +451,4 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         return metaTileEntities;
     }
-
 }
