@@ -72,7 +72,6 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         ItemStack itemstack = this.syncHandler.getOutputStack();
-        if (itemstack.isEmpty()) return;
         RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
         RenderUtil.handleSlotOverlay(this, widgetTheme);
     }
