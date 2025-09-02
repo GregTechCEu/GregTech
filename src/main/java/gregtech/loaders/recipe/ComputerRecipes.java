@@ -106,7 +106,7 @@ public class ComputerRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(wireFine, BorosilicateGlass, 8)
                 .input(foil, Silver, 8)
-                .input(plateDense, Aluminium, 1)
+                .input(plate, Aluminium, 1)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .output(OPTICAL_PIPES[0],2)
                 .duration(100).EUt(VA[MV]).buildAndRegister();
@@ -114,7 +114,7 @@ public class ComputerRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(wireFine, BorosilicateGlass, 8)
                 .input(foil, Silver, 8)
-                .input(plateDense, Aluminium, 1)
+                .input(plate, Aluminium, 1)
                 .fluidInputs(Epoxy.getFluid(L))
                 .output(OPTICAL_PIPES[0], 8)
                 .duration(100).EUt(VA[MV]).buildAndRegister();
@@ -122,7 +122,7 @@ public class ComputerRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(wireFine, BorosilicateGlass, 8)
                 .input(foil, Silver, 8)
-                .input(plateDense, Aluminium, 1)
+                .input(plate, Aluminium, 1)
                 .fluidInputs(Polybenzimidazole.getFluid(L))
                 .output(OPTICAL_PIPES[0], 32)
                 .duration(100).EUt(VA[MV]).buildAndRegister();
