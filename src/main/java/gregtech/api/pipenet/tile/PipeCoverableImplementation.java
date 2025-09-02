@@ -141,7 +141,7 @@ public class PipeCoverableImplementation implements CoverHolder {
         // If the available space for the cover is less than the regular cover plate thickness, use that
 
         // need to divide by 2 because thickness is centered on the block, so the space is half on each side of the pipe
-        return Math.min(1.0 / 16.0, (1.0 - thickness) / 2);
+        return Math.min(1.0 / 8.0, (1.0 - thickness) / 2);
     }
 
     @Override

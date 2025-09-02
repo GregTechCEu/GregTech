@@ -7,6 +7,7 @@ import gregtech.api.capability.IFilteredFluidContainer;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.FluidTankView;
 import gregtech.api.capability.impl.GTFluidHandlerItemStack;
 import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.gui.GuiTextures;
@@ -76,21 +77,20 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
 public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFluidTank>
-                                       implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
+        implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
 
     private final int tier;
     private final int maxFluidCapacity;
     protected FluidTank fluidTank;
-    private boolean autoOutputFluids;
-    @Nullable
-    private EnumFacing outputFacing;
-    private boolean allowInputFromOutputSide = false;
     protected IFluidHandler outputFluidInventory;
-
     @Nullable
     protected FluidStack previousFluid;
     protected boolean locked;
     protected boolean voiding;
+    private boolean autoOutputFluids;
+    @Nullable
+    private EnumFacing outputFacing;
+    private boolean allowInputFromOutputSide = false;
     @Nullable
     private FluidStack lockedFluid;
 
@@ -99,6 +99,27 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         this.tier = tier;
         this.maxFluidCapacity = maxFluidCapacity;
         initializeInventory();
+    }
+
+    public static void legacyTankItemHandlerNBTReading(MetaTileEntity mte, NBTTagCompound nbt, int inputSlot,
+                                                       int outputSlot) {
+        if (mte == null || nbt == null) {
+            return;
+        }
+        NBTTagList items = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        if (mte.getExportItems().getSlots() < 1 || mte.getImportItems().getSlots() < 1 || inputSlot < 0 ||
+                outputSlot < 0 || inputSlot == outputSlot) {
+            return;
+        }
+        for (int i = 0; i < items.tagCount(); ++i) {
+            NBTTagCompound itemTags = items.getCompoundTagAt(i);
+            int slot = itemTags.getInteger("Slot");
+            if (slot == inputSlot) {
+                mte.getImportItems().setStackInSlot(0, new ItemStack(itemTags));
+            } else if (slot == outputSlot) {
+                mte.getExportItems().setStackInSlot(0, new ItemStack(itemTags));
+            }
+        }
     }
 
     @Override
@@ -139,22 +160,21 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                     updatePreviousFluid(null);
                 } else if (previousFluid.getFluid().equals(currentFluid.getFluid()) &&
                         previousFluid.amount != currentFluid.amount) {
-                            int currentFill = MathHelper
-                                    .floor(16 * ((float) currentFluid.amount) / fluidTank.getCapacity());
-                            int previousFill = MathHelper
-                                    .floor(16 * ((float) previousFluid.amount) / fluidTank.getCapacity());
-                            // tank has fluid with changed amount
-                            previousFluid.amount = currentFluid.amount;
-                            writeCustomData(UPDATE_FLUID_AMOUNT, buf -> {
-                                buf.writeInt(currentFluid.amount);
-                                buf.writeBoolean(currentFill != previousFill);
-                            });
+                    int currentFill = MathHelper
+                            .floor(16 * ((float) currentFluid.amount) / fluidTank.getCapacity());
+                    int previousFill = MathHelper
+                            .floor(16 * ((float) previousFluid.amount) / fluidTank.getCapacity());
+                    // tank has fluid with changed amount
+                    previousFluid.amount = currentFluid.amount;
+                    writeCustomData(UPDATE_FLUID_AMOUNT, buf -> {
+                        buf.writeInt(currentFluid.amount);
+                        buf.writeBoolean(currentFill != previousFill);
+                    });
 
-                        } else
-                    if (!previousFluid.equals(currentFluid)) {
-                        // tank has a different fluid from before
-                        updatePreviousFluid(currentFluid);
-                    }
+                } else if (!previousFluid.equals(currentFluid)) {
+                    // tank has a different fluid from before
+                    updatePreviousFluid(currentFluid);
+                }
             }
         }
     }
@@ -194,27 +214,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         this.locked = data.getBoolean("IsLocked");
         this.lockedFluid = this.locked ? FluidStack.loadFluidStackFromNBT(data.getCompoundTag("LockedFluid")) : null;
         this.allowInputFromOutputSide = data.getBoolean("AllowInputFromOutputSideF");
-    }
-
-    public static void legacyTankItemHandlerNBTReading(MetaTileEntity mte, NBTTagCompound nbt, int inputSlot,
-                                                       int outputSlot) {
-        if (mte == null || nbt == null) {
-            return;
-        }
-        NBTTagList items = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-        if (mte.getExportItems().getSlots() < 1 || mte.getImportItems().getSlots() < 1 || inputSlot < 0 ||
-                outputSlot < 0 || inputSlot == outputSlot) {
-            return;
-        }
-        for (int i = 0; i < items.tagCount(); ++i) {
-            NBTTagCompound itemTags = items.getCompoundTagAt(i);
-            int slot = itemTags.getInteger("Slot");
-            if (slot == inputSlot) {
-                mte.getImportItems().setStackInSlot(0, new ItemStack(itemTags));
-            } else if (slot == outputSlot) {
-                mte.getExportItems().setStackInSlot(0, new ItemStack(itemTags));
-            }
-        }
     }
 
     @Override
@@ -274,6 +273,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         return new GTItemStackHandler(this, 1);
     }
 
+    //https://github.com/MCTian-mi/SussyPatches/blob/main/src/main/java/dev/tianmi/sussypatches/api/capability/impl/FluidTankView.java
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
@@ -287,7 +287,16 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                 Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             }
         }
-        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, fluidTank, getWorld(), getPos(),
+
+        FluidTank tankToRender = fluidTank;
+        if (renderContextStack != null) {
+            IFluidHandler handler = FluidUtil.getFluidHandler(renderContextStack);
+            if (handler != null) {
+                tankToRender = FluidTankView.of(handler);
+            }
+        }
+
+        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, tankToRender, getWorld(), getPos(),
                 getFrontFacing());
         renderIndicatorOverlay(renderState, translation, pipeline);
     }
@@ -349,7 +358,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                         this.lockedFluid.amount = 1;
                     }
                 })
-                        .setAlwaysShowFull(true).setDrawHoveringText(false);
+                .setAlwaysShowFull(true).setDrawHoveringText(false);
 
         ModularUI.Builder builder = ModularUI.defaultBuilder();
         builder.widget(new ImageWidget(7, 16, 81, 46, GuiTextures.DISPLAY))
@@ -364,16 +373,16 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
                 .widget(new ToggleButtonWidget(7, 64, 18, 18,
                         GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
-                                .setTooltipText("gregtech.gui.fluid_auto_output.tooltip")
-                                .shouldUseBaseBackground())
+                        .setTooltipText("gregtech.gui.fluid_auto_output.tooltip")
+                        .shouldUseBaseBackground())
                 .widget(new ToggleButtonWidget(25, 64, 18, 18,
                         GuiTextures.BUTTON_LOCK, this::isLocked, this::setLocked)
-                                .setTooltipText("gregtech.gui.fluid_lock.tooltip")
-                                .shouldUseBaseBackground())
+                        .setTooltipText("gregtech.gui.fluid_lock.tooltip")
+                        .shouldUseBaseBackground())
                 .widget(new ToggleButtonWidget(43, 64, 18, 18,
                         GuiTextures.BUTTON_FLUID_VOID, this::isVoiding, this::setVoiding)
-                                .setTooltipText("gregtech.gui.fluid_voiding.tooltip")
-                                .shouldUseBaseBackground());
+                        .setTooltipText("gregtech.gui.fluid_voiding.tooltip")
+                        .shouldUseBaseBackground());
 
         builder.widget(createConnectedGui(64));
 
@@ -418,6 +427,15 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         return outputFacing == null ? frontFacing.getOpposite() : outputFacing;
     }
 
+    public void setOutputFacing(EnumFacing outputFacing) {
+        this.outputFacing = outputFacing;
+        if (!getWorld().isRemote) {
+            notifyBlockUpdate();
+            writeCustomData(UPDATE_OUTPUT_FACING, buf -> buf.writeByte(outputFacing.getIndex()));
+            markDirty();
+        }
+    }
+
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
         if (frontFacing == EnumFacing.UP) {
@@ -443,6 +461,15 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     @Override
     public boolean isAutoOutputFluids() {
         return autoOutputFluids;
+    }
+
+    public void setAutoOutputFluids(boolean autoOutputFluids) {
+        if (this.autoOutputFluids == autoOutputFluids) return;
+        this.autoOutputFluids = autoOutputFluids;
+        if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_AUTO_OUTPUT_FLUIDS, buf -> buf.writeBoolean(autoOutputFluids));
+            markDirty();
+        }
     }
 
     @Override
@@ -526,15 +553,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         this.voiding = buf.readBoolean();
     }
 
-    public void setOutputFacing(EnumFacing outputFacing) {
-        this.outputFacing = outputFacing;
-        if (!getWorld().isRemote) {
-            notifyBlockUpdate();
-            writeCustomData(UPDATE_OUTPUT_FACING, buf -> buf.writeByte(outputFacing.getIndex()));
-            markDirty();
-        }
-    }
-
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE) {
@@ -600,15 +618,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         if (this.allowInputFromOutputSide == allowInputFromOutputSide) return;
         this.allowInputFromOutputSide = allowInputFromOutputSide;
         if (!getWorld().isRemote) {
-            markDirty();
-        }
-    }
-
-    public void setAutoOutputFluids(boolean autoOutputFluids) {
-        if (this.autoOutputFluids == autoOutputFluids) return;
-        this.autoOutputFluids = autoOutputFluids;
-        if (!getWorld().isRemote) {
-            writeCustomData(UPDATE_AUTO_OUTPUT_FLUIDS, buf -> buf.writeBoolean(autoOutputFluids));
             markDirty();
         }
     }
@@ -681,6 +690,26 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         return maxFluidCapacity;
     }
 
+    @Override
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                CuboidRayTraceResult hitResult) {
+        if (playerIn.getHeldItem(hand).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+            return getWorld().isRemote ||
+                    (!playerIn.isSneaking() && FluidUtil.interactWithFluidHandler(playerIn, hand, fluidTank));
+        }
+        return super.onRightClick(playerIn, hand, facing, hitResult);
+    }
+
+    @Override
+    public Type getType() {
+        return Type.FLUID;
+    }
+
+    @Override
+    public IFluidTank getTypeValue() {
+        return fluidTank;
+    }
+
     private class QuantumFluidTank extends FluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
 
         public QuantumFluidTank(int capacity) {
@@ -722,25 +751,5 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         public int getPriority() {
             return !locked || lockedFluid == null ? IFilter.noPriority() : IFilter.whitelistPriority(1);
         }
-    }
-
-    @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
-                                CuboidRayTraceResult hitResult) {
-        if (playerIn.getHeldItem(hand).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-            return getWorld().isRemote ||
-                    (!playerIn.isSneaking() && FluidUtil.interactWithFluidHandler(playerIn, hand, fluidTank));
-        }
-        return super.onRightClick(playerIn, hand, facing, hitResult);
-    }
-
-    @Override
-    public Type getType() {
-        return Type.FLUID;
-    }
-
-    @Override
-    public IFluidTank getTypeValue() {
-        return fluidTank;
     }
 }

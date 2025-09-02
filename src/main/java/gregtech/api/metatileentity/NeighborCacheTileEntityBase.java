@@ -98,4 +98,12 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
     public void onNeighborChanged(@NotNull EnumFacing facing) {
         this.neighbors.set(facing.getIndex(), INVALID);
     }
+
+    public void onNeighborChunkLoad(EnumFacing side) {
+        this.onNeighborChanged(side);
+    }
+
+    public void onNeighborChunkUnload(EnumFacing side) {
+        this.onNeighborChanged(side);
+    }
 }

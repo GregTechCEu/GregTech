@@ -130,6 +130,7 @@ public class MachineItemBlock extends ItemBlock {
         return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) != null;
     }
 
+    //from:https://github.com/MCTian-mi/SussyPatches/commit/0b0c6e2fa12b9f235bdd6520c7db07e2b5ec7279
     @NotNull
     @Override
     public ItemStack getContainerItem(@NotNull ItemStack itemStack) {
@@ -137,7 +138,9 @@ public class MachineItemBlock extends ItemBlock {
             return ItemStack.EMPTY;
         }
         if (itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-            IFluidHandlerItem handler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+            ItemStack singleStack = itemStack.copy();
+            singleStack.setCount(1);
+            IFluidHandlerItem handler = singleStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
                     null);
             if (handler != null) {
                 FluidStack drained = handler.drain(1000, true);

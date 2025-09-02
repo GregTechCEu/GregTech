@@ -2,6 +2,7 @@ package gtqt.common;
 
 import gregtech.common.items.MetaItems;
 
+import gtqt.api.util.ChunkAwareHook;
 import gtqt.api.util.wireless.WirelessWorldEventHandler;
 import gtqt.common.items.GTQTMetaItems;
 import gtqt.common.items.covers.GTQTCoverBehavior;
@@ -36,6 +37,7 @@ public class GTQTCommonProxy {
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(new WirelessWorldEventHandler());
+        MinecraftForge.EVENT_BUS.register(ChunkAwareHook.class);
     }
 
     public static void preInit() {
