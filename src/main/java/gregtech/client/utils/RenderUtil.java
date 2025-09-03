@@ -1,15 +1,7 @@
 package gregtech.client.utils;
 
-import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.drawable.GuiDraw;
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
-import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
-
-import com.cleanroommc.modularui.theme.WidgetSlotTheme;
-
 import gregtech.api.gui.resources.TextureArea;
-
-import gregtech.api.util.Mods;
+import gregtech.api.util.JEIUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -36,6 +28,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.MCHelper;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.GuiDraw;
+import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
+import com.cleanroommc.modularui.theme.WidgetSlotTheme;
+import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.utils.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -48,6 +46,7 @@ import java.util.*;
 public class RenderUtil {
 
     private static final Deque<int[]> scissorFrameStack = new ArrayDeque<>();
+    public static final int defaultSlotHoverColor = Color.withAlpha(Color.WHITE.main, 0x60);
 
     public static void useScissor(int x, int y, int width, int height, Runnable codeBlock) {
         pushScissorFrame(x, y, width, height);
@@ -129,7 +128,7 @@ public class RenderUtil {
      * if you want to do the similar things in Gui(2D) not World(3D), plz consider using the
      * {@link #useScissor(int, int, int, int, Runnable)}
      * that you don't need to draw mask to build a rect mask easily.
-     * 
+     *
      * @param mask             draw mask
      * @param renderInMask     rendering in the mask
      * @param shouldRenderMask should mask be rendered too
@@ -262,7 +261,7 @@ public class RenderUtil {
     /***
      * avoid z-fighting. not familiar with the CCL, its a trick.
      * //TODO could DisableDepthMask in the CCL?
-     * 
+     *
      * @param translation origin
      * @param side        facing
      * @param layer       level
@@ -721,48 +720,39 @@ public class RenderUtil {
         return getTextureMap().getMissingSprite();
     }
 
-    /**
-     * Draws the green overlay when a valid ingredient for the slot is hovered over in JEI
-     *
-     * @param slot the slot to draw the overlay on
-     * @return true if the overlay was drawn, false if not
-     */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean handleJeiGhostOverlay(@NotNull IWidget slot) {
-        if (!Mods.JustEnoughItems.isModLoaded()) return false;
-        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return false;
-
-        if (ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
-            GlStateManager.colorMask(true, true, true, false);
-            ingredientSlot.drawHighlight(slot.getArea(), slot.isHovering());
-            GlStateManager.colorMask(true, true, true, true);
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Draws a gray-ish overlay over the slot 1px inwards from each side. Intended for item slots.
-     *
-     * @param slot the slot to draw the overlay above
-     */
-    public static void drawSlotOverlay(@NotNull IWidget slot, @NotNull WidgetSlotTheme slotTheme) {
+    public static void drawSlotOverlay(@NotNull IWidget slot, int overlayColor) {
         GlStateManager.colorMask(true, true, true, false);
-        GuiDraw.drawRect(1, 1, slot.getArea().w() - 2, slot.getArea().h() - 2, slotTheme.getSlotHoverColor());
+        GuiDraw.drawRect(1, 1, slot.getArea().w() - 2, slot.getArea().h() - 2, overlayColor);
         GlStateManager.colorMask(true, true, true, true);
     }
 
-    /**
-     * Handles drawing the green JEI overlay when dragging an item, and if no item is being dragged, the overlay when
-     * mousing over the slot.
-     *
-     * @param slot      the slot to draw the overlay above
-     * @param slotTheme the theme to get the slot overlay color from
-     */
-    public static void handleSlotOverlays(@NotNull IWidget slot, @NotNull WidgetSlotTheme slotTheme) {
-        if (!handleJeiGhostOverlay(slot) && slot.isHovering()) {
-            drawSlotOverlay(slot, slotTheme);
+    public static void drawSlotOverlay(@NotNull IWidget slot, WidgetTheme widgetTheme) {
+        drawSlotOverlay(slot, widgetTheme instanceof WidgetSlotTheme slotTheme ? slotTheme.getSlotHoverColor() :
+                defaultSlotHoverColor);
+    }
+
+    public static void handleSlotOverlay(@NotNull IWidget slot, @NotNull WidgetTheme widgetTheme) {
+        if (slot.isHovering()) {
+            drawSlotOverlay(slot, widgetTheme);
         }
+    }
+
+    public static <
+            T extends IWidget & JeiGhostIngredientSlot<?>> void drawJEIGhostSlotOverlay(@NotNull T jeiGhostIngredientSlot) {
+        GlStateManager.colorMask(true, true, true, false);
+        jeiGhostIngredientSlot.drawHighlight(jeiGhostIngredientSlot.getArea(), jeiGhostIngredientSlot.isHovering());
+        GlStateManager.colorMask(true, true, true, true);
+    }
+
+    public static <
+            T extends IWidget & JeiGhostIngredientSlot<?>> boolean handleJEIGhostSlotOverlay(@NotNull T jeiGhostIngredientSlot,
+                                                                                             @NotNull WidgetTheme widgetTheme) {
+        if (JEIUtil.hoveringOverIngredient(jeiGhostIngredientSlot)) {
+            drawJEIGhostSlotOverlay(jeiGhostIngredientSlot);
+            return true;
+        }
+
+        handleSlotOverlay(jeiGhostIngredientSlot, widgetTheme);
+        return false;
     }
 }

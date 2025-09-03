@@ -1,5 +1,6 @@
 package gregtech.api.mui;
 
+import gregtech.api.GTValues;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.common.ConfigHolder;
 
@@ -56,6 +57,7 @@ public class GTGuiTheme {
             .simpleToggleButton(IDs.STANDARD_BUTTON,
                     IDs.STANDARD_SLOT,
                     ConfigHolder.client.defaultUIColor)
+            .logo(() -> GTValues.XMAS.get() ? GTGuiTextures.GREGTECH_LOGO_XMAS : GTGuiTextures.GREGTECH_LOGO)
             .build();
 
     public static final GTGuiTheme COVER = templateBuilder(Names.COVER)

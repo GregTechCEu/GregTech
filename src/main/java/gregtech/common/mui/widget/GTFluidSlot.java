@@ -117,7 +117,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         }
 
 
-        RenderUtil.handleSlotOverlays(this, widgetTheme);
+        RenderUtil.handleJEIGhostSlotOverlay(this, widgetTheme);
     }
 
     @Override

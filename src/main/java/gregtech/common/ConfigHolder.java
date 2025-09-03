@@ -552,10 +552,6 @@ public class ConfigHolder {
         @Config.Comment({ "Whether to prefer the Material Tree over other categories in JEI", "Default: false" })
         public boolean preferMaterialTreeInJEI = false;
 
-        @Config.Comment({ "是否使用VBO优化多方块渲染？与光影不兼容!",
-                "Default: true" })
-        public boolean useVBO = true;
-
         //是否运行Quit插件
         @Config.Comment({ "是否运行Quit插件", "Default: true" })
         public boolean runQuit = true;

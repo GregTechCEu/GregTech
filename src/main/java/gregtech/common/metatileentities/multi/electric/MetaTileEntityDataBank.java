@@ -93,7 +93,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     @Override
     protected void updateFormedValid() {
-        if(!isWorkingEnabled) {
+        if (!this.isWorkingEnabled) {
             this.hasNotEnoughEnergy = false;
             setActive(false);
             return;

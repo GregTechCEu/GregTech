@@ -603,13 +603,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         }
 
         TrackedDummyWorld world = new TrackedDummyWorld();
-
-        WorldSceneRenderer worldSceneRenderer;
-        if(ConfigHolder.client.useVBO) {
-            worldSceneRenderer = new VBOWorldSceneRenderer(world);
-        } else {
-            worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
-        }
+        ImmediateWorldSceneRenderer worldSceneRenderer = new VBOWorldSceneRenderer(world);
 
         worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
         world.addBlocks(blockMap);

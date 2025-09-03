@@ -1,5 +1,7 @@
+
 package gregtech.common.blocks;
 
+import gregtech.api.block.IStateSpawnControl;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
@@ -63,21 +65,27 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
                 MetaBlocks.STONE_BLOCKS.get(StoneVariant.COBBLE) : this);
     }
 
-    public enum StoneType implements IStringSerializable {
+    public enum StoneType implements IStringSerializable, IStateSpawnControl {
 
         BLACK_GRANITE("black_granite", MapColor.BLACK),
         RED_GRANITE("red_granite", MapColor.RED),
         MARBLE("marble", MapColor.QUARTZ),
         BASALT("basalt", MapColor.BLACK_STAINED_HARDENED_CLAY),
-        CONCRETE_LIGHT("concrete_light", MapColor.STONE),
-        CONCRETE_DARK("concrete_dark", MapColor.STONE);
+        CONCRETE_LIGHT("concrete_light", MapColor.STONE, false),
+        CONCRETE_DARK("concrete_dark", MapColor.STONE, false);
 
         private final String name;
+        private final boolean allowSpawn;
         public final MapColor mapColor;
 
         StoneType(@NotNull String name, @NotNull MapColor mapColor) {
+            this(name, mapColor, true);
+        }
+
+        StoneType(@NotNull String name, @NotNull MapColor mapColor, boolean allowSpawn) {
             this.name = name;
             this.mapColor = mapColor;
+            this.allowSpawn = allowSpawn;
         }
 
         @NotNull
@@ -101,6 +109,12 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
                 case BASALT -> Materials.Basalt;
                 case CONCRETE_LIGHT, CONCRETE_DARK -> Materials.Concrete;
             };
+        }
+
+        @Override
+        public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                        @NotNull EntityLiving.SpawnPlacementType type) {
+            return this.allowSpawn;
         }
     }
 

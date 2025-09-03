@@ -59,7 +59,6 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -511,6 +510,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                 exportItems, importFluids, exportFluids, yOffset, guiSyncManager);
 
         BooleanSyncValue hasEnergy = new BooleanSyncValue(workable::isHasNotEnoughEnergy);
+        guiSyncManager.syncValue("has_energy", hasEnergy);
 
         panel.child(widget)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
@@ -524,8 +524,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                         .size(18, 18)
                         .pos(79, 42 + yOffset)
                         .background(GTGuiTextures.INDICATOR_NO_ENERGY)
-                        // todo flicker appears on ui open even when it has enough energy
-                        // will need to test this
                         .setEnabledIf($ -> hasEnergy.getBoolValue()))
                 .bindPlayerInventory();
 

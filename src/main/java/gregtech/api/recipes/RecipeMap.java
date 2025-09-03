@@ -151,14 +151,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                      int maxFluidOutputs) {
         this.unlocalizedName = unlocalizedName;
 
+        this.recipeMapUI = recipeMapUI.apply(this);
+
         this.maxInputs = maxInputs;
         this.maxFluidInputs = maxFluidInputs;
         this.maxOutputs = maxOutputs;
         this.maxFluidOutputs = maxFluidOutputs;
         this.primaryRecipeCategory = GTRecipeCategory.create(GTValues.MODID, unlocalizedName, getTranslationKey(),
                 this);
-
-        this.recipeMapUI = recipeMapUI.apply(this);
 
         defaultRecipeBuilder.setRecipeMap(this);
         defaultRecipeBuilder.category(primaryRecipeCategory);

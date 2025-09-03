@@ -270,6 +270,7 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Silicon)
                 .fluidInputs(Chloromethane.getFluid(2000))
+                .circuitMeta(1)
                 .fluidOutputs(Dimethyldichlorosilane.getFluid(1000))
                 .duration(240).EUt(96).buildAndRegister();
 

@@ -1,63 +1,41 @@
 package gregtech.mixins.mui2;
 
-import net.minecraft.enchantment.EnchantmentData;
+import gregtech.api.util.JEIUtil;
+
 import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
-import com.cleanroommc.modularui.value.sync.ItemSlotSH;
 import com.cleanroommc.modularui.widgets.ItemSlot;
-import mezz.jei.Internal;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import mezz.jei.gui.ghost.GhostIngredientDrag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 // TODO: remove once MUI PR 146 merges into a release we use
-@Debug(export = true)
-@Mixin(value = ItemSlot.class)
+@Mixin(value = ItemSlot.class, remap = false)
 public abstract class ItemSlotMixin {
 
-    @Shadow(remap = false)
-    private ItemSlotSH syncHandler;
+    @Shadow
+    public abstract @Nullable ItemStack castGhostIngredientIfValid(@NotNull Object ingredient);
 
     @Redirect(method = "draw",
               at = @At(value = "INVOKE",
-                       target = "Lcom/cleanroommc/modularui/integration/jei/ModularUIJeiPlugin;hasDraggingGhostIngredient()Z"),
-              remap = false)
+                       target = "Lcom/cleanroommc/modularui/integration/jei/ModularUIJeiPlugin;hasDraggingGhostIngredient()Z"))
     private boolean onlyHighlightOnValidDrag() {
         GhostIngredientDrag<?> ingredientDrag = ModularUIJeiPlugin.getGhostDrag();
         if (ingredientDrag == null) return false;
         Object ingredient = ingredientDrag.getIngredient();
         if (ingredient == null) return false;
-        return gregTech$castIfItemStack(ingredient) != null;
+        return castGhostIngredientIfValid(ingredient) != null;
     }
 
-    /**
-     * @author Zorbatron
-     * @reason Add support for dragging enchanted books from JEI
-     */
-    @Overwrite(remap = false)
-    public @Nullable ItemStack castGhostIngredientIfValid(@NotNull Object ingredient) {
-        return gregTech$castIfItemStack(ingredient);
-    }
-
-    @Unique
-    private @Nullable ItemStack gregTech$castIfItemStack(Object ingredient) {
-        if (ingredient instanceof EnchantmentData enchantmentData) {
-            ingredient = Internal.getIngredientRegistry().getIngredientHelper(enchantmentData)
-                    .getCheatItemStack(enchantmentData);
-        }
-
-        if (ingredient instanceof ItemStack itemStack) {
-            return syncHandler.isItemValid(itemStack) ? itemStack : null;
-        }
-
-        return null;
+    @WrapMethod(method = "castGhostIngredientIfValid(Ljava/lang/Object;)Lnet/minecraft/item/ItemStack;")
+    public @Nullable ItemStack addSupportForEnchantedBooks(Object ingredient, Operation<ItemStack> original) {
+        return original.call(JEIUtil.getBookStackIfEnchantment(ingredient));
     }
 }

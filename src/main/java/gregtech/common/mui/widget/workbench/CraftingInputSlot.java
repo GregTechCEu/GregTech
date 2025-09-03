@@ -3,6 +3,7 @@ package gregtech.common.mui.widget.workbench;
 import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.JEIUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 
@@ -104,16 +105,20 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         ItemStack itemstack = this.syncHandler.getStack();
+        boolean jeiIngredientBeingHovered = JEIUtil.hoveringOverIngredient(this);
+
         if (!itemstack.isEmpty()) {
-            if (!this.hasIngredients) {
+            if (!jeiIngredientBeingHovered && !this.hasIngredients) {
                 RenderUtil.renderRect(0, 0, 18, 18, 200, 0x80FF0000);
             }
 
             RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
         }
 
-        if (widgetTheme instanceof WidgetSlotTheme slotTheme) {
-            RenderUtil.handleSlotOverlays(this, slotTheme);
+        if (jeiIngredientBeingHovered) {
+            RenderUtil.drawJEIGhostSlotOverlay(this);
+        } else {
+            RenderUtil.handleSlotOverlay(this, widgetTheme);
         }
     }
 
@@ -132,6 +137,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
     @Override
     public @Nullable ItemStack castGhostIngredientIfValid(@NotNull Object ingredient) {
+        ingredient = JEIUtil.getBookStackIfEnchantment(ingredient);
         return areAncestorsEnabled() && ingredient instanceof ItemStack ? (ItemStack) ingredient : null;
     }
 

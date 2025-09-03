@@ -23,6 +23,7 @@ import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
+@ApiStatus.Experimental
 public class RecipeMapUI<R extends RecipeMap<?>> {
 
     private final R recipeMap;
@@ -45,27 +47,35 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     private final boolean modifyFluidOutputs;
 
     private final boolean isGenerator;
-    private final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectOpenHashMap<>();
-    // todo try to store this better
-    private final Int2ObjectMap<IDrawable> itemInputOverlays = new Int2ObjectOpenHashMap<>();
+
+    private @NotNull Area specialTexturePosition = new Area();
+    private boolean isJEIVisible = true;
 
     /* *********************** MUI 1 *********************** */
+
+    @Deprecated
+    private final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectOpenHashMap<>();
+
+    @Deprecated
+    private TextureArea progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
+    @Deprecated
+    private gregtech.api.gui.widgets.ProgressWidget.MoveType moveType = gregtech.api.gui.widgets.ProgressWidget.MoveType.HORIZONTAL;
+    @Deprecated
+    private @Nullable TextureArea specialTexture;
+
+    /* *********************** MUI 2 *********************** */
+
+    // todo try to store this better
+    private final Int2ObjectMap<IDrawable> itemInputOverlays = new Int2ObjectOpenHashMap<>();
     private final Int2ObjectMap<IDrawable> itemOutputOverlays = new Int2ObjectOpenHashMap<>();
     private final Int2ObjectMap<IDrawable> fluidInputOverlays = new Int2ObjectOpenHashMap<>();
     private final Int2ObjectMap<IDrawable> fluidOutputOverlays = new Int2ObjectOpenHashMap<>();
-    private @NotNull Area specialTexturePosition = new Area();
 
-    /* *********************** MUI 2 *********************** */
-    private boolean isJEIVisible = true;
-    private TextureArea progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
-    private gregtech.api.gui.widgets.ProgressWidget.MoveType moveType = gregtech.api.gui.widgets.ProgressWidget.MoveType.HORIZONTAL;
-    private @Nullable TextureArea specialTexture;
     @ApiStatus.Experimental
     private boolean usesMui2 = false;
     private UITexture progressTexture = GTGuiTextures.PROGRESS_BAR_ARROW;
     private ProgressWidget.Direction progressDirection = ProgressWidget.Direction.RIGHT;
-    // todo sus name
-    private @Nullable IDrawable specialTextureNew;
+    private @Nullable IDrawable specialDrawableTexture;
 
     /**
      * @param recipeMap          the recipemap corresponding to this ui
@@ -130,6 +140,23 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         return new int[] { itemSlotsToLeft, itemSlotsToDown };
     }
 
+    /**
+     * Determines the slot grid sizes for the item and fluid counts
+     *
+     * @param itemInputsCount  the amount of item slots
+     * @param fluidInputsCount the amount of fluid tanks
+     * @return [item grid width, item grid height, fluid grid width, fluid grid height]
+     */
+    @Contract("_, _ -> new")
+    public static int @NotNull [] determineSlotsGrid(int itemInputsCount, int fluidInputsCount) {
+        int[] arr = determineSlotsGrid(itemInputsCount);
+        int[] sizes = { arr[0], arr[1], 0, 0 };
+        arr = determineSlotsGrid(fluidInputsCount);
+        sizes[2] = arr[0];
+        sizes[3] = arr[1];
+        return sizes;
+    }
+
     /* *********************** MUI 1 *********************** */
 
     /**
@@ -142,7 +169,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param yOffset      the y offset for the gui
      * @return the populated builder
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
                                                  FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
@@ -167,7 +195,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param yOffset          the y offset for the gui
      * @return the populated builder
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems,
                                               IItemHandlerModifiable exportItems, FluidTankList importFluids,
                                               FluidTankList exportFluids, int yOffset) {
@@ -194,7 +223,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param yOffset          the y offset for the gui
      * @return the populated builder
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public ModularUI.Builder createUITemplateNoOutputs(DoubleSupplier progressSupplier,
                                                        IItemHandlerModifiable importItems,
                                                        IItemHandlerModifiable exportItems, FluidTankList importFluids,
@@ -217,6 +247,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param isOutputs    if slots should be output slots
      * @param yOffset      the y offset for the gui
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     protected void addInventorySlotGroup(@NotNull ModularUI.Builder builder,
                                          @NotNull IItemHandlerModifiable itemHandler,
                                          @NotNull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
@@ -278,6 +310,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param isFluid      if the slot is a fluid slot
      * @param isOutputs    if slots should be output slots
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
                            FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
         if (!isFluid) {
@@ -293,7 +327,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @return the height used to determine size of background texture in JEI
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public int getPropertyHeightShift() {
         int maxPropertyCount = 0;
         if (shouldShiftWidgets()) {
@@ -310,7 +345,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @return widgets should be shifted
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     private boolean shouldShiftWidgets() {
         return recipeMap.getMaxInputs() + recipeMap.getMaxOutputs() >= 6 ||
                 recipeMap.getMaxFluidInputs() + recipeMap.getMaxFluidOutputs() >= 6;
@@ -322,7 +358,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param isLast   if the slot is the last slot of its type
      * @return the overlays for a slot
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     protected TextureArea[] getOverlaysForSlot(boolean isOutput, boolean isFluid, boolean isLast) {
         TextureArea base = isFluid ? GuiTextures.FLUID_SLOT : GuiTextures.SLOT;
         byte overlayKey = computeOverlayKey(isOutput, isFluid, isLast);
@@ -335,7 +372,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @return the progress bar's move type
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull gregtech.api.gui.widgets.ProgressWidget.MoveType progressBarMoveType() {
         return moveType;
     }
@@ -343,7 +381,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @param moveType the new progress bar move type
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setProgressBarMoveType(@NotNull gregtech.api.gui.widgets.ProgressWidget.MoveType moveType) {
         this.moveType = moveType;
     }
@@ -351,7 +390,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @return the texture of the progress bar
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull TextureArea progressBarTexture() {
         return progressBarTexture;
     }
@@ -359,7 +399,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @param progressBarTexture the new progress bar texture
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setProgressBarTexture(@NotNull TextureArea progressBarTexture) {
         this.progressBarTexture = progressBarTexture;
     }
@@ -368,7 +409,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param progressBarTexture the new progress bar texture
      * @param moveType           the new progress bar move type
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setProgressBar(@NotNull TextureArea progressBarTexture,
                                @NotNull gregtech.api.gui.widgets.ProgressWidget.MoveType moveType) {
         this.progressBarTexture = progressBarTexture;
@@ -382,7 +424,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param width          the width of the texture
      * @param height         the height of the texture
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setSpecialTexture(@NotNull TextureArea specialTexture, int x, int y, int width, int height) {
         setSpecialTexture(specialTexture, new int[] { x, y, width, height });
     }
@@ -391,7 +434,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param specialTexture the special texture to set
      * @param position       the position of the texture: [x, y, width, height]
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setSpecialTexture(@NotNull TextureArea specialTexture, int @NotNull [] position) {
         this.specialTexture = specialTexture;
         this.specialTexturePosition.set(
@@ -404,7 +448,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @return the special texture
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @Nullable TextureArea specialTexture() {
         return this.specialTexture;
     }
@@ -422,7 +467,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param builder the builder to add to
      * @return the updated builder
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull ModularUI.Builder addSpecialTexture(@NotNull ModularUI.Builder builder) {
         builder.image(specialTexturePosition.x(), specialTexturePosition.y(),
                 specialTexturePosition.w(),
@@ -441,7 +487,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param texture  the texture to set
      * @param isOutput if the slot is an output slot
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setItemSlotOverlay(@NotNull TextureArea texture, boolean isOutput) {
         this.slotOverlays.put(computeOverlayKey(isOutput, false, false), texture);
         this.slotOverlays.put(computeOverlayKey(isOutput, false, true), texture);
@@ -452,7 +499,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param isOutput   if the slot is an output slot
      * @param isLastSlot if the slot is the last slot
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setItemSlotOverlay(@NotNull TextureArea texture, boolean isOutput, boolean isLastSlot) {
         this.slotOverlays.put(computeOverlayKey(isOutput, false, isLastSlot), texture);
     }
@@ -461,7 +509,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param texture  the texture to set
      * @param isOutput if the slot is an output slot
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setFluidSlotOverlay(@NotNull TextureArea texture, boolean isOutput) {
         this.slotOverlays.put(computeOverlayKey(isOutput, true, false), texture);
         this.slotOverlays.put(computeOverlayKey(isOutput, true, true), texture);
@@ -472,7 +521,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param isOutput   if the slot is an output slot
      * @param isLastSlot if the slot is the last slot
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setFluidSlotOverlay(@NotNull TextureArea texture, boolean isOutput, boolean isLastSlot) {
         this.slotOverlays.put(computeOverlayKey(isOutput, true, isLastSlot), texture);
     }
@@ -481,7 +531,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param key     the key to store the slot's texture with
      * @param texture the texture to store
      */
-
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @ApiStatus.Internal
     public void setSlotOverlay(byte key, @NotNull TextureArea texture) {
         this.slotOverlays.put(key, texture);
@@ -494,18 +545,23 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                                        FluidTankList exportFluids, int yOffset, PanelSyncManager syncManager) {
         DoubleSyncValue progressValue = new DoubleSyncValue(progressSupplier);
 
-        ParentWidget<?> group = new ParentWidget<>().size(176, 166 + yOffset);
+        ParentWidget<?> group = new ParentWidget<>()
+                .debugName("recipemapui.parent")
+                .size(176, 166 + yOffset);
+
         group.child(new RecipeProgressWidget()
                 .recipeMap(recipeMap)
+                .debugName("recipe.progress")
                 .size(20)
-                .alignX(0.5f).top(23 + yOffset)
+                .alignX(0.5f)
+                .top(23 + yOffset)
                 .value(progressValue)
                 .texture(progressTexture, 20)
                 .direction(progressDirection));
         addInventorySlotGroup(group, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(group, exportItems, exportFluids, true, yOffset);
-        if (specialTextureNew != null) {
-            group.child(specialTextureNew.asWidget()
+        if (specialDrawableTexture != null) {
+            group.child(specialDrawableTexture.asWidget()
                     .debugName("special_texture")
                     .pos(specialTexturePosition.x(), specialTexturePosition.y())
                     .size(specialTexturePosition.w(), specialTexturePosition.h()));
@@ -516,70 +572,81 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     protected void addInventorySlotGroup(@NotNull ParentWidget<?> group,
                                          @NotNull IItemHandlerModifiable itemHandler,
                                          @NotNull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
-        int itemInputsCount = itemHandler.getSlots();
-        int fluidInputsCount = fluidHandler.getTanks();
-        boolean invertFluids = false;
-        if (itemInputsCount == 0) {
-            int tmp = itemInputsCount;
-            itemInputsCount = fluidInputsCount;
-            fluidInputsCount = tmp;
-            invertFluids = true;
-        }
-        int[] inputSlotGrid = determineSlotsGrid(itemInputsCount);
-        int itemSlotsToLeft = inputSlotGrid[0];
-        int itemSlotsToDown = inputSlotGrid[1];
-        int startInputsX = isOutputs ? 106 : 70 - itemSlotsToLeft * 18;
-        int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
-        boolean wasGroup = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
-        if (wasGroup) startInputsY -= 9;
-        else if (itemHandler.getSlots() >= 6 && fluidHandler.getTanks() >= 2 && !isOutputs) startInputsY -= 9;
+        final int itemInputsCount = itemHandler.getSlots();
+        boolean onlyFluids = itemInputsCount == 0;
+        final int fluidInputsCount = fluidHandler.getTanks();
+        if (fluidInputsCount == 0 && onlyFluids)
+            return; // nothing to do here
 
-        SlotGroup slotGroup = new SlotGroup(isOutputs ? "output_items" : "input_items", itemSlotsToLeft, 1, !isOutputs);
+        int[] slotGridSizes = determineSlotsGrid(itemInputsCount, fluidInputsCount);
+        int itemGridWidth = slotGridSizes[onlyFluids ? 2 : 0];
+        int itemGridHeight = slotGridSizes[onlyFluids ? 3 : 1];
 
-        for (int i = 0; i < itemSlotsToDown; i++) {
-            for (int j = 0; j < itemSlotsToLeft; j++) {
-                int slotIndex = i * itemSlotsToLeft + j;
-                if (slotIndex >= itemInputsCount) break;
-                int x = startInputsX + 18 * j;
-                int y = startInputsY + 18 * i;
-                if (invertFluids) {
-                    group.child(makeFluidSlot(slotIndex, fluidHandler, isOutputs)
-                            .pos(x, y));
-                } else {
-                    group.child(makeItemSlot(slotGroup, slotIndex, itemHandler, isOutputs)
-                            .pos(x, y));
-                }
-            }
+        int fluidGridWidth = slotGridSizes[2];
+        int fluidGridHeight = slotGridSizes[3];
+
+        int startX = isOutputs ? 106 : 70 - itemGridWidth * 18;
+        int startY = 33 - (int) (itemGridHeight / 2.0 * 18) + yOffset;
+
+        // note: is 'wasGroup' for the electrolyzer/centrifuge?
+        // it's the only thing I can think of that has 12 of item and fluid slots
+        boolean wasGroup = itemInputsCount + fluidInputsCount == 12;
+        if (wasGroup || itemInputsCount >= 6 && fluidInputsCount >= 2 && !isOutputs) {
+            startY -= 9;
         }
-        if (wasGroup) startInputsY += 2;
-        if (fluidInputsCount > 0 || invertFluids) {
-            if (itemSlotsToDown >= fluidInputsCount && itemSlotsToLeft < 3) {
-                int startSpecX = isOutputs ? startInputsX + itemSlotsToLeft * 18 : startInputsX - 18;
-                for (int i = 0; i < fluidInputsCount; i++) {
-                    int y = startInputsY + 18 * i;
-                    if (!invertFluids) {
-                        group.child(makeFluidSlot(i, fluidHandler, isOutputs)
-                                .pos(startSpecX, y));
-                    } else {
-                        group.child(makeItemSlot(slotGroup, i, itemHandler, isOutputs)
-                                .pos(startSpecX, y));
-                    }
-                }
-            } else {
-                int startSpecY = startInputsY + itemSlotsToDown * 18;
-                for (int i = 0; i < fluidInputsCount; i++) {
-                    int x = isOutputs ? startInputsX + 18 * (i % 3) :
-                            startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
-                    int y = startSpecY + (i / 3) * 18;
-                    if (!invertFluids) {
-                        group.child(makeFluidSlot(i, fluidHandler, isOutputs)
-                                .pos(x, y));
-                    } else {
-                        group.child(makeItemSlot(slotGroup, i, itemHandler, isOutputs)
-                                .pos(x, y));
-                    }
-                }
+
+        var itemGrid = new Grid()
+                .debugName(String.format("%s.%s.grid",
+                        onlyFluids ? "fluid" : "item",
+                        isOutputs ? "output" : "input"))
+                .pos(startX, startY)
+                .width(itemGridWidth * 18)
+                .height(itemGridHeight * 18);
+
+        if (onlyFluids) {
+            itemGrid.mapTo(fluidGridWidth, fluidInputsCount, i -> makeFluidSlot(i, fluidHandler, isOutputs));
+        } else {
+            SlotGroup slotGroup = new SlotGroup(isOutputs ? "output_items" : "input_items", itemGridWidth, 1,
+                    !isOutputs);
+            itemGrid.mapTo(itemGridWidth, itemInputsCount, i -> makeItemSlot(slotGroup, i, itemHandler, isOutputs));
+        }
+
+        group.child(itemGrid);
+
+        // we only have fluid slots, so we're done here
+        if (onlyFluids) return;
+
+        // otherwise, now we add the fluid slots
+        if (wasGroup) startY += 2; // this is responsible for the spacing between the slots on the electrolyzer
+
+        Grid fluidGrid = new Grid()
+                .debugName(String.format("fluid.%s.grid", isOutputs ? "output" : "inputs"))
+                .size(fluidGridWidth * 18, fluidGridHeight * 18);
+
+        if (itemGridHeight >= fluidInputsCount && itemGridWidth < 3) {
+            // we have enough room to place fluid slots to the left of the item slots
+            // import has fluid slots left of item slots
+            // export has fluid slots right of item slots
+            int startSpecX = isOutputs ? startX + itemGridWidth * 18 : startX - 18;
+            group.child(fluidGrid
+                    .mapTo(fluidGridWidth, fluidInputsCount, i -> makeFluidSlot(i, fluidHandler, isOutputs))
+                    .pos(startSpecX, startY));
+        } else {
+            // otherwise place them below the item slots
+            int startSpecY = startY + itemGridHeight * 18;
+            int x = startX;
+            if (!isOutputs) {
+                if (itemGridWidth == 3)
+                    // for assembler machine input fluid slot
+                    x += (18 * itemGridWidth) - 18;
+
+                if (fluidInputsCount > itemGridWidth)
+                    // to move chem reactor fluid input to the left
+                    x -= 18;
             }
+            group.child(fluidGrid
+                    .mapTo(fluidGridWidth, fluidInputsCount, i -> makeFluidSlot(i, fluidHandler, isOutputs))
+                    .pos(x, startSpecY));
         }
     }
 
@@ -589,19 +656,19 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 .slot(SyncHandlers.itemSlot(itemHandler, slotIndex)
                         .slotGroup(group)
                         .accessibility(!isOutputs, true))
-                .background(getOverlaysForSlotNew(isOutputs, false, slotIndex));
+                .background(getDrawableOverlaysForSlot(isOutputs, false, slotIndex));
     }
 
     protected GTFluidSlot makeFluidSlot(int slotIndex, FluidTankList fluidHandler, boolean isOutputs) {
         return new GTFluidSlot()
                 .syncHandler(GTFluidSlot.sync(fluidHandler.getTankAt(slotIndex))
-                        .accessibility(true, !isOutputs))
-                // todo show always full, should be implemented with mui2 multis
-                .background(getOverlaysForSlotNew(isOutputs, true, slotIndex));
+                        .accessibility(true, !isOutputs)
+                        .drawAlwaysFull(true))
+                .background(getDrawableOverlaysForSlot(isOutputs, true, slotIndex));
     }
 
     @ApiStatus.Experimental
-    protected IDrawable getOverlaysForSlotNew(boolean isOutput, boolean isFluid, int index) {
+    protected IDrawable getDrawableOverlaysForSlot(boolean isOutput, boolean isFluid, int index) {
         UITexture base = isFluid ? GTGuiTextures.FLUID_SLOT : GTGuiTextures.SLOT;
         var overlays = getOverlayMap(isOutput, isFluid);
         if (overlays.containsKey(index)) {
@@ -629,10 +696,9 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     }
 
     // todo this is a quick and dirty method, find a better way
-
     /** Marked experimental as this method will be removed when all GTCEu UIs are ported to MUI2. */
     @ApiStatus.Experimental
-    public RecipeMapUI<R> buildMui2(Consumer<RecipeMapUIBuilder> builderConsumer) {
+    public RecipeMapUI<R> buildMui2(@NotNull Consumer<RecipeMapUIBuilder> builderConsumer) {
         builderConsumer.accept(new RecipeMapUIBuilder(this));
         return this;
     }
@@ -656,7 +722,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param position       the position of the texture: [x, y, width, height]
      */
     public void setSpecialTexture(@NotNull IDrawable specialTexture, @NotNull Area position) {
-        this.specialTextureNew = specialTexture;
+        this.specialDrawableTexture = specialTexture;
         this.specialTexturePosition = position;
     }
 

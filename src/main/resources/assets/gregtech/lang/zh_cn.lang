@@ -322,7 +322,7 @@ metaitem.shape.extruder.hoe.name=模头（锄头）
 metaitem.shape.extruder.hoe.tooltip=用来制作锄的模头
 metaitem.shape.extruder.hammer.name=模头（锤头）
 metaitem.shape.extruder.hammer.tooltip=用来制作锤的模头
-metaitem.shape.extruder.file.name=模头（锉刀刃）
+metaitem.shape.extruder.file.name=模头（锉刀头）
 metaitem.shape.extruder.file.tooltip=用来制作锉的模头
 metaitem.shape.extruder.saw.name=模头（锯条）
 metaitem.shape.extruder.saw.tooltip=用来制作锯的模头
@@ -640,9 +640,9 @@ metaitem.sensor.opv.name=§9OpV§r传感器
 metaitem.sensor.max.name=§c§lMAX§r传感器
 
 metaitem.tool.datastick.name=闪存
-metaitem.tool.datastick.tooltip=一个小容量的数据存储器
+metaitem.tool.datastick.tooltip=一个小容量的数据容器
 metaitem.tool.dataorb.name=数据球
-metaitem.tool.dataorb.tooltip=一个大容量的数据存储器
+metaitem.tool.dataorb.tooltip=一个大容量的数据容器
 metaitem.tool.datamodule.name=数据模块
 metaitem.tool.datamodule.tooltip=超复杂数据存储/n§c只能用数据库读取
 metaitem.circuit.integrated.name=编程电路
@@ -1267,8 +1267,8 @@ metaarmor.qts.nightvision.error=夸克高科™套装：§c能量不足！
 metaarmor.jetpack.hover.enable=喷气背包：悬浮模式已启用
 metaarmor.jetpack.hover.disable=喷气背包：悬浮模式已禁用
 
-metaarmor.jetpack.cancel_inertia.enable=喷气背包: 已启用惯性消除
-metaarmor.jetpack.cancel_inertia.disable=喷气背包: 已禁用惯性取消
+metaarmor.jetpack.cancel_inertia.enable=喷气背包：无惯性已启用
+metaarmor.jetpack.cancel_inertia.disable=喷气背包：无惯性已禁用
 
 metaarmor.jetpack.emergency_hover_mode=紧急悬浮模式已启用！
 
@@ -1297,8 +1297,8 @@ metaarmor.hud.status.enabled=§a开
 metaarmor.hud.status.disabled=§c关
 metaarmor.hud.energy_lvl=能量存储：%s
 metaarmor.hud.fuel_lvl=燃料存储：%s
-metaarmor.hud.cancel_inertia_mode=惯性消除: %s
 metaarmor.hud.hover_mode=悬浮模式：%s
+metaarmor.hud.cancel_inertia_mode=惯性消除：%s
 mataarmor.hud.supply_mode=供能模式：%s
 metaarmor.hud.gravi_engine=重力引擎：%s
 
@@ -1591,7 +1591,7 @@ item.material.oreprefix.toolHeadShovel=%s锹头
 item.material.oreprefix.toolHeadAxe=%s斧头
 item.material.oreprefix.toolHeadHoe=%s锄头
 item.material.oreprefix.toolHeadScythe=%s镰刀刃
-item.material.oreprefix.toolHeadFile=%s锉刀刃
+item.material.oreprefix.toolHeadFile=%s锉刀头
 item.material.oreprefix.toolHeadHammer=%s锤头
 item.material.oreprefix.toolHeadSaw=%s锯条
 item.material.oreprefix.toolHeadBuzzSaw=%s圆锯锯片
@@ -5054,6 +5054,12 @@ gregtech.machine.miner.fluid_usage=每tick消耗§f%,d L§7的§f%s§7，超频�
 gregtech.machine.miner.multi.description=一台工作范围极广的多方块采矿机，能够提供巨量矿石。
 gregtech.machine.miner.multi.needsfluid=钻井液不足！
 
+gregtech.machine.miner.startx=sX：%d
+gregtech.machine.miner.starty=sY：%d
+gregtech.machine.miner.startz=sZ：%d
+gregtech.machine.miner.minex=mX：%d
+gregtech.machine.miner.miney=mY：%d
+gregtech.machine.miner.minez=mZ：%d
 gregtech.machine.miner.mining_at=当前采矿地址：
 gregtech.machine.miner.mining_pos=X：%s Y：%s Z：%s
 gregtech.machine.miner.radius=半径：%d
@@ -5071,7 +5077,7 @@ gregtech.machine.fluid_drilling_rig.shows_depletion=显示流体矿脉信息
 
 gregtech.machine.cleanroom.name=超净间
 gregtech.machine.cleanroom.tooltip.1=使其内部的机器能够处理需要超净环境的配方。
-gregtech.machine.cleanroom.tooltip.2=污染状态下耗能功率为§f30EU/t§7，洁净状态下则为§f4EU/t§7。
+gregtech.machine.cleanroom.tooltip.2=污染状态下功耗为§f30EU/t§7，洁净状态下则为§f4EU/t§7。
 gregtech.machine.cleanroom.tooltip.3=超频可提升每个周期的清洁度。
 gregtech.machine.cleanroom.tooltip.4=§b尺寸：§f最小5x5x5，最大15x15x15
 gregtech.machine.cleanroom.tooltip.hold_ctrl=按住CTRL以查看更多结构信息
@@ -5915,7 +5921,7 @@ gregtech.block.tooltip.no_mob_spawning=§b生物不会在这个方块上生成
 
 gregtech.recipe.total=总计：%,d EU
 gregtech.recipe.max_eu=最大EU：%,d EU
-gregtech.recipe.eu=耗能功率：%,d EU/t(%s§r)
+gregtech.recipe.eu=功耗：%,d EU/t（%s§r）
 gregtech.recipe.eu_inverted=产能功率：%,d EU/t
 gregtech.recipe.duration=耗时：%s 秒
 gregtech.recipe.amperage=电流：%,d
