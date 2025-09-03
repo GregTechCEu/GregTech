@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.IObjectHolder;
 import gregtech.api.capability.IOpticalComputationHatch;
@@ -267,12 +269,12 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         if (stack.isEmpty()) return;
         String id = AssemblyLineManager.readResearchId(stack);
         if (id == null) return;
-        List<String> stacks = new ArrayList<>();
+        List<IDrawable> stacks = new ArrayList<>();
         DataItemBehavior.collectResearchItems(id, stacks);
         stacks.remove(0);
         manager.add(KeyUtil.lang(TextFormatting.GREEN, "gregtech.machine.research_station.researching"));
-        for (String line : stacks) {
-            manager.add(KeyUtil.string(line));
+        for (IDrawable line : stacks) {
+            manager.add(line);
         }
     }
 
