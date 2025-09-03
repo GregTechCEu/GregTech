@@ -11,14 +11,12 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import mezz.jei.gui.ghost.GhostIngredientDrag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 // TODO: remove once MUI PR 146 merges into a release we use
-@Debug(export = true)
 @Mixin(value = ItemSlot.class, remap = false)
 public abstract class ItemSlotMixin {
 
