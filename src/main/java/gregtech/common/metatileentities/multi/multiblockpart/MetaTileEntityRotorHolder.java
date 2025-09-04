@@ -41,6 +41,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
@@ -86,7 +87,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         guiSyncManager.registerSlotGroup("item_inv", 1);
         // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, 176, 166)

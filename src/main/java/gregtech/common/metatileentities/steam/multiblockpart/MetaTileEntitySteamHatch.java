@@ -39,6 +39,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -140,7 +141,7 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         guiSyncManager.registerSlotGroup("item_inv", 2);
 
         GTFluidSyncHandler tankSyncHandler = GTFluidSlot.sync(this.importFluids.getTankAt(0))

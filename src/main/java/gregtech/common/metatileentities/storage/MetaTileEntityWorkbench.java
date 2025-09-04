@@ -47,6 +47,7 @@ import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -217,7 +218,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager syncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager syncManager, UISettings settings) {
         getCraftingRecipeLogic().updateCurrentRecipe();
         this.recipeLogic.clearSlotMap();
 

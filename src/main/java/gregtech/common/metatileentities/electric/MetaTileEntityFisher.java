@@ -32,6 +32,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
@@ -70,7 +71,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         int rowSize = (int) Math.sqrt(inventorySize);
         guiSyncManager.registerSlotGroup("item_in", 1);
         guiSyncManager.registerSlotGroup("item_out", rowSize);
