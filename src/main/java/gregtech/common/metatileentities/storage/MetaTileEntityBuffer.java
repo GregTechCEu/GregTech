@@ -109,7 +109,7 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
         // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, 176, Math.max(166, 18 + 18 * invTier + 94))
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(SlotGroupWidget.playerInventory(false).left(7).bottom(7))
                 .child(new Grid()
                         .top(18).height(18 * invTier)
                         .left(7)

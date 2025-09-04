@@ -160,7 +160,7 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
         // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, 176, 166)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(SlotGroupWidget.playerInventory(false).left(7).bottom(7))
                 .child(GTGuiTextures.DISPLAY.asWidget()
                         .left(7).top(16)
                         .size(81, 55))

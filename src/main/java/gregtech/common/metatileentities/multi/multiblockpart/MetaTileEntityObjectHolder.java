@@ -74,7 +74,7 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
         // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, 176, 166)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(SlotGroupWidget.playerInventory(false).left(7).bottom(7))
                 .child(GTGuiTextures.PROGRESS_BAR_RESEARCH_STATION_BASE.asWidget()
                         .left(46).top(18)
                         .size(84, 60))

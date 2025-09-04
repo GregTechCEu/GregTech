@@ -276,7 +276,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
 
         return GTGuis.createPanel(this, 176, 18 + 18 * rowSize + 94)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(SlotGroupWidget.playerInventory(false).left(7).bottom(7))
                 .child(new Grid()
                         .top(18).height(rowSize * 18)
                         .minElementMargin(0, 0)

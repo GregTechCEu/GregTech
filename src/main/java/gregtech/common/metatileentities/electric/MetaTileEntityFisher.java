@@ -90,7 +90,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
 
         return GTGuis.createPanel(this, 176, 18 + 18 * rowSize + 94)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(SlotGroupWidget.playerInventory(false).left(7).bottom(7))
                 .child(new ItemSlot().slot(SyncHandlers.itemSlot(importItems, 0)
                         .slotGroup("item_in"))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.STRING_SLOT_OVERLAY)

@@ -92,7 +92,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
         // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, 176, 166)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(SlotGroupWidget.playerInventory(false).left(7).bottom(7))
                 .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(inventory, 0)
                                 .slotGroup("item_inv")
