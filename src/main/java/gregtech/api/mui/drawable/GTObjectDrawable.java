@@ -66,7 +66,7 @@ public class GTObjectDrawable implements IDrawable, JeiIngredientProvider {
             IDrawable background = theme.getBackground();
             if (background == null) background = GTGuiTextures.SLOT;
             background.draw(context, x, y, width, height, theme);
-            GuiDraw.drawItem(stack, x + 1, y + 1, width - 2, height - 2);
+            GuiDraw.drawItem(stack, x + 1, y + 1, width - 2, height - 2, 100);
         } else if (object instanceof FluidStack stack) {
             WidgetSlotTheme theme = context.getTheme().getFluidSlotTheme();
             IDrawable slot = theme.getBackground();
