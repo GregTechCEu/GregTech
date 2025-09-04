@@ -11,6 +11,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.items.MetaItems;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -278,5 +279,11 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return ModHandler.isMaterialWood(material) ? SoundType.WOOD : SoundType.METAL;
     }
 }
