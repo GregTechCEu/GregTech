@@ -110,7 +110,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         GuiDraw.drawFluidTexture(content, 1, y, getArea().w() - 2, height, 0);
 
         if (content != null && this.syncHandler.showAmountOnSlot()) {
-            String amount = NumberFormat.formatWithMaxDigits(content.amount, 3) + "L";
+            String amount = NumberFormat.DEFAULT.format(content.amount) + "L";
             this.textRenderer.setAlignment(Alignment.CenterRight, getArea().width - 1f);
             this.textRenderer.setPos(0, 12);
             this.textRenderer.draw(amount);
