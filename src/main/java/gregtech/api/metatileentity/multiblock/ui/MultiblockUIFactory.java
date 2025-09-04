@@ -247,7 +247,7 @@ public class MultiblockUIFactory {
             this.screenFunction.addWidgets(panel, panelSyncManager);
         }
 
-        var playerInv = SlotGroupWidget.playerInventory(0);
+        var playerInv = SlotGroupWidget.playerInventory(false);
         if (disableButtons) {
             playerInv.alignX(0.5f);
         } else {
