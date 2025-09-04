@@ -261,7 +261,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         public CraftingOutputMS(IntSyncValue amountCrafted, MetaTileEntityWorkbench workbench) {
             super(new InventoryWrapper(
                     workbench.getCraftingRecipeLogic().getCraftingResultInventory(),
-                    workbench.getCraftingRecipeLogic()), 0, true);
+                    workbench.getCraftingRecipeLogic()), 0);
             this.amountCrafted = amountCrafted;
             this.recipeLogic = workbench.getCraftingRecipeLogic();
             this.recipeMemory = workbench.getRecipeMemory();

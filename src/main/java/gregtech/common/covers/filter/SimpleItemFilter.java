@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.widgets.slot.PhantomItemSlot;
+
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
@@ -118,7 +120,15 @@ public class SimpleItemFilter extends BaseFilter {
                         .matrix("XXX",
                                 "XXX",
                                 "XXX")
-                        .key('X', index -> new ItemSlot()
+                        .key('X', index -> new PhantomItemSlot()
+                                .slot(SyncHandlers.itemSlot(this.filterReader, 0)
+                                        .ignoreMaxStackSize(true)
+                                        .slotGroup(filterInventory)
+                                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                            if (onlyAmountChanged && !init) {
+                                                markDirty();
+                                            }
+                                        }))
                                 .tooltip(tooltip -> {
                                     tooltip.setAutoUpdate(true);
                                     tooltip.textColor(Color.GREY.main);
@@ -135,15 +145,7 @@ public class SimpleItemFilter extends BaseFilter {
                                             tooltip.addLine(
                                                     IKey.str("Count: %s", TextFormattingUtil.formatNumbers(count)));
                                     }
-                                })
-                                .slot(SyncHandlers.phantomItemSlot(this.filterReader, index)
-                                        .ignoreMaxStackSize(true)
-                                        .slotGroup(filterInventory)
-                                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                            if (onlyAmountChanged && !init) {
-                                                markDirty();
-                                            }
-                                        })))
+                                }))
                         .build().marginRight(4))
                 .child(Flow.column().width(18).coverChildren()
                         .child(createBlacklistUI())
