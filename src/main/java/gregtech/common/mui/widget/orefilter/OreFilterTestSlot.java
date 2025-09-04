@@ -9,7 +9,7 @@ import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
-import com.cleanroommc.modularui.widgets.slot.ItemSlot;
+import com.cleanroommc.modularui.widgets.slot.PhantomItemSlot;
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * @author brachy84
  */
-public class OreFilterTestSlot extends ItemSlot {
+public class OreFilterTestSlot extends PhantomItemSlot {
 
     private final ItemOreFilterTestSlot slot;
     private Supplier<OreGlob> globSupplier = ImpossibleOreGlob::getInstance;
