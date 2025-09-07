@@ -1,4 +1,4 @@
-package gregtech.api.util;
+package gregtech.api.util.hash;
 
 import net.minecraftforge.fluids.FluidStack;
 
@@ -6,41 +6,43 @@ import it.unimi.dsi.fastutil.Hash;
 
 import java.util.Objects;
 
+/**
+ * A configurable generator of hashing strategies, allowing for consideration of select properties of
+ * {@link FluidStack}s when considering equality.
+ */
 public interface FluidStackHashStrategy extends Hash.Strategy<FluidStack> {
 
     static Builder builder() {
         return new Builder();
     }
 
-    static FluidStackHashStrategy comparingAll() {
-        return builder().compareFluid(true)
-                .compareAmount(true)
-                .compareNBT(true)
-                .build();
-    }
+    FluidStackHashStrategy comparingAll = builder()
+            .compareFluid()
+            .compareAmount()
+            .compareNBT()
+            .build();
 
-    static FluidStackHashStrategy comparingAllButAmount() {
-        return builder().compareFluid(true)
-                .compareNBT(true)
-                .build();
-    }
+    FluidStackHashStrategy comparingAllButAmount = builder()
+            .compareFluid()
+            .compareNBT()
+            .build();
 
     class Builder {
 
-        private boolean fluid, amount, nbt;
+        private boolean fluid, amount, nbt = false;
 
-        public Builder compareFluid(boolean choice) {
-            this.fluid = choice;
+        public Builder compareFluid() {
+            this.fluid = true;
             return this;
         }
 
-        public Builder compareAmount(boolean choice) {
-            this.amount = choice;
+        public Builder compareAmount() {
+            this.amount = true;
             return this;
         }
 
-        public Builder compareNBT(boolean choice) {
-            this.nbt = choice;
+        public Builder compareNBT() {
+            this.nbt = true;
             return this;
         }
 

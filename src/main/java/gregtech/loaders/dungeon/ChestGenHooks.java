@@ -2,7 +2,7 @@ package gregtech.loaders.dungeon;
 
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTStringUtils;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
@@ -88,11 +88,10 @@ public final class ChestGenHooks {
         rollValues.put(tableLocation, new RandomValueRange(minAdd, maxAdd));
     }
 
-    private static final ItemStackHashStrategy HASH_STRATEGY = ItemStackHashStrategy.comparingAllButCount();
-
     private static @NotNull String createEntryName(@NotNull ItemStack stack, @NotNull String modid, int weight,
                                                    @NotNull RandomWeightLootFunction function) {
-        int hashCode = Objects.hash(HASH_STRATEGY.hashCode(stack), modid, weight, function.getMinAmount(),
+        int hashCode = Objects.hash(ItemStackHashStrategy.comparingAllButCount.hashCode(stack), modid, weight,
+                function.getMinAmount(),
                 function.getMaxAmount());
         return String.format("#%s:loot_%s", modid, hashCode);
     }

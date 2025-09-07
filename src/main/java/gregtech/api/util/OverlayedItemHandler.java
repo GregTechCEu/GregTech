@@ -1,5 +1,7 @@
 package gregtech.api.util;
 
+import gregtech.api.util.hash.ItemStackHashStrategy;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
@@ -56,7 +58,7 @@ public class OverlayedItemHandler {
             initSlot(i);
             // if it's the same item or there is no item in the slot
             ItemStack slotKey = this.slots[i].getItemStack();
-            if (slotKey.isEmpty() || ItemStackHashStrategy.comparingAllButCount().equals(slotKey, stack)) {
+            if (slotKey.isEmpty() || ItemStackHashStrategy.comparingAllButCount.equals(slotKey, stack)) {
                 // if the slot is not full
                 int canInsertUpTo = Math.min(this.slots[i].getSlotLimit() - this.slots[i].getCount(),
                         stack.getMaxStackSize());
@@ -140,7 +142,7 @@ public class OverlayedItemHandler {
         }
 
         public void setItemStack(@NotNull ItemStack itemStack) {
-            if (!ItemStackHashStrategy.comparingAllButCount().equals(this.itemStack, itemStack)) {
+            if (!ItemStackHashStrategy.comparingAllButCount.equals(this.itemStack, itemStack)) {
                 this.itemStack = itemStack;
                 this.slotLimit = Math.min(itemStack.getMaxStackSize(), slotLimit);
             }

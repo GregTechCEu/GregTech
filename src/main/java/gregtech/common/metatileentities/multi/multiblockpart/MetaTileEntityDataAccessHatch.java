@@ -17,8 +17,8 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.util.AssemblyLineManager;
-import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
@@ -191,7 +191,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
 
         list.add(new TextComponentTranslation("behavior.data_item.assemblyline.title"));
         list.add(new TextComponentString(""));
-        Collection<ItemStack> itemsAdded = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAll());
+        Collection<ItemStack> itemsAdded = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAll);
         for (Recipe recipe : recipes) {
             ItemStack stack = recipe.getOutputs().get(0);
             if (!itemsAdded.contains(stack)) {

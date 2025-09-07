@@ -2,7 +2,7 @@ package gregtech.api.capability;
 
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -16,9 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DualHandler implements IItemHandlerModifiable, IMultipleTankHandler, INotifiableHandler {
-
-    @NotNull
-    private static final ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingAll();
 
     @NotNull
     protected IItemHandlerModifiable itemDelegate;
@@ -71,7 +68,7 @@ public class DualHandler implements IItemHandlerModifiable, IMultipleTankHandler
     @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         var remainder = itemDelegate.insertItem(slot, stack, simulate);
-        if (!simulate && !strategy.equals(remainder, stack))
+        if (!simulate && !ItemStackHashStrategy.comparingAll.equals(remainder, stack))
             onContentsChanged();
         return remainder;
     }
@@ -93,8 +90,9 @@ public class DualHandler implements IItemHandlerModifiable, IMultipleTankHandler
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         var oldStack = itemDelegate.getStackInSlot(slot);
         itemDelegate.setStackInSlot(slot, stack);
-        if (!strategy.equals(oldStack, stack))
+        if (!ItemStackHashStrategy.comparingAll.equals(oldStack, stack)) {
             onContentsChanged();
+        }
     }
 
     @Override

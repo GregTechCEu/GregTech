@@ -6,7 +6,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.util.AssemblyLineManager;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -46,7 +46,7 @@ public class DataItemBehavior implements IItemBehaviour, IDataItem {
                 .getDataStickEntry(id);
         if (recipes != null && !recipes.isEmpty()) {
             lines.add(I18n.format("behavior.data_item.assemblyline.title"));
-            Collection<ItemStack> added = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount());
+            Collection<ItemStack> added = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount);
             for (Recipe recipe : recipes) {
                 ItemStack output = recipe.getOutputs().get(0);
                 if (added.add(output)) {

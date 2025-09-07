@@ -11,7 +11,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.resources.I18n;
@@ -160,7 +160,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
             }
 
             // If the stacks do not match, nothing can be inserted
-            if (!ItemStackHashStrategy.comparingAllButCount().equals(stack, this.getStackInSlot(slot)) &&
+            if (!ItemStackHashStrategy.comparingAllButCount.equals(stack, this.getStackInSlot(slot)) &&
                     !this.getStackInSlot(slot).isEmpty()) {
                 return stack;
             }
@@ -204,7 +204,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             boolean slotMatches = this.getStackInSlot(slot).isEmpty() ||
-                    ItemStackHashStrategy.comparingAllButCount().equals(this.getStackInSlot(slot), stack);
+                    ItemStackHashStrategy.comparingAllButCount.equals(this.getStackInSlot(slot), stack);
 
             MultiblockControllerBase controller = getController();
             if (controller instanceof IMachineHatchMultiblock)
