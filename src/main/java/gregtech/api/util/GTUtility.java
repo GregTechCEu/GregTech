@@ -879,7 +879,7 @@ public class GTUtility {
             if (tab == null || tab == CreativeTabs.SEARCH) continue;
             item.getSubItems(tab, subItems);
         }
-        return new ObjectOpenCustomHashSet<>(subItems, ItemStackHashStrategy.comparingItemDamageCount);
+        return new ObjectOpenCustomHashSet<>(subItems, ItemStackHashStrategy.comparingAllButNBT);
     }
 
     /**

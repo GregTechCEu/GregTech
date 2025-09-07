@@ -30,7 +30,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
             .compareTag()
             .build();
 
-    ItemStackHashStrategy comparingItemDamageCount = builder()
+    ItemStackHashStrategy comparingAllButNBT = builder()
             .compareItem()
             .compareDamage()
             .compareCount()

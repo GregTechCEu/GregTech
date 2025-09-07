@@ -116,7 +116,7 @@ public class CTRecipeBuilder {
         } else {
             // multiple inputs for a single input entry
             final Map<ItemStack, List<NBTTagCompound>> map = new Object2ObjectOpenCustomHashMap<>(
-                    ItemStackHashStrategy.comparingItemDamageCount);
+                    ItemStackHashStrategy.comparingAllButNBT);
 
             ItemStack[] stacks = new ItemStack[items.size()];
             for (int i = 0; i < stacks.length; i++) {
