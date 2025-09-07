@@ -58,10 +58,10 @@ public class ColorUtil {
          * Remove the other two colors from the integer encoded ARGB and set the alpha to 255. <br/>
          * Will always return {@code 0xFF000000} if called on {@link #ALPHA}. <br/>
          * Unlike {@link #isolateAndShift(int)}, this will not be between 0 and 255. <br/>
-         * Example: {@code GREEN.isolateWithFullAlpha(0xDEADBEEF)} will return {@code 0xFF00BE00} or {@code 4278238720}.
+         * Example: {@code GREEN.isolateWithFullAlpha(0xDEADBEEF)} will return {@code 0xFF00BE00} or {@code -16728576}.
          */
         public int isolateWithFullAlpha(int value) {
-            return (value & overlay) | 0xFF000000;
+            return (value & overlay) | ALPHA.overlay;
         }
 
         /**
