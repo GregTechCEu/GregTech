@@ -221,29 +221,25 @@ public class GTFluidSyncHandler extends SyncHandler {
 
     public @Nullable String getFluidLocalizedName() {
         var tankFluid = this.tank.getFluid();
-        if (tankFluid == null && canLockFluid())
-            tankFluid = this.lockedFluid.get();
+        if (tankFluid == null)
+            tankFluid = getLockedFluid();
 
         return tankFluid == null ? null : tankFluid.getLocalizedName();
     }
 
     public @NotNull IKey getFluidNameKey() {
         FluidStack tankFluid = tank.getFluid();
-        if (tankFluid == null && canLockFluid()) {
-            tankFluid = lockedFluid.get();
+        if (tankFluid == null) {
+            tankFluid = getLockedFluid();
         }
         return tankFluid == null ? IKey.EMPTY : KeyUtil.fluid(tankFluid);
     }
 
-    protected boolean shouldShowTooltip() {
-        if (getFluid() != null) return true;
-        return canLockFluid() && isLocked.getAsBoolean();
-    }
-
     public void handleTooltip(@NotNull RichTooltip tooltip) {
-        if (!shouldShowTooltip()) return;
-
-        tooltip.addLine(getFluidNameKey());
+        IKey nameKey = getFluidNameKey();
+        if (nameKey != IKey.EMPTY) {
+            tooltip.addLine(nameKey);
+        }
 
         if (showAmountInTooltip()) {
             tooltip.addLine(IKey.lang("gregtech.fluid.amount", getFluidAmount(), getCapacity()));
