@@ -291,7 +291,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 setLocked(fluidStack != null);
                 this.lockedFluid = fluidStack;
                 this.fluidTank.onContentsChanged();
-            }, this::setLocked);
+            }, this::setLocked, this::isLocked);
         }
 
         return GTGuis.createPanel(this, 176, 166)
