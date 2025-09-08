@@ -32,7 +32,7 @@ import net.minecraft.world.World;
 
 import appeng.api.util.AEColor;
 import appeng.tile.networking.TileCableBus;
-import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -42,7 +42,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
 
     private final ItemStack empty;
     private final EnumDyeColor color;
-    private final Pair<Color, Color> durabilityBarColors;
+    private final long durabilityBarColors;
 
     public ColorSprayBehaviour(ItemStack empty, int totalUses, int color) {
         super(totalUses);
@@ -223,18 +223,17 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack itemStack) {
+    public double getDurabilityForDisplay(@NotNull ItemStack itemStack) {
         return (double) getUsesLeft(itemStack) / totalUses;
     }
 
-    @Nullable
     @Override
-    public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
+    public long getDurabilityColorsForDisplay(@NotNull ItemStack itemStack) {
         return durabilityBarColors;
     }
 
     @Override
-    public boolean doDamagedStateColors(ItemStack itemStack) {
+    public boolean doDamagedStateColors(@NotNull ItemStack itemStack) {
         return false;
     }
 }

@@ -7,6 +7,7 @@ import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.items.toolitem.ToolHelper;
+import gregtech.api.util.ColorUtil;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.client.renderer.BufferBuilder;
@@ -18,10 +19,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
-
-import java.awt.*;
 
 // Thanks to EnderIO, slightly modified
 @SideOnly(Side.CLIENT)
@@ -29,20 +28,21 @@ public final class ToolChargeBarRenderer {
 
     private static final double BAR_W = 12d;
 
-    private static final Color colorShadow = new Color(0, 0, 0, 255);
-    private static final Color colorBG = new Color(0x0E, 0x01, 0x16, 255);
+    public static final int defaultGradientLeft = ColorUtil.combineRGBFullAlpha(20, 124, 0);
+    public static final int defaultGradientRight = ColorUtil.combineRGBFullAlpha(115, 255, 89);
+    public static final long defaultGradient = ColorUtil.packTwoARGB(defaultGradientLeft, defaultGradientRight);
 
-    private static final Color colorBarLeftEnergy = new Color(0, 101, 178, 255);
-    private static final Color colorBarRightEnergy = new Color(217, 238, 255, 255);
+    private static final int colorShadow = ColorUtil.combineRGBFullAlpha(0, 0, 0);
+    private static final int colorBackGround = ColorUtil.combineRGBFullAlpha(14, 1, 22);
 
-    private static final Color colorBarLeftDurability = new Color(20, 124, 0, 255);
-    private static final Color colorBarRightDurability = new Color(115, 255, 89, 255);
+    private static final int colorBarLeftEnergy = ColorUtil.combineRGBFullAlpha(0, 101, 178);
+    private static final int colorBarRightEnergy = ColorUtil.combineRGBFullAlpha(217, 238, 255);
 
-    private static final Color colorBarLeftDepleted = new Color(122, 0, 0, 255);
-    private static final Color colorBarRightDepleted = new Color(255, 27, 27, 255);
+    private static final int colorBarLeftDepleted = ColorUtil.combineRGBFullAlpha(122, 0, 0);
+    private static final int colorBarRightDepleted = ColorUtil.combineRGBFullAlpha(255, 27, 27);
 
-    public static void render(double level, int xPosition, int yPosition, int offset, boolean shadow, Color left,
-                              Color right, boolean doDepletedColor) {
+    public static void render(double level, int xPosition, int yPosition, int offset, boolean shadow, int left,
+                              int right, boolean doDepletedColor) {
         double width = level * BAR_W;
         if (doDepletedColor && level <= 0.25) {
             left = colorBarLeftDepleted;
@@ -57,13 +57,13 @@ public final class ToolChargeBarRenderer {
         GlStateManager.disableBlend();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder worldrenderer = tessellator.getBuffer();
-        worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        drawShadow(worldrenderer, xPosition + 2, yPosition + 13 - offset, 13, shadow ? 2 : 1);
-        drawGrad(worldrenderer, xPosition + 2, yPosition + 13 - offset, (BAR_W + width) / 2, left, right);
-        drawBG(worldrenderer, xPosition + 2 + (int) BAR_W, yPosition + 13 - offset, BAR_W - width);
+        BufferBuilder worldRenderer = tessellator.getBuffer();
+        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        drawShadow(worldRenderer, xPosition + 2, yPosition + 13 - offset, BAR_W + 1.0D, shadow ? 2.0D : 1.0D);
+        drawGradient(worldRenderer, xPosition + 2, yPosition + 13 - offset, (BAR_W + width) / 2, left, right);
+        drawBackGround(worldRenderer, xPosition + 2 + (int) BAR_W, yPosition + 13 - offset, BAR_W - width);
         if (offset == 2) {
-            overpaintVanillaRenderBug(worldrenderer, xPosition, yPosition);
+            overpaintVanillaRenderBug(worldRenderer, xPosition, yPosition);
         }
         tessellator.draw();
         GlStateManager.shadeModel(GL11.GL_FLAT);
@@ -73,47 +73,79 @@ public final class ToolChargeBarRenderer {
         GlStateManager.enableDepth();
     }
 
-    private static void drawGrad(BufferBuilder renderer, int x, int y, double width, Color left, Color right) {
-        renderer.pos(x, y, 0.0D).color(left.getRed(), left.getGreen(), left.getBlue(), left.getAlpha()).endVertex();
-        renderer.pos(x, y + (double) 1, 0.0D).color(left.getRed(), left.getGreen(), left.getBlue(), left.getAlpha())
-                .endVertex();
-        renderer.pos(x + width, y + (double) 1, 0.0D)
-                .color(right.getRed(), right.getGreen(), right.getBlue(), right.getAlpha()).endVertex();
-        renderer.pos(x + width, y, 0.0D).color(right.getRed(), right.getGreen(), right.getBlue(), right.getAlpha())
-                .endVertex();
-    }
+    @SuppressWarnings("DuplicatedCode")
+    private static void drawGradient(BufferBuilder renderer, int x, int y, double width, int left, int right) {
+        int leftAlpha = ColorUtil.ARGBHelper.ALPHA.isolateAndShift(left);
+        int leftRed = ColorUtil.ARGBHelper.RED.isolateAndShift(left);
+        int leftGreen = ColorUtil.ARGBHelper.GREEN.isolateAndShift(left);
+        int leftBlue = ColorUtil.ARGBHelper.BLUE.isolateAndShift(left);
 
-    private static void drawShadow(BufferBuilder renderer, int x, int y, double width, double height) {
+        int rightAlpha = ColorUtil.ARGBHelper.ALPHA.isolateAndShift(right);
+        int rightRed = ColorUtil.ARGBHelper.RED.isolateAndShift(right);
+        int rightGreen = ColorUtil.ARGBHelper.GREEN.isolateAndShift(right);
+        int rightBlue = ColorUtil.ARGBHelper.BLUE.isolateAndShift(right);
+
         renderer.pos(x, y, 0.0D)
-                .color(colorShadow.getRed(), colorShadow.getGreen(), colorShadow.getBlue(), colorShadow.getAlpha())
+                .color(leftRed, leftGreen, leftBlue, leftAlpha)
                 .endVertex();
-        renderer.pos(x, y + height, 0.0D)
-                .color(colorShadow.getRed(), colorShadow.getGreen(), colorShadow.getBlue(), colorShadow.getAlpha())
+        renderer.pos(x, y + 1d, 0.0D)
+                .color(leftRed, leftGreen, leftBlue, leftAlpha)
                 .endVertex();
-        renderer.pos(x + width, y + height, 0.0D)
-                .color(colorShadow.getRed(), colorShadow.getGreen(), colorShadow.getBlue(), colorShadow.getAlpha())
+        renderer.pos(x + width, y + 1d, 0.0D)
+                .color(rightRed, rightGreen, rightBlue, rightAlpha)
                 .endVertex();
         renderer.pos(x + width, y, 0.0D)
-                .color(colorShadow.getRed(), colorShadow.getGreen(), colorShadow.getBlue(), colorShadow.getAlpha())
+                .color(rightRed, rightGreen, rightBlue, rightAlpha)
                 .endVertex();
     }
 
-    private static void drawBG(BufferBuilder renderer, int x, int y, double width) {
+    @SuppressWarnings("DuplicatedCode")
+    private static void drawShadow(BufferBuilder renderer, int x, int y, double width, double height) {
+        int alpha = ColorUtil.ARGBHelper.ALPHA.isolateAndShift(colorShadow);
+        int red = ColorUtil.ARGBHelper.RED.isolateAndShift(colorShadow);
+        int green = ColorUtil.ARGBHelper.GREEN.isolateAndShift(colorShadow);
+        int blue = ColorUtil.ARGBHelper.BLUE.isolateAndShift(colorShadow);
+
+        renderer.pos(x, y, 0.0D)
+                .color(red, green, blue, alpha)
+                .endVertex();
+        renderer.pos(x, y + height, 0.0D)
+                .color(red, green, blue, alpha)
+                .endVertex();
+        renderer.pos(x + width, y + height, 0.0D)
+                .color(red, green, blue, alpha)
+                .endVertex();
+        renderer.pos(x + width, y, 0.0D)
+                .color(red, green, blue, alpha)
+                .endVertex();
+    }
+
+    @SuppressWarnings("DuplicatedCode")
+    private static void drawBackGround(BufferBuilder renderer, int x, int y, double width) {
+        int alpha = ColorUtil.ARGBHelper.ALPHA.isolateAndShift(colorBackGround);
+        int red = ColorUtil.ARGBHelper.RED.isolateAndShift(colorBackGround);
+        int green = ColorUtil.ARGBHelper.GREEN.isolateAndShift(colorBackGround);
+        int blue = ColorUtil.ARGBHelper.BLUE.isolateAndShift(colorBackGround);
+
         renderer.pos(x - width, y, 0.0D)
-                .color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), colorBG.getAlpha()).endVertex();
-        renderer.pos(x - width, y + (double) 1, 0.0D)
-                .color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), colorBG.getAlpha()).endVertex();
-        renderer.pos(x, y + (double) 1, 0.0D)
-                .color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), colorBG.getAlpha()).endVertex();
-        renderer.pos(x, y, 0.0D).color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), colorBG.getAlpha())
+                .color(red, green, blue, alpha)
+                .endVertex();
+        renderer.pos(x - width, y + 1.0D, 0.0D)
+                .color(red, green, blue, alpha)
+                .endVertex();
+        renderer.pos(x, y + 1.0D, 0.0D)
+                .color(red, green, blue, alpha)
+                .endVertex();
+        renderer.pos(x, y, 0.0D)
+                .color(red, green, blue, alpha)
                 .endVertex();
     }
 
-    private static void overpaintVanillaRenderBug(BufferBuilder worldrenderer, int xPosition, int yPosition) {
-        drawShadow(worldrenderer, xPosition + 2 + 12, yPosition + 13, 1, 1);
+    private static void overpaintVanillaRenderBug(BufferBuilder worldRenderer, int xPosition, int yPosition) {
+        drawShadow(worldRenderer, xPosition + 2 + 12, yPosition + 13, 1.0D, 1.0D);
     }
 
-    public static void renderBarsTool(IGTTool tool, ItemStack stack, int xPosition, int yPosition) {
+    public static void renderBarsTool(@NotNull IGTTool tool, @NotNull ItemStack stack, int x, int y) {
         if (tool instanceof ItemGTToolbelt toolbelt) {
             ItemStack selected = toolbelt.getSelectedTool(stack);
             if (!selected.isEmpty() && selected.getItem() instanceof IGTTool toool) {
@@ -121,19 +153,20 @@ public final class ToolChargeBarRenderer {
                 stack = selected;
             }
         }
+
         boolean renderedDurability = false;
         NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(stack);
         if (!tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {
-            renderedDurability = renderDurabilityBar(stack.getItem().getDurabilityForDisplay(stack), xPosition,
-                    yPosition);
+            renderedDurability = renderDurabilityBar(stack.getItem().getDurabilityForDisplay(stack), x, y);
         }
+
         if (tool.isElectric()) {
-            renderElectricBar(tool.getCharge(stack), tool.getMaxCharge(stack), xPosition, yPosition,
-                    renderedDurability);
+            renderElectricBar(tool.getCharge(stack), tool.getMaxCharge(stack), x, y, renderedDurability);
         }
     }
 
-    public static void renderBarsItem(MetaItem<?> metaItem, ItemStack stack, int xPosition, int yPosition) {
+    public static void renderBarsItem(@NotNull MetaItem<?> metaItem, @NotNull ItemStack stack, int xPosition,
+                                      int yPosition) {
         boolean renderedDurability = false;
         MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(stack);
         if (valueItem != null && valueItem.getDurabilityManager() != null) {
@@ -156,21 +189,19 @@ public final class ToolChargeBarRenderer {
         }
     }
 
-    private static boolean renderDurabilityBar(ItemStack stack, IItemDurabilityManager manager, int xPosition,
-                                               int yPosition) {
+    private static boolean renderDurabilityBar(@NotNull ItemStack stack, @NotNull IItemDurabilityManager manager,
+                                               int xPosition, int yPosition) {
         double level = manager.getDurabilityForDisplay(stack);
-        if (level == 0.0 && !manager.showEmptyBar(stack)) return false;
-        if (level == 1.0 && !manager.showFullBar(stack)) return false;
-        Pair<Color, Color> colors = manager.getDurabilityColorsForDisplay(stack);
-        boolean doDepletedColor = manager.doDamagedStateColors(stack);
-        Color left = colors != null ? colors.getLeft() : colorBarLeftDurability;
-        Color right = colors != null ? colors.getRight() : colorBarRightDurability;
-        render(1 - level, xPosition, yPosition, 0, true, left, right, doDepletedColor);
+        if (level == 0.0D && !manager.showEmptyBar(stack)) return false;
+        if (level == 1.0D && !manager.showFullBar(stack)) return false;
+        long colors = manager.getDurabilityColorsForDisplay(stack);
+        render(1 - level, xPosition, yPosition, 0, true, ColorUtil.getLeftARGB(colors), ColorUtil.getRightARGB(colors),
+                manager.doDamagedStateColors(stack));
         return true;
     }
 
     private static boolean renderDurabilityBar(double level, int xPosition, int yPosition) {
-        render(1 - level, xPosition, yPosition, 0, true, colorBarLeftDurability, colorBarRightDurability, true);
+        render(1 - level, xPosition, yPosition, 0, true, defaultGradientLeft, defaultGradientRight, true);
         return true;
     }
 

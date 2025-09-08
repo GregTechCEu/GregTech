@@ -27,8 +27,7 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
 
     private static final int FLUID_PER_BLOCK = 100;
 
-    private final Pair<Color, Color> durabilityBarColors;
+    private final long durabilityBarColors;
 
     public FoamSprayerBehavior() {
         this.durabilityBarColors = GradientUtil.getGradient(Materials.ConstructionFoam.getMaterialRGB(), 10);
@@ -84,7 +83,7 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack itemStack) {
+    public double getDurabilityForDisplay(@NotNull ItemStack itemStack) {
         IFluidHandlerItem fluidHandlerItem = itemStack
                 .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (fluidHandlerItem == null) return 0;
@@ -93,9 +92,8 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         return fluidStack == null ? 0 : (double) fluidStack.amount / (double) fluidTankProperties.getCapacity();
     }
 
-    @Nullable
     @Override
-    public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
+    public long getDurabilityColorsForDisplay(@NotNull ItemStack itemStack) {
         return durabilityBarColors;
     }
 

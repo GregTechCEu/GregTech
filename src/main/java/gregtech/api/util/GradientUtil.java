@@ -1,53 +1,40 @@
 package gregtech.api.util;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.awt.*;
-
 public class GradientUtil {
 
-    private GradientUtil() {}
-
-    public static Pair<Color, Color> getGradient(Color rgb, int luminanceDifference) {
+    public static long getGradient(int rgb, int luminanceDifference) {
         float[] hsl = RGBtoHSL(rgb);
-        float[] upshade = new float[3];
-        float[] downshade = new float[3];
-        System.arraycopy(hsl, 0, upshade, 0, 3);
-        System.arraycopy(hsl, 0, downshade, 0, 3);
-        upshade[2] = upshade[2] + luminanceDifference;
-        if (upshade[2] > 100.0F) upshade[2] = 100.0F;
-        downshade[2] = downshade[2] - luminanceDifference;
-        if (downshade[2] < 0.0F) downshade[2] = 0.0F;
-        Color upshadeRgb = toRGB(upshade);
-        Color downshadeRgb = toRGB(downshade);
-        return Pair.of(downshadeRgb, upshadeRgb);
+        float[] upShade = new float[3];
+        float[] downShade = new float[3];
+
+        System.arraycopy(hsl, 0, upShade, 0, 3);
+        System.arraycopy(hsl, 0, downShade, 0, 3);
+
+        upShade[2] = Math.min(upShade[2] + luminanceDifference, 100.0F);
+        downShade[2] = Math.max(downShade[2] - luminanceDifference, 0.0F);
+
+        return ColorUtil.packTwoARGB(toRGB(downShade), toRGB(upShade));
     }
 
-    public static Pair<Color, Color> getGradient(int rgb, int luminanceDifference) {
-        return getGradient(new Color(rgb), luminanceDifference);
-    }
-
-    public static float[] RGBtoHSL(Color rgbColor) {
-        // Get RGB values in the range 0 - 1
-        float[] rgb = rgbColor.getRGBColorComponents(null);
-        float r = rgb[0];
-        float g = rgb[1];
-        float b = rgb[2];
+    public static float[] RGBtoHSL(int rgb) {
+        float red = ColorUtil.ARGBHelper.RED.isolateAndShiftAsFloat(rgb);
+        float green = ColorUtil.ARGBHelper.GREEN.isolateAndShiftAsFloat(rgb);
+        float blue = ColorUtil.ARGBHelper.BLUE.isolateAndShiftAsFloat(rgb);
 
         // Minimum and Maximum RGB values are used in the HSL calculations
-        float min = Math.min(r, Math.min(g, b));
-        float max = Math.max(r, Math.max(g, b));
+        float min = Math.min(red, Math.min(green, blue));
+        float max = Math.max(red, Math.max(green, blue));
 
         // Calculate the Hue
         float h = 0;
         if (max == min) {
             h = 0;
-        } else if (max == r) {
-            h = ((60 * (g - b) / (max - min)) + 360) % 360;
-        } else if (max == g) {
-            h = (60 * (b - r) / (max - min)) + 120;
-        } else if (max == b) {
-            h = (60 * (r - g) / (max - min)) + 240;
+        } else if (max == red) {
+            h = ((60 * (green - blue) / (max - min)) + 360) % 360;
+        } else if (max == green) {
+            h = (60 * (blue - red) / (max - min)) + 120;
+        } else if (max == blue) {
+            h = (60 * (red - green) / (max - min)) + 240;
         }
 
         // Calculate the Luminance
@@ -66,11 +53,11 @@ public class GradientUtil {
         return new float[] { h, s * 100, l * 100 };
     }
 
-    public static Color toRGB(float[] hsv) {
-        return toRGB(hsv[0], hsv[1], hsv[2]);
+    public static int toRGB(float[] hsl) {
+        return toRGB(hsl[0], hsl[1], hsl[2]);
     }
 
-    public static Color toRGB(float h, float s, float l) {
+    public static int toRGB(float h, float s, float l) {
         // Formula needs all values between 0 - 1
         h = h % 360.0F;
         h /= 360.0F;
@@ -86,15 +73,15 @@ public class GradientUtil {
 
         float p = 2 * l - q;
 
-        float r = Math.max(0, hueToRGB(p, q, h + (1.0F / 3.0F)));
-        float g = Math.max(0, hueToRGB(p, q, h));
-        float b = Math.max(0, hueToRGB(p, q, h - (1.0F / 3.0F)));
+        float red = Math.max(0, hueToRGB(p, q, h + (1.0F / 3.0F)));
+        float green = Math.max(0, hueToRGB(p, q, h));
+        float blue = Math.max(0, hueToRGB(p, q, h - (1.0F / 3.0F)));
 
-        r = Math.min(r, 1.0F);
-        g = Math.min(g, 1.0F);
-        b = Math.min(b, 1.0F);
+        red = Math.min(red, 1.0F);
+        green = Math.min(green, 1.0F);
+        blue = Math.min(blue, 1.0F);
 
-        return new Color(r, g, b);
+        return ColorUtil.combineRGBNoAlpha((int) red * 255, (int) green * 255, (int) blue * 255);
     }
 
     private static float hueToRGB(float p, float q, float h) {

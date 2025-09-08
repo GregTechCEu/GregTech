@@ -34,9 +34,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.Collections;
@@ -272,11 +270,10 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         };
 
         public final int maxCapacity;
-        private final Pair<Color, Color> durabilityBarColors;
+        private static final long durabilityBarColors = GradientUtil.getGradient(0xB7AF08, 10);
 
         public Behaviour(int internalCapacity) {
             this.maxCapacity = internalCapacity;
-            this.durabilityBarColors = GradientUtil.getGradient(0xB7AF08, 10);
         }
 
         @Override
@@ -289,9 +286,8 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
             return fluidStack == null ? 0 : (double) fluidStack.amount / (double) fluidTankProperties.getCapacity();
         }
 
-        @Nullable
         @Override
-        public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
+        public long getDurabilityColorsForDisplay(@NotNull ItemStack itemStack) {
             return durabilityBarColors;
         }
 
