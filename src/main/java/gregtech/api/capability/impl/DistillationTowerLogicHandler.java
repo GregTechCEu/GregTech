@@ -4,6 +4,7 @@ import gregtech.api.capability.IDistillationTower;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.util.GTLog;
@@ -20,7 +21,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Allows hatchscan behavior to be used on fluid outputs. Not a child of {@link AbstractRecipeLogic}
@@ -70,16 +70,18 @@ public class DistillationTowerLogicHandler {
     /**
      * Called on structure formation to determine the ordered list of fluid handlers in the distillation tower. <br>
      * <br>
-     * Needs to be overriden for multiblocks that have different assemblies than the standard distillation tower.
+     * Needs to be overridden for multiblocks that have different assemblies than the standard distillation tower.
      */
     public void determineOrderedFluidOutputs() {
-        // noinspection SimplifyStreamApiCallChains
-        List<MetaTileEntityMultiblockPart> fluidExportParts = tower.getMultiblockParts().stream()
-                .filter(iMultiblockPart -> iMultiblockPart instanceof IMultiblockAbilityPart<?>abilityPart &&
-                        abilityPart.getAbilities().contains(MultiblockAbility.EXPORT_FLUIDS) &&
-                        abilityPart instanceof MetaTileEntityMultiblockPart)
-                .map(iMultiblockPart -> (MetaTileEntityMultiblockPart) iMultiblockPart)
-                .collect(Collectors.toList());
+        List<MetaTileEntityMultiblockPart> fluidExportParts = new ObjectArrayList<>();
+        for (IMultiblockPart part : tower.getMultiblockParts()) {
+            if (part instanceof IMultiblockAbilityPart<?>abilityPart &&
+                    abilityPart.getAbilities().contains(MultiblockAbility.EXPORT_FLUIDS) &&
+                    abilityPart instanceof MetaTileEntityMultiblockPart mteMultiPart) {
+                fluidExportParts.add(mteMultiPart);
+            }
+        }
+
         // the fluidExportParts should come sorted in smallest Y first, largest Y last.
         List<IFluidHandler> orderedHandlerList = new ObjectArrayList<>();
         List<IFluidTank> tankList = new ObjectArrayList<>();
