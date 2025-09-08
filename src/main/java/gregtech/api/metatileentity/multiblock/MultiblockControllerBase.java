@@ -229,7 +229,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             holder.setMetaTileEntity(mte);
 
             MetaTileEntity newMTE = holder.getMetaTileEntity();
-            newMTE.onPlacement();
+            // TODO: move all of this back into the lambda or find out if this is necessary!
+            // newMTE.onPlacement();
             newMTE.setFrontFacing(EnumFacing.SOUTH);
             blockInfos.add(new BlockInfo(mte.getBlock().getDefaultState(), holder));
         }
