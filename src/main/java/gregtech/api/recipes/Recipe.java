@@ -710,12 +710,17 @@ public class Recipe {
     public boolean hasValidInputsForDisplay() {
         for (GTRecipeInput ingredient : inputs) {
             if (ingredient.isOreDict()) {
-                if (OreDictionary.getOres(OreDictionary.getOreName(ingredient.getOreDict())).stream()
-                        .anyMatch(s -> !s.isEmpty())) {
-                    return true;
+                for (ItemStack oreStack : OreDictionary.getOres(OreDictionary.getOreName(ingredient.getOreDict()))) {
+                    if (!oreStack.isEmpty()) {
+                        return true;
+                    }
                 }
-            } else if (Arrays.stream(ingredient.getInputStacks()).anyMatch(s -> !s.isEmpty())) {
-                return true;
+            } else {
+                for (ItemStack inputStack : ingredient.getInputStacks()) {
+                    if (!inputStack.isEmpty()) {
+                        return true;
+                    }
+                }
             }
         }
         for (GTRecipeInput fluidInput : fluidInputs) {
