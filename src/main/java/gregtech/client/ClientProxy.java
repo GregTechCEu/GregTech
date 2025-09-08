@@ -80,7 +80,6 @@ import paulscode.sound.SoundSystemConfig;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -180,12 +179,13 @@ public class ClientProxy extends CommonProxy {
         // Test for Items
         UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
 
-        if (itemStack.getItem() instanceof MetaOreDictItem) { // Test for OreDictItems
-            MetaOreDictItem oreDictItem = (MetaOreDictItem) itemStack.getItem();
-            Optional<String> oreDictName = OreDictUnifier.getOreDictionaryNames(itemStack).stream().findFirst();
-            if (oreDictName.isPresent() && oreDictItem.OREDICT_TO_FORMULA.containsKey(oreDictName.get()) &&
-                    !oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get()).isEmpty()) {
-                tooltips.add(TextFormatting.YELLOW + oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get()));
+        if (itemStack.getItem() instanceof MetaOreDictItem oreDictItem) { // Test for OreDictItems
+            for (String oreDict : OreDictUnifier.getOreDictionaryNames(itemStack)) {
+                if (oreDictItem.OREDICT_TO_FORMULA.containsKey(oreDict) &&
+                        !oreDictItem.OREDICT_TO_FORMULA.get(oreDict).isEmpty()) {
+                    tooltips.add(TextFormatting.YELLOW + oreDictItem.OREDICT_TO_FORMULA.get(oreDict));
+                    break;
+                }
             }
         } else if (unificationEntry != null && unificationEntry.material != null) {
             if (unificationEntry.material.getChemicalFormula() != null &&
@@ -197,7 +197,7 @@ public class ClientProxy extends CommonProxy {
             tooltips = FluidTooltipUtil.getFluidTooltip(itemStack.getTagCompound().getString("FluidName"));
 
             // GTCE Cells, Forestry cans, some other containers
-            if (tooltips == null || tooltips.size() == 0) {
+            if (tooltips.isEmpty()) {
                 // if (itemStack.getItem() instanceof ItemBlock && ((ItemBlock) itemStack.getItem()).getBlock() ==
                 // GregTechAPI.MACHINE && itemStack.getItemDamage())
                 NBTTagCompound compound = itemStack.getTagCompound();
@@ -215,11 +215,9 @@ public class ClientProxy extends CommonProxy {
             tooltips = FluidTooltipUtil.getFluidTooltip(Materials.Lava.getFluid());
         }
 
-        if (tooltips != null) {
-            for (String s : tooltips) {
-                if (s == null || s.isEmpty()) continue;
-                event.getToolTip().add(s);
-            }
+        for (String s : tooltips) {
+            if (s == null || s.isEmpty()) continue;
+            event.getToolTip().add(s);
         }
     }
 
