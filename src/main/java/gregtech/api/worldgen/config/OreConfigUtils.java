@@ -24,69 +24,71 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class OreConfigUtils {
 
     @SuppressWarnings("deprecation")
-    public static List<IBlockState> getOreDictBlocks(String oreDictName) {
+    public static @NotNull List<IBlockState> getOreDictBlocks(String oreDictName) {
         List<ItemStack> allOres = OreDictUnifier.getAllWithOreDictionaryName(oreDictName);
         ArrayList<IBlockState> allBlocks = new ArrayList<>();
         for (ItemStack oreStack : allOres) {
             Block itemStackBlock = Block.getBlockFromItem(oreStack.getItem());
-            if (itemStackBlock == Blocks.AIR)
-                continue;
+            if (itemStackBlock == Blocks.AIR) continue;
             int placementMetadata = oreStack.getItem().getMetadata(oreStack.getMetadata());
             IBlockState placementState = itemStackBlock.getStateFromMeta(placementMetadata);
             allBlocks.add(placementState);
         }
+
         if (allBlocks.isEmpty()) {
             throw new IllegalArgumentException("Couldn't find any blocks matching " + oreDictName + " oredict tag");
         }
+
         return allBlocks;
     }
 
-    public static Map<StoneType, IBlockState> getOreStateMap(String stringDeclaration) {
+    public static @NotNull Map<StoneType, IBlockState> getOreStateMap(String stringDeclaration) {
         String materialName;
         if (stringDeclaration.startsWith("ore:")) {
             materialName = stringDeclaration.substring(4);
         } else {
             throw new IllegalArgumentException("Invalid string ore declaration: " + stringDeclaration);
         }
-        Material material = getMaterialByName(materialName);
-        return getOreForMaterial(material);
+
+        return getOreForMaterial(getMaterialByName(materialName));
     }
 
-    @NotNull
-    public static Map<StoneType, IBlockState> getOreForMaterial(Material material) {
-        List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
-                .filter(ore -> ore.material == material)
-                .collect(Collectors.toList());
+    public static @NotNull Map<StoneType, IBlockState> getOreForMaterial(@NotNull Material material) {
         Map<StoneType, IBlockState> stoneTypeMap = new HashMap<>();
-        for (BlockOre blockOre : oreBlocks) {
+        for (BlockOre blockOre : MetaBlocks.ORES) {
+            if (blockOre.material != material) continue;
             for (StoneType stoneType : blockOre.STONE_TYPE.getAllowedValues()) {
-                IBlockState blockState = blockOre.getOreBlock(stoneType);
-                stoneTypeMap.put(stoneType, blockState);
+                stoneTypeMap.put(stoneType, blockOre.getOreBlock(stoneType));
             }
         }
+
         if (stoneTypeMap.isEmpty()) {
             throw new IllegalArgumentException("There is no ore generated for material " + material);
         }
+
         return stoneTypeMap;
     }
 
-    public static Material getMaterialByName(String name) {
+    public static @NotNull Material getMaterialByName(@NotNull String name) {
         Material material = GregTechAPI.materialManager.getMaterial(name);
-        if (material == null || !material.hasProperty(PropertyKey.ORE))
+        if (material == null || !material.hasProperty(PropertyKey.ORE)) {
             throw new IllegalArgumentException("Material with name " + name + " not found!");
+        }
+
         return material;
     }
 
-    public static Block getBlockByName(String name) {
+    public static @NotNull Block getBlockByName(@NotNull String name) {
         ResourceLocation blockName = new ResourceLocation(name);
         Block block = GameRegistry.findRegistry(Block.class).getValue(blockName);
-        if (block == null)
+        if (block == null) {
             throw new IllegalArgumentException("Block with identifier " + blockName + " not found!");
+        }
+
         return block;
     }
 
