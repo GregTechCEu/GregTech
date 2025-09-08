@@ -2,6 +2,7 @@ package gregtech.common.items.tool;
 
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+import gregtech.api.util.function.ToFloatFunction;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -17,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Add to tools to have them deal bonus damage to specific mobs.
@@ -25,7 +25,7 @@ import java.util.function.Function;
  */
 public class EntityDamageBehavior implements IToolBehavior {
 
-    private final List<Function<EntityLivingBase, Float>> shouldDoBonusList = new ArrayList<>();
+    private final List<ToFloatFunction<EntityLivingBase>> shouldDoBonusList = new ArrayList<>();
     private final String mobType;
 
     public EntityDamageBehavior(float bonus, Class<?>... entities) {
@@ -55,11 +55,17 @@ public class EntityDamageBehavior implements IToolBehavior {
     @Override
     public void hitEntity(@NotNull ItemStack stack, @NotNull EntityLivingBase target,
                           @NotNull EntityLivingBase attacker) {
-        float damageBonus = shouldDoBonusList.stream().map(func -> func.apply(target)).filter(f -> f > 0).findFirst()
-                .orElse(0f);
+        float damageBonus = 0.0F;
+        for (ToFloatFunction<EntityLivingBase> bonus : shouldDoBonusList) {
+            damageBonus = bonus.applyAsFloat(target);
+            if (damageBonus > 0.0F) {
+                break;
+            }
+        }
+
         if (damageBonus != 0f) {
-            DamageSource source = attacker instanceof EntityPlayer ?
-                    DamageSources.getPlayerDamage((EntityPlayer) attacker) : DamageSources.getMobDamage(attacker);
+            DamageSource source = attacker instanceof EntityPlayer entityPlayer ?
+                    DamageSources.getPlayerDamage(entityPlayer) : DamageSources.getMobDamage(attacker);
             target.attackEntityFrom(source, damageBonus);
         }
     }
