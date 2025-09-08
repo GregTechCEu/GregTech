@@ -81,7 +81,7 @@ public class GradientUtil {
         green = Math.min(green, 1.0F);
         blue = Math.min(blue, 1.0F);
 
-        return ColorUtil.combineRGBNoAlpha((int) red * 255, (int) green * 255, (int) blue * 255);
+        return ColorUtil.combineRGBFullAlpha((int) red * 255, (int) green * 255, (int) blue * 255);
     }
 
     private static float hueToRGB(float p, float q, float h) {

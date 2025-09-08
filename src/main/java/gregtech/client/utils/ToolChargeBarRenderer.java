@@ -32,8 +32,8 @@ public final class ToolChargeBarRenderer {
     public static final int defaultGradientRight = ColorUtil.combineRGBFullAlpha(115, 255, 89);
     public static final long defaultGradient = ColorUtil.packTwoARGB(defaultGradientLeft, defaultGradientRight);
 
-    private static final int colorShadow = ColorUtil.combineRGBFullAlpha(0, 0, 0);
-    private static final int colorBackGround = ColorUtil.combineRGBFullAlpha(14, 1, 22);
+    private static final int colorShadow = ColorUtil.combineRGBNoAlpha(0, 0, 0);
+    private static final int colorBackGround = ColorUtil.combineRGBNoAlpha(14, 1, 22);
 
     private static final int colorBarLeftEnergy = ColorUtil.combineRGBFullAlpha(0, 101, 178);
     private static final int colorBarRightEnergy = ColorUtil.combineRGBFullAlpha(217, 238, 255);
@@ -101,43 +101,41 @@ public final class ToolChargeBarRenderer {
 
     @SuppressWarnings("DuplicatedCode")
     private static void drawShadow(BufferBuilder renderer, int x, int y, double width, double height) {
-        int alpha = ColorUtil.ARGBHelper.ALPHA.isolateAndShift(colorShadow);
         int red = ColorUtil.ARGBHelper.RED.isolateAndShift(colorShadow);
         int green = ColorUtil.ARGBHelper.GREEN.isolateAndShift(colorShadow);
         int blue = ColorUtil.ARGBHelper.BLUE.isolateAndShift(colorShadow);
 
         renderer.pos(x, y, 0.0D)
-                .color(red, green, blue, alpha)
+                .color(red, green, blue, 255)
                 .endVertex();
         renderer.pos(x, y + height, 0.0D)
-                .color(red, green, blue, alpha)
+                .color(red, green, blue, 255)
                 .endVertex();
         renderer.pos(x + width, y + height, 0.0D)
-                .color(red, green, blue, alpha)
+                .color(red, green, blue, 255)
                 .endVertex();
         renderer.pos(x + width, y, 0.0D)
-                .color(red, green, blue, alpha)
+                .color(red, green, blue, 255)
                 .endVertex();
     }
 
     @SuppressWarnings("DuplicatedCode")
     private static void drawBackGround(BufferBuilder renderer, int x, int y, double width) {
-        int alpha = ColorUtil.ARGBHelper.ALPHA.isolateAndShift(colorBackGround);
         int red = ColorUtil.ARGBHelper.RED.isolateAndShift(colorBackGround);
         int green = ColorUtil.ARGBHelper.GREEN.isolateAndShift(colorBackGround);
         int blue = ColorUtil.ARGBHelper.BLUE.isolateAndShift(colorBackGround);
 
         renderer.pos(x - width, y, 0.0D)
-                .color(red, green, blue, alpha)
+                .color(red, green, blue, 255)
                 .endVertex();
         renderer.pos(x - width, y + 1.0D, 0.0D)
-                .color(red, green, blue, alpha)
+                .color(red, green, blue, 255)
                 .endVertex();
         renderer.pos(x, y + 1.0D, 0.0D)
-                .color(red, green, blue, alpha)
+                .color(red, green, blue, 255)
                 .endVertex();
         renderer.pos(x, y, 0.0D)
-                .color(red, green, blue, alpha)
+                .color(red, green, blue, 255)
                 .endVertex();
     }
 
