@@ -3,6 +3,8 @@ package gregtech.api.unification.material.info;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,8 +15,13 @@ public class MaterialFlags {
 
     private final Set<MaterialFlag> flags = new HashSet<>();
 
-    public MaterialFlags addFlags(MaterialFlag... flags) {
+    public MaterialFlags addFlags(@NotNull MaterialFlag @NotNull... flags) {
         this.flags.addAll(Arrays.asList(flags));
+        return this;
+    }
+
+    public MaterialFlags addFlag(@NotNull MaterialFlag flag) {
+        this.flags.add(flag);
         return this;
     }
 

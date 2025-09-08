@@ -59,7 +59,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
@@ -173,18 +172,31 @@ public class Material implements Comparable<Material> {
         GregTechAPI.materialManager.getRegistry(getModid()).register(this);
     }
 
-    public void addFlags(MaterialFlag... flags) {
-        if (GregTechAPI.materialManager.canModifyMaterials()) {
-            this.flags.addFlags(flags).verify(this);
-        } else throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
+    public void addFlag(@NotNull MaterialFlag flag) {
+        checkMutability();
+        this.flags.addFlag(flag);
+    }
+
+    public void addFlags(@NotNull MaterialFlag @NotNull... flags) {
+        checkMutability();
+        this.flags.addFlags(flags).verify(this);
     }
 
     @ZenMethod
-    public void addFlags(String... names) {
-        addFlags(Arrays.stream(names)
-                .map(MaterialFlag::getByName)
-                .filter(Objects::nonNull)
-                .toArray(MaterialFlag[]::new));
+    public void addFlags(@NotNull String @NotNull... names) {
+        checkMutability();
+        for (String name : names) {
+            MaterialFlag flag = MaterialFlag.getByName(name);
+            if (flag != null) {
+                this.flags.addFlag(flag).verify(this);
+            }
+        }
+    }
+
+    private void checkMutability() {
+        if (!GregTechAPI.materialManager.canModifyMaterials()) {
+            throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
+        }
     }
 
     public boolean hasFlag(MaterialFlag flag) {
