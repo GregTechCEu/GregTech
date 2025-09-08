@@ -74,7 +74,7 @@ public final class ToolChargeBarRenderer {
     }
 
     @SuppressWarnings("DuplicatedCode")
-    private static void drawGradient(BufferBuilder renderer, int x, int y, double width, int left, int right) {
+    private static void drawGradient(@NotNull BufferBuilder renderer, int x, int y, double width, int left, int right) {
         int leftAlpha = ColorUtil.ARGBHelper.ALPHA.isolateAndShift(left);
         int leftRed = ColorUtil.ARGBHelper.RED.isolateAndShift(left);
         int leftGreen = ColorUtil.ARGBHelper.GREEN.isolateAndShift(left);
@@ -100,7 +100,7 @@ public final class ToolChargeBarRenderer {
     }
 
     @SuppressWarnings("DuplicatedCode")
-    private static void drawShadow(BufferBuilder renderer, int x, int y, double width, double height) {
+    private static void drawShadow(@NotNull BufferBuilder renderer, int x, int y, double width, double height) {
         int red = ColorUtil.ARGBHelper.RED.isolateAndShift(colorShadow);
         int green = ColorUtil.ARGBHelper.GREEN.isolateAndShift(colorShadow);
         int blue = ColorUtil.ARGBHelper.BLUE.isolateAndShift(colorShadow);
@@ -120,7 +120,7 @@ public final class ToolChargeBarRenderer {
     }
 
     @SuppressWarnings("DuplicatedCode")
-    private static void drawBackGround(BufferBuilder renderer, int x, int y, double width) {
+    private static void drawBackGround(@NotNull BufferBuilder renderer, int x, int y, double width) {
         int red = ColorUtil.ARGBHelper.RED.isolateAndShift(colorBackGround);
         int green = ColorUtil.ARGBHelper.GREEN.isolateAndShift(colorBackGround);
         int blue = ColorUtil.ARGBHelper.BLUE.isolateAndShift(colorBackGround);
@@ -139,7 +139,7 @@ public final class ToolChargeBarRenderer {
                 .endVertex();
     }
 
-    private static void overpaintVanillaRenderBug(BufferBuilder worldRenderer, int xPosition, int yPosition) {
+    private static void overpaintVanillaRenderBug(@NotNull BufferBuilder worldRenderer, int xPosition, int yPosition) {
         drawShadow(worldRenderer, xPosition + 2 + 12, yPosition + 13, 1.0D, 1.0D);
     }
 
@@ -202,6 +202,4 @@ public final class ToolChargeBarRenderer {
         render(1 - level, xPosition, yPosition, 0, true, defaultGradientLeft, defaultGradientRight, true);
         return true;
     }
-
-    private ToolChargeBarRenderer() {}
 }
