@@ -63,14 +63,18 @@ public class MaterialProperties {
             oldList.forEach(p -> p.verifyProperty(this));
         } while (oldList.size() != propertyMap.size());
 
-        if (propertyMap.keySet().stream().noneMatch(baseTypes::contains)) {
-            if (propertyMap.isEmpty()) {
-                if (ConfigHolder.misc.debug) {
-                    GTLog.logger.debug("Creating empty placeholder Material {}", material);
-                }
-                propertyMap.put(PropertyKey.EMPTY, PropertyKey.EMPTY.constructDefault());
-            } else
-                throw new IllegalArgumentException("Material must have at least one of: " + baseTypes + " specified!");
+        for (PropertyKey<? extends IMaterialProperty> materialProperty : propertyMap.keySet()) {
+            if (baseTypes.contains(materialProperty)) return;
+        }
+
+        if (propertyMap.isEmpty()) {
+            if (ConfigHolder.misc.debug) {
+                GTLog.logger.debug("Creating empty placeholder Material {}", material);
+            }
+
+            propertyMap.put(PropertyKey.EMPTY, PropertyKey.EMPTY.constructDefault());
+        } else {
+            throw new IllegalArgumentException("Material must have at least one of: " + baseTypes + " specified!");
         }
     }
 
