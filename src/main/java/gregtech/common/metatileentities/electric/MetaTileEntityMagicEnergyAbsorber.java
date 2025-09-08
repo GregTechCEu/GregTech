@@ -28,6 +28,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProviderEnd;
 import net.minecraft.world.biome.BiomeEndDecorator;
+import net.minecraft.world.gen.feature.WorldGenSpikes;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -37,13 +38,12 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 
@@ -160,12 +160,14 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
 
     private void updateConnectedCrystals() {
         this.connectedCrystalsIds.clear();
+        World world = getWorld();
+
         final double maxDistance = 64 * 64;
-        List<EntityEnderCrystal> enderCrystals = Arrays.stream(BiomeEndDecorator.getSpikesForWorld(getWorld()))
-                .flatMap(endSpike -> getWorld()
-                        .getEntitiesWithinAABB(EntityEnderCrystal.class, endSpike.getTopBoundingBox()).stream())
-                .filter(crystal -> crystal.getDistanceSq(getPos()) < maxDistance)
-                .collect(Collectors.toList());
+        List<EntityEnderCrystal> enderCrystals = new ObjectArrayList<>();
+        for (WorldGenSpikes.EndSpike spike : BiomeEndDecorator.getSpikesForWorld(world)) {
+            enderCrystals.addAll(world.getEntitiesWithinAABB(EntityEnderCrystal.class, spike.getTopBoundingBox(),
+                    crystal -> crystal.getDistanceSq(getPos()) < maxDistance));
+        }
 
         for (EntityEnderCrystal entityEnderCrystal : enderCrystals) {
             BlockPos beamTarget = entityEnderCrystal.getBeamTarget();
@@ -179,7 +181,7 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
             }
         }
 
-        for (EntityDragon entityDragon : getWorld().getEntities(EntityDragon.class, EntitySelectors.IS_ALIVE)) {
+        for (EntityDragon entityDragon : world.getEntities(EntityDragon.class, EntitySelectors.IS_ALIVE)) {
             if (entityDragon.healingEnderCrystal != null &&
                     connectedCrystalsIds.contains(entityDragon.healingEnderCrystal.getEntityId())) {
                 // if dragon is healing from crystal we draw energy from, reset it's healing crystal
