@@ -15,8 +15,6 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
@@ -37,18 +35,19 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
 
     // transfer initial max charge for correct display in JEI
     private void fixOutputItemMaxCharge() {
+        long totalMaxCharge = 0L;
         for (Ingredient ingredient : getIngredients()) {
+            long maxCharge = 0L;
+            for (ItemStack stack : ingredient.getMatchingStacks()) {
+                if (!(stack.getItem() instanceof IGTTool)) continue;
+                IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
 
+                if (electricItem == null) continue;
+                maxCharge = Math.max(maxCharge, electricItem.getMaxCharge());
+            }
+            totalMaxCharge += maxCharge;
         }
 
-        long totalMaxCharge = getIngredients().stream()
-                .mapToLong(it -> Arrays.stream(it.getMatchingStacks())
-                        .filter(itemStack -> !(itemStack.getItem() instanceof IGTTool))
-                        .map(stack -> stack.copy().getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null))
-                        .filter(Objects::nonNull)
-                        .mapToLong(IElectricItem::getMaxCharge)
-                        .max().orElse(0L))
-                .sum();
         IElectricItem electricItem = output.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (totalMaxCharge > 0L && electricItem instanceof ElectricItem item) {
             item.setMaxChargeOverride(totalMaxCharge);
