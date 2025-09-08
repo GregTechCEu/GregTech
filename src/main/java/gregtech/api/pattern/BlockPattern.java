@@ -7,8 +7,10 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.RelativeDirection;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -22,15 +24,14 @@ import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 public class BlockPattern {
 
@@ -46,6 +47,10 @@ public class BlockPattern {
     protected final PatternMatchContext matchContext = new PatternMatchContext();
     protected final Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount;
     protected final Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount;
+    public static final ItemStackHashStrategy hashStrategy = ItemStackHashStrategy.builder()
+            .compareItem(true)
+            .compareDamage(true)
+            .build();
 
     public Long2ObjectMap<BlockInfo> cache = new Long2ObjectOpenHashMap<>();
     // x, y, z, minZ, maxZ
@@ -340,44 +345,46 @@ public class BlockPattern {
                                 }
                             }
 
-                            List<ItemStack> candidates = Arrays.stream(infos)
-                                    .filter(info -> info.getBlockState().getBlock() != Blocks.AIR).map(info -> {
-                                        IBlockState blockState = info.getBlockState();
-                                        MetaTileEntity metaTileEntity = info
-                                                .getTileEntity() instanceof IGregTechTileEntity ?
-                                                        ((IGregTechTileEntity) info.getTileEntity())
-                                                                .getMetaTileEntity() :
-                                                        null;
-                                        if (metaTileEntity != null) {
-                                            return metaTileEntity.getStackForm();
-                                        } else {
-                                            return new ItemStack(Item.getItemFromBlock(blockState.getBlock()), 1,
-                                                    blockState.getBlock().damageDropped(blockState));
-                                        }
-                                    }).collect(Collectors.toList());
+                            Set<ItemStack> candidates = new ObjectOpenCustomHashSet<>(hashStrategy);
+                            for (var blockInfo : infos) {
+                                IBlockState blockState = blockInfo.getBlockState();
+                                if (blockState.getBlock() == Blocks.AIR) continue;
+                                if (!(blockInfo.getTileEntity() instanceof IGregTechTileEntity iGTTe)) continue;
+
+                                MetaTileEntity mte = iGTTe.getMetaTileEntity();
+                                if (mte == null) {
+                                    Block block = blockState.getBlock();
+                                    candidates.add(new ItemStack(Item.getItemFromBlock(block), 1,
+                                            block.damageDropped(blockState)));
+                                } else {
+                                    candidates.add(mte.getStackForm());
+                                }
+                            }
                             if (candidates.isEmpty()) continue;
+
                             // check inventory
                             ItemStack found = null;
-                            if (!player.isCreative()) {
-                                for (ItemStack itemStack : player.inventory.mainInventory) {
-                                    if (candidates.stream().anyMatch(candidate -> candidate.isItemEqual(itemStack)) &&
-                                            !itemStack.isEmpty() && itemStack.getItem() instanceof ItemBlock) {
-                                        found = itemStack.copy();
-                                        itemStack.setCount(itemStack.getCount() - 1);
+                            if (player.isCreative()) {
+                                for (ItemStack candidate : candidates) {
+                                    if (candidate.isEmpty()) continue;
+                                    if (candidate.getItem() instanceof ItemBlock) {
+                                        found = candidate.copy();
                                         break;
                                     }
                                 }
-                                if (found == null) continue;
                             } else {
-                                for (int i = candidates.size() - 1; i >= 0; i--) {
-                                    found = candidates.get(i).copy();
-                                    if (!found.isEmpty() && found.getItem() instanceof ItemBlock) {
+                                for (ItemStack playerStack : player.inventory.mainInventory) {
+                                    if (playerStack.isEmpty()) continue;
+                                    if (!candidates.contains(playerStack)) continue;
+                                    if (playerStack.getItem() instanceof ItemBlock) {
+                                        found = playerStack.copy();
+                                        playerStack.shrink(1);
                                         break;
                                     }
-                                    found = null;
                                 }
-                                if (found == null) continue;
                             }
+                            if (found == null) continue;
+
                             ItemBlock itemBlock = (ItemBlock) found.getItem();
                             IBlockState state = itemBlock.getBlock()
                                     .getStateFromMeta(itemBlock.getMetadata(found.getMetadata()));
