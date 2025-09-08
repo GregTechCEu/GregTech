@@ -559,8 +559,13 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default boolean definition$canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity,
                                                 EntityLivingBase attacker) {
-        return getBehaviors(stack).stream()
-                .anyMatch(behavior -> behavior.canDisableShield(stack, shield, entity, attacker));
+        for (var behavior : getBehaviors(stack)) {
+            if (behavior.canDisableShield(stack, shield, entity, attacker)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     default boolean definition$doesSneakBypassUse(@NotNull ItemStack stack, @NotNull IBlockAccess world,
