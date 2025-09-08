@@ -8,6 +8,7 @@ import gregtech.api.items.toolitem.IGTTool;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -36,6 +37,10 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
 
     // transfer initial max charge for correct display in JEI
     private void fixOutputItemMaxCharge() {
+        for (Ingredient ingredient : getIngredients()) {
+
+        }
+
         long totalMaxCharge = getIngredients().stream()
                 .mapToLong(it -> Arrays.stream(it.getMatchingStacks())
                         .filter(itemStack -> !(itemStack.getItem() instanceof IGTTool))
@@ -45,8 +50,8 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
                         .max().orElse(0L))
                 .sum();
         IElectricItem electricItem = output.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (totalMaxCharge > 0L && electricItem instanceof ElectricItem) {
-            ((ElectricItem) electricItem).setMaxChargeOverride(totalMaxCharge);
+        if (totalMaxCharge > 0L && electricItem instanceof ElectricItem item) {
+            item.setMaxChargeOverride(totalMaxCharge);
         }
     }
 

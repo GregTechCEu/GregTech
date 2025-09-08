@@ -234,7 +234,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             blockInfos.add(new BlockInfo(mte.getBlock().getDefaultState(), holder));
         }
 
-        BlockInfo[] infoArray = blockInfos.toArray(BlockInfo[]::new);
+        BlockInfo[] infoArray = blockInfos.toArray(new BlockInfo[0]);
         return () -> infoArray;
     }
 
@@ -258,7 +258,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             abilityMTEs.addAll(MultiblockAbility.REGISTRY.get(allowedAbility));
         }
 
-        return getCandidates(abilityMTEs.toArray(MetaTileEntity[]::new));
+        return getCandidates(abilityMTEs.toArray(new MetaTileEntity[0]));
     }
 
     public static @NotNull TraceabilityPredicate states(@Nullable IBlockState @NotNull... allowedStates) {
@@ -278,7 +278,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             blockInfos.add(new BlockInfo(allowedState, null));
         }
 
-        BlockInfo[] infoArray = blockInfos.toArray(BlockInfo[]::new);
+        BlockInfo[] infoArray = blockInfos.toArray(new BlockInfo[0]);
         return () -> infoArray;
     }
 
@@ -292,7 +292,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             blockStates.add(MetaBlocks.FRAMES.get(material).getBlock(material));
         }
 
-        return states(blockStates.toArray(IBlockState[]::new))
+        return states(blockStates.toArray(new IBlockState[0]))
                 .or(new TraceabilityPredicate(bws -> {
                     TileEntity tileEntity = bws.getTileEntity();
                     if (tileEntity instanceof IPipeTile<?, ?>pipeTile) {
@@ -320,7 +320,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             blockStates.add(block.getDefaultState());
         }
 
-        return getCandidates(blockStates.toArray(IBlockState[]::new));
+        return getCandidates(blockStates.toArray(new IBlockState[0]));
     }
 
     public static TraceabilityPredicate air() {
