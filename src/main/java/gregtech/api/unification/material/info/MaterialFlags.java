@@ -4,6 +4,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,7 +33,7 @@ public class MaterialFlags {
                 .collect(Collectors.toSet()));
     }
 
-    public boolean hasFlag(MaterialFlag flag) {
+    public boolean hasFlag(@Nullable MaterialFlag flag) {
         return flags.contains(flag);
     }
 

@@ -199,7 +199,7 @@ public class Material implements Comparable<Material> {
         }
     }
 
-    public boolean hasFlag(MaterialFlag flag) {
+    public boolean hasFlag(@Nullable MaterialFlag flag) {
         return flags.hasFlag(flag);
     }
 
@@ -212,12 +212,21 @@ public class Material implements Comparable<Material> {
         return materialInfo.element;
     }
 
-    public boolean hasFlags(MaterialFlag... flags) {
-        return Arrays.stream(flags).allMatch(this::hasFlag);
+    public boolean hasFlags(@Nullable MaterialFlag @NotNull... flags) {
+        if (flags.length == 0) return false;
+        for (MaterialFlag flag : flags) {
+            if (!hasFlag(flag)) return false;
+        }
+
+        return true;
     }
 
-    public boolean hasAnyOfFlags(MaterialFlag... flags) {
-        return Arrays.stream(flags).anyMatch(this::hasFlag);
+    public boolean hasAnyOfFlags(@Nullable MaterialFlag @NotNull... flags) {
+        for (MaterialFlag flag : flags) {
+            if (hasFlag(flag)) return true;
+        }
+
+        return false;
     }
 
     protected void calculateDecompositionType() {
