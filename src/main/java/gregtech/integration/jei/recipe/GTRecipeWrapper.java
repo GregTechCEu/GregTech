@@ -17,6 +17,7 @@ import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.properties.RecipeProperty;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.recipes.properties.impl.ComputationProperty;
 import gregtech.api.recipes.properties.impl.ScanProperty;
 import gregtech.api.recipes.properties.impl.TotalComputationProperty;
@@ -36,6 +37,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.FluidStack;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import org.jetbrains.annotations.NotNull;
@@ -45,8 +47,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
-import java.util.stream.Collectors;
 
 public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
@@ -97,17 +99,19 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
 
         // Outputs
-        if (!recipe.getOutputs().isEmpty() || !recipe.getChancedOutputs().getChancedEntries().isEmpty()) {
-            List<ItemStack> recipeOutputs = recipe.getOutputs()
-                    .stream().map(ItemStack::copy)
-                    .collect(Collectors.toList());
+        List<ItemStack> originalRecipeOutputs = recipe.getOutputs();
+        if (!originalRecipeOutputs.isEmpty() || !recipe.getChancedOutputs().getChancedEntries().isEmpty()) {
+            List<ItemStack> recipeOutputs = new ObjectArrayList<>(originalRecipeOutputs.size());
+            for (ItemStack inputStack : originalRecipeOutputs) {
+                recipeOutputs.add(inputStack.copy());
+            }
 
             List<ItemStack> scannerPossibilities = null;
             if (this.recipeMap instanceof IScannerRecipeMap) {
                 scannerPossibilities = new ArrayList<>();
                 // Scanner Output replacing, used for cycling research outputs
                 String researchId = null;
-                for (ItemStack stack : recipe.getOutputs()) {
+                for (ItemStack stack : originalRecipeOutputs) {
                     researchId = AssemblyLineManager.readResearchId(stack);
                     if (researchId != null) break;
                 }
@@ -146,10 +150,12 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
 
         // Fluid Outputs
-        if (!recipe.getFluidOutputs().isEmpty() || !recipe.getChancedFluidOutputs().getChancedEntries().isEmpty()) {
-            List<FluidStack> recipeOutputs = recipe.getFluidOutputs().stream()
-                    .map(FluidStack::copy)
-                    .collect(Collectors.toList());
+        List<FluidStack> originalRecipeFluidOOutputs = recipe.getFluidOutputs();
+        if (!originalRecipeFluidOOutputs.isEmpty() || !recipe.getChancedFluidOutputs().getChancedEntries().isEmpty()) {
+            List<FluidStack> recipeOutputs = new ObjectArrayList<>();
+            for (FluidStack inputFluidStack : originalRecipeFluidOOutputs) {
+                recipeOutputs.add(inputFluidStack.copy());
+            }
 
             List<ChancedFluidOutput> chancedOutputs = new ArrayList<>(
                     recipe.getChancedFluidOutputs().getChancedEntries());
@@ -168,9 +174,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (!input) {
             if (!recipe.getChancedOutputs().getChancedEntries().isEmpty()) {
                 int outputIndex = slotIndex - recipeMap.getMaxInputs();
-                if (outputIndex >= recipe.getOutputs().size()) {
-                    entry = recipe.getChancedOutputs().getChancedEntries()
-                            .get(outputIndex - recipe.getOutputs().size());
+                int outputSize = recipe.getOutputs().size();
+                if (outputIndex >= outputSize) {
+                    entry = recipe.getChancedOutputs().getChancedEntries().get(outputIndex - outputSize);
                 }
             }
         }
@@ -239,20 +245,35 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     @Override
     public void drawInfo(@NotNull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
-        var storage = recipe.propertyStorage();
-        var properties = storage.values();
-        boolean drawTotalEU = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideTotalEU);
-        boolean drawEUt = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideEUt);
-        boolean drawDuration = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideDuration);
+        RecipePropertyStorage storage = recipe.propertyStorage();
+        Set<RecipeProperty<?>> properties = storage.values();
+        boolean drawTotalEU = true;
+        for (RecipeProperty<?> recipeProperty : properties) {
+            drawTotalEU &= recipeProperty.hideTotalEU();
+        }
+
+        boolean drawEUt = true;
+        for (RecipeProperty<?> recipeProperty : properties) {
+            drawEUt &= recipeProperty.hideEUt();
+        }
+
+        boolean drawDuration = true;
+        for (RecipeProperty<?> recipeProperty : properties) {
+            drawDuration &= recipeProperty.hideDuration();
+        }
 
         int defaultLines = 0;
         if (drawTotalEU) defaultLines++;
         if (drawEUt) defaultLines++;
         if (drawDuration) defaultLines++;
 
-        int unhiddenCount = (int) storage.entrySet().stream()
-                .filter((property) -> !property.getKey().isHidden())
-                .count();
+        int unhiddenCount = 0;
+        for (RecipeProperty<?> recipeProperty : storage.values()) {
+            if (!recipeProperty.isHidden()) {
+                unhiddenCount++;
+            }
+        }
+
         int yPosition = recipeHeight - ((unhiddenCount + defaultLines) * 10 - 3);
 
         // Default entries
@@ -270,9 +291,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
         if (drawEUt) {
             minecraft.fontRenderer.drawString(
-                    I18n.format(
-                            recipeMap.getRecipeMapUI().isGenerator() ? "gregtech.recipe.eu_inverted" :
-                                    "gregtech.recipe.eu",
+                    I18n.format(recipeMap.getRecipeMapUI().isGenerator() ?
+                            "gregtech.recipe.eu_inverted" : "gregtech.recipe.eu",
                             recipe.getEUt(), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]),
                     0, yPosition += LINE_HEIGHT, 0x111111);
         }
