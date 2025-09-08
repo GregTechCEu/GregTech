@@ -18,6 +18,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,12 +34,14 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class BlockOre extends Block implements IBlockOre {
 
@@ -174,9 +177,11 @@ public class BlockOre extends Block implements IBlockOre {
     @Override
     public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         if (tab == CreativeTabs.SEARCH || tab == GTCreativeTabs.TAB_GREGTECH_ORES) {
-            blockState.getValidStates().stream()
-                    .filter(state -> state.getValue(STONE_TYPE).shouldBeDroppedAsItem)
-                    .forEach(blockState -> list.add(GTUtility.toItem(blockState)));
+            for (IBlockState state : blockState.getValidStates()) {
+                if (state.getValue(STONE_TYPE).shouldBeDroppedAsItem) {
+                    list.add(GTUtility.toItem(state));
+                }
+            }
         }
     }
 
@@ -197,10 +202,16 @@ public class BlockOre extends Block implements IBlockOre {
 
     @SideOnly(Side.CLIENT)
     public void onModelRegister() {
-        ModelLoader.setCustomStateMapper(this, b -> b.getBlockState().getValidStates().stream()
-                .collect(Collectors.toMap(
-                        s -> s,
-                        s -> OreBakedModel.registerOreEntry(s.getValue(STONE_TYPE), this.material))));
+        ModelLoader.setCustomStateMapper(this, block -> {
+            List<IBlockState> validStates = block.getBlockState().getValidStates();
+            Map<IBlockState, ModelResourceLocation> modelMap = new Object2ObjectOpenHashMap<>(validStates.size());
+            for (IBlockState blockState : validStates) {
+                modelMap.put(blockState, OreBakedModel.registerOreEntry(blockState.getValue(STONE_TYPE), material));
+            }
+
+            return modelMap;
+        });
+
         for (IBlockState state : this.getBlockState().getValidStates()) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state),
                     OreBakedModel.registerOreEntry(state.getValue(STONE_TYPE), this.material));
