@@ -51,6 +51,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
@@ -58,7 +59,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -189,8 +189,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return getFrontOverlay().getParticleSprite();
     }
 
-    public static TraceabilityPredicate tilePredicate(@NotNull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate,
-                                                      @Nullable Supplier<BlockInfo[]> candidates) {
+    public static @NotNull TraceabilityPredicate tilePredicate(@NotNull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate,
+                                                               @Nullable Supplier<BlockInfo[]> candidates) {
         return new TraceabilityPredicate(blockWorldState -> {
             TileEntity tileEntity = blockWorldState.getTileEntity();
             if (!(tileEntity instanceof IGregTechTileEntity))
@@ -208,29 +208,37 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }, candidates);
     }
 
-    public static TraceabilityPredicate metaTileEntities(MetaTileEntity... metaTileEntities) {
-        ResourceLocation[] ids = Arrays.stream(metaTileEntities).filter(Objects::nonNull)
-                .map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
-        return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId),
-                getCandidates(metaTileEntities));
+    public static @NotNull TraceabilityPredicate metaTileEntities(@Nullable MetaTileEntity @NotNull... metaTileEntities) {
+        return tilePredicate((state, tile) -> {
+            for (MetaTileEntity mte : metaTileEntities) {
+                if (mte == null) continue;
+                if (mte.metaTileEntityId.equals(tile.metaTileEntityId)) {
+                    return true;
+                }
+            }
+            return false;
+        }, getCandidates(metaTileEntities));
     }
 
-    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
-        return () -> Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
-            // TODO
+    private static @NotNull Supplier<BlockInfo[]> getCandidates(@Nullable MetaTileEntity @NotNull... metaTileEntities) {
+        Set<BlockInfo> blockInfos = new ObjectOpenHashSet<>(metaTileEntities.length);
+        for (MetaTileEntity mte : metaTileEntities) {
+            if (mte == null) continue;
+
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
-            holder.setMetaTileEntity(tile);
-            holder.getMetaTileEntity().onPlacement();
-            holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
-            return new BlockInfo(tile.getBlock().getDefaultState(), holder);
-        }).toArray(BlockInfo[]::new);
+            holder.setMetaTileEntity(mte);
+
+            MetaTileEntity newMTE = holder.getMetaTileEntity();
+            newMTE.onPlacement();
+            newMTE.setFrontFacing(EnumFacing.SOUTH);
+            blockInfos.add(new BlockInfo(mte.getBlock().getDefaultState(), holder));
+        }
+
+        BlockInfo[] infoArray = blockInfos.toArray(BlockInfo[]::new);
+        return () -> infoArray;
     }
 
-    private static Supplier<BlockInfo[]> getCandidates(IBlockState... allowedStates) {
-        return () -> Arrays.stream(allowedStates).map(state -> new BlockInfo(state, null)).toArray(BlockInfo[]::new);
-    }
-
-    public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
+    public static @NotNull TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
         return tilePredicate((state, tile) -> {
             if (tile instanceof IMultiblockAbilityPart<?>abilityPart) {
                 for (var ability : abilityPart.getAbilities()) {
@@ -238,13 +246,22 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                         return true;
                 }
             }
+
             return false;
-        }, getCandidates(Arrays.stream(allowedAbilities)
-                .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
-                .toArray(MetaTileEntity[]::new)));
+        }, getCandidates(allowedAbilities));
     }
 
-    public static TraceabilityPredicate states(IBlockState... allowedStates) {
+    private static @NotNull Supplier<BlockInfo[]> getCandidates(@Nullable MultiblockAbility<?>... allowedAbilities) {
+        Set<MetaTileEntity> abilityMTEs = new ObjectOpenHashSet<>();
+        for (MultiblockAbility<?> allowedAbility : allowedAbilities) {
+            if (allowedAbility == null) continue;
+            abilityMTEs.addAll(MultiblockAbility.REGISTRY.get(allowedAbility));
+        }
+
+        return getCandidates(abilityMTEs.toArray(MetaTileEntity[]::new));
+    }
+
+    public static @NotNull TraceabilityPredicate states(@Nullable IBlockState @NotNull... allowedStates) {
         return new TraceabilityPredicate(blockWorldState -> {
             IBlockState state = blockWorldState.getBlockState();
             if (state.getBlock() instanceof VariantActiveBlock) {
@@ -254,26 +271,56 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }, getCandidates(allowedStates));
     }
 
+    private static @NotNull Supplier<BlockInfo[]> getCandidates(@Nullable IBlockState @NotNull... allowedStates) {
+        Set<BlockInfo> blockInfos = new ObjectOpenHashSet<>(allowedStates.length);
+        for (IBlockState allowedState : allowedStates) {
+            if (allowedState == null) continue;
+            blockInfos.add(new BlockInfo(allowedState, null));
+        }
+
+        BlockInfo[] infoArray = blockInfos.toArray(BlockInfo[]::new);
+        return () -> infoArray;
+    }
+
     /**
      * Use this predicate for Frames in your Multiblock. Allows for Framed Pipes as well as normal Frame blocks.
      */
-    public static TraceabilityPredicate frames(Material... frameMaterials) {
-        return states(Arrays.stream(frameMaterials).map(m -> MetaBlocks.FRAMES.get(m).getBlock(m))
-                .toArray(IBlockState[]::new))
-                        .or(new TraceabilityPredicate(blockWorldState -> {
-                            TileEntity tileEntity = blockWorldState.getTileEntity();
-                            if (!(tileEntity instanceof IPipeTile)) {
-                                return false;
-                            }
-                            IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
-                            return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial());
-                        }));
+    public static @NotNull TraceabilityPredicate frames(@Nullable Material @NotNull... frameMaterials) {
+        Set<IBlockState> blockStates = new ObjectOpenHashSet<>(frameMaterials.length);
+        for (Material material : frameMaterials) {
+            if (material == null) continue;
+            blockStates.add(MetaBlocks.FRAMES.get(material).getBlock(material));
+        }
+
+        return states(blockStates.toArray(IBlockState[]::new))
+                .or(new TraceabilityPredicate(bws -> {
+                    TileEntity tileEntity = bws.getTileEntity();
+                    if (tileEntity instanceof IPipeTile<?, ?>pipeTile) {
+                        Material pipeFrameMaterial = pipeTile.getFrameMaterial();
+                        if (pipeFrameMaterial == null) return false;
+                        for (Material material : frameMaterials) {
+                            if (pipeFrameMaterial == material) return true;
+                        }
+                    }
+
+                    return false;
+                }));
     }
 
-    public static TraceabilityPredicate blocks(Block... block) {
+    public static @NotNull TraceabilityPredicate blocks(@Nullable Block @NotNull... blocks) {
         return new TraceabilityPredicate(
-                blockWorldState -> ArrayUtils.contains(block, blockWorldState.getBlockState().getBlock()),
-                getCandidates(Arrays.stream(block).map(Block::getDefaultState).toArray(IBlockState[]::new)));
+                blockWorldState -> ArrayUtils.contains(blocks, blockWorldState.getBlockState().getBlock()),
+                getCandidates(blocks));
+    }
+
+    private static @NotNull Supplier<BlockInfo[]> getCandidates(@Nullable Block @NotNull... blocks) {
+        Set<IBlockState> blockStates = new ObjectOpenHashSet<>(blocks.length);
+        for (Block block : blocks) {
+            if (block == null) continue;
+            blockStates.add(block.getDefaultState());
+        }
+
+        return getCandidates(blockStates.toArray(IBlockState[]::new));
     }
 
     public static TraceabilityPredicate air() {
