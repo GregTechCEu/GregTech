@@ -11,11 +11,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectAVLTreeSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class TreeFellingListener {
 
@@ -36,7 +35,7 @@ public final class TreeFellingListener {
         BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
 
         Queue<BlockPos> checking = new ArrayDeque<>();
-        Set<BlockPos> visited = new ObjectOpenHashSet<>();
+        SortedSet<BlockPos> visited = new ObjectAVLTreeSet<>((pos1, pos2) -> pos2.getY() - pos1.getY());
         checking.add(start);
 
         while (!checking.isEmpty()) {
@@ -65,10 +64,7 @@ public final class TreeFellingListener {
         }
 
         if (!visited.isEmpty()) {
-            Deque<BlockPos> orderedBlocks = visited.stream()
-                    .sorted(Comparator.comparingInt(pos -> start.getY() - pos.getY()))
-                    .collect(Collectors.toCollection(ArrayDeque::new));
-            MinecraftForge.EVENT_BUS.register(new TreeFellingListener(player, tool, orderedBlocks));
+            MinecraftForge.EVENT_BUS.register(new TreeFellingListener(player, tool, new ArrayDeque<>(visited)));
         }
     }
 
