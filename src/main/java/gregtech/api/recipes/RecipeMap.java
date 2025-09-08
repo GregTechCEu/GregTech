@@ -69,7 +69,6 @@ import stanhebben.zenscript.annotations.ZenSetter;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -491,11 +490,21 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @Nullable
     public Recipe findRecipe(long voltage, final List<ItemStack> inputs, final List<FluidStack> fluidInputs,
                              boolean exactVoltage) {
-        final List<ItemStack> items = inputs.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
-        final List<FluidStack> fluids = fluidInputs.stream().filter(f -> f != null && f.amount != 0)
-                .collect(Collectors.toList());
+        final List<ItemStack> validStacks = new ObjectArrayList<>();
+        for (ItemStack inputStack : inputs) {
+            if (!inputStack.isEmpty()) {
+                validStacks.add(inputStack);
+            }
+        }
 
-        return find(items, fluids, recipe -> {
+        final List<FluidStack> validFluidStacks = new ObjectArrayList<>();
+        for (FluidStack inputFluidStack : fluidInputs) {
+            if (inputFluidStack != null && inputFluidStack.amount > 0) {
+                validFluidStacks.add(inputFluidStack);
+            }
+        }
+
+        return find(validStacks, validFluidStacks, recipe -> {
             if (exactVoltage && recipe.getEUt() != voltage) {
                 // if exact voltage is required, the recipe is not considered valid
                 return false;
@@ -1249,20 +1258,42 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @ZenMethod("findRecipe")
     @Method(modid = Mods.Names.CRAFT_TWEAKER)
     @Nullable
-    public CTRecipe ctFindRecipe(long maxVoltage, IItemStack[] itemInputs, ILiquidStack[] fluidInputs,
+    public CTRecipe ctFindRecipe(long maxVoltage, @Nullable IItemStack[] itemInputs,
+                                 @Nullable ILiquidStack[] fluidInputs,
                                  @Optional(valueLong = Integer.MAX_VALUE) int outputFluidTankCapacity) {
-        List<ItemStack> mcItemInputs = itemInputs == null ? Collections.emptyList() :
-                Arrays.stream(itemInputs).map(CraftTweakerMC::getItemStack).collect(Collectors.toList());
-        List<FluidStack> mcFluidInputs = fluidInputs == null ? Collections.emptyList() :
-                Arrays.stream(fluidInputs).map(CraftTweakerMC::getLiquidStack).collect(Collectors.toList());
-        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, true);
+        List<ItemStack> trueItemInputs;
+        if (itemInputs == null) {
+            trueItemInputs = Collections.emptyList();
+        } else {
+            trueItemInputs = new ObjectArrayList<>();
+            for (IItemStack ctItemStack : itemInputs) {
+                trueItemInputs.add(CraftTweakerMC.getItemStack(ctItemStack));
+            }
+        }
+
+        List<FluidStack> trueFluidInputs;
+        if (itemInputs == null) {
+            trueFluidInputs = Collections.emptyList();
+        } else {
+            trueFluidInputs = new ObjectArrayList<>();
+            for (ILiquidStack ctFluidStack : fluidInputs) {
+                trueFluidInputs.add(CraftTweakerMC.getLiquidStack(ctFluidStack));
+            }
+        }
+
+        Recipe backingRecipe = findRecipe(maxVoltage, trueItemInputs, trueFluidInputs, true);
         return backingRecipe == null ? null : new CTRecipe(this, backingRecipe);
     }
 
     @ZenGetter("recipes")
     @Method(modid = Mods.Names.CRAFT_TWEAKER)
     public List<CTRecipe> ctGetRecipeList() {
-        return getRecipeList().stream().map(recipe -> new CTRecipe(this, recipe)).collect(Collectors.toList());
+        List<CTRecipe> recipes = new ObjectArrayList<>();
+        for (Recipe recipe : getRecipeList()) {
+            recipes.add(new CTRecipe(this, recipe));
+        }
+
+        return recipes;
     }
 
     @ZenGetter("localizedName")
