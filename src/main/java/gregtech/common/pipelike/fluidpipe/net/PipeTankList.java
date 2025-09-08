@@ -1,5 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
+import gregtech.api.util.ArrayIterator;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 
@@ -13,7 +14,6 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
 public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
@@ -124,6 +124,6 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
     @Override
     @NotNull
     public Iterator<FluidTank> iterator() {
-        return Arrays.stream(tanks).iterator();
+        return new ArrayIterator<>(tanks);
     }
 }
