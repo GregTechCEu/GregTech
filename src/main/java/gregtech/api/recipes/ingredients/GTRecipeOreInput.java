@@ -10,6 +10,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 
 public class GTRecipeOreInput extends GTRecipeInput {
@@ -104,11 +105,14 @@ public class GTRecipeOreInput extends GTRecipeInput {
         // Used in GroovyScript Reload, and upon Load Complete to fix unreliable behaviour with CT and GS scripts.
         if (inputStacks == null || currentStandard != STANDARD) {
             currentStandard = STANDARD;
-            inputStacks = (OreDictionary.getOres(OreDictionary.getOreName(ore)).stream().map(is -> {
-                is = is.copy();
-                is.setCount(this.amount);
-                return is;
-            })).toArray(ItemStack[]::new);
+
+            List<ItemStack> inputStacks = OreDictionary.getOres(OreDictionary.getOreName(ore));
+            this.inputStacks = new ItemStack[inputStacks.size()];
+            for (int index = 0; index < inputStacks.size(); index++) {
+                ItemStack newStack = inputStacks.get(index);
+                newStack.setCount(this.amount);
+                this.inputStacks[index] = newStack;
+            }
         }
         return inputStacks;
     }
