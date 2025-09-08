@@ -260,9 +260,11 @@ public final class ToolHelper {
         if (stack.getItem() instanceof IGTTool) {
             damage = ((IGTTool) stack.getItem()).getToolStats().getToolDamagePerCraft(stack);
         } else {
-            if (OreDictUnifier.getOreDictionaryNames(stack).stream()
-                    .anyMatch(s -> s.startsWith("tool") || s.startsWith("craftingTool"))) {
-                damage = 1;
+            for (String oreDict : OreDictUnifier.getOreDictionaryNames(stack)) {
+                if (oreDict.startsWith("tool") || oreDict.startsWith("craftingTool")) {
+                    damage = 1;
+                    break;
+                }
             }
         }
         damageItem(stack, entity, damage);
