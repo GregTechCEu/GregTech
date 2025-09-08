@@ -249,17 +249,17 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         Set<RecipeProperty<?>> properties = storage.values();
         boolean drawTotalEU = true;
         for (RecipeProperty<?> recipeProperty : properties) {
-            drawTotalEU &= recipeProperty.hideTotalEU();
+            drawTotalEU &= !recipeProperty.hideTotalEU();
         }
 
         boolean drawEUt = true;
         for (RecipeProperty<?> recipeProperty : properties) {
-            drawEUt &= recipeProperty.hideEUt();
+            drawEUt &= !recipeProperty.hideEUt();
         }
 
         boolean drawDuration = true;
         for (RecipeProperty<?> recipeProperty : properties) {
-            drawDuration &= recipeProperty.hideDuration();
+            drawDuration &= !recipeProperty.hideDuration();
         }
 
         int defaultLines = 0;
