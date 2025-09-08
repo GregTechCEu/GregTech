@@ -27,17 +27,18 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import org.jetbrains.annotations.NotNull;
 import team.chisel.ctm.client.state.CTMExtendedState;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.stream.Collectors;
 
 public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> {
 
@@ -157,10 +158,16 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
             ModelLoader.setCustomModelResourceLocation(item, value.ordinal(), inactiveModel);
             ModelLoader.registerItemVariants(item, activeModel);
         }
-        ModelLoader.setCustomStateMapper(this,
-                b -> b.getBlockState().getValidStates().stream().collect(Collectors.toMap(
-                        s -> s,
-                        s -> models.get(s.getValue(VARIANT)))));
+
+        ModelLoader.setCustomStateMapper(this, block -> {
+            List<IBlockState> validStates = block.getBlockState().getValidStates();
+            Map<IBlockState, ModelResourceLocation> modelMap = new Object2ObjectOpenHashMap<>(validStates.size());
+            for (IBlockState blockState : validStates) {
+                modelMap.put(blockState, models.get(blockState.getValue(VARIANT)));
+            }
+
+            return modelMap;
+        });
     }
 
     private ModelResourceLocation model(boolean active, T variant) {
