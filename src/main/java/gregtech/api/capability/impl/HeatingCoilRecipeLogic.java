@@ -2,15 +2,15 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IHeatingCoil;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.recipes.logic.OCParams;
-import gregtech.api.recipes.logic.OCResult;
-import gregtech.api.recipes.logic.OverclockingLogic;
+import gregtech.api.recipes.logic.old.OCParams;
+import gregtech.api.recipes.logic.old.OCResult;
+import gregtech.api.recipes.logic.old.OverclockingLogic;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.recipes.properties.impl.TemperatureProperty;
 
 import org.jetbrains.annotations.NotNull;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.heatingCoilOC;
+import static gregtech.api.recipes.logic.old.OverclockingLogic.heatingCoilOC;
 
 /**
  * RecipeLogic for multiblocks that use temperature for raising speed and lowering energy usage

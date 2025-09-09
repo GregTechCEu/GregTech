@@ -14,8 +14,8 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.logic.OCParams;
-import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.logic.old.OCParams;
+import gregtech.api.recipes.logic.old.OCResult;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
@@ -37,7 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import org.jetbrains.annotations.NotNull;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.standardOC;
+import static gregtech.api.recipes.logic.old.OverclockingLogic.standardOC;
 
 public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 

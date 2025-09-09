@@ -22,8 +22,8 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.logic.OCParams;
-import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.logic.old.OCParams;
+import gregtech.api.recipes.logic.old.OCResult;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
@@ -55,7 +55,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static gregtech.api.GTValues.ULV;
-import static gregtech.api.recipes.logic.OverclockingLogic.subTickNonParallelOC;
+import static gregtech.api.recipes.logic.old.OverclockingLogic.subTickNonParallelOC;
 
 public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController implements IMachineHatchMultiblock {
 

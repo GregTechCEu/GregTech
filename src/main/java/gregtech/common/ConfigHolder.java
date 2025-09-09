@@ -359,6 +359,10 @@ public class ConfigHolder {
                 "Default: true" })
         public boolean ignoreErrorOrInvalidRecipes = true;
 
+        @Config.Comment({ "Setting this to true makes GTCEu print errors to the log that would otherwise cause crash.",
+                "Default: true" })
+        public boolean ignoreRecipeLogicErrors = true;
+
         @Config.Comment({ "Whether to enable a login message to players when they join the world.", "Default: true" })
         public boolean loginMessage = true;
 

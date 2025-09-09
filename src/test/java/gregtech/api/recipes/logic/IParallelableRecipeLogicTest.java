@@ -14,6 +14,7 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMapBuilder;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
+import gregtech.api.recipes.logic.old.IParallelableRecipeLogic;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;

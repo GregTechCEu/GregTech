@@ -11,8 +11,8 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.logic.OCParams;
-import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.logic.old.OCParams;
+import gregtech.api.recipes.logic.old.OCResult;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.subTickParallelOC;
+import static gregtech.api.recipes.logic.old.OverclockingLogic.subTickParallelOC;
 
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 

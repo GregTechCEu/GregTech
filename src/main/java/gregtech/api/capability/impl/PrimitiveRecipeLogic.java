@@ -3,8 +3,8 @@ package gregtech.api.capability.impl;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.logic.OCParams;
-import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.logic.old.OCParams;
+import gregtech.api.recipes.logic.old.OCResult;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 
 import org.jetbrains.annotations.NotNull;

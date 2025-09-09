@@ -1,10 +1,13 @@
 package gregtech.api.recipes.logic;
 
+import gregtech.api.recipes.logic.old.OCParams;
+import gregtech.api.recipes.logic.old.OCResult;
+import gregtech.api.recipes.logic.old.OverclockingLogic;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import static gregtech.api.GTValues.*;
-import static gregtech.api.recipes.logic.OverclockingLogic.*;
+import static gregtech.api.recipes.logic.old.OverclockingLogic.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;

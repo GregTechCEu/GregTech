@@ -10,6 +10,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMapBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
+import gregtech.api.recipes.logic.old.ParallelLogic;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.OverlayedFluidHandler;
@@ -26,7 +27,7 @@ import net.minecraft.item.ItemStack;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static gregtech.api.recipes.logic.ParallelLogic.doParallelRecipes;
+import static gregtech.api.recipes.logic.old.ParallelLogic.doParallelRecipes;
 import static gregtech.api.util.GTUtility.gregtechId;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

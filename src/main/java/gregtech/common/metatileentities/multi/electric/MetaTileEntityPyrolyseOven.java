@@ -11,7 +11,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.logic.old.OCResult;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;

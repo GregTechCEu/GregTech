@@ -10,7 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.Nullable;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.STD_DURATION_FACTOR_INV;
+import static gregtech.api.recipes.logic.old.OverclockingLogic.STD_DURATION_FACTOR_INV;
 
 public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalDistillationRecipeBuilder> {
 

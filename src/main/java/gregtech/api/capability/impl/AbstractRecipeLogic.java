@@ -16,9 +16,9 @@ import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.logic.IParallelableRecipeLogic;
-import gregtech.api.recipes.logic.OCParams;
-import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.logic.old.IParallelableRecipeLogic;
+import gregtech.api.recipes.logic.old.OCParams;
+import gregtech.api.recipes.logic.old.OCResult;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.recipes.properties.impl.CleanroomProperty;
 import gregtech.api.recipes.properties.impl.DimensionProperty;
@@ -47,7 +47,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static gregtech.api.GTValues.ULV;
-import static gregtech.api.recipes.logic.OverclockingLogic.*;
+import static gregtech.api.recipes.logic.old.OverclockingLogic.*;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
 

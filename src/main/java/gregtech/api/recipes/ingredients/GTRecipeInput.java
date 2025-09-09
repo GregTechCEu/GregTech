@@ -1,5 +1,6 @@
 package gregtech.api.recipes.ingredients;
 
+import gregtech.api.recipes.ingredients.match.Matcher;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.util.GTLog;
@@ -16,6 +17,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectLists;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,7 +38,7 @@ import java.util.Objects;
  * instances will be replaced by identical object previously created. This
  * caching strategy is turned off after recipe registration is over.
  */
-public abstract class GTRecipeInput {
+public abstract class GTRecipeInput implements Matcher<Object> {
 
     /**
      * Sorting order of standard recipe inputs.
@@ -170,6 +172,21 @@ public abstract class GTRecipeInput {
 
     public boolean acceptsFluid(@Nullable FluidStack input) {
         return false;
+    }
+
+    @Override
+    public boolean matches(Object o) {
+        if (o instanceof ItemStack s) {
+            return acceptsStack(s);
+        } else if (o instanceof FluidStack s) {
+            return acceptsFluid(s);
+        }
+        return false;
+    }
+
+    @Override
+    public @Range(from = 1, to = Long.MAX_VALUE) long getRequiredCount() {
+        return getAmount();
     }
 
     @Override

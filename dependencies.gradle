@@ -47,6 +47,10 @@ dependencies {
     api("appeng:ae2-uel:v0.56.4") { transitive = false }
     api rfg.deobf("curse.maven:ctm-267602:2915363") // CTM 1.0.2.31
 
+    // Shadowed Dependencies
+    // Packages that aren't mods, and thus need to be included in the release files.
+    shadowCompile 'org.jgrapht:jgrapht-core:1.4.0' // JGraphT 1.4.0
+
     // Non-published dependencies
     // Change any to devOnlyNonPublishable to test them in-game.
     compileOnly("curse.maven:journeymap-32274:5172461") // Journeymap 5.7.1p3

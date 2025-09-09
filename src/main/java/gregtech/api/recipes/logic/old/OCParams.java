@@ -1,4 +1,4 @@
-package gregtech.api.recipes.logic;
+package gregtech.api.recipes.logic.old;
 
 public final class OCParams {
 

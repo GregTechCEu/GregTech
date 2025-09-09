@@ -1,4 +1,4 @@
-package gregtech.api.recipes.logic;
+package gregtech.api.recipes.logic.old;
 
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.IVoidable;
