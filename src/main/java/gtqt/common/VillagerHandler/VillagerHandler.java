@@ -27,9 +27,13 @@ public class VillagerHandler {
     public static VillagerRegistry.VillagerProfession FOLK_SCIENTIST_PROFESSION;
     public static void Init_TradeList()
     {
-        GREGTECH_TRADE_LISTS_MAP.add(new GregtechTradeList(GTQTMetaItems.GENERAL_CIRCUIT_LV.getStackForm()).ListItemForEmeralds( GTQTMetaItems.GENERAL_CIRCUIT_MV.getStackForm(),new EntityVillager.PriceInfo(2,8)));
-        GREGTECH_TRADE_LISTS_MAP.add(new GregtechTradeList(GTQTMetaItems.GENERAL_CIRCUIT_MV.getStackForm()).ListItemForEmeralds( GTQTMetaItems.GENERAL_CIRCUIT_HV.getStackForm(),new EntityVillager.PriceInfo(2,8)));
-        GREGTECH_TRADE_LISTS_MAP.add(new GregtechTradeList(GTQTMetaItems.GENERAL_CIRCUIT_HV.getStackForm()).ListItemForEmeralds( GTQTMetaItems.GENERAL_CIRCUIT_EV.getStackForm(),new EntityVillager.PriceInfo(2,8)));
+        //自定义交易列表参数详解   构造参数传递的货币，然后调用的ListItemForEmeralds ,这个方法俩参数  第一个 传递货物(ItemStack) 和货物的数量范围 PriceInfo
+        GREGTECH_TRADE_LISTS_MAP.add(new GregtechTradeList(GTQTMetaItems.GENERAL_CIRCUIT_LV.getStackForm())
+                .ListItemForEmeralds( GTQTMetaItems.GENERAL_CIRCUIT_MV.getStackForm(),new EntityVillager.PriceInfo(2,8)));
+        GREGTECH_TRADE_LISTS_MAP.add(new GregtechTradeList(GTQTMetaItems.GENERAL_CIRCUIT_MV.getStackForm())
+                .ListItemForEmeralds( GTQTMetaItems.GENERAL_CIRCUIT_HV.getStackForm(),new EntityVillager.PriceInfo(2,8)));
+        GREGTECH_TRADE_LISTS_MAP.add(new GregtechTradeList(GTQTMetaItems.GENERAL_CIRCUIT_HV.getStackForm())
+                .ListItemForEmeralds( GTQTMetaItems.GENERAL_CIRCUIT_EV.getStackForm(),new EntityVillager.PriceInfo(2,8)));
     }
     @SubscribeEvent
     public static void onVillagerProfessionRegistration(RegistryEvent.Register<VillagerRegistry.VillagerProfession> event) {
