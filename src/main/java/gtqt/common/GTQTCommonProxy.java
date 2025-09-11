@@ -4,6 +4,7 @@ import gregtech.common.items.MetaItems;
 
 import gtqt.api.util.ChunkAwareHook;
 import gtqt.api.util.wireless.WirelessWorldEventHandler;
+import gtqt.common.VillagerHandler.VillagerHandler;
 import gtqt.common.items.GTQTMetaItems;
 import gtqt.common.items.covers.GTQTCoverBehavior;
 import gtqt.common.metatileentities.GTQTMetaTileEntities;
@@ -48,4 +49,5 @@ public class GTQTCommonProxy {
     public static void registerRecipes() {
         RecipeManager.register();
     }
+
 }
