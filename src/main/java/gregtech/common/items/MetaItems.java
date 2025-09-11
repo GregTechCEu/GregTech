@@ -653,12 +653,14 @@ public final class MetaItems {
         orePrefixes.add(OrePrefix.toolHeadBuzzSaw);
         orePrefixes.add(OrePrefix.toolHeadScrewdriver);
     }
+    public static MetaItem1 GT_META_ITEM;
+    public static MetaArmor GT_ARMOR;
 
     public static void init() {
-        MetaItem1 first = new MetaItem1();
-        first.setRegistryName("meta_item_1");
-        MetaArmor armor = new MetaArmor();
-        armor.setRegistryName("gt_armor");
+        GT_META_ITEM = new MetaItem1();
+        GT_META_ITEM.setRegistryName("meta_item_1");
+        GT_ARMOR = new MetaArmor();
+        GT_ARMOR.setRegistryName("gt_armor");
         for (OrePrefix prefix : orePrefixes) {
             for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
                 String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, prefix.name());

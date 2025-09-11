@@ -2,22 +2,20 @@ package gtqt.common;
 
 import gregtech.common.items.MetaItems;
 
-import gtqt.api.util.ChunkAwareHook;
-import gtqt.api.util.wireless.WirelessWorldEventHandler;
 import gtqt.common.VillagerHandler.VillagerHandler;
-import gtqt.common.items.GTQTMetaItems;
-import gtqt.common.items.covers.GTQTCoverBehavior;
-import gtqt.common.metatileentities.GTQTMetaTileEntities;
-
-import gtqt.loaders.recipe.RecipeManager;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
+
+import gtqt.api.util.ChunkAwareHook;
+import gtqt.api.util.wireless.WirelessWorldEventHandler;
+import gtqt.common.items.GTQTMetaItems;
+import gtqt.common.items.covers.GTQTCoverBehavior;
+import gtqt.common.metatileentities.GTQTMetaTileEntities;
+import gtqt.loaders.recipe.RecipeManager;
 
 public class GTQTCommonProxy {
 
@@ -28,6 +26,7 @@ public class GTQTCommonProxy {
             return MetaItems.INTEGRATED_CIRCUIT.getStackForm();
         }
     };
+
     public static void registerRecipeHandlers(RegistryEvent.Register<IRecipe> event) {
 
     }
@@ -48,6 +47,7 @@ public class GTQTCommonProxy {
 
     public static void registerRecipes() {
         RecipeManager.register();
+        VillagerHandler.registerTrade();
     }
 
 }
