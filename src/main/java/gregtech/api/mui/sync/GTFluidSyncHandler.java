@@ -41,6 +41,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     private final IFluidTank tank;
     private Consumer<FluidStack> jeiHandler;
     private BooleanConsumer lockHandler;
+    private BooleanSupplier isLocked;
     private Supplier<FluidStack> lockedFluid;
     private FluidStack lastFluid;
     private FluidStack phantomFluid;
@@ -50,6 +51,8 @@ public class GTFluidSyncHandler extends SyncHandler {
     private BooleanSupplier showAmountInTooltip = () -> true;
     private BooleanSupplier showAmountOnSlot = () -> true;
     private BooleanSupplier drawAlwaysFull = () -> true;
+    @Nullable
+    private Consumer<@Nullable FluidStack> changeConsumer;
 
     public GTFluidSyncHandler(IFluidTank tank) {
         this.tank = tank;
@@ -57,8 +60,8 @@ public class GTFluidSyncHandler extends SyncHandler {
 
     @Override
     public void detectAndSendChanges(boolean init) {
-        var current = getFluid();
-        if (init || current == null || lastFluid == null || current.isFluidEqual(lastFluid)) {
+        FluidStack current = getFluid();
+        if (init || !GTUtility.areFluidsEqual(current, lastFluid)) {
             lastFluid = current == null ? null : current.copy();
             syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, current));
         } else if (lastFluid != null && current.amount != lastFluid.amount) {
@@ -84,11 +87,13 @@ public class GTFluidSyncHandler extends SyncHandler {
         });
     }
 
-    public GTFluidSyncHandler handleLocking(Supplier<FluidStack> lockedFluid, Consumer<FluidStack> jeiHandler,
-                                            BooleanConsumer lockHandler) {
+    public GTFluidSyncHandler handleLocking(@NotNull Supplier<FluidStack> lockedFluid,
+                                            @NotNull Consumer<FluidStack> jeiHandler,
+                                            @NotNull BooleanConsumer lockHandler, @NotNull BooleanSupplier isLocked) {
         this.lockedFluid = lockedFluid;
         this.jeiHandler = jeiHandler;
         this.lockHandler = lockHandler;
+        this.isLocked = isLocked;
         return this;
     }
 
@@ -194,6 +199,16 @@ public class GTFluidSyncHandler extends SyncHandler {
         return this.drawAlwaysFull.getAsBoolean();
     }
 
+    public void setChangeConsumer(@Nullable Consumer<@Nullable FluidStack> changeConsumer) {
+        this.changeConsumer = changeConsumer;
+    }
+
+    protected void onChange(@Nullable FluidStack fluidStack) {
+        if (changeConsumer != null) {
+            changeConsumer.accept(fluidStack);
+        }
+    }
+
     public @NotNull String getFormattedFluidAmount() {
         var tankFluid = this.tank.getFluid();
         return String.format("%,d", tankFluid == null ? 0 : tankFluid.amount);
@@ -206,22 +221,25 @@ public class GTFluidSyncHandler extends SyncHandler {
 
     public @Nullable String getFluidLocalizedName() {
         var tankFluid = this.tank.getFluid();
-        if (tankFluid == null && canLockFluid())
-            tankFluid = this.lockedFluid.get();
+        if (tankFluid == null)
+            tankFluid = getLockedFluid();
 
         return tankFluid == null ? null : tankFluid.getLocalizedName();
     }
 
     public @NotNull IKey getFluidNameKey() {
         FluidStack tankFluid = tank.getFluid();
-        if (tankFluid == null && canLockFluid()) {
-            tankFluid = lockedFluid.get();
+        if (tankFluid == null) {
+            tankFluid = getLockedFluid();
         }
         return tankFluid == null ? IKey.EMPTY : KeyUtil.fluid(tankFluid);
     }
 
     public void handleTooltip(@NotNull RichTooltip tooltip) {
-        tooltip.addLine(getFluidNameKey());
+        IKey nameKey = getFluidNameKey();
+        if (nameKey != IKey.EMPTY) {
+            tooltip.addLine(nameKey);
+        }
 
         if (showAmountInTooltip()) {
             tooltip.addLine(IKey.lang("gregtech.fluid.amount", getFluidAmount(), getCapacity()));
@@ -249,9 +267,20 @@ public class GTFluidSyncHandler extends SyncHandler {
     public void readOnClient(int id, PacketBuffer buf) {
         switch (id) {
             case TRY_CLICK_CONTAINER -> replaceCursorItemStack(NetworkUtils.readItemStack(buf));
-            case UPDATE_TANK -> setFluid(NetworkUtils.readFluidStack(buf));
-            case UPDATE_AMOUNT -> setAmount(buf.readInt());
-            case LOCK_FLUID -> lockFluid(NetworkUtils.readFluidStack(buf), false);
+            case UPDATE_TANK -> {
+                FluidStack stack = NetworkUtils.readFluidStack(buf);
+                setFluid(stack);
+                onChange(stack);
+            }
+            case UPDATE_AMOUNT -> {
+                setAmount(buf.readInt());
+                onChange(getFluid());
+            }
+            case LOCK_FLUID -> {
+                lockFluid(NetworkUtils.readFluidStack(buf), false);
+                FluidStack stack = getFluid();
+                onChange(stack == null ? getLockedFluid() : stack);
+            }
         }
     }
 
@@ -390,9 +419,7 @@ public class GTFluidSyncHandler extends SyncHandler {
         var fluidHandlerItem = FluidUtil.getFluidHandler(useStack);
         if (fluidHandlerItem == null) return ItemStack.EMPTY;
 
-        //槽位
         FluidStack tankFluid = tank.getFluid();
-        //手持容器
         FluidStack heldFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
 
         // nothing to do, return
@@ -401,56 +428,21 @@ public class GTFluidSyncHandler extends SyncHandler {
 
         ItemStack returnable = ItemStack.EMPTY;
 
-        if (canDrainSlot && tankFluid != null) {
-            //不能填装 默认直接取出
-            if (!canFillSlot) {
-                //可提取的条件
-                if (heldFluid == null || heldFluid.isFluidEqual(tank.getFluid())) {
-                    returnable = drainTankIntoStack(fluidHandlerItem, tankFluid, tryFillAll);
+        // tank is empty, try to fill tank
+        if (canFillSlot && tankFluid == null) {
+            returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
 
-                    syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
-                    return returnable;
-                }
-            }
-            //容器满状态 一定无法装填 直接取出
-            if (tank.getFluidAmount() >= tank.getCapacity()) {
-                //可提取的条件
-                if (heldFluid == null || heldFluid.isFluidEqual(tank.getFluid())) {
-                    returnable = drainTankIntoStack(fluidHandlerItem, tankFluid, tryFillAll);
+            // hand is empty, try to drain tank
+        } else if (canDrainSlot && heldFluid == null) {
+            returnable = drainTankIntoStack(fluidHandlerItem, tankFluid, tryFillAll);
 
-                    syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
-                    return returnable;
-                }
-            }
-            //手持容器为空，一定是需要取出
-            if (heldFluid == null) {
-                returnable = drainTankIntoStack(fluidHandlerItem, tankFluid, tryFillAll);
-
-                syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
-                return returnable;
-            }
-        }
-
-        if (canFillSlot) {
-            //空状态容器  （无需检测手持容器因为已经检测了） 可以注入 直接注入即可
-            if (tankFluid == null) {
-                returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
-
-                syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
-                return returnable;
-            }
-
-            //半满状态 手持容器有相同流体 进行填充
-            else if (tank.getFluidAmount() < tank.getCapacity() && heldFluid != null &&
-                    heldFluid.isFluidEqual(tank.getFluid())) {
-                returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
-
-                syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
-                return returnable;
-            }
+            // neither is empty but tank is not full, try to fill tank
+        } else if (canFillSlot && tank.getFluidAmount() < tank.getCapacity() && heldFluid != null) {
+            returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
         }
 
         syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
+
         return returnable;
     }
 
@@ -557,7 +549,8 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     /**
-     * Play the appropriate fluid interaction sound for the fluid. <br /> Must be called on server to work correctly
+     * Play the appropriate fluid interaction sound for the fluid. <br />
+     * Must be called on server to work correctly
      **/
     private void playSound(FluidStack fluid, boolean fill) {
         if (fluid == null) return;
@@ -581,7 +574,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public boolean canLockFluid() {
-        return jeiHandler != null && lockHandler != null && lockedFluid != null;
+        return jeiHandler != null && lockHandler != null && lockedFluid != null && isLocked != null;
     }
 
     public void toggleLockFluid() {

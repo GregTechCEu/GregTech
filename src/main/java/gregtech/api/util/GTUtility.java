@@ -1078,6 +1078,12 @@ public class GTUtility {
         return map.get(key.toWildcard());
     }
 
+    public static boolean areFluidsEqual(@Nullable FluidStack a, @Nullable FluidStack b) {
+        if (a == b) return true;
+        if (a == null) return false;
+        return a.isFluidEqual(b);
+    }
+
     /**
      * Copies the FluidStack with new stack size.
      *

@@ -916,7 +916,7 @@ public class ElementMaterials {
 
         Sulfur = new Material.Builder(103, gregtechId("sulfur"))
                 .dust()
-                .liquid(new FluidBuilder().temperature(115))
+                .liquid(new FluidBuilder().temperature(388))
                 .plasma()
                 .color(0xC8C800)
                 .flags(FLAMMABLE)

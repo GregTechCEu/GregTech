@@ -38,11 +38,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     private boolean disableBackground = false;
 
     public GTFluidSlot() {
-        tooltip().setAutoUpdate(true).titleMargin();
-        tooltipBuilder(tooltip -> {
-            if (!isSynced()) return;
-            syncHandler.handleTooltip(tooltip);
-        });
+        tooltip().titleMargin();
     }
 
     public static GTFluidSyncHandler sync(IFluidTank tank) {
@@ -57,6 +53,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         if (syncHandler.canLockFluid() || syncHandler.isPhantom()) {
             getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
         }
+        tooltipBuilder(syncHandler::handleTooltip);
+        syncHandler.setChangeConsumer($ -> markTooltipDirty());
     }
 
     public GTFluidSlot syncHandler(IFluidTank fluidTank) {
@@ -116,8 +114,13 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             this.textRenderer.draw(amount);
         }
 
+        if (isHovering()) {
+            GlStateManager.colorMask(true, true, true, false);
+            GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2, widgetTheme.getSlotHoverColor());
+            GlStateManager.colorMask(true, true, true, true);
+        }
 
-        RenderUtil.handleJEIGhostSlotOverlay(this, widgetTheme);
+        RenderUtil.handleJeiGhostHighlight(this);
     }
 
     @Override

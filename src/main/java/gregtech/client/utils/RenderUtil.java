@@ -1,7 +1,11 @@
 package gregtech.client.utils;
 
+import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
+
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.JEIUtil;
+
+import gregtech.api.util.Mods;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -754,5 +758,16 @@ public class RenderUtil {
 
         handleSlotOverlay(jeiGhostIngredientSlot, widgetTheme);
         return false;
+    }
+
+    public static void handleJeiGhostHighlight(IWidget slot) {
+        if (!Mods.JustEnoughItems.isModLoaded()) return;
+        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return;
+        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() ||
+                ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
+            GlStateManager.colorMask(true, true, true, false);
+            ingredientSlot.drawHighlight(slot.getArea(), slot.isHovering());
+            GlStateManager.colorMask(true, true, true, true);
+        }
     }
 }
