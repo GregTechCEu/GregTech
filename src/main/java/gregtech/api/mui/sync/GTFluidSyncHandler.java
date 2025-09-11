@@ -419,7 +419,9 @@ public class GTFluidSyncHandler extends SyncHandler {
         var fluidHandlerItem = FluidUtil.getFluidHandler(useStack);
         if (fluidHandlerItem == null) return ItemStack.EMPTY;
 
+        //槽位
         FluidStack tankFluid = tank.getFluid();
+        //手持容器
         FluidStack heldFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
 
         // nothing to do, return
@@ -428,21 +430,56 @@ public class GTFluidSyncHandler extends SyncHandler {
 
         ItemStack returnable = ItemStack.EMPTY;
 
-        // tank is empty, try to fill tank
-        if (canFillSlot && tankFluid == null) {
-            returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
+        if (canDrainSlot && tankFluid != null) {
+            //不能填装 默认直接取出
+            if (!canFillSlot) {
+                //可提取的条件
+                if (heldFluid == null || heldFluid.isFluidEqual(tank.getFluid())) {
+                    returnable = drainTankIntoStack(fluidHandlerItem, tankFluid, tryFillAll);
 
-            // hand is empty, try to drain tank
-        } else if (canDrainSlot && heldFluid == null) {
-            returnable = drainTankIntoStack(fluidHandlerItem, tankFluid, tryFillAll);
+                    syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
+                    return returnable;
+                }
+            }
+            //容器满状态 一定无法装填 直接取出
+            if (tank.getFluidAmount() >= tank.getCapacity()) {
+                //可提取的条件
+                if (heldFluid == null || heldFluid.isFluidEqual(tank.getFluid())) {
+                    returnable = drainTankIntoStack(fluidHandlerItem, tankFluid, tryFillAll);
 
-            // neither is empty but tank is not full, try to fill tank
-        } else if (canFillSlot && tank.getFluidAmount() < tank.getCapacity() && heldFluid != null) {
-            returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
+                    syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
+                    return returnable;
+                }
+            }
+            //手持容器为空，一定是需要取出
+            if (heldFluid == null) {
+                returnable = drainTankIntoStack(fluidHandlerItem, tankFluid, tryFillAll);
+
+                syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
+                return returnable;
+            }
+        }
+
+        if (canFillSlot) {
+            //空状态容器  （无需检测手持容器因为已经检测了） 可以注入 直接注入即可
+            if (tankFluid == null) {
+                returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
+
+                syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
+                return returnable;
+            }
+
+            //半满状态 手持容器有相同流体 进行填充
+            else if (tank.getFluidAmount() < tank.getCapacity() && heldFluid != null &&
+                    heldFluid.isFluidEqual(tank.getFluid())) {
+                returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
+
+                syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
+                return returnable;
+            }
         }
 
         syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
-
         return returnable;
     }
 
