@@ -261,11 +261,12 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
         return facing != outputFacing;
     }
 
+    @NotNull
     public EnumFacing getOutputFacing() {
         return outputFacing == null ? EnumFacing.SOUTH : outputFacing;
     }
 
-    public void setOutputFacing(EnumFacing outputFacing) {
+    public void setOutputFacing(@NotNull EnumFacing outputFacing) {
         this.outputFacing = outputFacing;
         if (!getWorld().isRemote) {
             notifyBlockUpdate();
@@ -275,12 +276,10 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     }
 
     @Override
-    public void setFrontFacing(EnumFacing frontFacing) {
+    public void setFrontFacing(@NotNull EnumFacing frontFacing) {
         super.setFrontFacing(frontFacing);
-        if (this.outputFacing == null) {
-            // set initial output facing as opposite to front
-            setOutputFacing(frontFacing.getOpposite());
-        }
+        // Set initial output facing as opposite to front
+        setOutputFacing(frontFacing.getOpposite());
     }
 
     public int getEnergyPerBlockBreak() {
@@ -301,6 +300,14 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
 
     public float getEfficiencyMultiplier() {
         return 1.0f - MathHelper.clamp(1.0f - 0.2f * (getTier() - 1.0f), 0.1f, 1.0f);
+    }
+
+    public int getBreakProgressTicksLeft() {
+        return breakProgressTicksLeft;
+    }
+
+    public float getCurrentBlockHardness() {
+        return currentBlockHardness;
     }
 
     @Override
