@@ -312,6 +312,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         super.readFromNBT(tagCompound);
         this.isInverted = tagCompound.getBoolean("Inverted");
         this.controllerMode = ControllerMode.VALUES[tagCompound.getInteger("ControllerMode")];
+        updateRedstoneStatus();
     }
 
     @Override
