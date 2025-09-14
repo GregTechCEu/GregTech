@@ -1551,6 +1551,7 @@ public final class RecipeMaps {
     public static final RecipeMap<FuelRecipeBuilder> COMBUSTION_GENERATOR_FUELS = new RecipeMapBuilder<>(
             "combustion_generator", new FuelRecipeBuilder())
             .fluidInputs(1)
+            .fluidOutputs(1)
             .uiBuilder(b -> b
                     .fluidSlotOverlay(GTGuiTextures.FURNACE_OVERLAY_2, false)
                     .progressBar(GTGuiTextures.PROGRESS_BAR_ARROW_MULTIPLE))
