@@ -90,6 +90,11 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         this.maintenance_problems |= 1 << index;
     }
 
+    @Override
+    public void fixAllMaintenance() {
+        maintenance_problems = 0b000000;
+    }
+
     /**
      * Used to cause a single random maintenance problem
      */
