@@ -52,6 +52,7 @@ dependencies {
     compileOnly("curse.maven:journeymap-32274:5172461") // Journeymap 5.7.1p3
     compileOnly("curse.maven:voxelmap-225179:3029445") // VoxelMap 1.9.28
     compileOnly("curse.maven:xaeros-263420:5394758") // Xaero's Minimap 24.2.0
+    compileOnly("maven.modrinth:fluidlogged-api:ArR5epY9") // Fluidlogged API 3.0.6
     compileOnly rfg.deobf("curse.maven:opencomputers-223008:5274236") // OpenComputers 1.8.5+179e1c3
     compileOnly rfg.deobf("curse.maven:hwyla-253449:2568751") // HWYLA 1.8.26-B41
     compileOnly rfg.deobf("curse.maven:baubles-227083:2518667") // Baubles 1.5.2

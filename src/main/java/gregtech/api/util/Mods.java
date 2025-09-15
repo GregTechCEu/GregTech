@@ -114,6 +114,7 @@ public enum Mods {
         public static final String EXTRA_BEES = "extrabees";
         public static final String EXTRA_TREES = "extratrees";
         public static final String EXTRA_UTILITIES2 = "extrautils2";
+        public static final String FLUIDLOGGED_API = "fluidlogged_api";
         public static final String FORESTRY = "forestry";
         public static final String FORESTRY_APICULTURE = "apiculture";
         public static final String FORESTRY_ARBORICULTURE = "arboriculture";
