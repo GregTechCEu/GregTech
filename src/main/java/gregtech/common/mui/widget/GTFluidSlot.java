@@ -4,7 +4,6 @@ import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.RenderUtil;
 
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -116,13 +115,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             this.textRenderer.draw(amount);
         }
 
-        if (isHovering()) {
-            GlStateManager.colorMask(true, true, true, false);
-            GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2, widgetTheme.getSlotHoverColor());
-            GlStateManager.colorMask(true, true, true, true);
-        }
-
-        RenderUtil.handleJeiGhostHighlight(this);
+        RenderUtil.handleJEIGhostSlotOverlay(this, widgetTheme);
     }
 
     @Override
