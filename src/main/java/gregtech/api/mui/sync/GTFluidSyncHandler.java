@@ -61,7 +61,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     @Override
     public void detectAndSendChanges(boolean init) {
         FluidStack current = getFluid();
-        if (init || !GTUtility.areFluidsEqual(current, lastFluid)) {
+        if (init || !GTUtility.areFluidStacksEqual(current, lastFluid)) {
             lastFluid = current == null ? null : current.copy();
             syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, current));
         } else if (lastFluid != null && current.amount != lastFluid.amount) {
