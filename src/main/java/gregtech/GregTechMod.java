@@ -28,6 +28,9 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Mod(modid = GTValues.MODID,
      name = GTValues.MOD_NAME,
      acceptedMinecraftVersions = "[1.12.2,1.13)",
@@ -43,6 +46,8 @@ public class GregTechMod {
     // Hold this so that we can reference non-interface methods without
     // letting the GregTechAPI object see them as immediately.
     private ModuleManager moduleManager;
+    public static final Logger LOGGER = LogManager.getLogger(GTValues.MODID);
+
 
     public GregTechMod() {
         GregTechAPI.instance = this;

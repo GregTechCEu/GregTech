@@ -600,7 +600,7 @@ public abstract class AbstractRecipeLogic extends MTETrait
                 metaTileEntity.getFluidOutputLimit());
 
         // apply EU/speed discount (if any) before parallel
-        if (euDiscount > 0 || speedBonus > 0) { // if-statement to avoid unnecessarily creating RecipeBuilder object
+          if (euDiscount > 0 || speedBonus > 0) { // if-statement to avoid unnecessarily creating RecipeBuilder object
             RecipeBuilder<?> builder = new RecipeBuilder<>(recipe, recipeMap);
             if (euDiscount > 0) {
                 long newEUt = Math.round(recipe.getEUt() * euDiscount);

@@ -1,13 +1,21 @@
 package gregtech.api.metatileentity.multiblock;
 
+import com.google.common.collect.Lists;
+
+import gregtech.api.capability.IBatch;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IDistinctBusController;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.capability.impl.SteamMultiblockRecipeLogic;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MTETrait;
+import gregtech.api.metatileentity.interfaces.IRefreshBeforeConsumption;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.pattern.PatternMatchContext;
@@ -17,6 +25,8 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.KeyUtil;
 import gregtech.common.ConfigHolder;
 
+import gtqt.api.util.GTQTUtility;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -24,6 +34,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.render.CCRenderState;
@@ -33,9 +44,11 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase implements IControllable {
+public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase implements IControllable,
+                                                                                                      IDistinctBusController{
 
     protected static final double CONVERSION_RATE = ConfigHolder.machines.multiblockSteamToEU;
 
@@ -45,15 +58,42 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     protected IItemHandlerModifiable inputInventory;
     protected IItemHandlerModifiable outputInventory;
     protected IMultipleTankHandler steamFluidTank;
+    protected IMultipleTankHandler inputFluidInventory;
+    protected IMultipleTankHandler outputFluidInventory;
 
     public RecipeMapSteamMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap,
                                               double conversionRate,ParallelLogicType type) {
         super(metaTileEntityId);
         this.recipeMap = recipeMap;
         this.recipeMapWorkable = new SteamMultiWorkable(this, conversionRate ,type);
+        this.refreshBeforeConsumptions = new ArrayList<>();
         resetTileAbilities();
     }
+    @Override
+    public boolean canBeDistinct() {
+        return false;
+    }
+    private boolean isDistinct = false;
+    @Override
+    public boolean isDistinct() {
+        return isDistinct;
+    }
 
+    @Override
+    public void setDistinct(boolean isDistinct) {
+        this.isDistinct = isDistinct;
+        recipeMapWorkable.onDistinctChanged();
+        getMultiblockParts().forEach(part -> part.onDistinctChange(isDistinct));
+        // mark buses as changed on distinct toggle
+        if (this.isDistinct) {
+            this.notifiedItemInputList
+                    .addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+            this.notifiedItemInputList
+                    .addAll(this.getAbilities(MultiblockAbility.DUAL_IMPORT));
+        } else {
+            this.notifiedItemInputList.add(this.inputInventory);
+        }
+    }
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
@@ -66,7 +106,6 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     public IItemHandlerModifiable getInputInventory() {
         return inputInventory;
     }
-
     public IItemHandlerModifiable getOutputInventory() {
         return outputInventory;
     }
@@ -74,6 +113,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     public IMultipleTankHandler getSteamFluidTank() {
         return steamFluidTank;
     }
+    public IMultipleTankHandler getInputFluidInventory() {return inputFluidInventory;}
+    public IMultipleTankHandler getOutputFluidInventory() {return outputFluidInventory;}
 
     /**
      * Performs extra checks for validity of given recipe before multiblock
@@ -100,18 +141,46 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
         recipeMapWorkable.update();
     }
 
-    private void initializeAbilities() {
-        this.inputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.STEAM_IMPORT_ITEMS));
-        this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.STEAM_EXPORT_ITEMS));
+
+    protected void initializeAbilities() {
+        List<IItemHandler> inputItems = new ArrayList<>(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+        inputItems.addAll(getAbilities(MultiblockAbility.DUAL_IMPORT));
+        inputItems.addAll(getAbilities(MultiblockAbility.STEAM_IMPORT_ITEMS));
+        this.inputInventory = new ItemHandlerList(inputItems);
         this.steamFluidTank = new FluidTankList(true, getAbilities(MultiblockAbility.STEAM));
+        List<IMultipleTankHandler> inputFluids = new ArrayList<>(getAbilities(MultiblockAbility.DUAL_IMPORT));
+        inputFluids.add(new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS)));
+        this.inputFluidInventory = GTQTUtility.mergeTankHandlers(inputFluids, true);
+
+        List<IItemHandler> outputItems = new ArrayList<>(this.getAbilities(MultiblockAbility.EXPORT_ITEMS));
+        outputItems.addAll(getAbilities(MultiblockAbility.DUAL_EXPORT));
+        outputItems.addAll(getAbilities(MultiblockAbility.STEAM_EXPORT_ITEMS));
+        this.outputInventory = new ItemHandlerList(outputItems);
+        List<IMultipleTankHandler> outputFluids = new ArrayList<>(getAbilities(MultiblockAbility.DUAL_EXPORT));
+        outputFluids.add(new FluidTankList(false, getAbilities(MultiblockAbility.EXPORT_FLUIDS)));
+        this.outputFluidInventory = GTQTUtility.mergeTankHandlers(outputFluids, false);
+
+
+        for (IMultiblockPart part : getMultiblockParts()) {
+            if (part instanceof IRefreshBeforeConsumption refresh) {
+                refreshBeforeConsumptions.add(refresh);
+            }
+        }
     }
 
     private void resetTileAbilities() {
         this.inputInventory = new GTItemStackHandler(this, 0);
+        this.inputFluidInventory = new FluidTankList(true);
         this.outputInventory = new GTItemStackHandler(this, 0);
+        this.outputFluidInventory = new FluidTankList(true);
         this.steamFluidTank = new FluidTankList(true);
     }
-
+    protected List<IRefreshBeforeConsumption> refreshBeforeConsumptions;
+    public void refreshAllBeforeConsumption() {
+        for (IRefreshBeforeConsumption refresh : refreshBeforeConsumptions) {
+            refresh.refreshBeforeConsumption();
+        }
+    }
     @Override
     protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
