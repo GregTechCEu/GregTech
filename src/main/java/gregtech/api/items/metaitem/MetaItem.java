@@ -1011,6 +1011,10 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return new ItemStack(MetaItem.this, amount, metaItemOffset + metaValue);
         }
 
+        public ItemStack getStackForm(int amount, @Nullable NBTTagCompound withNBT) {
+            return new ItemStack(MetaItem.this, amount, metaItemOffset + metaValue, withNBT);
+        }
+
         public boolean isItemEqual(ItemStack itemStack) {
             return itemStack.getItem() == MetaItem.this && itemStack.getItemDamage() == (metaItemOffset + metaValue);
         }
