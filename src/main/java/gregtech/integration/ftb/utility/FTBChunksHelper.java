@@ -1,4 +1,6 @@
-package gregtech.api.util;
+package gregtech.integration.ftb.utility;
+
+import gregtech.api.util.Mods;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -13,7 +15,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class FTBChunksUtil {
+public final class FTBChunksHelper {
+
+    private FTBChunksHelper() {}
 
     /**
      * Check if a {@link BlockPos} is modifiable by a player abiding by FTB chunk rules, if this block is in a claimed

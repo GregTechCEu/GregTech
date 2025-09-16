@@ -7,13 +7,13 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.BlockUtility;
-import gregtech.api.util.FTBChunksUtil;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.api.util.Mods;
 import gregtech.api.util.function.TriPredicate;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
+import gregtech.integration.ftb.utility.FTBChunksHelper;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -73,7 +73,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
                 (world, blockPos, fakePlayer) -> !(world.getBlockState(blockPos).getBlock() instanceof BlockLiquid));
         PREDICATE_LIST.add((world, blockPos, fakePlayer) -> world.isBlockModifiable(fakePlayer, blockPos));
         if (Mods.FTB_UTILITIES.isModLoaded()) {
-            PREDICATE_LIST.add(FTBChunksUtil::isBlockModifiableByPlayer);
+            PREDICATE_LIST.add(FTBChunksHelper::isBlockModifiableByPlayer);
         }
     }
 
