@@ -262,7 +262,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
                         "gregtech.multiblock.data_bank.providing")
                 .addWorkingStatusLine();
 
-        if (isWorkingEnabled() && isActive())
+        if (isWorkingEnabled())
             builder.addEnergyUsageExactLine(getEnergyUsage());
     }
 
