@@ -162,6 +162,14 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
     }
 
     @Override
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
+        ItemStack extraSlotStack = extraSlotInventory.getStackInSlot(0);
+        if (!extraSlotStack.isEmpty()) {
+            itemBuffer.add(extraSlotStack);
+        }
+    }
+
+    @Override
     public void onRemoval() {
         flushInventory();
         super.onRemoval();
