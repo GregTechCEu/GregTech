@@ -4936,8 +4936,8 @@ gregtech.machine.data_bank.name=数据库
 gregtech.machine.data_bank.tooltip.1=你的个人网络存储器
 gregtech.machine.data_bank.tooltip.2=大容量数据存储，使用光缆传输。
 gregtech.machine.data_bank.tooltip.3=数据库间可以相互连接。
-gregtech.machine.data_bank.tooltip.4=每个数据/光学仓耗能为§f%s EU/t§7。
-gregtech.machine.data_bank.tooltip.5=每个已连接的数据/光学仓耗能为§f%s EU/t§7。
+gregtech.machine.data_bank.tooltip.4=通常，每个数据/光学仓耗能为§f%s EU/t§7。
+gregtech.machine.data_bank.tooltip.5=安装了靶仓时，每个数据/光学仓耗能为§f%s EU/t§7。
 gregtech.multiblock.data_bank.description=数据库是一个用于在多个装配线间分享研究数据的多方块结构。此外，它也能让装配线读取数据模块里更复杂的研究数据。
 
 gregtech.machine.power_substation.name=蓄能变电站
