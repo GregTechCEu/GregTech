@@ -106,7 +106,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEF
             }
 
             if (stack == null) {
-                GTLog.logger.error("Error reading AEFluidStack from ME Output Hatch buffer tag list");
+                GTLog.logger.error("Error reading ME Output Hatch buffer tag list");
             } else {
                 internalBuffer.add(stack);
             }
