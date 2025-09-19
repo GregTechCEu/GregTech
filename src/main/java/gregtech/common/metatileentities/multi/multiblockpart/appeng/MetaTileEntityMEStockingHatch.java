@@ -439,7 +439,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         }
     }
 
-    private static class ExportOnlyAEStockingFluidList extends ExportOnlyAEFluidList {
+    public static class ExportOnlyAEStockingFluidList extends ExportOnlyAEFluidList {
 
         private final MetaTileEntityMEStockingHatch holder;
 

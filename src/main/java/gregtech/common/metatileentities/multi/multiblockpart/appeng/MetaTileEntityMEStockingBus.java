@@ -488,7 +488,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         super.readConfigFromTag(tag);
     }
 
-    private static class ExportOnlyAEStockingItemList extends ExportOnlyAEItemList {
+    public static class ExportOnlyAEStockingItemList extends ExportOnlyAEItemList {
 
         private final MetaTileEntityMEStockingBus holder;
 
