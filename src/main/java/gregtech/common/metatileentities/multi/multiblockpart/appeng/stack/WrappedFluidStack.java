@@ -15,37 +15,50 @@ import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.fluids.util.AEFluidStack;
 import io.netty.buffer.ByteBuf;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class WrappedFluidStack implements IAEFluidStack {
+import java.util.Objects;
+
+public class WrappedFluidStack implements IAEFluidStack, IWrappedStack<IAEFluidStack, FluidStack> {
 
     @NotNull
     private FluidStack delegate;
+    private long stackSize;
 
-    private WrappedFluidStack(@NotNull FluidStack stack) {
+    private WrappedFluidStack(@NotNull FluidStack stack, long stackSize) {
         this.delegate = stack;
+        this.stackSize = stackSize;
     }
 
-    @Contract("null -> null; !null -> !null")
     public static WrappedFluidStack fromFluidStack(@Nullable FluidStack fluidStack) {
-        return fluidStack == null ? null : new WrappedFluidStack(fluidStack);
+        return fluidStack == null ? null : new WrappedFluidStack(fluidStack, fluidStack.amount);
     }
 
-    @Contract("null -> null")
-    public static WrappedFluidStack fromNBT(NBTTagCompound data) {
-        FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(data);
-        return fromFluidStack(fluidStack);
+    public static WrappedFluidStack fromFluidStack(@Nullable FluidStack fluidStack, long amount) {
+        return fluidStack == null ? null : new WrappedFluidStack(fluidStack, amount);
+    }
+
+    public static WrappedFluidStack fromNBT(@NotNull NBTTagCompound data) {
+        // Migrate old NBT entries from the old format
+        if (data.getBoolean("wrapped")) {
+            FluidStack stack = FluidStack.loadFluidStackFromNBT(data.getCompoundTag("stack"));
+            if (stack == null) return null;
+            return new WrappedFluidStack(stack, data.getLong("stackSize"));
+        } else {
+            return fromFluidStack(FluidStack.loadFluidStackFromNBT(data));
+        }
     }
 
     public static WrappedFluidStack fromPacket(@NotNull PacketBuffer buffer) {
-        return fromFluidStack(NetworkUtil.readFluidStack(buffer));
+        return new WrappedFluidStack(Objects.requireNonNull(NetworkUtil.readFluidStack(buffer)), buffer.readLong());
     }
 
     @NotNull
     public AEFluidStack getAEStack() {
-        return AEFluidStack.fromFluidStack(this.delegate);
+        AEFluidStack aeFluidStack = AEFluidStack.fromFluidStack(this.delegate);
+        aeFluidStack.setStackSize(stackSize);
+        return aeFluidStack;
     }
 
     @NotNull
@@ -60,17 +73,19 @@ public class WrappedFluidStack implements IAEFluidStack {
 
     @Override
     public void add(IAEFluidStack iaeFluidStack) {
-        this.delegate.amount += iaeFluidStack.getStackSize();
+        if (equals(iaeFluidStack)) {
+            incStackSize(iaeFluidStack.getStackSize());
+        }
     }
 
     @Override
     public long getStackSize() {
-        return this.delegate.amount;
+        return stackSize;
     }
 
     @Override
-    public IAEFluidStack setStackSize(long l) {
-        this.delegate.amount = (int) l;
+    public IAEFluidStack setStackSize(long newStackSize) {
+        this.stackSize = newStackSize;
         return this;
     }
 
@@ -97,6 +112,7 @@ public class WrappedFluidStack implements IAEFluidStack {
     @Override
     public IAEFluidStack reset() {
         this.delegate.amount = 0;
+        this.stackSize = 0L;
         return this;
     }
 
@@ -106,13 +122,15 @@ public class WrappedFluidStack implements IAEFluidStack {
     }
 
     @Override
-    public void incStackSize(long l) {
-        this.delegate.amount += l;
+    public void incStackSize(long add) {
+        if (add < 1) return;
+        this.stackSize += Math.min(Long.MAX_VALUE - this.stackSize, add);
     }
 
     @Override
-    public void decStackSize(long l) {
-        this.delegate.amount -= l;
+    public void decStackSize(long sub) {
+        if (sub < 1) return;
+        this.stackSize -= Math.min(this.stackSize, sub);
     }
 
     @Override
@@ -127,7 +145,9 @@ public class WrappedFluidStack implements IAEFluidStack {
 
     @Override
     public void writeToNBT(NBTTagCompound nbtTagCompound) {
-        this.delegate.writeToNBT(nbtTagCompound);
+        nbtTagCompound.setTag("stack", this.delegate.writeToNBT(new NBTTagCompound()));
+        nbtTagCompound.setLong("stackSize", this.stackSize);
+        nbtTagCompound.setBoolean("wrapped", true);
     }
 
     public NBTTagCompound serializeToNBT() {
@@ -143,21 +163,34 @@ public class WrappedFluidStack implements IAEFluidStack {
 
     @Override
     public void writeToPacket(ByteBuf buffer) {
-        writeToPacket(new PacketBuffer(buffer));
+        writeToPacketBuffer(new PacketBuffer(buffer));
     }
 
-    public void writeToPacket(@NotNull PacketBuffer packetBuffer) {
+    public void writeToPacketBuffer(@NotNull PacketBuffer packetBuffer) {
         NetworkUtil.writeFluidStack(packetBuffer, this.delegate);
+        packetBuffer.writeLong(this.stackSize);
     }
 
     @Override
     public IAEFluidStack copy() {
-        return new WrappedFluidStack(this.delegate.copy());
+        return new WrappedFluidStack(delegate.copy(), stackSize);
+    }
+
+    @Override
+    public @NotNull IAEFluidStack copyAsAEStack() {
+        IAEFluidStack stack = AEFluidStack.fromFluidStack(delegate.copy());
+        stack.setStackSize(stackSize);
+        return stack;
+    }
+
+    @Override
+    public @NotNull IWrappedStack<IAEFluidStack, FluidStack> copyWrapped() {
+        return new WrappedFluidStack(delegate.copy(), stackSize);
     }
 
     @Override
     public IAEFluidStack empty() {
-        IAEFluidStack dup = new WrappedFluidStack(this.delegate.copy());
+        IAEFluidStack dup = copy();
         dup.reset();
         return dup;
     }
@@ -188,13 +221,25 @@ public class WrappedFluidStack implements IAEFluidStack {
     }
 
     @Override
+    public @NotNull FluidStack getDefinition() {
+        return delegate;
+    }
+
+    @Override
     public boolean equals(Object other) {
-        if (other instanceof WrappedFluidStack) {
-            return ((WrappedFluidStack) other).delegate.isFluidEqual(this.delegate);
-        } else if (other instanceof FluidStack) {
-            return ((FluidStack) other).isFluidEqual(this.delegate);
+        if (other instanceof WrappedFluidStack wrappedFluidStack) {
+            return wrappedFluidStack.delegate.isFluidEqual(this.delegate);
+        } else if (other instanceof FluidStack fluidStack) {
+            return fluidStack.isFluidEqual(this.delegate);
         }
+
         return false;
+    }
+
+    @Override
+    public boolean delegateAndSizeEqual(@Nullable IWrappedStack<IAEFluidStack, FluidStack> wrappedStack) {
+        if (wrappedStack == null) return false;
+        return delegate.isFluidEqual(wrappedStack.getDefinition()) && stackSize == wrappedStack.getStackSize();
     }
 
     @Override

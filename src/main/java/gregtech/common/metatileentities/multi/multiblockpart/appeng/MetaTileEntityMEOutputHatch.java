@@ -1,94 +1,52 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.INotifiableHandler;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.mui.drawable.GTObjectDrawable;
+import gregtech.api.util.FluidStackHashStrategy;
+import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.GTLog;
+import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.gui.widget.appeng.AEFluidGridWidget;
-import gregtech.common.inventory.appeng.SerializableFluidList;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.IWrappedStack;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import appeng.api.config.Actionable;
-import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
-import appeng.api.storage.data.IItemList;
-import appeng.fluids.util.AEFluidStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.text.RichText;
+import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostableChannelPart<IAEFluidStack>
+public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEFluidStack, FluidStack>
                                          implements IMultiblockAbilityPart<IFluidTank> {
 
     public final static String FLUID_BUFFER_TAG = "FluidBuffer";
-    public final static String WORKING_TAG = "WorkingEnabled";
-    private boolean workingEnabled = true;
-    private SerializableFluidList internalBuffer;
 
     public MetaTileEntityMEOutputHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.EV, true, IFluidStorageChannel.class);
-    }
-
-    @Override
-    protected void initializeInventory() {
-        this.internalBuffer = new SerializableFluidList();
-        super.initializeInventory();
-    }
-
-    @Override
-    public void update() {
-        super.update();
-        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME() && updateMEStatus()) {
-            if (this.internalBuffer.isEmpty()) return;
-
-            IMEMonitor<IAEFluidStack> monitor = getMonitor();
-            if (monitor == null) return;
-
-            for (IAEFluidStack fluid : this.internalBuffer) {
-                IAEFluidStack notInserted = monitor.injectItems(fluid.copy(), Actionable.MODULATE, getActionSource());
-                if (notInserted != null && notInserted.getStackSize() > 0) {
-                    fluid.setStackSize(notInserted.getStackSize());
-                } else {
-                    fluid.reset();
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onRemoval() {
-        IMEMonitor<IAEFluidStack> monitor = getMonitor();
-        if (monitor == null) return;
-
-        for (IAEFluidStack fluid : this.internalBuffer) {
-            monitor.injectItems(fluid.copy(), Actionable.MODULATE, this.getActionSource());
-        }
-        super.onRemoval();
+        super(metaTileEntityId, GTValues.EV, IFluidStorageChannel.class);
     }
 
     @Override
@@ -97,72 +55,62 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostableChannel
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI
-                .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
-                .label(10, 5, getMetaFullName());
-        // ME Network status
-        builder.dynamicLabel(10, 15, () -> isOnline() ?
-                I18n.format("gregtech.gui.me_network.online") :
-                I18n.format("gregtech.gui.me_network.offline"),
-                0x404040);
-        builder.label(10, 25, "gregtech.gui.waiting_list", 0xFFFFFFFF);
-        builder.widget(new AEFluidGridWidget(10, 35, 3, this.internalBuffer));
-
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
-        return builder.build(this.getHolder(), entityPlayer);
+    protected @NotNull IByteBufDeserializer<IWrappedStack<IAEFluidStack, FluidStack>> getDeserializer() {
+        return WrappedFluidStack::fromPacket;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public boolean isWorkingEnabled() {
-        return this.workingEnabled;
-    }
-
-    @Override
-    public void setWorkingEnabled(boolean workingEnabled) {
-        this.workingEnabled = workingEnabled;
-        World world = this.getWorld();
-        if (world != null && !world.isRemote) {
-            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
-        }
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
-            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
-        }
-        return super.getCapability(capability, side);
-    }
-
-    @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
-        buf.writeBoolean(workingEnabled);
-    }
-
-    @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
-        this.workingEnabled = buf.readBoolean();
+    protected void addStackLine(@NotNull RichText text,
+                                @NotNull IWrappedStack<IAEFluidStack, FluidStack> wrappedStack) {
+        FluidStack stack = wrappedStack.getDefinition();
+        text.add(new GTObjectDrawable(stack, 0)
+                .asIcon()
+                .asHoverable()
+                .tooltip(tooltip -> {
+                    tooltip.addLine(KeyUtil.fluid(stack));
+                    FluidTooltipUtil.handleFluidTooltip(tooltip, stack);
+                }));
+        text.space();
+        text.addLine(IKey.str("%dx %s", wrappedStack.getStackSize(), KeyUtil.fluid(stack))
+                .color(0xFFFFFF));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setBoolean(WORKING_TAG, this.workingEnabled);
-        data.setTag(FLUID_BUFFER_TAG, this.internalBuffer.serializeNBT());
+
+        NBTTagList nbtList = new NBTTagList();
+        for (IWrappedStack<IAEFluidStack, FluidStack> stack : internalBuffer) {
+            NBTTagCompound stackTag = new NBTTagCompound();
+            stack.writeToNBT(stackTag);
+            nbtList.appendTag(stackTag);
+        }
+        data.setTag(FLUID_BUFFER_TAG, nbtList);
+
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        if (data.hasKey(WORKING_TAG)) {
-            this.workingEnabled = data.getBoolean(WORKING_TAG);
-        }
-        if (data.hasKey(FLUID_BUFFER_TAG, 9)) {
-            this.internalBuffer.deserializeNBT((NBTTagList) data.getTag(FLUID_BUFFER_TAG));
+        for (NBTBase tag : data.getTagList(FLUID_BUFFER_TAG, Constants.NBT.TAG_COMPOUND)) {
+            NBTTagCompound tagCompound = (NBTTagCompound) tag;
+
+            WrappedFluidStack stack;
+            // Migrate from AEFluidStacks to WrappedFluidStacks
+            if (tagCompound.getBoolean("wrapped")) {
+                stack = WrappedFluidStack.fromNBT(tagCompound);
+            } else {
+                stack = WrappedFluidStack.fromFluidStack(FluidStack.loadFluidStackFromNBT(tagCompound),
+                        data.getLong("Cnt"));
+            }
+
+            if (stack == null) {
+                GTLog.logger.error("Error reading AEFluidStack from ME Output Hatch buffer tag list");
+            } else {
+                internalBuffer.add(stack);
+            }
         }
     }
 
@@ -202,22 +150,18 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostableChannel
     @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
-        if (controllerBase instanceof MultiblockWithDisplayBase) {
-            ((MultiblockWithDisplayBase) controllerBase).enableFluidInfSink();
+        if (controllerBase instanceof MultiblockWithDisplayBase multiblockWithDisplayBase) {
+            multiblockWithDisplayBase.enableFluidInfSink();
         }
     }
 
-    private static class InaccessibleInfiniteTank implements IFluidTank, INotifiableHandler {
+    private static class InaccessibleInfiniteTank extends InaccessibleInfiniteHandler<IAEFluidStack, FluidStack>
+                                                  implements IFluidTank {
 
-        private final IItemList<IAEFluidStack> internalBuffer;
-        private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
-        private final MetaTileEntity holder;
-
-        public InaccessibleInfiniteTank(MetaTileEntity holder, IItemList<IAEFluidStack> internalBuffer,
-                                        MetaTileEntity mte) {
-            this.holder = holder;
-            this.internalBuffer = internalBuffer;
-            this.notifiableEntities.add(mte);
+        public InaccessibleInfiniteTank(@NotNull MetaTileEntity holder,
+                                        @NotNull List<IWrappedStack<IAEFluidStack, FluidStack>> internalBuffer,
+                                        @NotNull MetaTileEntity mte) {
+            super(holder, internalBuffer, mte, FluidStackHashStrategy.comparingAllButAmount());
         }
 
         @Nullable
@@ -242,16 +186,17 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostableChannel
         }
 
         @Override
-        public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null) {
+        public int fill(@Nullable FluidStack stackToInsert, boolean doFill) {
+            if (stackToInsert == null || stackToInsert.amount < 1) {
                 return 0;
             }
+
             if (doFill) {
-                this.internalBuffer.add(AEFluidStack.fromFluidStack(resource));
-                holder.markDirty();
+                add(stackToInsert, stackToInsert.amount);
+                this.trigger();
             }
-            this.trigger();
-            return resource.amount;
+
+            return stackToInsert.amount;
         }
 
         @Nullable
@@ -261,21 +206,8 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostableChannel
         }
 
         @Override
-        public void addNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-            this.notifiableEntities.add(metaTileEntity);
-        }
-
-        @Override
-        public void removeNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-            this.notifiableEntities.remove(metaTileEntity);
-        }
-
-        private void trigger() {
-            for (MetaTileEntity metaTileEntity : this.notifiableEntities) {
-                if (metaTileEntity != null && metaTileEntity.isValid()) {
-                    this.addToNotifiedList(metaTileEntity, this, true);
-                }
-            }
+        protected @NotNull IWrappedStack<IAEFluidStack, FluidStack> wrapStack(@NotNull FluidStack stack, long amount) {
+            return WrappedFluidStack.fromFluidStack(stack, amount);
         }
     }
 }

@@ -21,7 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.function.IntBinaryOperator;
 
-public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler implements IJEIRecipeReceiver {
+public abstract class AESyncHandler<AEStackType extends IAEStack<AEStackType>> extends SyncHandler
+                                   implements IJEIRecipeReceiver {
 
     public static final int slotSyncID = 0;
     public static final int setConfigID = 1;
@@ -31,16 +32,16 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
     public static final int bulkConfigAmountChangeID = 5;
 
     protected final boolean isStocking;
-    protected final IConfigurableSlot<T>[] slots;
-    private final IConfigurableSlot<T>[] cached;
-    private final Int2ObjectMap<IConfigurableSlot<T>> changeMap = new Int2ObjectOpenHashMap<>();
+    protected final @NotNull IConfigurableSlot<AEStackType>[] slots;
+    private final @NotNull IConfigurableSlot<AEStackType>[] cached;
+    private final Int2ObjectMap<@NotNull IConfigurableSlot<AEStackType>> changeMap = new Int2ObjectOpenHashMap<>();
 
-    private final IByteBufAdapter<T> byteBufAdapter;
+    private final IByteBufAdapter<AEStackType> byteBufAdapter;
 
     @Nullable
     private final Runnable dirtyNotifier;
 
-    public AESyncHandler(IConfigurableSlot<T>[] slots, boolean isStocking, @Nullable Runnable dirtyNotifier) {
+    public AESyncHandler(IConfigurableSlot<AEStackType>[] slots, boolean isStocking, @Nullable Runnable dirtyNotifier) {
         this.slots = slots;
         this.isStocking = isStocking;
         this.dirtyNotifier = dirtyNotifier;
@@ -48,27 +49,27 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
         this.byteBufAdapter = initializeByteBufAdapter();
     }
 
-    protected abstract @NotNull IConfigurableSlot<T> @NotNull [] initializeCache();
+    protected abstract @NotNull IConfigurableSlot<AEStackType> @NotNull [] initializeCache();
 
-    protected abstract @NotNull IByteBufAdapter<T> initializeByteBufAdapter();
+    protected abstract @NotNull IByteBufAdapter<AEStackType> initializeByteBufAdapter();
 
-    public abstract boolean isStackValidForSlot(int index, @Nullable T stack);
+    public abstract boolean isStackValidForSlot(int index, @Nullable AEStackType stack);
 
     @SuppressWarnings("DuplicatedCode")
     @Override
     public void detectAndSendChanges(boolean init) {
         for (int index = 0; index < slots.length; index++) {
-            IConfigurableSlot<T> slot = slots[index];
-            IConfigurableSlot<T> cache = cached[index];
+            IConfigurableSlot<AEStackType> slot = slots[index];
+            IConfigurableSlot<AEStackType> cache = cached[index];
 
-            T newConfig = slot.getConfig();
-            T cachedConfig = cache.getConfig();
-            T newStock = slot.getStock();
-            T cachedStock = cache.getStock();
+            AEStackType newConfig = slot.getConfig();
+            AEStackType cachedConfig = cache.getConfig();
+            AEStackType newStock = slot.getStock();
+            AEStackType cachedStock = cache.getStock();
 
             if (init || !areAEStackCountEquals(newConfig, cachedConfig) ||
                     !areAEStackCountEquals(newStock, cachedStock)) {
-                IConfigurableSlot<T> newCache = slot.copy();
+                IConfigurableSlot<AEStackType> newCache = slot.copy();
                 cached[index] = newCache;
                 changeMap.put(index, newCache);
             }
@@ -80,7 +81,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
                 for (int index : changeMap.keySet()) {
                     buf.writeVarInt(index);
 
-                    T syncConfig = changeMap.get(index).getConfig();
+                    AEStackType syncConfig = changeMap.get(index).getConfig();
                     if (syncConfig == null) {
                         buf.writeBoolean(false);
                     } else {
@@ -88,7 +89,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
                         syncConfig.writeToPacket(buf);
                     }
 
-                    T syncStock = changeMap.get(index).getStock();
+                    AEStackType syncStock = changeMap.get(index).getStock();
                     if (syncStock == null) {
                         buf.writeBoolean(false);
                     } else {
@@ -108,33 +109,37 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
 
     @Override
     public void readOnServer(int id, PacketBuffer buf) throws IOException {
-        if (id == clearConfigID) {
-            slots[buf.readVarInt()].setConfig(null);
-        } else if (id == changeConfigAmountID) {
-            T config = getConfig(buf.readVarInt());
-            if (config != null) {
-                config.setStackSize(buf.readInt());
-            }
-        } else if (id == setConfigID) {
-            int index = buf.readVarInt();
-            T newConfig = buf.readBoolean() ? byteBufAdapter.deserialize(buf) : null;
-            if (isStackValidForSlot(index, newConfig)) {
-                IConfigurableSlot<T> slot = slots[index];
-                slot.setConfig(newConfig);
-            }
-        } else if (id == bulkClearConfigID) {
-            int indexFrom = buf.readVarInt();
-            for (int index = indexFrom; index < slots.length; index++) {
-                IConfigurableSlot<T> slot = slots[index];
-                slot.setConfig(null);
-            }
-        } else if (id == bulkConfigAmountChangeID) {
-            int size = buf.readVarInt();
-            for (int i = 0; i < size; i++) {
-                T config = slots[buf.readVarInt()].getConfig();
-                int newAmount = buf.readInt();
+        switch (id) {
+            case clearConfigID -> slots[buf.readVarInt()].setConfig(null);
+            case changeConfigAmountID -> {
+                AEStackType config = getConfig(buf.readVarInt());
                 if (config != null) {
-                    config.setStackSize(newAmount);
+                    config.setStackSize(buf.readInt());
+                }
+            }
+            case setConfigID -> {
+                int index = buf.readVarInt();
+                AEStackType newConfig = buf.readBoolean() ? byteBufAdapter.deserialize(buf) : null;
+                if (isStackValidForSlot(index, newConfig)) {
+                    IConfigurableSlot<AEStackType> slot = slots[index];
+                    slot.setConfig(newConfig);
+                }
+            }
+            case bulkClearConfigID -> {
+                int indexFrom = buf.readVarInt();
+                for (int index = indexFrom; index < slots.length; index++) {
+                    IConfigurableSlot<AEStackType> slot = slots[index];
+                    slot.setConfig(null);
+                }
+            }
+            case bulkConfigAmountChangeID -> {
+                int size = buf.readVarInt();
+                for (int i = 0; i < size; i++) {
+                    AEStackType config = slots[buf.readVarInt()].getConfig();
+                    int newAmount = buf.readInt();
+                    if (config != null) {
+                        config.setStackSize(newAmount);
+                    }
                 }
             }
         }
@@ -146,7 +151,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
             int size = buf.readVarInt();
             for (int i = 0; i < size; i++) {
                 int index = buf.readVarInt();
-                IConfigurableSlot<T> slot = slots[index];
+                IConfigurableSlot<AEStackType> slot = slots[index];
 
                 if (buf.readBoolean()) {
                     slot.setConfig(byteBufAdapter.deserialize(buf));
@@ -174,7 +179,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
     }
 
     @SideOnly(Side.CLIENT)
-    public void setConfig(int index, @Nullable T newConfig) {
+    public void setConfig(int index, @Nullable AEStackType newConfig) {
         syncToServer(setConfigID, buf -> {
             buf.writeVarInt(index);
             if (newConfig == null) {
@@ -187,7 +192,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
     }
 
     @Nullable
-    public T getConfig(int index) {
+    public AEStackType getConfig(int index) {
         return slots[index].getConfig();
     }
 
@@ -196,7 +201,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
     }
 
     public int getConfigAmount(int index) {
-        T config = getConfig(index);
+        AEStackType config = getConfig(index);
         return config == null ? 0 : GTUtility.safeCastLongToInt(config.getStackSize());
     }
 
@@ -209,7 +214,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
     }
 
     @Nullable
-    public T getStock(int index) {
+    public AEStackType getStock(int index) {
         return slots[index].getStock();
     }
 
@@ -223,7 +228,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
         Int2IntMap changeMap = new Int2IntArrayMap(slots.length);
 
         for (int index = 0; index < slots.length; index++) {
-            T config = slots[index].getConfig();
+            AEStackType config = slots[index].getConfig();
             if (config != null) {
                 int originalSize = GTUtility.safeCastLongToInt(config.getStackSize());
                 int newSize = function.applyAsInt(index, originalSize);
@@ -246,7 +251,7 @@ public abstract class AESyncHandler<T extends IAEStack<T>> extends SyncHandler i
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public final boolean areAEStackCountEquals(T stack1, T stack2) {
+    public final boolean areAEStackCountEquals(AEStackType stack1, AEStackType stack2) {
         if (stack2 == stack1) {
             return true;
         }

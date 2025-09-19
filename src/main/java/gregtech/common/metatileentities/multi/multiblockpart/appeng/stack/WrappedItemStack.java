@@ -14,41 +14,55 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.core.Api;
 import appeng.util.item.AEItemStack;
 import io.netty.buffer.ByteBuf;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class WrappedItemStack implements IAEItemStack {
+public class WrappedItemStack implements IAEItemStack, IWrappedStack<IAEItemStack, ItemStack> {
 
     @NotNull
     private ItemStack delegate;
+    private long stackSize;
 
-    private WrappedItemStack(@NotNull ItemStack itemStack) {
+    private WrappedItemStack(@NotNull ItemStack itemStack, long stackSize) {
         this.delegate = itemStack;
+        this.stackSize = stackSize;
     }
 
-    @Contract("null -> null")
     public static WrappedItemStack fromItemStack(@Nullable ItemStack stack) {
         if (stack == null) return null;
-        return stack.isEmpty() ? null : new WrappedItemStack(stack);
+        return stack.isEmpty() ? null : new WrappedItemStack(stack, stack.getCount());
     }
 
-    @Contract("null -> null")
-    public static WrappedItemStack fromNBT(@Nullable NBTTagCompound i) {
-        if (i == null) {
+    public static WrappedItemStack fromItemStack(@Nullable ItemStack stack, long amount) {
+        if (stack == null) return null;
+        return stack.isEmpty() ? null : new WrappedItemStack(stack, amount);
+    }
+
+    public static WrappedItemStack fromNBT(@Nullable NBTTagCompound tag) {
+        if (tag == null) {
             return null;
         } else {
-            ItemStack itemstack = new ItemStack(i);
-            return fromItemStack(itemstack);
+            // Migrate old NBT entries from the old format
+            if (tag.getBoolean("wrapped")) {
+                return new WrappedItemStack(new ItemStack(tag.getCompoundTag("stack")), tag.getLong("stackSize"));
+            } else {
+                ItemStack itemStack = new ItemStack(tag);
+                return fromItemStack(itemStack);
+            }
         }
     }
 
     public static WrappedItemStack fromPacket(@NotNull PacketBuffer data) {
-        return fromItemStack(NetworkUtil.readItemStack(data));
+        WrappedItemStack wrappedItemStack = fromItemStack(NetworkUtil.readItemStack(data));
+        wrappedItemStack.setStackSize(data.readLong());
+        return wrappedItemStack;
     }
 
     public AEItemStack getAEStack() {
-        return AEItemStack.fromItemStack(this.delegate);
+        AEItemStack aeItemStack = AEItemStack.fromItemStack(this.delegate);
+        assert aeItemStack != null;
+        aeItemStack.setStackSize(stackSize);
+        return aeItemStack;
     }
 
     @Override
@@ -63,17 +77,19 @@ public class WrappedItemStack implements IAEItemStack {
 
     @Override
     public void add(IAEItemStack iaeItemStack) {
-        this.delegate.grow((int) iaeItemStack.getStackSize());
+        if (equals(iaeItemStack)) {
+            incStackSize(iaeItemStack.getStackSize());
+        }
     }
 
     @Override
     public long getStackSize() {
-        return this.delegate.getCount();
+        return stackSize;
     }
 
     @Override
-    public IAEItemStack setStackSize(long l) {
-        this.delegate.setCount((int) l);
+    public IAEItemStack setStackSize(long newStackSize) {
+        this.stackSize = newStackSize;
         return this;
     }
 
@@ -100,6 +116,7 @@ public class WrappedItemStack implements IAEItemStack {
     @Override
     public IAEItemStack reset() {
         this.delegate.setCount(0);
+        this.stackSize = 0;
         return this;
     }
 
@@ -109,13 +126,15 @@ public class WrappedItemStack implements IAEItemStack {
     }
 
     @Override
-    public void incStackSize(long l) {
-        this.delegate.grow((int) l);
+    public void incStackSize(long add) {
+        if (add < 1) return;
+        this.stackSize += Math.min(Long.MAX_VALUE - this.stackSize, add);
     }
 
     @Override
-    public void decStackSize(long l) {
-        this.delegate.shrink((int) l);
+    public void decStackSize(long sub) {
+        if (sub < 1) return;
+        this.stackSize -= Math.min(this.stackSize, sub);
     }
 
     @Override
@@ -130,7 +149,9 @@ public class WrappedItemStack implements IAEItemStack {
 
     @Override
     public void writeToNBT(NBTTagCompound nbtTagCompound) {
-        this.delegate.writeToNBT(nbtTagCompound);
+        nbtTagCompound.setTag("stack", this.delegate.serializeNBT());
+        nbtTagCompound.setLong("stackSize", this.stackSize);
+        nbtTagCompound.setBoolean("wrapped", true);
     }
 
     @Override
@@ -140,21 +161,38 @@ public class WrappedItemStack implements IAEItemStack {
 
     @Override
     public void writeToPacket(ByteBuf byteBuf) {
-        writeToPacket(new PacketBuffer(byteBuf));
+        writeToPacketBuffer(new PacketBuffer(byteBuf));
     }
 
-    public void writeToPacket(@NotNull PacketBuffer packetBuffer) {
+    public void writeToPacketBuffer(@NotNull PacketBuffer packetBuffer) {
         NetworkUtil.writeItemStack(packetBuffer, this.delegate);
+        packetBuffer.writeLong(this.stackSize);
     }
 
     @Override
     public IAEItemStack copy() {
-        return new WrappedItemStack(this.delegate.copy());
+        return new WrappedItemStack(delegate.copy(), stackSize);
+    }
+
+    @Override
+    public @NotNull IAEItemStack copyAsAEStack() {
+        IAEItemStack stack = AEItemStack.fromItemStack(delegate.copy());
+        if (stack == null) {
+            throw new IllegalStateException("Error creating AEItemStack from delegate");
+        }
+
+        stack.setStackSize(stackSize);
+        return stack;
+    }
+
+    @Override
+    public @NotNull IWrappedStack<IAEItemStack, ItemStack> copyWrapped() {
+        return new WrappedItemStack(delegate.copy(), stackSize);
     }
 
     @Override
     public IAEItemStack empty() {
-        IAEItemStack copy = this.copy();
+        IAEItemStack copy = copy();
         copy.reset();
         return copy;
     }
@@ -211,7 +249,7 @@ public class WrappedItemStack implements IAEItemStack {
     }
 
     @Override
-    public ItemStack getDefinition() {
+    public @NotNull ItemStack getDefinition() {
         return this.delegate;
     }
 
@@ -222,13 +260,19 @@ public class WrappedItemStack implements IAEItemStack {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof IAEItemStack) {
-            return this.delegate.isItemEqual(((IAEItemStack) other).createItemStack());
+        if (other instanceof IAEItemStack stack) {
+            return this.delegate.isItemEqual(stack.createItemStack());
+        } else if (other instanceof ItemStack itemStack) {
+            return this.equals(itemStack);
         }
-        if (other instanceof ItemStack) {
-            return this.delegate.isItemEqual((ItemStack) other);
-        }
+
         return false;
+    }
+
+    @Override
+    public boolean delegateAndSizeEqual(@Nullable IWrappedStack<IAEItemStack, ItemStack> wrappedStack) {
+        if (wrappedStack == null) return false;
+        return delegate.isItemEqual(wrappedStack.getDefinition()) && stackSize == wrappedStack.getStackSize();
     }
 
     @Override
@@ -254,6 +298,6 @@ public class WrappedItemStack implements IAEItemStack {
 
     @Override
     public String toString() {
-        return String.format("Wrapped: %s", delegate);
+        return String.format("Wrapped: %s, Stack Size: %d", delegate, stackSize);
     }
 }
