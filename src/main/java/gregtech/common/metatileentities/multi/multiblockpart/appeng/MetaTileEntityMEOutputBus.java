@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.mui.drawable.GTObjectDrawable;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.IWrappedStack;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
@@ -17,6 +18,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
@@ -28,7 +30,6 @@ import appeng.api.storage.data.IAEItemStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.text.RichText;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import org.jetbrains.annotations.NotNull;
@@ -66,8 +67,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityMEOutputBase<IAEIte
                 .tooltipAutoUpdate(true)
                 .tooltipBuilder(tooltip -> tooltip.addFromItem(stack)));
         text.space();
-        text.addLine(IKey.str("%dx %s", wrappedStack.getStackSize(), stack.getDisplayName())
-                .color(0xFFFFFF));
+        text.addLine(KeyUtil.number(TextFormatting.WHITE, wrappedStack.getStackSize(), "x"));
     }
 
     @Override

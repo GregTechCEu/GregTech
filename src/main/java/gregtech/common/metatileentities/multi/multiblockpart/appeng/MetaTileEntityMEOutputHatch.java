@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
@@ -32,7 +33,6 @@ import appeng.api.storage.data.IAEFluidStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.text.RichText;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import org.jetbrains.annotations.NotNull;
@@ -72,8 +72,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEF
                     FluidTooltipUtil.handleFluidTooltip(tooltip, stack);
                 }));
         text.space();
-        text.addLine(IKey.str("%dx %s", wrappedStack.getStackSize(), KeyUtil.fluid(stack))
-                .color(0xFFFFFF));
+        text.addLine(KeyUtil.number(TextFormatting.WHITE, wrappedStack.getStackSize(), "x"));
     }
 
     @Override
