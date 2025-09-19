@@ -26,6 +26,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.text.RichText;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -42,6 +43,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AEStackType>, RealStackType>
                                                 extends MetaTileEntityAEHostableChannelPart<AEStackType> {
@@ -106,13 +108,7 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
                 getDeserializer());
         panelSyncManager.syncValue("buffer", 0, bufferSync);
 
-        ScrollableTextWidget textList = new ScrollableTextWidget()
-                .textBuilder(text -> {
-                    for (IWrappedStack<AEStackType, RealStackType> wrappedStack : bufferSync) {
-                        addStackLine(text, wrappedStack);
-                    }
-                });
-
+        ScrollableTextWidget textList = new ScrollableTextWidget();
         bufferSync.setChangeListener(textList::markDirty);
 
         return GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94)
@@ -124,9 +120,11 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
                         .asWidget()
                         .pos(5, 15))
                 .child(textList.pos(9, 25 + 4)
-                        .size(158, 18 * 4 - 8)
+                        .size(158, 18 * 4 - 6)
+                        .textBuilder(text -> bufferSync.cacheForEach(stack -> addStackLine(text, stack)))
+                        .alignment(Alignment.TopLeft)
                         .background(GTGuiTextures.DISPLAY.asIcon()
-                                .margin(-4)))
+                                .margin(-2, -2)))
                 .child(SlotGroupWidget.playerInventory());
     }
 
@@ -211,7 +209,7 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
             this.strategy = strategy;
         }
 
-        protected void add(@NotNull RealStackType stackToAdd, int amount) {
+        protected void add(@NotNull RealStackType stackToAdd, long amount) {
             for (IWrappedStack<AEStackType, RealStackType> bufferedAEStack : internalBuffer) {
                 long bufferedAEStackSize = bufferedAEStack.getStackSize();
                 RealStackType bufferStack = bufferedAEStack.getDefinition();
@@ -253,7 +251,7 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
     }
 
     private static class WrappedStackSyncHandler<AEStackType extends IAEStack<AEStackType>,
-            RealStackType> extends SyncHandler implements Iterable<IWrappedStack<AEStackType, RealStackType>> {
+            RealStackType> extends SyncHandler {
 
         private final List<@NotNull IWrappedStack<AEStackType, RealStackType>> source;
         private final ObjectArrayList<@NotNull IWrappedStack<AEStackType, RealStackType>> cache = new ObjectArrayList<>();
@@ -323,11 +321,6 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
             // This sync handler is Server -> Client only.
         }
 
-        @Override
-        public @NotNull Iterator<IWrappedStack<AEStackType, RealStackType>> iterator() {
-            return cache.iterator();
-        }
-
         public void setChangeListener(@NotNull Runnable listener) {
             this.changeListener = listener;
         }
@@ -335,6 +328,12 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
         private void onChange() {
             if (changeListener != null) {
                 changeListener.run();
+            }
+        }
+
+        public void cacheForEach(@NotNull Consumer<@NotNull IWrappedStack<AEStackType, RealStackType>> consumer) {
+            for (IWrappedStack<AEStackType, RealStackType> stack : cache) {
+                consumer.accept(stack);
             }
         }
     }
