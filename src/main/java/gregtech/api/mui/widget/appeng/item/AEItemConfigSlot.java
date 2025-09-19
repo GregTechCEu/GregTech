@@ -68,15 +68,8 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
                 RenderUtil.renderTextFixedCorner(amount, 17d, 18d, 0xFFFFFF, true, 0.5f);
             }
         }
-    }
 
-    @Override
-    public void drawOverlay(ModularGuiContext context, WidgetTheme widgetTheme) {
-        if (!RenderUtil.handleJeiGhostHighlight(this)) {
-            drawSlotOverlay();
-        }
-
-        super.drawOverlay(context, widgetTheme);
+        RenderUtil.handleJEIGhostSlotOverlay(this, widgetTheme);
     }
 
     @Override

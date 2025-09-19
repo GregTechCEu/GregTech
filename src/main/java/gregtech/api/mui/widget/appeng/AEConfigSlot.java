@@ -4,22 +4,18 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.appeng.AESyncHandler;
 
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 
 import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.api.IPanelHandler;
-import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
@@ -91,21 +87,6 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
         if (selected) {
             GTGuiTextures.SELECT_BOX.draw(0, 0, 18, 18);
         }
-    }
-
-    // TODO: get rid of these two methods when 2817 merges
-    protected void drawSlotOverlay() {
-        GlStateManager.colorMask(true, true, true, false);
-        GuiDraw.drawRect(1, 1, 16, 16, getSlotHoverColor());
-        GlStateManager.colorMask(true, true, true, true);
-    }
-
-    public int getSlotHoverColor() {
-        WidgetTheme theme = getWidgetTheme(getContext().getTheme());
-        if (theme instanceof WidgetSlotTheme slotTheme) {
-            return slotTheme.getSlotHoverColor();
-        }
-        return ITheme.getDefault().getItemSlotTheme().getSlotHoverColor();
     }
 
     @Override
