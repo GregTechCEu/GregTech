@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.block.IStateHarvestLevel;
+import gregtech.api.block.IStateSoundType;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 
@@ -51,21 +52,27 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
         }
     }
 
-    public enum SteamCasingType implements IStringSerializable, IStateHarvestLevel {
+    public enum SteamCasingType implements IStringSerializable, IStateHarvestLevel, IStateSoundType {
 
         BRONZE_HULL("bronze_hull", 1),
         BRONZE_BRICKS_HULL("bronze_bricks_hull", 1),
         STEEL_HULL("steel_hull", 2),
         STEEL_BRICKS_HULL("steel_bricks_hull", 2),
-        PUMP_DECK("pump_deck", 1),
-        WOOD_WALL("wood_wall", 0);
+        PUMP_DECK("pump_deck", 1, SoundType.WOOD),
+        WOOD_WALL("wood_wall", 0, SoundType.WOOD);
 
         private final String name;
         private final int harvestLevel;
+        private final SoundType soundType;
 
-        SteamCasingType(String name, int harvestLevel) {
+        SteamCasingType(String name, int harvestLevel, SoundType soundType) {
             this.name = name;
             this.harvestLevel = harvestLevel;
+            this.soundType = soundType;
+        }
+
+        SteamCasingType(String name, int harvestLevel) {
+            this(name, harvestLevel, SoundType.METAL);
         }
 
         @Override
@@ -82,6 +89,12 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
         @Override
         public String getHarvestTool(IBlockState state) {
             return ToolClasses.WRENCH;
+        }
+
+        @NotNull
+        @Override
+        public SoundType getSoundType(@NotNull IBlockState state) {
+            return soundType;
         }
     }
 }

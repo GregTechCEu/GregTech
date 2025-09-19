@@ -1036,7 +1036,7 @@ public class GTUtility {
      * Attempts to collapse a {@link List} of {@link ItemStack}s by combining similar stacks downwards (towards index
      * 0). <br>
      * WARNING: Mutates original item stacks and list, you might want to make a new list with copies!
-     * 
+     *
      * @param stacks       the list to collapse
      * @param maxStackSize the max stack size of the to-be combined stack
      * @param removeEmpty  if true, will remove entries from the list if they're empty after collapsing
@@ -1146,5 +1146,11 @@ public class GTUtility {
      */
     public static void collapseFluidList(List<FluidStack> stacks) {
         collapseFluidList(stacks, Integer.MAX_VALUE, true);
+    }
+
+    public static boolean areFluidStacksEqual(@Nullable FluidStack a, @Nullable FluidStack b) {
+        if (a == b) return true;
+        if (a == null) return false;
+        return a.isFluidEqual(b);
     }
 }

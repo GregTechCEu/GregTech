@@ -12,6 +12,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -30,6 +31,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -126,5 +128,11 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
             return getWorld().isRemote || FluidUtil.interactWithFluidHandler(playerIn, hand, getFluidInventory());
         }
         return super.onRightClick(playerIn, hand, facing, hitResult);
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return SoundType.STONE;
     }
 }

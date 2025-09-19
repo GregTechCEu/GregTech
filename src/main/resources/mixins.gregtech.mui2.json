@@ -19,6 +19,8 @@
   ],
   "client": [
     "LangKeyMixin",
+    "ModularUIJeiPluginMixin",
+    "ItemSlotMixin",
     "ModularSyncManagerMixin"
   ],
   "server": []

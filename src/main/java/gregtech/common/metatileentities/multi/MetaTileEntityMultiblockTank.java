@@ -20,6 +20,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.mui.widget.GTFluidSlot;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -190,5 +191,11 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
             }
         }
         return super.getCapability(capability, side);
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return this.isMetal ? SoundType.METAL : SoundType.WOOD;
     }
 }

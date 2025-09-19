@@ -1,7 +1,13 @@
 package gregtech.api.util;
 
+import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
+import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
+
 import gregtech.mixins.jei.GuiIngredientGroupAccessor;
 
+import mezz.jei.Internal;
+
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -137,5 +143,24 @@ public class JEIUtil {
 
     private static Set<Integer> getInputIndexes(IGuiIngredientGroup<?> ingredientGroup) {
         return ((GuiIngredientGroupAccessor) ingredientGroup).getInputSlotIndexes();
+    }
+
+    /**
+     * Check if the player is currently hovering over a valid ingredient for this slot. <br/>
+     * Will always return false is JEI is not installed.
+     */
+    public static boolean hoveringOverIngredient(JeiGhostIngredientSlot<?> jeiGhostIngredientSlot) {
+        if (!Mods.JustEnoughItems.isModLoaded()) return false;
+        return ModularUIJeiPlugin.hoveringOverIngredient(jeiGhostIngredientSlot);
+    }
+
+    public static Object getBookStackIfEnchantment(Object ingredient) {
+        if (ingredient instanceof EnchantmentData enchantmentData) {
+            return Internal.getIngredientRegistry()
+                    .getIngredientHelper(enchantmentData)
+                    .getCheatItemStack(enchantmentData);
+        }
+
+        return ingredient;
     }
 }
