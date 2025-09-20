@@ -261,7 +261,19 @@ public class WrappedItemStack implements IAEItemStack, IWrappedStack<IAEItemStac
     @Override
     public boolean equals(Object other) {
         if (other instanceof IAEItemStack stack) {
-            return this.delegate.isItemEqual(stack.createItemStack());
+            ItemStack otherStack = stack.getCachedItemStack(stack.getStackSize());
+            NBTTagCompound thisTag = delegate.getTagCompound();
+            NBTTagCompound otherTag = otherStack.getTagCompound();
+
+            boolean nbtMatch;
+            if (thisTag == null) {
+                nbtMatch = otherTag == null;
+            } else {
+                // noinspection PointlessNullCheck
+                nbtMatch = otherTag != null && thisTag.equals(otherTag);
+            }
+
+            return this.delegate.isItemEqual(otherStack) && nbtMatch;
         } else if (other instanceof ItemStack itemStack) {
             return this.equals(itemStack);
         }
