@@ -74,6 +74,7 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
         Iterator<ItemStack> inputsIterator = itemInputs.iterator();
         while (inputsIterator.hasNext()) {
             ItemStack stack = inputsIterator.next();
+            if (stack == null) continue;
             if (IntCircuitIngredient.isIntegratedCircuit(stack)) {
                 inputsIterator.remove();
                 circuitValue = IntCircuitIngredient.getCircuitConfiguration(stack);

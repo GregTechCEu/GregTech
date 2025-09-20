@@ -3,12 +3,14 @@ package gregtech.api.recipes.ingredients;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
+import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -93,16 +95,14 @@ public class IntCircuitIngredient extends GTRecipeInput {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof IntCircuitIngredient)) return false;
-        IntCircuitIngredient other = (IntCircuitIngredient) obj;
+        if (!(obj instanceof IntCircuitIngredient other)) return false;
         return this.isConsumable == other.isConsumable && this.matchingConfigurations == other.matchingConfigurations;
     }
 
     @Override
     public boolean equalIgnoreAmount(GTRecipeInput input) {
         if (this == input) return true;
-        if (!(input instanceof IntCircuitIngredient)) return false;
-        IntCircuitIngredient other = (IntCircuitIngredient) input;
+        if (!(input instanceof IntCircuitIngredient other)) return false;
         return this.matchingConfigurations == other.matchingConfigurations;
     }
 
@@ -116,26 +116,22 @@ public class IntCircuitIngredient extends GTRecipeInput {
         return "1xcircuit(" + matchingConfigurations + ")";
     }
 
-    public static ItemStack getIntegratedCircuit(int configuration) {
+    public static @NotNull ItemStack getIntegratedCircuit(int configuration) {
         ItemStack stack = MetaItems.INTEGRATED_CIRCUIT.getStackForm();
         setCircuitConfiguration(stack, configuration);
         return stack;
     }
 
-    public static void setCircuitConfiguration(ItemStack itemStack, int configuration) {
+    public static void setCircuitConfiguration(@NotNull ItemStack itemStack, int configuration) {
         if (!MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack))
             throw new IllegalArgumentException("Given item stack is not an integrated circuit!");
         if (configuration < 0 || configuration > CIRCUIT_MAX)
             throw new IllegalArgumentException("Given configuration number is out of range!");
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
-        if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            itemStack.setTagCompound(tagCompound);
-        }
+        NBTTagCompound tagCompound = GTUtility.getOrCreateNbtCompound(itemStack);
         tagCompound.setInteger("Configuration", configuration);
     }
 
-    public static int getCircuitConfiguration(ItemStack itemStack) {
+    public static int getCircuitConfiguration(@NotNull ItemStack itemStack) {
         if (!isIntegratedCircuit(itemStack)) return 0;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -144,8 +140,7 @@ public class IntCircuitIngredient extends GTRecipeInput {
         return 0;
     }
 
-    public static boolean isIntegratedCircuit(@Nullable ItemStack itemStack) {
-        if (itemStack == null) return false;
+    public static boolean isIntegratedCircuit(@NotNull ItemStack itemStack) {
         boolean isCircuit = MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack);
         if (isCircuit && !itemStack.hasTagCompound()) {
             NBTTagCompound compound = new NBTTagCompound();
