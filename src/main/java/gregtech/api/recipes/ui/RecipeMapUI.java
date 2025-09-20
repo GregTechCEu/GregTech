@@ -16,6 +16,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.drawable.UITexture;
+import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -540,16 +541,15 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
     /* *********************** MUI 2 *********************** */
 
-    public ParentWidget<?> buildWidget(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems,
+    public ModularPanel constructPanel(ModularPanel panel, DoubleSupplier progressSupplier,
+                                       IItemHandlerModifiable importItems,
                                        IItemHandlerModifiable exportItems, FluidTankList importFluids,
                                        FluidTankList exportFluids, int yOffset, PanelSyncManager syncManager) {
         DoubleSyncValue progressValue = new DoubleSyncValue(progressSupplier);
 
-        ParentWidget<?> group = new ParentWidget<>()
-                .debugName("recipemapui.parent")
-                .size(176, 166 + yOffset);
+        panel.debugName("recipemapui.parent");
 
-        group.child(new RecipeProgressWidget()
+        panel.child(new RecipeProgressWidget()
                 .recipeMap(recipeMap)
                 .debugName("recipe.progress")
                 .size(20)
@@ -558,15 +558,15 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 .value(progressValue)
                 .texture(progressTexture, 20)
                 .direction(progressDirection));
-        addInventorySlotGroup(group, importItems, importFluids, false, yOffset);
-        addInventorySlotGroup(group, exportItems, exportFluids, true, yOffset);
+        addInventorySlotGroup(panel, importItems, importFluids, false, yOffset);
+        addInventorySlotGroup(panel, exportItems, exportFluids, true, yOffset);
         if (specialDrawableTexture != null) {
-            group.child(specialDrawableTexture.asWidget()
+            panel.child(specialDrawableTexture.asWidget()
                     .debugName("special_texture")
                     .pos(specialTexturePosition.x(), specialTexturePosition.y())
                     .size(specialTexturePosition.w(), specialTexturePosition.h()));
         }
-        return group;
+        return panel;
     }
 
     protected void addInventorySlotGroup(@NotNull ParentWidget<?> group,

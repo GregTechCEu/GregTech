@@ -14,15 +14,11 @@ import gregtech.api.cover.Cover;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -506,13 +502,12 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         }
 
         ModularPanel panel = GTGuis.createPanel(this, 176, 166 + yOffset);
-        Widget<?> widget = workableRecipeMap.getRecipeMapUI().buildWidget(workable::getProgressPercent, importItems,
-                exportItems, importFluids, exportFluids, yOffset, guiSyncManager);
 
         BooleanSyncValue hasEnergy = new BooleanSyncValue(workable::isHasNotEnoughEnergy);
         guiSyncManager.syncValue("has_energy", hasEnergy);
 
-        panel.child(widget)
+        workableRecipeMap.getRecipeMapUI().constructPanel(panel, workable::getProgressPercent,
+                importItems, exportItems, importFluids, exportFluids, yOffset, guiSyncManager)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(chargerInventory, 0))
@@ -558,7 +553,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                     .background(GTGuiTextures.getLogo(getUITheme())));
 
             if (hasGhostCircuitInventory() && circuitInventory != null) {
-                panel.child(new gregtech.api.mui.widget.GhostCircuitSlotWidget()
+                panel.child(new GhostCircuitSlotWidget()
                         .pos(124, 62 + yOffset)
                         .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY));
@@ -584,38 +579,42 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         ModularUI.Builder builder = workableRecipeMap.getRecipeMapUI()
                 .createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids,
                         yOffset)
-                .widget(new LabelWidget(5, 5, getMetaFullName()))
-                .widget(new SlotWidget(chargerInventory, 0, 79, 62 + yOffset, true, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY)
-                        .setTooltipText("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
-                                GTValues.VNF[getTier()]))
-                .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_ENERGY).setIgnoreColor(true)
-                        .setPredicate(workable::isHasNotEnoughEnergy))
+                .widget(new gregtech.api.gui.widgets.LabelWidget(5, 5, getMetaFullName()))
+                .widget(new gregtech.api.gui.widgets.SlotWidget(chargerInventory, 0, 79, 62 + yOffset, true, true,
+                        false)
+                                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY)
+                                .setTooltipText("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
+                                        GTValues.VNF[getTier()]))
+                .widget(new gregtech.api.gui.widgets.ImageWidget(79, 42 + yOffset, 18, 18,
+                        GuiTextures.INDICATOR_NO_ENERGY).setIgnoreColor(true)
+                                .setPredicate(workable::isHasNotEnoughEnergy))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
         int leftButtonStartX = 7;
 
         if (exportItems.getSlots() > 0) {
-            builder.widget(new ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
+            builder.widget(new gregtech.api.gui.widgets.ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
                     GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
                             .setTooltipText("gregtech.gui.item_auto_output.tooltip")
                             .shouldUseBaseBackground());
             leftButtonStartX += 18;
         }
         if (exportFluids.getTanks() > 0) {
-            builder.widget(new ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
+            builder.widget(new gregtech.api.gui.widgets.ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
                     GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
                             .setTooltipText("gregtech.gui.fluid_auto_output.tooltip")
                             .shouldUseBaseBackground());
         }
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
-            ImageWidget logo = new ImageWidget(152, 63 + yOffset, 17, 17,
+            gregtech.api.gui.widgets.ImageWidget logo = new gregtech.api.gui.widgets.ImageWidget(152, 63 + yOffset, 17,
+                    17,
                     GTValues.XMAS.get() ? getXmasLogo() : getLogo()).setIgnoreColor(true);
 
             if (this.circuitInventory != null) {
-                SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62 + yOffset)
-                        .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
+                gregtech.api.gui.widgets.SlotWidget circuitSlot = new gregtech.api.gui.widgets.GhostCircuitSlotWidget(
+                        circuitInventory, 0, 124, 62 + yOffset)
+                                .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
                 builder.widget(circuitSlot.setConsumer(this::getCircuitSlotTooltip)).widget(logo);
             }
         }
@@ -641,7 +640,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
     }
 
     // Method provided to override
-    protected void getCircuitSlotTooltip(SlotWidget widget) {
+    protected void getCircuitSlotTooltip(gregtech.api.gui.widgets.SlotWidget widget) {
         String configString;
         if (circuitInventory == null || circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
             configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();

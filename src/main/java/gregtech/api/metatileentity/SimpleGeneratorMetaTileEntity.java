@@ -152,10 +152,8 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
         }
 
         ModularPanel panel = GTGuis.createPanel(this, 176, 166 + yOffset);
-        Widget<?> widget = workableRecipeMap.getRecipeMapUI().buildWidget(workable::getProgressPercent, importItems,
-                exportItems, importFluids, exportFluids, yOffset, guiSyncManager);
-
-        panel.child(widget)
+        workableRecipeMap.getRecipeMapUI().constructPanel(panel, workable::getProgressPercent,
+                importItems, exportItems, importFluids, exportFluids, yOffset, guiSyncManager)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .bindPlayerInventory();
 

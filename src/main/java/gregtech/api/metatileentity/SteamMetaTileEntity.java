@@ -40,7 +40,6 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widget.Widget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -148,10 +147,8 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
 
         ModularPanel modularPanel = GTGuis.defaultPanel(this);
 
-        Widget<?> widget = map.getRecipeMapUI().buildWidget(workableHandler::getProgressPercent, importItems,
-                exportItems, EMPTY, exportFluids, 0, guiSyncManager);
-
-        modularPanel.child(widget)
+        map.getRecipeMapUI().constructPanel(modularPanel, workableHandler::getProgressPercent,
+                importItems, exportItems, EMPTY, exportFluids, 0, guiSyncManager)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .bindPlayerInventory();
 
