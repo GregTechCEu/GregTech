@@ -18,6 +18,7 @@ import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.HoveredWidgetList;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.ScrollArea;
@@ -172,6 +173,17 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
                 this.builder.accept(this.text);
             }
             this.dirty = false;
+        }
+        // center and bottom alignments cause issues with the text renderer
+        // when drawing in a scrolling context
+        // they draw the text higher than expected
+        if (this.text.getAlignment().y > 0f) { // not top
+            int type = (int) (this.text.getAlignment().x * 2);
+            switch (type) {
+                case 1 -> this.text.alignment(Alignment.TopCenter);
+                case 2 -> this.text.alignment(Alignment.TopRight);
+                default -> this.text.alignment(Alignment.TopLeft);
+            }
         }
         this.text.setupRenderer(this.renderer, getArea().getPadding().left, getArea().getPadding().top - getScrollY(),
                 getArea().paddedWidth(), getArea().paddedHeight(),
