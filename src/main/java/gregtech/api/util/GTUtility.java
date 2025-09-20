@@ -1095,23 +1095,6 @@ public class GTUtility {
                                          @Range(from = 1, to = Integer.MAX_VALUE) int maxStackSize,
                                          boolean removeEmpty) {
         stacks.removeIf(Objects::isNull);
-        // TODO: replace with FluidStackHashStrategy once the MUI2 Multi PR merges
-        Hash.Strategy<FluidStack> stackStrategy = new Hash.Strategy<>() {
-
-            @Override
-            public int hashCode(FluidStack o) {
-                // don't need to do this since I'll only call equals
-                return 0;
-            }
-
-            @Override
-            public boolean equals(FluidStack a, FluidStack b) {
-                if (a == null) return b == null;
-                if (b == null) return false;
-
-                return a.getFluid() == b.getFluid() && Objects.equals(a.tag, b.tag);
-            }
-        };
 
         for (int checkingSlot = 0; checkingSlot < stacks.size(); checkingSlot++) {
             FluidStack stackToCheck = stacks.get(checkingSlot);
@@ -1121,7 +1104,7 @@ public class GTUtility {
                 FluidStack collapsingStack = stacks.get(collapsingSlot);
                 if (collapsingStack.amount < 1) continue;
 
-                if (stackStrategy.equals(stackToCheck, collapsingStack)) {
+                if (FluidStackHashStrategy.comparingAllButAmount().equals(stackToCheck, collapsingStack)) {
                     final int checkingSize = stackToCheck.amount;
                     final int collapsingSize = collapsingStack.amount;
 
