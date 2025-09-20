@@ -40,7 +40,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     private Object lastIngredient;
 
     private final ScrollArea scroll = new ScrollArea();
-    private final TextRenderer renderer = new TextRenderer();
+    private final TextRenderer renderer = new ScrollingTextRenderer();
 
     public ScrollableTextWidget() {
         listenGuiAction((IGuiAction.MouseReleased) mouseButton -> {
@@ -174,17 +174,6 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
             }
             this.dirty = false;
         }
-        // center and bottom alignments cause issues with the text renderer
-        // when drawing in a scrolling context
-        // they draw the text higher than expected
-        if (this.text.getAlignment().y > 0f) { // not top
-            int type = (int) (this.text.getAlignment().x * 2);
-            switch (type) {
-                case 1 -> this.text.alignment(Alignment.TopCenter);
-                case 2 -> this.text.alignment(Alignment.TopRight);
-                default -> this.text.alignment(Alignment.TopLeft);
-            }
-        }
         this.text.setupRenderer(this.renderer, getArea().getPadding().left, getArea().getPadding().top - getScrollY(),
                 getArea().paddedWidth(), getArea().paddedHeight(),
                 getWidgetTheme(context.getTheme()).getTextColor(),
@@ -239,5 +228,21 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     @Override
     public @Nullable Object getIngredient() {
         return this.lastIngredient;
+    }
+
+    public static class ScrollingTextRenderer extends TextRenderer {
+
+        public int getLastY() {
+            return (int) lastY;
+        }
+
+        public int getLastX() {
+            return (int) lastX;
+        }
+
+        @Override
+        protected int getStartY(float height) {
+            return this.y; // always draw at the top
+        }
     }
 }
