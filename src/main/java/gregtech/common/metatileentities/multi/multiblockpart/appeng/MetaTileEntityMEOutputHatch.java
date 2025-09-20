@@ -72,7 +72,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEF
                     FluidTooltipUtil.handleFluidTooltip(tooltip, stack);
                 }));
         text.space();
-        text.addLine(KeyUtil.number(TextFormatting.WHITE, wrappedStack.getStackSize(), "x"));
+        text.addLine(KeyUtil.number(TextFormatting.WHITE, wrappedStack.getStackSize(), "L"));
     }
 
     @Override
