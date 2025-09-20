@@ -118,7 +118,9 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
                 .child(IKey.lang(() -> onlineSync.getBoolValue() ?
                         "gregtech.gui.me_network.online" : "gregtech.gui.me_network.offline")
                         .asWidget()
-                        .pos(5, 15))
+                        .marginLeft(5)
+                        .widthRel(1.0f)
+                        .top(15))
                 .child(textList.pos(9, 25 + 4)
                         .size(158, 18 * 4 - 6)
                         .textBuilder(text -> bufferSync.cacheForEach(stack -> addStackLine(text, stack)))

@@ -254,7 +254,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostableChannelPar
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
                 .child(IKey.lang(() -> isOnline() ? "gregtech.gui.me_network.online" :
                         "gregtech.gui.me_network.offline")
-                        .asWidget().pos(5, 15))
+                        .asWidget()
+                        .marginLeft(5)
+                        .widthRel(1.0f)
+                        .top(15))
                 .child(configGrid)
                 .child(new Grid()
                         .pos(7 + 18 * 5, 25)
