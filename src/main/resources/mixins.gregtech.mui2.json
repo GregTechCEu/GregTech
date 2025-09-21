@@ -21,7 +21,8 @@
     "LangKeyMixin",
     "ModularUIJeiPluginMixin",
     "ItemSlotMixin",
-    "ModularSyncManagerMixin"
+    "ModularSyncManagerMixin",
+    "MCHelperMixin"
   ],
   "server": []
 }
