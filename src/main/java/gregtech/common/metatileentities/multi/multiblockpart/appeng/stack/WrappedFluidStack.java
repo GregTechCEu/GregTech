@@ -61,11 +61,6 @@ public class WrappedFluidStack implements IAEFluidStack, IWrappedStack<IAEFluidS
         return aeFluidStack;
     }
 
-    @NotNull
-    public FluidStack getDelegate() {
-        return this.delegate;
-    }
-
     @Override
     public FluidStack getFluidStack() {
         return this.delegate.copy();

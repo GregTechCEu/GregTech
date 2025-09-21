@@ -21,14 +21,14 @@ class AEFluidStackPreviewWidget extends AEStackPreviewWidget<IAEFluidStack> {
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
         if (stackToDraw.get() instanceof WrappedFluidStack wrappedFluidStack) {
-            KeyUtil.fluidInfo(wrappedFluidStack.getDelegate(), tooltip, false, true, false);
+            KeyUtil.fluidInfo(wrappedFluidStack.getDefinition(), tooltip, false, true, false);
         }
     }
 
     @Override
     public void draw(@Nullable IAEFluidStack stackToDraw, int x, int y, int width, int height) {
         if (stackToDraw instanceof WrappedFluidStack wrappedFluidStack) {
-            GuiDraw.drawFluidTexture(wrappedFluidStack.getDelegate(), x, y, width, height, 0.0f);
+            GuiDraw.drawFluidTexture(wrappedFluidStack.getDefinition(), x, y, width, height, 0.0f);
         }
     }
 

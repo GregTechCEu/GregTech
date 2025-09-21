@@ -97,7 +97,7 @@ public class ExportOnlyAEFluidSlot extends ExportOnlyAESlot<IAEFluidStack>
     @Override
     public FluidStack getFluid() {
         if (this.stock instanceof WrappedFluidStack wrappedFluidStack) {
-            return wrappedFluidStack.getDelegate();
+            return wrappedFluidStack.getDefinition();
         }
         return null;
     }

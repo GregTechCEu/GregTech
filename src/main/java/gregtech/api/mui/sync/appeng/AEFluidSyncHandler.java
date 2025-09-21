@@ -51,7 +51,7 @@ public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
     public boolean isStackValidForSlot(int index, @Nullable IAEFluidStack stack) {
         if (stack == null) return true;
         if (!isStocking) return true;
-        return !fluidList.hasStackInConfig(((WrappedFluidStack) stack).getDelegate(), true);
+        return !fluidList.hasStackInConfig(((WrappedFluidStack) stack).getDefinition(), true);
     }
 
     @Override

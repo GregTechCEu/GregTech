@@ -7,9 +7,8 @@ import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
-import net.minecraftforge.fluids.FluidStack;
-
 import appeng.api.storage.data.IAEFluidStack;
+import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -26,9 +25,9 @@ public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
 
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        IAEFluidStack stock = getSyncHandler().getStock(index);
+        WrappedFluidStack stock = (WrappedFluidStack) getSyncHandler().getStock(index);
         if (stock != null) {
-            KeyUtil.fluidInfo(((WrappedFluidStack) stock).getDelegate(), tooltip);
+            KeyUtil.fluidInfo(stock.getDefinition(), tooltip);
         }
     }
 
@@ -44,14 +43,14 @@ public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
 
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        IAEFluidStack stock = getSyncHandler().getStock(index);
+        WrappedFluidStack stock = (WrappedFluidStack) getSyncHandler().getStock(index);
         if (stock != null) {
-            FluidStack stack = ((WrappedFluidStack) stock).getDelegate();
-            RenderUtil.drawFluidForGui(stack, stack.amount, 1, 1, 17, 17);
-
-            String amount = TextFormattingUtil.formatLongToCompactString(stack.amount, 4);
-            RenderUtil.renderTextFixedCorner(amount, 17d, 18d, 0xFFFFFF, true, 0.5f);
+            GuiDraw.drawFluidTexture(stock.getDefinition(), 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
+            RenderUtil.renderTextFixedCorner(TextFormattingUtil.formatLongToCompactString(stock.getStackSize(), 4), 17d,
+                    18d, 0xFFFFFF, true, 0.5f);
         }
+
+        RenderUtil.handleSlotOverlay(this, widgetTheme);
     }
 
     @Override

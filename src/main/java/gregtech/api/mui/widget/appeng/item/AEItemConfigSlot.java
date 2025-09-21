@@ -6,6 +6,7 @@ import gregtech.api.mui.widget.appeng.AEConfigSlot;
 import gregtech.api.mui.widget.appeng.AEStackPreviewWidget;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.item.ItemStack;
 
@@ -36,11 +37,11 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
         IAEItemStack config = getSyncHandler().getConfig(index);
-        if (config == null) {
-            super.buildTooltip(tooltip);
-        } else {
+        if (config != null) {
             tooltip.addFromItem(config.createItemStack());
         }
+
+        super.buildTooltip(tooltip);
     }
 
     @Override
@@ -55,17 +56,12 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
 
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        IAEItemStack config = getSyncHandler().getConfig(index);
+        WrappedItemStack config = (WrappedItemStack) getSyncHandler().getConfig(index);
         if (config != null) {
-            ItemStack stack = config.createItemStack(); // have to copy the stack here since the count is set to 1
-            if (!stack.isEmpty()) {
-                stack.setCount(1);
-                RenderUtil.renderItem(stack, 1, 1, 16f, 16f);
-            }
-
+            RenderUtil.renderItem(config.getDefinition(), 1, 1, 16f, 16f);
             if (!isStocking) {
-                String amount = TextFormattingUtil.formatLongToCompactString(config.getStackSize(), 4);
-                RenderUtil.renderTextFixedCorner(amount, 17d, 18d, 0xFFFFFF, true, 0.5f);
+                RenderUtil.renderTextFixedCorner(TextFormattingUtil.formatLongToCompactString(config.getStackSize(), 4),
+                        17d, 18d, 0xFFFFFF, true, 0.5f);
             }
         }
 

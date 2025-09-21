@@ -15,6 +15,7 @@ import net.minecraftforge.fluids.FluidUtil;
 
 import appeng.api.storage.data.IAEFluidStack;
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
@@ -42,11 +43,11 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
         IAEFluidStack config = getSyncHandler().getConfig(index);
-        if (config == null) {
-            super.buildTooltip(tooltip);
-        } else {
-            KeyUtil.fluidInfo(((WrappedFluidStack) config).getDelegate(), tooltip, false, true, true);
+        if (config != null) {
+            KeyUtil.fluidInfo(((WrappedFluidStack) config).getDefinition(), tooltip, false, true, true);
         }
+
+        super.buildTooltip(tooltip);
     }
 
     @Override
@@ -61,14 +62,12 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
 
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        IAEFluidStack config = getSyncHandler().getConfig(index);
+        WrappedFluidStack config = (WrappedFluidStack) getSyncHandler().getConfig(index);
         if (config != null) {
-            FluidStack stack = ((WrappedFluidStack) config).getDelegate();
-            RenderUtil.drawFluidForGui(stack, stack.amount, 1, 1, 17, 17);
-
+            GuiDraw.drawFluidTexture(config.getDefinition(), 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
             if (!isStocking) {
-                String amount = TextFormattingUtil.formatLongToCompactString(stack.amount, 4);
-                RenderUtil.renderTextFixedCorner(amount, 17d, 18d, 0xFFFFFF, true, 0.5f);
+                RenderUtil.renderTextFixedCorner(TextFormattingUtil.formatLongToCompactString(config.getStackSize(), 4),
+                        17d, 18d, 0xFFFFFF, true, 0.5f);
             }
         }
 

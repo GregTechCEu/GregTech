@@ -54,8 +54,6 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
     }
 
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        tooltip.addLine(IKey.lang("gregtech.gui.config_slot"));
-
         if (isAutoPull.getAsBoolean()) {
             tooltip.add(I18n.format("gregtech.gui.config_slot.auto_pull_managed"));
         } else {
