@@ -1,5 +1,8 @@
 package gregtech.api.mui.widget.appeng.fluid;
 
+import com.cleanroommc.modularui.drawable.text.TextRenderer;
+import com.cleanroommc.modularui.utils.Color;
+
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
 import gregtech.api.mui.widget.appeng.AEConfigSlot;
@@ -10,10 +13,12 @@ import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
 import appeng.api.storage.data.IAEFluidStack;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
@@ -42,9 +47,14 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
 
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        IAEFluidStack config = getSyncHandler().getConfig(index);
+        WrappedFluidStack config = (WrappedFluidStack) getSyncHandler().getConfig(index);
         if (config != null) {
-            KeyUtil.fluidInfo(((WrappedFluidStack) config).getDefinition(), tooltip, false, true, true);
+            KeyUtil.fluidInfo(config.getDefinition(), tooltip, false, true, true);
+            tooltip.addLine(IKey.str("§9§oMod Name Here§r"));
+            tooltip.addLine((context, x, y, width, height, widgetTheme) -> {
+                final int color = Color.GREY.darker(2);
+                codechicken.lib.gui.GuiDraw.drawRect(x, y + 3, (int) TextRenderer.SHARED.getLastWidth(), 2, color);
+            });
         }
 
         super.buildTooltip(tooltip);

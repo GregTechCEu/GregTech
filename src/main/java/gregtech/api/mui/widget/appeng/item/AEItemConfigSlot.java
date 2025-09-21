@@ -1,5 +1,13 @@
 package gregtech.api.mui.widget.appeng.item;
 
+import codechicken.lib.gui.GuiDraw;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+
+import com.cleanroommc.modularui.drawable.text.TextRenderer;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+
+import com.cleanroommc.modularui.utils.Color;
+
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
 import gregtech.api.mui.widget.appeng.AEConfigSlot;
@@ -11,11 +19,15 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.Wrappe
 import net.minecraft.item.ItemStack;
 
 import appeng.api.storage.data.IAEItemStack;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
+
+import net.minecraft.util.text.TextFormatting;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,9 +48,14 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
 
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        IAEItemStack config = getSyncHandler().getConfig(index);
+        WrappedItemStack config = (WrappedItemStack) getSyncHandler().getConfig(index);
         if (config != null) {
-            tooltip.addFromItem(config.createItemStack());
+            tooltip.addFromItem(config.getDefinition());
+            tooltip.addLine(IKey.str("§9§oMod Name Here§r"));
+            tooltip.addLine((context, x, y, width, height, widgetTheme) -> {
+                final int color = Color.GREY.darker(2);
+                GuiDraw.drawRect(x, y + 3, (int) TextRenderer.SHARED.getLastWidth(), 2, color);
+            });
         }
 
         super.buildTooltip(tooltip);
