@@ -19,7 +19,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IExportOnlyAEStackList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.client.resources.I18n;
@@ -80,7 +79,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
     }
 
     @Override
-    protected @NotNull IExportOnlyAEStackList<IAEItemStack> initializeAEHandler() {
+    protected @NotNull ExportOnlyAEItemList initializeAEHandler() {
         return new ExportOnlyAEItemList(this, CONFIG_SIZE, this.getController());
     }
 

@@ -69,6 +69,7 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
         super.initializeInventory();
         this.aeHandler = initializeAEHandler();
         this.circuitInventory = new GhostCircuitItemStackHandler(this);
+        this.importItems = circuitInventory;
     }
 
     protected abstract @NotNull IExportOnlyAEStackList<AEStackType> initializeAEHandler();
@@ -307,19 +308,6 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
                         .right(5)
                         .top(7)
                         .overlay(IKey.str("x")));
-    }
-
-    @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
-        super.addToMultiBlock(controllerBase);
-        circuitInventory.addNotifiableMetaTileEntity(controllerBase);
-        circuitInventory.addToNotifiedList(this, circuitInventory, false);
-    }
-
-    @Override
-    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
-        super.removeFromMultiBlock(controllerBase);
-        circuitInventory.removeNotifiableMetaTileEntity(controllerBase);
     }
 
     @Override
