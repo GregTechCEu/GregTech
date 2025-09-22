@@ -1,7 +1,7 @@
 package gregtech.api.mui.widget.appeng.fluid;
 
 import gregtech.api.mui.widget.appeng.AEStackPreviewWidget;
-import gregtech.api.util.KeyUtil;
+import gregtech.api.util.FluidTooltipUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import appeng.api.storage.data.IAEFluidStack;
@@ -21,7 +21,7 @@ class AEFluidStackPreviewWidget extends AEStackPreviewWidget<IAEFluidStack> {
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
         if (stackToDraw.get() instanceof WrappedFluidStack wrappedFluidStack) {
-            KeyUtil.fluidInfo(wrappedFluidStack.getDefinition(), tooltip, false, true, false);
+            FluidTooltipUtil.fluidInfo(wrappedFluidStack.getDefinition(), tooltip, false, true, false);
         }
     }
 

@@ -9,7 +9,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.screen.RichTooltip;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -145,28 +144,5 @@ public class KeyUtil {
         }
         if (stack == null) return IKey.lang(fluid.getUnlocalizedName());
         else return IKey.lang(fluid.getUnlocalizedName(stack));
-    }
-
-    public static void fluidInfo(@Nullable FluidStack stack, @NotNull RichTooltip tooltip, boolean showAmount,
-                                 boolean showTooltip, boolean showMolAmount) {
-        if (stack == null) return;
-
-        tooltip.addLine(fluid(stack));
-
-        if (showAmount) {
-            tooltip.addLine(IKey.str("%,d L", stack.amount));
-        }
-
-        if (showTooltip) {
-            FluidTooltipUtil.handleFluidTooltip(tooltip, stack);
-        }
-
-        if (showMolAmount) {
-            FluidTooltipUtil.addIngotMolFluidTooltip(tooltip, stack);
-        }
-    }
-
-    public static void fluidInfo(@Nullable FluidStack stack, @NotNull RichTooltip tooltip) {
-        fluidInfo(stack, tooltip, true, true, true);
     }
 }

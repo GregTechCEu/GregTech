@@ -253,14 +253,15 @@ public class GTFluidSyncHandler extends SyncHandler {
         if (tankFluid == null) {
             tankFluid = getLockedFluid();
         }
+        if (tankFluid == null) return;
 
-        if (tankFluid != null) {
-            FluidTooltipUtil.handleFluidTooltip(tooltip, tankFluid);
+        FluidTooltipUtil.handleFluidTooltip(tooltip, tankFluid);
 
-            if (showAmountInTooltip()) {
-                FluidTooltipUtil.addIngotMolFluidTooltip(tooltip, tankFluid);
-            }
+        if (showAmountInTooltip()) {
+            FluidTooltipUtil.addIngotMolFluidTooltip(tooltip, tankFluid);
         }
+
+        tooltip.add(FluidTooltipUtil.getFluidModName(tankFluid));
     }
 
     @Override

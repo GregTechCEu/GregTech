@@ -2,10 +2,13 @@ package gregtech.api.mui.widget.appeng.fluid;
 
 import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
 import gregtech.api.mui.widget.appeng.AEDisplaySlot;
+import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
+
+import net.minecraftforge.fluids.FluidStack;
 
 import appeng.api.storage.data.IAEFluidStack;
 import com.cleanroommc.modularui.drawable.GuiDraw;
@@ -27,7 +30,10 @@ public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
         WrappedFluidStack stock = (WrappedFluidStack) getSyncHandler().getStock(index);
         if (stock != null) {
-            KeyUtil.fluidInfo(stock.getDefinition(), tooltip);
+            FluidStack stack = stock.getDefinition();
+            tooltip.addLine(KeyUtil.fluid(stack));
+            FluidTooltipUtil.fluidInfo(stack, tooltip);
+            tooltip.addLine(FluidTooltipUtil.getFluidModNameKey(stack));
         }
     }
 
