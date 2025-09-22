@@ -11,6 +11,8 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
+import gregtech.api.mui.sync.appeng.AESyncHandler;
 import gregtech.api.mui.widget.appeng.item.AEItemConfigSlot;
 import gregtech.api.mui.widget.appeng.item.AEItemDisplaySlot;
 import gregtech.api.util.GTUtility;
@@ -113,6 +115,11 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
                 notifiable.removeNotifiableMetaTileEntity(controllerBase);
             }
         }
+    }
+
+    @Override
+    protected @NotNull AESyncHandler<IAEItemStack> createAESyncHandler() {
+        return new AEItemSyncHandler(getAEHandler(), this::markDirty, circuitInventory::setCircuitValue);
     }
 
     @Override

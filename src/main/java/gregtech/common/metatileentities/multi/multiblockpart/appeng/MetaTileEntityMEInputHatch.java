@@ -8,6 +8,8 @@ import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
+import gregtech.api.mui.sync.appeng.AESyncHandler;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidConfigSlot;
 import gregtech.api.mui.widget.appeng.fluid.AEFluidDisplaySlot;
 import gregtech.client.renderer.texture.Textures;
@@ -39,6 +41,7 @@ import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.Arrays;
 import java.util.List;
@@ -71,6 +74,22 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityMEInputBase<IAEFlu
     @Override
     public @NotNull ExportOnlyAEFluidList getAEHandler() {
         return (ExportOnlyAEFluidList) aeHandler;
+    }
+
+    @Override
+    protected @NotNull AESyncHandler<IAEFluidStack> createAESyncHandler() {
+        return new AEFluidSyncHandler(getAEHandler(), this::markDirty, circuitInventory::setCircuitValue);
+    }
+
+    @Override
+    protected @NotNull Widget<?> createMainColumnWidget(@Range(from = 0, to = 3) int index, @NotNull PosGuiData guiData,
+                                                        @NotNull PanelSyncManager panelSyncManager) {
+        return switch (index) {
+            case 2 -> new Widget<>()
+                    .size(18);
+            case 3 -> createGhostCircuitWidget();
+            default -> super.createMainColumnWidget(index, guiData, panelSyncManager);
+        };
     }
 
     @Override

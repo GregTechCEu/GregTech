@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
+import gregtech.api.mui.sync.appeng.AESyncHandler;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -146,10 +147,14 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
         return true;
     }
 
+    protected abstract @NotNull AESyncHandler<AEStackType> createAESyncHandler();
+
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         ModularPanel mainPanel = GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94);
         final boolean isStocking = getAEHandler().isStocking();
+
+        panelSyncManager.syncValue(SYNC_HANDLER_NAME, 0, createAESyncHandler());
 
         return mainPanel.child(IKey.lang(getMetaFullName())
                 .asWidget()
@@ -191,12 +196,17 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
                                                         @NotNull PanelSyncManager panelSyncManager) {
         return switch (index) {
             case 1 -> GTGuiTextures.ARROW_DOUBLE.asWidget();
-            case 2 -> new GhostCircuitSlotWidget()
-                    .slot(SyncHandlers.itemSlot(circuitInventory, 0))
-                    .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY);
+            case 2 -> createGhostCircuitWidget();
             default -> new Widget<>()
                     .size(18);
         };
+    }
+
+    protected @NotNull GhostCircuitSlotWidget createGhostCircuitWidget() {
+        // Grrr generics .background only returns ItemSlot
+        return (GhostCircuitSlotWidget) new GhostCircuitSlotWidget()
+                .slot(SyncHandlers.itemSlot(circuitInventory, 0))
+                .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY);
     }
 
     protected Widget<?> getSettingWidget(@NotNull PosGuiData guiData, @NotNull PanelSyncManager guiSyncManager) {
