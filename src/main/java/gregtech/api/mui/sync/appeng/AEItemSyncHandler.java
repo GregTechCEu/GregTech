@@ -25,17 +25,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.IntConsumer;
 
 public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
 
     protected final ExportOnlyAEItemList itemList;
-    protected final GhostCircuitItemStackHandler ghostCircuitHandler;
 
     public AEItemSyncHandler(ExportOnlyAEItemList itemList, @Nullable Runnable dirtyNotifier,
-                             @NotNull GhostCircuitItemStackHandler ghostCircuitHandler) {
-        super(itemList.getInventory(), itemList.isStocking(), dirtyNotifier);
+                             @NotNull IntConsumer circuitChangeConsumer) {
+        super(itemList.getInventory(), itemList.isStocking(), dirtyNotifier, circuitChangeConsumer);
         this.itemList = itemList;
-        this.ghostCircuitHandler = ghostCircuitHandler;
     }
 
     @Override
@@ -76,11 +75,12 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
             ItemStack stack = inputsIterator.next();
             if (stack == null) continue;
             if (IntCircuitIngredient.isIntegratedCircuit(stack)) {
-                inputsIterator.remove();
                 circuitValue = IntCircuitIngredient.getCircuitConfiguration(stack);
+                inputsIterator.remove();
+                break;
             }
         }
-        setGhostCircuit(circuitValue);
+        ghostCircuitConfig.accept(circuitValue);
 
         int lastSlotIndex;
         for (lastSlotIndex = 0; lastSlotIndex < itemInputs.size(); lastSlotIndex++) {
@@ -95,9 +95,5 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
     @SideOnly(Side.CLIENT)
     public void setConfig(int index, @Nullable ItemStack stack) {
         setConfig(index, WrappedItemStack.fromItemStack(stack));
-    }
-
-    protected void setGhostCircuit(int circuitValue) {
-        ghostCircuitHandler.setCircuitValue(circuitValue);
     }
 }

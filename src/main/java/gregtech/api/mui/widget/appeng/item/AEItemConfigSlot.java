@@ -26,7 +26,7 @@ import java.util.function.BooleanSupplier;
 
 public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiGhostIngredientSlot<ItemStack> {
 
-    public AEItemConfigSlot(boolean isStocking, int index, BooleanSupplier isAutoPull) {
+    public AEItemConfigSlot(boolean isStocking, int index, @NotNull BooleanSupplier isAutoPull) {
         super(isStocking, index, isAutoPull);
         tooltipAutoUpdate(true);
     }

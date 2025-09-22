@@ -32,7 +32,7 @@ import java.util.function.BooleanSupplier;
 public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
                                implements Interactable, JeiGhostIngredientSlot<FluidStack> {
 
-    public AEFluidConfigSlot(boolean isStocking, int index, BooleanSupplier isAutoPull) {
+    public AEFluidConfigSlot(boolean isStocking, int index, @NotNull BooleanSupplier isAutoPull) {
         super(isStocking, index, isAutoPull);
         tooltipAutoUpdate(true);
     }

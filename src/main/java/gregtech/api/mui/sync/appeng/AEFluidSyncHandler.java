@@ -1,6 +1,8 @@
 package gregtech.api.mui.sync.appeng;
 
+import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.mui.GTByteBufAdapters;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.JEIUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
@@ -8,6 +10,7 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportO
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -22,13 +25,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntConsumer;
 
 public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
 
     protected final ExportOnlyAEFluidList fluidList;
 
-    public AEFluidSyncHandler(ExportOnlyAEFluidList fluidList, @Nullable Runnable dirtyNotifier) {
-        super(fluidList.getInventory(), fluidList.isStocking(), dirtyNotifier);
+    public AEFluidSyncHandler(ExportOnlyAEFluidList fluidList, @Nullable Runnable dirtyNotifier,
+                              @NotNull IntConsumer circuitChangeConsumer) {
+        super(fluidList.getInventory(), fluidList.isStocking(), dirtyNotifier, circuitChangeConsumer);
         this.fluidList = fluidList;
     }
 
@@ -70,6 +75,17 @@ public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
             setConfig(lastSlotIndex, newConfig);
         }
         clearConfigFrom(lastSlotIndex);
+
+        Int2ObjectMap<ItemStack> itemInputs = JEIUtil.getDisplayedInputItemStacks(recipeLayout.getItemStacks(), false,
+                false);
+        int circuitValue = GhostCircuitItemStackHandler.NO_CONFIG;
+        for (ItemStack inputStack : itemInputs.values()) {
+            if (IntCircuitIngredient.isIntegratedCircuit(inputStack)) {
+                circuitValue = IntCircuitIngredient.getCircuitConfiguration(inputStack);
+                break;
+            }
+        }
+        ghostCircuitConfig.accept(circuitValue);
 
         return null;
     }

@@ -40,6 +40,12 @@ public class ExportOnlyAEFluidSlot extends ExportOnlyAESlot<IAEFluidStack>
     }
 
     @Override
+    public void decrementStock(long amount) {
+        if (stock == null) return;
+        stock.decStackSize(amount);
+    }
+
+    @Override
     public IAEFluidStack requestStack() {
         IAEFluidStack result = super.requestStack();
         if (result instanceof WrappedFluidStack) {

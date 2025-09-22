@@ -29,6 +29,7 @@ import appeng.api.storage.data.IItemList;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -38,6 +39,7 @@ import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -64,7 +66,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     }
 
     @Override
-    protected ExportOnlyAEStockingFluidList getAEFluidHandler() {
+    public @NotNull ExportOnlyAEStockingFluidList getAEHandler() {
         if (this.aeFluidHandler == null) {
             this.aeFluidHandler = new ExportOnlyAEStockingFluidList(this, CONFIG_SIZE, getController());
         }
@@ -78,10 +80,10 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
             // Immediately clear cached fluids if the status changed, to prevent running recipes while offline
             if (this.meStatusChanged && !isOnline()) {
                 if (autoPull) {
-                    this.getAEFluidHandler().clearConfig();
+                    this.getAEHandler().clearConfig();
                 } else {
                     for (int i = 0; i < CONFIG_SIZE; i++) {
-                        getAEFluidHandler().getInventory()[i].setStack(null);
+                        getAEHandler().getInventory()[i].setStack(null);
                     }
                 }
             }
@@ -102,7 +104,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         IMEMonitor<IAEFluidStack> monitor = super.getMonitor();
         if (monitor == null) return;
 
-        for (ExportOnlyAEStockingFluidSlot slot : this.getAEFluidHandler().getInventory()) {
+        for (ExportOnlyAEStockingFluidSlot slot : this.getAEHandler().getInventory()) {
             if (slot.getConfig() == null) {
                 slot.setStack(null);
             } else {
@@ -136,13 +138,13 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         this.autoPullTest = $ -> false;
         if (this.autoPull) {
-            this.getAEFluidHandler().clearConfig();
+            this.getAEHandler().clearConfig();
         }
         super.removeFromMultiBlock(controllerBase);
     }
 
     private void validateConfig() {
-        for (var slot : this.getAEFluidHandler().getInventory()) {
+        for (var slot : this.getAEHandler().getInventory()) {
             if (slot.getConfig() != null) {
                 FluidStack configuredStack = slot.getConfig().getFluidStack();
                 if (testConfiguredInOtherHatch(configuredStack)) {
@@ -162,7 +164,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         for (var ability : abilityList) {
             if (ability instanceof ExportOnlyAEStockingFluidSlot aeSlot) {
                 if (aeSlot.getConfig() == null) continue;
-                if (getAEFluidHandler().ownsSlot(aeSlot)) continue;
+                if (getAEHandler().ownsSlot(aeSlot)) continue;
                 if (aeSlot.getConfig().getFluid().equals(stack.getFluid())) {
                     return true;
                 }
@@ -177,7 +179,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         markDirty();
         if (!getWorld().isRemote) {
             if (!this.autoPull) {
-                this.getAEFluidHandler().clearConfig();
+                this.getAEHandler().clearConfig();
             } else if (updateMEStatus()) {
                 refreshList();
                 syncME();
@@ -211,7 +213,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
             if (autoPullTest != null && !autoPullTest.test(fluidStack)) continue;
             IAEFluidStack selectedStack = WrappedFluidStack.fromFluidStack(fluidStack);
             IAEFluidStack configStack = selectedStack.copy().setStackSize(1);
-            var slot = this.getAEFluidHandler().getInventory()[index];
+            var slot = this.getAEHandler().getInventory()[index];
             slot.setConfig(configStack);
             slot.setStack(selectedStack);
             index++;
@@ -222,7 +224,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
 
     private void clearInventory(int startIndex) {
         for (int i = startIndex; i < CONFIG_SIZE; i++) {
-            var slot = this.getAEFluidHandler().getInventory()[i];
+            var slot = this.getAEHandler().getInventory()[i];
             slot.setConfig(null);
             slot.setStack(null);
         }
@@ -260,18 +262,21 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     }
 
     @Override
-    protected Widget<?> getExtraButton() {
-        BooleanSyncValue autoPullSync = new BooleanSyncValue(() -> autoPull, this::setAutoPull);
+    protected @NotNull Widget<?> createMainColumnWidget(@Range(from = 0, to = 3) int index, @NotNull PosGuiData guiData,
+                                                        @NotNull PanelSyncManager panelSyncManager) {
+        if (index == 0) {
+            return new ToggleButton()
+                    .size(16)
+                    .margin(1)
+                    .value(new BooleanSyncValue(this::isAutoPull, this::setAutoPull))
+                    .disableHoverBackground()
+                    .overlay(false, GTGuiTextures.AUTO_PULL[0])
+                    .overlay(true, GTGuiTextures.AUTO_PULL[1])
+                    .addTooltip(false, IKey.lang("gregtech.machine.me.stocking_auto_pull_disabled"))
+                    .addTooltip(true, IKey.lang("gregtech.machine.me.stocking_auto_pull_enabled"));
+        }
 
-        return new ToggleButton()
-                .size(16)
-                .margin(1)
-                .value(autoPullSync)
-                .disableHoverBackground()
-                .overlay(false, GTGuiTextures.AUTO_PULL[0])
-                .overlay(true, GTGuiTextures.AUTO_PULL[1])
-                .addTooltip(false, IKey.lang("gregtech.machine.me.stocking_auto_pull_disabled"))
-                .addTooltip(true, IKey.lang("gregtech.machine.me.stocking_auto_pull_enabled"));
+        return super.createMainColumnWidget(index, guiData, panelSyncManager);
     }
 
     public void setMinimumStackSize(int minimumStackSize) {
@@ -380,7 +385,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         super.readConfigFromTag(tag);
     }
 
-    private static class ExportOnlyAEStockingFluidSlot extends ExportOnlyAEFluidSlot {
+    public static class ExportOnlyAEStockingFluidSlot extends ExportOnlyAEFluidSlot {
 
         public ExportOnlyAEStockingFluidSlot(MetaTileEntityMEStockingHatch holder, IAEFluidStack config,
                                              IAEFluidStack stock, MetaTileEntity entityToNotify) {
@@ -461,7 +466,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         }
 
         @Override
-        public ExportOnlyAEStockingFluidSlot[] getInventory() {
+        public @NotNull ExportOnlyAEStockingFluidSlot @NotNull [] getInventory() {
             return (ExportOnlyAEStockingFluidSlot[]) super.getInventory();
         }
 

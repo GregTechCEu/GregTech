@@ -31,6 +31,7 @@ import appeng.api.storage.data.IItemList;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -40,6 +41,7 @@ import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -66,7 +68,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     }
 
     @Override
-    protected ExportOnlyAEStockingItemList getAEItemHandler() {
+    public @NotNull ExportOnlyAEStockingItemList getAEHandler() {
         if (this.aeItemHandler == null) {
             this.aeItemHandler = new ExportOnlyAEStockingItemList(this, CONFIG_SIZE, getController());
         }
@@ -83,7 +85,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
                     clearInventory(0);
                 } else {
                     for (int i = 0; i < CONFIG_SIZE; i++) {
-                        getAEItemHandler().getInventory()[i].setStack(null);
+                        getAEHandler().getInventory()[i].setStack(null);
                     }
                 }
             }
@@ -106,7 +108,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         IMEMonitor<IAEItemStack> monitor = super.getMonitor();
         if (monitor == null) return;
 
-        for (ExportOnlyAEStockingItemSlot slot : this.getAEItemHandler().getInventory()) {
+        for (ExportOnlyAEStockingItemSlot slot : this.getAEHandler().getInventory()) {
             if (slot.getConfig() == null) {
                 slot.setStack(null);
             } else {
@@ -145,7 +147,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         this.autoPullTest = $ -> false;
         if (this.autoPull) {
             // may as well clear if we are auto-pull, no reason to preserve the config
-            this.getAEItemHandler().clearConfig();
+            this.getAEHandler().clearConfig();
         }
         super.removeFromMultiBlock(controllerBase);
     }
@@ -165,7 +167,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
      * we are attached to. Prevents dupes in certain situations.
      */
     private void validateConfig() {
-        for (var slot : this.getAEItemHandler().getInventory()) {
+        for (var slot : this.getAEHandler().getInventory()) {
             if (slot.getConfig() != null) {
                 ItemStack configuredStack = slot.getConfig().createItemStack();
                 if (testConfiguredInOtherBus(configuredStack)) {
@@ -219,7 +221,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         markDirty();
         if (!getWorld().isRemote) {
             if (!this.autoPull) {
-                this.getAEItemHandler().clearConfig();
+                this.getAEHandler().clearConfig();
             } else if (updateMEStatus()) {
                 refreshList();
                 syncME();
@@ -259,7 +261,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
             IAEItemStack selectedStack = WrappedItemStack.fromItemStack(itemStack);
             if (selectedStack == null) continue;
             IAEItemStack configStack = selectedStack.copy().setStackSize(1);
-            var slot = this.getAEItemHandler().getInventory()[index];
+            var slot = this.getAEHandler().getInventory()[index];
             slot.setConfig(configStack);
             slot.setStack(selectedStack);
             index++;
@@ -270,7 +272,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
 
     private void clearInventory(int startIndex) {
         for (int i = startIndex; i < CONFIG_SIZE; i++) {
-            var slot = this.getAEItemHandler().getInventory()[i];
+            var slot = this.getAEHandler().getInventory()[i];
             slot.setConfig(null);
             slot.setStack(null);
         }
@@ -286,8 +288,6 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
 
     @Override
     protected ModularPanel buildSettingsPopup(PanelSyncManager syncManager, IPanelHandler syncHandler) {
-        IntSyncValue minimumStockSync = new IntSyncValue(this::getMinimumStackSize, this::setMinimumStackSize);
-
         return super.buildSettingsPopup(syncManager, syncHandler)
                 .child(IKey.lang("gregtech.machine.me.settings.minimum")
                         .asWidget()
@@ -299,7 +299,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
                         .size(100, 10)
                         .setNumbers(0, Integer.MAX_VALUE)
                         .setDefaultNumber(0)
-                        .value(minimumStockSync));
+                        .value(new IntSyncValue(this::getMinimumStackSize, this::setMinimumStackSize)));
     }
 
     @Override
@@ -308,18 +308,21 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     }
 
     @Override
-    protected Widget<?> getExtraButton() {
-        BooleanSyncValue autoPullSync = new BooleanSyncValue(() -> autoPull, this::setAutoPull);
+    protected @NotNull Widget<?> createMainColumnWidget(@Range(from = 0, to = 3) int index, @NotNull PosGuiData guiData,
+                                                        @NotNull PanelSyncManager panelSyncManager) {
+        if (index == 0) {
+            return new ToggleButton()
+                    .size(16)
+                    .margin(1)
+                    .value(new BooleanSyncValue(this::isAutoPull, this::setAutoPull))
+                    .disableHoverBackground()
+                    .overlay(false, GTGuiTextures.AUTO_PULL[0])
+                    .overlay(true, GTGuiTextures.AUTO_PULL[1])
+                    .addTooltip(false, IKey.lang("gregtech.machine.me.stocking_auto_pull_disabled"))
+                    .addTooltip(true, IKey.lang("gregtech.machine.me.stocking_auto_pull_enabled"));
+        }
 
-        return new ToggleButton()
-                .size(16)
-                .margin(1)
-                .value(autoPullSync)
-                .disableHoverBackground()
-                .overlay(false, GTGuiTextures.AUTO_PULL[0])
-                .overlay(true, GTGuiTextures.AUTO_PULL[1])
-                .addTooltip(false, IKey.lang("gregtech.machine.me.stocking_auto_pull_disabled"))
-                .addTooltip(true, IKey.lang("gregtech.machine.me.stocking_auto_pull_enabled"));
+        return super.createMainColumnWidget(index, guiData, panelSyncManager);
     }
 
     public void setMinimumStackSize(int minimumStackSize) {
@@ -381,7 +384,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         this.autoPull = buf.readBoolean();
     }
 
-    private static class ExportOnlyAEStockingItemSlot extends ExportOnlyAEItemSlot {
+    public static class ExportOnlyAEStockingItemSlot extends ExportOnlyAEItemSlot {
 
         private final MetaTileEntityMEStockingBus holder;
 
@@ -513,7 +516,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         }
 
         @Override
-        public ExportOnlyAEStockingItemSlot[] getInventory() {
+        public @NotNull ExportOnlyAEStockingItemSlot @NotNull [] getInventory() {
             return (ExportOnlyAEStockingItemSlot[]) super.getInventory();
         }
 

@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.GTGuiTextures;
@@ -46,7 +47,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AEStackType>, RealStackType>
-                                                extends MetaTileEntityAEHostableChannelPart<AEStackType> {
+                                                extends MetaTileEntityAEHostableChannelPart<AEStackType>
+                                                implements IControllable {
 
     public final static String WORKING_TAG = "WorkingEnabled";
 
@@ -67,7 +69,7 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME() && updateMEStatus()) {
+        if (!getWorld().isRemote && this.workingEnabled && this.shouldOperateOnME() && updateMEStatus()) {
             if (this.internalBuffer.isEmpty()) return;
 
             IMEMonitor<AEStackType> monitor = getMonitor();

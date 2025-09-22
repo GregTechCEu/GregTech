@@ -174,9 +174,11 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         if (aeProxy == null) {
             return aeProxy = createProxy();
         }
+
         if (!aeProxy.isReady() && getWorld() != null) {
             aeProxy.onReady();
         }
+
         return aeProxy;
     }
 
@@ -184,6 +186,7 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         if (this.getHolder() instanceof IActionHost holder) {
             return new MachineSource(holder);
         }
+
         return new BaseActionSource();
     }
 
@@ -206,6 +209,7 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
                 meStatusChanged = false;
             }
         }
+
         return isOnline;
     }
 

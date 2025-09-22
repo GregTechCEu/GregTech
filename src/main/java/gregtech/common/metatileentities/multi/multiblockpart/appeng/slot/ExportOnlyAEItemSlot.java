@@ -45,6 +45,12 @@ public class ExportOnlyAEItemSlot extends ExportOnlyAESlot<IAEItemStack> impleme
     }
 
     @Override
+    public void decrementStock(long amount) {
+        if (stock == null) return;
+        stock.decStackSize(amount);
+    }
+
+    @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {}
 
     @Override

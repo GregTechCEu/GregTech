@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.function.IntBinaryOperator;
+import java.util.function.IntConsumer;
 
 public abstract class AESyncHandler<AEStackType extends IAEStack<AEStackType>> extends SyncHandler
                                    implements IJEIRecipeReceiver {
@@ -32,6 +33,7 @@ public abstract class AESyncHandler<AEStackType extends IAEStack<AEStackType>> e
     public static final int bulkConfigAmountChangeID = 5;
 
     protected final boolean isStocking;
+    protected final IntConsumer ghostCircuitConfig;
     protected final @NotNull IConfigurableSlot<AEStackType>[] slots;
     private final @NotNull IConfigurableSlot<AEStackType>[] cached;
     private final Int2ObjectMap<@NotNull IConfigurableSlot<AEStackType>> changeMap = new Int2ObjectOpenHashMap<>();
@@ -41,9 +43,11 @@ public abstract class AESyncHandler<AEStackType extends IAEStack<AEStackType>> e
     @Nullable
     private final Runnable dirtyNotifier;
 
-    public AESyncHandler(IConfigurableSlot<AEStackType>[] slots, boolean isStocking, @Nullable Runnable dirtyNotifier) {
+    public AESyncHandler(IConfigurableSlot<AEStackType>[] slots, boolean isStocking, @Nullable Runnable dirtyNotifier,
+                         @NotNull IntConsumer ghostCircuitConfig) {
         this.slots = slots;
         this.isStocking = isStocking;
+        this.ghostCircuitConfig = ghostCircuitConfig;
         this.dirtyNotifier = dirtyNotifier;
         this.cached = initializeCache();
         this.byteBufAdapter = initializeByteBufAdapter();

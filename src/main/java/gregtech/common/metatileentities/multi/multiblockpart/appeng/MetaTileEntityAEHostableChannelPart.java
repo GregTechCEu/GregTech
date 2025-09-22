@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import gregtech.api.capability.IControllable;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
@@ -18,8 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class MetaTileEntityAEHostableChannelPart<T extends IAEStack<T>> extends MetaTileEntityAEHostablePart
-                                                         implements IControllable {
+public abstract class MetaTileEntityAEHostableChannelPart<T extends IAEStack<T>> extends MetaTileEntityAEHostablePart {
 
     public static final String REFRESH_RATE_TAG = "RefreshRate";
 
@@ -40,7 +38,7 @@ public abstract class MetaTileEntityAEHostableChannelPart<T extends IAEStack<T>>
     @Override
     public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {}
 
-    protected boolean shouldSyncME() {
+    protected boolean shouldOperateOnME() {
         return getMEUpdateTick() % refreshRate == 0;
     }
 

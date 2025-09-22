@@ -47,9 +47,11 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>>
         if (this.stock != null && !this.stock.isMeaningful()) {
             this.stock = null;
         }
+
         if (this.config == null && this.stock != null) {
             return this.stock.copy();
         }
+
         if (this.config != null && this.stock != null) {
             if (this.config.equals(this.stock) && this.config.getStackSize() < this.stock.getStackSize()) {
                 return this.stock.copy().setStackSize(this.stock.getStackSize() - this.config.getStackSize());
@@ -58,12 +60,15 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>>
                 return this.stock.copy();
             }
         }
+
         return null;
     }
 
     public abstract void addStack(T stack);
 
     public abstract void setStack(T stack);
+
+    public abstract void decrementStock(long amount);
 
     @Override
     public NBTTagCompound serializeNBT() {

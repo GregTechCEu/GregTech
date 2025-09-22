@@ -45,7 +45,7 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
     @Nullable
     protected Runnable onSelect;
 
-    public AEConfigSlot(boolean isStocking, int index, BooleanSupplier isAutoPull) {
+    public AEConfigSlot(boolean isStocking, int index, @NotNull BooleanSupplier isAutoPull) {
         this.isStocking = isStocking;
         this.index = index;
         this.isAutoPull = isAutoPull;
