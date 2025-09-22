@@ -8,6 +8,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IExportOnlyAEStackList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.client.resources.I18n;
@@ -66,11 +67,13 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     }
 
     @Override
+    protected @NotNull IExportOnlyAEStackList<IAEFluidStack> initializeAEHandler() {
+        return new ExportOnlyAEStockingFluidList(this, CONFIG_SIZE, getController());
+    }
+
+    @Override
     public @NotNull ExportOnlyAEStockingFluidList getAEHandler() {
-        if (this.aeFluidHandler == null) {
-            this.aeFluidHandler = new ExportOnlyAEStockingFluidList(this, CONFIG_SIZE, getController());
-        }
-        return (ExportOnlyAEStockingFluidList) this.aeFluidHandler;
+        return (ExportOnlyAEStockingFluidList) this.aeHandler;
     }
 
     @Override

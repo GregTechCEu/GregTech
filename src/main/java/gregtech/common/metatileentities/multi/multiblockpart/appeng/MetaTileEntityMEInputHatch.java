@@ -13,6 +13,7 @@ import gregtech.api.mui.widget.appeng.fluid.AEFluidDisplaySlot;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IExportOnlyAEStackList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.client.resources.I18n;
@@ -47,8 +48,6 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityMEInputBase<IAEFlu
 
     public static final String FLUID_BUFFER_TAG = "FluidTanks";
 
-    protected ExportOnlyAEFluidList aeFluidHandler;
-
     public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false, IFluidStorageChannel.class);
     }
@@ -59,23 +58,19 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityMEInputBase<IAEFlu
     }
 
     @Override
-    public @NotNull ExportOnlyAEFluidList getAEHandler() {
-        if (aeFluidHandler == null) {
-            aeFluidHandler = new ExportOnlyAEFluidList(this, CONFIG_SIZE, this.getController());
-        }
-
-        return aeFluidHandler;
-    }
-
-    @Override
     protected void initializeInventory() {
-        getAEHandler(); // initialize it
         super.initializeInventory();
+        this.importFluids = new FluidTankList(false, getAEHandler().getInventory());
     }
 
     @Override
-    protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, getAEHandler().getInventory());
+    protected @NotNull IExportOnlyAEStackList<IAEFluidStack> initializeAEHandler() {
+        return new ExportOnlyAEFluidList(this, CONFIG_SIZE, this.getController());
+    }
+
+    @Override
+    public @NotNull ExportOnlyAEFluidList getAEHandler() {
+        return (ExportOnlyAEFluidList) aeHandler;
     }
 
     @Override
@@ -198,7 +193,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityMEInputBase<IAEFlu
         NBTTagCompound configStacks = new NBTTagCompound();
         tag.setTag("ConfigStacks", configStacks);
         for (int i = 0; i < CONFIG_SIZE; i++) {
-            var slot = this.aeFluidHandler.getInventory()[i];
+            var slot = this.aeHandler.getInventory()[i];
             IAEFluidStack config = slot.getConfig();
             if (config == null) {
                 continue;
@@ -232,9 +227,9 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityMEInputBase<IAEFlu
                 String key = Integer.toString(i);
                 if (configStacks.hasKey(key)) {
                     NBTTagCompound configTag = configStacks.getCompoundTag(key);
-                    this.aeFluidHandler.getInventory()[i].setConfig(WrappedFluidStack.fromNBT(configTag));
+                    this.aeHandler.getInventory()[i].setConfig(WrappedFluidStack.fromNBT(configTag));
                 } else {
-                    this.aeFluidHandler.getInventory()[i].setConfig(null);
+                    this.aeHandler.getInventory()[i].setConfig(null);
                 }
             }
         }

@@ -181,6 +181,11 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
     }
 
     @Override
+    protected boolean shouldSerializeInventories() {
+        return false;
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean(WORKING_TAG, this.workingEnabled);

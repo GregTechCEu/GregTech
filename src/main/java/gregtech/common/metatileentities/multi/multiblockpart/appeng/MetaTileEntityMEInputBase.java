@@ -54,6 +54,7 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
     public static final String WORKING_TAG = "WorkingEnabled";
     public static final String SYNC_HANDLER_NAME = "aeSync";
 
+    protected IExportOnlyAEStackList<AEStackType> aeHandler;
     protected GhostCircuitItemStackHandler circuitInventory;
     protected boolean workingEnabled = true;
 
@@ -64,8 +65,14 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
 
     @Override
     protected void initializeInventory() {
+        super.initializeInventory();
+        this.aeHandler = initializeAEHandler();
         this.circuitInventory = new GhostCircuitItemStackHandler(this);
     }
+
+    protected abstract @NotNull IExportOnlyAEStackList<AEStackType> initializeAEHandler();
+
+    public abstract @NotNull IExportOnlyAEStackList<AEStackType> getAEHandler();
 
     @Override
     public void update() {
@@ -74,8 +81,6 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
             operateOnME();
         }
     }
-
-    public abstract @NotNull IExportOnlyAEStackList<AEStackType> getAEHandler();
 
     public boolean isAutoPull() {
         return getAEHandler().isAutoPull();
@@ -360,9 +365,15 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
     }
 
     @Override
+    protected boolean shouldSerializeInventories() {
+        return false;
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean(WORKING_TAG, this.workingEnabled);
+        this.circuitInventory.write(data);
         return data;
     }
 
@@ -372,5 +383,6 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
         if (data.hasKey(WORKING_TAG, Constants.NBT.TAG_BYTE)) {
             this.workingEnabled = data.getBoolean(WORKING_TAG);
         }
+        this.circuitInventory.read(data);
     }
 }

@@ -17,6 +17,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IExportOnlyAEStackList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.client.resources.I18n;
@@ -56,9 +57,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
 
     public static final String ITEM_BUFFER_TAG = "ItemSlots";
 
-    protected ExportOnlyAEItemList aeItemHandler;
     protected NotifiableItemStackHandler extraSlotInventory;
-    private ItemHandlerList actualImportItems;
 
     public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false, IItemStorageChannel.class);
@@ -69,27 +68,22 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
         return new MetaTileEntityMEInputBus(metaTileEntityId, getTier());
     }
 
-    public @NotNull ExportOnlyAEItemList getAEHandler() {
-        if (aeItemHandler == null) {
-            aeItemHandler = new ExportOnlyAEItemList(this, CONFIG_SIZE, this.getController());
-        }
-
-        return aeItemHandler;
-    }
-
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.aeItemHandler = getAEHandler();
         this.extraSlotInventory = new NotifiableItemStackHandler(this, 1, this, false);
         this.extraSlotInventory.addNotifiableMetaTileEntity(this);
-        this.actualImportItems = new ItemHandlerList(
-                Arrays.asList(this.aeItemHandler, this.circuitInventory, this.extraSlotInventory));
-        this.importItems = this.actualImportItems;
+        this.importItems = new ItemHandlerList(
+                Arrays.asList(getAEHandler(), this.circuitInventory, this.extraSlotInventory));
     }
 
-    public IItemHandlerModifiable getImportItems() {
-        return this.actualImportItems;
+    @Override
+    protected @NotNull IExportOnlyAEStackList<IAEItemStack> initializeAEHandler() {
+        return new ExportOnlyAEItemList(this, CONFIG_SIZE, this.getController());
+    }
+
+    public @NotNull ExportOnlyAEItemList getAEHandler() {
+        return (ExportOnlyAEItemList) aeHandler;
     }
 
     @Override
@@ -103,7 +97,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
     @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
-        for (IItemHandler handler : this.actualImportItems.getBackingHandlers()) {
+        for (IItemHandler handler : ((ItemHandlerList) this.importItems).getBackingHandlers()) {
             if (handler instanceof INotifiableHandler notifiable) {
                 notifiable.addNotifiableMetaTileEntity(controllerBase);
                 notifiable.addToNotifiedList(this, handler, false);
@@ -114,7 +108,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
     @Override
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
-        for (IItemHandler handler : this.actualImportItems.getBackingHandlers()) {
+        for (IItemHandler handler : ((ItemHandlerList) this.importItems).getBackingHandlers()) {
             if (handler instanceof INotifiableHandler notifiable) {
                 notifiable.removeNotifiableMetaTileEntity(controllerBase);
             }
@@ -190,7 +184,6 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
         }
         data.setTag(ITEM_BUFFER_TAG, slots);
 
-        this.circuitInventory.write(data);
         GTUtility.writeItems(this.extraSlotInventory, "ExtraInventory", data);
 
         return data;
@@ -209,7 +202,6 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
             }
         }
 
-        this.circuitInventory.read(data);
         GTUtility.readItems(this.extraSlotInventory, "ExtraInventory", data);
         this.importItems = createImportItemHandler();
     }
@@ -245,7 +237,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
 
     @Override
     public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
-        abilityInstances.add(this.actualImportItems);
+        abilityInstances.add(this.importItems);
     }
 
     @Override
@@ -262,7 +254,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
         NBTTagCompound configStacks = new NBTTagCompound();
         tag.setTag("ConfigStacks", configStacks);
         for (int i = 0; i < CONFIG_SIZE; i++) {
-            var slot = this.aeItemHandler.getInventory()[i];
+            var slot = this.aeHandler.getInventory()[i];
             IAEItemStack config = slot.getConfig();
             if (config == null) {
                 continue;
@@ -298,9 +290,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
                 String key = Integer.toString(i);
                 if (configStacks.hasKey(key)) {
                     NBTTagCompound configTag = configStacks.getCompoundTag(key);
-                    this.aeItemHandler.getInventory()[i].setConfig(WrappedItemStack.fromNBT(configTag));
+                    this.aeHandler.getInventory()[i].setConfig(WrappedItemStack.fromNBT(configTag));
                 } else {
-                    this.aeItemHandler.getInventory()[i].setConfig(null);
+                    this.aeHandler.getInventory()[i].setConfig(null);
                 }
             }
         }

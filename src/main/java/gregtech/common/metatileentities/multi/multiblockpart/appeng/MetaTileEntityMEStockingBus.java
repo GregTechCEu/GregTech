@@ -10,6 +10,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IExportOnlyAEStackList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.client.resources.I18n;
@@ -68,11 +69,13 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     }
 
     @Override
+    protected @NotNull IExportOnlyAEStackList<IAEItemStack> initializeAEHandler() {
+        return new ExportOnlyAEStockingItemList(this, CONFIG_SIZE, getController());
+    }
+
+    @Override
     public @NotNull ExportOnlyAEStockingItemList getAEHandler() {
-        if (this.aeItemHandler == null) {
-            this.aeItemHandler = new ExportOnlyAEStockingItemList(this, CONFIG_SIZE, getController());
-        }
-        return (ExportOnlyAEStockingItemList) this.aeItemHandler;
+        return (ExportOnlyAEStockingItemList) aeHandler;
     }
 
     @Override
@@ -209,7 +212,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
 
     private boolean checkHandler(@NotNull IItemHandler itemHandler, @NotNull ItemStack stack) {
         if (itemHandler instanceof ExportOnlyAEStockingItemList itemList) {
-            if (itemList == this.aeItemHandler) return false;
+            if (itemList == this.aeHandler) return false;
             return itemList.hasStackInConfig(stack, false);
         }
 
