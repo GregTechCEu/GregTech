@@ -71,7 +71,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityMEInputBase<IAEFlu
     }
 
     @Override
-    public @NotNull ExportOnlyAEFluidList getAEHandler() {
+    @NotNull
+    protected ExportOnlyAEFluidList getAEHandler() {
         return (ExportOnlyAEFluidList) aeHandler;
     }
 

@@ -71,7 +71,8 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     }
 
     @Override
-    public @NotNull ExportOnlyAEStockingFluidList getAEHandler() {
+    @NotNull
+    protected ExportOnlyAEStockingFluidList getAEHandler() {
         return (ExportOnlyAEStockingFluidList) this.aeHandler;
     }
 

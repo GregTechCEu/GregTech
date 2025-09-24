@@ -83,7 +83,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
         return new ExportOnlyAEItemList(this, CONFIG_SIZE, this.getController());
     }
 
-    public @NotNull ExportOnlyAEItemList getAEHandler() {
+    @NotNull
+    protected ExportOnlyAEItemList getAEHandler() {
         return (ExportOnlyAEItemList) aeHandler;
     }
 

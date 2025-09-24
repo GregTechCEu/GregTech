@@ -73,7 +73,7 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
 
     protected abstract @NotNull IExportOnlyAEStackList<AEStackType> initializeAEHandler();
 
-    public abstract @NotNull IExportOnlyAEStackList<AEStackType> getAEHandler();
+    protected abstract @NotNull IExportOnlyAEStackList<AEStackType> getAEHandler();
 
     @Override
     public void update() {

@@ -73,7 +73,8 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     }
 
     @Override
-    public @NotNull ExportOnlyAEStockingItemList getAEHandler() {
+    @NotNull
+    protected ExportOnlyAEStockingItemList getAEHandler() {
         return (ExportOnlyAEStockingItemList) aeHandler;
     }
 
