@@ -411,37 +411,38 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
 
         @Override
         public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (slot == 0 && this.stock != null) {
-                if (this.config != null) {
-                    // Extract the items from the real net to either validate (simulate)
-                    // or extract (modulate) when this is called
-                    IMEMonitor<IAEItemStack> monitor = holder.getMonitor();
-                    if (monitor == null) return ItemStack.EMPTY;
+            if (slot != 0 || this.stock == null || this.stock.getStackSize() <= 0) return ItemStack.EMPTY;
 
-                    Actionable action = simulate ? Actionable.SIMULATE : Actionable.MODULATE;
-                    IAEItemStack request;
-                    if (this.config instanceof WrappedItemStack wis) {
-                        request = wis.getAEStack();
-                    } else {
-                        request = this.config.copy();
+            if (this.config != null) {
+                // Extract the items from the real net to either validate (simulate)
+                // or extract (modulate) when this is called
+                IMEMonitor<IAEItemStack> monitor = holder.getMonitor();
+                if (monitor == null) return ItemStack.EMPTY;
+
+                Actionable action = simulate ? Actionable.SIMULATE : Actionable.MODULATE;
+                IAEItemStack request;
+                if (this.config instanceof WrappedItemStack wis) {
+                    request = wis.getAEStack();
+                } else {
+                    request = this.config.copy();
+                }
+                request.setStackSize(amount);
+
+                IAEItemStack result = monitor.extractItems(request, action, holder.getActionSource());
+                if (result != null) {
+                    int extracted = (int) Math.min(result.getStackSize(), amount);
+                    this.stock.decStackSize(extracted); // may as well update the display here
+                    if (this.trigger != null) {
+                        this.trigger.accept(0);
                     }
-                    request.setStackSize(amount);
-
-                    IAEItemStack result = monitor.extractItems(request, action, holder.getActionSource());
-                    if (result != null) {
-                        int extracted = (int) Math.min(result.getStackSize(), amount);
-                        this.stock.decStackSize(extracted); // may as well update the display here
-                        if (this.trigger != null) {
-                            this.trigger.accept(0);
-                        }
-                        if (extracted != 0) {
-                            ItemStack resultStack = this.config.createItemStack();
-                            resultStack.setCount(extracted);
-                            return resultStack;
-                        }
+                    if (extracted != 0) {
+                        ItemStack resultStack = this.config.createItemStack();
+                        resultStack.setCount(extracted);
+                        return resultStack;
                     }
                 }
             }
+
             return ItemStack.EMPTY;
         }
     }

@@ -217,6 +217,7 @@ public class WrappedFluidStack implements IAEFluidStack, IWrappedStack<IAEFluidS
 
     @Override
     public @NotNull FluidStack getDefinition() {
+        delegate.amount = (int) stackSize;
         return delegate;
     }
 
@@ -247,6 +248,6 @@ public class WrappedFluidStack implements IAEFluidStack, IWrappedStack<IAEFluidS
 
     @Override
     public String toString() {
-        return String.format("Wrapped: %s", delegate);
+        return String.format("Wrapped: %s, Stack Size: %d", delegate, stackSize);
     }
 }

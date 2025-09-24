@@ -414,9 +414,10 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
 
         @Override
         public @Nullable FluidStack drain(int maxDrain, boolean doDrain) {
-            if (this.stock == null) {
+            if (this.stock == null || this.stock.getStackSize() <= 0) {
                 return null;
             }
+
             if (this.config != null) {
                 IMEMonitor<IAEFluidStack> monitor = getHolder().getMonitor();
                 if (monitor == null) return null;

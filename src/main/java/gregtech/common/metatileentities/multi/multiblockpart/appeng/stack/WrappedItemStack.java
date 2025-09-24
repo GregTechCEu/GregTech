@@ -250,6 +250,7 @@ public class WrappedItemStack implements IAEItemStack, IWrappedStack<IAEItemStac
 
     @Override
     public @NotNull ItemStack getDefinition() {
+        delegate.setCount((int) stackSize);
         return this.delegate;
     }
 

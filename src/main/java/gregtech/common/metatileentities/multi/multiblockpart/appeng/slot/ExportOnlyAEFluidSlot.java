@@ -105,6 +105,7 @@ public class ExportOnlyAEFluidSlot extends ExportOnlyAESlot<IAEFluidStack>
         if (this.stock instanceof WrappedFluidStack wrappedFluidStack) {
             return wrappedFluidStack.getDefinition();
         }
+
         return null;
     }
 
