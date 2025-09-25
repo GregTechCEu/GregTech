@@ -1,7 +1,6 @@
 package gregtech.api.mui.sync.appeng;
 
 import gregtech.api.mui.IJEIRecipeReceiver;
-import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 
 import net.minecraft.network.PacketBuffer;
@@ -11,16 +10,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.function.IntBinaryOperator;
 import java.util.function.IntConsumer;
+import java.util.function.LongBinaryOperator;
 
 public abstract class AESyncHandler<AEStackType extends IAEStack<AEStackType>> extends SyncHandler
                                    implements IJEIRecipeReceiver {
@@ -118,7 +115,7 @@ public abstract class AESyncHandler<AEStackType extends IAEStack<AEStackType>> e
             case changeConfigAmountID -> {
                 AEStackType config = getConfig(buf.readVarInt());
                 if (config != null) {
-                    config.setStackSize(buf.readInt());
+                    config.setStackSize(buf.readLong());
                 }
             }
             case setConfigID -> {
@@ -137,12 +134,11 @@ public abstract class AESyncHandler<AEStackType extends IAEStack<AEStackType>> e
                 }
             }
             case bulkConfigAmountChangeID -> {
-                int size = buf.readVarInt();
-                for (int i = 0; i < size; i++) {
-                    AEStackType config = slots[buf.readVarInt()].getConfig();
-                    int newAmount = buf.readInt();
+                long[] changes = buf.readLongArray(new long[slots.length]);
+                for (int index = 0; index < slots.length; index++) {
+                    AEStackType config = slots[index].getConfig();
                     if (config != null) {
-                        config.setStackSize(newAmount);
+                        config.setStackSize(changes[index]);
                     }
                 }
             }
@@ -204,16 +200,16 @@ public abstract class AESyncHandler<AEStackType extends IAEStack<AEStackType>> e
         return getConfig(index) != null;
     }
 
-    public int getConfigAmount(int index) {
+    public long getConfigAmount(int index) {
         AEStackType config = getConfig(index);
-        return config == null ? 0 : GTUtility.safeCastLongToInt(config.getStackSize());
+        return config == null ? 0 : config.getStackSize();
     }
 
     @SideOnly(Side.CLIENT)
-    public void setConfigAmount(int index, int newAmount) {
+    public void setConfigAmount(int index, long newAmount) {
         syncToServer(changeConfigAmountID, buf -> {
             buf.writeVarInt(index);
-            buf.writeInt(newAmount);
+            buf.writeLong(newAmount);
         });
     }
 
@@ -228,30 +224,27 @@ public abstract class AESyncHandler<AEStackType extends IAEStack<AEStackType>> e
      * @param function a function that takes the slot index and the original stack size, and returns a new stack size
      */
     @SideOnly(Side.CLIENT)
-    public void modifyConfigAmounts(@NotNull IntBinaryOperator function) {
-        Int2IntMap changeMap = new Int2IntArrayMap(slots.length);
+    public boolean modifyConfigAmounts(@NotNull LongBinaryOperator function) {
+        long[] newAmounts = new long[slots.length];
 
+        boolean anyChanged = false;
         for (int index = 0; index < slots.length; index++) {
             AEStackType config = slots[index].getConfig();
             if (config != null) {
-                int originalSize = GTUtility.safeCastLongToInt(config.getStackSize());
-                int newSize = function.applyAsInt(index, originalSize);
+                long originalSize = config.getStackSize();
+                long newSize = function.applyAsLong(index, originalSize);
                 if (newSize != originalSize) {
-                    changeMap.put(index, newSize);
+                    anyChanged = true;
+                    newAmounts[index] = newSize;
                 }
             }
         }
 
-        if (!changeMap.isEmpty()) {
-            syncToServer(bulkConfigAmountChangeID, buf -> {
-                buf.writeVarInt(changeMap.size());
-
-                for (int index : changeMap.keySet()) {
-                    buf.writeVarInt(index);
-                    buf.writeInt(changeMap.get(index));
-                }
-            });
+        if (anyChanged) {
+            syncToServer(bulkConfigAmountChangeID, buf -> buf.writeLongArray(newAmounts));
         }
+
+        return anyChanged;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

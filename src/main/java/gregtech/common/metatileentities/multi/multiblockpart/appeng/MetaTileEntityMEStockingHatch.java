@@ -118,7 +118,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
                 } else {
                     request = slot.getConfig().copy();
                 }
-                request.setStackSize(Integer.MAX_VALUE);
+                request.setStackSize(Long.MAX_VALUE);
                 IAEFluidStack result = monitor.extractItems(request, Actionable.SIMULATE, getActionSource());
                 slot.setStack(result);
             }

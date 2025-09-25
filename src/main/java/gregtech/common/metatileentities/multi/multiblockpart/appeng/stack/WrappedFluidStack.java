@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng.stack;
 
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.NetworkUtil;
 
 import net.minecraft.item.ItemStack;
@@ -23,7 +24,7 @@ import java.util.Objects;
 public class WrappedFluidStack implements IAEFluidStack, IWrappedStack<IAEFluidStack, FluidStack> {
 
     @NotNull
-    private FluidStack delegate;
+    private final FluidStack delegate;
     private long stackSize;
 
     private WrappedFluidStack(@NotNull FluidStack stack, long stackSize) {
@@ -63,7 +64,9 @@ public class WrappedFluidStack implements IAEFluidStack, IWrappedStack<IAEFluidS
 
     @Override
     public FluidStack getFluidStack() {
-        return this.delegate.copy();
+        FluidStack newStack = this.delegate.copy();
+        newStack.amount = GTUtility.safeCastLongToInt(stackSize);
+        return newStack;
     }
 
     @Override
@@ -217,7 +220,7 @@ public class WrappedFluidStack implements IAEFluidStack, IWrappedStack<IAEFluidS
 
     @Override
     public @NotNull FluidStack getDefinition() {
-        delegate.amount = (int) stackSize;
+        delegate.amount = GTUtility.safeCastLongToInt(stackSize);
         return delegate;
     }
 
@@ -225,6 +228,9 @@ public class WrappedFluidStack implements IAEFluidStack, IWrappedStack<IAEFluidS
     public boolean equals(Object other) {
         if (other instanceof WrappedFluidStack wrappedFluidStack) {
             return wrappedFluidStack.delegate.isFluidEqual(this.delegate);
+        } else if (other instanceof AEFluidStack aeFluidStack) {
+            // noinspection EqualsBetweenInconvertibleTypes
+            return aeFluidStack.equals(delegate);
         } else if (other instanceof FluidStack fluidStack) {
             return fluidStack.isFluidEqual(this.delegate);
         }

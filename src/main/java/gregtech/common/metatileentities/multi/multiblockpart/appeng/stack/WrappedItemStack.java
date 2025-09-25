@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng.stack;
 
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.NetworkUtil;
 
 import net.minecraft.item.Item;
@@ -67,7 +68,9 @@ public class WrappedItemStack implements IAEItemStack, IWrappedStack<IAEItemStac
 
     @Override
     public ItemStack createItemStack() {
-        return this.delegate.copy();
+        ItemStack newStack = this.delegate.copy();
+        newStack.setCount(GTUtility.safeCastLongToInt(stackSize));
+        return newStack;
     }
 
     @Override
@@ -214,6 +217,7 @@ public class WrappedItemStack implements IAEItemStack, IWrappedStack<IAEItemStac
 
     @Override
     public ItemStack asItemStackRepresentation() {
+        delegate.setCount(GTUtility.safeCastLongToInt(stackSize));
         return this.delegate;
     }
 
@@ -250,7 +254,7 @@ public class WrappedItemStack implements IAEItemStack, IWrappedStack<IAEItemStac
 
     @Override
     public @NotNull ItemStack getDefinition() {
-        delegate.setCount((int) stackSize);
+        delegate.setCount(GTUtility.safeCastLongToInt(stackSize));
         return this.delegate;
     }
 
@@ -261,8 +265,8 @@ public class WrappedItemStack implements IAEItemStack, IWrappedStack<IAEItemStac
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof IAEItemStack stack) {
-            ItemStack otherStack = stack.getCachedItemStack(stack.getStackSize());
+        if (other instanceof WrappedItemStack wrappedItemStack) {
+            ItemStack otherStack = wrappedItemStack.getDefinition();
             NBTTagCompound thisTag = delegate.getTagCompound();
             NBTTagCompound otherTag = otherStack.getTagCompound();
 
@@ -275,6 +279,8 @@ public class WrappedItemStack implements IAEItemStack, IWrappedStack<IAEItemStac
             }
 
             return this.delegate.isItemEqual(otherStack) && nbtMatch;
+        } else if (other instanceof AEItemStack aeItemStack) {
+            return aeItemStack.equals(delegate);
         } else if (other instanceof ItemStack itemStack) {
             return this.equals(itemStack);
         }
@@ -300,7 +306,7 @@ public class WrappedItemStack implements IAEItemStack, IWrappedStack<IAEItemStac
     @Override
     public ItemStack getCachedItemStack(long l) {
         ItemStack copy = this.delegate.copy();
-        copy.setCount((int) l);
+        copy.setCount(GTUtility.safeCastLongToInt(stackSize));
         return copy;
     }
 

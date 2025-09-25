@@ -955,20 +955,38 @@ public class GTUtility {
     }
 
     /**
-     * Safely cast a Long to an Int without overflow.
+     * Safely multiply two Integers without overflow or underflow, returning {@link Integer#MAX_VALUE} or
+     * {@link Integer#MIN_VALUE} if it would have.
      *
-     * @param v The Long value to cast to an Int.
-     * @return v, cast to Int, or Integer.MAX_VALUE if it would overflow.
+     * @param num The Long value to cast to an Int.
      */
-    public static int safeCastLongToInt(long v) {
-        return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
+    public static int safeCastLongToInt(long num) {
+        if (num > Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        } else if (num < Integer.MIN_VALUE) {
+            return Integer.MIN_VALUE;
+        } else {
+            return (int) num;
+        }
     }
 
     /**
-     * Safely multiply two Ints without overflowing
+     * Safely multiply two Ints without overflow or underflow.
      */
-    public static int safeIntegerMultiplication(int a, int b) {
+    public static int multiplySaturated(int a, int b) {
         return safeCastLongToInt((long) a * b);
+    }
+
+    /**
+     * Safely multiply two Longs without overflow or underflow, returning {@link Long#MAX_VALUE} or
+     * {@link Long#MIN_VALUE} if it would have.
+     */
+    public static long multiplySaturated(long a, long b) {
+        if (a > 0 && b > 0 && a > Long.MAX_VALUE / b) return Long.MAX_VALUE;
+        if (a < 0 && b < 0 && a < Long.MAX_VALUE / b) return Long.MAX_VALUE;
+        if (a > 0 && b < 0 && b < Long.MIN_VALUE / a) return Long.MIN_VALUE;
+        if (a < 0 && b > 0 && a < Long.MIN_VALUE / b) return Long.MIN_VALUE;
+        return a * b;
     }
 
     /**

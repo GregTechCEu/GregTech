@@ -122,7 +122,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
                 } else {
                     request = slot.getConfig().copy();
                 }
-                request.setStackSize(Integer.MAX_VALUE);
+                request.setStackSize(Long.MAX_VALUE);
                 IAEItemStack result = monitor.extractItems(request, Actionable.SIMULATE, getActionSource());
                 slot.setStack(result);
             }

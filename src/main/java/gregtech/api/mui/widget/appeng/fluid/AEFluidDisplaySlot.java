@@ -32,7 +32,7 @@ public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
         if (stock != null) {
             FluidStack stack = stock.getDefinition();
             tooltip.addLine(KeyUtil.fluid(stack));
-            FluidTooltipUtil.fluidInfo(stack, tooltip);
+            FluidTooltipUtil.fluidInfo(stack, tooltip, false, true, true);
             tooltip.addLine(FluidTooltipUtil.getFluidModNameKey(stack));
         }
     }

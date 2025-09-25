@@ -10,15 +10,13 @@ import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
-import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
-import com.cleanroommc.modularui.value.IntValue;
+import com.cleanroommc.modularui.value.LongValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -123,9 +121,8 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
             }
         }
 
-        if (newStackSize > 0 && newStackSize < Integer.MAX_VALUE + 1L) {
-            int scaledStackSize = (int) newStackSize;
-            getSyncHandler().setConfigAmount(index, scaledStackSize);
+        if (newStackSize > 0) {
+            getSyncHandler().setConfigAmount(index, newStackSize);
             return true;
         }
 
@@ -139,36 +136,23 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
 
     protected IPanelHandler getAmountPanel() {
         if (amountPanel == null) {
-            amountPanel = IPanelHandler.simple(getPanel(), (parentPanel, player) -> {
-                ModularPanel popupPanel = GTGuis.blankPopupPanel("ae_slot_amount." + index, 100, 18 + 5 * 2)
-                        .closeListener(onSelect)
-                        .child(createPopupDrawable()
-                                .size(18)
-                                .left(5)
-                                .top(5))
-                        .child(new TextFieldWidget()
-                                .setNumbers(1, Integer.MAX_VALUE)
-                                .setDefaultNumber(1)
-                                .value(new IntValue.Dynamic(() -> getSyncHandler().getConfigAmount(index),
-                                        newAmount -> getSyncHandler().setConfigAmount(index, newAmount)))
-                                .size(50, 10)
-                                .left(18 + 5 * 2)
-                                .top(7)); // alignY didn't work :whar:
-
-                popupPanel.child(ButtonWidget.panelCloseButton()
-                        .onMousePressed(button -> {
-                            if (button == 0 || button == 1) {
-                                popupPanel.closeIfOpen(true);
-                                return true;
-                            }
-
-                            return false;
-                        })
-                        .right(5)
-                        .alignY(0.5f));
-
-                return popupPanel;
-            }, true);
+            amountPanel = IPanelHandler.simple(getPanel(),
+                    (parentPanel, player) -> GTGuis.blankPopupPanel("ae_slot_amount." + index, 150, 18 + 5 * 2)
+                            .closeListener(onSelect)
+                            .child(createPopupDrawable()
+                                    .size(18)
+                                    .left(5)
+                                    .top(5))
+                            .child(new TextFieldWidget()
+                                    .setNumbersLong(test -> test < 1 ? 1 : test)
+                                    .setDefaultNumber(1)
+                                    .value(new LongValue.Dynamic(() -> getSyncHandler().getConfigAmount(index),
+                                            newAmount -> getSyncHandler().setConfigAmount(index, newAmount)))
+                                    .size(100, 10)
+                                    .left(18 + 5 * 2)
+                                    // alignY didn't work :whar:
+                                    .top(7)),
+                    true);
         }
 
         return amountPanel;

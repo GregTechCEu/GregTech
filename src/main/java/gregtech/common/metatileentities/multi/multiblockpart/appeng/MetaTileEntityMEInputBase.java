@@ -282,11 +282,8 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
 
         return GTGuis.createPopupPanel("multiplier", 100, 35)
                 .child(new ButtonWidget<>()
-                        .onMousePressed(mouse -> {
-                            aeSyncHandler.modifyConfigAmounts(
-                                    (index, amount) -> Math.max(1, amount / multiplier.getIntValue()));
-                            return true;
-                        })
+                        .onMousePressed(mouse -> aeSyncHandler
+                                .modifyConfigAmounts((index, amount) -> Math.max(1, amount / multiplier.getIntValue())))
                         .left(5)
                         .top(7)
                         .overlay(IKey.str("/")))
@@ -299,11 +296,8 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
                         .setDefaultNumber(2)
                         .value(multiplier))
                 .child(new ButtonWidget<>()
-                        .onMousePressed(mouse -> {
-                            aeSyncHandler.modifyConfigAmounts((index, amount) -> GTUtility
-                                    .safeIntegerMultiplication(amount, multiplier.getIntValue()));
-                            return true;
-                        })
+                        .onMousePressed(mouse -> aeSyncHandler.modifyConfigAmounts(
+                                (index, amount) -> GTUtility.multiplySaturated(amount, multiplier.getIntValue())))
                         .right(5)
                         .top(7)
                         .overlay(IKey.str("x")));
