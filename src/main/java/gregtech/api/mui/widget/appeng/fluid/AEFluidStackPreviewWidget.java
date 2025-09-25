@@ -2,7 +2,10 @@ package gregtech.api.mui.widget.appeng.fluid;
 
 import gregtech.api.mui.widget.appeng.AEStackPreviewWidget;
 import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.KeyUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
+
+import net.minecraftforge.fluids.FluidStack;
 
 import appeng.api.storage.data.IAEFluidStack;
 import com.cleanroommc.modularui.drawable.GuiDraw;
@@ -21,7 +24,10 @@ class AEFluidStackPreviewWidget extends AEStackPreviewWidget<IAEFluidStack> {
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
         if (stackToDraw.get() instanceof WrappedFluidStack wrappedFluidStack) {
-            FluidTooltipUtil.fluidInfo(wrappedFluidStack.getDefinition(), tooltip, false, true, false);
+            FluidStack stack = wrappedFluidStack.getDefinition();
+            tooltip.addLine(KeyUtil.fluid(stack));
+            FluidTooltipUtil.fluidInfo(stack, tooltip, false, true, false);
+            tooltip.addLine(FluidTooltipUtil.getFluidModNameKey(stack));
         }
     }
 
