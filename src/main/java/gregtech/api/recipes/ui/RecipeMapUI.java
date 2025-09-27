@@ -559,6 +559,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                 .top(23 - 7);
 
+        // this isn't great but it works for now
+        // panel size is hardcoded because you can't get the panel size from the panel
         int m = calculateCenter(importItems.getSlots(), importFluids.getTanks(), 176 + 20);
 
         row.child(makeInventorySlotGroup(importItems, importFluids, false)
@@ -568,14 +570,10 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 .debugName("recipe.progress")
                 .size(20)
                 .margin(4, 0)
-                // .alignX(0.5f)
-                // .top(23 + yOffset)
                 .value(progressValue)
                 .texture(progressTexture, 20)
                 .direction(progressDirection));
         row.child(makeInventorySlotGroup(exportItems, exportFluids, true));
-        // addInventorySlotGroup(panel, importItems, importFluids, false, yOffset);
-        // addInventorySlotGroup(panel, exportItems, exportFluids, true, yOffset);
         panel.child(row);
         if (specialDrawableTexture != null) {
             panel.child(specialDrawableTexture.asWidget()
