@@ -1,5 +1,9 @@
 package gregtech.api.metatileentity;
 
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+
+import com.cleanroommc.modularui.widgets.layout.Flow;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
@@ -501,7 +505,12 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
             yOffset = FONT_HEIGHT;
         }
 
-        ModularPanel panel = GTGuis.createPanel(this, 176, 166 + yOffset);
+        ModularPanel panel = GTGuis.createPanel(this, 176 + 20, 166 + yOffset);
+        Flow col = Flow.column()
+                .debugName("special.buttons")
+                .right(7).bottom(7)
+                .height(18 * 4 + 4)
+                .width(18);
 
         BooleanSyncValue hasEnergy = new BooleanSyncValue(workable::isHasNotEnoughEnergy);
         guiSyncManager.syncValue("has_energy", hasEnergy);
@@ -509,25 +518,28 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         workableRecipeMap.getRecipeMapUI().constructPanel(panel, workable::getProgressPercent,
                 importItems, exportItems, importFluids, exportFluids, yOffset, guiSyncManager)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .child(new ItemSlot()
-                        .slot(SyncHandlers.itemSlot(chargerInventory, 0))
-                        .pos(79, 62 + yOffset)
-                        .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
-                        .addTooltipLine(IKey.lang("gregtech.gui.charger_slot.tooltip",
-                                GTValues.VNF[getTier()], GTValues.VNF[getTier()])))
                 .child(new Widget<>()
+                        .debugName("energy.indicator")
                         .size(18, 18)
                         .pos(79, 42 + yOffset)
                         .background(GTGuiTextures.INDICATOR_NO_ENERGY)
                         .setEnabledIf($ -> hasEnergy.getBoolValue()))
-                .bindPlayerInventory();
+                .child(col)
+                .child(SlotGroupWidget.playerInventory().left(7));
+
+        col.child(new ItemSlot()
+                .debugName("charger.slot")
+                .slot(SyncHandlers.itemSlot(chargerInventory, 0))
+//                .pos(79, 62 + yOffset)
+                .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
+                .addTooltipLine(IKey.lang("gregtech.gui.charger_slot.tooltip",
+                        GTValues.VNF[getTier()], GTValues.VNF[getTier()])));
 
         int leftButtonStartX = 7;
 
         if (exportItems.getSlots() > 0) {
-
-            panel.child(new ToggleButton()
-                    .pos(leftButtonStartX, 62 + yOffset)
+            col.child(new ToggleButton()
+//                    .pos(leftButtonStartX, 62 + yOffset)
                     .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
                     .value(new BooleanSyncValue(() -> autoOutputItems, val -> autoOutputItems = val))
                     .addTooltip(true, IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled"))
@@ -538,8 +550,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
 
         if (exportFluids.getTanks() > 0) {
 
-            panel.child(new ToggleButton()
-                    .pos(leftButtonStartX, 62 + yOffset)
+            col.child(new ToggleButton()
+//                    .pos(leftButtonStartX, 62 + yOffset)
                     .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
                     .value(new BooleanSyncValue(() -> autoOutputFluids, val -> autoOutputFluids = val))
                     .addTooltip(true, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.enabled"))
@@ -547,14 +559,16 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         }
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
-            panel.child(new Widget<>()
+            col.child(new Widget<>()
                     .size(17)
-                    .pos(152, 63 + yOffset)
+                    .marginTop(1).marginRight(1)
+                    .bottom(0)
+//                    .pos(152, 63 + yOffset)
                     .background(GTGuiTextures.getLogo(getUITheme())));
 
             if (hasGhostCircuitInventory() && circuitInventory != null) {
-                panel.child(new GhostCircuitSlotWidget()
-                        .pos(124, 62 + yOffset)
+                col.child(new GhostCircuitSlotWidget()
+//                        .pos(124, 62 + yOffset)
                         .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY));
             }
