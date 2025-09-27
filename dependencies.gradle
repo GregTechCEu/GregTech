@@ -52,6 +52,8 @@ dependencies {
     compileOnly("curse.maven:journeymap-32274:5172461") // Journeymap 5.7.1p3
     compileOnly("curse.maven:voxelmap-225179:3029445") // VoxelMap 1.9.28
     compileOnly("curse.maven:xaeros-263420:5394758") // Xaero's Minimap 24.2.0
+    devOnlyNonPublishable rfg.deobf("curse.maven:ftb-library-legacy-forge-237167:2985811") // FTB Library 5.4.7.2
+    devOnlyNonPublishable rfg.deobf("curse.maven:ftb-utilities-forge-237102:3157548") // FTB Utilities 5.4.1.131
     compileOnly rfg.deobf("curse.maven:opencomputers-223008:5274236") // OpenComputers 1.8.5+179e1c3
     compileOnly rfg.deobf("curse.maven:hwyla-253449:2568751") // HWYLA 1.8.26-B41
     compileOnly rfg.deobf("curse.maven:baubles-227083:2518667") // Baubles 1.5.2

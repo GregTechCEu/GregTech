@@ -46,6 +46,9 @@ public enum Mods {
     ForestryApiculture(Names.FORESTRY, forestryModule(Names.FORESTRY_APICULTURE)),
     ForestryArboriculture(Names.FORESTRY, forestryModule(Names.FORESTRY_ARBORICULTURE)),
     ForestryLepidopterology(Names.FORESTRY, forestryModule(Names.FORESTRY_LEPIDOPTEROLOGY)),
+    FTB_LIB(Names.FTB_LIB),
+    // FTB Utilities hard deps on ftb lib so you don't have to check if both are loaded
+    FTB_UTILITIES(Names.FTB_UTILITIES),
     GalacticraftCore(Names.GALACTICRAFT_CORE),
     Genetics(Names.GENETICS),
     GregTech(Names.GREGTECH),
@@ -118,6 +121,8 @@ public enum Mods {
         public static final String FORESTRY_APICULTURE = "apiculture";
         public static final String FORESTRY_ARBORICULTURE = "arboriculture";
         public static final String FORESTRY_LEPIDOPTEROLOGY = "lepidopterology";
+        public static final String FTB_LIB = "ftblib";
+        public static final String FTB_UTILITIES = "ftbutilities";
         public static final String GALACTICRAFT_CORE = "galacticraftcore";
         public static final String GENETICS = "genetics";
         public static final String GREGTECH = GTValues.MODID;

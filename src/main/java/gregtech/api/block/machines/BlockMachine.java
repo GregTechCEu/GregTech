@@ -590,4 +590,13 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
         if (metaTileEntity != null) metaTileEntity.randomDisplayTick();
     }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType(@NotNull IBlockState state, @NotNull World world, @NotNull BlockPos pos,
+                                  @Nullable Entity entity) {
+        MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
+        if (metaTileEntity == null) return getSoundType();
+        return metaTileEntity.getSoundType();
+    }
 }

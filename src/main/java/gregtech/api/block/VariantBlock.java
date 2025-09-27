@@ -4,6 +4,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -11,9 +12,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -110,6 +113,16 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     @Override
     public int getMetaFromState(IBlockState state) {
         return state.getValue(VARIANT).ordinal();
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType(@NotNull IBlockState state, @NotNull World world, @NotNull BlockPos pos,
+                                  @Nullable Entity entity) {
+        if (getState(state) instanceof IStateSoundType stateSoundType) {
+            return stateSoundType.getSoundType(state);
+        }
+        return super.getSoundType(state, world, pos, entity);
     }
 
     // magic is here
