@@ -1,9 +1,5 @@
 package gregtech.api.metatileentity;
 
-import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-
-import com.cleanroommc.modularui.widgets.layout.Flow;
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
@@ -64,7 +60,9 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -530,28 +528,20 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         col.child(new ItemSlot()
                 .debugName("charger.slot")
                 .slot(SyncHandlers.itemSlot(chargerInventory, 0))
-//                .pos(79, 62 + yOffset)
                 .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
                 .addTooltipLine(IKey.lang("gregtech.gui.charger_slot.tooltip",
                         GTValues.VNF[getTier()], GTValues.VNF[getTier()])));
 
-        int leftButtonStartX = 7;
-
         if (exportItems.getSlots() > 0) {
             col.child(new ToggleButton()
-//                    .pos(leftButtonStartX, 62 + yOffset)
                     .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
                     .value(new BooleanSyncValue(() -> autoOutputItems, val -> autoOutputItems = val))
                     .addTooltip(true, IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled"))
                     .addTooltip(false, IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")));
-
-            leftButtonStartX += 18;
         }
 
         if (exportFluids.getTanks() > 0) {
-
             col.child(new ToggleButton()
-//                    .pos(leftButtonStartX, 62 + yOffset)
                     .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
                     .value(new BooleanSyncValue(() -> autoOutputFluids, val -> autoOutputFluids = val))
                     .addTooltip(true, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.enabled"))
@@ -561,14 +551,13 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
             col.child(new Widget<>()
                     .size(17)
-                    .marginTop(1).marginRight(1)
+                    .marginTop(1)
+                    .marginRight(1)
                     .bottom(0)
-//                    .pos(152, 63 + yOffset)
                     .background(GTGuiTextures.getLogo(getUITheme())));
 
             if (hasGhostCircuitInventory() && circuitInventory != null) {
                 col.child(new GhostCircuitSlotWidget()
-//                        .pos(124, 62 + yOffset)
                         .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY));
             }
