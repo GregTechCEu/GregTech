@@ -516,11 +516,11 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         workableRecipeMap.getRecipeMapUI().constructPanel(panel, workable::getProgressPercent,
                 importItems, exportItems, importFluids, exportFluids, yOffset, guiSyncManager)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .child(new Widget<>()
+                .child(GTGuiTextures.INDICATOR_NO_ENERGY.asWidget()
                         .debugName("energy.indicator")
-                        .size(18, 18)
-                        .pos(79, 42 + yOffset)
-                        .background(GTGuiTextures.INDICATOR_NO_ENERGY)
+                        .size(18)
+                        .alignX(0.5f)
+                        .top(42 + yOffset + 18)
                         .setEnabledIf($ -> hasEnergy.getBoolValue()))
                 .child(col)
                 .child(SlotGroupWidget.playerInventory().left(7));
