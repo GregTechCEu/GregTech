@@ -35,6 +35,7 @@ import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.init.SoundEvents;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widgets.ProgressWidget.Direction;
 import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -901,7 +902,8 @@ public final class RecipeMaps {
                     .itemOutputs(1)
                     .uiBuilder(b -> b
                             .itemSlotOverlay(GTGuiTextures.HAMMER_OVERLAY, false)
-                            .specialTexture(GTGuiTextures.PROGRESS_BAR_HAMMER_BASE, 78, 42, 20, 6)
+                            .specialTexture(widget -> widget.overlay(GTGuiTextures.PROGRESS_BAR_HAMMER_BASE.asIcon()
+                                    .size(20, 6)))
                             .progressBar(GTGuiTextures.PROGRESS_BAR_HAMMER, Direction.DOWN))
                     .sound(GTSoundEvents.FORGE_HAMMER)
                     .build();
@@ -1135,7 +1137,9 @@ public final class RecipeMaps {
                             .itemSlotOverlay(GTGuiTextures.PIPE_OVERLAY_1, false)
                             .itemSlotOverlay(GTGuiTextures.PIPE_OVERLAY_2, true, false)
                             .itemSlotOverlay(GTGuiTextures.DUST_OVERLAY, true, true)
-                            .specialTexture(GTGuiTextures.PROGRESS_BAR_LATHE_BASE, 98, 24, 5, 18)
+                            .specialTexture(widget -> widget.overlay(GTGuiTextures.PROGRESS_BAR_LATHE_BASE.asIcon()
+                                    .size(5, 18)
+                                    .alignment(Alignment.CenterRight)))
                             .progressBar(GTGuiTextures.PROGRESS_BAR_LATHE))
                     .sound(GTSoundEvents.CUT)
                     .build();
