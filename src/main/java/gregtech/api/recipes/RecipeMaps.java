@@ -903,7 +903,9 @@ public final class RecipeMaps {
                     .uiBuilder(b -> b
                             .itemSlotOverlay(GTGuiTextures.HAMMER_OVERLAY, false)
                             .specialTexture(widget -> widget.overlay(GTGuiTextures.PROGRESS_BAR_HAMMER_BASE.asIcon()
-                                    .size(20, 6)))
+                                    .size(20, 6)
+                                    .alignment(Alignment.BottomCenter)
+                                    .marginBottom(-5)))
                             .progressBar(GTGuiTextures.PROGRESS_BAR_HAMMER, Direction.DOWN))
                     .sound(GTSoundEvents.FORGE_HAMMER)
                     .build();
@@ -1137,8 +1139,9 @@ public final class RecipeMaps {
                             .itemSlotOverlay(GTGuiTextures.PIPE_OVERLAY_1, false)
                             .itemSlotOverlay(GTGuiTextures.PIPE_OVERLAY_2, true, false)
                             .itemSlotOverlay(GTGuiTextures.DUST_OVERLAY, true, true)
-                            .specialTexture(widget -> widget.overlay(GTGuiTextures.PROGRESS_BAR_LATHE_BASE.asIcon()
+                            .specialTexture(widget -> widget.background(GTGuiTextures.PROGRESS_BAR_LATHE_BASE.asIcon()
                                     .size(5, 18)
+                                    .marginRight(-3)
                                     .alignment(Alignment.CenterRight)))
                             .progressBar(GTGuiTextures.PROGRESS_BAR_LATHE))
                     .sound(GTSoundEvents.CUT)
