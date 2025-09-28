@@ -547,7 +547,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         DoubleSyncValue progressValue = new DoubleSyncValue(progressSupplier);
 
         Flow row = Flow.row()
-                .height(3 * 18 + 9)
+                .height(3 * 18)
                 .debugName("row:recipemapui.parent")
                 .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                 .top(23 - 7);
