@@ -12,35 +12,32 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.common.mui.widget.GTFluidSlot;
 
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
-import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
@@ -72,11 +69,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
     /* *********************** MUI 2 *********************** */
 
-    // todo try to store this better
-    private final Int2ObjectMap<IDrawable> itemInputOverlays = new Int2ObjectOpenHashMap<>();
-    private final Int2ObjectMap<IDrawable> itemOutputOverlays = new Int2ObjectOpenHashMap<>();
-    private final Int2ObjectMap<IDrawable> fluidInputOverlays = new Int2ObjectOpenHashMap<>();
-    private final Int2ObjectMap<IDrawable> fluidOutputOverlays = new Int2ObjectOpenHashMap<>();
+    private final Byte2ObjectMap<Int2ObjectMap<IDrawable>> overlays = new Byte2ObjectArrayMap<>(4);
 
     @ApiStatus.Experimental
     private boolean usesMui2 = false;
@@ -667,150 +660,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
             flow.childIf(singleRow && !isOutputs, () -> makeItemGroup(itemGridWidth, itemHandler, isOutputs));
         }
 
-        if (true) {
-            return flow;
-        }
-
-        Grid grid = new Grid()
-                .debugName(isOutputs ? "output.grid" : "input.grid");
-
-        SlotGroup slotGroup = new SlotGroup(isOutputs ? "output_items" : "input_items", itemGridWidth, 1,
-                !isOutputs);
-        int tHeight = singleRow ? itemGridHeight : itemGridHeight + fluidGridHeight;
-        int tWidth = itemGridWidth + fluidGridWidth;
-        int total = tWidth * tHeight;
-        grid.size(tWidth * 18, tHeight * 18);
-
-        List<IWidget> list = new ArrayList<>();
-        int diff = (itemGridHeight * itemGridWidth) - itemInputsCount;
-        int fluidDiff = Math.max(tWidth - fluidInputsCount, 0);
-        int fluidIndex = 0, itemIndex = 0, emptyIndex = 0;
-
-        for (int i = 0; i < total; i++) {
-            IWidget widget = IDrawable.EMPTY.asWidget().size(18)
-                    .debugName("empty.slot." + emptyIndex++);
-            if (!isOutputs) {
-                if (singleRow) {
-                    // fluid slot, then item slots
-                    if (i == 0 && fluidIndex < fluidInputsCount) {
-                        widget = makeFluidSlot(fluidIndex++, fluidHandler, false);
-                    } else if (itemIndex < itemInputsCount) {
-                        widget = makeItemSlot(slotGroup, itemIndex++, itemHandler, false);
-                    }
-                } else {
-                    if (i > diff && i < itemGridWidth * itemGridHeight) {
-                        // top left should be empty
-                        widget = makeItemSlot(slotGroup, itemIndex++, itemHandler, false);
-                    } else if (i >= itemGridWidth * itemGridHeight && i < total - fluidDiff) {
-                        // bottom left should be empty
-                        widget = makeFluidSlot(fluidIndex++, fluidHandler, false);
-                    }
-                }
-            } else {
-                if (singleRow) {
-                    // item slots, then fluid slots
-                    if (i == total - 1 && fluidIndex < fluidInputsCount) {
-                        widget = makeFluidSlot(fluidIndex++, fluidHandler, false);
-                    } else if (itemIndex < itemInputsCount) {
-                        widget = makeItemSlot(slotGroup, itemIndex++, itemHandler, false);
-                    }
-                } else {
-                    if (i < (tWidth - diff) || i >= tWidth) {
-                        // top right should be empty
-                        widget = makeItemSlot(slotGroup, itemIndex++, itemHandler, false);
-                    } else if (i >= itemGridWidth * itemGridHeight && i < total - fluidDiff) {
-                        // bottom right should be empty
-                        widget = makeFluidSlot(fluidIndex++, fluidHandler, false);
-                    }
-                }
-            }
-            list.add(widget);
-        }
-
-        grid.mapTo(Math.max(itemGridWidth, fluidGridWidth), list);
-
-        return grid;
-    }
-
-    protected void addInventorySlotGroup(@NotNull ParentWidget<?> group,
-                                         @NotNull IItemHandlerModifiable itemHandler,
-                                         @NotNull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
-        final int itemInputsCount = itemHandler.getSlots();
-        boolean onlyFluids = itemInputsCount == 0;
-        final int fluidInputsCount = fluidHandler.getTanks();
-        if (fluidInputsCount == 0 && onlyFluids)
-            return; // nothing to do here
-
-        int[] slotGridSizes = determineSlotsGrid(itemInputsCount, fluidInputsCount);
-        int itemGridWidth = slotGridSizes[onlyFluids ? 2 : 0];
-        int itemGridHeight = slotGridSizes[onlyFluids ? 3 : 1];
-
-        int fluidGridWidth = slotGridSizes[2];
-        int fluidGridHeight = slotGridSizes[3];
-
-        int startX = isOutputs ? 106 : 70 - itemGridWidth * 18;
-        int startY = 33 - (int) (itemGridHeight / 2.0 * 18) + yOffset;
-
-        // note: is 'wasGroup' for the electrolyzer/centrifuge?
-        // it's the only thing I can think of that has 12 of item and fluid slots
-        boolean wasGroup = itemInputsCount + fluidInputsCount == 12;
-        if (wasGroup || itemInputsCount >= 6 && fluidInputsCount >= 2 && !isOutputs) {
-            startY -= 9;
-        }
-
-        var itemGrid = new Grid()
-                .debugName(String.format("%s.%s.grid",
-                        onlyFluids ? "fluid" : "item",
-                        isOutputs ? "output" : "input"))
-                .pos(startX, startY)
-                .width(itemGridWidth * 18)
-                .height(itemGridHeight * 18);
-
-        if (onlyFluids) {
-            itemGrid.mapTo(fluidGridWidth, fluidInputsCount, i -> makeFluidSlot(i, fluidHandler, isOutputs));
-        } else {
-            SlotGroup slotGroup = new SlotGroup(isOutputs ? "output_items" : "input_items", itemGridWidth, 1,
-                    !isOutputs);
-            itemGrid.mapTo(itemGridWidth, itemInputsCount, i -> makeItemSlot(slotGroup, i, itemHandler, isOutputs));
-        }
-
-        group.child(itemGrid);
-
-        // we only have fluid slots, so we're done here
-        if (onlyFluids) return;
-
-        // otherwise, now we add the fluid slots
-        if (wasGroup) startY += 2; // this is responsible for the spacing between the slots on the electrolyzer
-
-        Grid fluidGrid = new Grid()
-                .debugName(String.format("fluid.%s.grid", isOutputs ? "output" : "inputs"))
-                .size(fluidGridWidth * 18, fluidGridHeight * 18);
-
-        if (itemGridHeight >= fluidInputsCount && itemGridWidth < 3) {
-            // we have enough room to place fluid slots to the left of the item slots
-            // import has fluid slots left of item slots
-            // export has fluid slots right of item slots
-            int startSpecX = isOutputs ? startX + itemGridWidth * 18 : startX - 18;
-            group.child(fluidGrid
-                    .mapTo(fluidGridWidth, fluidInputsCount, i -> makeFluidSlot(i, fluidHandler, isOutputs))
-                    .pos(startSpecX, startY));
-        } else {
-            // otherwise place them below the item slots
-            int startSpecY = startY + itemGridHeight * 18;
-            int x = startX;
-            if (!isOutputs) {
-                if (itemGridWidth == 3)
-                    // for assembler machine input fluid slot
-                    x += (18 * itemGridWidth) - 18;
-
-                if (fluidInputsCount > itemGridWidth)
-                    // to move chem reactor fluid input to the left
-                    x -= 18;
-            }
-            group.child(fluidGrid
-                    .mapTo(fluidGridWidth, fluidInputsCount, i -> makeFluidSlot(i, fluidHandler, isOutputs))
-                    .pos(x, startSpecY));
-        }
+        return flow;
     }
 
     protected ItemSlot makeItemSlot(SlotGroup group, int slotIndex, IItemHandlerModifiable itemHandler,
@@ -835,7 +685,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     @ApiStatus.Experimental
     protected IDrawable getDrawableOverlaysForSlot(boolean isOutput, boolean isFluid, int index) {
         UITexture base = isFluid ? GTGuiTextures.FLUID_SLOT : GTGuiTextures.SLOT;
-        var overlays = getOverlayMap(isOutput, isFluid);
+        Int2ObjectMap<IDrawable> overlays = getOverlayMap(isOutput, isFluid);
         if (overlays.containsKey(index)) {
             return IDrawable.of(base, overlays.get(index));
         }
@@ -843,8 +693,14 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     }
 
     protected Int2ObjectMap<IDrawable> getOverlayMap(boolean isOutput, boolean isFluid) {
-        if (isOutput) return isFluid ? fluidOutputOverlays : itemOutputOverlays;
-        else return isFluid ? fluidInputOverlays : itemInputOverlays;
+        return this.overlays.computeIfAbsent(computeKey(isOutput, isFluid), k -> new Int2ObjectArrayMap<>());
+    }
+
+    protected static byte computeKey(boolean isOutput, boolean isFluid) {
+        byte k = 0b00;
+        if (isOutput) k |= 0b10;
+        if (isFluid) k |= 0b01;
+        return k;
     }
 
     /** Marked experimental as this method will be removed when all GTCEu UIs are ported to MUI2. */
