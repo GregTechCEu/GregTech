@@ -2,10 +2,12 @@ package gregtech.api.recipes.ui;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.drawable.UITexture;
-import com.cleanroommc.modularui.widget.sizer.Area;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 @ApiStatus.Experimental
 @SuppressWarnings({ "unused", "UnusedReturnValue" })
@@ -141,14 +143,11 @@ public class RecipeMapUIBuilder {
         return this;
     }
 
-    public @NotNull RecipeMapUIBuilder specialTexture(@NotNull UITexture texture,
-                                                      int x, int y,
-                                                      int width, int height) {
-        return specialTexture(texture, new Area(x, y, width, height));
-    }
-
-    public @NotNull RecipeMapUIBuilder specialTexture(@NotNull UITexture texture, @NotNull Area area) {
-        this.mapUI.setSpecialTexture(texture, area);
+    /**
+     * @param extraOverlays Consumer for adding stuff to the progress widget
+     */
+    public @NotNull RecipeMapUIBuilder specialTexture(Consumer<Widget<?>> extraOverlays) {
+        this.mapUI.setSpecialTexture(extraOverlays);
         return this;
     }
 

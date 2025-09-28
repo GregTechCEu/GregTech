@@ -51,11 +51,12 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
     private final boolean isGenerator;
 
-    private @NotNull Area specialTexturePosition = new Area();
     private boolean isJEIVisible = true;
 
     /* *********************** MUI 1 *********************** */
 
+    @Deprecated
+    private final @NotNull Area specialTexturePosition = new Area();
     @Deprecated
     private final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectOpenHashMap<>();
 
@@ -74,7 +75,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     private boolean usesMui2 = false;
     private UITexture progressTexture = GTGuiTextures.PROGRESS_BAR_ARROW;
     private ProgressWidget.Direction progressDirection = ProgressWidget.Direction.RIGHT;
-    private @Nullable IDrawable specialDrawableTexture;
+    private Consumer<Widget<?>> extraOverlays = null;
 
     /**
      * @param recipeMap          the recipemap corresponding to this ui
@@ -559,7 +560,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
             row.child(makeInventorySlotGroup(importItems, importFluids, false)
                     .marginLeft(m - 4));
         }
-        row.child(new RecipeProgressWidget()
+        RecipeProgressWidget progressWidget = new RecipeProgressWidget();
+        if (this.extraOverlays != null) {
+            this.extraOverlays.accept(progressWidget);
+        }
+        row.child(progressWidget
                 .recipeMap(recipeMap)
                 .debugName("recipe.progress")
                 .size(20)
@@ -570,15 +575,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         if (exportItems.getSlots() > 0 || exportFluids.getTanks() > 0) {
             row.child(makeInventorySlotGroup(exportItems, exportFluids, true));
         }
-        panel.child(row);
-        if (specialDrawableTexture != null) {
-            panel.child(specialDrawableTexture.asWidget()
-                    .debugName("special_texture")
-                    // todo fix these hard coded values
-                    .pos(specialTexturePosition.x(), specialTexturePosition.y())
-                    .size(specialTexturePosition.w(), specialTexturePosition.h()));
-        }
-        return panel;
+        return panel.child(row);
     }
 
     private int calculateCenter(int inputItems, int inputFluids, int panelSize) {
@@ -746,12 +743,10 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     }
 
     /**
-     * @param specialTexture the special texture to set
-     * @param position       the position of the texture: [x, y, width, height]
+     * @param extraOverlays Consumer for adding stuff to the progress widget
      */
-    public void setSpecialTexture(@NotNull IDrawable specialTexture, @NotNull Area position) {
-        this.specialDrawableTexture = specialTexture;
-        this.specialTexturePosition = position;
+    public void setSpecialTexture(Consumer<Widget<?>> extraOverlays) {
+        this.extraOverlays = extraOverlays;
     }
 
     /**
