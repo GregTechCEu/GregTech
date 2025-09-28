@@ -548,19 +548,17 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                     .addTooltip(false, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.disabled")));
         }
 
-        if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
-            col.child(new Widget<>()
-                    .size(17)
-                    .marginTop(1)
-                    .marginRight(1)
-                    .bottom(0)
-                    .background(GTGuiTextures.getLogo(getUITheme())));
+        col.child(new Widget<>()
+                .size(17)
+                .marginTop(1)
+                .marginRight(1)
+                .bottom(0)
+                .background(GTGuiTextures.getLogo(getUITheme())));
 
-            if (hasGhostCircuitInventory() && circuitInventory != null) {
-                col.child(new GhostCircuitSlotWidget()
-                        .slot(SyncHandlers.itemSlot(circuitInventory, 0))
-                        .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY));
-            }
+        if (hasGhostCircuitInventory() && circuitInventory != null) {
+            col.child(new GhostCircuitSlotWidget()
+                    .slot(SyncHandlers.itemSlot(circuitInventory, 0))
+                    .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY));
         }
         return panel;
     }
