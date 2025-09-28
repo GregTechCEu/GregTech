@@ -12,9 +12,6 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.common.mui.widget.GTFluidSlot;
 
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
@@ -30,8 +27,10 @@ import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -548,7 +547,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
         Flow row = Flow.row()
                 .height(3 * 18 + 9)
-                .debugName("recipemapui.parent")
+                .debugName("row:recipemapui.parent")
                 .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                 .top(23 - 7);
 
@@ -556,8 +555,10 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         // panel size is hardcoded because you can't get the panel size from the panel
         int m = calculateCenter(importItems.getSlots(), importFluids.getTanks(), 176 + 20);
 
-        row.child(makeInventorySlotGroup(importItems, importFluids, false)
-                .marginLeft(m - 4));
+        if (importItems.getSlots() > 0 || importFluids.getTanks() > 0) {
+            row.child(makeInventorySlotGroup(importItems, importFluids, false)
+                    .marginLeft(m - 4));
+        }
         row.child(new RecipeProgressWidget()
                 .recipeMap(recipeMap)
                 .debugName("recipe.progress")
@@ -566,11 +567,14 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 .value(progressValue)
                 .texture(progressTexture, 20)
                 .direction(progressDirection));
-        row.child(makeInventorySlotGroup(exportItems, exportFluids, true));
+        if (exportItems.getSlots() > 0 || exportFluids.getTanks() > 0) {
+            row.child(makeInventorySlotGroup(exportItems, exportFluids, true));
+        }
         panel.child(row);
         if (specialDrawableTexture != null) {
             panel.child(specialDrawableTexture.asWidget()
                     .debugName("special_texture")
+                    // todo fix these hard coded values
                     .pos(specialTexturePosition.x(), specialTexturePosition.y())
                     .size(specialTexturePosition.w(), specialTexturePosition.h()));
         }
@@ -622,13 +626,16 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         return col;
     }
 
+    @NotNull
     protected Widget<?> makeInventorySlotGroup(@NotNull IItemHandlerModifiable itemHandler,
                                                @NotNull FluidTankList fluidHandler, boolean isOutputs) {
         final int itemInputsCount = itemHandler.getSlots();
         boolean onlyFluids = itemInputsCount == 0;
         final int fluidInputsCount = fluidHandler.getTanks();
-        if (fluidInputsCount == 0 && onlyFluids)
-            return null; // nothing to do here
+        if (fluidInputsCount == 0 && onlyFluids) {
+            // nothing to do here
+            throw new IllegalArgumentException("item and fluid handlers are empty!");
+        }
 
         int[] slotGridSizes = determineSlotsGrid(itemInputsCount, fluidInputsCount);
         int itemGridWidth = slotGridSizes[onlyFluids ? 2 : 0];
