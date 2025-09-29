@@ -525,13 +525,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                 .child(col)
                 .child(SlotGroupWidget.playerInventory().left(7));
 
-        col.child(new ItemSlot()
-                .debugName("charger.slot")
-                .slot(SyncHandlers.itemSlot(chargerInventory, 0))
-                .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
-                .addTooltipLine(IKey.lang("gregtech.gui.charger_slot.tooltip",
-                        GTValues.VNF[getTier()], GTValues.VNF[getTier()])));
-
         if (exportItems.getSlots() > 0) {
             col.child(new ToggleButton()
                     .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
@@ -548,15 +541,24 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                     .addTooltip(false, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.disabled")));
         }
 
+        col.child(new ItemSlot()
+                .debugName("charger.slot")
+                .slot(SyncHandlers.itemSlot(chargerInventory, 0))
+                .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
+                .bottom(18 + 4)
+                .addTooltipLine(IKey.lang("gregtech.gui.charger_slot.tooltip",
+                        GTValues.VNF[getTier()], GTValues.VNF[getTier()])));
+
         col.child(new Widget<>()
                 .size(17)
                 .marginTop(1)
                 .marginRight(1)
-                .bottom(0)
+                .top(-17 - 2)
                 .background(GTGuiTextures.getLogo(getUITheme())));
 
         if (hasGhostCircuitInventory() && circuitInventory != null) {
             col.child(new GhostCircuitSlotWidget()
+                    .bottom(0)
                     .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                     .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY));
         }
