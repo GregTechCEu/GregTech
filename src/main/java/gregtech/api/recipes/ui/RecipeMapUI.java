@@ -609,34 +609,45 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         return grid[1] >= fluidCount && grid[0] < 3;
     }
 
-    private Widget<?> makeItemGroup(int width, IItemHandlerModifiable handler, boolean isOutputs) {
-        Flow col = Flow.column().mainAxisAlignment(Alignment.MainAxis.END)
-                .coverChildren().debugName("item.col");
-        int c = handler.getSlots();
-        int h = (int) Math.ceil((double) c / width);
-        SlotGroup slotGroup = new SlotGroup(isOutputs ? "output_items" : "input_items",
-                width, 1, !isOutputs);
-        for (int i = 0; i < h; i++) {
-            Flow row = Flow.row().mainAxisAlignment(isOutputs ? Alignment.MainAxis.START : Alignment.MainAxis.END)
-                    .coverChildren().debugName("item.row." + i);
+    /**
+     * @param grid [item grid width, item grid height, fluid grid width, fluid grid height]
+     */
+    private Widget<?> makeItemGroup(int[] grid, IItemHandlerModifiable handler, boolean isOutputs) {
+        Flow col = Flow.column()
+                .mainAxisAlignment(Alignment.MainAxis.END)
+                .coverChildren()
+                .debugName("col:item_grid");
+        int width = grid[0], height = grid[1];
+        SlotGroup slotGroup = new SlotGroup(isOutputs ? "output_items" : "input_items", width, 1, !isOutputs);
+        for (int i = 0; i < height; i++) {
+            Flow row = Flow.row()
+                    .mainAxisAlignment(isOutputs ? Alignment.MainAxis.START : Alignment.MainAxis.END)
+                    .coverChildren()
+                    .debugName("row:item_" + i);
             for (int j = 0; j < width; j++) {
-                row.child(makeItemSlot(slotGroup, (i * h) + j, handler, isOutputs));
+                row.child(makeItemSlot(slotGroup, (i * height) + j, handler, isOutputs));
             }
             col.child(row);
         }
         return col;
     }
 
-    private Widget<?> makeFluidGroup(int width, FluidTankList handler, boolean isOutputs) {
-        Flow col = Flow.column().mainAxisAlignment(Alignment.MainAxis.START)
-                .coverChildren().debugName("fluid.col");
-        int c = handler.getTanks();
-        int h = (int) Math.ceil((double) c / width);
-        for (int i = 0; i < h; i++) {
-            Flow row = Flow.row().mainAxisAlignment(isOutputs ? Alignment.MainAxis.START : Alignment.MainAxis.END)
-                    .coverChildren().debugName("fluid.row");
+    /**
+     * @param grid [item grid width, item grid height, fluid grid width, fluid grid height]
+     */
+    private Widget<?> makeFluidGroup(int[] grid, FluidTankList handler, boolean isOutputs) {
+        Flow col = Flow.column()
+                .mainAxisAlignment(Alignment.MainAxis.START)
+                .coverChildren()
+                .debugName("col:fluid_grid");
+        int width = grid[2], height = grid[3];
+        for (int i = 0; i < height; i++) {
+            Flow row = Flow.row()
+                    .mainAxisAlignment(isOutputs ? Alignment.MainAxis.START : Alignment.MainAxis.END)
+                    .coverChildren()
+                    .debugName("row:fluid_" + i);
             for (int j = 0; j < width; j++) {
-                row.child(makeFluidSlot((i * h) + j, handler, isOutputs));
+                row.child(makeFluidSlot((i * height) + j, handler, isOutputs));
             }
             col.child(row);
         }
@@ -655,11 +666,9 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         }
 
         int[] slotGridSizes = determineSlotsGrid(itemInputsCount, fluidInputsCount);
-        int itemGridWidth = slotGridSizes[onlyFluids ? 2 : 0];
         int itemGridHeight = slotGridSizes[onlyFluids ? 3 : 1];
-
-        int fluidGridWidth = slotGridSizes[2];
         int fluidGridHeight = slotGridSizes[3];
+
         boolean singleRow = isSingleRow(slotGridSizes, fluidInputsCount);
 
         Flow flow = (singleRow ? Flow.row() : Flow.column())
@@ -678,11 +687,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         }
 
         if (onlyFluids) {
-            flow.childIf(fluidInputsCount > 0, () -> makeFluidGroup(fluidGridWidth, fluidHandler, isOutputs));
+            flow.childIf(fluidInputsCount > 0, () -> makeFluidGroup(slotGridSizes, fluidHandler, isOutputs));
         } else {
-            flow.childIf(!singleRow || isOutputs, () -> makeItemGroup(itemGridWidth, itemHandler, isOutputs));
-            flow.childIf(fluidInputsCount > 0, () -> makeFluidGroup(fluidGridWidth, fluidHandler, isOutputs));
-            flow.childIf(singleRow && !isOutputs, () -> makeItemGroup(itemGridWidth, itemHandler, isOutputs));
+            flow.childIf(!singleRow || isOutputs, () -> makeItemGroup(slotGridSizes, itemHandler, isOutputs));
+            flow.childIf(fluidInputsCount > 0, () -> makeFluidGroup(slotGridSizes, fluidHandler, isOutputs));
+            flow.childIf(singleRow && !isOutputs, () -> makeItemGroup(slotGridSizes, itemHandler, isOutputs));
         }
 
         return flow;
