@@ -549,17 +549,20 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         Flow row = Flow.row()
                 .height(3 * 18)
                 .debugName("row:recipemapui.parent")
+                .alignX(0.5f)
                 .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                 .top(23 - 7);
 
-        // this isn't great but it works for now
-        // panel size is hardcoded because you can't get the panel size from the panel
-        int m = calculateCenter(importItems.getSlots(), importFluids.getTanks(), 176 + 20);
+        int progressSize = 20;
         int margin = 6;
+        row.width(calculateWidth(importItems.getSlots(), importFluids.getTanks(),
+                exportItems.getSlots(), exportFluids.getTanks(),
+                progressSize, margin));
+
+        if (!this.isLeftGreater) row.mainAxisAlignment(Alignment.MainAxis.END);
 
         if (importItems.getSlots() > 0 || importFluids.getTanks() > 0) {
-            row.child(makeInventorySlotGroup(importItems, importFluids, false)
-                    .marginLeft(m - margin));
+            row.child(makeInventorySlotGroup(importItems, importFluids, false));
         }
         RecipeProgressWidget progressWidget = new RecipeProgressWidget();
         if (this.extraOverlays != null) {
@@ -568,7 +571,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         row.child(progressWidget
                 .recipeMap(recipeMap)
                 .debugName("recipe.progress")
-                .size(20)
+                .size(progressSize)
                 .margin(margin, 0)
                 .value(progressValue)
                 .texture(progressTexture, 20)
@@ -579,15 +582,31 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         return panel.child(row);
     }
 
-    private int calculateCenter(int inputItems, int inputFluids, int panelSize) {
-        int[] ints = determineSlotsGrid(inputItems, inputFluids);
-        int leftSize = ints[1] >= inputFluids && ints[0] < 3 ?
-                (ints[0] + ints[2]) * 18 :
-                Math.max(ints[0] * 18, ints[2] * 18);
-        int p = panelSize / 2;
-        p -= 10;
-        p -= leftSize;
-        return p;
+    boolean isLeftGreater = false;
+
+    private int calculateWidth(int inputItems, int inputFluids,
+                               int outputItems, int outputFluids,
+                               int progressSize, int margin) {
+        int[] inputGrid = determineSlotsGrid(inputItems, inputFluids);
+        int[] outputGrid = determineSlotsGrid(outputItems, outputFluids);
+
+        int w1 = getGridWidth(inputGrid, inputFluids);
+        int w2 = getGridWidth(outputGrid, outputFluids);
+
+        this.isLeftGreater = w1 >= w2;
+        return (Math.max(w1, w2) + margin) * 2 + progressSize;
+    }
+
+    private int getGridWidth(int[] grid, int fluidCount) {
+        if (isSingleRow(grid, fluidCount)) {
+            return (grid[0] + grid[2]) * 18;
+        } else {
+            return Math.max(grid[0] * 18, (grid[2] * 18));
+        }
+    }
+
+    private boolean isSingleRow(int[] grid, int fluidCount) {
+        return grid[1] >= fluidCount && grid[0] < 3;
     }
 
     private Widget<?> makeItemGroup(int width, IItemHandlerModifiable handler, boolean isOutputs) {
@@ -641,10 +660,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
         int fluidGridWidth = slotGridSizes[2];
         int fluidGridHeight = slotGridSizes[3];
-        boolean singleRow = itemGridHeight >= fluidInputsCount && itemGridWidth < 3;
+        boolean singleRow = isSingleRow(slotGridSizes, fluidInputsCount);
 
-        Flow flow = (singleRow ? Flow.row() : Flow.column()).coverChildren()
-                .debugName(singleRow ? "parent.row" : "parent.col");
+        Flow flow = (singleRow ? Flow.row() : Flow.column())
+                .coverChildren()
+                .debugName(singleRow ? "row:parent" : "col:parent");
         flow.crossAxisAlignment(isOutputs ? Alignment.CrossAxis.START : Alignment.CrossAxis.END);
 
         if (!onlyFluids && fluidGridHeight > 1) {
