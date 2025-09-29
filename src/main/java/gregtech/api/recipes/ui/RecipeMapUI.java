@@ -6,7 +6,9 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.widget.RecipeProgressWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
@@ -76,6 +78,9 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     private UITexture progressTexture = GTGuiTextures.PROGRESS_BAR_ARROW;
     private ProgressWidget.Direction progressDirection = ProgressWidget.Direction.RIGHT;
     private Consumer<Widget<?>> extraOverlays = null;
+    private int width = GTGuis.DEFAULT_WIDTH;
+    private int height = GTGuis.DEFAULT_HIEGHT;
+    private boolean isLeftGreater = false;
 
     /**
      * @param recipeMap          the recipemap corresponding to this ui
@@ -540,14 +545,31 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
     /* *********************** MUI 2 *********************** */
 
-    public ModularPanel constructPanel(ModularPanel panel, DoubleSupplier progressSupplier,
-                                       IItemHandlerModifiable importItems,
-                                       IItemHandlerModifiable exportItems, FluidTankList importFluids,
-                                       FluidTankList exportFluids, int yOffset, PanelSyncManager syncManager) {
+    public RecipeMapUI<R> setSize(int width, int height) {
+        this.width = width;
+        this.height = height;
+        return this;
+    }
+
+    public ModularPanel constructPanel(MetaTileEntity mte, DoubleSupplier progressSupplier,
+                                       IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
+                                       FluidTankList importFluids, FluidTankList exportFluids,
+                                       int yOffset, PanelSyncManager syncManager) {
+        int inputHeight = calculateHeight(determineSlotsGrid(importItems.getSlots(), importFluids.getTanks()),
+                importFluids.getTanks());
+        int outputHeight = calculateHeight(determineSlotsGrid(exportItems.getSlots(), exportFluids.getTanks()),
+                exportFluids.getTanks());
+        ModularPanel panel = GTGuis.createPanel(mte, this.width, adjustHeight(inputHeight, outputHeight));
+
         DoubleSyncValue progressValue = new DoubleSyncValue(progressSupplier);
 
+        int h = 3 * 18;
+        if (Math.max(inputHeight, outputHeight) < 3) {
+            h -= 18;
+        }
+
         Flow row = Flow.row()
-                .height(3 * 18)
+                .height(h)
                 .debugName("row:recipemapui.parent")
                 .alignX(0.5f)
                 .crossAxisAlignment(Alignment.CrossAxis.CENTER)
@@ -582,8 +604,6 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         return panel.child(row);
     }
 
-    boolean isLeftGreater = false;
-
     private int calculateWidth(int inputItems, int inputFluids,
                                int outputItems, int outputFluids,
                                int progressSize, int margin) {
@@ -607,6 +627,23 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
     private boolean isSingleRow(int[] grid, int fluidCount) {
         return grid[1] >= fluidCount && grid[0] < 3;
+    }
+
+    private int adjustHeight(int inputHeight, int outputHeight) {
+        if (Math.max(inputHeight, outputHeight) < 4) {
+            return this.height - 18;
+        }
+        return this.height;
+    }
+
+    private int calculateHeight(int[] inputs, int inputFluids) {
+        int inputHeight;
+        if (isSingleRow(inputs, inputFluids)) {
+            inputHeight = Math.max(inputs[1], inputs[3]);
+        } else {
+            inputHeight = inputs[1] + inputs[3];
+        }
+        return inputHeight;
     }
 
     /**

@@ -11,7 +11,6 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -151,9 +150,12 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
             yOffset = FONT_HEIGHT;
         }
 
-        ModularPanel panel = GTGuis.createPanel(this, 176, 166 + yOffset);
-        workableRecipeMap.getRecipeMapUI().constructPanel(panel, workable::getProgressPercent,
-                importItems, exportItems, importFluids, exportFluids, yOffset, guiSyncManager)
+        ModularPanel panel = workableRecipeMap.getRecipeMapUI()
+                .setSize(176, 166 + yOffset)
+                .constructPanel(this, workable::getProgressPercent,
+                        importItems, exportItems,
+                        importFluids, exportFluids,
+                        yOffset, guiSyncManager)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .bindPlayerInventory();
 

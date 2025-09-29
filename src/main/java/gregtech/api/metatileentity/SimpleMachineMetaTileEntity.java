@@ -17,7 +17,6 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTTransferUtils;
@@ -503,9 +502,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
             yOffset = FONT_HEIGHT;
         }
 
-        ModularPanel panel = GTGuis.createPanel(this, 176 + 20, 166 + yOffset);
         Flow col = Flow.column()
-                .debugName("special.buttons")
+                .debugName("col:special.buttons")
                 .right(7).bottom(7)
                 .height(18 * 4 + 4)
                 .width(18);
@@ -513,8 +511,12 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         BooleanSyncValue hasEnergy = new BooleanSyncValue(workable::isHasNotEnoughEnergy);
         guiSyncManager.syncValue("has_energy", hasEnergy);
 
-        workableRecipeMap.getRecipeMapUI().constructPanel(panel, workable::getProgressPercent,
-                importItems, exportItems, importFluids, exportFluids, yOffset, guiSyncManager)
+        ModularPanel panel = workableRecipeMap.getRecipeMapUI()
+                .setSize(176 + 20, 166 + yOffset)
+                .constructPanel(this, workable::getProgressPercent,
+                        importItems, exportItems,
+                        importFluids, exportFluids,
+                        yOffset, guiSyncManager)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(GTGuiTextures.INDICATOR_NO_ENERGY.asWidget()
                         .debugName("energy.indicator")
