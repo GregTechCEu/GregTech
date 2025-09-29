@@ -9,7 +9,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.mui.GTGuiTheme;
-import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.client.particle.VanillaParticleEffects;
@@ -145,14 +144,13 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         RecipeMap<?> map = Objects.requireNonNull(getRecipeMap());
 
-        ModularPanel modularPanel = GTGuis.defaultPanel(this);
-
-        map.getRecipeMapUI().constructPanel(modularPanel, workableHandler::getProgressPercent,
-                importItems, exportItems, EMPTY, exportFluids, 0, guiSyncManager)
+        return map.getRecipeMapUI()
+                .constructPanel(this, workableHandler::getProgressPercent,
+                        importItems, exportItems,
+                        EMPTY, exportFluids,
+                        0, guiSyncManager)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .bindPlayerInventory();
-
-        return modularPanel;
     }
 
     @Override
