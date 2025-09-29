@@ -555,10 +555,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         // this isn't great but it works for now
         // panel size is hardcoded because you can't get the panel size from the panel
         int m = calculateCenter(importItems.getSlots(), importFluids.getTanks(), 176 + 20);
+        int margin = 6;
 
         if (importItems.getSlots() > 0 || importFluids.getTanks() > 0) {
             row.child(makeInventorySlotGroup(importItems, importFluids, false)
-                    .marginLeft(m - 4));
+                    .marginLeft(m - margin));
         }
         RecipeProgressWidget progressWidget = new RecipeProgressWidget();
         if (this.extraOverlays != null) {
@@ -568,7 +569,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 .recipeMap(recipeMap)
                 .debugName("recipe.progress")
                 .size(20)
-                .margin(4, 0)
+                .margin(margin, 0)
                 .value(progressValue)
                 .texture(progressTexture, 20)
                 .direction(progressDirection));
