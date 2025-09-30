@@ -555,10 +555,12 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                                        IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
                                        FluidTankList importFluids, FluidTankList exportFluids,
                                        int yOffset, PanelSyncManager syncManager) {
-        int inputHeight = calculateHeight(determineSlotsGrid(importItems.getSlots(), importFluids.getTanks()),
-                importFluids.getTanks());
-        int outputHeight = calculateHeight(determineSlotsGrid(exportItems.getSlots(), exportFluids.getTanks()),
-                exportFluids.getTanks());
+        CalculatedGrid inputGrid = CalculatedGrid.of(importItems, importFluids);
+        CalculatedGrid outputGrid = CalculatedGrid.of(exportItems, exportFluids);
+
+        int inputHeight = inputGrid.getMaxHeight();
+        int outputHeight = outputGrid.getMaxHeight();
+
         ModularPanel panel = GTGuis.createPanel(mte, this.width, adjustHeight(inputHeight, outputHeight));
 
         DoubleSyncValue progressValue = new DoubleSyncValue(progressSupplier);
@@ -577,14 +579,14 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
         int progressSize = 20;
         int margin = 6;
-        row.width(calculateWidth(importItems.getSlots(), importFluids.getTanks(),
-                exportItems.getSlots(), exportFluids.getTanks(),
-                progressSize, margin));
+        row.width(calculatePixelWidth(inputGrid, outputGrid, progressSize, margin));
 
-        if (!this.isLeftGreater) row.mainAxisAlignment(Alignment.MainAxis.END);
+        if (inputGrid.getMaxWidth() < outputGrid.getMaxWidth()) {
+            row.mainAxisAlignment(Alignment.MainAxis.END);
+        }
 
         if (importItems.getSlots() > 0 || importFluids.getTanks() > 0) {
-            row.child(makeInventorySlotGroup(importItems, importFluids, false));
+            row.child(makeInventorySlotGroup(inputGrid, importItems, importFluids, false));
         }
         RecipeProgressWidget progressWidget = new RecipeProgressWidget();
         if (this.extraOverlays != null) {
@@ -599,34 +601,17 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 .texture(progressTexture, 20)
                 .direction(progressDirection));
         if (exportItems.getSlots() > 0 || exportFluids.getTanks() > 0) {
-            row.child(makeInventorySlotGroup(exportItems, exportFluids, true));
+            row.child(makeInventorySlotGroup(outputGrid, exportItems, exportFluids, true));
         }
         return panel.child(row);
     }
 
-    private int calculateWidth(int inputItems, int inputFluids,
-                               int outputItems, int outputFluids,
-                               int progressSize, int margin) {
-        int[] inputGrid = determineSlotsGrid(inputItems, inputFluids);
-        int[] outputGrid = determineSlotsGrid(outputItems, outputFluids);
+    private static int calculatePixelWidth(CalculatedGrid inputGrid, CalculatedGrid outputGrid,
+                                           int progressSize, int margin) {
+        int leftWidth = inputGrid.getMaxWidth() * 18;
+        int rightWidth = outputGrid.getMaxWidth() * 18;
 
-        int w1 = getGridWidth(inputGrid, inputFluids);
-        int w2 = getGridWidth(outputGrid, outputFluids);
-
-        this.isLeftGreater = w1 >= w2;
-        return (Math.max(w1, w2) + margin) * 2 + progressSize;
-    }
-
-    private int getGridWidth(int[] grid, int fluidCount) {
-        if (isSingleRow(grid, fluidCount)) {
-            return (grid[0] + grid[2]) * 18;
-        } else {
-            return Math.max(grid[0] * 18, (grid[2] * 18));
-        }
-    }
-
-    private boolean isSingleRow(int[] grid, int fluidCount) {
-        return grid[1] >= fluidCount && grid[0] < 3;
+        return (Math.max(leftWidth, rightWidth) + margin) * 2 + progressSize;
     }
 
     private int adjustHeight(int inputHeight, int outputHeight) {
@@ -636,25 +621,14 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         return this.height;
     }
 
-    private int calculateHeight(int[] inputs, int inputFluids) {
-        int inputHeight;
-        if (isSingleRow(inputs, inputFluids)) {
-            inputHeight = Math.max(inputs[1], inputs[3]);
-        } else {
-            inputHeight = inputs[1] + inputs[3];
-        }
-        return inputHeight;
-    }
-
-    /**
-     * @param grid [item grid width, item grid height, fluid grid width, fluid grid height]
-     */
-    private Widget<?> makeItemGroup(int[] grid, IItemHandlerModifiable handler, boolean isOutputs) {
+    private Widget<?> makeItemGroup(CalculatedGrid grid, IItemHandlerModifiable handler, boolean isOutputs) {
         Flow col = Flow.column()
                 .mainAxisAlignment(Alignment.MainAxis.END)
                 .coverChildren()
                 .debugName("col:item_grid");
-        int width = grid[0], height = grid[1];
+        int width = grid.getItemGridWidth();
+        int height = grid.getItemGridHeight();
+
         SlotGroup slotGroup = new SlotGroup(isOutputs ? "output_items" : "input_items", width, 1, !isOutputs);
         for (int i = 0; i < height; i++) {
             Flow row = Flow.row()
@@ -669,15 +643,15 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         return col;
     }
 
-    /**
-     * @param grid [item grid width, item grid height, fluid grid width, fluid grid height]
-     */
-    private Widget<?> makeFluidGroup(int[] grid, FluidTankList handler, boolean isOutputs) {
+    private Widget<?> makeFluidGroup(CalculatedGrid grid, FluidTankList handler, boolean isOutputs) {
         Flow col = Flow.column()
                 .mainAxisAlignment(Alignment.MainAxis.START)
                 .coverChildren()
                 .debugName("col:fluid_grid");
-        int width = grid[2], height = grid[3];
+
+        int width = grid.getFluidGridWidth();
+        int height = grid.getFluidGridHeight();
+
         for (int i = 0; i < height; i++) {
             Flow row = Flow.row()
                     .mainAxisAlignment(isOutputs ? Alignment.MainAxis.START : Alignment.MainAxis.END)
@@ -692,7 +666,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     }
 
     @NotNull
-    protected Widget<?> makeInventorySlotGroup(@NotNull IItemHandlerModifiable itemHandler,
+    protected Widget<?> makeInventorySlotGroup(CalculatedGrid grid, @NotNull IItemHandlerModifiable itemHandler,
                                                @NotNull FluidTankList fluidHandler, boolean isOutputs) {
         final int itemInputsCount = itemHandler.getSlots();
         boolean onlyFluids = itemInputsCount == 0;
@@ -702,11 +676,13 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
             throw new IllegalArgumentException("item and fluid handlers are empty!");
         }
 
-        int[] slotGridSizes = determineSlotsGrid(itemInputsCount, fluidInputsCount);
-        int itemGridHeight = slotGridSizes[onlyFluids ? 3 : 1];
-        int fluidGridHeight = slotGridSizes[3];
+        int itemGridHeight = grid.getFluidGridHeight();
+        int fluidGridHeight = grid.getFluidGridHeight();
+        if (!onlyFluids) {
+            itemGridHeight = grid.getItemGridHeight();
+        }
 
-        boolean singleRow = isSingleRow(slotGridSizes, fluidInputsCount);
+        boolean singleRow = grid.isSingleRow();
 
         Flow flow = (singleRow ? Flow.row() : Flow.column())
                 .coverChildren()
@@ -724,11 +700,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         }
 
         if (onlyFluids) {
-            flow.childIf(fluidInputsCount > 0, () -> makeFluidGroup(slotGridSizes, fluidHandler, isOutputs));
+            flow.childIf(fluidInputsCount > 0, () -> makeFluidGroup(grid, fluidHandler, isOutputs));
         } else {
-            flow.childIf(!singleRow || isOutputs, () -> makeItemGroup(slotGridSizes, itemHandler, isOutputs));
-            flow.childIf(fluidInputsCount > 0, () -> makeFluidGroup(slotGridSizes, fluidHandler, isOutputs));
-            flow.childIf(singleRow && !isOutputs, () -> makeItemGroup(slotGridSizes, itemHandler, isOutputs));
+            flow.childIf(!singleRow || isOutputs, () -> makeItemGroup(grid, itemHandler, isOutputs));
+            flow.childIf(fluidInputsCount > 0, () -> makeFluidGroup(grid, fluidHandler, isOutputs));
+            flow.childIf(singleRow && !isOutputs, () -> makeItemGroup(grid, itemHandler, isOutputs));
         }
 
         return flow;
@@ -874,5 +850,66 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      */
     public @NotNull R recipeMap() {
         return recipeMap;
+    }
+
+    protected static class CalculatedGrid {
+
+        private final int itemCount;
+        private final int fluidCount;
+        private final int[] grid;
+
+        protected static CalculatedGrid of(IItemHandlerModifiable itemHandler, FluidTankList fluidTankList) {
+            return new CalculatedGrid(itemHandler.getSlots(), fluidTankList.getTanks());
+        }
+
+        private CalculatedGrid(int itemCount, int fluidCount) {
+            this.itemCount = itemCount;
+            this.fluidCount = fluidCount;
+            this.grid = RecipeMapUI.determineSlotsGrid(this.itemCount, this.fluidCount);
+        }
+
+        public int getItemCount() {
+            return this.itemCount;
+        }
+
+        public int getItemGridWidth() {
+            return this.grid[0];
+        }
+
+        public int getItemGridHeight() {
+            return this.grid[1];
+        }
+
+        public int getFluidCount() {
+            return this.fluidCount;
+        }
+
+        public int getFluidGridWidth() {
+            return this.grid[2];
+        }
+
+        public int getFluidGridHeight() {
+            return this.grid[3];
+        }
+
+        public int getMaxWidth() {
+            if (isSingleRow()) {
+                return getFluidGridWidth() + getItemGridWidth();
+            } else {
+                return Math.max(getFluidGridWidth(), getItemGridWidth());
+            }
+        }
+
+        public int getMaxHeight() {
+            if (isSingleRow()) {
+                return Math.max(getFluidGridHeight(), getItemGridHeight());
+            } else {
+                return getFluidGridHeight() + getItemGridHeight();
+            }
+        }
+
+        private boolean isSingleRow() {
+            return getItemGridHeight() >= getFluidCount() && getItemGridWidth() < 3;
+        }
     }
 }
