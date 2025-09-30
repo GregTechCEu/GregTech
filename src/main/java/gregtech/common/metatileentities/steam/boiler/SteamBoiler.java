@@ -50,6 +50,7 @@ import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
@@ -161,12 +162,14 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isBurning);
+        buf.writeVarInt(currentTemperature);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isBurning = buf.readBoolean();
+        this.currentTemperature = buf.readVarInt();
     }
 
     @Override
@@ -346,12 +349,17 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        IntSyncValue temp = new IntSyncValue(this::getCurrentTemperature);
+        guiSyncManager.syncValue("temperature", temp);
         return GTGuis.defaultPanel(this)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(new ProgressWidget()
                         .texture(getEmptyBarDrawable(), GTGuiTextures.PROGRESS_BAR_BOILER_HEAT, -1)
                         .direction(ProgressWidget.Direction.UP)
                         .debugName("temp")
+                        .tooltipBuilder(
+                                tooltip -> tooltip.addLine(IKey.lang("gregtech.machine.steam_boiler.heat_tooltip",
+                                        temp.getIntValue(), getMaxTemperate())))
                         .value(new DoubleSyncValue(this::getTemperaturePercent))
                         .pos(96, 26)
                         .size(10, 54))

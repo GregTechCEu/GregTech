@@ -162,7 +162,8 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
             panel.child(new Widget<>()
                     .size(17)
-                    .pos(152, 63 + yOffset)
+                    .right(7)
+                    .top(45 + yOffset)
                     .background(GTGuiTextures.getLogo(getUITheme())));
         }
         return panel;
