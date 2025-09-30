@@ -144,6 +144,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         RecipeMap<?> map = Objects.requireNonNull(getRecipeMap());
 
+        // todo remove logo from background and use a widget
         return map.getRecipeMapUI()
                 .constructPanel(this, workableHandler::getProgressPercent,
                         importItems, exportItems,
