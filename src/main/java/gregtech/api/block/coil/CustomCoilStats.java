@@ -4,14 +4,11 @@ import gregtech.api.GTValues;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.client.model.ActiveVariantBlockBakedModel;
 
 import net.minecraft.util.IStringSerializable;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Predicate;
 
 public final class CustomCoilStats implements IHeatingCoilBlockStats, Comparable<CustomCoilStats>,
                                    IStringSerializable {
@@ -60,11 +57,6 @@ public final class CustomCoilStats implements IHeatingCoilBlockStats, Comparable
     @Override
     public @Nullable Material getMaterial() {
         return material;
-    }
-
-    @Override
-    public ActiveVariantBlockBakedModel createModel(Predicate<Object> bloomConfig) {
-        return null;
     }
 
     @Override

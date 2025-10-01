@@ -47,7 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
+import java.util.function.BooleanSupplier;
 
 public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
@@ -113,7 +113,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         Int2ObjectMap<ModelResourceLocation> modelMap = new Int2ObjectArrayMap<>();
 
         for (CoilType value : VALUES) {
-            var model = value.createModel(object -> isBloomEnabled((CoilType) object));
+            var model = value.createModel(() -> isBloomEnabled(value));
             modelMap.put(VARIANT.getIndexOf(value), model.getModelLocation());
 
             // inactive
@@ -327,8 +327,8 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
                 }
 
                 @Override
-                public ActiveVariantBlockBakedModel createModel(Predicate<Object> bloomConfig) {
-                    return new ActiveVariantBlockBakedModel(inactive, active, () -> bloomConfig.test(this));
+                public ActiveVariantBlockBakedModel createModel(BooleanSupplier bloomConfig) {
+                    return new ActiveVariantBlockBakedModel(inactive, active, bloomConfig);
                 }
             };
         }
