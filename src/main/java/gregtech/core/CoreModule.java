@@ -4,6 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.GregTechAPIInternal;
 import gregtech.api.block.IHeatingCoilBlockStats;
+import gregtech.api.block.coil.CoilManager;
+import gregtech.api.block.coil.CoilRegistry;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverUIFactory;
@@ -193,12 +195,20 @@ public class CoreModule implements IGregTechModule {
         // need to do this before MetaBlocks runs, to make sure all addons get their own BlockMachine
         /* Start MTE Registry Addition */
         GregTechAPI.mteManager = MTEManager.getInstance();
+        GregTechAPI.coilManager = CoilManager.getInstance();
         MinecraftForge.EVENT_BUS.post(new MTEManager.MTERegistryEvent());
         /* End MTE Registry Addition */
 
         OreDictUnifier.init();
 
         MetaBlocks.init();
+
+        for (CoilRegistry registry : coilManager.getRegistries()) {
+            registry.unfreeze();
+        }
+        logger.info("Registering Coils");
+        MinecraftForge.EVENT_BUS.post(new CoilManager.CoilRegistryEvent());
+
         MetaItems.init();
         ToolItems.init();
         GTFluidRegistration.INSTANCE.register();
@@ -253,6 +263,9 @@ public class CoreModule implements IGregTechModule {
         // freeze once addon preInit is finished
         for (MTERegistry registry : mteManager.getRegistries()) {
             registry.freeze();
+        }
+        for (CoilRegistry r : coilManager.getRegistries()) {
+            r.freeze();
         }
         proxy.onLoad();
         if (RecipeMap.isFoundInvalidRecipe()) {

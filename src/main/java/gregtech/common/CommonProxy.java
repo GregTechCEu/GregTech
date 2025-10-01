@@ -5,6 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.coil.CoilManager;
 import gregtech.api.block.coil.CoilRegistry;
+import gregtech.api.block.coil.CustomCoilBlock;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
@@ -287,10 +288,9 @@ public class CommonProxy {
         registry.register(createItemBlock(MULTIBLOCK_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(TRANSPARENT_CASING, VariantItemBlock::new));
 
-        MinecraftForge.EVENT_BUS.post(new CoilManager.CoilRegistryEvent());
-        for (CoilRegistry r : CoilManager.getInstance().getRegistries()) {
-            for (ResourceLocation l : r.getKeys()) {
-                registry.register(createItemBlock(r.getObject(l), VariantItemBlock::new));
+        for (CoilRegistry coilRegistry : GregTechAPI.coilManager.getRegistries()) {
+            for (CustomCoilBlock block : coilRegistry) {
+                registry.register(createItemBlock(block, VariantItemBlock::new));
             }
         }
 
