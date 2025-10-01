@@ -203,9 +203,9 @@ public class CoreModule implements IGregTechModule {
 
         MetaBlocks.init();
 
-        for (CoilRegistry registry : coilManager.getRegistries()) {
-            registry.unfreeze();
-        }
+//        for (CoilRegistry registry : coilManager.getRegistries()) {
+//            registry.unfreeze();
+//        }
         logger.info("Registering Coils");
         MinecraftForge.EVENT_BUS.post(new CoilManager.CoilRegistryEvent());
 
@@ -264,9 +264,9 @@ public class CoreModule implements IGregTechModule {
         for (MTERegistry registry : mteManager.getRegistries()) {
             registry.freeze();
         }
-        for (CoilRegistry r : coilManager.getRegistries()) {
-            r.freeze();
-        }
+//        for (CoilRegistry r : coilManager.getRegistries()) {
+//            r.freeze();
+//        }
         proxy.onLoad();
         if (RecipeMap.isFoundInvalidRecipe()) {
             logger.fatal("Seems like invalid recipe was found.");
