@@ -95,6 +95,12 @@ public class CommonProxy {
             registry.register(r.getBlock());
         }
 
+        for (CoilRegistry r : GregTechAPI.coilManager.getRegistries()) {
+            for (CustomCoilBlock block : r) {
+                registry.register(block);
+            }
+        }
+
         StoneType.init();
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
