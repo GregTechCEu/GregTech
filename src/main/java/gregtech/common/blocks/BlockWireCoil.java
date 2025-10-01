@@ -138,17 +138,13 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         Item item = Item.getItemFromBlock(this);
 
         for (CoilType value : VALUES) {
-            colorMap.put(VARIANT.getIndexOf(value), getColor(value));
+            colorMap.put(VARIANT.getIndexOf(value), value.getColor());
         }
 
         blockColors.registerBlockColorHandler((state, worldIn, pos, tintIndex) -> colorMap.get(state.getValue(VARIANT)),
                 this);
 
         itemColors.registerItemColorHandler((stack, tintIndex) -> colorMap.get(item.getMetadata(stack)), item);
-    }
-
-    private int getColor(CoilType type) {
-        return type.getMaterial() == null ? 0xFFFFFFFF : type.getMaterial().getMaterialRGB();
     }
 
     public static List<CoilType> getCoilTypes() {

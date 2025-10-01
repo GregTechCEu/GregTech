@@ -56,6 +56,10 @@ public interface IHeatingCoilBlockStats {
     @Nullable
     Material getMaterial();
 
+    default int getColor() {
+        return getMaterial() == null ? 0xFFFFFFFF : getMaterial().getMaterialRGB();
+    }
+
     default ActiveVariantBlockBakedModel createModel(BooleanSupplier bloomConfig) {
         return null;
     }

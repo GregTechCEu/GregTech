@@ -4,11 +4,15 @@ import gregtech.api.GTValues;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.client.model.ActiveVariantBlockBakedModel;
 
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.IStringSerializable;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.BooleanSupplier;
 
 public final class CustomCoilStats implements IHeatingCoilBlockStats, Comparable<CustomCoilStats>,
                                    IStringSerializable {
@@ -26,6 +30,7 @@ public final class CustomCoilStats implements IHeatingCoilBlockStats, Comparable
     int tier = GTValues.ULV;
 
     Material material = Materials.Iron;
+    ModelResourceLocation active, inactive;
 
     CustomCoilStats() {}
 
@@ -57,6 +62,11 @@ public final class CustomCoilStats implements IHeatingCoilBlockStats, Comparable
     @Override
     public @Nullable Material getMaterial() {
         return material;
+    }
+
+    @Override
+    public ActiveVariantBlockBakedModel createModel(BooleanSupplier bloomConfig) {
+        return new ActiveVariantBlockBakedModel(inactive, active, bloomConfig);
     }
 
     @Override
