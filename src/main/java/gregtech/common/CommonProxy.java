@@ -3,8 +3,9 @@ package gregtech.common;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
+import gregtech.api.block.coil.CoilManager;
+import gregtech.api.block.coil.CoilRegistry;
 import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.event.CoilEvent;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
@@ -222,8 +223,11 @@ public class CommonProxy {
 
     // todo REMOVE, THIS IS FOR TESTING
     @SubscribeEvent
-    public static void registerCoils(CoilEvent.Register event) {
-        event.create("custom_coil")
+    public static void registerCoils(CoilManager.CoilRegistryEvent event) {
+        final String modid = "test";
+        CoilRegistry registry = CoilManager.getInstance().createRegistry(modid);
+
+        registry.makeBuilder(0, "coil_block")
                 .addCoilType(b -> b
                         .coilTemp(42069)
                         .tier(GTValues.UHV)
@@ -234,7 +238,7 @@ public class CommonProxy {
                         .tier(GTValues.UHV)
                         .multiSmelter(69, 99)
                         .material(Materials.Neutronium))
-                .register();
+                .build();
     }
 
     @SubscribeEvent
@@ -283,8 +287,13 @@ public class CommonProxy {
         registry.register(createItemBlock(MULTIBLOCK_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(TRANSPARENT_CASING, VariantItemBlock::new));
 
-        MinecraftForge.EVENT_BUS.post(new CoilEvent.Register());
-        CoilEvent.registerBlocks(registry);
+        MinecraftForge.EVENT_BUS.post(new CoilManager.CoilRegistryEvent());
+        for (CoilRegistry r : CoilManager.getInstance().getRegistries()) {
+            for (ResourceLocation l : r.getKeys()) {
+                registry.register(createItemBlock(r.getObject(l), VariantItemBlock::new));
+            }
+        }
+
         registry.register(createItemBlock(WIRE_COIL, VariantItemBlock::new));
         registry.register(createItemBlock(FUSION_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN, VariantItemBlock::new));

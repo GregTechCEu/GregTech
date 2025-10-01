@@ -327,11 +327,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
                 }
 
                 @Override
-                public int getCoilColor() {
-                    return color;
-                }
-
-                @Override
                 public ActiveVariantBlockBakedModel createModel(Predicate<Object> bloomConfig) {
                     return new ActiveVariantBlockBakedModel(inactive, active, () -> bloomConfig.test(this));
                 }

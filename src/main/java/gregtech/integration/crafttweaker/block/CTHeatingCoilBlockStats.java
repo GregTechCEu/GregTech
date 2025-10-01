@@ -78,11 +78,6 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
     }
 
     @Override
-    public int getCoilColor() {
-        return getMaterial().getMaterialRGB();
-    }
-
-    @Override
     public ActiveVariantBlockBakedModel createModel(Predicate<Object> bloomConfig) {
         return null;
     }

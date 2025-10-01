@@ -56,7 +56,5 @@ public interface IHeatingCoilBlockStats {
     @Nullable
     Material getMaterial();
 
-    int getCoilColor();
-
     ActiveVariantBlockBakedModel createModel(Predicate<Object> bloomConfig);
 }
