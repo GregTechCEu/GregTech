@@ -39,7 +39,7 @@ public final class CustomCoilStats implements IHeatingCoilBlockStats, Comparable
     Material material = Materials.Iron;
     ModelResourceLocation active, inactive;
     boolean isGeneric;
-    QuadConsumer<ItemStack, World, List<String>, ITooltipFlag> additionalTooltips;
+    QuadConsumer<ItemStack, World, List<String>, Boolean> additionalTooltips;
 
     CustomCoilStats() {}
 
@@ -88,7 +88,7 @@ public final class CustomCoilStats implements IHeatingCoilBlockStats, Comparable
     public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, @NotNull List<String> lines,
                                @NotNull ITooltipFlag tooltipFlag) {
         if (this.additionalTooltips != null) {
-            this.additionalTooltips.accept(itemStack, worldIn, lines, tooltipFlag);
+            this.additionalTooltips.accept(itemStack, worldIn, lines, tooltipFlag.isAdvanced());
         }
     }
 }

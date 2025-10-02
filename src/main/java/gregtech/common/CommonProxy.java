@@ -238,6 +238,9 @@ public class CommonProxy {
                 .addCoilType(b -> b
                         .coilTemp(42069)
                         .generic()
+                        .tooltip((stack, world, strings, advanced) -> {
+                            strings.add("this is a custom coil!");
+                        })
                         .tier(GTValues.UHV)
                         .multiSmelter(69, 98)
                         .material(Materials.Chlorine))

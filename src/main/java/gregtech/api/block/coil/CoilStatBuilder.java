@@ -2,9 +2,14 @@ package gregtech.api.block.coil;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.function.QuadConsumer;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+
+import java.util.List;
 
 public class CoilStatBuilder {
 
@@ -55,6 +60,11 @@ public class CoilStatBuilder {
 
     public CoilStatBuilder generic() {
         return generic(true);
+    }
+
+    public CoilStatBuilder tooltip(QuadConsumer<ItemStack, World, List<String>, Boolean> additionalTooltips) {
+        this.stats.additionalTooltips = additionalTooltips;
+        return this;
     }
 
     CustomCoilStats build() {
