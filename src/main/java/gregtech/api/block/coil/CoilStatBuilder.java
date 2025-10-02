@@ -1,7 +1,6 @@
 package gregtech.api.block.coil;
 
 import gregtech.api.unification.material.Material;
-import gregtech.api.util.GTUtility;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
@@ -11,6 +10,7 @@ import java.util.Objects;
 public class CoilStatBuilder {
 
     private final CustomCoilStats stats;
+    private ResourceLocation textureLocation;
 
     CoilStatBuilder() {
         this.stats = new CustomCoilStats();
@@ -39,21 +39,23 @@ public class CoilStatBuilder {
     }
 
     public CoilStatBuilder texture(ResourceLocation location, boolean generic) {
-        ResourceLocation loc = Objects.requireNonNull(location);
-        String variant = generic ? "%s" : "active=%s,variant=%s";
-        stats.inactive = new ModelResourceLocation(loc,
-                generic ? String.format(variant, false) : String.format(variant, false, stats.name));
-        stats.active = new ModelResourceLocation(loc,
-                generic ? String.format(variant, true) : String.format(variant, true, stats.name));
+        this.textureLocation = Objects.requireNonNull(location);
+        this.stats.isGeneric = generic;
         return this;
     }
 
     CustomCoilStats build() {
-        if (stats.inactive == null) {
-            stats.inactive = new ModelResourceLocation(GTUtility.gregtechId("wire_coil"), "normal");
-        }
-        if (stats.active == null) {
-            stats.active = stats.inactive;
+        String variant;
+        if (this.stats.isGeneric) {
+            variant = "%s";
+            this.stats.inactive = new ModelResourceLocation(this.textureLocation, String.format(variant, false));
+            this.stats.active = new ModelResourceLocation(this.textureLocation, String.format(variant, true));
+        } else {
+            variant = "active=%s,variant=%s";
+            this.stats.inactive = new ModelResourceLocation(this.textureLocation,
+                    String.format(variant, false, stats.name));
+            this.stats.active = new ModelResourceLocation(this.textureLocation,
+                    String.format(variant, true, stats.name));
         }
         return this.stats;
     }

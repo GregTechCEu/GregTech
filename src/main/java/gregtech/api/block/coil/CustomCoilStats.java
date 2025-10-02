@@ -31,6 +31,7 @@ public final class CustomCoilStats implements IHeatingCoilBlockStats, Comparable
 
     Material material = Materials.Iron;
     ModelResourceLocation active, inactive;
+    boolean isGeneric = true;
 
     CustomCoilStats() {}
 

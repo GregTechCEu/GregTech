@@ -90,6 +90,11 @@ public abstract class VariantActiveBlock<T extends IStringSerializable & Compara
     @NotNull
     @Override
     public BlockRenderLayer getRenderLayer() {
+        return getRenderLayer(VALUES[0]);
+    }
+
+    @NotNull
+    public BlockRenderLayer getRenderLayer(T value) {
         return BlockRenderLayer.CUTOUT;
     }
 

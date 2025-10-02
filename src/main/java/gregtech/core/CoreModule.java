@@ -5,7 +5,6 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.GregTechAPIInternal;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.coil.CoilManager;
-import gregtech.api.block.coil.CoilRegistry;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverUIFactory;
@@ -203,9 +202,9 @@ public class CoreModule implements IGregTechModule {
 
         MetaBlocks.init();
 
-//        for (CoilRegistry registry : coilManager.getRegistries()) {
-//            registry.unfreeze();
-//        }
+        // for (CoilRegistry registry : coilManager.getRegistries()) {
+        // registry.unfreeze();
+        // }
         logger.info("Registering Coils");
         MinecraftForge.EVENT_BUS.post(new CoilManager.CoilRegistryEvent());
 
@@ -264,9 +263,9 @@ public class CoreModule implements IGregTechModule {
         for (MTERegistry registry : mteManager.getRegistries()) {
             registry.freeze();
         }
-//        for (CoilRegistry r : coilManager.getRegistries()) {
-//            r.freeze();
-//        }
+        // for (CoilRegistry r : coilManager.getRegistries()) {
+        // r.freeze();
+        // }
         proxy.onLoad();
         if (RecipeMap.isFoundInvalidRecipe()) {
             logger.fatal("Seems like invalid recipe was found.");

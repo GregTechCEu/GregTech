@@ -22,7 +22,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -32,7 +31,6 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.cleanroommc.modularui.utils.Color;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
@@ -46,7 +44,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
 public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
@@ -59,12 +56,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         setSoundType(SoundType.METAL);
         setHarvestLevel(ToolClasses.WRENCH, 2);
         setDefaultState(getState(CoilType.CUPRONICKEL));
-    }
-
-    @NotNull
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.SOLID;
     }
 
     @Override
@@ -181,8 +172,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         static {
             CUPRONICKEL = coilType(Materials.Cupronickel)
                     .tier(GTValues.LV)
-                    // this works, but requires SOLID, while everything else needs CUTOUT
-                    .texture(GTUtility.gregtechId("wire_coil"), false)
                     .coilTemp(1800)
                     .multiSmelter(1, 1)
                     .build();
@@ -242,7 +231,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         private int level;
         private int energyDiscount;
         private int tier;
-        private int color = Color.WHITE.main;
         private final Material material;
         private ModelResourceLocation inactive;
         private ModelResourceLocation active;
@@ -262,21 +250,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             return this;
         }
 
-        public Builder color(int color) {
-            this.color = color;
-            return this;
-        }
-
-        public Builder texture(ResourceLocation location, boolean generic) {
-            ResourceLocation loc = Objects.requireNonNull(location);
-            String variant = generic ? "%s" : "active=%s,variant=%s";
-            this.inactive = new ModelResourceLocation(loc,
-                    generic ? String.format(variant, false) : String.format(variant, false, name));
-            this.active = new ModelResourceLocation(loc,
-                    generic ? String.format(variant, true) : String.format(variant, true, name));
-            return this;
-        }
-
         public Builder multiSmelter(int level, int energyDiscount) {
             this.level = level;
             this.energyDiscount = energyDiscount;
@@ -284,12 +257,10 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         }
 
         public CoilType build() {
-            if (inactive == null) {
-                inactive = new ModelResourceLocation(GTUtility.gregtechId("wire_coil"), "normal");
-            }
-            if (active == null) {
-                active = inactive;
-            }
+            ResourceLocation loc = GTUtility.gregtechId("wire_coil");
+            String variant = "active=%s,variant=%s";
+            this.inactive = new ModelResourceLocation(loc, String.format(variant, false, name));
+            this.active = new ModelResourceLocation(loc, String.format(variant, true, name));
             return new CoilType() {
 
                 @Override

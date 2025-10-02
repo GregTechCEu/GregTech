@@ -63,8 +63,8 @@ public final class CustomCoilBlock extends VariantActiveBlock<CustomCoilStats> {
 
     @NotNull
     @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.SOLID;
+    public BlockRenderLayer getRenderLayer(CustomCoilStats value) {
+        return value.isGeneric ? BlockRenderLayer.CUTOUT : BlockRenderLayer.SOLID;
     }
 
     @Override
@@ -84,8 +84,8 @@ public final class CustomCoilBlock extends VariantActiveBlock<CustomCoilStats> {
                                @NotNull ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
 
-        // noinspection rawtypes, unchecked
-        VariantItemBlock itemBlock = (VariantItemBlock<CustomCoilStats, CustomCoilBlock>) itemStack.getItem();
+        // noinspection unchecked
+        var itemBlock = (VariantItemBlock<CustomCoilStats, CustomCoilBlock>) itemStack.getItem();
         IBlockState stackState = itemBlock.getBlockState(itemStack);
         IHeatingCoilBlockStats coilType = getState(stackState);
 
