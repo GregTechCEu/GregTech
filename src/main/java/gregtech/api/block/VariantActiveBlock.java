@@ -100,7 +100,7 @@ public abstract class VariantActiveBlock<T extends IStringSerializable & Compara
 
     @Override
     public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
-        return layer == getRenderLayer() ||
+        return layer == getRenderLayer(getState(state)) ||
                 layer == BloomEffectUtil.getEffectiveBloomLayer(isBloomEnabled(getState(state)));
     }
 

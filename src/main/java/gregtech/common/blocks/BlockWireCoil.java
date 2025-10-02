@@ -22,6 +22,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -96,6 +97,11 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
     public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
                                     @NotNull SpawnPlacementType type) {
         return false;
+    }
+
+    @Override
+    public @NotNull BlockRenderLayer getRenderLayer(CoilType value) {
+        return BlockRenderLayer.SOLID;
     }
 
     @SideOnly(Side.CLIENT)

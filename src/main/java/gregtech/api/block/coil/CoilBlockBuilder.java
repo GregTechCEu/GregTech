@@ -12,21 +12,23 @@ public class CoilBlockBuilder {
     public static final int ACTIVE_META_LIMIT = 8;
 
     private final List<CustomCoilStats> stats = new ArrayList<>(ACTIVE_META_LIMIT);
+    private final String modid;
     private final Consumer<CustomCoilBlock> onBuild;
 
-    private CoilBlockBuilder(Consumer<CustomCoilBlock> onBuild) {
+    private CoilBlockBuilder(String modid, Consumer<CustomCoilBlock> onBuild) {
+        this.modid = modid;
         this.onBuild = onBuild;
     }
 
-    static CoilBlockBuilder builder(Consumer<CustomCoilBlock> onBuild) {
-        return new CoilBlockBuilder(onBuild);
+    static CoilBlockBuilder builder(String modid, Consumer<CustomCoilBlock> onBuild) {
+        return new CoilBlockBuilder(modid, onBuild);
     }
 
     public CoilBlockBuilder addCoilType(UnaryOperator<CoilStatBuilder> builder) {
         if (stats.size() >= ACTIVE_META_LIMIT) {
             throw new IllegalStateException("Cannot exceed active meta limit!");
         }
-        stats.add(builder.apply(new CoilStatBuilder()).build());
+        stats.add(builder.apply(new CoilStatBuilder(this.modid)).build());
         return this;
     }
 

@@ -237,11 +237,13 @@ public class CommonProxy {
         registry.makeBuilder(0, "coil_block")
                 .addCoilType(b -> b
                         .coilTemp(42069)
+                        .generic()
                         .tier(GTValues.UHV)
                         .multiSmelter(69, 98)
                         .material(Materials.Chlorine))
                 .addCoilType(b -> b
                         .coilTemp(696969)
+                        .generic()
                         .tier(GTValues.UHV)
                         .multiSmelter(69, 99)
                         .material(Materials.Neutronium))

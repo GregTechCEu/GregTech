@@ -19,7 +19,7 @@ public class CoilRegistry extends GTControlledRegistry<ResourceLocation, CustomC
 
     public CoilBlockBuilder makeBuilder(int id, String name) {
         ResourceLocation loc = new ResourceLocation(this.modid, name);
-        return CoilBlockBuilder.builder(b -> register(id, loc, b));
+        return CoilBlockBuilder.builder(this.modid, b -> register(id, loc, b));
     }
 
     @Override

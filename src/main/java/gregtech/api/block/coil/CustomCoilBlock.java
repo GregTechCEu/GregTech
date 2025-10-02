@@ -1,7 +1,6 @@
 package gregtech.api.block.coil;
 
 import gregtech.api.GTValues;
-import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -87,7 +86,7 @@ public final class CustomCoilBlock extends VariantActiveBlock<CustomCoilStats> {
         // noinspection unchecked
         var itemBlock = (VariantItemBlock<CustomCoilStats, CustomCoilBlock>) itemStack.getItem();
         IBlockState stackState = itemBlock.getBlockState(itemStack);
-        IHeatingCoilBlockStats coilType = getState(stackState);
+        CustomCoilStats coilType = getState(stackState);
 
         lines.add(I18n.format("tile.wire_coil.tooltip_heat", coilType.getCoilTemperature()));
 
@@ -106,6 +105,8 @@ public final class CustomCoilBlock extends VariantActiveBlock<CustomCoilStats> {
         } else {
             lines.add(I18n.format("tile.wire_coil.tooltip_extended_info"));
         }
+
+        coilType.addInformation(itemStack, worldIn, lines, tooltipFlag);
     }
 
     @SideOnly(Side.CLIENT)
