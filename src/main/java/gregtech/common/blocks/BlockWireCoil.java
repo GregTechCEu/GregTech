@@ -161,20 +161,6 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         public static CoilType TRINIUM;
         public static CoilType TRITANIUM;
 
-        private CoilType() {
-            COIL_TYPES.add(this);
-        }
-
-        @Override
-        public int compareTo(@NotNull BlockWireCoil.CoilType o) {
-            return Integer.compare(o.getTier(), getTier());
-        }
-
-        @Override
-        public String toString() {
-            return getName();
-        }
-
         static {
             CUPRONICKEL = coilType(Materials.Cupronickel)
                     .tier(GTValues.LV)
@@ -225,6 +211,20 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
         private static Builder coilType(String name, Material material) {
             return new Builder(name, material);
+        }
+
+        private CoilType() {
+            COIL_TYPES.add(this);
+        }
+
+        @Override
+        public int compareTo(@NotNull BlockWireCoil.CoilType o) {
+            return Integer.compare(o.getTier(), getTier());
+        }
+
+        @Override
+        public String toString() {
+            return getName();
         }
     }
 
