@@ -135,8 +135,8 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
     @Override
     public @Nullable ItemStack castGhostIngredientIfValid(@NotNull Object ingredient) {
-        ingredient = JEIUtil.getBookStackIfEnchantment(ingredient);
-        return areAncestorsEnabled() && ingredient instanceof ItemStack ? (ItemStack) ingredient : null;
+        ItemStack stack = JEIUtil.getActualStack(ingredient);
+        return areAncestorsEnabled() && !stack.isEmpty() ? stack : null;
     }
 
     @Override
