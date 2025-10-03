@@ -12,10 +12,7 @@
     "IconMixin",
     "IconMixin$DelegateMixin",
     "ModularPanelMixin",
-    "RichTextCompilerMixin",
-    "ModularSyncManagerAccessor",
-    "PanelSyncHandlerAccessor",
-    "PanelSyncManagerAccessor"
+    "RichTextCompilerMixin"
   ],
   "client": [
     "LangKeyMixin",
