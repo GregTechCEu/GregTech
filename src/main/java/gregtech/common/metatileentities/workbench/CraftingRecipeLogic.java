@@ -1,8 +1,8 @@
 package gregtech.common.metatileentities.workbench;
 
 import gregtech.api.items.toolitem.ItemGTToolbelt;
-import gregtech.api.mui.IJEIRecipeReceiver;
 import gregtech.api.mui.sync.PagedWidgetSyncHandler;
+import gregtech.api.mui.sync.RecipeSyncHandler;
 import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -25,7 +25,6 @@ import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
-import com.cleanroommc.modularui.value.sync.SyncHandler;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.ints.Int2BooleanArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
@@ -46,7 +45,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class CraftingRecipeLogic extends SyncHandler implements IJEIRecipeReceiver {
+public class CraftingRecipeLogic extends RecipeSyncHandler {
 
     // client only
     public static final int UPDATE_INGREDIENTS = 1;

@@ -1,8 +1,7 @@
 package gregtech.api.mui;
 
 import gregtech.api.GTValues;
-import gregtech.api.util.MUIUtil;
-import gregtech.mixins.mui2.ModularSyncManagerAccessor;
+import gregtech.integration.jei.JustEnoughItemsModule;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -10,22 +9,16 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import com.cleanroommc.modularui.integration.jei.JeiRecipeTransferHandler;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.utils.ObjectList;
-import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.value.sync.SyncHandler;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
-import mezz.jei.transfer.RecipeTransferErrorInternal;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("UnstableApiUsage")
 @SideOnly(Side.CLIENT)
 public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransferHandler {
+
+    private static final Object2ObjectMap<String, IJEIRecipeReceiver> knownRecipeReceivers = new Object2ObjectOpenHashMap<>();
 
     public GregTechGuiScreen(ModularPanel mainPanel) {
         this(mainPanel, GTGuiTheme.STANDARD);
@@ -46,29 +39,18 @@ public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransfe
 
     @Override
     public IRecipeTransferError transferRecipe(IRecipeLayout recipeLayout, boolean maxTransfer, boolean simulate) {
-        Map<String, List<SyncHandler>> panelToSyncMap = new HashMap<>();
-        ObjectList<PanelSyncManager> panels = ObjectList.create();
-        panels.add(((ModularSyncManagerAccessor) getSyncManager()).getMainPanelSyncManager());
-        while (!panels.isEmpty()) {
-            PanelSyncManager psm = panels.removeFirst();
-            panelToSyncMap.put(psm.getPanelName(), new ArrayList<>(MUIUtil.getSyncHandlers(psm)));
-
-            if (MUIUtil.hasSubPanels(psm)) {
-                for (PanelSyncHandler psh : MUIUtil.getSubPanels(psm)) {
-                    if (MUIUtil.hasSyncManager(psh)) {
-                        panels.add(MUIUtil.getPanelSyncManager(psh));
-                    }
-                }
-            }
+        for (IJEIRecipeReceiver handler : knownRecipeReceivers.values()) {
+            IRecipeTransferError error = handler.receiveRecipe(recipeLayout, maxTransfer, simulate);
+            if (error == null) return null;
         }
+        return JustEnoughItemsModule.transferHelper.createInternalError();
+    }
 
-        for (SyncHandler syncHandler : panelToSyncMap.get(getPanelManager().getTopMostPanel().getName())) {
-            if (syncHandler instanceof IJEIRecipeReceiver recipeReceiver) {
-                return recipeReceiver.receiveRecipe(recipeLayout, maxTransfer, simulate);
-            }
-        }
+    public static void registerRecipeReceiver(String key, IJEIRecipeReceiver receiver) {
+        knownRecipeReceivers.put(key, receiver);
+    }
 
-        // Hide the + button by default if no recipe receiver was found.
-        return RecipeTransferErrorInternal.INSTANCE;
+    public static void removeRecipeReceiver(String key) {
+        knownRecipeReceivers.remove(key);
     }
 }
