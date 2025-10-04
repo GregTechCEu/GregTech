@@ -11,32 +11,51 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import com.mojang.authlib.GameProfile;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
+import java.util.Map;
 import java.util.UUID;
 
 public class GregFakePlayer extends EntityPlayer {
 
-    private static final GameProfile GREGTECH = new GameProfile(UUID.fromString("518FDF18-EC2A-4322-832A-58ED1721309B"),
-            "[GregTech]");
-    private static WeakReference<FakePlayer> GREGTECH_PLAYER = null;
+    private static final String FAKE_NAME = "[GregTech]";
+    private static final UUID FAKE_UUID = UUID.fromString("518FDF18-EC2A-4322-832A-58ED1721309B");
+    private static final GameProfile FAKE_PROFILE = new GameProfile(FAKE_UUID, FAKE_NAME);
+    private static final Map<UUID, GameProfile> PROFILE_CACHE = new Object2ObjectOpenHashMap<>();
+    private static final Map<UUID, WeakReference<FakePlayer>> GREGTECH_PLAYERS = new Object2ObjectOpenHashMap<>();
 
-    public static FakePlayer get(WorldServer world) {
-        FakePlayer ret = GREGTECH_PLAYER != null ? GREGTECH_PLAYER.get() : null;
-        if (ret == null) {
-            ret = FakePlayerFactory.get(world, GREGTECH);
-            GREGTECH_PLAYER = new WeakReference<>(ret);
-        }
-        return ret;
+    public static @NotNull FakePlayer get(@NotNull WorldServer world) {
+        return get(world, FAKE_PROFILE);
     }
 
-    public GregFakePlayer(World worldIn) {
-        super(worldIn, GREGTECH);
+    public static @NotNull FakePlayer get(@NotNull WorldServer world, @Nullable UUID fakePlayerUUID) {
+        return get(world, fakePlayerUUID == null ? FAKE_PROFILE :
+                PROFILE_CACHE.computeIfAbsent(fakePlayerUUID, id -> new GameProfile(id, FAKE_NAME)));
+    }
+
+    public static @NotNull FakePlayer get(@NotNull WorldServer world, @NotNull GameProfile fakePlayerProfile) {
+        UUID id = fakePlayerProfile.getId();
+        if (GREGTECH_PLAYERS.containsKey(id)) {
+            FakePlayer fakePlayer = GREGTECH_PLAYERS.get(id).get();
+            if (fakePlayer != null) {
+                return fakePlayer;
+            }
+        }
+
+        FakePlayer fakePlayer = new FakePlayer(world, fakePlayerProfile);
+        GREGTECH_PLAYERS.put(id, new WeakReference<>(fakePlayer));
+        return fakePlayer;
+    }
+
+    public GregFakePlayer(@NotNull World worldIn) {
+        super(worldIn, FAKE_PROFILE);
     }
 
     @Override

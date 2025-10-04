@@ -3,14 +3,13 @@ package gregtech.common.metatileentities.multi;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.PropertyFluidFilter;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.client.renderer.ICubeRenderer;
@@ -19,7 +18,9 @@ import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockSteamCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.mui.widget.GTFluidSlot;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,6 +38,9 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.widgets.TextWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -111,6 +115,12 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     @Override
+    public GTGuiTheme getUITheme() {
+        if (isMetal) return GTGuiTheme.STEEL;
+        else return GTGuiTheme.PRIMITIVE;
+    }
+
+    @Override
     public boolean hasMaintenanceMechanics() {
         return false;
     }
@@ -129,13 +139,25 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     @Override
-    protected ModularUI.Builder createUITemplate(@NotNull EntityPlayer entityPlayer) {
-        return ModularUI.defaultBuilder()
-                .widget(new LabelWidget(6, 6, getMetaFullName()))
-                .widget(new TankWidget(importFluids.getTankAt(0), 52, 18, 72, 61)
-                        .setBackgroundTexture(GuiTextures.SLOT)
-                        .setContainerClicking(true, true))
-                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 0);
+    protected MultiblockUIFactory createUIFactory() {
+        return new MultiblockUIFactory(this)
+                .setSize(176, 166)
+                .disableDisplay()
+                .disableButtons()
+                .addScreenChildren((parent, syncManager) -> {
+                    parent.child(new TextWidget(IKey.lang(getMetaFullName()))
+                            .pos(5, 5));
+                    parent.child(new GTFluidSlot()
+                            .pos(52, 18)
+                            .size(72, 61)
+                            // todo this looks ugly
+                            .overlay(GTGuiTextures.PRIMITIVE_LARGE_FLUID_TANK_OVERLAY.asIcon()
+                                    .alignment(Alignment.CenterLeft)
+                                    .size(30, 58))
+                            .syncHandler(GTFluidSlot.sync(importFluids.getTankAt(0))
+                                    .showAmountOnSlot(false)
+                                    .drawAlwaysFull(false)));
+                });
     }
 
     @Override
@@ -169,5 +191,11 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
             }
         }
         return super.getCapability(capability, side);
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return this.isMetal ? SoundType.METAL : SoundType.WOOD;
     }
 }

@@ -29,18 +29,20 @@ public class DustProperty implements IMaterialProperty {
         this(2, 0);
     }
 
-    public void setHarvestLevel(int harvestLevel) {
+    public DustProperty setHarvestLevel(int harvestLevel) {
         if (harvestLevel <= 0) throw new IllegalArgumentException("Harvest Level must be greater than zero!");
         this.harvestLevel = harvestLevel;
+        return this;
     }
 
     public int getHarvestLevel() {
         return this.harvestLevel;
     }
 
-    public void setBurnTime(int burnTime) {
+    public DustProperty setBurnTime(int burnTime) {
         if (burnTime < 0) throw new IllegalArgumentException("Burn Time cannot be negative!");
         this.burnTime = burnTime;
+        return this;
     }
 
     public int getBurnTime() {

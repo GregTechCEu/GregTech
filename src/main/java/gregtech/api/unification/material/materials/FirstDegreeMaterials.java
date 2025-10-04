@@ -904,7 +904,7 @@ public class FirstDegreeMaterials {
         PhosphorusPentoxide = new Material.Builder(359, gregtechId("phosphorus_pentoxide"))
                 .dust(1)
                 .color(0xDCDC00)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Phosphorus, 4, Oxygen, 10)
                 .build();
 
@@ -978,11 +978,7 @@ public class FirstDegreeMaterials {
                 .components(Zinc, 1, Oxygen, 1)
                 .build();
 
-        CupricOxide = new Material.Builder(371, gregtechId("cupric_oxide"))
-                .dust(1)
-                .color(0x0F0F0F)
-                .components(Copper, 1, Oxygen, 1)
-                .build();
+        // FREE ID 371
 
         CobaltOxide = new Material.Builder(372, gregtechId("cobalt_oxide"))
                 .dust(1)
@@ -1002,11 +998,7 @@ public class FirstDegreeMaterials {
                 .components(Lead, 1, Oxygen, 1)
                 .build();
 
-        Ferrosilite = new Material.Builder(375, gregtechId("ferrosilite"))
-                .dust(1)
-                .color(0x97632A)
-                .components(Iron, 1, Silicon, 1, Oxygen, 3)
-                .build();
+        // FREE ID 375
 
         MetalMixture = new Material.Builder(376, gregtechId("metal_mixture"))
                 .dust(1)

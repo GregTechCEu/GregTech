@@ -45,20 +45,23 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
 
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        ItemStack itemstack = this.memory.getRecipeOutputAtIndex(this.index);
-        if (itemstack.isEmpty()) return;
+        ItemStack itemStack = this.memory.getRecipeOutputAtIndex(this.index);
 
-        int cachedCount = itemstack.getCount();
-        itemstack.setCount(1); // required to not render the amount overlay
-        RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
-        itemstack.setCount(cachedCount);
+        if (!itemStack.isEmpty()) {
+            int cachedCount = itemStack.getCount();
+            itemStack.setCount(1); // required to not render the amount overlay
+            RenderUtil.renderItem(itemStack, 1, 1, 16, 16);
+            itemStack.setCount(cachedCount);
 
-        // noinspection DataFlowIssue
-        if (this.memory.getRecipeAtIndex(this.index).isRecipeLocked()) {
-            GlStateManager.disableDepth();
-            GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
-            GlStateManager.enableDepth();
+            // noinspection DataFlowIssue
+            if (this.memory.getRecipeAtIndex(this.index).isRecipeLocked()) {
+                GlStateManager.disableDepth();
+                GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
+                GlStateManager.enableDepth();
+            }
         }
+
+        RenderUtil.handleSlotOverlay(this, widgetTheme);
     }
 
     @Override

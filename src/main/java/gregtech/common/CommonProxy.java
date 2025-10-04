@@ -18,7 +18,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
-import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.BlockCompressed;
@@ -64,6 +64,7 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.Mod;
@@ -359,7 +360,7 @@ public class CommonProxy {
         MaterialInfoLoader.init();
 
         // post an event for addons to modify unification data before base GT registers recycling recipes
-        MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, ItemMaterialInfo.class));
+        MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, RecyclingData.class));
 
         GTLog.logger.info("Registering recipes...");
 
@@ -445,9 +446,13 @@ public class CommonProxy {
         // If JEI and GS is not loaded, refresh ore dict ingredients
         // Not needed if JEI is loaded, as done in the JEI plugin (and this runs after that)
         // Not needed if GS is loaded, as done after script loads (and this runs after that)
-        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI) &&
-                !GroovyScriptModule.isCurrentlyRunning())
-            GTRecipeOreInput.refreshStackCache();
+        if (!GroovyScriptModule.isCurrentlyRunning()) {
+            // EXCEPTION: IF GrS is not loaded, and JEI is loaded, and we are in a dedicated server env, refresh
+            // This is due to JEI Plugin Register not taking place on server, and GrS not acting as the backup.
+            if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI) ||
+                    FMLCommonHandler.instance().getSide().isServer())
+                GTRecipeOreInput.refreshStackCache();
+        }
     }
 
     public boolean isFancyGraphics() {

@@ -6,7 +6,6 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.GTFluid;
-import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.items.behavior.CoverItemBehavior;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -19,6 +18,8 @@ import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.ItemAndMetadata;
+import gregtech.api.util.function.impl.TimedProgressSupplier;
 
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -58,6 +59,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -508,6 +510,40 @@ public class GTUtility {
     }
 
     /**
+     * Copies the FluidStack with new stack size.
+     *
+     * @param stack item stack for copying
+     * @return a copy of FluidStack, or {@code null} if the stack is empty
+     */
+    @Nullable
+    public static FluidStack copy(int newCount, @Nullable FluidStack stack) {
+        if (isEmpty(stack)) return null;
+        FluidStack copy = stack.copy();
+        copy.amount = newCount;
+        return copy;
+    }
+
+    /**
+     * Copies the FluidStack.
+     *
+     * @param stack fluid stack for copying
+     * @return a copy of FluidStack, or {@code null} if the stack is empty
+     */
+    @Nullable
+    public static FluidStack copy(@Nullable FluidStack stack) {
+        if (isEmpty(stack)) return null;
+        return stack.copy();
+    }
+
+    /**
+     * @param stack fluid stack to check if empty
+     * @return true if the stack is null or amount is <= 0
+     */
+    public static boolean isEmpty(FluidStack stack) {
+        return stack == null || stack.amount <= 0;
+    }
+
+    /**
      * Copies first non-empty ItemStack from stacks.
      *
      * @param stacks list of candidates for copying
@@ -877,6 +913,8 @@ public class GTUtility {
     }
 
     @Contract("null -> null")
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public static TextComponentTranslation getFluidTranslation(@Nullable FluidStack stack) {
         if (stack == null) return null;
         if (stack.getFluid() instanceof GTFluid.GTMaterialFluid materialFluid) {
@@ -887,6 +925,8 @@ public class GTUtility {
     }
 
     @Contract("null -> null")
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public static TextComponentTranslation getFluidTranslation(@Nullable Fluid fluid) {
         if (fluid == null) return null;
         if (fluid instanceof GTFluid.GTMaterialFluid materialFluid) {
@@ -895,10 +935,11 @@ public class GTUtility {
         return new TextComponentTranslation(fluid.getUnlocalizedName());
     }
 
+    @Deprecated
     public static @NotNull Pair<DoubleSupplier, DoubleSupplier> createPairedSupplier(int ticksPerCycle, int width,
                                                                                      double splitPoint) {
         AtomicDouble tracker = new AtomicDouble(0.0);
-        DoubleSupplier supplier1 = new ProgressWidget.TimedProgressSupplier(ticksPerCycle, width, false) {
+        DoubleSupplier supplier1 = new TimedProgressSupplier(ticksPerCycle, width, false) {
 
             @Override
             public double getAsDouble() {
@@ -964,5 +1005,28 @@ public class GTUtility {
     public static int combineRGB(@Range(from = 0, to = 255) int r, @Range(from = 0, to = 255) int g,
                                  @Range(from = 0, to = 255) int b) {
         return (r << 16) | (g << 8) | b;
+    }
+
+    /**
+     * @param map the map to get from
+     * @param key the key to retrieve with
+     * @return value corresponding to the given key or its wildcard counterpart
+     */
+    public static <T> @Nullable T getOrWildcardMeta(@NotNull Map<ItemAndMetadata, T> map,
+                                                    @NotNull ItemAndMetadata key) {
+        T t = map.get(key);
+        if (t != null) {
+            return t;
+        }
+        if (key.isWildcard()) {
+            return null;
+        }
+        return map.get(key.toWildcard());
+    }
+
+    public static boolean areFluidStacksEqual(@Nullable FluidStack a, @Nullable FluidStack b) {
+        if (a == b) return true;
+        if (a == null) return false;
+        return a.isFluidEqual(b);
     }
 }

@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
@@ -15,7 +16,6 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
@@ -48,12 +48,9 @@ public class RecyclingRecipes {
     // TODO - Work on durations and EUt's
 
     public static void init() {
-        for (Entry<ItemStack, ItemMaterialInfo> entry : OreDictUnifier.getAllItemInfos()) {
-            ItemStack itemStack = entry.getKey();
-            ItemMaterialInfo materialInfo = entry.getValue();
-            List<MaterialStack> materialStacks = new ArrayList<>(materialInfo.getMaterials());
-            registerRecyclingRecipes(itemStack, materialStacks, false, null);
-        }
+        GregTechAPI.RECYCLING_MANAGER.iterate((itemAndMetadata, materialInfo) -> {
+            registerRecyclingRecipes(itemAndMetadata.toItemStack(), materialInfo.getMaterials(), false, null);
+        });
     }
 
     public static void registerRecyclingRecipes(ItemStack input, List<MaterialStack> components,
