@@ -53,8 +53,9 @@ public class WireProperties implements IMaterialProperty {
      *
      * @param voltage The new wire voltage
      */
-    public void setVoltage(int voltage) {
+    public WireProperties setVoltage(int voltage) {
         this.voltage = voltage;
+        return this;
     }
 
     /**
@@ -71,8 +72,9 @@ public class WireProperties implements IMaterialProperty {
      *
      * @param amperage The new current wire amperage
      */
-    public void setAmperage(int amperage) {
+    public WireProperties setAmperage(int amperage) {
         this.amperage = amperage;
+        return this;
     }
 
     /**
@@ -89,8 +91,9 @@ public class WireProperties implements IMaterialProperty {
      *
      * @param lossPerBlock The new wire loss per block
      */
-    public void setLossPerBlock(int lossPerBlock) {
+    public WireProperties setLossPerBlock(int lossPerBlock) {
         this.lossPerBlock = lossPerBlock;
+        return this;
     }
 
     /**
@@ -107,8 +110,9 @@ public class WireProperties implements IMaterialProperty {
      *
      * @param isSuperconductor The new wire superconductor status
      */
-    public void setSuperconductor(boolean isSuperconductor) {
+    public WireProperties setSuperconductor(boolean isSuperconductor) {
         this.isSuperconductor = isSuperconductor;
+        return this;
     }
 
     /**
@@ -126,8 +130,9 @@ public class WireProperties implements IMaterialProperty {
      *
      * @param criticalTemperature The new critical temperature
      */
-    public void setSuperconductorCriticalTemperature(int criticalTemperature) {
+    public WireProperties setSuperconductorCriticalTemperature(int criticalTemperature) {
         this.superconductorCriticalTemperature = this.isSuperconductor ? criticalTemperature : 0;
+        return this;
     }
 
     @Override

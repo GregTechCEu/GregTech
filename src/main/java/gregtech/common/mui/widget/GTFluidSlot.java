@@ -1,21 +1,15 @@
 package gregtech.common.mui.widget;
 
-import gregtech.api.GTValues;
 import gregtech.api.mui.sync.GTFluidSyncHandler;
-import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.LocalizationUtils;
-import gregtech.client.utils.TooltipHelper;
+import gregtech.client.utils.RenderUtil;
 
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import com.cleanroommc.modularui.api.ITheme;
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
@@ -23,7 +17,6 @@ import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -44,33 +37,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     private boolean disableBackground = false;
 
     public GTFluidSlot() {
-        tooltip().setAutoUpdate(true);
-        // .setHasTitleMargin(true);
-        tooltipBuilder(tooltip -> {
-            if (!isSynced()) return;
-            var fluid = this.syncHandler.getFluid();
-
-            if (fluid == null)
-                fluid = this.syncHandler.getLockedFluid();
-
-            if (fluid == null) return;
-
-            tooltip.addLine(IKey.str(fluid.getLocalizedName()));
-            if (this.syncHandler.showAmount())
-                tooltip.addLine(IKey.lang("gregtech.fluid.amount", fluid.amount, this.syncHandler.getCapacity()));
-
-            if (this.syncHandler.isPhantom() && this.syncHandler.showAmount())
-                tooltip.addLine(IKey.lang("modularui.fluid.phantom.control"));
-
-            // Add various tooltips from the material
-            for (String s : FluidTooltipUtil.getFluidTooltip(fluid)) {
-                if (s.isEmpty()) continue;
-                tooltip.addLine(IKey.str(s));
-            }
-
-            if (this.syncHandler.showAmount())
-                addIngotMolFluidTooltip(fluid, tooltip);
-        });
+        tooltip().titleMargin();
     }
 
     public static GTFluidSyncHandler sync(IFluidTank tank) {
@@ -82,7 +49,11 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         this.textRenderer.setShadow(true);
         this.textRenderer.setScale(0.5f);
         this.textRenderer.setColor(Color.WHITE.main);
-        getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
+        if (syncHandler.canLockFluid() || syncHandler.isPhantom()) {
+            getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
+        }
+        tooltipBuilder(syncHandler::handleTooltip);
+        syncHandler.setChangeConsumer($ -> markTooltipDirty());
     }
 
     public GTFluidSlot syncHandler(IFluidTank fluidTank) {
@@ -123,20 +94,26 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         if (content == null)
             content = this.syncHandler.getLockedFluid();
 
-        GuiDraw.drawFluidTexture(content, 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
+        float height = getArea().h() - 2;
+        int y = 1;
 
-        if (content != null && this.syncHandler.showAmount()) {
+        if (!this.syncHandler.drawAlwaysFull()) {
+            float amt = content == null ? 0f : content.amount;
+            float newHeight = height * (amt / this.syncHandler.getCapacity());
+            y += (int) (height - newHeight);
+            height = newHeight;
+        }
+
+        GuiDraw.drawFluidTexture(content, 1, y, getArea().w() - 2, height, 0);
+
+        if (content != null && this.syncHandler.showAmountOnSlot()) {
             String amount = NumberFormat.formatWithMaxDigits(content.amount, 3) + "L";
             this.textRenderer.setAlignment(Alignment.CenterRight, getArea().width - 1f);
             this.textRenderer.setPos(0, 12);
             this.textRenderer.draw(amount);
         }
 
-        if (isHovering()) {
-            GlStateManager.colorMask(true, true, true, false);
-            GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2, widgetTheme.getSlotHoverColor());
-            GlStateManager.colorMask(true, true, true, true);
-        }
+        RenderUtil.handleJEIGhostSlotOverlay(this, widgetTheme);
     }
 
     @Override
@@ -170,19 +147,6 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         return theme.getFluidSlotTheme();
     }
 
-    public static void addIngotMolFluidTooltip(FluidStack fluidStack, RichTooltip tooltip) {
-        // Add tooltip showing how many "ingot moles" (increments of 144) this fluid is if shift is held
-        if (TooltipHelper.isShiftDown() && fluidStack.amount > GTValues.L) {
-            int numIngots = fluidStack.amount / GTValues.L;
-            int extra = fluidStack.amount % GTValues.L;
-            String fluidAmount = String.format(" %,d L = %,d * %d L", fluidStack.amount, numIngots, GTValues.L);
-            if (extra != 0) {
-                fluidAmount += String.format(" + %d L", extra);
-            }
-            tooltip.add(TextFormatting.GRAY + LocalizationUtils.format("gregtech.gui.amount_raw") + fluidAmount);
-        }
-    }
-
     @Override
     public void setGhostIngredient(@NotNull FluidStack ingredient) {
         if (this.syncHandler.isPhantom()) {
@@ -196,6 +160,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
     @Override
     public @Nullable FluidStack castGhostIngredientIfValid(@NotNull Object ingredient) {
+        if (!(syncHandler.canLockFluid() || syncHandler.isPhantom())) return null;
+
         if (ingredient instanceof FluidStack stack) {
             return stack;
         } else if (ingredient instanceof ItemStack stack &&

@@ -29,24 +29,27 @@ public class IngotProperty implements IMaterialProperty {
     @Nullable
     private Material magneticMaterial;
 
-    public void setSmeltingInto(Material smeltInto) {
+    public IngotProperty setSmeltingInto(Material smeltInto) {
         this.smeltInto = smeltInto;
+        return this;
     }
 
     public Material getSmeltingInto() {
         return this.smeltInto;
     }
 
-    public void setArcSmeltingInto(Material arcSmeltingInto) {
+    public IngotProperty setArcSmeltingInto(Material arcSmeltingInto) {
         this.arcSmeltInto = arcSmeltingInto;
+        return this;
     }
 
     public Material getArcSmeltInto() {
         return this.arcSmeltInto;
     }
 
-    public void setMagneticMaterial(@Nullable Material magneticMaterial) {
+    public IngotProperty setMagneticMaterial(@Nullable Material magneticMaterial) {
         this.magneticMaterial = magneticMaterial;
+        return this;
     }
 
     @Nullable
@@ -54,8 +57,9 @@ public class IngotProperty implements IMaterialProperty {
         return magneticMaterial;
     }
 
-    public void setMacerateInto(Material macerateInto) {
+    public IngotProperty setMacerateInto(Material macerateInto) {
         this.macerateInto = macerateInto;
+        return this;
     }
 
     public Material getMacerateInto() {

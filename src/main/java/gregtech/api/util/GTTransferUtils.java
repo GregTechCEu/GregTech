@@ -43,7 +43,7 @@ public class GTTransferUtils {
 
             currentFluid.amount = fluidLeftToTransfer;
             FluidStack fluidStack = sourceHandler.drain(currentFluid, false);
-            if (fluidStack == null || fluidStack.amount == 0) {
+            if (GTUtility.isEmpty(fluidStack)) {
                 continue;
             }
 
@@ -51,7 +51,7 @@ public class GTTransferUtils {
             if (canInsertAmount > 0) {
                 fluidStack.amount = canInsertAmount;
                 fluidStack = sourceHandler.drain(fluidStack, true);
-                if (fluidStack != null && fluidStack.amount > 0) {
+                if (!GTUtility.isEmpty(fluidStack)) {
                     destHandler.fill(fluidStack, true);
 
                     fluidLeftToTransfer -= fluidStack.amount;
@@ -68,13 +68,13 @@ public class GTTransferUtils {
                                                   @NotNull IFluidHandler destHandler, FluidStack fluidStack) {
         int amount = fluidStack.amount;
         FluidStack sourceFluid = sourceHandler.drain(fluidStack, false);
-        if (sourceFluid == null || sourceFluid.amount != amount) {
+        if (GTUtility.isEmpty(sourceFluid) || sourceFluid.amount != amount) {
             return false;
         }
         int canInsertAmount = destHandler.fill(sourceFluid, false);
         if (canInsertAmount == amount) {
             sourceFluid = sourceHandler.drain(sourceFluid, true);
-            if (sourceFluid != null && sourceFluid.amount > 0) {
+            if (!GTUtility.isEmpty(sourceFluid)) {
                 destHandler.fill(sourceFluid, true);
                 return true;
             }

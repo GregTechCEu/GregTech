@@ -22,18 +22,16 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -195,6 +193,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         buf.writeBoolean(workingEnabled);
         if (isExportHatch) {
             buf.writeBoolean(locked);
+            NetworkUtils.writeFluidStack(buf, lockedFluid);
         } else {
             buf.writeVarInt(this.circuitInventory.getCircuitValue());
         }
@@ -206,6 +205,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         this.workingEnabled = buf.readBoolean();
         if (isExportHatch) {
             this.locked = buf.readBoolean();
+            this.lockedFluid = NetworkUtils.readFluidStack(buf);
         } else {
             setGhostCircuitConfig(buf.readVarInt());
         }
@@ -283,13 +283,16 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
-                .showAmount(false)
-                .accessibility(true, !isExportHatch)
-                .handleLocking(() -> this.lockedFluid, fluidStack -> {
-                    setLocked(fluidStack != null);
-                    this.lockedFluid = fluidStack;
-                    this.fluidTank.onContentsChanged();
-                }, this::setLocked);
+                .showAmountOnSlot(false)
+                .accessibility(true, !isExportHatch);
+
+        if (isExportHatch) {
+            fluidSyncHandler.handleLocking(() -> this.lockedFluid, fluidStack -> {
+                setLocked(fluidStack != null);
+                this.lockedFluid = fluidStack;
+                this.fluidTank.onContentsChanged();
+            }, this::setLocked, this::isLocked);
+        }
 
         return GTGuis.createPanel(this, 176, 166)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(6, 6))
@@ -332,11 +335,16 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                         .autoUpdate(true)
                         .textBuilder(richText -> {
                             richText.addLine(IKey.lang("gregtech.gui.fluid_amount"));
-                            String name = fluidSyncHandler.getFluidLocalizedName();
-                            if (name == null) return;
-                            if (name.length() > 25) name = name.substring(0, 25) + "...";
 
-                            richText.addLine(IKey.str(name));
+                            IKey nameKey = fluidSyncHandler.getFluidNameKey();
+                            if (nameKey == IKey.EMPTY) return;
+
+                            String formatted = nameKey.getFormatted();
+                            if (formatted.length() > 25) {
+                                nameKey = IKey.str(formatted.substring(0, 25) + TextFormatting.WHITE + "...");
+                            }
+
+                            richText.addLine(nameKey);
                             richText.addLine(IKey.str(fluidSyncHandler.getFormattedFluidAmount()));
                         }))
                 .child(new GTFluidSlot()
@@ -408,21 +416,6 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         }
         this.lockedFluid = null;
         fluidTank.onContentsChanged();
-    }
-
-    @Override
-    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
-        if (this == MetaTileEntities.FLUID_IMPORT_HATCH[0]) {
-            for (var hatch : MetaTileEntities.FLUID_IMPORT_HATCH) {
-                if (hatch != null) subItems.add(hatch.getStackForm());
-            }
-            for (var hatch : MetaTileEntities.FLUID_EXPORT_HATCH) {
-                if (hatch != null) subItems.add(hatch.getStackForm());
-            }
-        } else if (this.getClass() != MetaTileEntityFluidHatch.class) {
-            // let subclasses fall through this override
-            super.getSubItems(creativeTab, subItems);
-        }
     }
 
     protected class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {

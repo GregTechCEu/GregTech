@@ -41,6 +41,7 @@ import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -492,7 +493,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         return null;
     }
 
@@ -892,7 +893,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (sound == null) {
             return;
         }
-        if (isValid() && isActive()) {
+        boolean canPlay = isValid() && isActive();
+        if (this instanceof IControllable controllable) {
+            canPlay &= controllable.isWorkingEnabled();
+        }
+        if (canPlay) {
             if (--playSoundCooldown > 0) {
                 return;
             }
@@ -902,6 +907,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             GregTechAPI.soundManager.stopTileSound(getPos());
             playSoundCooldown = 0;
         }
+    }
+
+    /**
+     * @return The sound type used when this block is broken, placed, stepped on, hit, or fallen on.
+     */
+    @NotNull
+    public SoundType getSoundType() {
+        return SoundType.METAL;
     }
 
     public final @NotNull ItemStack getStackForm(int amount) {

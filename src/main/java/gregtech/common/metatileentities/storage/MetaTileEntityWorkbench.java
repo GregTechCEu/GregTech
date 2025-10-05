@@ -17,6 +17,7 @@ import gregtech.common.mui.widget.workbench.CraftingInputSlot;
 import gregtech.common.mui.widget.workbench.CraftingOutputSlot;
 import gregtech.common.mui.widget.workbench.RecipeMemorySlot;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
@@ -124,6 +125,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             NetworkUtils.writeItemStack(buf, craftingGrid.getStackInSlot(i));
         }
         this.recipeMemory.writeInitialSyncData(buf);
+        buf.writeVarInt(computeConnectedInventory().getSlots());
     }
 
     @Override
@@ -134,6 +136,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             craftingGrid.setStackInSlot(i, NetworkUtils.readItemStack(buf));
         }
         this.recipeMemory.receiveInitialSyncData(buf);
+        this.connectedInventory = new ItemHandlerList(
+                Collections.singletonList(new GTItemStackHandler(this, buf.readVarInt())));
     }
 
     @Override
@@ -158,28 +162,39 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     public IItemHandlerModifiable getAvailableHandlers() {
-        var handlers = new ArrayList<IItemHandler>();
+        ArrayList<IItemHandler> handlers = new ArrayList<>();
+        handlers.add(this.internalInventory);
+        handlers.add(this.toolInventory);
+        if (getWorld().isRemote) {
+            // this might be called on client, so just return the existing inventory instead
+            handlers.add(this.connectedInventory);
+        } else {
+            handlers.add(computeConnectedInventory());
+        }
+        return this.combinedInventory = new ItemHandlerList(handlers);
+    }
+
+    // this should only be called server-side
+    private ItemHandlerList computeConnectedInventory() {
+        ArrayList<IItemHandler> handlers = new ArrayList<>();
         for (var facing : EnumFacing.VALUES) {
             var neighbor = getNeighbor(facing);
             if (neighbor == null) continue;
             var handler = neighbor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
             if (handler != null) handlers.add(handler);
         }
-        this.connectedInventory = new ItemHandlerList(handlers);
-        handlers.clear();
-
-        handlers.add(this.internalInventory);
-        handlers.add(this.toolInventory);
-        handlers.add(this.connectedInventory);
-        return this.combinedInventory = new ItemHandlerList(handlers);
+        return this.connectedInventory = new ItemHandlerList(handlers);
     }
 
     @Override
     public void onNeighborChanged() {
         getCraftingRecipeLogic().updateInventory(getAvailableHandlers());
-        writeCustomData(GregtechDataCodes.UPDATE_CLIENT_HANDLER, this::sendHandlerToClient);
+        if (!getWorld().isRemote) {
+            writeCustomData(GregtechDataCodes.UPDATE_CLIENT_HANDLER, this::sendHandlerToClient);
+        }
     }
 
+    // this is called on client and server
     public @NotNull CraftingRecipeLogic getCraftingRecipeLogic() {
         Preconditions.checkState(getWorld() != null, "getRecipeResolver called too early");
         if (this.recipeLogic == null) {
@@ -472,5 +487,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     public boolean showToolUsages() {
         return false;
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return SoundType.WOOD;
     }
 }
