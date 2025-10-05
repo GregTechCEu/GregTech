@@ -2,7 +2,6 @@ package gregtech.integration.exnihilo.metatileentities;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
@@ -51,11 +50,6 @@ public class MetaTileEntitySieve extends SimpleMachineMetaTileEntity {
                 GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
                         .setTooltipText("gregtech.gui.item_auto_output.tooltip")
                         .shouldUseBaseBackground());
-
-        builder.widget(new CycleButtonWidget(25, 87, 18, 18,
-                workable.getAvailableOverclockingTiers(), workable::getOverclockTier, workable::setOverclockTier)
-                        .setTooltipHoverString("gregtech.gui.overclock.description")
-                        .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
 
         return builder;
     }
