@@ -1,17 +1,16 @@
 package gregtech.integration.exnihilo.recipes;
 
+
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.Mods;
-import gregtech.common.blocks.MetaBlocks;
 import gregtech.integration.exnihilo.ExNihiloConfig;
 import gregtech.integration.exnihilo.ExNihiloModule;
-import gregtech.loaders.recipe.MetaTileEntityLoader;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -27,45 +26,20 @@ import exnihilocreatio.registries.manager.ExNihiloRegistryManager;
 import exnihilocreatio.registries.types.Siftable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.common.blocks.BlockSteamCasing.SteamCasingType.BRONZE_HULL;
 import static gregtech.integration.exnihilo.ExNihiloModule.*;
-import static gregtech.loaders.recipe.CraftingComponent.*;
 
-public class ExNihiloRecipes {
 
-    public static void registerGTRecipes() {
-        // Machine Recipes
-        MetaTileEntityLoader.registerMachineRecipe(SIEVES, "CPC", "FMF", "OSO", 'M', HULL, 'C', CIRCUIT, 'O', CABLE,
-                'F', CONVEYOR, 'S', new ItemStack(ModBlocks.sieve), 'P', PISTON);
-        ModHandler.addShapedRecipe(true, "steam_sieve_bronze", STEAM_SIEVE_BRONZE.getStackForm(), "BPB", "BMB", "BSB",
-                'B', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.Bronze), 'M',
-                MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), 'S', new ItemStack(ModBlocks.sieve), 'P',
-                Blocks.PISTON);
-        ModHandler.addShapedRecipe(true, "steam_sieve_steel", STEAM_SIEVE_STEEL.getStackForm(), "BPB", "WMW", "BBB",
-                'B', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.TinAlloy), 'M',
-                STEAM_SIEVE_BRONZE.getStackForm(), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron),
-                'P', new UnificationEntry(OrePrefix.plate, Materials.Steel));
-    }
+public class MachineRecipes {
 
-    public static void registerCraftingRecipes() {
+
+    public static void registerRecipes() {
         // Pebbles
-
-        ModHandler.addShapedRecipe("basalt", OreDictUnifier.get(cobble, Basalt, 1), "PP", "PP", 'P',
-                new ItemStack(ExNihiloModule.GTPebbles, 1, 0));
-        ModHandler.addShapedRecipe("black_granite", OreDictUnifier.get(cobble, GraniteBlack, 1), "PP", "PP", 'P',
-                new ItemStack(ExNihiloModule.GTPebbles, 1, 1));
-        ModHandler.addShapedRecipe("marble", OreDictUnifier.get(cobble, Marble, 1), "PP", "PP", 'P',
-                new ItemStack(ExNihiloModule.GTPebbles, 1, 2));
-        ModHandler.addShapedRecipe("red_granite", OreDictUnifier.get(cobble, GraniteRed, 1), "PP", "PP", 'P',
-                new ItemStack(ExNihiloModule.GTPebbles, 1, 3));
-
         COMPRESSOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(ModItems.pebbles, 4, 0))
                 .output(Blocks.COBBLESTONE)
@@ -91,25 +65,25 @@ public class ExNihiloRecipes {
                 .duration(40)
                 .buildAndRegister();
         COMPRESSOR_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(ExNihiloModule.GTPebbles, 4, 0))
+                .inputs(new ItemStack(ExNihiloModule.pebbleItem, 4, 0))
                 .outputs(OreDictUnifier.get(cobble, Basalt, 1))
                 .EUt(4)
                 .duration(40)
                 .buildAndRegister();
         COMPRESSOR_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(ExNihiloModule.GTPebbles, 4, 1))
+                .inputs(new ItemStack(ExNihiloModule.pebbleItem, 4, 1))
                 .outputs(OreDictUnifier.get(cobble, GraniteBlack, 1))
                 .EUt(4)
                 .duration(40)
                 .buildAndRegister();
         COMPRESSOR_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(ExNihiloModule.GTPebbles, 4, 2))
+                .inputs(new ItemStack(ExNihiloModule.pebbleItem, 4, 2))
                 .outputs(OreDictUnifier.get(cobble, Marble, 1))
                 .EUt(4)
                 .duration(40)
                 .buildAndRegister();
         COMPRESSOR_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(ExNihiloModule.GTPebbles, 4, 3))
+                .inputs(new ItemStack(ExNihiloModule.pebbleItem, 4, 3))
                 .outputs(OreDictUnifier.get(cobble, GraniteRed, 1))
                 .EUt(4)
                 .duration(40)
@@ -160,30 +134,12 @@ public class ExNihiloRecipes {
                 .EUt(16)
                 .duration(10)
                 .buildAndRegister();
-
-        // Meshes
-        if (ExNihiloConfig.harderMeshes) {
-            ModHandler.removeRecipeByName("exnihilocreatio:item_mesh_2");
-            ModHandler.addShapedRecipe("bronze_mesh", new ItemStack(ModItems.mesh, 1, 2), "TFT", "SRS", "TST",
-                    'R', new UnificationEntry(ring, Bronze),
-                    'T', new UnificationEntry(stick, Bronze),
-                    'F', new ItemStack(Items.FLINT),
-                    'S', new ItemStack(Items.STRING));
-            ModHandler.removeRecipeByName("exnihilocreatio:item_mesh_3");
-            ModHandler.addShapedRecipe("steel_mesh", new ItemStack(ModItems.mesh, 1, 3), "TST", "SRS", "TST",
-                    'R', new UnificationEntry(ring, Steel),
-                    'T', new UnificationEntry(stick, Steel),
-                    'S', new ItemStack(Items.STRING));
-            ModHandler.removeRecipeByName("exnihilocreatio:item_mesh_4");
-            ModHandler.addShapedRecipe("aluminium_mesh", new ItemStack(ModItems.mesh, 1, 4), "TST", "SRS", "TST",
-                    'R', new UnificationEntry(ring, Aluminium),
-                    'T', new UnificationEntry(stick, Aluminium),
-                    'S', new ItemStack(Items.STRING));
-        }
     }
 
-    // Has to be done in init phase because of ExNi registering outside the Registry event
-    public static void registerExNihiloRecipes() {
+    public static void mirrorExNihiloRecipes() {
+        Map<ItemStack, List<ItemStack>> sieveRecipes = new Object2ObjectOpenHashMap<>();
+        ArrayList<ItemStack> extractorRecipes = new ArrayList<>();
+
         // Mirror Ex Nihilo Sifter recipes to Sifter RecipeMap
         for (SieveRecipe recipe : ExNihiloRegistryManager.SIEVE_REGISTRY.getRecipeList()) {
             for (ItemStack stack : recipe.getSievables()) {
@@ -203,9 +159,7 @@ public class ExNihiloRecipes {
                         builder.EUt(64);
                         break;
                 }
-                if (SIEVE_RECIPES.findRecipe(builder.getEUt(), Arrays.asList(stack, recipe.getMesh()),
-                        new ArrayList<>(), true) !=
-                        null)
+                if (sieveRecipes.containsKey(stack) && sieveRecipes.get(stack).contains(recipe.getMesh()))
                     continue;
                 for (Siftable siftable : ExNihiloRegistryManager.SIEVE_REGISTRY.getDrops(stack)) {
                     if (siftable.getDrop() == null) continue;
@@ -219,6 +173,11 @@ public class ExNihiloRecipes {
                         }
                     }
                 }
+                if (sieveRecipes.containsKey(stack)) {
+                    sieveRecipes.get(stack).add(recipe.getMesh());
+                } else {
+                    sieveRecipes.put(stack, new ArrayList<>() {{ add(recipe.getMesh()); }});
+                }
                 builder.buildAndRegister();
             }
         }
@@ -229,10 +188,10 @@ public class ExNihiloRecipes {
                 if (FluidUtil.getFluidContained(recipe.getFluid()) != null) {
                     for (List<ItemStack> listStack : recipe.getInputs()) {
                         for (ItemStack stack : listStack) {
-                            if (EXTRACTOR_RECIPES.findRecipe(4, Collections.singletonList(stack), new ArrayList<>(),
-                                    true) !=
-                                    null)
+                            if (extractorRecipes.stream().anyMatch(stack1 -> stack1.isItemEqual(stack))) {
                                 continue;
+                            }
+                            extractorRecipes.add(stack);
                             EXTRACTOR_RECIPES.recipeBuilder()
                                     .inputs(stack)
                                     .fluidOutputs(FluidUtil.getFluidContained(recipe.getFluid()))

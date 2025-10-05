@@ -1218,6 +1218,8 @@ public class MetaTileEntities {
 
         // 1820-1849 are taken for UHV+ 4A/16A/64A Energy/Dynamo Hatches
         // 1850-1869 are taken for UHV+ Input/Output Buses/Hatches
+
+        // 4000-4014 are taken for Ex Nihilo integration Sieves
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,

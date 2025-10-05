@@ -1,5 +1,6 @@
 package gregtech.integration.exnihilo.items;
 
+import gregtech.api.util.GTUtility;
 import gregtech.integration.exnihilo.ExNihiloModule;
 
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -27,7 +28,7 @@ public class ExNihiloPebble extends Item implements IHasModel {
 
     public ExNihiloPebble() {
         setTranslationKey("gtPebble");
-        setRegistryName("gtPebble");
+        setRegistryName(GTUtility.gregtechId("pebble"));
         setCreativeTab(ExNihiloCreatio.tabExNihilo);
         setHasSubtypes(true);
         Data.ITEMS.add(this);
@@ -36,15 +37,14 @@ public class ExNihiloPebble extends Item implements IHasModel {
     @Override
     @NotNull
     public String getTranslationKey(@NotNull ItemStack stack) {
-        return String.format("%s.%s", getTranslationKey(), GTPebbles.VALUES[stack.getItemDamage()].getName());
+        return String.format("%s.%s", getTranslationKey(), GTPebbles.VALUES[stack.getMetadata()].getName());
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void getSubItems(@Nullable CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         if (tab != null && isInCreativeTab(tab)) {
             for (GTPebbles pebble : GTPebbles.VALUES) {
-                list.add(new ItemStack(ExNihiloModule.GTPebbles, 1, pebble.ordinal()));
+                list.add(new ItemStack(ExNihiloModule.pebbleItem, 1, pebble.ordinal()));
             }
         }
     }
@@ -91,7 +91,7 @@ public class ExNihiloPebble extends Item implements IHasModel {
         ModelLoader.setCustomMeshDefinition(this, stack -> locations[stack.getMetadata()]);
     }
 
-    private enum GTPebbles implements IStringSerializable {
+    public enum GTPebbles implements IStringSerializable {
 
         BASALT("basalt"),
         BLACK_GRANITE("black_granite"),

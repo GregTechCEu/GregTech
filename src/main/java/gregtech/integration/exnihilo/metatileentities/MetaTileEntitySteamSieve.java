@@ -15,8 +15,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import org.jetbrains.annotations.NotNull;
-
 public class MetaTileEntitySteamSieve extends SteamMetaTileEntity {
 
     public MetaTileEntitySteamSieve(ResourceLocation metaTileEntityId, boolean isHighPressure) {
@@ -39,20 +37,20 @@ public class MetaTileEntitySteamSieve extends SteamMetaTileEntity {
     }
 
     @Override
-    protected ModularUI createUI(@NotNull EntityPlayer player) {
+    public ModularUI.Builder createUITemplate(EntityPlayer player) {
         ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND_STEAM.get(this.isHighPressure), 176,
                 192)
-                        .label(6, 6, this.getMetaFullName()).shouldColor(false)
-                        .slot(this.importItems, 0, 17, 43, GuiTextures.SLOT_STEAM.get(isHighPressure))
-                        .slot(this.importItems, 1, 35, 43, GuiTextures.SLOT_STEAM.get(isHighPressure),
-                                GuiTextures.STRING_SLOT_OVERLAY)
-                        .progressBar(workableHandler::getProgressPercent, 25, 68, 20, 20,
-                                ExNihiloModule.PROGRESS_BAR_SIFTER_STEAM.get(isHighPressure),
-                                ProgressWidget.MoveType.VERTICAL_INVERTED, workableHandler.getRecipeMap())
-                        .widget((new ImageWidget(79, 77, 18, 18,
-                                GuiTextures.INDICATOR_NO_STEAM.get(this.isHighPressure)))
-                                        .setPredicate(() -> this.workableHandler.isHasNotEnoughEnergy()))
-                        .bindPlayerInventory(player.inventory, GuiTextures.SLOT_STEAM.get(this.isHighPressure), 7, 109);
+                .label(6, 6, this.getMetaFullName()).shouldColor(false)
+                .slot(this.importItems, 0, 17, 43, GuiTextures.SLOT_STEAM.get(isHighPressure))
+                .slot(this.importItems, 1, 35, 43, GuiTextures.SLOT_STEAM.get(isHighPressure),
+                        GuiTextures.STRING_SLOT_OVERLAY)
+                .progressBar(workableHandler::getProgressPercent, 25, 68, 20, 20,
+                        GuiTextures.PROGRESS_BAR_SIFT_STEAM.get(isHighPressure),
+                        ProgressWidget.MoveType.VERTICAL_INVERTED, workableHandler.getRecipeMap())
+                .widget((new ImageWidget(79, 77, 18, 18,
+                        GuiTextures.INDICATOR_NO_STEAM.get(this.isHighPressure)))
+                        .setPredicate(() -> this.workableHandler.isHasNotEnoughEnergy()))
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT_STEAM.get(this.isHighPressure), 7, 109);
 
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 6; x++) {
@@ -60,7 +58,6 @@ public class MetaTileEntitySteamSieve extends SteamMetaTileEntity {
                         GuiTextures.SLOT_STEAM.get(isHighPressure));
             }
         }
-
-        return builder.build(getHolder(), player);
+        return builder;
     }
 }
