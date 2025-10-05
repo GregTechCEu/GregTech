@@ -142,6 +142,8 @@ final class MetaTileEntityRegistration {
 
         // Multiblock parts: 11000-12999
         multiblockParts();
+
+        // Ex Nihilo integration: 13000-13014
     }
 
     /**
