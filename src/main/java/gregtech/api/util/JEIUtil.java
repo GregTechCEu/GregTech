@@ -2,8 +2,8 @@ package gregtech.api.util;
 
 import net.minecraft.enchantment.EnchantmentData;
 
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
 import mezz.jei.Internal;
 
 public class JEIUtil {
@@ -12,7 +12,7 @@ public class JEIUtil {
      * Check if the player is currently hovering over a valid ingredient for this slot. <br/>
      * Will always return false is JEI is not installed.
      */
-    public static boolean hoveringOverIngredient(JeiGhostIngredientSlot<?> jeiGhostIngredientSlot) {
+    public static boolean hoveringOverIngredient(RecipeViewerGhostIngredientSlot<?> jeiGhostIngredientSlot) {
         if (!Mods.JustEnoughItems.isModLoaded()) return false;
         return ModularUIJeiPlugin.hoveringOverIngredient(jeiGhostIngredientSlot);
     }

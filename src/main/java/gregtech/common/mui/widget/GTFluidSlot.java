@@ -10,16 +10,15 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import com.cleanroommc.modularui.api.ITheme;
+import com.cleanroommc.modularui.api.UpOrDown;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
-import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerIngredientProvider;
 import com.cleanroommc.modularui.network.NetworkUtils;
-import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetSlotTheme;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
@@ -29,8 +28,8 @@ import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, JeiIngredientProvider,
-                               JeiGhostIngredientSlot<FluidStack> {
+public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, RecipeViewerIngredientProvider,
+                               RecipeViewerGhostIngredientSlot<FluidStack> {
 
     private final TextRenderer textRenderer = new TextRenderer();
     private GTFluidSyncHandler syncHandler;
@@ -50,7 +49,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         this.textRenderer.setScale(0.5f);
         this.textRenderer.setColor(Color.WHITE.main);
         if (syncHandler.canLockFluid() || syncHandler.isPhantom()) {
-            getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
+            getContext().getRecipeViewerSettings().addRecipeViewerGhostIngredientSlot(this);
         }
         tooltipBuilder(syncHandler::handleTooltip);
         syncHandler.setChangeConsumer($ -> markTooltipDirty());
@@ -77,19 +76,13 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     }
 
     @Override
-    public void drawBackground(ModularGuiContext context, WidgetTheme widgetTheme) {
+    public void drawBackground(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         if (disableBackground) return;
         super.drawBackground(context, widgetTheme);
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        if (widgetTheme instanceof WidgetSlotTheme slotTheme) {
-            draw(context, slotTheme);
-        }
-    }
-
-    public void draw(ModularGuiContext context, WidgetSlotTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         FluidStack content = this.syncHandler.getFluid();
         if (content == null)
             content = this.syncHandler.getLockedFluid();
@@ -131,7 +124,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     }
 
     @Override
-    public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int amount) {
+    public boolean onMouseScroll(UpOrDown scrollDirection, int amount) {
         if (!this.syncHandler.isPhantom()) return false;
         if ((scrollDirection.isUp() && !this.syncHandler.canFillSlot()) ||
                 (scrollDirection.isDown() && !this.syncHandler.canDrainSlot())) {
@@ -143,7 +136,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     }
 
     @Override
-    protected WidgetTheme getWidgetThemeInternal(ITheme theme) {
+    protected WidgetThemeEntry<?> getWidgetThemeInternal(ITheme theme) {
         return theme.getFluidSlotTheme();
     }
 

@@ -5,6 +5,7 @@ import gregtech.api.mui.IconAcessor;
 import net.minecraft.client.gui.FontRenderer;
 
 import com.cleanroommc.modularui.api.GuiAxis;
+import com.cleanroommc.modularui.api.UpOrDown;
 import com.cleanroommc.modularui.api.drawable.IHoverable;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.api.layout.IViewport;
@@ -14,8 +15,7 @@ import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.Stencil;
 import com.cleanroommc.modularui.drawable.text.RichText;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
-import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
-import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerIngredientProvider;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.utils.HoveredWidgetList;
@@ -30,7 +30,7 @@ import java.util.function.Consumer;
 
 public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
                                   implements IRichTextBuilder<ScrollableTextWidget>, Interactable, IViewport,
-                                  JeiIngredientProvider {
+                                  RecipeViewerIngredientProvider {
 
     private final RichText text = new RichText();
     private Consumer<RichText> builder;
@@ -74,7 +74,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
             }
         }
         if (getHoveredElement() instanceof IconAcessor accessor &&
-                accessor.gregTech$getDrawable() instanceof JeiIngredientProvider provider) {
+                accessor.gregTech$getDrawable() instanceof RecipeViewerIngredientProvider provider) {
             lastIngredient = provider.getIngredient();
         } else {
             lastIngredient = null;
@@ -94,7 +94,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     }
 
     @Override
-    public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int amount) {
+    public boolean onMouseScroll(UpOrDown scrollDirection, int amount) {
         if (this.scroll.mouseScroll(getContext())) {
             return true;
         }

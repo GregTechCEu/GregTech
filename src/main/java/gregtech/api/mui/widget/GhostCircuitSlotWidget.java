@@ -11,10 +11,10 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandler;
 
 import com.cleanroommc.modularui.api.IPanelHandler;
+import com.cleanroommc.modularui.api.UpOrDown;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
-import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.PhantomItemSlotSH;
@@ -55,7 +55,7 @@ public class GhostCircuitSlotWidget extends ItemSlot {
     }
 
     @Override
-    public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int amount) {
+    public boolean onMouseScroll(UpOrDown scrollDirection, int amount) {
         if (isSelectorPanelOpen()) return true;
         MouseData mouseData = MouseData.create(scrollDirection.modifier);
         getSyncHandler().syncToServer(3, mouseData::writeToPacket);
