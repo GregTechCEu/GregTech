@@ -80,7 +80,6 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     private Consumer<Widget<?>> extraOverlays = null;
     private int width = GTGuis.DEFAULT_WIDTH;
     private int height = GTGuis.DEFAULT_HIEGHT;
-    private boolean isLeftGreater = false;
 
     /**
      * @param recipeMap          the recipemap corresponding to this ui
