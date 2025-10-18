@@ -46,6 +46,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.ScrollingTextWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
@@ -198,10 +199,9 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                         .widthRel(0.5f)
                         .left(4)
                         .marginBottom(2))
-                .child(IKey.dynamic(name)
+                .child(new ScrollingTextWidget(IKey.dynamic(name))
                         .alignment(Alignment.TopLeft)
                         .color(Color.WHITE.main)
-                        .asWidget()
                         .setEnabledIf(condition)
                         .widthRel(0.5f)
                         .left(4)

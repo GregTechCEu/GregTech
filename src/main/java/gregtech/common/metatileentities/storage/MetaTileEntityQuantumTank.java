@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
@@ -52,7 +53,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -314,7 +314,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                 () -> {
                     var f = fluidTank.getFluid();
                     if (f == null) return "";
-                    return IKey.lang(f.getUnlocalizedName()).get();
+                    return KeyUtil.fluid(f).getFormatted();
                 },
                 textWidget -> fluidTank.getFluid() != null,
                 () -> TextFormattingUtil.formatNumbers(fluidTank.getFluidAmount()) + " L"))
@@ -323,7 +323,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                                 .handleLocking(() -> lockedFluid, fluidStack -> {
                                     setLocked(fluidStack != null);
                                     lockedFluid = fluidStack;
-                                }, this::setLocked)
+                                }, this::setLocked, this::isLocked)
                                 .showAmount(false, false))
                         .pos(148, 41));
     }
