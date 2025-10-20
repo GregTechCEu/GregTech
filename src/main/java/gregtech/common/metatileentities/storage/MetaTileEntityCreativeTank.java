@@ -240,12 +240,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         public FluidStack drain(int maxDrain, boolean doDrain) {
             if (!active) return null;
 
-            var f = super.drain(maxDrain, false);
-            if (f != null) {
-                f = f.copy();
-                f.amount = Math.min(mBPerCycle, maxDrain);
-            }
-            return f;
+            FluidStack stack = super.drain(maxDrain, false);
+            return GTUtility.copy(Math.min(mBPerCycle, maxDrain), stack);
         }
 
         @Override
