@@ -28,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
@@ -52,13 +53,20 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     private int itemsPerCycle = 1;
     private int ticksPerCycle = 1;
 
-    private final GTItemStackHandler handler;
+    private GTItemStackHandler creativeHandler;
+    private IItemHandlerModifiable modifiableHandler;
 
     private boolean active;
 
     public MetaTileEntityCreativeChest(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.MAX, 0);
-        this.handler = new CreativeItemStackHandler(1);
+    }
+
+    @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        this.itemInventory = this.modifiableHandler = new ModifiableHandler();
+        this.creativeHandler = new CreativeItemStackHandler(1);
     }
 
     @Override
@@ -94,7 +102,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
                         .child(IKey.lang("gregtech.creative.chest.item").asWidget()
                                 .pos(7, 9))
                         .child(new ItemSlot()
-                                .slot(SyncHandlers.phantomItemSlot(handler, 0)
+                                .slot(SyncHandlers.phantomItemSlot(modifiableHandler, 0)
                                         .changeListener((newItem, onlyAmountChanged, client, init) -> markDirty()))
                                 .pos(36, 6))
                         .child(createConnectionButton()
@@ -105,7 +113,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 209)
                 .bindPlayerInventory(entityPlayer.inventory, 126);
-        builder.widget(new PhantomSlotWidget(handler, 0, 36, 6)
+        builder.widget(new PhantomSlotWidget(modifiableHandler, 0, 36, 6)
                 .setClearSlotOnRightClick(true)
                 .setBackgroundTexture(GuiTextures.SLOT)
                 .setChangeListener(this::markDirty));
@@ -140,7 +148,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public void update() {
-        ItemStack stack = handler.getStackInSlot(0).copy();
+        ItemStack stack = creativeHandler.getStackInSlot(0).copy();
         this.virtualItemStack = stack; // For rendering purposes
         super.update();
         if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0) return;
@@ -165,7 +173,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setTag("ItemStackHandler", handler.serializeNBT());
+        data.setTag("ItemStackHandler", creativeHandler.serializeNBT());
         data.setInteger("ItemsPerCycle", itemsPerCycle);
         data.setInteger("TicksPerCycle", ticksPerCycle);
         data.setBoolean("Active", active);
@@ -175,8 +183,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        handler.deserializeNBT(data.getCompoundTag("ItemStackHandler"));
-        this.virtualItemStack = handler.getStackInSlot(0); // For rendering purposes
+        creativeHandler.deserializeNBT(data.getCompoundTag("ItemStackHandler"));
+        this.virtualItemStack = creativeHandler.getStackInSlot(0); // For rendering purposes
         itemsPerCycle = data.getInteger("ItemsPerCycle");
         ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
@@ -186,7 +194,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     public void initFromItemStackData(NBTTagCompound itemStack) {
         super.initFromItemStackData(itemStack);
         if (itemStack.hasKey("id", 8)) { // Check if ItemStack wrote to this
-            this.handler.setStackInSlot(0, new ItemStack(itemStack));
+            this.creativeHandler.setStackInSlot(0, new ItemStack(itemStack));
         }
         itemsPerCycle = itemStack.getInteger("mBPerCycle");
         ticksPerCycle = itemStack.getInteger("ticksPerCycle");
@@ -195,7 +203,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void writeItemStackData(NBTTagCompound tag) {
         super.writeItemStackData(tag);
-        ItemStack stack = this.handler.getStackInSlot(0);
+        ItemStack stack = this.creativeHandler.getStackInSlot(0);
         if (!stack.isEmpty()) {
             stack.writeToNBT(tag);
         }
@@ -213,12 +221,33 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.handler.setStackInSlot(0, this.virtualItemStack);
+        this.creativeHandler.setStackInSlot(0, this.virtualItemStack);
     }
 
     @Override
     public IItemHandler getTypeValue() {
-        return this.handler;
+        return this.creativeHandler;
+    }
+
+    protected class ModifiableHandler extends QuantumChestItemHandler implements IItemHandlerModifiable {
+
+        @Override
+        public void setStackInSlot(int slot, ItemStack stack) {
+            virtualItemStack = stack;
+            itemsStoredInside = stack.getCount();
+            updateClient();
+        }
+
+        @Override
+        public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack insertedStack, boolean simulate) {
+            if (insertedStack.isEmpty()) {
+                return ItemStack.EMPTY;
+            }
+
+            setStackInSlot(slot, insertedStack);
+
+            return ItemStack.EMPTY;
+        }
     }
 
     protected class CreativeItemStackHandler extends GTItemStackHandler {
@@ -230,7 +259,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         @NotNull
         @Override
         public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            return stack;
+            return stack; // do not allow inserts
         }
 
         @NotNull
@@ -247,8 +276,12 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
-            super.setStackInSlot(slot, stack);
-            virtualItemStack = GTUtility.copy(1, stack);
+            modifiableHandler.setStackInSlot(slot, GTUtility.copy(1, stack));
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            return modifiableHandler.getStackInSlot(slot);
         }
     }
 }

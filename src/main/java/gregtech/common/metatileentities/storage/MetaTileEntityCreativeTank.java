@@ -26,6 +26,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankPropertiesWrapper;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -51,10 +52,17 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     private int mBPerCycle = 1;
     private int ticksPerCycle = 1;
     private boolean active = false;
+    private FluidTank modifiableTank;
 
     public MetaTileEntityCreativeTank(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.MAX, -1);
-        this.fluidTank = new CreativeFluidTank(1);
+    }
+
+    @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        this.modifiableTank = new FluidTank(1);
+        this.fluidTank = new CreativeFluidTank(this.modifiableTank);
     }
 
     @Override
@@ -95,7 +103,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                         .child(IKey.lang("gregtech.creative.tank.fluid").asWidget()
                                 .pos(7, 9))
                         .child(new GTFluidSlot()
-                                .syncHandler(GTFluidSlot.sync(this.fluidTank)
+                                .syncHandler(GTFluidSlot.sync(this.modifiableTank)
                                         .phantom(true)
                                         .showAmount(false, false))
                                 .pos(36, 6))
@@ -108,8 +116,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 209)
                 .bindPlayerInventory(entityPlayer.inventory, 126);
         builder.widget(new PhantomFluidWidget(36, 6, 18, 18,
-                () -> this.fluidTank.getFluid(), data -> {
-                    this.fluidTank.setFluid(data);
+                () -> this.modifiableTank.getFluid(), data -> {
+                    this.modifiableTank.setFluid(data);
                 }).showTip(false));
         builder.label(7, 9, "gregtech.creative.tank.fluid");
         builder.widget(new ImageWidget(7, 45, 154, 14, GuiTextures.DISPLAY));
@@ -197,15 +205,18 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     private class CreativeFluidTank extends FluidTank {
 
-        public CreativeFluidTank(int capacity) {
-            super(capacity);
+        private final FluidTank internal;
+
+        public CreativeFluidTank(FluidTank internal) {
+            super(1);
+            this.internal = internal;
         }
 
         @Override
         public IFluidTankProperties[] getTankProperties() {
             if (this.tankProperties == null) {
                 this.tankProperties = new IFluidTankProperties[] {
-                        new FluidTankPropertiesWrapper(fluidTank) {
+                        new FluidTankPropertiesWrapper(this.internal) {
 
                             @Override
                             public int getCapacity() {
@@ -215,15 +226,12 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                             @Override
                             public FluidStack getContents() {
                                 if (!active) return null;
-                                var f = super.getContents();
-                                if (f != null) f.amount = mBPerCycle;
-                                return f;
+                                return GTUtility.copy(getCapacity(), getFluid());
                             }
 
                             @Override
                             public boolean canDrainFluidType(FluidStack fluidStack) {
-                                if (!active) return false;
-                                return super.canDrainFluidType(fluidStack);
+                                return active && super.canDrainFluidType(fluidStack);
                             }
                         }
                 };
@@ -232,21 +240,52 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         }
 
         @Override
+        public FluidStack getFluid() {
+            return this.internal.getFluid();
+        }
+
+        @Override
+        public int getFluidAmount() {
+            return this.internal.getFluidAmount();
+        }
+
+        @Override
+        public int getCapacity() {
+            return mBPerCycle;
+        }
+
+        @Override
+        public void setFluid(FluidStack fluid) {
+            this.internal.setFluid(fluid);
+        }
+
+        @Override
         public FluidStack drain(FluidStack resource, boolean doDrain) {
-            return drain(resource == null ? 0 : resource.amount, doDrain);
+            if (!active || GTUtility.isEmpty(resource)) return null;
+            return drain(resource.amount, doDrain);
         }
 
         @Override
         public FluidStack drain(int maxDrain, boolean doDrain) {
             if (!active) return null;
-
-            FluidStack stack = super.drain(maxDrain, false);
-            return GTUtility.copy(Math.min(mBPerCycle, maxDrain), stack);
+            FluidStack stack = this.internal.drain(maxDrain, false);
+            return GTUtility.copy(Math.min(getCapacity(), maxDrain), stack);
         }
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
             return 0;
+        }
+
+        @Override
+        public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+            return this.internal.writeToNBT(nbt);
+        }
+
+        @Override
+        public FluidTank readFromNBT(NBTTagCompound nbt) {
+            this.internal.readFromNBT(nbt);
+            return this;
         }
     }
 }

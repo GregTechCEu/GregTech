@@ -330,8 +330,7 @@ public class GTFluidSyncHandler extends SyncHandler {
         EntityPlayer player = getSyncManager().getPlayer();
         ItemStack currentStack = player.inventory.getItemStack();
         FluidStack currentFluid = this.tank.getFluid();
-        if (currentStack.getCount() > 1) currentStack = GTUtility.copy(1, currentStack);
-        var fluidHandlerItem = FluidUtil.getFluidHandler(currentStack);
+        IFluidHandlerItem fluidHandlerItem = FluidUtil.getFluidHandler(currentStack);
 
         switch (data.mouseButton) {
             case 0 -> {

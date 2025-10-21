@@ -474,7 +474,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
         return new AxisAlignedBB(getPos());
     }
 
-    private class QuantumChestItemHandler extends SyncHandler implements IItemHandler {
+    protected class QuantumChestItemHandler extends SyncHandler implements IItemHandler {
 
         @Override
         public int getSlots() {
@@ -491,9 +491,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 return ItemStack.EMPTY;
             }
 
-            ItemStack resultStack = itemStack.copy();
-            resultStack.setCount((int) itemsStored);
-            return resultStack;
+            return GTUtility.copy((int) itemsStored, itemStack);
         }
 
         @Override
@@ -582,7 +580,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
             }
         }
 
-        private void updateClient() {
+        protected void updateClient() {
             if (isValid() && !getSyncManager().isClient()) {
                 syncToClient(1, buffer -> {
                     buffer.writeInt((int) itemsStoredInside);
