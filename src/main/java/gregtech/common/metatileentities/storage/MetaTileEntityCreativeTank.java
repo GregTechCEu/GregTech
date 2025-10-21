@@ -112,43 +112,6 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 209)
-                .bindPlayerInventory(entityPlayer.inventory, 126);
-        builder.widget(new PhantomFluidWidget(36, 6, 18, 18,
-                () -> this.modifiableTank.getFluid(), data -> {
-                    this.modifiableTank.setFluid(data);
-                }).showTip(false));
-        builder.label(7, 9, "gregtech.creative.tank.fluid");
-        builder.widget(new ImageWidget(7, 45, 154, 14, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(9, 47, 152, 10, () -> String.valueOf(mBPerCycle), value -> {
-            if (!value.isEmpty()) {
-                mBPerCycle = Integer.parseInt(value);
-            }
-        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 28, "gregtech.creative.tank.mbpc");
-
-        builder.widget(new ImageWidget(7, 82, 154, 14, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(9, 84, 152, 10, () -> String.valueOf(ticksPerCycle), value -> {
-            if (!value.isEmpty()) {
-                ticksPerCycle = Integer.parseInt(value);
-            }
-        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 65, "gregtech.creative.tank.tpc");
-
-        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> {
-            active = value;
-            scheduleRenderUpdate();
-            var c = getQuantumController();
-            if (c != null) c.onHandlerUpdate();
-        }, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
-
-        builder.widget(createConnectedGui(6));
-
-        return builder.build(getHolder(), entityPlayer);
-    }
-
-    @Override
     public void update() {
         super.update();
         if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0 || fluidTank.getFluid() == null ||

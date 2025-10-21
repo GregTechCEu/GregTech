@@ -110,43 +110,6 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 209)
-                .bindPlayerInventory(entityPlayer.inventory, 126);
-        builder.widget(new PhantomSlotWidget(modifiableHandler, 0, 36, 6)
-                .setClearSlotOnRightClick(true)
-                .setBackgroundTexture(GuiTextures.SLOT)
-                .setChangeListener(this::markDirty));
-        builder.label(7, 9, "gregtech.creative.chest.item");
-        builder.widget(new ImageWidget(7, 48, 154, 14, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(9, 50, 152, 10, () -> String.valueOf(itemsPerCycle), value -> {
-            if (!value.isEmpty()) {
-                itemsPerCycle = Integer.parseInt(value);
-            }
-        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 28, "gregtech.creative.chest.ipc");
-
-        builder.widget(new ImageWidget(7, 85, 154, 14, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(9, 87, 152, 10, () -> String.valueOf(ticksPerCycle), value -> {
-            if (!value.isEmpty()) {
-                ticksPerCycle = Integer.parseInt(value);
-            }
-        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 65, "gregtech.creative.chest.tpc");
-
-        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> {
-            active = value;
-            scheduleRenderUpdate();
-            var c = getQuantumController();
-            if (c != null) c.onHandlerUpdate();
-        }, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
-
-        builder.widget(createConnectedGui(6));
-
-        return builder.build(getHolder(), entityPlayer);
-    }
-
-    @Override
     public void update() {
         ItemStack stack = creativeHandler.getStackInSlot(0).copy();
         this.virtualItemStack = stack; // For rendering purposes
