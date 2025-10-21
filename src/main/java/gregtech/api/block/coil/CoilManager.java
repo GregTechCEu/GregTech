@@ -15,7 +15,7 @@ public class CoilManager {
 
     private static CoilManager instance;
     private static int networkId;
-    private static CoilRegistry internal;
+    private static BuilderFactory internal;
 
     private final Object2ObjectMap<String, CoilRegistry> registryMap = new Object2ObjectOpenHashMap<>();
     private final Int2ObjectMap<CoilRegistry> networkMap = new Int2ObjectOpenHashMap<>();
@@ -30,7 +30,7 @@ public class CoilManager {
 
     private CoilManager() {}
 
-    public CoilRegistry getRegistry(String modid) {
+    public BuilderFactory getRegistry(String modid) {
         CoilRegistry coilRegistry = registryMap.get(modid);
         if (coilRegistry == null) {
             throw new IllegalArgumentException("No MTE registry exists for modid \"" + modid + "\"");
@@ -38,7 +38,7 @@ public class CoilManager {
         return coilRegistry;
     }
 
-    public CoilRegistry createRegistry(String modid) {
+    public BuilderFactory createRegistry(String modid) {
         if (registryMap.containsKey(modid)) {
             throw new IllegalArgumentException("MTE Registry for modid \"" + modid + "\" is already registered");
         }
@@ -48,7 +48,7 @@ public class CoilManager {
         return registry;
     }
 
-    public CoilRegistry getRegistry(int networkId) {
+    public BuilderFactory getRegistry(int networkId) {
         CoilRegistry coilRegistry = networkMap.get(networkId);
         return coilRegistry == null ? internal : coilRegistry;
     }

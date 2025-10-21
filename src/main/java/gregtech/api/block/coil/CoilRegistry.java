@@ -6,7 +6,7 @@ import net.minecraft.util.ResourceLocation;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CoilRegistry extends GTControlledRegistry<ResourceLocation, CustomCoilBlock> {
+public class CoilRegistry extends GTControlledRegistry<ResourceLocation, CustomCoilBlock> implements BuilderFactory {
 
     private final String modid;
     private final int networkId;
@@ -17,9 +17,10 @@ public class CoilRegistry extends GTControlledRegistry<ResourceLocation, CustomC
         this.networkId = networkId;
     }
 
+    @Override
     public CoilBlockBuilder makeBuilder(int id, String name) {
         ResourceLocation loc = new ResourceLocation(this.modid, name);
-        return CoilBlockBuilder.builder(this.modid, b -> register(id, loc, b));
+        return new CoilBlockBuilder(this.modid, b -> register(id, loc, b));
     }
 
     @Override

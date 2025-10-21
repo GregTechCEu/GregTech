@@ -15,13 +15,9 @@ public class CoilBlockBuilder {
     private final String modid;
     private final Consumer<CustomCoilBlock> onBuild;
 
-    private CoilBlockBuilder(String modid, Consumer<CustomCoilBlock> onBuild) {
+    CoilBlockBuilder(String modid, Consumer<CustomCoilBlock> onBuild) {
         this.modid = modid;
         this.onBuild = onBuild;
-    }
-
-    static CoilBlockBuilder builder(String modid, Consumer<CustomCoilBlock> onBuild) {
-        return new CoilBlockBuilder(modid, onBuild);
     }
 
     public CoilBlockBuilder addCoilType(UnaryOperator<CoilStatBuilder> builder) {
@@ -35,9 +31,7 @@ public class CoilBlockBuilder {
     public CustomCoilBlock build() {
         if (this.stats.isEmpty())
             throw new IllegalArgumentException("Variants is empty!");
-        CustomCoilBlock.setActiveList(this.stats);
-        var block = new CustomCoilBlock();
-        CustomCoilBlock.clearActiveList();
+        var block = new CustomCoilBlock(this.stats);
         for (var stat : this.stats) {
             GregTechAPI.HEATING_COILS.put(block.getState(stat), stat);
         }

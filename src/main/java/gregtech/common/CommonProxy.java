@@ -3,7 +3,6 @@ package gregtech.common;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
-import gregtech.api.block.coil.CoilManager;
 import gregtech.api.block.coil.CoilRegistry;
 import gregtech.api.block.coil.CustomCoilBlock;
 import gregtech.api.block.machines.MachineItemBlock;
@@ -15,7 +14,6 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -226,31 +224,6 @@ public class CommonProxy {
     public static void registerBlocksLast(RegistryEvent.Register<Block> event) {
         // last chance for mods to register their potion types is here
         FLUID_BLOCKS.forEach(event.getRegistry()::register);
-    }
-
-    // todo REMOVE, THIS IS FOR TESTING
-    @SubscribeEvent
-    public static void registerCoils(CoilManager.CoilRegistryEvent event) {
-        final String modid = "test";
-        CoilRegistry registry = CoilManager.getInstance().createRegistry(modid);
-
-        registry.makeBuilder(0, "coil_block")
-                .addCoilType(b -> b
-                        .coilTemp(42069)
-                        .generic()
-                        .tooltip((stack, world, strings, advanced) -> {
-                            strings.add("this is a custom coil!");
-                        })
-                        .tier(GTValues.UHV)
-                        .multiSmelter(69, 98)
-                        .material(Materials.Chlorine))
-                .addCoilType(b -> b
-                        .coilTemp(696969)
-                        .generic()
-                        .tier(GTValues.UHV)
-                        .multiSmelter(69, 99)
-                        .material(Materials.Neutronium))
-                .build();
     }
 
     @SubscribeEvent

@@ -42,16 +42,18 @@ public final class CustomCoilBlock extends VariantActiveBlock<CustomCoilStats> {
 
     private static final AtomicReference<List<CustomCoilStats>> activeSublist = new AtomicReference<>();
 
-    static void setActiveList(List<CustomCoilStats> sublist) {
+    // called in constructor to handle super constructor nonsense
+    private static net.minecraft.block.material.Material setActiveList(List<CustomCoilStats> sublist) {
         activeSublist.set(sublist);
+        return net.minecraft.block.material.Material.IRON;
     }
 
-    static void clearActiveList() {
+    private static void clearActiveList() {
         activeSublist.set(null);
     }
 
-    public CustomCoilBlock() {
-        super(net.minecraft.block.material.Material.IRON);
+    public CustomCoilBlock(List<CustomCoilStats> stats) {
+        super(setActiveList(stats));
         setTranslationKey("wire_coil");
         setHardness(5.0f);
         setResistance(10.0f);
@@ -68,7 +70,9 @@ public final class CustomCoilBlock extends VariantActiveBlock<CustomCoilStats> {
 
     @Override
     protected @NotNull Collection<CustomCoilStats> computeVariants() {
-        return activeSublist.get(); // stupid super constructor nonsense
+        List<CustomCoilStats> stats = activeSublist.get();
+        clearActiveList();
+        return stats;
     }
 
     @Override
