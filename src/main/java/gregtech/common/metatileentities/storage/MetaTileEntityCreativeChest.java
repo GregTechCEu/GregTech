@@ -140,7 +140,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setTag("ItemStackHandler", creativeHandler.serializeNBT());
+//        data.setTag("ItemStackHandler", creativeHandler.serializeNBT());
         data.setInteger("ItemsPerCycle", itemsPerCycle);
         data.setInteger("TicksPerCycle", ticksPerCycle);
         data.setBoolean("Active", active);
@@ -150,8 +150,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        creativeHandler.deserializeNBT(data.getCompoundTag("ItemStackHandler"));
-        this.virtualItemStack = creativeHandler.getStackInSlot(0); // For rendering purposes
+//        creativeHandler.deserializeNBT(data.getCompoundTag("ItemStackHandler"));
+//        this.virtualItemStack = creativeHandler.getStackInSlot(0); // For rendering purposes
         itemsPerCycle = data.getInteger("ItemsPerCycle");
         ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
@@ -248,7 +248,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
-            modifiableHandler.setStackInSlot(slot, GTUtility.copy(1, stack));
+            ItemStack copy = GTUtility.copy(1, stack);
+            modifiableHandler.setStackInSlot(slot, copy);
         }
 
         @Override
