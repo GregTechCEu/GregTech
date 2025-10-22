@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
@@ -310,16 +311,17 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
 
     @Override
     protected void createWidgets(ModularPanel mainPanel, PanelSyncManager syncManager) {
+        GTFluidSyncHandler fluidSyncHandler = GTFluidSlot.sync(fluidTank);
+
         mainPanel.child(createQuantumDisplay("gregtech.gui.fluid_amount",
-                () -> {
-                    var f = fluidTank.getFluid();
-                    if (f == null) return "";
-                    return KeyUtil.fluid(f).getFormatted();
-                },
-                textWidget -> fluidTank.getFluid() != null,
-                () -> TextFormattingUtil.formatNumbers(fluidTank.getFluidAmount()) + " L"))
+                        () -> {
+                            String name = fluidSyncHandler.getFluidLocalizedName();
+                            return name == null ? "" : name;
+                        },
+                        textWidget -> fluidSyncHandler.getFluidLocalizedName() != null,
+                        () -> TextFormattingUtil.formatNumbers(fluidTank.getFluidAmount()) + " L"))
                 .child(new GTFluidSlot()
-                        .syncHandler(GTFluidSlot.sync(fluidTank)
+                        .syncHandler(fluidSyncHandler
                                 .handleLocking(() -> lockedFluid, fluidStack -> {
                                     setLocked(fluidStack != null);
                                     lockedFluid = fluidStack;
@@ -378,6 +380,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         NetworkUtils.writeFluidStack(buf, fluidTank.getFluid());
+        NetworkUtils.writeFluidStack(buf, this.lockedFluid);
     }
 
     @Override
@@ -392,6 +395,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
             }
         }
         this.fluidTank.setFluid(NetworkUtils.readFluidStack(buf));
+        this.lockedFluid = NetworkUtils.readFluidStack(buf);
+        this.locked = !GTUtility.isEmpty(this.lockedFluid);
     }
 
     @Override

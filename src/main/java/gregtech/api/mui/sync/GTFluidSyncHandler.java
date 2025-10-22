@@ -1,5 +1,7 @@
 package gregtech.api.mui.sync;
 
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
@@ -67,24 +69,23 @@ public class GTFluidSyncHandler extends SyncHandler {
         } else if (lastFluid != null && current.amount != lastFluid.amount) {
             lastFluid.amount = current.amount;
             syncToClient(UPDATE_AMOUNT, buffer -> buffer.writeInt(current.amount));
+        } else if (!isPhantom() && canLockFluid() && !GTUtility.areFluidStacksEqual(this.phantomFluid, this.lockedFluid.get())) {
+            this.phantomFluid = this.lockedFluid.get();
+            sync(LOCK_FLUID, buffer -> {
+                buffer.writeBoolean(true);
+                NetworkUtils.writeFluidStack(buffer, this.phantomFluid);
+            });
         }
     }
 
-    public void lockFluid(FluidStack stack, boolean sync) {
+    public void lockFluid(FluidStack stack) {
         if (!canLockFluid()) return;
         this.jeiHandler.accept(stack);
-        if (sync) sync(LOCK_FLUID, buffer -> {
-            buffer.writeBoolean(stack != null);
-            NetworkUtils.writeFluidStack(buffer, stack);
-        });
     }
 
-    public void lockFluid(boolean locked, boolean sync) {
+    public void lockFluid(boolean locked) {
+        if (!canLockFluid()) return;
         this.lockHandler.accept(locked);
-        if (sync) sync(LOCK_FLUID, buffer -> {
-            buffer.writeBoolean(locked);
-            NetworkUtils.writeFluidStack(buffer, null);
-        });
     }
 
     public GTFluidSyncHandler handleLocking(@NotNull Supplier<FluidStack> lockedFluid,
@@ -106,10 +107,13 @@ public class GTFluidSyncHandler extends SyncHandler {
             fluidTank.setFluid(fluid);
         } else {
             tank.drain(Integer.MAX_VALUE, true);
-            if (fluid != null) tank.fill(fluid, true);
+            if (!GTUtility.isEmpty(fluid)) tank.fill(fluid, true);
         }
-        if (!isPhantom() || fluid == null) return;
-        if (this.phantomFluid == null || this.phantomFluid.getFluid() != fluid.getFluid()) {
+        if (canLockFluid() && isLocked.getAsBoolean() && !GTUtility.isEmpty(fluid)) {
+            lockFluid(fluid);
+        }
+        if (!isPhantom() || GTUtility.isEmpty(fluid)) return;
+        if (GTUtility.isEmpty(this.phantomFluid) || this.phantomFluid.getFluid() != fluid.getFluid()) {
             this.phantomFluid = fluid;
         }
     }
@@ -284,7 +288,8 @@ public class GTFluidSyncHandler extends SyncHandler {
                 onChange(getFluid());
             }
             case LOCK_FLUID -> {
-                lockFluid(NetworkUtils.readFluidStack(buf), false);
+                lockHandler.accept(buf.readBoolean());
+                lockFluid(NetworkUtils.readFluidStack(buf));
                 FluidStack stack = getFluid();
                 onChange(stack == null ? getLockedFluid() : stack);
             }
@@ -585,18 +590,17 @@ public class GTFluidSyncHandler extends SyncHandler {
 
     public void toggleLockFluid() {
         var cursorItem = getSyncManager().getCursorItem();
-        if (getLockedFluid() == null) {
-            if (cursorItem.isEmpty()) return;
-            if (cursorItem.getCount() > 1) cursorItem = GTUtility.copy(1, cursorItem);
-
-            var fluidHandler = FluidUtil.getFluidHandler(cursorItem);
-            if (fluidHandler == null) return;
-
-            var fluidStack = fluidHandler.getTankProperties()[0].getContents();
-            if (fluidStack == null) return;
-            lockFluid(fluidStack.copy(), true);
-        } else if (cursorItem.isEmpty()) {
-            lockFluid(null, true);
+        FluidStack stack;
+        if (getLockedFluid() == null && !cursorItem.isEmpty()) {
+            var fluidStack = FluidUtil.getFluidContained(cursorItem);
+            stack = !GTUtility.isEmpty(fluidStack) ? fluidStack.copy() : null;
+        } else {
+            stack = null;
         }
+        lockFluid(stack);
+        sync(LOCK_FLUID, buffer -> {
+            buffer.writeBoolean(isLocked.getAsBoolean());
+            NetworkUtils.writeFluidStack(buffer, stack);
+        });
     }
 }
