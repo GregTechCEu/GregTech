@@ -53,6 +53,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -320,6 +321,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                 textWidget -> fluidSyncHandler.getFluidLocalizedName() != null,
                 () -> TextFormattingUtil.formatNumbers(fluidTank.getFluidAmount()) + " L"))
                 .child(new GTFluidSlot()
+                        .background(IDrawable.NONE)
                         .syncHandler(fluidSyncHandler
                                 .handleLocking(() -> lockedFluid, fluidStack -> {
                                     setLocked(fluidStack != null);

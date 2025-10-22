@@ -98,9 +98,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
                         .child(new ItemSlot()
                                 .slot(SyncHandlers.phantomItemSlot(modifiableHandler, 0)
                                         .changeListener((newItem, onlyAmountChanged, client, init) -> markDirty()))
-                                .pos(36, 6))
-                        .child(createConnectionButton()
-                                .top(7));
+                                .pos(36, 6));
     }
 
     @Override

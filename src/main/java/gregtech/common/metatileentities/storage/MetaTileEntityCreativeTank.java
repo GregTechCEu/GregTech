@@ -98,9 +98,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                                 .syncHandler(GTFluidSlot.sync(this.modifiableTank)
                                         .phantom(true)
                                         .showAmount(false, false))
-                                .pos(36, 6))
-                        .child(createConnectionButton()
-                                .top(6));
+                                .pos(36, 6));
     }
 
     @Override
