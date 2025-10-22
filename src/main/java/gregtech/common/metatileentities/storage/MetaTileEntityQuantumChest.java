@@ -125,7 +125,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
         super.update();
         EnumFacing currentOutputFacing = getOutputFacing();
         if (!getWorld().isRemote) {
-            if (itemsStoredInside < maxStoredItems) {
+            if (shouldTransferImport()) {
                 ItemStack inputStack = importItems.getStackInSlot(0);
                 ItemStack outputStack = exportItems.getStackInSlot(0);
                 if (!inputStack.isEmpty() &&
@@ -135,7 +135,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                     markDirty();
                 }
             }
-            if (itemsStoredInside > 0 && !virtualItemStack.isEmpty()) {
+            if (shouldTransferExport()) {
                 ItemStack outputStack = exportItems.getStackInSlot(0);
                 int maxStackSize = virtualItemStack.getMaxStackSize();
                 if (outputStack.isEmpty() || (areItemStackIdentical(virtualItemStack, outputStack) &&
@@ -214,6 +214,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
         temp.add(this.itemInventory);
         this.combinedInventory = new ItemHandlerList(temp);
         this.outputItemInventory = new ItemHandlerProxy(new GTItemStackHandler(this, 0), combinedInventory);
+    }
+
+    protected boolean shouldTransferImport() {
+        return this.importItems.getSlots() > 0 && maxStoredItems > 0 && itemsStoredInside < maxStoredItems;
+    }
+
+    protected boolean shouldTransferExport() {
+        return this.exportItems.getSlots() > 0 && itemsStoredInside > 0 && !virtualItemStack.isEmpty();
     }
 
     @Override

@@ -47,7 +47,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     private int ticksPerCycle = 1;
 
     private GTItemStackHandler creativeHandler;
-    private IItemHandlerModifiable modifiableHandler;
+    private ModifiableHandler modifiableHandler;
 
     private boolean active;
 
@@ -88,6 +88,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        guiSyncManager.syncValue("handler", this.modifiableHandler);
         return appendCreativeUI(GTGuis.createPanel(this, 176, 166), false,
                 new BoolValue.Dynamic(() -> active, b -> active = b),
                 new IntSyncValue(() -> itemsPerCycle, v -> itemsPerCycle = v),
@@ -124,6 +125,16 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
                 GTTransferUtils.insertItem(container, stack, false);
             }
         }
+    }
+
+    @Override
+    protected boolean shouldTransferImport() {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldTransferExport() {
+        return false;
     }
 
     @Override
@@ -189,7 +200,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
-            virtualItemStack = stack;
+            virtualItemStack = GTUtility.copy(1, stack);
             itemsStoredInside = stack.getCount();
             updateClient();
         }
