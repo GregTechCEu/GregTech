@@ -192,27 +192,21 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                 .padding(4)
                 .height(46)
                 .top(16)
-                .child(IKey.lang(lang)
+                .child(IKey.comp(IKey.lang(lang), IKey.SPACE, IKey.dynamic(count))
                         .alignment(Alignment.TopLeft)
                         .color(Color.WHITE.main)
                         .asWidget()
-                        .widthRel(0.5f)
+                        .widthRel(1f)
                         .left(4)
                         .marginBottom(2))
                 .child(new ScrollingTextWidget(IKey.dynamic(name))
-                        .alignment(Alignment.TopLeft)
+                        .alignment(Alignment.CenterLeft)
                         .color(Color.WHITE.main)
                         .setEnabledIf(condition)
-                        .widthRel(0.5f)
+                        .widthRel(0.75f)
                         .left(4)
                         .height(20)
-                        .marginBottom(2))
-                .child(IKey.dynamic(count)
-                        .alignment(Alignment.TopLeft)
-                        .color(Color.WHITE.main)
-                        .asWidget()
-                        .widthRel(0.5f)
-                        .left(4));
+                        .marginBottom(2));
     }
 
     public ParentWidget<?> createQuantumIO(IItemHandlerModifiable importHandler,
