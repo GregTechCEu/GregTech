@@ -17,7 +17,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
@@ -314,12 +313,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         GTFluidSyncHandler fluidSyncHandler = GTFluidSlot.sync(fluidTank);
 
         mainPanel.child(createQuantumDisplay("gregtech.gui.fluid_amount",
-                        () -> {
-                            String name = fluidSyncHandler.getFluidLocalizedName();
-                            return name == null ? "" : name;
-                        },
-                        textWidget -> fluidSyncHandler.getFluidLocalizedName() != null,
-                        () -> TextFormattingUtil.formatNumbers(fluidTank.getFluidAmount()) + " L"))
+                () -> {
+                    String name = fluidSyncHandler.getFluidLocalizedName();
+                    return name == null ? "" : name;
+                },
+                textWidget -> fluidSyncHandler.getFluidLocalizedName() != null,
+                () -> TextFormattingUtil.formatNumbers(fluidTank.getFluidAmount()) + " L"))
                 .child(new GTFluidSlot()
                         .syncHandler(fluidSyncHandler
                                 .handleLocking(() -> lockedFluid, fluidStack -> {

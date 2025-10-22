@@ -1,7 +1,5 @@
 package gregtech.api.mui.sync;
 
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
@@ -69,13 +67,14 @@ public class GTFluidSyncHandler extends SyncHandler {
         } else if (lastFluid != null && current.amount != lastFluid.amount) {
             lastFluid.amount = current.amount;
             syncToClient(UPDATE_AMOUNT, buffer -> buffer.writeInt(current.amount));
-        } else if (!isPhantom() && canLockFluid() && !GTUtility.areFluidStacksEqual(this.phantomFluid, this.lockedFluid.get())) {
-            this.phantomFluid = this.lockedFluid.get();
-            sync(LOCK_FLUID, buffer -> {
-                buffer.writeBoolean(true);
-                NetworkUtils.writeFluidStack(buffer, this.phantomFluid);
-            });
-        }
+        } else if (!isPhantom() && canLockFluid() &&
+                !GTUtility.areFluidStacksEqual(this.phantomFluid, this.lockedFluid.get())) {
+                    this.phantomFluid = this.lockedFluid.get();
+                    sync(LOCK_FLUID, buffer -> {
+                        buffer.writeBoolean(true);
+                        NetworkUtils.writeFluidStack(buffer, this.phantomFluid);
+                    });
+                }
     }
 
     public void lockFluid(FluidStack stack) {
