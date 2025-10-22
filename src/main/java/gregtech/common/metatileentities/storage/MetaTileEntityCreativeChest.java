@@ -195,6 +195,11 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         }
 
         @Override
+        public int getSlotLimit(int slot) {
+            return 1;
+        }
+
+        @Override
         public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack insertedStack, boolean simulate) {
             if (insertedStack.isEmpty()) {
                 return ItemStack.EMPTY;
