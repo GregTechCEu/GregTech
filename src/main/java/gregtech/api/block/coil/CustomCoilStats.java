@@ -1,9 +1,7 @@
 package gregtech.api.block.coil;
 
-import gregtech.api.GTValues;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.util.function.QuadConsumer;
 import gregtech.client.model.ActiveVariantBlockBakedModel;
 
@@ -24,24 +22,45 @@ import java.util.function.BooleanSupplier;
 public final class CustomCoilStats implements IHeatingCoilBlockStats, Comparable<CustomCoilStats>,
                                    IStringSerializable {
 
-    String name;
+    private final String name;
 
     // electric blast furnace properties
-    int coilTemperature = -1;
+    private final int coilTemperature;
 
     // multi smelter properties
-    int level = -1;
-    int energyDiscount = 0;
+    private final int level;
+    private final int energyDiscount;
 
     // voltage tier
-    int tier = GTValues.ULV;
+    private final int tier;
 
-    Material material = Materials.Iron;
-    ModelResourceLocation active, inactive;
-    boolean isGeneric;
-    QuadConsumer<ItemStack, World, List<String>, Boolean> additionalTooltips;
+    private final Material material;
+    private final ModelResourceLocation active;
+    private final ModelResourceLocation inactive;
+    private final boolean isGeneric;
+    private final QuadConsumer<ItemStack, World, List<String>, Boolean> additionalTooltips;
 
-    CustomCoilStats() {}
+    CustomCoilStats(String name,
+                    int coilTemperature,
+                    int level,
+                    int energyDiscount,
+                    int tier,
+                    Material material,
+                    ModelResourceLocation active,
+                    ModelResourceLocation inactive,
+                    boolean isGeneric,
+                    QuadConsumer<ItemStack, World, List<String>, Boolean> additionalTooltips) {
+        this.name = name;
+        this.coilTemperature = coilTemperature;
+        this.level = level;
+        this.energyDiscount = energyDiscount;
+        this.tier = tier;
+        this.material = material;
+        this.active = active;
+        this.inactive = inactive;
+        this.isGeneric = isGeneric;
+        this.additionalTooltips = additionalTooltips;
+    }
 
     @Override
     public @NotNull String getName() {
@@ -90,5 +109,9 @@ public final class CustomCoilStats implements IHeatingCoilBlockStats, Comparable
         if (this.additionalTooltips != null) {
             this.additionalTooltips.accept(itemStack, worldIn, lines, tooltipFlag.isAdvanced());
         }
+    }
+
+    public boolean isGeneric() {
+        return isGeneric;
     }
 }

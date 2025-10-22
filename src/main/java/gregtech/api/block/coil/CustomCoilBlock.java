@@ -65,7 +65,7 @@ public final class CustomCoilBlock extends VariantActiveBlock<CustomCoilStats> {
     @NotNull
     @Override
     public BlockRenderLayer getRenderLayer(CustomCoilStats value) {
-        return value.isGeneric ? BlockRenderLayer.CUTOUT : BlockRenderLayer.SOLID;
+        return value.isGeneric() ? BlockRenderLayer.CUTOUT : BlockRenderLayer.SOLID;
     }
 
     @Override
