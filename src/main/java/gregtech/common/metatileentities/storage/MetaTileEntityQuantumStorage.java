@@ -55,7 +55,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -72,6 +71,11 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     protected static final String IS_VOIDING = "IsVoiding";
     protected static final String INPUT_FROM_OUTPUT = "AllowInputFromOutputSide";
     protected static final String INPUT_FROM_OUTPUT_FLUID = "AllowInputFromOutputSideF";
+    protected static final String OUTPUT_FACING = "OutputFacing";
+    protected static final String AUTO_OUTPUT_ITEMS = "AutoOutputItems";
+    protected static final String IS_LOCKED = "IsLocked";
+    protected static final String HAS_CONTROLLER = "HasController";
+    protected static final String CONTROLLER_POS = "ControllerPos";
 
     protected EnumFacing outputFacing;
     protected boolean voiding = false;
@@ -227,18 +231,40 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
     public Flow createQuantumButtonRow() {
         boolean isFluid = getType() == Type.FLUID;
-        BooleanSupplier getter = isFluid ? this::isAutoOutputFluids : this::isAutoOutputItems;
 
         return Flow.row()
                 .coverChildren()
                 .pos(7, 63)
-                .child(new ToggleButton()
-                        .overlay(isFluid ? GTGuiTextures.BUTTON_FLUID_OUTPUT : GTGuiTextures.BUTTON_ITEM_OUTPUT)
-                        .value(new BooleanSyncValue(getter, this::setAutoOutput)))
-                .child(new ToggleButton()
+                // fluid
+                .childIf(isFluid, () -> new ToggleButton()
+                        .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
+                        .addTooltip(true, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.enabled"))
+                        .addTooltip(false, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.disabled"))
+                        .value(new BooleanSyncValue(this::isAutoOutputFluids, this::setAutoOutput)))
+                .childIf(isFluid, () -> new ToggleButton()
                         .overlay(GTGuiTextures.FLUID_LOCK_OVERLAY)
+                        .addTooltip(true, IKey.lang("gregtech.gui.fluid_lock.tooltip.enabled"))
+                        .addTooltip(false, IKey.lang("gregtech.gui.fluid_lock.tooltip.disabled"))
                         .value(new BooleanSyncValue(this::isLocked, this::setLocked)))
-                .child(new ToggleButton()
+                .childIf(isFluid, () -> new ToggleButton()
+                        .addTooltip(true, IKey.lang("gregtech.gui.fluid_voiding.tooltip.enabled"))
+                        .addTooltip(false, IKey.lang("gregtech.gui.fluid_voiding.tooltip.disabled"))
+                        .overlay(isFluid ? GTGuiTextures.FLUID_VOID_OVERLAY : GTGuiTextures.ITEM_VOID_OVERLAY)
+                        .value(new BooleanSyncValue(this::isVoiding, this::setVoiding)))
+                // item
+                .childIf(!isFluid, () -> new ToggleButton()
+                        .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
+                        .addTooltip(true, IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled"))
+                        .addTooltip(false, IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled"))
+                        .value(new BooleanSyncValue(this::isAutoOutputItems, this::setAutoOutput)))
+                .childIf(!isFluid, () -> new ToggleButton()
+                        .overlay(GTGuiTextures.FLUID_LOCK_OVERLAY)
+                        .addTooltip(true, IKey.lang("gregtech.gui.item_lock.tooltip.enabled"))
+                        .addTooltip(false, IKey.lang("gregtech.gui.item_lock.tooltip.disabled"))
+                        .value(new BooleanSyncValue(this::isLocked, this::setLocked)))
+                .childIf(!isFluid, () -> new ToggleButton()
+                        .addTooltip(true, IKey.lang("gregtech.gui.item_voiding.tooltip.enabled"))
+                        .addTooltip(false, IKey.lang("gregtech.gui.item_voiding.tooltip.disabled"))
                         .overlay(isFluid ? GTGuiTextures.FLUID_VOID_OVERLAY : GTGuiTextures.ITEM_VOID_OVERLAY)
                         .value(new BooleanSyncValue(this::isVoiding, this::setVoiding)));
     }
@@ -419,16 +445,16 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         NBTTagCompound tagCompound = super.writeToNBT(data);
-        tagCompound.setBoolean("HasController", controllerPos != null);
+        tagCompound.setBoolean(HAS_CONTROLLER, controllerPos != null);
         if (controllerPos != null) {
-            tagCompound.setLong("ControllerPos", controllerPos.toLong());
+            tagCompound.setLong(CONTROLLER_POS, controllerPos.toLong());
         }
         if (getType() == Type.ITEM || getType() == Type.FLUID) {
-            data.setInteger("OutputFacing", getOutputFacing().getIndex());
-            data.setBoolean("AutoOutputItems", autoOutput);
+            data.setInteger(OUTPUT_FACING, getOutputFacing().getIndex());
+            data.setBoolean(AUTO_OUTPUT_ITEMS, autoOutput);
             data.setBoolean(INPUT_FROM_OUTPUT, this.allowInputFromOutputSide);
             data.setBoolean(IS_VOIDING, isVoiding());
-            data.setBoolean("IsLocked", locked);
+            data.setBoolean(IS_LOCKED, locked);
         }
         return tagCompound;
     }
@@ -436,20 +462,23 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        if (data.getBoolean("HasController")) {
-            this.controllerPos = BlockPos.fromLong(data.getLong("ControllerPos"));
+        if (data.getBoolean(HAS_CONTROLLER)) {
+            this.controllerPos = BlockPos.fromLong(data.getLong(CONTROLLER_POS));
         }
         if (getType() == Type.ITEM || getType() == Type.FLUID) {
-            this.outputFacing = EnumFacing.VALUES[data.getInteger("OutputFacing")];
-            this.autoOutput = data.getBoolean("AutoOutputItems");
+            this.outputFacing = EnumFacing.VALUES[data.getInteger(OUTPUT_FACING)];
+            this.autoOutput = data.getBoolean(AUTO_OUTPUT_ITEMS);
 
             if (data.hasKey(INPUT_FROM_OUTPUT))
                 this.allowInputFromOutputSide = data.getBoolean(INPUT_FROM_OUTPUT);
             else if (data.hasKey(INPUT_FROM_OUTPUT_FLUID))
                 this.allowInputFromOutputSide = data.getBoolean(INPUT_FROM_OUTPUT_FLUID);
 
-            this.voiding = data.getBoolean(IS_VOIDING) || data.getBoolean("IsPartiallyVoiding"); // legacy save support
-            this.locked = data.getBoolean("IsLocked");
+            // todo remove legacy save support "IsPartiallyVoiding" post 2.9
+            this.voiding = data.getBoolean(IS_VOIDING)
+                    || data.getBoolean("IsPartiallyVoiding");
+
+            this.locked = data.getBoolean(IS_LOCKED);
         }
     }
 
