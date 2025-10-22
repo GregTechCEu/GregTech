@@ -339,6 +339,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         this.locked = locked;
         if (!getWorld().isRemote) {
             markDirty();
+            writeCustomData(LOCK_FILL, buf -> buf.writeBoolean(this.locked));
         }
     }
 
@@ -439,6 +440,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             scheduleRenderUpdate();
         } else if (dataId == UPDATE_IS_VOIDING) {
             setVoiding(buf.readBoolean());
+        } else if (dataId == LOCK_FILL) {
+            setLocked(buf.readBoolean());
         }
     }
 

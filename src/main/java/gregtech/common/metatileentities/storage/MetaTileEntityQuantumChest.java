@@ -157,7 +157,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
             if (previousStack == null || !areItemStackIdentical(previousStack, virtualItemStack)) {
                 writeCustomData(UPDATE_ITEM, buf -> {
                     virtualItemStack.setCount(1);
-                    buf.writeItemStack(virtualItemStack);
+                    NetworkUtils.writeItemStack(buf, this.virtualItemStack);
                 });
                 previousStack = virtualItemStack;
             }
@@ -377,11 +377,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_ITEM) {
-            try {
-                this.virtualItemStack = buf.readItemStack();
-            } catch (IOException e) {
-                GTLog.logger.error("Failed to read item stack in a quantum chest!");
-            }
+            this.virtualItemStack = NetworkUtils.readItemStack(buf);
         } else if (dataId == UPDATE_ITEM_COUNT) {
             this.itemsStoredInside = buf.readLong();
         }
