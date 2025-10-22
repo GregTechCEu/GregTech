@@ -304,9 +304,9 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                         .disableHoverBackground()
                         .pos(7, 101)
                         .size(162, 20)
-                        .overlay(IKey.lang(() -> isActive.getBoolValue() ?
-                                "gregtech.creative.activity.on" :
-                                "gregtech.creative.activity.off"))
+                        .overlay(IKey.lang(() -> String.format("gregtech.creative.activity.%s",
+                                isActive.getBoolValue() ? "on" : "off"))
+                                .color(Color.WHITE.main))
                         .value(new BooleanSyncValue(isActive::getBoolValue, value -> {
                             isActive.setBoolValue(value);
                             scheduleRenderUpdate();
@@ -475,8 +475,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                 this.allowInputFromOutputSide = data.getBoolean(INPUT_FROM_OUTPUT_FLUID);
 
             // todo remove legacy save support "IsPartiallyVoiding" post 2.9
-            this.voiding = data.getBoolean(IS_VOIDING)
-                    || data.getBoolean("IsPartiallyVoiding");
+            this.voiding = data.getBoolean(IS_VOIDING) || data.getBoolean("IsPartiallyVoiding");
 
             this.locked = data.getBoolean(IS_LOCKED);
         }
