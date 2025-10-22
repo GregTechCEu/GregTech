@@ -4,8 +4,6 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
@@ -75,8 +73,6 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     protected static final String INPUT_FROM_OUTPUT = "AllowInputFromOutputSide";
     protected static final String INPUT_FROM_OUTPUT_FLUID = "AllowInputFromOutputSideF";
 
-    @Deprecated
-    private ClickButtonWidget connectedIcon;
     protected EnumFacing outputFacing;
     protected boolean voiding = false;
     protected boolean autoOutput;
@@ -179,6 +175,9 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                 .child(IKey.lang(getMetaFullName()).asWidget())
                 .child(createQuantumIO(importItems, exportItems))
                 .child(createQuantumButtonRow())
+                .child(createConnectionButton()
+                        .right(9)
+                        .top(18 + 45))
                 .child(SlotGroupWidget.playerInventory().left(7));
     }
 
@@ -287,7 +286,10 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                             scheduleRenderUpdate();
                             var c = getQuantumController();
                             if (c != null) c.onHandlerUpdate();
-                        })));
+                        })))
+                .child(createConnectionButton()
+                        .right(9)
+                        .top(7));
     }
 
     protected boolean isVoiding() {
@@ -393,19 +395,11 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             this.controllerPos = buf.readBlockPos();
             this.controller.clear();
 
-            if (this.connectedIcon != null) {
-                this.connectedIcon.setButtonTexture(GuiTextures.GREGTECH_LOGO);
-                this.connectedIcon.setTooltipText("gregtech.machine.quantum_storage.connected",
-                        controllerPos.getX(), controllerPos.getZ(), controllerPos.getY());
-            }
             scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.REMOVE_CONTROLLER) {
             this.controllerPos = null;
             this.controller.clear();
-            if (this.connectedIcon != null) {
-                this.connectedIcon.setButtonTexture(GuiTextures.GREGTECH_LOGO_DARK);
-                this.connectedIcon.setTooltipText("gregtech.machine.quantum_storage.disconnected");
-            }
+
             scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.LOCATE_CONTROLLER) {
             // tell controller to highlight
@@ -461,7 +455,6 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
     protected ButtonWidget<?> createConnectionButton() {
         return new ButtonWidget<>()
-                .left(151)
                 .disableHoverBackground()
                 .onMousePressed(mouseButton -> {
                     // tell controller to highlight
@@ -482,25 +475,6 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                 })
                 .background(new DynamicDrawable(
                         () -> isConnected() ? GTGuiTextures.GREGTECH_LOGO : GTGuiTextures.GREGTECH_LOGO_DARK));
-    }
-
-    @Deprecated
-    protected ClickButtonWidget createConnectedGui(int y) {
-        connectedIcon = new ClickButtonWidget(151, y, 18, 18, "",
-                clickData -> {
-                    if (isConnected())
-                        writeCustomData(GregtechDataCodes.LOCATE_CONTROLLER);
-                });
-        connectedIcon.setButtonTexture(isConnected() ? GuiTextures.GREGTECH_LOGO : GuiTextures.GREGTECH_LOGO_DARK);
-
-        if (isConnected()) {
-            connectedIcon.setTooltipText("gregtech.machine.quantum_storage.connected",
-                    controllerPos.getX(), controllerPos.getZ(), controllerPos.getY());
-        } else {
-            connectedIcon.setTooltipText("gregtech.machine.quantum_storage.disconnected");
-        }
-
-        return connectedIcon;
     }
 
     @Override
