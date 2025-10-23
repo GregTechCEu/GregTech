@@ -712,8 +712,14 @@ public class RenderUtil {
 
     @SideOnly(Side.CLIENT)
     public static void drawItemStack(ItemStack itemStack, int x, int y, @Nullable String altTxt) {
+        drawItemStack(itemStack, x, y, 16, 16, altTxt);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawItemStack(ItemStack itemStack, int x, int y, int w, int h, @Nullable String altTxt) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.0F, 0.0F, 32.0F);
+        GlStateManager.scale(w / 16F, h / 16F, 1);
         GlStateManager.color(1F, 1F, 1F, 1F);
         GlStateManager.enableDepth();
         GlStateManager.enableRescaleNormal();
