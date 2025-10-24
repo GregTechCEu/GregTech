@@ -3,7 +3,6 @@ package gregtech.common.covers.detector;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.gui.widgets.*;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
@@ -38,9 +37,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class CoverDetectorItemAdvanced extends CoverDetectorItem implements CoverWithUI {
 
-    private static final int PADDING = 3;
-    private static final int SIZE = 18;
-
     private static final int DEFAULT_MIN = 64;
     private static final int DEFAULT_MAX = 512;
 
@@ -71,10 +67,10 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                         .top(28)
                         .left(5).right(5)
                         .coverChildrenHeight()
-                        .child(createMinMaxRow("cover.advanced_item_detector.min", this::getMinValue,
-                                this::setMinValue))
-                        .child(createMinMaxRow("cover.advanced_item_detector.max", this::getMaxValue,
-                                this::setMaxValue))
+                        .child(createMinMaxRow("cover.advanced_item_detector.min",
+                                this::getMinValue, this::setMinValue))
+                        .child(createMinMaxRow("cover.advanced_item_detector.max",
+                                this::getMaxValue, this::setMaxValue))
                         .child(Flow.row()
                                 .widthRel(1f)
                                 .coverChildrenHeight()
@@ -102,20 +98,20 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                 .bindPlayerInventory();
     }
 
-    private String getMinValue() {
-        return String.valueOf(min);
+    private long getMinValue() {
+        return min;
     }
 
-    private String getMaxValue() {
-        return String.valueOf(max);
+    private long getMaxValue() {
+        return max;
     }
 
-    private void setMinValue(String val) {
-        this.min = CoverDetectorBase.parseCapped(val, 0, this.max - 1, DEFAULT_MIN);
+    private void setMinValue(long val) {
+        this.min = clamp((int) val, 0, this.max - 1);
     }
 
-    private void setMaxValue(String val) {
-        this.max = CoverDetectorBase.parseCapped(val, this.min + 1, Integer.MAX_VALUE, DEFAULT_MAX);
+    private void setMaxValue(long val) {
+        this.max = clamp((int) val, this.min + 1, Integer.MAX_VALUE);
     }
 
     private void setLatched(boolean isLatched) {
