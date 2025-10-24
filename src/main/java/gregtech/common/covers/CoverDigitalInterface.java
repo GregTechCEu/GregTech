@@ -450,6 +450,8 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
         return false;
     }
 
+    // todo port this to mui2 unless that's already done in some other pr
+
     @Override
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup primaryGroup = new WidgetGroup(new Position(0, 10));
