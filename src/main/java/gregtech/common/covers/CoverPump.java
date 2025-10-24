@@ -15,6 +15,8 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
+import gregtech.common.mui.widget.GTTextFieldWidget;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -229,8 +231,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
-                    .child(new TextFieldWidget()
+                    .child(new GTTextFieldWidget()
                             .left(18).right(18)
+                            // todo remove 'keepScrollBarInArea' when this is fixed in mui2
+                            .keepScrollBarInArea(true)
+                            .setPostFix(" L/s")
                             .setTextColor(Color.WHITE.darker(1))
                             .setNumbers(1, maxFluidTransferRate)
                             .value(throughputString)

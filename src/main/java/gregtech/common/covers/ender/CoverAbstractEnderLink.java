@@ -154,13 +154,16 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         return Flow.column().coverChildrenHeight().top(24)
                 .margin(7, 0).widthRel(1f)
-                .child(new Row().marginBottom(2)
+                .child(Flow.row().marginBottom(2)
                         .coverChildrenHeight()
                         .child(createPrivateButton())
                         .child(createColorIcon())
                         .child(new TextFieldWidget()
+                                // todo remove 'keepScrollBarInArea' when this is fixed in mui2
+                                .keepScrollBarInArea(true)
                                 .height(18)
                                 .value(name)
+                                .setTextColor(Color.WHITE.main)
                                 .setPattern(COLOR_INPUT_PATTERN)
                                 .widthRel(0.5f)
                                 .marginRight(2))
