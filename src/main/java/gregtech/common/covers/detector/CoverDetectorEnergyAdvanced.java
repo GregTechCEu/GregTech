@@ -137,26 +137,22 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         w.setNumbers(0, isUsePercent() ? 100 : Integer.MAX_VALUE);
     }
 
-    private String getMinValue() {
-        return String.valueOf(minValue);
+    private long getMinValue() {
+        return (minValue);
     }
 
-    private String getMaxValue() {
-        return String.valueOf(maxValue);
+    private long getMaxValue() {
+        return (maxValue);
     }
 
-    private void setMinValue(String val) {
-        this.minValue = CoverDetectorBase.parseCapped(val,
-                0,
-                this.maxValue - 1,
-                usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU);
+    private void setMinValue(long val) {
+        this.minValue = clamp(val,
+                0, this.maxValue - 1);
     }
 
-    private void setMaxValue(String val) {
-        this.maxValue = CoverDetectorBase.parseCapped(val,
-                this.minValue + 1,
-                usePercent ? 100 : Long.MAX_VALUE,
-                usePercent ? DEFAULT_MAX_PERCENT : DEFAULT_MAX_EU);
+    private void setMaxValue(long val) {
+        this.maxValue = clamp(val,
+                this.minValue + 1, usePercent ? 100 : Long.MAX_VALUE);
     }
 
     private boolean isUsePercent() {

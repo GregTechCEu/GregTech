@@ -14,7 +14,6 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
-
 import gregtech.common.mui.widget.GTTextFieldWidget;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -57,7 +56,6 @@ import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
