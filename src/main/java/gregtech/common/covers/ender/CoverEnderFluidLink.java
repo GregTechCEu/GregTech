@@ -148,7 +148,6 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
 
         var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
         syncManager.syncValue("pump_mode", pumpMode);
-        pumpMode.updateCacheFromSource(true);
 
         return super.createWidgets(data, syncManager)
                 .child(getFluidFilterContainer().initUI(data, syncManager))
