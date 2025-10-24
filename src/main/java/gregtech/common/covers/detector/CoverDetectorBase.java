@@ -16,13 +16,15 @@ import net.minecraft.util.text.TextComponentTranslation;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.value.sync.LongSyncValue;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
+import java.util.function.LongConsumer;
+import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_INVERTED;
@@ -131,50 +133,43 @@ public abstract class CoverDetectorBase extends CoverBase {
     }
 
     /**
-     * Returns parsed result of {@code value} as long, or {@code fallbackValue} if the parse fails.
+     * Clamps {@code val} as int between {@code minValue} and {@code maxValue}.
      *
-     * @param value         String to parse
-     * @param minValue      Minimum value
-     * @param maxValue      Maximum value
-     * @param fallbackValue Fallback value to be used in case of parse failure.
+     * @param val      Current value
+     * @param minValue Minimum value
+     * @param maxValue Maximum value
      * @return Capped value of either parsed result or {@code fallbackValue}
      */
-    protected static long parseCapped(String value, long minValue, long maxValue, long fallbackValue) {
-        long parsedValue;
-        try {
-            parsedValue = Long.parseLong(value);
-        } catch (NumberFormatException e) {
-            parsedValue = fallbackValue;
-        }
-        return Math.min(Math.max(parsedValue, minValue), maxValue);
+    protected final long clamp(long val, long minValue, long maxValue) {
+        return Math.min(Math.max(val, minValue), maxValue);
     }
 
     /**
-     * Returns parsed result of {@code value} as int, or {@code fallbackValue} if the parse fails.
+     * Clamps {@code val} as int between {@code minValue} and {@code maxValue}.
      *
-     * @param value         String to parse
-     * @param minValue      Minimum value
-     * @param maxValue      Maximum value
-     * @param fallbackValue Fallback value to be used in case of parse failure.
+     * @param val      Current value
+     * @param minValue Minimum value
+     * @param maxValue Maximum value
      * @return Capped value of either parsed result or {@code fallbackValue}
      */
-    protected static int parseCapped(String value, int minValue, int maxValue, int fallbackValue) {
-        int parsedValue;
-        try {
-            parsedValue = Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            parsedValue = fallbackValue;
-        }
-        return Math.min(Math.max(parsedValue, minValue), maxValue);
+    protected final int clamp(int val, int minValue, int maxValue) {
+        return Math.min(Math.max(val, minValue), maxValue);
     }
 
-    protected static Flow createMinMaxRow(@NotNull String lang, @NotNull Supplier<String> getter,
-                                          @Nullable Consumer<String> setter) {
+    protected static Flow createMinMaxRow(@NotNull String lang, @NotNull LongSupplier getter,
+                                          @Nullable LongConsumer setter) {
         return createMinMaxRow(lang, getter, setter, null, null);
     }
 
-    protected static Flow createMinMaxRow(@NotNull String lang, @NotNull Supplier<String> getter,
-                                          @Nullable Consumer<String> setter,
+    protected static Flow createMinMaxRow(@NotNull String lang, @NotNull LongSupplier getter,
+                                          @Nullable LongConsumer setter,
+                                          @Nullable Supplier<String> postFix,
+                                          @Nullable Consumer<GTTextFieldWidget> listener) {
+        return createMinMaxRow(lang, new LongSyncValue(getter, setter), postFix, listener);
+    }
+
+    protected static Flow createMinMaxRow(@NotNull String lang,
+                                          @NotNull LongSyncValue syncValue,
                                           @Nullable Supplier<String> postFix,
                                           @Nullable Consumer<GTTextFieldWidget> listener) {
         return Flow.row()
@@ -189,6 +184,6 @@ public abstract class CoverDetectorBase extends CoverBase {
                         .setPattern(TextFieldWidget.WHOLE_NUMS)
                         .setPostFix(postFix)
                         .onUpdateListener(listener)
-                        .value(new StringSyncValue(getter, setter)));
+                        .value(syncValue));
     }
 }
