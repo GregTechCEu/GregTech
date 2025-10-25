@@ -20,6 +20,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.gui.widget.prospector.widget.WidgetOreList;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
+import gregtech.common.mui.widget.GTTextFieldWidget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -68,6 +69,7 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -531,11 +533,14 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
                                     slotValue.setIntValue(s);
                                     return true;
                                 }))
-                        .child(IKey.dynamic(() -> Integer.toString(this.slot)).asWidget()
+                        .child(new GTTextFieldWidget()
+                                .setNumbers(0, Integer.MAX_VALUE)
+                                .value(new StringValue.Dynamic(
+                                        () -> String.valueOf(slotValue.getIntValue()),
+                                        s -> slotValue.setIntValue(Integer.parseInt(s))))
                                 .size(80, 20)
-                                .paddingLeft(4)
-                                .color(0xffffff)
-                                .alignment(Alignment.CenterLeft)
+                                .keepScrollBarInArea()
+                                .setTextColor(Color.WHITE.main)
                                 .background(GTGuiTextures.DISPLAY))
                         .child(new ButtonWidget<>()
                                 .size(20)
@@ -564,7 +569,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
                                 .alignment(Alignment.CenterLeft)
                                 .paddingLeft(4)
                                 .size(80, 20)
-                                .color(0xffffff)
+                                .color(Color.WHITE.main)
                                 .background(GTGuiTextures.DISPLAY)))
                 .bindPlayerInventory();
     }
