@@ -72,7 +72,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     protected IItemHandler outputItemInventory;
     private ItemHandlerList combinedInventory;
     protected ItemStack previousStack;
-    protected @NotNull ItemStack lockedStack = ItemStack.EMPTY;
+    protected ItemStack lockedStack = ItemStack.EMPTY;
     protected long previousStackSize;
 
     public MetaTileEntityQuantumChest(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
