@@ -245,8 +245,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
-            ItemStack copy = GTUtility.copy(1, stack);
-            modifiableHandler.setStackInSlot(slot, copy);
+            modifiableHandler.setStackInSlot(slot, stack);
         }
 
         @Override
