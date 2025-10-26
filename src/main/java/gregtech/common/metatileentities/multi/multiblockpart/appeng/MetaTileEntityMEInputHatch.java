@@ -1,20 +1,18 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
+import gregtech.api.mui.sync.appeng.AESyncHandler;
+import gregtech.api.mui.widget.appeng.fluid.AEFluidConfigSlot;
+import gregtech.api.mui.widget.appeng.fluid.AEFluidDisplaySlot;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.gui.widget.appeng.AEFluidConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
@@ -25,217 +23,142 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.IFluidTank;
 
-import appeng.api.config.Actionable;
-import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAEFluidStack>
+public class MetaTileEntityMEInputHatch extends MetaTileEntityMEInputBase<IAEFluidStack>
                                         implements IMultiblockAbilityPart<IFluidTank>, IDataStickIntractable {
 
-    public final static String FLUID_BUFFER_TAG = "FluidTanks";
-    public final static String WORKING_TAG = "WorkingEnabled";
-    private final static int CONFIG_SIZE = 16;
-    private boolean workingEnabled = true;
-    protected ExportOnlyAEFluidList aeFluidHandler;
+    public static final String FLUID_BUFFER_TAG = "FluidTanks";
 
-    public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId) {
-        this(metaTileEntityId, GTValues.EV);
-    }
-
-    protected MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId, int tier) {
+    public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false, IFluidStorageChannel.class);
-    }
-
-    protected ExportOnlyAEFluidList getAEFluidHandler() {
-        if (aeFluidHandler == null) {
-            aeFluidHandler = new ExportOnlyAEFluidList(this, CONFIG_SIZE, this.getController());
-        }
-        return aeFluidHandler;
-    }
-
-    @Override
-    protected void initializeInventory() {
-        getAEFluidHandler(); // initialize it
-        super.initializeInventory();
-    }
-
-    @Override
-    protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, getAEFluidHandler().getInventory());
-    }
-
-    @Override
-    public void update() {
-        super.update();
-        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME() && updateMEStatus()) {
-            syncME();
-        }
-    }
-
-    protected void syncME() {
-        IMEMonitor<IAEFluidStack> monitor = getMonitor();
-        if (monitor == null) return;
-
-        for (ExportOnlyAEFluidSlot aeTank : this.getAEFluidHandler().getInventory()) {
-            // Try to clear the wrong fluid
-            IAEFluidStack exceedFluid = aeTank.exceedStack();
-            if (exceedFluid != null) {
-                long total = exceedFluid.getStackSize();
-                IAEFluidStack notInserted = monitor.injectItems(exceedFluid, Actionable.MODULATE,
-                        this.getActionSource());
-                if (notInserted != null && notInserted.getStackSize() > 0) {
-                    aeTank.drain((int) (total - notInserted.getStackSize()), true);
-                    continue;
-                } else {
-                    aeTank.drain((int) total, true);
-                }
-            }
-            // Fill it
-            IAEFluidStack reqFluid = aeTank.requestStack();
-            if (reqFluid != null) {
-                IAEFluidStack extracted = monitor.extractItems(reqFluid, Actionable.MODULATE, this.getActionSource());
-                if (extracted != null) {
-                    aeTank.addStack(extracted);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onRemoval() {
-        flushInventory();
-        super.onRemoval();
-    }
-
-    protected void flushInventory() {
-        IMEMonitor<IAEFluidStack> monitor = getMonitor();
-        if (monitor == null) return;
-
-        for (ExportOnlyAEFluidSlot aeTank : this.getAEFluidHandler().getInventory()) {
-            IAEFluidStack stock = aeTank.getStock();
-            if (stock instanceof WrappedFluidStack) {
-                stock = ((WrappedFluidStack) stock).getAEStack();
-            }
-            if (stock != null) {
-                monitor.injectItems(stock, Actionable.MODULATE, this.getActionSource());
-            }
-        }
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityMEInputHatch(this.metaTileEntityId);
+        return new MetaTileEntityMEInputHatch(this.metaTileEntityId, getTier());
     }
 
     @Override
-    protected final ModularUI createUI(EntityPlayer player) {
-        ModularUI.Builder builder = createUITemplate(player);
-        return builder.build(this.getHolder(), player);
-    }
-
-    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
-        ModularUI.Builder builder = ModularUI
-                .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
-                .label(10, 5, getMetaFullName());
-        // ME Network status
-        builder.dynamicLabel(10, 15, () -> this.isOnline ?
-                I18n.format("gregtech.gui.me_network.online") :
-                I18n.format("gregtech.gui.me_network.offline"),
-                0x404040);
-
-        // Config slots
-        builder.widget(new AEFluidConfigWidget(7, 25, this.getAEFluidHandler()));
-
-        // Arrow image
-        builder.image(7 + 18 * 4, 25 + 18, 18, 18, GuiTextures.ARROW_DOUBLE);
-
-        // GT Logo, cause there's some free real estate
-        builder.widget(new ImageWidget(7 + 18 * 4, 25 + 18 * 3, 17, 17,
-                GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
-                        .setIgnoreColor(true));
-
-        builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
-        return builder;
+    protected void initializeInventory() {
+        super.initializeInventory();
+        this.importFluids = new FluidTankList(false, getAEHandler().getInventory());
     }
 
     @Override
-    public boolean isWorkingEnabled() {
-        return this.workingEnabled;
+    protected @NotNull ExportOnlyAEFluidList initializeAEHandler() {
+        return new ExportOnlyAEFluidList(this, CONFIG_SIZE, this.getController());
     }
 
     @Override
-    public void setWorkingEnabled(boolean workingEnabled) {
-        this.workingEnabled = workingEnabled;
-        World world = this.getWorld();
-        if (world != null && !world.isRemote) {
-            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
+    @NotNull
+    protected ExportOnlyAEFluidList getAEHandler() {
+        return (ExportOnlyAEFluidList) aeHandler;
+    }
+
+    @Override
+    protected @NotNull AESyncHandler<IAEFluidStack> createAESyncHandler() {
+        return new AEFluidSyncHandler(getAEHandler(), this::markDirty, circuitInventory::setCircuitValue);
+    }
+
+    @Override
+    protected @NotNull Widget<?> createMainColumnWidget(@Range(from = 0, to = 3) int index, @NotNull PosGuiData guiData,
+                                                        @NotNull PanelSyncManager panelSyncManager) {
+        return switch (index) {
+            case 2 -> new Widget<>()
+                    .size(18);
+            case 3 -> createGhostCircuitWidget();
+            default -> super.createMainColumnWidget(index, guiData, panelSyncManager);
+        };
+    }
+
+    @Override
+    protected @NotNull Widget<?> createConfigGrid(@NotNull PosGuiData guiData,
+                                                  @NotNull PanelSyncManager panelSyncManager) {
+        Grid grid = new Grid()
+                .pos(7, 25)
+                .size(18 * 4)
+                .minElementMargin(0, 0)
+                .minColWidth(18)
+                .minRowHeight(18)
+                .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
+                        index -> new AEFluidConfigSlot(isStocking(), index, this::isAutoPull)
+                                .syncHandler(SYNC_HANDLER_NAME, 0)
+                                .debugName("Index " + index)));
+
+        for (IWidget slotUpper : grid.getChildren()) {
+            ((AEFluidConfigSlot) slotUpper).onSelect(() -> {
+                for (IWidget slotLower : grid.getChildren()) {
+                    ((AEFluidConfigSlot) slotLower).deselect();
+                }
+            });
         }
+
+        return grid;
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
-            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
-        }
-        return super.getCapability(capability, side);
-    }
-
-    @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
-        buf.writeBoolean(workingEnabled);
-    }
-
-    @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
-        this.workingEnabled = buf.readBoolean();
+    protected @NotNull Widget<?> createDisplayGrid(@NotNull PosGuiData guiData,
+                                                   @NotNull PanelSyncManager panelSyncManager) {
+        return new Grid()
+                .pos(7 + 18 * 5, 25)
+                .size(18 * 4)
+                .minElementMargin(0, 0)
+                .minColWidth(18)
+                .minRowHeight(18)
+                .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
+                        index -> new AEFluidDisplaySlot(index)
+                                .background(GTGuiTextures.SLOT_DARK)
+                                .syncHandler(SYNC_HANDLER_NAME, 0)
+                                .debugName("Index " + index)));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setBoolean(WORKING_TAG, this.workingEnabled);
+
         NBTTagList tanks = new NBTTagList();
         for (int i = 0; i < CONFIG_SIZE; i++) {
-            ExportOnlyAEFluidSlot tank = this.getAEFluidHandler().getInventory()[i];
+            ExportOnlyAEFluidSlot tank = this.getAEHandler().getInventory()[i];
             NBTTagCompound tankTag = new NBTTagCompound();
             tankTag.setInteger("slot", i);
             tankTag.setTag("tank", tank.serializeNBT());
             tanks.appendTag(tankTag);
         }
         data.setTag(FLUID_BUFFER_TAG, tanks);
+
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        if (data.hasKey(WORKING_TAG)) {
-            this.workingEnabled = data.getBoolean(WORKING_TAG);
-        }
+
         if (data.hasKey(FLUID_BUFFER_TAG, 9)) {
             NBTTagList tanks = (NBTTagList) data.getTag(FLUID_BUFFER_TAG);
             for (NBTBase nbtBase : tanks) {
                 NBTTagCompound tankTag = (NBTTagCompound) nbtBase;
-                ExportOnlyAEFluidSlot tank = this.getAEFluidHandler().getInventory()[tankTag.getInteger("slot")];
+                ExportOnlyAEFluidSlot tank = this.getAEHandler().getInventory()[tankTag.getInteger("slot")];
                 tank.deserializeNBT(tankTag.getCompoundTag("tank"));
             }
         }
@@ -245,7 +168,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            if (isOnline) {
+            if (isOnline()) {
                 Textures.ME_INPUT_HATCH_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
             } else {
                 Textures.ME_INPUT_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);
@@ -266,13 +189,17 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
     }
 
     @Override
-    public MultiblockAbility<IFluidTank> getAbility() {
-        return MultiblockAbility.IMPORT_FLUIDS;
+    public @NotNull List<MultiblockAbility<?>> getAbilities() {
+        return Arrays.asList(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS);
     }
 
     @Override
     public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
-        abilityInstances.addAll(Arrays.asList(this.getAEFluidHandler().getInventory()));
+        if (abilityInstances.isKey(MultiblockAbility.IMPORT_FLUIDS)) {
+            abilityInstances.add(Arrays.asList(getAEHandler().getInventory()));
+        } else if (abilityInstances.isKey(MultiblockAbility.IMPORT_ITEMS)) {
+            abilityInstances.add(circuitInventory);
+        }
     }
 
     @Override
@@ -289,7 +216,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
         NBTTagCompound configStacks = new NBTTagCompound();
         tag.setTag("ConfigStacks", configStacks);
         for (int i = 0; i < CONFIG_SIZE; i++) {
-            var slot = this.aeFluidHandler.getInventory()[i];
+            var slot = this.aeHandler.getInventory()[i];
             IAEFluidStack config = slot.getConfig();
             if (config == null) {
                 continue;
@@ -298,6 +225,9 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
             config.writeToNBT(stackNbt);
             configStacks.setTag(Integer.toString(i), stackNbt);
         }
+
+        tag.setInteger(REFRESH_RATE_TAG, this.refreshRate);
+
         return tag;
     }
 
@@ -320,11 +250,15 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
                 String key = Integer.toString(i);
                 if (configStacks.hasKey(key)) {
                     NBTTagCompound configTag = configStacks.getCompoundTag(key);
-                    this.aeFluidHandler.getInventory()[i].setConfig(WrappedFluidStack.fromNBT(configTag));
+                    this.aeHandler.getInventory()[i].setConfig(WrappedFluidStack.fromNBT(configTag));
                 } else {
-                    this.aeFluidHandler.getInventory()[i].setConfig(null);
+                    this.aeHandler.getInventory()[i].setConfig(null);
                 }
             }
+        }
+
+        if (tag.hasKey(REFRESH_RATE_TAG)) {
+            this.refreshRate = tag.getInteger(REFRESH_RATE_TAG);
         }
     }
 }

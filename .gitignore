@@ -74,6 +74,7 @@ local.properties
 /classes/
 /out/
 /build/
+.run
 
 # Linux
 *~

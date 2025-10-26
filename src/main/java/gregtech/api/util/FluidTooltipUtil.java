@@ -11,6 +11,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.RichTooltip;
@@ -133,6 +135,27 @@ public class FluidTooltipUtil {
         };
     }
 
+    public static void fluidInfo(@Nullable FluidStack stack, @NotNull RichTooltip tooltip, boolean showAmount,
+                                 boolean showTooltip, boolean showMolAmount) {
+        if (stack == null) return;
+
+        if (showAmount) {
+            tooltip.addLine(IKey.str("%,d L", stack.amount));
+        }
+
+        if (showTooltip) {
+            handleFluidTooltip(tooltip, stack);
+        }
+
+        if (showMolAmount) {
+            addIngotMolFluidTooltip(tooltip, stack);
+        }
+    }
+
+    public static void fluidInfo(@Nullable FluidStack stack, @NotNull RichTooltip tooltip) {
+        fluidInfo(stack, tooltip, true, true, true);
+    }
+
     public static void addIngotMolFluidTooltip(@NotNull RichTooltip tooltip, @NotNull FluidStack fluidStack) {
         // Add tooltip showing how many "ingot moles" (increments of 144) this fluid is if shift is held
         if (TooltipHelper.isShiftDown() && fluidStack.amount > GTValues.L) {
@@ -142,7 +165,27 @@ public class FluidTooltipUtil {
             if (extra != 0) {
                 fluidAmount += String.format(" + %d L", extra);
             }
-            tooltip.add(TextFormatting.GRAY + LocalizationUtils.format("gregtech.gui.amount_raw") + fluidAmount);
+            tooltip.addLine(KeyUtil.lang(TextFormatting.GRAY, "gregtech.gui.amount_raw", fluidAmount));
         }
+    }
+
+    public static @NotNull IKey getFluidModNameKey(@NotNull FluidStack fluidStack) {
+        return IKey.str(getFluidModName(fluidStack.getFluid()));
+    }
+
+    public static @NotNull String getFluidModName(@NotNull FluidStack fluidStack) {
+        return getFluidModName(fluidStack.getFluid());
+    }
+
+    public static @NotNull String getFluidModName(@NotNull Fluid fluid) {
+        ModContainer modContainer = Loader.instance().getIndexedModList().get(getFluidModID(fluid));
+        if (modContainer == null) throw new IllegalStateException(
+                "Tried to get the mod name of a fluid that isn't registered to the Forge FluidRegistry");
+        return "§9§o" + modContainer.getName() + "§r";
+    }
+
+    public static @NotNull String getFluidModID(@NotNull Fluid fluid) {
+        String fluidModName = FluidRegistry.getDefaultFluidName(fluid);
+        return fluidModName.substring(0, fluidModName.indexOf(":"));
     }
 }

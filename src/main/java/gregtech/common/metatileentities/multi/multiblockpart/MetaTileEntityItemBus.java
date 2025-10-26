@@ -84,7 +84,6 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         super.initializeInventory();
         if (this.hasGhostCircuitInventory()) {
             this.circuitInventory = new GhostCircuitItemStackHandler(this);
-            this.circuitInventory.addNotifiableMetaTileEntity(this);
             this.actualImportItems = new ItemHandlerList(Arrays.asList(super.getImportItems(), this.circuitInventory));
         } else {
             this.actualImportItems = null;

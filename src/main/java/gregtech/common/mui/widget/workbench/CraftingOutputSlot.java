@@ -1,9 +1,9 @@
 package gregtech.common.mui.widget.workbench;
 
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
-import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
-import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
+import gregtech.common.metatileentities.workbench.CraftingRecipeLogic;
+import gregtech.common.metatileentities.workbench.CraftingRecipeMemory;
+import gregtech.common.metatileentities.workbench.MetaTileEntityWorkbench;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
