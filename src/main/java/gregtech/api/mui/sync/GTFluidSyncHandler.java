@@ -71,7 +71,7 @@ public class GTFluidSyncHandler extends SyncHandler {
                 !GTUtility.areFluidStacksEqual(this.phantomFluid, this.lockedFluid.get())) {
                     this.phantomFluid = this.lockedFluid.get();
                     sync(LOCK_FLUID, buffer -> {
-                        buffer.writeBoolean(true);
+                        buffer.writeBoolean(this.isLocked.getAsBoolean());
                         NetworkUtils.writeFluidStack(buffer, this.phantomFluid);
                     });
                 }
@@ -590,7 +590,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     public void toggleLockFluid() {
         var cursorItem = getSyncManager().getCursorItem();
         FluidStack stack;
-        if (getLockedFluid() == null && !cursorItem.isEmpty()) {
+        if (GTUtility.isEmpty(getLockedFluid()) && !cursorItem.isEmpty()) {
             var fluidStack = FluidUtil.getFluidContained(cursorItem);
             stack = !GTUtility.isEmpty(fluidStack) ? fluidStack.copy() : null;
         } else {
@@ -598,7 +598,7 @@ public class GTFluidSyncHandler extends SyncHandler {
         }
         lockFluid(stack);
         sync(LOCK_FLUID, buffer -> {
-            buffer.writeBoolean(isLocked.getAsBoolean());
+            buffer.writeBoolean(this.isLocked.getAsBoolean());
             NetworkUtils.writeFluidStack(buffer, stack);
         });
     }

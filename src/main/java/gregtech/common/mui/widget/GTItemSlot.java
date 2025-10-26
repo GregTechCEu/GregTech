@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
 
+// todo make sure this class is actually needed once we update to rc6
 public class GTItemSlot extends Widget<GTItemSlot>
                         implements IVanillaSlot, Interactable, JeiGhostIngredientSlot<ItemStack>,
                         JeiIngredientProvider {
