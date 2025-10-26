@@ -193,6 +193,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         return this.creativeHandler;
     }
 
+    // todo try to refactor this with mui2 rc6
     protected class ModifiableHandler extends QuantumChestItemHandler implements IItemHandlerModifiable {
 
         @Override
