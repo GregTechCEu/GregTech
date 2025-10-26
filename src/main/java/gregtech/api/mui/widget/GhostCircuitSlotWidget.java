@@ -17,12 +17,12 @@ import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.utils.MouseData;
-import com.cleanroommc.modularui.value.sync.ItemSlotSH;
+import com.cleanroommc.modularui.value.sync.PhantomItemSlotSH;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -135,8 +135,10 @@ public class GhostCircuitSlotWidget extends ItemSlot {
         return this.selectorPanel;
     }
 
-    private static class GhostCircuitSyncHandler extends ItemSlotSH {
+    private static class GhostCircuitSyncHandler extends PhantomItemSlotSH {
 
+        // TODO: should we be using this as it's marked internal? Or is it fine.
+        @SuppressWarnings("UnstableApiUsage")
         public GhostCircuitSyncHandler(ModularSlot slot) {
             super(slot);
         }

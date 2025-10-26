@@ -11,13 +11,10 @@
     "AbstractCycleButtonWidgetMixin",
     "IconMixin",
     "IconMixin$DelegateMixin",
-    "ModularPanelMixin",
     "RichTextCompilerMixin"
   ],
   "client": [
-    "LangKeyMixin",
-    "ModularUIJeiPluginMixin",
-    "ItemSlotMixin"
+    "LangKeyMixin"
   ],
   "server": []
 }

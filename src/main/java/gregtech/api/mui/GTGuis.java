@@ -108,7 +108,7 @@ public class GTGuis {
             child(ButtonWidget.panelCloseButton().top(5).right(5)
                     .onMousePressed(mouseButton -> {
                         if (mouseButton == 0 || mouseButton == 1) {
-                            this.closeIfOpen(true);
+                            this.closeIfOpen();
                             return true;
                         }
                         return false;

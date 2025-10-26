@@ -138,7 +138,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     @Override
     public void getSelfAt(IViewportStack stack, HoveredWidgetList widgets, int x, int y) {
         if (isInside(stack, x, y)) {
-            widgets.add(this, stack.peek());
+            widgets.add(this, stack.peek(), getAdditionalHoverInfo(stack, x, y));
         }
     }
 
@@ -179,7 +179,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
                 getWidgetTheme(context.getTheme()).getTextShadow());
         this.text.compileAndDraw(this.renderer, context, false);
         // this isn't perfect, but i hope it's good enough
-        int diff = (int) Math.ceil((this.renderer.getLastHeight() - getArea().h()) / 2);
+        int diff = (int) Math.ceil((this.renderer.getLastTrimmedHeight() - getArea().h()) / 2);
         this.scroll.getScrollY().setScrollSize(getArea().h() + Math.max(0, diff));
     }
 

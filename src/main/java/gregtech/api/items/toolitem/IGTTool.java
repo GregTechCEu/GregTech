@@ -72,6 +72,7 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.factory.ItemGuiFactory;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -947,7 +948,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     @Override
-    default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager manager) {
+    default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager manager, UISettings settings) {
         final var usedStack = guiData.getUsedItemStack();
         final var behaviorsTag = getBehaviorsTag(usedStack);
         final var defaultDefinition = getMaxAoEDefinition(usedStack);
