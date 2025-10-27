@@ -1,6 +1,5 @@
 package gregtech.common.mui.widget;
 
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.mui.IconAcessor;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -30,15 +29,16 @@ import com.cleanroommc.modularui.widget.sizer.Box;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
+
 public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
                                   implements IRichTextBuilder<ScrollableTextWidget>, Interactable, IViewport,
                                   JeiIngredientProvider {
 
     private final RichText text = new RichText();
-    private MultiblockUIBuilder builder;
+    private Consumer<IRichTextBuilder<?>> builder;
     private boolean dirty = false;
     private boolean autoUpdate = false;
-    private boolean initScroll;
     private Object lastIngredient;
 
     private final ScrollArea scroll = new ScrollArea();
@@ -164,32 +164,15 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
         if (!transformed) {
             Stencil.applyAtZero(this.scroll, context);
         } else {
-            drawText(context, false);
+            drawText(context);
         }
     }
 
-    public void postRebuild() {
-        if (initScroll || !isValid()) return;
-        initScroll = true;
-
-        // i really hate how this is done but it works
-        // this is responsible for scrolling to the right value on ui ope
-        // eg half-way for center, and at the bottom for bottom alignments
-        drawText(getContext(), true);
-        int size = this.scroll.getScrollY().getScrollSize();
-        if (size <= getArea().h()) return;
-        size -= getArea().h();
-
-        Alignment alignment = this.text.getAlignment();
-        int scroll = (int) (size * alignment.y);
-        this.scroll.getScrollY().scrollTo(this.scroll, scroll);
-    }
-
-    private void drawText(ModularGuiContext context, boolean simulate) {
+    private void drawText(ModularGuiContext context) {
         if (this.autoUpdate || this.dirty) {
             if (this.builder != null) {
                 this.text.clearText();
-                this.builder.build(this.text);
+                this.builder.accept(this.text);
             }
             this.dirty = false;
         }
@@ -205,19 +188,16 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
         int diff = (int) Math.ceil((this.renderer.getLastHeight() - area.h()) / 2);
         this.scroll.getScrollY().setScrollSize(area.h() + Math.max(0, diff));
 
-        if (!simulate) {
-            // this is responsible for centering the text if there's not enough to scroll
-            int x = padding.left;
-            int y = (int) (area.h() * alignment.y);
-            if (alignment.y == 0.5f) y -= (int) (this.renderer.getLastHeight() / 2);
-            y = Math.min(Math.max(padding.top, y), area.h() - padding.bottom);
-            if (alignment.y > 0.5f) y -= area.h(); // why?
-            this.text.setupRenderer(this.renderer, x, y - getScrollY(),
-                    area.paddedWidth(), area.paddedHeight(),
-                    widgetTheme.getTextColor(), widgetTheme.getTextShadow());
+        // this is responsible for centering the text if there's not enough to scroll
+        int x = padding.left;
+        int y = (int) (area.h() * alignment.y);
+        y -= (int) (this.renderer.getLastHeight() * alignment.y);
+        y = Math.min(Math.max(padding.top, y), area.h() - padding.bottom);
+        this.text.setupRenderer(this.renderer, x, y - getScrollY(),
+                area.paddedWidth(), area.paddedHeight(),
+                widgetTheme.getTextColor(), widgetTheme.getTextShadow());
 
-            this.text.compileAndDraw(this.renderer, context, false);
-        }
+        this.text.compileAndDraw(this.renderer, context, false);
     }
 
     @Override
@@ -252,11 +232,10 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     /**
      * A builder which is called every time before drawing when {@link #dirty} is true.
      *
-     * @param uiBuilder@return this
+     * @param builder@return this
      */
-    public ScrollableTextWidget textBuilder(MultiblockUIBuilder uiBuilder) {
-        this.builder = uiBuilder;
-        this.builder.postRebuild(this::postRebuild);
+    public ScrollableTextWidget textBuilder(Consumer<IRichTextBuilder<?>> builder) {
+        this.builder = builder;
         markDirty();
         return this;
     }

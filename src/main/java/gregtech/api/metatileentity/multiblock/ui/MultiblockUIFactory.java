@@ -362,7 +362,7 @@ public class MultiblockUIFactory {
                     .alignment(Alignment.TopLeft)
                     .margin(4)
                     .autoUpdate(true)
-                    .textBuilder(display));
+                    .textBuilder(display::build));
         }
 
         if (this.screenFunction != null) {
