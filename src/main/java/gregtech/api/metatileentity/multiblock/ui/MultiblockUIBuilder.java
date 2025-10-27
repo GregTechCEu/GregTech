@@ -20,6 +20,7 @@ import gregtech.api.util.function.ByteSupplier;
 import gregtech.api.util.function.FloatSupplier;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.ToolItems;
+import gregtech.common.mui.widget.ScrollableTextWidget;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -77,8 +78,8 @@ public class MultiblockUIBuilder {
     private IKey idlingKey = IKey.lang("gregtech.multiblock.idling").style(TextFormatting.GRAY);
     private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused").style(TextFormatting.GOLD);
     private IKey runningKey = IKey.lang("gregtech.multiblock.running").style(TextFormatting.GREEN);
-    private boolean dirty;
     private Runnable onRebuild;
+    private Runnable postRebuild;
 
     @NotNull
     InternalSyncer getSyncer() {
@@ -797,18 +798,11 @@ public class MultiblockUIBuilder {
     }
 
     /**
-     * Builds the passed in rich text with operations and drawables. <br />
-     * Will clear and rebuild if this builder is marked dirty
+     * Builds the passed in rich text with operations and drawables.
      *
      * @param richText the rich text to add drawables to
      */
     public void build(IRichTextBuilder<?> richText) {
-        if (dirty) {
-            clear();
-            onRebuild();
-            runAction();
-            dirty = false;
-        }
         for (Operation op : operations) {
             op.accept(richText);
         }
@@ -820,11 +814,10 @@ public class MultiblockUIBuilder {
         }
     }
 
-    /**
-     * Mark this builder as dirty. Will be rebuilt during {@link #build(IRichTextBuilder) build()}
-     */
-    public void markDirty() {
-        dirty = true;
+    private void postRebuild() {
+        if (this.postRebuild != null) {
+            this.postRebuild.run();
+        }
     }
 
     /*
@@ -853,6 +846,15 @@ public class MultiblockUIBuilder {
      */
     public void onRebuild(Runnable onRebuild) {
         this.onRebuild = onRebuild;
+    }
+
+    /**
+     * The runnable is called after rebuilding, usually used for {@link ScrollableTextWidget#postRebuild()}
+     *
+     * @param postRebuild the runnable to run after rebuilding
+     */
+    public void postRebuild(Runnable postRebuild) {
+        this.postRebuild = postRebuild;
     }
 
     private void addHoverableKey(IKey key, IDrawable... hover) {
@@ -1042,6 +1044,7 @@ public class MultiblockUIBuilder {
                 getSyncer().readBuffer(buf);
                 onRebuild();
                 runAction();
+                postRebuild();
             }
         }
 
