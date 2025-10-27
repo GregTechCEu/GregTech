@@ -110,7 +110,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
                 RenderUtil.renderRect(0, 0, 18, 18, 200, 0x80FF0000);
             }
 
-            RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
+            RenderUtil.drawItemStack(itemstack, 1, 1, false);
         }
 
         if (jeiIngredientBeingHovered) {

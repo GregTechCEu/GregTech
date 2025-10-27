@@ -1,15 +1,10 @@
 package gregtech.common.metatileentities.storage;
 
 import gregtech.api.GTValues;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.PhantomSlotWidget;
-import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -17,7 +12,6 @@ import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -27,11 +21,20 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,13 +46,20 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     private int itemsPerCycle = 1;
     private int ticksPerCycle = 1;
 
-    private final GTItemStackHandler handler;
+    private GTItemStackHandler creativeHandler;
+    private ModifiableHandler modifiableHandler;
 
     private boolean active;
 
     public MetaTileEntityCreativeChest(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.MAX, 0);
-        this.handler = new CreativeItemStackHandler(1);
+    }
+
+    @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        this.itemInventory = this.modifiableHandler = new ModifiableHandler();
+        this.creativeHandler = new CreativeItemStackHandler(1);
     }
 
     @Override
@@ -77,45 +87,23 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 209)
-                .bindPlayerInventory(entityPlayer.inventory, 126);
-        builder.widget(new PhantomSlotWidget(handler, 0, 36, 6)
-                .setClearSlotOnRightClick(true)
-                .setBackgroundTexture(GuiTextures.SLOT)
-                .setChangeListener(this::markDirty));
-        builder.label(7, 9, "gregtech.creative.chest.item");
-        builder.widget(new ImageWidget(7, 48, 154, 14, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(9, 50, 152, 10, () -> String.valueOf(itemsPerCycle), value -> {
-            if (!value.isEmpty()) {
-                itemsPerCycle = Integer.parseInt(value);
-            }
-        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 28, "gregtech.creative.chest.ipc");
-
-        builder.widget(new ImageWidget(7, 85, 154, 14, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(9, 87, 152, 10, () -> String.valueOf(ticksPerCycle), value -> {
-            if (!value.isEmpty()) {
-                ticksPerCycle = Integer.parseInt(value);
-            }
-        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 65, "gregtech.creative.chest.tpc");
-
-        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> {
-            active = value;
-            scheduleRenderUpdate();
-            var c = getQuantumController();
-            if (c != null) c.onHandlerUpdate();
-        }, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
-
-        builder.widget(createConnectedGui(6));
-
-        return builder.build(getHolder(), entityPlayer);
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        guiSyncManager.syncValue("handler", this.modifiableHandler);
+        return appendCreativeUI(GTGuis.createPanel(this, 176, 166), false,
+                new BoolValue.Dynamic(() -> active, b -> active = b),
+                new IntSyncValue(() -> itemsPerCycle, v -> itemsPerCycle = v),
+                new IntSyncValue(() -> ticksPerCycle, v -> ticksPerCycle = v))
+                        .child(IKey.lang("gregtech.creative.chest.item").asWidget()
+                                .pos(7, 9))
+                        .child(new ItemSlot()
+                                .slot(SyncHandlers.phantomItemSlot(modifiableHandler, 0)
+                                        .changeListener((newItem, onlyAmountChanged, client, init) -> markDirty()))
+                                .pos(36, 6));
     }
 
     @Override
     public void update() {
-        ItemStack stack = handler.getStackInSlot(0).copy();
+        ItemStack stack = creativeHandler.getStackInSlot(0).copy();
         this.virtualItemStack = stack; // For rendering purposes
         super.update();
         if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0) return;
@@ -138,9 +126,18 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
+    protected boolean shouldTransferImport() {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldTransferExport() {
+        return false;
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setTag("ItemStackHandler", handler.serializeNBT());
         data.setInteger("ItemsPerCycle", itemsPerCycle);
         data.setInteger("TicksPerCycle", ticksPerCycle);
         data.setBoolean("Active", active);
@@ -150,8 +147,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        handler.deserializeNBT(data.getCompoundTag("ItemStackHandler"));
-        this.virtualItemStack = handler.getStackInSlot(0); // For rendering purposes
+        if (virtualItemStack.isEmpty())
+            creativeHandler.deserializeNBT(data.getCompoundTag("ItemStackHandler"));
         itemsPerCycle = data.getInteger("ItemsPerCycle");
         ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
@@ -161,7 +158,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     public void initFromItemStackData(NBTTagCompound itemStack) {
         super.initFromItemStackData(itemStack);
         if (itemStack.hasKey("id", 8)) { // Check if ItemStack wrote to this
-            this.handler.setStackInSlot(0, new ItemStack(itemStack));
+            this.creativeHandler.setStackInSlot(0, new ItemStack(itemStack));
         }
         itemsPerCycle = itemStack.getInteger("mBPerCycle");
         ticksPerCycle = itemStack.getInteger("ticksPerCycle");
@@ -170,7 +167,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void writeItemStackData(NBTTagCompound tag) {
         super.writeItemStackData(tag);
-        ItemStack stack = this.handler.getStackInSlot(0);
+        ItemStack stack = this.creativeHandler.getStackInSlot(0);
         if (!stack.isEmpty()) {
             stack.writeToNBT(tag);
         }
@@ -188,12 +185,39 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.handler.setStackInSlot(0, this.virtualItemStack);
+        this.creativeHandler.setStackInSlot(0, this.virtualItemStack);
     }
 
     @Override
     public IItemHandler getTypeValue() {
-        return this.handler;
+        return this.creativeHandler;
+    }
+
+    // todo try to refactor this with mui2 rc6
+    protected class ModifiableHandler extends QuantumChestItemHandler implements IItemHandlerModifiable {
+
+        @Override
+        public void setStackInSlot(int slot, ItemStack stack) {
+            virtualItemStack = GTUtility.copy(1, stack);
+            itemsStoredInside = stack.isEmpty() ? 0 : 1;
+            updateClient();
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return 1;
+        }
+
+        @Override
+        public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack insertedStack, boolean simulate) {
+            if (insertedStack.isEmpty()) {
+                return ItemStack.EMPTY;
+            }
+
+            setStackInSlot(slot, insertedStack);
+
+            return ItemStack.EMPTY;
+        }
     }
 
     protected class CreativeItemStackHandler extends GTItemStackHandler {
@@ -205,7 +229,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         @NotNull
         @Override
         public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            return stack;
+            return stack; // do not allow inserts
         }
 
         @NotNull
@@ -222,8 +246,18 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
-            super.setStackInSlot(slot, stack);
-            virtualItemStack = GTUtility.copy(1, stack);
+            modifiableHandler.setStackInSlot(slot, stack);
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            return modifiableHandler.getStackInSlot(slot);
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            super.deserializeNBT(nbt);
+            modifiableHandler.setStackInSlot(0, stacks.get(0)); // legacy nbt
         }
     }
 }

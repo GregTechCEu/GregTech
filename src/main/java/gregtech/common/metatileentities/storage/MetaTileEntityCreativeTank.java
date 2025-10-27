@@ -1,21 +1,16 @@
 package gregtech.common.metatileentities.storage;
 
 import gregtech.api.GTValues;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.PhantomFluidWidget;
-import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -33,6 +28,12 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,10 +44,17 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     private int mBPerCycle = 1;
     private int ticksPerCycle = 1;
     private boolean active = false;
+    private FluidTank modifiableTank;
 
     public MetaTileEntityCreativeTank(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.MAX, -1);
-        this.fluidTank = new CreativeFluidTank(1);
+    }
+
+    @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        this.modifiableTank = new FluidTank(1);
+        this.fluidTank = new CreativeFluidTank(this.modifiableTank);
     }
 
     @Override
@@ -69,7 +77,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        if (this.getWorld() != null && this.fluidTank.getFluid() != null && this.fluidTank.getFluid().amount > 0)
+        if (this.getWorld() != null && !GTUtility.isEmpty(this.fluidTank.getFluid()))
             QuantumStorageRenderer.renderTankAmount(x, y, z, frontFacing, 69);
     }
 
@@ -79,40 +87,18 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 209)
-                .bindPlayerInventory(entityPlayer.inventory, 126);
-        builder.widget(new PhantomFluidWidget(36, 6, 18, 18,
-                () -> this.fluidTank.getFluid(), data -> {
-                    this.fluidTank.setFluid(data);
-                }).showTip(false));
-        builder.label(7, 9, "gregtech.creative.tank.fluid");
-        builder.widget(new ImageWidget(7, 45, 154, 14, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(9, 47, 152, 10, () -> String.valueOf(mBPerCycle), value -> {
-            if (!value.isEmpty()) {
-                mBPerCycle = Integer.parseInt(value);
-            }
-        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 28, "gregtech.creative.tank.mbpc");
-
-        builder.widget(new ImageWidget(7, 82, 154, 14, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(9, 84, 152, 10, () -> String.valueOf(ticksPerCycle), value -> {
-            if (!value.isEmpty()) {
-                ticksPerCycle = Integer.parseInt(value);
-            }
-        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 65, "gregtech.creative.tank.tpc");
-
-        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> {
-            active = value;
-            scheduleRenderUpdate();
-            var c = getQuantumController();
-            if (c != null) c.onHandlerUpdate();
-        }, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
-
-        builder.widget(createConnectedGui(6));
-
-        return builder.build(getHolder(), entityPlayer);
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        return appendCreativeUI(GTGuis.createPanel(this, 176, 166), true,
+                new BoolValue.Dynamic(() -> active, b -> active = b),
+                new IntSyncValue(() -> mBPerCycle, v -> mBPerCycle = v),
+                new IntSyncValue(() -> ticksPerCycle, v -> ticksPerCycle = v))
+                        .child(IKey.lang("gregtech.creative.tank.fluid").asWidget()
+                                .pos(7, 9))
+                        .child(new GTFluidSlot()
+                                .syncHandler(GTFluidSlot.sync(this.modifiableTank)
+                                        .phantom(true)
+                                        .showAmount(false, false))
+                                .pos(36, 6));
     }
 
     @Override
@@ -172,15 +158,18 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     private class CreativeFluidTank extends FluidTank {
 
-        public CreativeFluidTank(int capacity) {
-            super(capacity);
+        private final FluidTank internal;
+
+        public CreativeFluidTank(FluidTank internal) {
+            super(1);
+            this.internal = internal;
         }
 
         @Override
         public IFluidTankProperties[] getTankProperties() {
             if (this.tankProperties == null) {
                 this.tankProperties = new IFluidTankProperties[] {
-                        new FluidTankPropertiesWrapper(fluidTank) {
+                        new FluidTankPropertiesWrapper(this.internal) {
 
                             @Override
                             public int getCapacity() {
@@ -190,15 +179,12 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                             @Override
                             public FluidStack getContents() {
                                 if (!active) return null;
-                                var f = super.getContents();
-                                if (f != null) f.amount = mBPerCycle;
-                                return f;
+                                return GTUtility.copy(getCapacity(), getFluid());
                             }
 
                             @Override
                             public boolean canDrainFluidType(FluidStack fluidStack) {
-                                if (!active) return false;
-                                return super.canDrainFluidType(fluidStack);
+                                return active && super.canDrainFluidType(fluidStack);
                             }
                         }
                 };
@@ -207,25 +193,52 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         }
 
         @Override
+        public FluidStack getFluid() {
+            return this.internal.getFluid();
+        }
+
+        @Override
+        public int getFluidAmount() {
+            return this.internal.getFluidAmount();
+        }
+
+        @Override
+        public int getCapacity() {
+            return mBPerCycle;
+        }
+
+        @Override
+        public void setFluid(FluidStack fluid) {
+            this.internal.setFluid(fluid);
+        }
+
+        @Override
         public FluidStack drain(FluidStack resource, boolean doDrain) {
-            return drain(resource == null ? 0 : resource.amount, doDrain);
+            if (!active || GTUtility.isEmpty(resource)) return null;
+            return drain(resource.amount, doDrain);
         }
 
         @Override
         public FluidStack drain(int maxDrain, boolean doDrain) {
             if (!active) return null;
-
-            var f = super.drain(maxDrain, false);
-            if (f != null) {
-                f = f.copy();
-                f.amount = Math.min(mBPerCycle, maxDrain);
-            }
-            return f;
+            FluidStack stack = this.internal.drain(maxDrain, false);
+            return GTUtility.copy(Math.min(getCapacity(), maxDrain), stack);
         }
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
             return 0;
+        }
+
+        @Override
+        public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+            return this.internal.writeToNBT(nbt);
+        }
+
+        @Override
+        public FluidTank readFromNBT(NBTTagCompound nbt) {
+            this.internal.readFromNBT(nbt);
+            return this;
         }
     }
 }
