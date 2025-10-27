@@ -18,8 +18,8 @@ import static gregtech.api.recipes.logic.OverclockingLogic.heatingCoilOC;
  */
 public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
 
-    public HeatingCoilRecipeLogic(RecipeMapMultiblockController metaTileEntity) {
-        super(metaTileEntity);
+    public HeatingCoilRecipeLogic(RecipeMapMultiblockController metaTileEntity, int tierskipLimit_) {
+        super(metaTileEntity, tierskipLimit_);
         if (!(metaTileEntity instanceof IHeatingCoil)) {
             throw new IllegalArgumentException("MetaTileEntity must be instanceof IHeatingCoil");
         }
