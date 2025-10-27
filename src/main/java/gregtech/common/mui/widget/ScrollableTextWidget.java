@@ -232,7 +232,8 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     /**
      * A builder which is called every time before drawing when {@link #dirty} is true.
      *
-     * @param builder@return this
+     * @param builder text builder
+     * @return this
      */
     public ScrollableTextWidget textBuilder(Consumer<IRichTextBuilder<?>> builder) {
         this.builder = builder;
