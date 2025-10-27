@@ -360,9 +360,9 @@ public class MultiblockUIFactory {
                     .debugName("display_text")
                     .sizeRel(1f)
                     .alignment(Alignment.TopLeft)
-                    .margin(4, 4)
+                    .margin(4)
                     .autoUpdate(true)
-                    .textBuilder(display::build));
+                    .textBuilder(display));
         }
 
         if (this.screenFunction != null) {

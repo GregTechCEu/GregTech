@@ -1,5 +1,6 @@
 package gregtech.common.mui.widget;
 
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.mui.IconAcessor;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -18,24 +19,26 @@ import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.HoveredWidgetList;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.ScrollArea;
 import com.cleanroommc.modularui.widget.scroll.ScrollData;
 import com.cleanroommc.modularui.widget.sizer.Area;
+import com.cleanroommc.modularui.widget.sizer.Box;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Consumer;
 
 public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
                                   implements IRichTextBuilder<ScrollableTextWidget>, Interactable, IViewport,
                                   JeiIngredientProvider {
 
     private final RichText text = new RichText();
-    private Consumer<RichText> builder;
+    private MultiblockUIBuilder builder;
     private boolean dirty = false;
     private boolean autoUpdate = false;
+    private boolean initScroll;
     private Object lastIngredient;
 
     private final ScrollArea scroll = new ScrollArea();
@@ -161,26 +164,60 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
         if (!transformed) {
             Stencil.applyAtZero(this.scroll, context);
         } else {
-            drawText(context);
+            drawText(context, false);
         }
     }
 
-    private void drawText(ModularGuiContext context) {
+    public void postRebuild() {
+        if (initScroll || !isValid()) return;
+        initScroll = true;
+
+        // i really hate how this is done but it works
+        // this is responsible for scrolling to the right value on ui ope
+        // eg half-way for center, and at the bottom for bottom alignments
+        drawText(getContext(), true);
+        int size = this.scroll.getScrollY().getScrollSize();
+        if (size <= getArea().h()) return;
+        size -= getArea().h();
+
+        Alignment alignment = this.text.getAlignment();
+        int scroll = (int) (size * alignment.y);
+        this.scroll.getScrollY().scrollTo(this.scroll, scroll);
+    }
+
+    private void drawText(ModularGuiContext context, boolean simulate) {
         if (this.autoUpdate || this.dirty) {
             if (this.builder != null) {
                 this.text.clearText();
-                this.builder.accept(this.text);
+                this.builder.build(this.text);
             }
             this.dirty = false;
         }
-        this.text.setupRenderer(this.renderer, getArea().getPadding().left, getArea().getPadding().top - getScrollY(),
-                getArea().paddedWidth(), getArea().paddedHeight(),
-                getWidgetTheme(context.getTheme()).getTextColor(),
-                getWidgetTheme(context.getTheme()).getTextShadow());
-        this.text.compileAndDraw(this.renderer, context, false);
+
+        Alignment alignment = this.text.getAlignment();
+        Area area = getArea();
+        Box padding = area.getPadding();
+        WidgetTheme widgetTheme = getWidgetTheme(context.getTheme());
+
+        this.text.compileAndDraw(this.renderer, context, true);
+
         // this isn't perfect, but i hope it's good enough
-        int diff = (int) Math.ceil((this.renderer.getLastHeight() - getArea().h()) / 2);
-        this.scroll.getScrollY().setScrollSize(getArea().h() + Math.max(0, diff));
+        int diff = (int) Math.ceil((this.renderer.getLastHeight() - area.h()) / 2);
+        this.scroll.getScrollY().setScrollSize(area.h() + Math.max(0, diff));
+
+        if (!simulate) {
+            // this is responsible for centering the text if there's not enough to scroll
+            int x = padding.left;
+            int y = (int) (area.h() * alignment.y);
+            if (alignment.y == 0.5f) y -= (int) (this.renderer.getLastHeight() / 2);
+            y = Math.min(Math.max(padding.top, y), area.h() - padding.bottom);
+            if (alignment.y > 0.5f) y -= area.h(); // why?
+            this.text.setupRenderer(this.renderer, x, y - getScrollY(),
+                    area.paddedWidth(), area.paddedHeight(),
+                    widgetTheme.getTextColor(), widgetTheme.getTextShadow());
+
+            this.text.compileAndDraw(this.renderer, context, false);
+        }
     }
 
     @Override
@@ -215,11 +252,11 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     /**
      * A builder which is called every time before drawing when {@link #dirty} is true.
      *
-     * @param builder text builder
-     * @return this
+     * @param uiBuilder@return this
      */
-    public ScrollableTextWidget textBuilder(Consumer<RichText> builder) {
-        this.builder = builder;
+    public ScrollableTextWidget textBuilder(MultiblockUIBuilder uiBuilder) {
+        this.builder = uiBuilder;
+        this.builder.postRebuild(this::postRebuild);
         markDirty();
         return this;
     }
