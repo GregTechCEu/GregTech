@@ -3,6 +3,7 @@ package gregtech.api;
 import gregtech.api.advancement.IAdvancementManager;
 import gregtech.api.block.ICleanroomFilter;
 import gregtech.api.block.IHeatingCoilBlockStats;
+import gregtech.api.block.coil.CoilManager;
 import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.event.HighTierEvent;
@@ -56,6 +57,8 @@ public class GregTechAPI {
     public static MarkerMaterialRegistry markerMaterialRegistry;
     /** Will be available at the Pre-Initialization stage */
     public static MTEManager mteManager;
+    /** Will be available at the Pre-Initialization stage */
+    public static CoilManager coilManager;
     /** GT's data migrations API */
     public static final MigrationAPI MIGRATIONS = new MigrationAPI();
     public static final RecipePropertyRegistry RECIPE_PROPERTIES = new RecipePropertyRegistry();
