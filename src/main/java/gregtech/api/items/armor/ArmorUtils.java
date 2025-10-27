@@ -2,7 +2,7 @@ package gregtech.api.items.armor;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.Minecraft;
@@ -185,8 +185,7 @@ public class ArmorUtils {
      * @return Formated list
      */
     public static List<ItemStack> format(List<ItemStack> input) {
-        Object2IntMap<ItemStack> items = new Object2IntOpenCustomHashMap<>(
-                ItemStackHashStrategy.comparingAllButCount());
+        Object2IntMap<ItemStack> items = new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount);
         List<ItemStack> output = new ArrayList<>();
         for (ItemStack itemStack : input) {
             if (items.containsKey(itemStack)) {

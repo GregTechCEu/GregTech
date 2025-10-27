@@ -11,7 +11,7 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
@@ -124,7 +124,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     @SuppressWarnings("NewExpressionSideOnly")
     public MultiblockInfoRecipeWrapper(@NotNull MultiblockControllerBase controller) {
         this.controller = controller;
-        Set<ItemStack> drops = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount());
+        Set<ItemStack> drops = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount);
         this.patterns = controller.getMatchingShapes().stream()
                 .map(it -> initializePattern(it, drops))
                 .toArray(MBPattern[]::new);
@@ -513,7 +513,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private static Collection<PartInfo> gatherStructureBlocks(World world, @NotNull Map<BlockPos, BlockInfo> blocks,
                                                               Set<ItemStack> parts) {
         Map<ItemStack, PartInfo> partsMap = new Object2ObjectOpenCustomHashMap<>(
-                ItemStackHashStrategy.comparingAllButCount());
+                ItemStackHashStrategy.comparingAllButCount);
         for (Entry<BlockPos, BlockInfo> entry : blocks.entrySet()) {
             BlockPos pos = entry.getKey();
             IBlockState state = world.getBlockState(pos);

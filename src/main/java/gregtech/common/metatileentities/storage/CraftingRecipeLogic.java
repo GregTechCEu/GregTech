@@ -4,7 +4,7 @@ import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 import gregtech.common.crafting.ShapedOreEnergyTransferRecipe;
 import gregtech.common.mui.widget.workbench.CraftingInputSlot;
 
@@ -52,8 +52,8 @@ public class CraftingRecipeLogic extends SyncHandler {
     private final World world;
     private IItemHandlerModifiable availableHandlers;
     private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder()
-            .compareItem(true)
-            .compareMetadata(true)
+            .compareItem()
+            .compareMetadata()
             .build();
 
     /**
@@ -66,8 +66,7 @@ public class CraftingRecipeLogic extends SyncHandler {
      * List of items needed to complete the crafting recipe, filled by
      * {@link CraftingRecipeLogic#detectAndSendChanges(boolean)} )}
      **/
-    private final Map<ItemStack, Integer> requiredItems = new Object2IntOpenCustomHashMap<>(
-            this.strategy);
+    private final Map<ItemStack, Integer> requiredItems = new Object2IntOpenCustomHashMap<>(this.strategy);
 
     private final Int2IntMap compactedIndexes = new Int2IntArrayMap(9);
     private final Int2IntMap slotMap = new Int2IntArrayMap();
@@ -199,7 +198,7 @@ public class CraftingRecipeLogic extends SyncHandler {
      */
     public ItemStack findSubstitute(int craftingIndex, ItemStack stack) {
         Object2BooleanMap<ItemStack> map = replaceAttemptMap.computeIfAbsent(craftingIndex,
-                (m) -> new Object2BooleanOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount()));
+                (m) -> new Object2BooleanOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount));
 
         ItemStack substitute = ItemStack.EMPTY;
 

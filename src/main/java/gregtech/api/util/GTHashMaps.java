@@ -1,5 +1,8 @@
 package gregtech.api.util;
 
+import gregtech.api.util.hash.FluidStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -101,8 +104,8 @@ public final class GTHashMaps {
      */
     @NotNull
     public static Object2IntMap<ItemStack> createItemStackMap(boolean linked) {
-        ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingAllButCount();
-        return linked ? new Object2IntLinkedOpenCustomHashMap<>(strategy) : new Object2IntOpenCustomHashMap<>(strategy);
+        return linked ? new Object2IntLinkedOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount) :
+                new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount);
     }
 
     /**
@@ -111,8 +114,8 @@ public final class GTHashMaps {
      */
     @NotNull
     public static Object2IntMap<FluidStack> createFluidStackMap(boolean linked) {
-        var strategy = FluidStackHashStrategy.comparingAllButAmount();
-        return linked ? new Object2IntLinkedOpenCustomHashMap<>(strategy) : new Object2IntOpenCustomHashMap<>(strategy);
+        return linked ? new Object2IntLinkedOpenCustomHashMap<>(FluidStackHashStrategy.comparingAllButAmount) :
+                new Object2IntOpenCustomHashMap<>(FluidStackHashStrategy.comparingAllButAmount);
     }
 
     /**

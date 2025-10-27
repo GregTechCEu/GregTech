@@ -1,6 +1,6 @@
 package gregtech.common.inventory;
 
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 
 import net.minecraft.item.ItemStack;
 
@@ -37,6 +37,6 @@ public class SimpleItemInfo implements IItemInfo {
 
     @Override
     public int hashCode() {
-        return ItemStackHashStrategy.comparingAllButCount().hashCode(this.itemStack);
+        return ItemStackHashStrategy.comparingAllButCount.hashCode(this.itemStack);
     }
 }

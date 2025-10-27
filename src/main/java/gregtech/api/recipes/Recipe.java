@@ -12,7 +12,7 @@ import gregtech.api.recipes.properties.RecipeProperty;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.recipes.properties.RecipePropertyStorageImpl;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 import gregtech.integration.groovy.GroovyScriptModule;
 
 import net.minecraft.item.ItemStack;
@@ -371,7 +371,7 @@ public class Recipe {
         for (GTRecipeInput recipeIngredient : this.inputs) {
             if (!recipeIngredient.isOreDict()) {
                 for (ItemStack is : recipeIngredient.getInputStacks()) {
-                    hash = 31 * hash + ItemStackHashStrategy.comparingAll().hashCode(is);
+                    hash = 31 * hash + ItemStackHashStrategy.comparingAll.hashCode(is);
                 }
             } else {
                 hash = 31 * hash + recipeIngredient.getOreDict();

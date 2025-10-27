@@ -11,7 +11,7 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
@@ -390,7 +390,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     @NotNull
     protected Map<ItemStack, TypeItemInfo> countInventoryItemsByType(@NotNull IItemHandler inventory) {
         Map<ItemStack, TypeItemInfo> result = new Object2ObjectOpenCustomHashMap<>(
-                ItemStackHashStrategy.comparingAllButCount());
+                ItemStackHashStrategy.comparingAllButCount);
         for (int srcIndex = 0; srcIndex < inventory.getSlots(); srcIndex++) {
             ItemStack itemStack = inventory.getStackInSlot(srcIndex);
             if (itemStack.isEmpty()) {
@@ -430,7 +430,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
             if (!result.containsKey(matchedSlot)) {
                 GroupItemInfo itemInfo = new GroupItemInfo(matchedSlot,
-                        new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount()), 0);
+                        new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount), 0);
                 itemInfo.itemStackTypes.add(itemStack.copy());
                 itemInfo.totalCount += itemStack.getCount();
                 result.put(matchedSlot, itemInfo);
