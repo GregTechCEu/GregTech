@@ -285,8 +285,8 @@ public abstract class WorldSceneRenderer {
         for (BlockPos pos : renderedBlocks) {
             IBlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
-            state = state.getActualState(world, pos);
             if (block == Blocks.AIR) continue;
+            state = state.getActualState(world, pos);
             if (block.canRenderInLayer(state, layer)) {
                 blockrendererdispatcher.renderBlock(state, pos, world, buffer);
             }
