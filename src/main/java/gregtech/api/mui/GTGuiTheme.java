@@ -101,7 +101,7 @@ public class GTGuiTheme {
 
     // TODO make this better
     public static final GTGuiTheme TERMINAL = templateBuilder("gregtech_terminal")
-            .parent("gregtech_standard")
+            .parent(Names.STANDARD)
             .textColor(0xFFFDFDFD)
             .build();
 
