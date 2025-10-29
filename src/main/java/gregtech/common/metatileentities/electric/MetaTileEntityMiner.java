@@ -110,6 +110,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         return true;
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         int rowSize = (int) Math.sqrt(inventorySize);
@@ -122,11 +123,11 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         BooleanSyncValue isInventoryFullSync = new BooleanSyncValue(() -> isInventoryFull);
         BooleanSyncValue hasEnoughEnergySync = new BooleanSyncValue(() -> drainEnergy(true));
         panelSyncManager.syncValue("radius", 0, radiusSync);
-        panelSyncManager.syncValue("isDone", 0, isDoneSync);
-        panelSyncManager.syncValue("isWorking", 0, isWorkingSync);
-        panelSyncManager.syncValue("isWorkingEnabled", 0, isWorkingEnabledSync);
-        panelSyncManager.syncValue("isInventoryFull", 0, isInventoryFullSync);
-        panelSyncManager.syncValue("hasEnoughEnergy", 0, hasEnoughEnergySync);
+        panelSyncManager.syncValue("done", 0, isDoneSync);
+        panelSyncManager.syncValue("working", 0, isWorkingSync);
+        panelSyncManager.syncValue("workingEnabled", 0, isWorkingEnabledSync);
+        panelSyncManager.syncValue("inventoryFull", 0, isInventoryFullSync);
+        panelSyncManager.syncValue("enoughEnergy", 0, hasEnoughEnergySync);
 
         IntSyncValue xPosSync = new IntSyncValue(() -> minerLogic.getMineX().get());
         IntSyncValue yPosSync = new IntSyncValue(() -> minerLogic.getMineY().get());

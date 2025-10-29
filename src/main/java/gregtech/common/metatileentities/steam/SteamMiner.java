@@ -8,24 +8,24 @@ import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.capability.impl.miner.MinerLogic;
 import gregtech.api.capability.impl.miner.SteamMinerLogic;
 import gregtech.api.damagesources.DamageSources;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuiTheme;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.mui.widget.ScrollableTextWidget;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,7 +34,6 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -48,6 +47,17 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -114,60 +124,98 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public GTGuiTheme getUITheme() {
+        return GTGuiTheme.BRONZE;
+    }
+
+    @SuppressWarnings("DuplicatedCode")
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         int rowSize = (int) Math.sqrt(inventorySize);
+        panelSyncManager.registerSlotGroup("export_items", rowSize);
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(false), 175, 176);
-        builder.bindPlayerInventory(entityPlayer.inventory, 94);
+        IntSyncValue radiusSync = new IntSyncValue(() -> getWorkingArea(minerLogic.getCurrentRadius()));
+        BooleanSyncValue isDoneSync = new BooleanSyncValue(minerLogic::isDone);
+        BooleanSyncValue isWorkingSync = new BooleanSyncValue(minerLogic::isWorking);
+        BooleanSyncValue isWorkingEnabledSync = new BooleanSyncValue(minerLogic::isWorkingEnabled);
+        BooleanSyncValue isInventoryFullSync = new BooleanSyncValue(() -> isInventoryFull);
+        BooleanSyncValue isVentBlockedSync = new BooleanSyncValue(this::isVentingStuck);
+        BooleanSyncValue hasEnoughEnergySync = new BooleanSyncValue(() -> drainEnergy(true));
+        panelSyncManager.syncValue("radius", 0, radiusSync);
+        panelSyncManager.syncValue("done", 0, isDoneSync);
+        panelSyncManager.syncValue("working", 0, isWorkingSync);
+        panelSyncManager.syncValue("workingEnabled", 0, isWorkingEnabledSync);
+        panelSyncManager.syncValue("inventoryFull", 0, isInventoryFullSync);
+        panelSyncManager.syncValue("ventBlocked", 0, isVentBlockedSync);
+        panelSyncManager.syncValue("enoughEnergy", 0, hasEnoughEnergySync);
 
-        for (int y = 0; y < rowSize; y++) {
-            for (int x = 0; x < rowSize; x++) {
-                int index = y * rowSize + x;
-                builder.widget(new SlotWidget(exportItems, index, 142 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(false)));
-            }
-        }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(false), 10);
+        IntSyncValue xPosSync = new IntSyncValue(() -> minerLogic.getMineX().get());
+        IntSyncValue yPosSync = new IntSyncValue(() -> minerLogic.getMineY().get());
+        IntSyncValue zPosSync = new IntSyncValue(() -> minerLogic.getMineZ().get());
+        panelSyncManager.syncValue("xPos", 0, xPosSync);
+        panelSyncManager.syncValue("yPos", 0, yPosSync);
+        panelSyncManager.syncValue("zPos", 0, zPosSync);
 
-        builder.image(7, 16, 105, 75, GuiTextures.DISPLAY_STEAM.get(false))
-                .label(6, 6, getMetaFullName());
-        builder.widget(new AdvancedTextWidget(10, 19, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(84));
-        builder.widget(new AdvancedTextWidget(70, 19, this::addDisplayText2, 0xFFFFFF)
-                .setMaxWidthLimit(84));
+        return GTGuis.createPanel(this, 175, 176)
+                .child(IKey.lang(getMetaFullName())
+                        .asWidget()
+                        .pos(5, 5))
+                .child(new ScrollableTextWidget()
+                        .pos(7 + 3, 15 + 3)
+                        .size(105 - 3 * 2, 75 - 3 * 2)
+                        .autoUpdate(true)
+                        .alignment(Alignment.TopLeft)
+                        .textBuilder(text -> {
+                            text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_at"));
+                            text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_x",
+                                    xPosSync.getIntValue()));
+                            text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_y",
+                                    yPosSync.getIntValue()));
+                            text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_z",
+                                    zPosSync.getIntValue()));
 
-        return builder.build(getHolder(), entityPlayer);
-    }
+                            text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.working_area",
+                                    radiusSync.getIntValue(), radiusSync.getIntValue()));
 
-    void addDisplayText(List<ITextComponent> textList) {
-        int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
-        if (this.minerLogic.isDone())
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.done")
-                    .setStyle(new Style().setColor(TextFormatting.GREEN)));
-        else if (this.minerLogic.isWorking())
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.working")
-                    .setStyle(new Style().setColor(TextFormatting.GOLD)));
-        else if (!this.isWorkingEnabled())
-            textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-        if (this.isInventoryFull)
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
-        if (ventingStuck)
-            textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.vent")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
-        else if (!drainEnergy(true))
-            textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.steam")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
-    }
+                            if (isDoneSync.getBoolValue()) {
+                                text.addLine(KeyUtil.lang(TextFormatting.GREEN, "gregtech.machine.miner.done"));
+                            } else if (isWorkingSync.getBoolValue()) {
+                                text.addLine(KeyUtil.lang(TextFormatting.GOLD, "gregtech.machine.miner.working"));
+                            } else if (!isWorkingEnabledSync.getBoolValue()) {
+                                text.addLine(KeyUtil.lang("gregtech.multiblock.work_paused"));
+                            }
 
-    void addDisplayText2(List<ITextComponent> textList) {
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
+                            if (isInventoryFullSync.getBoolValue()) {
+                                text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.miner.invfull"));
+                            }
+
+                            if (isVentBlockedSync.getBoolValue()) {
+                                text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.steam_miner.vent"));
+                            }
+
+                            if (!hasEnoughEnergySync.getBoolValue()) {
+                                text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.steam_miner.steam"));
+                            }
+                        })
+                        .background(GTGuiTextures.DISPLAY_BRONZE.asIcon()
+                                .margin(-3)))
+                .child(new Grid()
+                        .pos(151 - 18 * 2, 15)
+                        .minElementMargin(0)
+                        .minColWidth(18)
+                        .minRowHeight(18)
+                        .mapTo(rowSize, inventorySize, index -> new ItemSlot()
+                                .slot(SyncHandlers.itemSlot(exportItems, index)
+                                        .slotGroup("export_items")
+                                        .accessibility(false, true))))
+                .child(SlotGroupWidget.playerInventory()
+                        .left(7)
+                        .bottom(7));
     }
 
     @Override
