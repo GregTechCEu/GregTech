@@ -7,7 +7,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.fluids.IFluidTank;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,18 +88,6 @@ public class VirtualEnderRegistry extends WorldSavedData {
 
     private static VirtualRegistryMap getRegistry(UUID owner) {
         return VIRTUAL_REGISTRIES.computeIfAbsent(owner, key -> new VirtualRegistryMap());
-    }
-
-    // remove if tank app is removed
-    public static Map<UUID, Map<String, IFluidTank>> createTankMap() {
-        Map<UUID, Map<String, IFluidTank>> map = new HashMap<>();
-        for (var uuid : VIRTUAL_REGISTRIES.keySet()) {
-            map.put(uuid, new HashMap<>());
-            for (var name : getEntryNames(uuid, EntryTypes.ENDER_FLUID)) {
-                map.get(uuid).put(name, getEntry(uuid, EntryTypes.ENDER_FLUID, name));
-            }
-        }
-        return map;
     }
 
     @Override
