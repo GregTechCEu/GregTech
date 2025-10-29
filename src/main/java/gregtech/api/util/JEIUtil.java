@@ -6,7 +6,6 @@ import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
-import mezz.jei.Internal;
 
 public class JEIUtil {
 
