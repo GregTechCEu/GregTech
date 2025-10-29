@@ -6,6 +6,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +50,7 @@ public class VirtualRegistryMap implements INBTSerializable<NBTTagCompound> {
     }
 
     public Set<String> getEntryNames(EntryTypes<?> type) {
-        return registryMap.get(type).keySet();
+        return registryMap.getOrDefault(type, Collections.emptyMap()).keySet();
     }
 
     @Override
