@@ -1,6 +1,8 @@
 package gregtech.api.util;
 
-import net.minecraft.enchantment.EnchantmentData;
+import gregtech.integration.jei.JustEnoughItemsModule;
+
+import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
@@ -17,13 +19,10 @@ public class JEIUtil {
         return ModularUIJeiPlugin.hoveringOverIngredient(jeiGhostIngredientSlot);
     }
 
-    public static Object getBookStackIfEnchantment(Object ingredient) {
-        if (ingredient instanceof EnchantmentData enchantmentData) {
-            return Internal.getIngredientRegistry()
-                    .getIngredientHelper(enchantmentData)
-                    .getCheatItemStack(enchantmentData);
-        }
-
-        return ingredient;
+    public static ItemStack getActualStack(Object ingredient) {
+        if (!Mods.JustEnoughItems.isModLoaded()) return ItemStack.EMPTY;
+        return JustEnoughItemsModule.ingredientRegistry
+                .getIngredientHelper(ingredient)
+                .getCheatItemStack(ingredient);
     }
 }
