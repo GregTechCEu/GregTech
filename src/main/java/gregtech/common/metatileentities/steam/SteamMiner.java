@@ -198,7 +198,11 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
                                 text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.steam_miner.vent"));
                             }
 
-                            if (!hasEnoughEnergySync.getBoolValue()) {
+                            // Drain energy always returns false when the vent is blocked, so check that it isn't
+                            // blocked.
+                            // It should be fine since I don't think it can even enter the vent blocked state without
+                            // having steam.
+                            if (!hasEnoughEnergySync.getBoolValue() && !isVentBlockedSync.getBoolValue()) {
                                 text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.steam_miner.steam"));
                             }
                         })
