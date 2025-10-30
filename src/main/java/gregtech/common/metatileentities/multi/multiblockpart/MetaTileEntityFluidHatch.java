@@ -292,6 +292,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 setLocked(fluidStack != null);
                 this.lockedFluid = fluidStack;
                 this.fluidTank.onContentsChanged();
+                markDirty();
             }, this::setLocked, this::isLocked);
         }
 
@@ -307,7 +308,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 .childIf(isExportHatch, new ToggleButton()
                         .pos(7, 63)
                         .overlay(GTGuiTextures.BUTTON_LOCK)
-                        .value(new BooleanSyncValue(this::isLocked, b -> fluidSyncHandler.lockFluid(b, false)))
+                        .value(new BooleanSyncValue(this::isLocked, fluidSyncHandler::lockFluid))
                         .addTooltip(true, IKey.lang("gregtech.gui.fluid_lock.tooltip.enabled"))
                         .addTooltip(false, IKey.lang("gregtech.gui.fluid_lock.tooltip.disabled")))
 
@@ -413,6 +414,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             this.lockedFluid = fluidTank.getFluid().copy();
             this.lockedFluid.amount = 1;
             fluidTank.onContentsChanged();
+            markDirty();
             return;
         }
         this.lockedFluid = null;

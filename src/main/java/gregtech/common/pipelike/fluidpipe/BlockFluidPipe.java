@@ -4,7 +4,6 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.EntityDamageUtil;
@@ -17,7 +16,6 @@ import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,7 +23,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
@@ -33,35 +30,15 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
-
-    private final SortedMap<Material, FluidPipeProperties> enabledMaterials = new TreeMap<>();
 
     public BlockFluidPipe(FluidPipeType pipeType, MaterialRegistry registry) {
         super(pipeType, registry);
         setCreativeTab(GTCreativeTabs.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WRENCH, 1);
-    }
-
-    public void addPipeMaterial(Material material, FluidPipeProperties fluidPipeProperties) {
-        Preconditions.checkNotNull(material, "material");
-        Preconditions.checkNotNull(fluidPipeProperties, "material %s fluidPipeProperties was null", material);
-        Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null,
-                "material %s is not registered", material);
-        this.enabledMaterials.put(material, fluidPipeProperties);
-    }
-
-    public Collection<Material> getEnabledMaterials() {
-        return Collections.unmodifiableSet(enabledMaterials.keySet());
     }
 
     @Override
@@ -74,28 +51,11 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         return WorldFluidPipeNet.getWorldPipeNet(world);
     }
 
-    @Override
-    protected FluidPipeProperties createProperties(FluidPipeType fluidPipeType, Material material) {
-        return fluidPipeType.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
-    }
-
     @SideOnly(Side.CLIENT)
     @NotNull
     @Override
     public PipeRenderer getPipeRenderer() {
         return FluidPipeRenderer.INSTANCE;
-    }
-
-    @Override
-    protected FluidPipeProperties getFallbackType() {
-        return enabledMaterials.values().iterator().next();
-    }
-
-    @Override
-    public void getSubBlocks(@NotNull CreativeTabs itemIn, @NotNull NonNullList<ItemStack> items) {
-        for (Material material : enabledMaterials.keySet()) {
-            items.add(getItem(material));
-        }
     }
 
     @Override

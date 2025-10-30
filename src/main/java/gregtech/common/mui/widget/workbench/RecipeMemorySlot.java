@@ -50,7 +50,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
         if (!itemStack.isEmpty()) {
             int cachedCount = itemStack.getCount();
             itemStack.setCount(1); // required to not render the amount overlay
-            RenderUtil.renderItem(itemStack, 1, 1, 16, 16);
+            RenderUtil.drawItemStack(itemStack, 1, 1, true);
             itemStack.setCount(cachedCount);
 
             // noinspection DataFlowIssue
