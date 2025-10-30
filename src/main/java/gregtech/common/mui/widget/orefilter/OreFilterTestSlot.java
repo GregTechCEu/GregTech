@@ -8,7 +8,7 @@ import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.widgets.slot.PhantomItemSlot;
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
@@ -106,14 +106,12 @@ public class OreFilterTestSlot extends PhantomItemSlot {
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         super.draw(context, widgetTheme);
         if (this.matchSuccess) {
-            GTGuiTextures.OREDICT_MATCH
-                    .draw(context, 12, -2, 9, 6, widgetTheme);
-        } else if (testResult.size() > 0) {
-            GTGuiTextures.OREDICT_NO_MATCH
-                    .draw(context, 12, -3, 7, 7, widgetTheme);
+            GTGuiTextures.OREDICT_MATCH.draw(context, 12, -2, 9, 6, widgetTheme.getTheme());
+        } else if (!testResult.isEmpty()) {
+            GTGuiTextures.OREDICT_NO_MATCH.draw(context, 12, -3, 7, 7, widgetTheme.getTheme());
         }
     }
 

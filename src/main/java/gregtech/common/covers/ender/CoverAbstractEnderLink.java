@@ -363,7 +363,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                         .background(GTGuiTextures.SLOT.asIcon().size(18))
                         .top(1))
                 .child(new InteractableText<>(entry, this::updateColor)
-                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                        .tooltipAutoUpdate(true)
                         .tooltipBuilder(tooltip -> {
                             String desc = entry.getDescription();
                             if (!desc.isEmpty()) tooltip.add(desc);

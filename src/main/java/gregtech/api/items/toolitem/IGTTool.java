@@ -77,7 +77,6 @@ import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
@@ -1007,14 +1006,15 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         return Flow.column()
                 .coverChildren()
-                .child(new TextWidget(IKey.lang("item.gt.tool.aoe." + lang))
+                .child(IKey.lang("item.gt.tool.aoe." + lang)
+                        .asWidget()
                         .marginBottom(5))
                 .child(Flow.row()
                         .coverChildren()
                         .marginBottom(5)
                         .child(increaseButton)
                         .child(decreaseButton))
-                .child(new TextWidget(display)
+                .child(display.asWidget()
                         .alignment(Alignment.Center)
                         .widthRel(1f));
     }

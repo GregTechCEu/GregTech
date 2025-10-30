@@ -18,6 +18,7 @@ import com.cleanroommc.modularui.drawable.text.TextRenderer;
 import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerIngredientProvider;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.theme.TextFieldTheme;
 import com.cleanroommc.modularui.utils.HoveredWidgetList;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.ScrollArea;
@@ -138,7 +139,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     @Override
     public void getSelfAt(IViewportStack stack, HoveredWidgetList widgets, int x, int y) {
         if (isInside(stack, x, y)) {
-            widgets.add(this, stack.peek(), getAdditionalHoverInfo(stack, x, y));
+            widgets.add(this, stack, getAdditionalHoverInfo(stack, x, y));
         }
     }
 
@@ -173,10 +174,11 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
             }
             this.dirty = false;
         }
-        this.text.setupRenderer(this.renderer, getArea().getPadding().left, getArea().getPadding().top - getScrollY(),
-                getArea().paddedWidth(), getArea().paddedHeight(),
-                getWidgetTheme(context.getTheme()).getTextColor(),
-                getWidgetTheme(context.getTheme()).getTextShadow());
+
+        TextFieldTheme textFieldTheme = context.getTheme().getTextFieldTheme().getTheme();
+        this.text.setupRenderer(this.renderer, getArea().getPadding().getLeft(),
+                getArea().getPadding().getTop() - getScrollY(), getArea().paddedWidth(), getArea().paddedHeight(),
+                textFieldTheme.getTextColor(), textFieldTheme.getTextShadow());
         this.text.compileAndDraw(this.renderer, context, false);
         // this isn't perfect, but i hope it's good enough
         int diff = (int) Math.ceil((this.renderer.getLastTrimmedHeight() - getArea().h()) / 2);
@@ -187,7 +189,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     public void postDraw(ModularGuiContext context, boolean transformed) {
         if (!transformed) {
             Stencil.remove();
-            this.scroll.drawScrollbar();
+            this.scroll.drawScrollbar(context, context.getTheme().getScrollbarTheme().getTheme(isHovering()));
         }
     }
 

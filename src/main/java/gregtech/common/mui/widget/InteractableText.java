@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class InteractableText<T extends VirtualEntry> extends TextWidget implements Interactable {
+public class InteractableText<T extends VirtualEntry> extends TextWidget<InteractableText<T>> implements Interactable {
 
     private final T entry;
     private final EntryColorSH syncHandler;

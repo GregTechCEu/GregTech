@@ -56,7 +56,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
             // noinspection DataFlowIssue
             if (this.memory.getRecipeAtIndex(this.index).isRecipeLocked()) {
                 GlStateManager.disableDepth();
-                GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
+                GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme.getTheme());
                 GlStateManager.enableDepth();
             }
         }

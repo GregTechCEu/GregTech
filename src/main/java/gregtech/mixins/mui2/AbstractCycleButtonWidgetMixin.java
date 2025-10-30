@@ -2,7 +2,7 @@ package gregtech.mixins.mui2;
 
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.AbstractCycleButtonWidget;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -25,14 +25,14 @@ public class AbstractCycleButtonWidgetMixin<W extends AbstractCycleButtonWidget<
     @ModifyReturnValue(method = "getCurrentOverlay", at = @At(value = "RETURN", ordinal = 0))
     public IDrawable fixOverlay(IDrawable original,
                                 @Local(argsOnly = true) ITheme theme,
-                                @Local(argsOnly = true) WidgetTheme widgetTheme) {
+                                @Local(argsOnly = true) WidgetThemeEntry<?> widgetTheme) {
         return original != IDrawable.NONE ? original : super.getCurrentOverlay(theme, widgetTheme);
     }
 
     @ModifyReturnValue(method = "getCurrentBackground", at = @At(value = "RETURN", ordinal = 0))
     public IDrawable fixBackground(IDrawable original,
                                    @Local(argsOnly = true) ITheme theme,
-                                   @Local(argsOnly = true) WidgetTheme widgetTheme) {
+                                   @Local(argsOnly = true) WidgetThemeEntry<?> widgetTheme) {
         return original != IDrawable.NONE ? original : super.getCurrentBackground(theme, widgetTheme);
     }
 
