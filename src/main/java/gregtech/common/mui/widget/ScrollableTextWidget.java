@@ -1,12 +1,11 @@
 package gregtech.common.mui.widget;
 
-import gregtech.api.mui.IconAcessor;
-
 import net.minecraft.client.gui.FontRenderer;
 
 import com.cleanroommc.modularui.api.GuiAxis;
 import com.cleanroommc.modularui.api.UpOrDown;
 import com.cleanroommc.modularui.api.drawable.IHoverable;
+import com.cleanroommc.modularui.api.drawable.IIcon;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.api.layout.IViewport;
 import com.cleanroommc.modularui.api.layout.IViewportStack;
@@ -74,8 +73,8 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
                 tooltip.draw(context);
             }
         }
-        if (getHoveredElement() instanceof IconAcessor accessor &&
-                accessor.gregTech$getDrawable() instanceof RecipeViewerIngredientProvider provider) {
+        if (getHoveredElement() instanceof IIcon icon &&
+                icon.getRootDrawable() instanceof RecipeViewerIngredientProvider provider) {
             lastIngredient = provider.getIngredient();
         } else {
             lastIngredient = null;

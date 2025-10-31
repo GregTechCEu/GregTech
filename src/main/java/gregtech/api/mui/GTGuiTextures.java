@@ -464,7 +464,7 @@ public class GTGuiTextures {
     public static final UITexture BUTTON_BRONZE = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/widget/buttons.png")
             .imageSize(54, 36)
-            .uv(18, 0, 18, 18)
+            .xy(18, 0, 18, 18)
             .adaptable(2)
             .name(IDs.BRONZE_BUTTON)
             .build();
@@ -472,7 +472,7 @@ public class GTGuiTextures {
     public static final UITexture BUTTON_BRONZE_SELECTED = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/widget/buttons.png")
             .imageSize(54, 36)
-            .uv(18, 18, 18, 18)
+            .xy(18, 18, 18, 18)
             .adaptable(2)
             .name(IDs.BRONZE_BUTTON_SELECTED)
             .build();
@@ -480,7 +480,7 @@ public class GTGuiTextures {
     public static final UITexture BUTTON_STEEL = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/widget/buttons.png")
             .imageSize(54, 36)
-            .uv(36, 0, 18, 18)
+            .xy(36, 0, 18, 18)
             .adaptable(2)
             .name(IDs.STEEL_BUTTON)
             .build();
@@ -488,7 +488,7 @@ public class GTGuiTextures {
     public static final UITexture BUTTON_STEEL_SELECTED = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/widget/buttons.png")
             .imageSize(54, 36)
-            .uv(36, 18, 18, 18)
+            .xy(36, 18, 18, 18)
             .adaptable(2)
             .name(IDs.STEEL_BUTTON_SELECTED)
             .build();
@@ -733,7 +733,7 @@ public class GTGuiTextures {
                         .location(GTValues.MODID, path)
                         .colorType(colorType)
                         .imageSize(imageWidth, imageHeight)
-                        .uv(indexX * sliceWidth, indexY * sliceHeight, sliceWidth, sliceHeight)
+                        .xy(indexX * sliceWidth, indexY * sliceHeight, sliceWidth, sliceHeight)
                         .build();
             }
         }
