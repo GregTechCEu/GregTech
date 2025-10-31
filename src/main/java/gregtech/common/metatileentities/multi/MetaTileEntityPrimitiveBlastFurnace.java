@@ -132,6 +132,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
                                             .coverChildren()
                                             .mapTo(3, 3, value -> new ItemSlot()
                                                     .background(GTGuiTextures.SLOT_PRIMITIVE, exportOverlays[value])
+                                                    .disableHoverBackground()
                                                     .slot(new ModularSlot(exportItems, value)
                                                             .accessibility(false, true)))));
                 });
