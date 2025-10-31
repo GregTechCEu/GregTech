@@ -119,7 +119,7 @@ public class SimpleItemFilter extends BaseFilter {
                                 "XXX",
                                 "XXX")
                         .key('X', index -> new PhantomItemSlot()
-                                .slot(SyncHandlers.itemSlot(this.filterReader, 0)
+                                .slot(SyncHandlers.itemSlot(this.filterReader, index)
                                         .ignoreMaxStackSize(true)
                                         .slotGroup(filterInventory)
                                         .changeListener((newItem, onlyAmountChanged, client, init) -> {
