@@ -20,7 +20,6 @@ import gregtech.api.util.function.ByteSupplier;
 import gregtech.api.util.function.FloatSupplier;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.ToolItems;
-import gregtech.common.mui.widget.ScrollableTextWidget;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -814,12 +813,6 @@ public class MultiblockUIBuilder {
         }
     }
 
-    private void postRebuild() {
-        if (this.postRebuild != null) {
-            this.postRebuild.run();
-        }
-    }
-
     /*
      * this is run on the server side to write values to the internal syncer
      * those values are then synced to the client and read back in the same order
@@ -848,17 +841,7 @@ public class MultiblockUIBuilder {
         this.onRebuild = onRebuild;
     }
 
-    /**
-     * The runnable is called after rebuilding, usually used for {@link ScrollableTextWidget#postRebuild()}
-     *
-     * @param postRebuild the runnable to run after rebuilding
-     */
-    public void postRebuild(Runnable postRebuild) {
-        this.postRebuild = postRebuild;
-    }
-
     private void addHoverableKey(IKey key, IDrawable... hover) {
-        if (isServer()) return;
         addKey(KeyUtil.setHover(key, hover));
     }
 
@@ -1044,7 +1027,6 @@ public class MultiblockUIBuilder {
                 getSyncer().readBuffer(buf);
                 onRebuild();
                 runAction();
-                postRebuild();
             }
         }
 
