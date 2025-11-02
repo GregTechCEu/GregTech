@@ -21,6 +21,7 @@ import gregtech.common.items.behaviors.ClipboardBehavior;
 import gregtech.core.network.packets.PacketClipboardNBTUpdate;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -547,5 +548,11 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     @Override
     public ItemStack getPickItem(EntityPlayer player) {
         return this.getClipboard();
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return SoundType.WOOD;
     }
 }

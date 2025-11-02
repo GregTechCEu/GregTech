@@ -1,14 +1,12 @@
 package gregtech.common.mui.widget;
 
 import gregtech.api.mui.sync.GTFluidSyncHandler;
-import gregtech.api.util.GTUtility;
 import gregtech.client.utils.RenderUtil;
 
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.widget.Interactable;
@@ -38,11 +36,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     private boolean disableBackground = false;
 
     public GTFluidSlot() {
-        tooltip().setAutoUpdate(true).titleMargin();
-        tooltipBuilder(tooltip -> {
-            if (!isSynced()) return;
-            syncHandler.handleTooltip(tooltip);
-        });
+        tooltip().titleMargin();
     }
 
     public static GTFluidSyncHandler sync(IFluidTank tank) {
@@ -57,6 +51,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         if (syncHandler.canLockFluid() || syncHandler.isPhantom()) {
             getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
         }
+        tooltipBuilder(syncHandler::handleTooltip);
+        syncHandler.setChangeConsumer($ -> markTooltipDirty());
     }
 
     public GTFluidSlot syncHandler(IFluidTank fluidTank) {
@@ -116,19 +112,14 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             this.textRenderer.draw(amount);
         }
 
-        if (isHovering()) {
-            GlStateManager.colorMask(true, true, true, false);
-            GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2, widgetTheme.getSlotHoverColor());
-            GlStateManager.colorMask(true, true, true, true);
-        }
-
-        RenderUtil.handleJeiGhostHighlight(this);
+        RenderUtil.handleJEIGhostSlotOverlay(this, widgetTheme);
     }
 
     @Override
     public @NotNull Result onMousePressed(int mouseButton) {
         var data = MouseData.create(mouseButton);
-        if (this.syncHandler.canFillSlot() || this.syncHandler.canDrainSlot()) {
+        if (this.syncHandler.isPhantom() ||
+                this.syncHandler.canFillSlot() || this.syncHandler.canDrainSlot()) {
             this.syncHandler.handleClick(data);
 
             if (this.syncHandler.canLockFluid())
@@ -163,7 +154,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             this.syncHandler.syncToServer(GTFluidSyncHandler.UPDATE_TANK,
                     buffer -> NetworkUtils.writeFluidStack(buffer, ingredient));
         } else {
-            this.syncHandler.lockFluid(ingredient, true);
+            this.syncHandler.lockFluid(ingredient);
         }
     }
 
@@ -173,13 +164,12 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
         if (ingredient instanceof FluidStack stack) {
             return stack;
-        } else if (ingredient instanceof ItemStack stack &&
-                stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-                    if (stack.getCount() > 1) stack = GTUtility.copy(1, stack);
+        }
 
-                    var handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-                    return handler == null ? null : handler.drain(Integer.MAX_VALUE, true);
-                }
+        if (ingredient instanceof ItemStack stack) {
+            return FluidUtil.getFluidContained(stack);
+        }
+
         return null;
     }
 
