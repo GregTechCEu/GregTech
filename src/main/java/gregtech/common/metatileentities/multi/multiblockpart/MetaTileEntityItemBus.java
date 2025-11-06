@@ -324,7 +324,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                                         IKey.lang("gregtech.gui.item_auto_collapse.tooltip.enabled") :
                                         IKey.lang("gregtech.gui.item_auto_collapse.tooltip.disabled"))))
                         .childIf(hasGhostCircuit, new GhostCircuitSlotWidget()
-                                .slot(SyncHandlers.itemSlot(circuitInventory, 0))
+                                .slot(circuitInventory, 0)
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
                         .childIf(!hasGhostCircuit, new Widget<>()
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.BUTTON_X)

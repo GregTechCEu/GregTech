@@ -13,8 +13,11 @@ public class SimpleFluidFilterUIManager extends BaseFilterUIManager {
     @Override
     public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         var filter = BaseFilter.getFilterFromStack(guiData.getUsedItemStack());
-        return createBasePanel(filter.getContainerStack()).padding(4).height(166)
-                .child(filter.createWidgets(guiSyncManager).top(22).left(7))
-                .child(SlotGroupWidget.playerInventory(false).left(7));
+        return createBasePanel(filter.getContainerStack())
+                .height(166)
+                .child(filter.createWidgets(guiSyncManager)
+                        .top(22)
+                        .left(7))
+                .child(SlotGroupWidget.playerInventory(true));
     }
 }

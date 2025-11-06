@@ -43,6 +43,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.slot.ItemSlot;
@@ -111,27 +112,27 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
                             .child(Flow.row()
                                     .top(20)
                                     .alignX(0.5f)
-                                    // .pos(52, 20)
                                     .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                                     .coverChildren()
                                     .child(new Grid()
                                             .coverChildren()
                                             .mapTo(1, 3, value -> new ItemSlot()
                                                     .background(GTGuiTextures.SLOT_PRIMITIVE, importOverlays[value])
+                                                    // todo why do we need this now?
+                                                    .disableHoverBackground()
                                                     .slot(new ModularSlot(importItems, value)
                                                             .slotGroup(importGroup)))
                                             .marginRight(6))
-                                    .child(new com.cleanroommc.modularui.widgets.ProgressWidget()
-                                            // .pos(77, 39)
+                                    .child(new ProgressWidget()
                                             .size(20, 15)
                                             .marginRight(6)
                                             .texture(GTGuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, 20)
                                             .value(new DoubleSyncValue(recipeMapWorkable::getProgressPercent)))
                                     .child(new Grid()
                                             .coverChildren()
-                                            // .pos(104, 38)
                                             .mapTo(3, 3, value -> new ItemSlot()
                                                     .background(GTGuiTextures.SLOT_PRIMITIVE, exportOverlays[value])
+                                                    .disableHoverBackground()
                                                     .slot(new ModularSlot(exportItems, value)
                                                             .accessibility(false, true)))));
                 });

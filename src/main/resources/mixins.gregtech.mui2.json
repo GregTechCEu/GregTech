@@ -7,12 +7,7 @@
   "injectors": {
     "maxShiftBy": 10
   },
-  "mixins": [
-    "AbstractCycleButtonWidgetMixin",
-    "IconMixin",
-    "IconMixin$DelegateMixin",
-    "RichTextCompilerMixin"
-  ],
+  "mixins": [],
   "client": [
     "LangKeyMixin"
   ],
