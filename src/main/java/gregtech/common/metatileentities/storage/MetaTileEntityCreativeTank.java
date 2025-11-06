@@ -31,6 +31,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -87,7 +88,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         return appendCreativeUI(GTGuis.createPanel(this, 176, 166), true,
                 new BoolValue.Dynamic(() -> active, b -> active = b),
                 new IntSyncValue(() -> mBPerCycle, v -> mBPerCycle = v),

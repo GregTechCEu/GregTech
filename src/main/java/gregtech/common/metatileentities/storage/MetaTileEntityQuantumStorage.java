@@ -34,6 +34,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.BoolValue;
@@ -43,12 +44,11 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.ScrollingTextWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -172,7 +172,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         var panel = GTGuis.createPanel(this, 176, 166);
         createWidgets(panel, guiSyncManager);
         return panel.padding(4)
@@ -182,13 +182,15 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                 .child(createConnectionButton()
                         .right(9)
                         .top(18 + 45))
-                .child(SlotGroupWidget.playerInventory().left(7));
+                .child(SlotGroupWidget.playerInventory(false)
+                        .left(7)
+                        .bottom(7));
     }
 
     protected void createWidgets(ModularPanel mainPanel, PanelSyncManager syncManager) {}
 
     public Flow createQuantumDisplay(String lang,
-                                     Supplier<String> name, Predicate<TextWidget> condition,
+                                     Supplier<String> name, Predicate<ScrollingTextWidget> condition,
                                      Supplier<String> count) {
         return Flow.column()
                 .background(GTGuiTextures.DISPLAY)
@@ -287,7 +289,6 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                                 .left(2)
                                 .marginBottom(15)
                                 .size(154, 14)
-                                .keepScrollBarInArea(true)
                                 .setNumbers(1, Integer.MAX_VALUE)
                                 .setMaxLength(11)
                                 .value(amountPerCycle))
@@ -296,7 +297,6 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                         .child(new TextFieldWidget()
                                 .left(2)
                                 .size(154, 14)
-                                .keepScrollBarInArea(true)
                                 .setNumbers(1, Integer.MAX_VALUE)
                                 .setMaxLength(11)
                                 .value(ticksPerCycle)))
