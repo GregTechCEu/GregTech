@@ -1,20 +1,9 @@
 package gregtech.common.command.benchmark;
 
-import com.github.bsideup.jabel.Desugar;
-
-import com.google.common.collect.ImmutableList;
-
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.util.GTLog;
-
-import it.unimi.dsi.fastutil.Function;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -27,10 +16,14 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.io.File;
+import com.github.bsideup.jabel.Desugar;
+import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -84,15 +77,19 @@ public class CommandBenchmarkLookup extends CommandBase {
         for (var entry : nsTrialTimes.entrySet()) {
             BenchmarkResults results = composeResults(entry.getValue());
             resultsCache.put(entry.getKey(), results);
-            GTLog.logger.info("[Benchmarking] Recipe Map {}, measurements in nanoseconds:", entry.getKey().getLocalizedName());
+            GTLog.logger.info("[Benchmarking] Recipe Map {}, measurements in nanoseconds:",
+                    entry.getKey().getLocalizedName());
             GTLog.logger.info("[Benchmarking] - Characteristic numbers for No Match: {}", results.noMatchTest());
-            GTLog.logger.info("[Benchmarking] - Characteristic numbers for One Match Exact: {}", results.oneMatchExactTest());
-            GTLog.logger.info("[Benchmarking] - Characteristic numbers for Three Match Excess: {}", results.threeMatchExcessTest());
+            GTLog.logger.info("[Benchmarking] - Characteristic numbers for One Match Exact: {}",
+                    results.oneMatchExactTest());
+            GTLog.logger.info("[Benchmarking] - Characteristic numbers for Three Match Excess: {}",
+                    results.threeMatchExcessTest());
         }
         sender.sendMessage(new TextComponentTranslation("gregtech.command.benchmark.lookup.success")
                 .setStyle(new Style().setColor(TextFormatting.GREEN)));
-        sender.sendMessage(new TextComponentTranslation("gregtech.command.benchmark.lookup.failures", failureCount.get())
-                .setStyle(new Style().setColor(TextFormatting.RED)));
+        sender.sendMessage(
+                new TextComponentTranslation("gregtech.command.benchmark.lookup.failures", failureCount.get())
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
         try (FileWriter writer = new FileWriter("benchmark-lookup-results.csv")) {
             writer.append("Recipe Map,Trial Type,Minimum,Q1,Median,Q3,Maximum\n");
             for (var entry : resultsCache.entrySet()) {
@@ -120,7 +117,8 @@ public class CommandBenchmarkLookup extends CommandBase {
         }
     }
 
-    private TrialResults trial(List<Recipe> recipeSpace, RecipeLookupFunction function, AtomicInteger failureCount) throws CommandException {
+    private TrialResults trial(List<Recipe> recipeSpace, RecipeLookupFunction function,
+                               AtomicInteger failureCount) throws CommandException {
         Recipe[] sample = new Recipe[10];
         for (int i = 0; i < 10; i++) {
             double r = Math.random();
@@ -199,12 +197,13 @@ public class CommandBenchmarkLookup extends CommandBase {
         }
         long timeThreeExcess = System.nanoTime() - start;
         // re-enable this code block once lookup returns proper lists of matching recipes
-//        for (int i = 0; i < 3; i++) {
-//            Recipe r = sample[i];
-//            if (!out.contains(r)) {
-//                throw new CommandException("Something in the benchmark's three match test is wrong! Report this to mod authors with context.");
-//            }
-//        }
+        // for (int i = 0; i < 3; i++) {
+        // Recipe r = sample[i];
+        // if (!out.contains(r)) {
+        // throw new CommandException("Something in the benchmark's three match test is wrong! Report this to mod
+        // authors with context.");
+        // }
+        // }
 
         // one match exact trial
         items.clear();
@@ -237,7 +236,9 @@ public class CommandBenchmarkLookup extends CommandBase {
     }
 
     private BenchmarkResults composeResults(List<TrialResults> results) {
-        return new BenchmarkResults(representativeNumbers(results, TrialResults::noMatchTest), representativeNumbers(results, TrialResults::oneMatchExactTest), representativeNumbers(results, TrialResults::threeMatchExcessTest));
+        return new BenchmarkResults(representativeNumbers(results, TrialResults::noMatchTest),
+                representativeNumbers(results, TrialResults::oneMatchExactTest),
+                representativeNumbers(results, TrialResults::threeMatchExcessTest));
     }
 
     private double[] representativeNumbers(List<TrialResults> results, ToLongFunction<TrialResults> func) {
@@ -250,23 +251,22 @@ public class CommandBenchmarkLookup extends CommandBase {
             numbers[2] = func.applyAsLong(results.get(results.size() / 2));
             offset = 1;
         } else {
-            numbers[2] = (func.applyAsLong(results.get(results.size() / 2 - 1))
-                    + func.applyAsLong(results.get(results.size() / 2))) / 2d;
+            numbers[2] = (func.applyAsLong(results.get(results.size() / 2 - 1)) +
+                    func.applyAsLong(results.get(results.size() / 2))) / 2d;
         }
         int s = results.size() / 2;
         if (s % 2 == 1) {
             numbers[1] = func.applyAsLong(results.get(s / 2));
             numbers[3] = func.applyAsLong(results.get(s + offset + s / 2));
         } else {
-            numbers[1] = (func.applyAsLong(results.get(s / 2 - 1))
-                    + func.applyAsLong(results.get(s / 2))) / 2d;
-            numbers[3] = (func.applyAsLong(results.get(s / 2 - 1))
-                    + func.applyAsLong(results.get(s / 2))) / 2d;
+            numbers[1] = (func.applyAsLong(results.get(s / 2 - 1)) + func.applyAsLong(results.get(s / 2))) / 2d;
+            numbers[3] = (func.applyAsLong(results.get(s / 2 - 1)) + func.applyAsLong(results.get(s / 2))) / 2d;
         }
         return numbers;
     }
 
     interface RecipeLookupFunction {
+
         Collection<Recipe> find(long voltage, List<ItemStack> items, List<FluidStack> fluids);
     }
 
