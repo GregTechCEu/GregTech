@@ -16,7 +16,6 @@ import gregtech.api.recipes.map.Branch;
 import gregtech.api.recipes.map.Either;
 import gregtech.api.recipes.map.MapFluidIngredient;
 import gregtech.api.recipes.map.MapItemStackIngredient;
-import gregtech.api.recipes.map.MapItemStackNBTIngredient;
 import gregtech.api.recipes.map.MapOreDictIngredient;
 import gregtech.api.recipes.map.MapOreDictNBTIngredient;
 import gregtech.api.recipes.ui.RecipeMapUI;
@@ -1155,11 +1154,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             } else {
                 // input must be represented as a list of possible stacks
                 List<AbstractMapIngredient> ingredients;
+                ingredients = MapItemStackIngredient.from(r);
                 if (r.hasNBTMatchingCondition()) {
-                    ingredients = MapItemStackNBTIngredient.from(r);
                     hasNBTMatcherInputs = true;
-                } else {
-                    ingredients = MapItemStackIngredient.from(r);
                 }
 
                 for (int i = 0; i < ingredients.size(); i++) {
@@ -1211,7 +1208,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             }
             if (hasNBTMatcherInputs) {
                 // add the nbt input for the regular input
-                ls.add(new MapItemStackNBTIngredient(stack, meta, nbt));
+                ls.add(new MapItemStackIngredient(stack, meta, nbt));
             }
             if (!ls.isEmpty()) list.add(ls);
         }
