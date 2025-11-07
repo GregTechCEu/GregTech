@@ -54,8 +54,8 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
                 return Objects.equals(this.tag, other.tag);
             } else if (this.gtRecipeInput == null) {
                 return other.gtRecipeInput.acceptsStack(this.stack);
-            } else if (other.gtRecipeInput != null) {
-                return gtRecipeInput.equalIgnoreAmount(other.gtRecipeInput);
+            } else {
+                return this.gtRecipeInput.acceptsStack(other.stack);
             }
         }
         return false;

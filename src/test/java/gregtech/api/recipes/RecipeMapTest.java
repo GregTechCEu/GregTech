@@ -2,6 +2,7 @@ package gregtech.api.recipes;
 
 import gregtech.Bootstrap;
 import gregtech.api.GTValues;
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.map.AbstractMapIngredient;
 import gregtech.api.recipes.map.MapFluidIngredient;
@@ -9,6 +10,8 @@ import gregtech.api.recipes.map.MapItemStackIngredient;
 import gregtech.api.recipes.map.MapOreDictIngredient;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.common.items.MetaItems;
+import gregtech.loaders.recipe.VanillaStandardRecipes;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -24,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -281,46 +285,38 @@ public class RecipeMapTest {
     }
 
     @Test
-    public void testInputs() {
+    public void testInputs() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        for (MetaItem<?> item : MetaItems.ITEMS) {
+            item.registerSubItems();
+        }
+
+        Method dyingCleaningRecipes = VanillaStandardRecipes.class.getDeclaredMethod("dyingCleaningRecipes");
+        dyingCleaningRecipes.setAccessible(true);
+        dyingCleaningRecipes.invoke(null);
+
         FluidStack dye = Materials.CHEMICAL_DYES[1].getFluid(GTValues.L);
 
-        map.recipeBuilder()
-                .inputs(new ItemStack(Blocks.WOOL))
-                .fluidInputs(GTUtility.copy(dye))
-                .outputs(new ItemStack(Blocks.WOOL, 1, 1))
-                .duration(1).EUt(1)
-                .buildAndRegister();
+        Method prepareRecipeFind = RecipeMap.class.getDeclaredMethod("prepareRecipeFind", Collection.class,
+                Collection.class);
+        prepareRecipeFind.setAccessible(true);
 
-        map.recipeBuilder()
-                .input(Blocks.WOOL, 1, true)
-                .fluidInputs(Chlorine.getFluid(50))
-                .output(Blocks.WOOL)
-                .duration(1).EUt(1)
-                .buildAndRegister();
+        // noinspection unchecked
+        List<List<AbstractMapIngredient>> list = (List<List<AbstractMapIngredient>>) prepareRecipeFind.invoke(map,
+                Collections.singletonList(new ItemStack(Blocks.WOOL)),
+                Collections.singletonList(GTUtility.copy(dye)));
 
-        try {
-            Method prepareRecipeFind = RecipeMap.class.getDeclaredMethod("prepareRecipeFind", Collection.class,
-                    Collection.class);
-            prepareRecipeFind.setAccessible(true);
+        // noinspection unchecked
+        List<List<AbstractMapIngredient>> list2 = (List<List<AbstractMapIngredient>>) prepareRecipeFind.invoke(map,
+                Collections.singletonList(new ItemStack(Blocks.WOOL)),
+                Collections.singletonList(Chlorine.getFluid(50)));
 
-            // noinspection unchecked
-            List<List<AbstractMapIngredient>> list = (List<List<AbstractMapIngredient>>) prepareRecipeFind.invoke(map,
-                    Collections.singletonList(new ItemStack(Blocks.WOOL)),
-                    Collections.singletonList(GTUtility.copy(dye)));
+        MatcherAssert.assertThat("the first two ingredients are not equal!",
+                list.get(0).get(0).equals(list2.get(0).get(0)));
 
-            // noinspection unchecked
-            List<List<AbstractMapIngredient>> list2 = (List<List<AbstractMapIngredient>>) prepareRecipeFind.invoke(map,
-                    Collections.singletonList(new ItemStack(Blocks.WOOL)),
-                    Collections.singletonList(Chlorine.getFluid(50)));
-
-            MatcherAssert.assertThat("the first two ingredients are not equal!",
-                    list.get(0).get(0).equals(list2.get(0).get(0)));
-        } catch (ReflectiveOperationException ignored) {}
-
-        Recipe recipe = map.find(
-                Collections.singleton(new ItemStack(Blocks.WOOL)),
-                Collections.singleton(GTUtility.copy(dye)),
-                r -> true);
+        List<ItemStack> wool = Arrays.asList(new ItemStack(Blocks.WOOL));
+        List<FluidStack> fluidDye = Arrays.asList(GTUtility.copy(dye));
+        Recipe recipe = RecipeMaps.CHEMICAL_BATH_RECIPES.find(
+                wool, fluidDye, r -> r.matches(false, wool, fluidDye));
 
         MatcherAssert.assertThat("recipe could not be found!", recipe != null);
     }
