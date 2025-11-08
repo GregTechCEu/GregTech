@@ -50,8 +50,11 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
             if (this.meta != other.meta) {
                 return false;
             }
+            if (!Objects.equals(this.tag, other.tag)) {
+                return false;
+            }
             if (this.gtRecipeInput == other.gtRecipeInput) {
-                return Objects.equals(this.tag, other.tag);
+                return true;
             } else if (this.gtRecipeInput == null) {
                 return other.gtRecipeInput.acceptsStack(this.stack);
             } else {
