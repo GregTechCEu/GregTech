@@ -30,6 +30,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.animation.Animator;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
@@ -37,6 +38,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.utils.Interpolation;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -205,6 +207,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                         .left(4)
                         .marginBottom(2))
                 .child(new ScrollingTextWidget(IKey.dynamic(name))
+                        // initialize this so it doesn't crash on dispose
+                        .animator(new Animator().curve(Interpolation.SINE_INOUT))
                         .alignment(Alignment.CenterLeft)
                         .color(Color.WHITE.main)
                         .setEnabledIf(condition)
