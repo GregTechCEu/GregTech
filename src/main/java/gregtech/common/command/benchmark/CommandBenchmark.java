@@ -4,11 +4,20 @@ import net.minecraft.command.ICommandSender;
 import net.minecraftforge.server.command.CommandTreeBase;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CommandBenchmark extends CommandTreeBase {
 
+    static @Nullable BenchmarkTask ACTIVE_BENCHMARK = null;
+
     public CommandBenchmark() {
         addSubcommand(new CommandBenchmarkLookup());
+        addSubcommand(new CommandBenchmarkAbort());
+    }
+
+    @Override
+    public int getRequiredPermissionLevel() {
+        return 3;
     }
 
     @Override
@@ -17,7 +26,7 @@ public class CommandBenchmark extends CommandTreeBase {
     }
 
     @Override
-    public @NotNull String getUsage(ICommandSender sender) {
+    public @NotNull String getUsage(@NotNull ICommandSender sender) {
         return "gregtech.command.benchmark.usage";
     }
 }
