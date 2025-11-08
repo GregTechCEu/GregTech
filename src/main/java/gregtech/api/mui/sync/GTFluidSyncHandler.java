@@ -26,6 +26,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -78,8 +79,9 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public void lockFluid(FluidStack stack) {
-        if (!canLockFluid()) return;
-        this.jeiHandler.accept(stack);
+        if (canLockFluid() && GTUtility.isEmpty(getLockedFluid())) {
+            this.jeiHandler.accept(stack);
+        }
     }
 
     public void lockFluid(boolean locked) {
@@ -426,15 +428,21 @@ public class GTFluidSyncHandler extends SyncHandler {
             return ItemStack.EMPTY;
 
         ItemStack useStack = GTUtility.copy(1, playerHeldStack);
-        var fluidHandlerItem = FluidUtil.getFluidHandler(useStack);
-        if (fluidHandlerItem == null) return ItemStack.EMPTY;
-
+        IFluidHandlerItem fluidHandlerItem = FluidUtil.getFluidHandler(useStack);
+        FluidStack heldFluid = FluidUtil.getFluidContained(playerHeldStack);
         FluidStack tankFluid = tank.getFluid();
-        FluidStack heldFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
 
-        // nothing to do, return
-        if (tankFluid == null && heldFluid == null)
+        if (fluidHandlerItem == null || heldFluid == tankFluid)
             return ItemStack.EMPTY;
+
+        if (canLockFluid() && isLocked.getAsBoolean()) {
+            FluidStack lockedFluid = getLockedFluid();
+            if (lockedFluid == null && heldFluid != null) {
+                lockFluid(heldFluid);
+            } else if (!Objects.equals(heldFluid, lockedFluid)) {
+                return ItemStack.EMPTY;
+            }
+        }
 
         ItemStack returnable = ItemStack.EMPTY;
 
@@ -588,11 +596,13 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public void toggleLockFluid() {
-        var cursorItem = getSyncManager().getCursorItem();
+        ItemStack cursorItem = getSyncManager().getCursorItem();
+        FluidStack fluidStack = FluidUtil.getFluidContained(cursorItem);
         FluidStack stack;
-        if (GTUtility.isEmpty(getLockedFluid()) && !cursorItem.isEmpty()) {
-            var fluidStack = FluidUtil.getFluidContained(cursorItem);
-            stack = !GTUtility.isEmpty(fluidStack) ? fluidStack.copy() : null;
+        if (GTUtility.isEmpty(getLockedFluid()) && !GTUtility.isEmpty(fluidStack)) {
+            stack = fluidStack.copy();
+        } else if (!GTUtility.isEmpty(getLockedFluid()) && !Objects.equals(getLockedFluid(), fluidStack)) {
+            return;
         } else {
             stack = null;
         }
