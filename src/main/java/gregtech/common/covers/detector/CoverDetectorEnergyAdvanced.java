@@ -138,11 +138,11 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     private long getMinValue() {
-        return (minValue);
+        return minValue;
     }
 
     private long getMaxValue() {
-        return (maxValue);
+        return maxValue;
     }
 
     private void setMinValue(long val) {
@@ -163,11 +163,11 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         this.usePercent = b;
 
         if (this.usePercent) { // using percent
-            this.minValue = DEFAULT_MIN_PERCENT;
-            this.maxValue = DEFAULT_MAX_PERCENT;
+            this.minValue = (long) Math.ceil(((double) this.minValue / getCoverHolderCapacity()) * 100d);
+            this.maxValue = (long) Math.ceil(((double) this.maxValue / getCoverHolderCapacity()) * 100d);
         } else { // using discrete EU
-            this.minValue = DEFAULT_MIN_EU;
-            this.maxValue = DEFAULT_MAX_EU;
+            this.minValue = (long) Math.floor((this.minValue / 100d) * getCoverHolderCapacity());
+            this.maxValue = (long) Math.floor((this.maxValue / 100d) * getCoverHolderCapacity());
         }
     }
 
