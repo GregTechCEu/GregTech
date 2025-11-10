@@ -3,6 +3,7 @@ package gregtech.common.items.behaviors;
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.metaitem.stats.IItemModelDispatcher;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.GTGuiTextures;
@@ -33,7 +34,7 @@ import com.cleanroommc.modularui.widgets.layout.Grid;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubItemHandler {
+public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubItemHandler, IItemModelDispatcher {
 
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
@@ -114,5 +115,10 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     @Override
     public void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         subItems.add(itemStack.copy());
+    }
+
+    @Override
+    public int getModelIndex(ItemStack itemStack, int maxIndex) {
+        return IntCircuitIngredient.getCircuitConfiguration(itemStack);
     }
 }
