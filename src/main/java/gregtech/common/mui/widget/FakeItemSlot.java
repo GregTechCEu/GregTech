@@ -93,7 +93,7 @@ public class FakeItemSlot extends Widget<FakeItemSlot>
         });
 
         if (receiveFromRecipeViewer) {
-            getContext().getRecipeViewerSettings().addRecipeViewerGhostIngredientSlot(this);
+            getContext().getRecipeViewerSettings().addGhostIngredientSlot(this);
         }
     }
 

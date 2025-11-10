@@ -18,6 +18,7 @@ import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerIngredient
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.TextFieldTheme;
+import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.HoveredWidgetList;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.ScrollArea;
@@ -188,7 +189,8 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     public void postDraw(ModularGuiContext context, boolean transformed) {
         if (!transformed) {
             Stencil.remove();
-            this.scroll.drawScrollbar(context, context.getTheme().getScrollbarTheme().getTheme(isHovering()));
+            WidgetTheme theme = context.getTheme().getScrollbarTheme().getTheme(isHovering());
+            this.scroll.drawScrollbar(context, theme, theme.getBackground());
         }
     }
 

@@ -48,7 +48,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         this.textRenderer.setScale(0.5f);
         this.textRenderer.setColor(Color.WHITE.main);
         if (syncHandler.canLockFluid() || syncHandler.isPhantom()) {
-            getContext().getRecipeViewerSettings().addRecipeViewerGhostIngredientSlot(this);
+            getContext().getRecipeViewerSettings().addGhostIngredientSlot(this);
         }
         tooltipBuilder(syncHandler::handleTooltip);
         syncHandler.setChangeConsumer($ -> markTooltipDirty());

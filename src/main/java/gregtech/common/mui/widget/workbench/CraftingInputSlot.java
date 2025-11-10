@@ -75,7 +75,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
     @Override
     public void onInit() {
-        getContext().getRecipeViewerSettings().addRecipeViewerGhostIngredientSlot(this);
+        getContext().getRecipeViewerSettings().addGhostIngredientSlot(this);
     }
 
     public CraftingInputSlot changeListener(IOnSlotChanged listener) {
