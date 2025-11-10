@@ -54,7 +54,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         if (config != null) {
             ItemStack stack = config.createItemStack();
             stack.setCount(1);
-            RenderUtil.drawItemStack(stack, stackX, stackY, null);
+            RenderUtil.drawItemStack(stack, stackX, stackY);
 
             // Only draw the config amount if not stocking, as its meaningless when stocking
             if (!pw.isStocking()) {
@@ -65,7 +65,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         if (stock != null) {
             ItemStack stack = stock.createItemStack();
             stack.setCount(1);
-            RenderUtil.drawItemStack(stack, stackX + DISPLAY_X_OFFSET, stackY, null);
+            RenderUtil.drawItemStack(stack, stackX + DISPLAY_X_OFFSET, stackY);
             String amountStr = TextFormattingUtil.formatLongToCompactString(stock.getStackSize(), 4);
             drawStringFixedCorner(amountStr, stackX + DISPLAY_X_OFFSET + 17, stackY + 17, 16777215, true, 0.5f);
         }
