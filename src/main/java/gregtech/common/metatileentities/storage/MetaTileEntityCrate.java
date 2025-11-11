@@ -179,7 +179,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
 
         return panel.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .bindPlayerInventory()
-                .childIf(hasAnyCover(), createCoverWidgets(guiData, guiSyncManager, panel))
+                .childIf(hasAnyCover(), createCoverWidgets(guiData, panelSyncManager, panel))
                 .child(new Grid()
                         .top(18).left(7).right(7).height(rows * 18)
                         .minElementMargin(0, 0)
@@ -192,18 +192,18 @@ public class MetaTileEntityCrate extends MetaTileEntity {
                 .background(GuiTextures.MC_BACKGROUND)
                 .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                 .padding(4)
-                .coverChildrenWidth()
+                .width(18 + 6)
                 .topRel(0.25f)
                 .left(-20)
-                .height(24 * 3);
+                .height(22 * 3);
         Flow rightCoverColumn = Flow.column()
                 .background(GuiTextures.MC_BACKGROUND)
                 .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                 .padding(4)
-                .coverChildrenWidth()
+                .width(18 + 6)
                 .topRel(0.25f)
                 .right(-20)
-                .height(24 * 3);
+                .height(22 * 3);
 
         int numCovers = 0;
         List<IPanelHandler> coverPanels = new ArrayList<>();
@@ -234,14 +234,14 @@ public class MetaTileEntityCrate extends MetaTileEntity {
                 // Use the left side for the first three covers
                 if (numCovers++ < 3) {
                     leftCoverColumn.child(new ButtonWidget<>()
-                            .size(20, 20)
+                            .size(18)
                             .marginBottom(2)
                             .background(GTGuiTextures.SLOT)
                             .onMousePressed(handlePanel)
                             .overlay(new ItemDrawable(cover.getPickItem()).asIcon()));
                 } else {
                     rightCoverColumn.child(new ButtonWidget<>()
-                            .size(20, 20)
+                            .size(18)
                             .marginBottom(2)
                             .background(GTGuiTextures.SLOT)
                             .onMousePressed(handlePanel)

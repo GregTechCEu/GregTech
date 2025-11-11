@@ -25,7 +25,6 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +90,7 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public @Nullable ParentWidget<?> createUI(SidedPosGuiData data, PanelSyncManager manager) {
+    public @Nullable Grid createUI(SidedPosGuiData data, PanelSyncManager manager) {
         manager.registerSlotGroup("item_inv", this.storageHandler.getSlots());
 
         int rowSize = this.storageHandler.getSlots();
@@ -103,7 +102,7 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
                 .top((MAX_HEIGHT - SLOT_SIZE * 5) / 2).left(7).right(7).height(18)
                 .minElementMargin(0, 0)
                 .minColWidth(18).minRowHeight(18)
-                .mapTo(rowSize, widgets, (index, value) -> value);
+                .mapTo(rowSize, widgets);
     }
 
     @Override
