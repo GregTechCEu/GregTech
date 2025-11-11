@@ -19,6 +19,7 @@ import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.TextFieldTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.utils.HoveredWidgetList;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.ScrollArea;
@@ -51,7 +52,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
 
     @Override
     public void onInit() {
-        this.scroll.setScrollData(ScrollData.of(GuiAxis.Y));
+        this.scroll.setScrollData(ScrollData.of(GuiAxis.Y, false, 4));
     }
 
     @Override
@@ -189,8 +190,8 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     public void postDraw(ModularGuiContext context, boolean transformed) {
         if (!transformed) {
             Stencil.remove();
-            WidgetTheme theme = context.getTheme().getScrollbarTheme().getTheme(isHovering());
-            this.scroll.drawScrollbar(context, theme, theme.getBackground());
+            WidgetThemeEntry<WidgetTheme> theme = context.getTheme().getScrollbarTheme();
+            this.scroll.drawScrollbar(context, theme.getTheme(isHovering()), theme.getTheme().getBackground());
         }
     }
 
