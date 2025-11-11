@@ -59,8 +59,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.itemInventory = this.modifiableHandler = new ModifiableHandler();
-        this.creativeHandler = new CreativeItemStackHandler(1);
+        this.modifiableHandler = new ModifiableHandler();
+        this.itemInventory = this.creativeHandler = new CreativeItemStackHandler(1);
     }
 
     @Override
