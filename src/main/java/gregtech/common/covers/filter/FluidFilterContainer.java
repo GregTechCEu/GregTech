@@ -53,7 +53,7 @@ public class FluidFilterContainer extends BaseFilterContainer {
     @Override
     protected boolean isItemValid(ItemStack stack) {
         var filter = BaseFilter.getFilterFromStack(stack);
-        return filter != null && filter.getType() == IFilter.FilterType.FLUID;
+        return filter != BaseFilter.ERROR_FILTER && filter.getType() == IFilter.FilterType.FLUID;
     }
 
     @Override
