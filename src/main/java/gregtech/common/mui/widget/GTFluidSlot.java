@@ -36,6 +36,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
     public GTFluidSlot() {
         tooltip().titleMargin();
+        tooltipAutoUpdate(true);
         tooltipBuilder(tooltip -> {
             if (isSynced()) {
                 syncHandler.handleTooltip(tooltip);
@@ -63,7 +64,6 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
     public GTFluidSlot syncHandler(GTFluidSyncHandler syncHandler) {
         setSyncHandler(syncHandler);
-        syncHandler.setChangeConsumer($ -> markTooltipDirty());
         return this;
     }
 
