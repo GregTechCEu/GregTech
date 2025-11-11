@@ -118,8 +118,6 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
                                             .coverChildren()
                                             .mapTo(1, 3, value -> new ItemSlot()
                                                     .background(GTGuiTextures.SLOT_PRIMITIVE, importOverlays[value])
-                                                    // todo why do we need this now?
-                                                    .disableHoverBackground()
                                                     .slot(new ModularSlot(importItems, value)
                                                             .slotGroup(importGroup)))
                                             .marginRight(6))
@@ -132,7 +130,6 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
                                             .coverChildren()
                                             .mapTo(3, 3, value -> new ItemSlot()
                                                     .background(GTGuiTextures.SLOT_PRIMITIVE, exportOverlays[value])
-                                                    .disableHoverBackground()
                                                     .slot(new ModularSlot(exportItems, value)
                                                             .accessibility(false, true)))));
                 });

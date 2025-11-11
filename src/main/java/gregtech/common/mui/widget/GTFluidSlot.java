@@ -93,7 +93,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             float amt = content == null ? 0f : content.amount;
             float newHeight = height * (amt / this.syncHandler.getCapacity());
             y += (int) (height - newHeight);
-            height = newHeight;
+            height = (float) Math.ceil(newHeight);
         }
 
         GuiDraw.drawFluidTexture(content, 1, y, getArea().w() - 2, height, 0);
