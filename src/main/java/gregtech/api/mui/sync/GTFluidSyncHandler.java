@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
+import com.cleanroommc.modularui.api.MCHelper;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.RichTooltip;
@@ -247,30 +248,24 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public void handleTooltip(@NotNull RichTooltip tooltip) {
-        IKey nameKey = getFluidNameKey();
-
-        if (nameKey != IKey.EMPTY) {
-            tooltip.addLine(nameKey);
-        }
-
-        if (showAmountInTooltip()) {
-            tooltip.addLine(IKey.lang("gregtech.fluid.amount", getFluidAmount(), getCapacity()));
-        }
-
-        if (isPhantom() && showAmountInTooltip()) {
-            tooltip.addLine(IKey.lang("modularui.fluid.phantom.control"));
-        }
-
         FluidStack tankFluid = getFluid();
-        if (tankFluid == null) {
+        if (GTUtility.isEmpty(tankFluid)) {
             tankFluid = getLockedFluid();
         }
 
-        if (tankFluid != null) {
+        if (!GTUtility.isEmpty(tankFluid)) {
+            tooltip.addLine(KeyUtil.fluid(tankFluid));
+
             FluidTooltipUtil.handleFluidTooltip(tooltip, tankFluid);
 
             if (showAmountInTooltip()) {
                 FluidTooltipUtil.addIngotMolFluidTooltip(tooltip, tankFluid);
+            }
+
+            tooltip.addLine(MCHelper.getFluidModName(tankFluid));
+
+            if (isPhantom() && showAmountInTooltip()) {
+                tooltip.addLine(IKey.lang("modularui.fluid.phantom.control"));
             }
         }
     }

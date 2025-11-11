@@ -36,6 +36,11 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
     public GTFluidSlot() {
         tooltip().titleMargin();
+        tooltipBuilder(tooltip -> {
+            if (isSynced()) {
+                syncHandler.handleTooltip(tooltip);
+            }
+        });
     }
 
     public static GTFluidSyncHandler sync(IFluidTank tank) {
@@ -50,8 +55,6 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         if (syncHandler.canLockFluid() || syncHandler.isPhantom()) {
             getContext().getRecipeViewerSettings().addGhostIngredientSlot(this);
         }
-        tooltipBuilder(syncHandler::handleTooltip);
-        syncHandler.setChangeConsumer($ -> markTooltipDirty());
     }
 
     public GTFluidSlot syncHandler(IFluidTank fluidTank) {
@@ -60,7 +63,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
     public GTFluidSlot syncHandler(GTFluidSyncHandler syncHandler) {
         setSyncHandler(syncHandler);
-        this.syncHandler = syncHandler;
+        syncHandler.setChangeConsumer($ -> markTooltipDirty());
         return this;
     }
 
@@ -71,6 +74,12 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     @Override
     public boolean isValidSyncHandler(SyncHandler syncHandler) {
         return syncHandler instanceof GTFluidSyncHandler;
+    }
+
+    @Override
+    protected void setSyncHandler(@Nullable SyncHandler syncHandler) {
+        super.setSyncHandler(syncHandler);
+        this.syncHandler = (GTFluidSyncHandler) syncHandler;
     }
 
     @Override

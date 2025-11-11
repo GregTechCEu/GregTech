@@ -327,6 +327,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                         .pos(124, 62))
 
                 // common ui
+                // todo split up these lines into their own widgets and use a scrolling text widget for the name
                 .child(new RichTextWidget()
                         .size(81 - 6, (isExportHatch ? 46 : 55) - 8)
                         // .padding(3, 4)

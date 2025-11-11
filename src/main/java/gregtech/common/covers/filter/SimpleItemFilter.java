@@ -127,21 +127,20 @@ public class SimpleItemFilter extends BaseFilter {
                                                 markDirty();
                                             }
                                         }))
-                                .tooltip(tooltip -> {
-                                    tooltip.setAutoUpdate(true);
-                                    tooltip.textColor(Color.GREY.main);
-                                })
+                                .tooltipAutoUpdate(true)
+                                .tooltipTextColor(Color.GREY.main)
                                 .tooltipBuilder(tooltip -> {
                                     if (dirtyNotifiable instanceof CoverRoboticArm coverArm &&
                                             coverArm.getTransferMode() != TransferMode.TRANSFER_ANY ||
                                             dirtyNotifiable instanceof CoverItemVoidingAdvanced coverItem &&
                                                     coverItem.getVoidingMode() != VoidingMode.VOID_ANY) {
-                                        tooltip.addLine(IKey.lang("cover.item_filter.config_amount"));
                                         int count = this.filterReader.getTagAt(index)
                                                 .getInteger(SimpleItemFilterReader.COUNT);
-                                        if (count > 0)
+                                        if (count > 0) {
+                                            tooltip.addLine(IKey.lang("cover.item_filter.config_amount"));
                                             tooltip.addLine(
                                                     IKey.str("Count: %s", TextFormattingUtil.formatNumbers(count)));
+                                        }
                                     }
                                 }))
                         .build().marginRight(4))
