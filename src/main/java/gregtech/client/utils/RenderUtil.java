@@ -27,7 +27,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.MCHelper;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
@@ -36,6 +35,7 @@ import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
@@ -169,7 +169,7 @@ public class RenderUtil {
     public static void useLightMap(float x, float y, Runnable codeBlock) {
         /* hack the lightmap */
         GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+        RenderHelper.disableStandardItemLighting();
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, x, y);
@@ -178,7 +178,7 @@ public class RenderUtil {
         }
         /* restore the lightmap */
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
-        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
         GL11.glPopAttrib();
     }
 
@@ -383,32 +383,14 @@ public class RenderUtil {
     }
 
     public static void renderItemOverLay(float x, float y, float z, float scale, ItemStack itemStack) {
-        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
         GlStateManager.pushMatrix();
         GlStateManager.scale(scale, scale, 0.0001f);
         GlStateManager.translate(x * 16, y * 16, z * 16);
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         renderItem.renderItemAndEffectIntoGUI(itemStack, 0, 0);
         GlStateManager.popMatrix();
-        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
-    }
-
-    // adapted from com.cleanroommc.modularui.drawable.GuiDraw.java
-    // todo merge this with the method from the qstorage mui2 port
-    public static void renderItem(ItemStack item, int x, int y, float width, float height) {
-        if (item.isEmpty()) return;
-        GlStateManager.pushMatrix();
-        RenderHelper.enableGUIStandardItemLighting();
-        GlStateManager.enableDepth();
-        GlStateManager.translate(x, y, 0);
-        GlStateManager.scale(width / 16f, height / 16f, 1);
-        RenderItem renderItem = MCHelper.getMc().getRenderItem();
-        renderItem.renderItemAndEffectIntoGUI(MCHelper.getPlayer(), item, 0, 0);
-        renderItem.renderItemOverlayIntoGUI(MCHelper.getFontRenderer(), item, 0, 0, null);
-        GlStateManager.disableDepth();
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.disableLighting();
-        GlStateManager.popMatrix();
+        RenderHelper.disableStandardItemLighting();
     }
 
     public static void renderFluidOverLay(float x, float y, float width, float height, float z, FluidStack fluidStack,
@@ -638,10 +620,10 @@ public class RenderUtil {
         OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, fbo.framebufferObject);
         if (fbo.isStencilEnabled()) {
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER,
-                    org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER,
+                    EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER,
                     depthBuffer);
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER,
-                    org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER,
+                    EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER,
                     depthBuffer);
         } else {
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT,
@@ -718,6 +700,42 @@ public class RenderUtil {
      */
     public static @NotNull TextureAtlasSprite getMissingSprite() {
         return getTextureMap().getMissingSprite();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawItemStack(ItemStack itemStack, int x, int y, boolean drawCount) {
+        int cache = itemStack.getCount();
+        if (!drawCount) itemStack.setCount(1);
+        drawItemStack(itemStack, x, y, null);
+        if (!drawCount) itemStack.setCount(cache);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawItemStack(ItemStack itemStack, int x, int y, @Nullable String altTxt) {
+        drawItemStack(itemStack, x, y, 16, 16, altTxt);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawItemStack(ItemStack itemStack, int x, int y, int w, int h, @Nullable String altTxt) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0.0F, 0.0F, 32.0F);
+        GlStateManager.scale(w / 16F, h / 16F, 1);
+        GlStateManager.color(1F, 1F, 1F, 1F);
+        GlStateManager.enableDepth();
+        GlStateManager.enableRescaleNormal();
+        GlStateManager.enableLighting();
+        RenderHelper.enableGUIStandardItemLighting();
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0f, 240.0f);
+        Minecraft mc = Minecraft.getMinecraft();
+        RenderItem itemRender = mc.getRenderItem();
+        itemRender.renderItemAndEffectIntoGUI(itemStack, x, y);
+        itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, itemStack, x, y, altTxt);
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.disableLighting();
+        GlStateManager.color(1F, 1F, 1F, 1F);
+        GlStateManager.popMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
     }
 
     public static void drawSlotOverlay(@NotNull IWidget slot, int overlayColor) {

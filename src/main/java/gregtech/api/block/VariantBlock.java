@@ -13,10 +13,12 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -123,6 +125,15 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
             return stateSoundType.getSoundType(state);
         }
         return super.getSoundType(state, world, pos, entity);
+    }
+
+    @Override
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull EntityLiving.SpawnPlacementType type) {
+        if (getState(state) instanceof IStateSpawnControl stateSpawnControl) {
+            return stateSpawnControl.canCreatureSpawn(state, world, pos, type);
+        }
+        return super.canCreatureSpawn(state, world, pos, type);
     }
 
     // magic is here

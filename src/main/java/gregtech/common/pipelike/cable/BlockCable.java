@@ -8,6 +8,7 @@ import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.GTUtility;
@@ -22,7 +23,6 @@ import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,26 +31,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.TreeMap;
-
 public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, WorldENet>
                         implements ITileEntityProvider {
-
-    private final Map<Material, WireProperties> enabledMaterials = new TreeMap<>();
 
     public BlockCable(Insulation cableType, MaterialRegistry registry) {
         super(cableType, registry);
@@ -58,28 +49,15 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
     }
 
-    public void addCableMaterial(Material material, WireProperties wireProperties) {
-        Preconditions.checkNotNull(material, "material was null");
-        Preconditions.checkNotNull(wireProperties, "material %s wireProperties was null", material);
-        Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null,
-                "material %s is not registered", material);
-        if (!pipeType.orePrefix.isIgnored(material)) {
-            this.enabledMaterials.put(material, wireProperties);
-        }
-    }
-
-    public Collection<Material> getEnabledMaterials() {
-        return Collections.unmodifiableSet(enabledMaterials.keySet());
+    @Override
+    public boolean isValidPipeMaterial(Material material) {
+        return super.isValidPipeMaterial(material) && !(getItemPipeType(null).isCable() &&
+                material.getProperty(PropertyKey.WIRE).isSuperconductor());
     }
 
     @Override
     public Class<Insulation> getPipeTypeClass() {
         return Insulation.class;
-    }
-
-    @Override
-    protected WireProperties createProperties(Insulation insulation, Material material) {
-        return insulation.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
     }
 
     @SideOnly(Side.CLIENT)
@@ -90,20 +68,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    protected WireProperties getFallbackType() {
-        return enabledMaterials.values().iterator().next();
-    }
-
-    @Override
     public WorldENet getWorldPipeNet(World world) {
         return WorldENet.getWorldENet(world);
-    }
-
-    @Override
-    public void getSubBlocks(@NotNull CreativeTabs itemIn, @NotNull NonNullList<ItemStack> items) {
-        for (Material material : enabledMaterials.keySet()) {
-            items.add(getItem(material));
-        }
     }
 
     @Override

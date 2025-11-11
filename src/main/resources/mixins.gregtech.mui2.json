@@ -12,12 +12,14 @@
     "IconMixin",
     "IconMixin$DelegateMixin",
     "ModularPanelMixin",
-    "RichTextCompilerMixin"
+    "RichTextCompilerMixin",
+    "TextWidgetMixin",
+    "TextWidgetMixin$TextRenderMixin"
   ],
   "client": [
+    "ItemSlotMixin",
     "LangKeyMixin",
-    "ModularUIJeiPluginMixin",
-    "ItemSlotMixin"
+    "ModularUIJeiPluginMixin"
   ],
   "server": []
 }
