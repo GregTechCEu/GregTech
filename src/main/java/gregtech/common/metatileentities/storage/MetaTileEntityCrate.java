@@ -49,7 +49,6 @@ import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
-import com.cleanroommc.modularui.widgets.layout.Row;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -214,8 +213,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
                 SidedPosGuiData sideData = new SidedPosGuiData(data.getPlayer(), data.getX(),
                         data.getY(), data.getZ(), side);
 
-                // todo better key for this?
-                var panel = manager.panel("cover at side: " + side.getName(),
+                IPanelHandler panel = manager.panel("side: " + side.getName(),
                         (syncManager, syncHandler) -> cover.getSmallGUI(sideData, syncManager), true);
                 coverPanels.add(panel);
 
@@ -249,7 +247,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
                 }
             }
         }
-        return new Row()
+        return Flow.row()
                 .expanded()
                 .child(leftCoverColumn)
                 .child(rightCoverColumn);
