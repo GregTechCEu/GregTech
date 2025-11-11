@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.IFluidTank;
 
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.UpOrDown;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
@@ -32,7 +33,6 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
     private final TextRenderer textRenderer = new TextRenderer();
     private GTFluidSyncHandler syncHandler;
-    private boolean disableBackground = false;
 
     public GTFluidSlot() {
         tooltip().titleMargin();
@@ -65,19 +65,12 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     }
 
     public GTFluidSlot disableBackground() {
-        this.disableBackground = true;
-        return this;
+        return background(IDrawable.NONE);
     }
 
     @Override
     public boolean isValidSyncHandler(SyncHandler syncHandler) {
         return syncHandler instanceof GTFluidSyncHandler;
-    }
-
-    @Override
-    public void drawBackground(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
-        if (disableBackground) return;
-        super.drawBackground(context, widgetTheme);
     }
 
     @Override
