@@ -77,8 +77,8 @@ public class MultiblockUIBuilder {
     private IKey idlingKey = IKey.lang("gregtech.multiblock.idling").style(TextFormatting.GRAY);
     private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused").style(TextFormatting.GOLD);
     private IKey runningKey = IKey.lang("gregtech.multiblock.running").style(TextFormatting.GREEN);
-    private boolean dirty;
     private Runnable onRebuild;
+    private Runnable postRebuild;
 
     @NotNull
     InternalSyncer getSyncer() {
@@ -797,18 +797,11 @@ public class MultiblockUIBuilder {
     }
 
     /**
-     * Builds the passed in rich text with operations and drawables. <br />
-     * Will clear and rebuild if this builder is marked dirty
+     * Builds the passed in rich text with operations and drawables.
      *
      * @param richText the rich text to add drawables to
      */
     public void build(IRichTextBuilder<?> richText) {
-        if (dirty) {
-            clear();
-            onRebuild();
-            runAction();
-            dirty = false;
-        }
         for (Operation op : operations) {
             op.accept(richText);
         }
@@ -818,13 +811,6 @@ public class MultiblockUIBuilder {
         if (this.onRebuild != null) {
             this.onRebuild.run();
         }
-    }
-
-    /**
-     * Mark this builder as dirty. Will be rebuilt during {@link #build(IRichTextBuilder) build()}
-     */
-    public void markDirty() {
-        dirty = true;
     }
 
     /*
@@ -856,7 +842,6 @@ public class MultiblockUIBuilder {
     }
 
     private void addHoverableKey(IKey key, IDrawable... hover) {
-        if (isServer()) return;
         addKey(KeyUtil.setHover(key, hover));
     }
 
