@@ -1,27 +1,27 @@
 package gregtech.integration.exnihilo.recipes;
 
-import exnihilocreatio.registries.types.Siftable;
-
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.exnihilo.ExNihiloConfig;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraftforge.oredict.OreIngredient;
 
 import exnihilocreatio.registries.manager.ExNihiloRegistryManager;
+import exnihilocreatio.registries.types.Siftable;
 import exnihilocreatio.util.ItemInfo;
-
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
+import java.util.Optional;
 
 /**
- * Used for adding/removing recipes to the Sieve for CEu (and addons), drops will be added at {@link net.minecraftforge.fml.common.event.FMLInitializationEvent} to the Ex Nihilo sifting list.
+ * Used for adding/removing recipes to the Sieve for CEu (and addons), drops will be added at
+ * {@link net.minecraftforge.fml.common.event.FMLInitializationEvent} to the Ex Nihilo sifting list.
  */
 public class SieveDrops {
 
@@ -49,7 +49,8 @@ public class SieveDrops {
 
     @SuppressWarnings("unused")
     public static void removeDrop(ItemStack input, ItemStack output) {
-        siftables.entrySet().removeIf(siftable -> siftable.getKey().test(input) && siftable.getValue().removeIf(drop -> drop.getDrop().getItemStack().isItemEqual(output)));
+        siftables.entrySet().removeIf(siftable -> siftable.getKey().test(input) &&
+                siftable.getValue().removeIf(drop -> drop.getDrop().getItemStack().isItemEqual(output)));
     }
 
     public static void addDrop(Block input, ItemStack output, int meshLevel, float chance) {
@@ -71,7 +72,7 @@ public class SieveDrops {
             IntegrationModule.logger.error("Cannot find oredict {}!", oredict, new Throwable());
             return;
         }
-        addDrop(Ingredient.fromStacks(stacks.toArray(new ItemStack[0])), output, meshLevel, chance);
+        addDrop(new OreIngredient(oredict), output, meshLevel, chance);
     }
 
     public static void addDrop(Ingredient ingredient, ItemStack output, int meshLevel, float chance) {
@@ -82,11 +83,17 @@ public class SieveDrops {
         if (!validateDrops(siftable.getDrop().getItemStack(), siftable.getMeshLevel(), siftable.getChance())) {
             return;
         }
-        if (siftables.containsKey(ingredient)) {
-            siftables.get(ingredient).add(siftable);
-            return;
+        ItemStack[] matchingStacks = ingredient.getMatchingStacks();
+        Optional<Ingredient> optionalIngredient = siftables.keySet().stream()
+                .filter(ingredient1 -> Arrays.stream(ingredient1.getMatchingStacks()).allMatch(stack -> Arrays
+                        .stream(matchingStacks).anyMatch(stack1 -> ItemStack.areItemsEqual(stack, stack1))))
+                .findFirst();
+        if (!optionalIngredient.isPresent()) {
+            siftables.put(ingredient, new ArrayList<>());
+        } else {
+            ingredient = optionalIngredient.get();
         }
-        siftables.put(ingredient, new ArrayList<>() {{ add(siftable); }});
+        siftables.get(ingredient).add(siftable);
     }
 
     public static void registerSiftingRecipes() {
@@ -97,11 +104,12 @@ public class SieveDrops {
             ExNihiloRegistryManager.SIEVE_REGISTRY.getRegistry().clear();
             if (!siftablesDirt.isEmpty()) {
                 ExNihiloRegistryManager.SIEVE_REGISTRY.register(
-                        Ingredient.fromStacks(OreDictUnifier.getAllWithOreDictionaryName("dirt").toArray(new ItemStack[0])),
+                        Ingredient.fromStacks(
+                                OreDictUnifier.getAllWithOreDictionaryName("dirt").toArray(new ItemStack[0])),
                         siftablesDirt);
             }
         }
-        siftables.forEach((ExNihiloRegistryManager.SIEVE_REGISTRY::register));
+        siftables.forEach(ExNihiloRegistryManager.SIEVE_REGISTRY::register);
 
         siftables = null; // let this get GC'd, no more eating my memory
     }

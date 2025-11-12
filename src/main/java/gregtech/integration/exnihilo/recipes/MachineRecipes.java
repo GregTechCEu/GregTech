@@ -1,14 +1,11 @@
 package gregtech.integration.exnihilo.recipes;
 
-
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.Mods;
 import gregtech.integration.exnihilo.ExNihiloConfig;
 import gregtech.integration.exnihilo.ExNihiloModule;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -21,6 +18,7 @@ import exnihilocreatio.compatibility.jei.sieve.SieveRecipe;
 import exnihilocreatio.modules.AppliedEnergistics2;
 import exnihilocreatio.registries.manager.ExNihiloRegistryManager;
 import exnihilocreatio.registries.types.Siftable;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +29,7 @@ import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.integration.exnihilo.ExNihiloModule.*;
 
-
 public class MachineRecipes {
-
 
     public static void registerRecipes() {
         // Pebbles
@@ -170,11 +166,10 @@ public class MachineRecipes {
                         }
                     }
                 }
-                if (sieveRecipes.containsKey(stack)) {
-                    sieveRecipes.get(stack).add(recipe.getMesh());
-                } else {
-                    sieveRecipes.put(stack, new ArrayList<>() {{ add(recipe.getMesh()); }});
+                if (sieveRecipes.keySet().stream().noneMatch(stack::isItemEqual)) {
+                    sieveRecipes.put(stack, new ArrayList<>());
                 }
+                sieveRecipes.computeIfAbsent(stack, key -> new ArrayList<>()).add(recipe.getMesh());
                 builder.buildAndRegister();
             }
         }
@@ -185,7 +180,7 @@ public class MachineRecipes {
                 if (FluidUtil.getFluidContained(recipe.getFluid()) != null) {
                     for (List<ItemStack> listStack : recipe.getInputs()) {
                         for (ItemStack stack : listStack) {
-                            if (extractorRecipes.stream().anyMatch(stack1 -> stack1.isItemEqual(stack))) {
+                            if (extractorRecipes.stream().anyMatch(stack::isItemEqual)) {
                                 continue;
                             }
                             extractorRecipes.add(stack);

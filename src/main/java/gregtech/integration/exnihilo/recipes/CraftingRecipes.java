@@ -1,9 +1,5 @@
 package gregtech.integration.exnihilo.recipes;
 
-import exnihilocreatio.ModBlocks;
-
-import exnihilocreatio.ModItems;
-
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
@@ -13,12 +9,14 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.integration.exnihilo.ExNihiloConfig;
 import gregtech.integration.exnihilo.ExNihiloModule;
 import gregtech.integration.exnihilo.items.ExNihiloPebble;
-
 import gregtech.loaders.recipe.MetaTileEntityLoader;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+
+import exnihilocreatio.ModBlocks;
+import exnihilocreatio.ModItems;
 
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.Materials.GraniteRed;
@@ -46,7 +44,8 @@ public class CraftingRecipes {
         // Pebbles
         ModHandler.addShapedRecipe("pebble_to_basalt", OreDictUnifier.get(cobble, Basalt, 1), "PP", "PP", 'P',
                 new ItemStack(ExNihiloModule.pebbleItem, 1, ExNihiloPebble.GTPebbles.BASALT.ordinal()));
-        ModHandler.addShapedRecipe("pebble_to_black_granite", OreDictUnifier.get(cobble, GraniteBlack, 1), "PP", "PP", 'P',
+        ModHandler.addShapedRecipe("pebble_to_black_granite", OreDictUnifier.get(cobble, GraniteBlack, 1), "PP", "PP",
+                'P',
                 new ItemStack(ExNihiloModule.pebbleItem, 1, ExNihiloPebble.GTPebbles.BLACK_GRANITE.ordinal()));
         ModHandler.addShapedRecipe("pebble_to_marble", OreDictUnifier.get(cobble, Marble, 1), "PP", "PP", 'P',
                 new ItemStack(ExNihiloModule.pebbleItem, 1, ExNihiloPebble.GTPebbles.MARBLE.ordinal()));
