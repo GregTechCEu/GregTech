@@ -33,6 +33,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -145,42 +146,47 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
-        var filteringMode = new EnumSyncValue<>(FluidFilterMode.class, this::getFilterMode, this::setFilterMode);
-
-        guiSyncManager.syncValue("filtering_mode", filteringMode);
-        this.fluidFilterContainer.setMaxTransferSize(1);
-
         return getFilter().createPanel(guiSyncManager)
                 .size(176, 212).padding(7)
                 .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()))
-                .child(Flow.column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
-                        .child(new EnumRowBuilder<>(FluidFilterMode.class)
-                                .value(filteringMode)
-                                .lang("cover.filter.mode.title")
-                                .overlay(16, GTGuiTextures.FILTER_MODE_OVERLAY)
-                                .build())
-                        .child(Flow.row()
-                                .marginBottom(2)
-                                .widthRel(1f)
-                                .coverChildrenHeight()
-                                .setEnabledIf(b -> getFilterMode() != FluidFilterMode.FILTER_BOTH)
-                                .child(new ToggleButton()
-                                        .overlay(IKey.dynamic(() -> IKey.lang(allowFlow ?
-                                                "cover.generic.enabled" :
-                                                "cover.generic.disabled").get())
-                                                .color(Color.WHITE.main).shadow(false))
-                                        .tooltip(tooltip -> tooltip
-                                                .addLine(IKey.lang("cover.filter.allow_flow.tooltip")))
-                                        .size(72, 18)
-                                        .value(new BooleanSyncValue(() -> allowFlow, b -> allowFlow = b)))
-                                .child(IKey.lang("cover.filter.allow_flow.label")
-                                        .asWidget()
-                                        .height(18)
-                                        .alignX(1f)))
-                        .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
-                                .height(1).widthRel(0.95f).margin(0, 4))
-                        .child(getFilter().createWidgets(guiSyncManager)))
+                .child(createUI(guiData, guiSyncManager))
                 .child(SlotGroupWidget.playerInventory().bottom(7).left(7));
+    }
+
+    @Override
+    public @Nullable IWidget createUI(SidedPosGuiData data, PanelSyncManager manager) {
+        var filteringMode = new EnumSyncValue<>(FluidFilterMode.class, this::getFilterMode, this::setFilterMode);
+
+        manager.syncValue("filtering_mode", filteringMode);
+        this.fluidFilterContainer.setMaxTransferSize(1);
+
+        return Flow.column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
+                .child(new EnumRowBuilder<>(FluidFilterMode.class)
+                        .value(filteringMode)
+                        .lang("cover.filter.mode.title")
+                        .overlay(16, GTGuiTextures.FILTER_MODE_OVERLAY)
+                        .build())
+                .child(Flow.row()
+                        .marginBottom(2)
+                        .widthRel(1f)
+                        .coverChildrenHeight()
+                        .setEnabledIf(b -> getFilterMode() != FluidFilterMode.FILTER_BOTH)
+                        .child(new ToggleButton()
+                                .overlay(IKey.dynamic(() -> IKey.lang(allowFlow ?
+                                        "cover.generic.enabled" :
+                                        "cover.generic.disabled").get())
+                                        .color(Color.WHITE.main).shadow(false))
+                                .tooltip(tooltip -> tooltip
+                                        .addLine(IKey.lang("cover.filter.allow_flow.tooltip")))
+                                .size(72, 18)
+                                .value(new BooleanSyncValue(() -> allowFlow, b -> allowFlow = b)))
+                        .child(IKey.lang("cover.filter.allow_flow.label")
+                                .asWidget()
+                                .height(18)
+                                .alignX(1f)))
+                .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
+                        .height(1).widthRel(0.95f).margin(0, 4))
+                .child(getFilter().createWidgets(manager));
     }
 
     @Override
