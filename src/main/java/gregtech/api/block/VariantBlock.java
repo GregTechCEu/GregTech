@@ -6,7 +6,7 @@ import gregtech.common.creativetab.GTCreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.properties.PropertyHelper;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -23,31 +23,42 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.google.common.base.Optional;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block {
+public abstract class VariantBlock<T extends IStringSerializable & Comparable<T>> extends Block {
 
-    protected PropertyEnum<T> VARIANT;
+    protected PropertyIntMap<T> VARIANT;
     protected T[] VALUES;
 
     public VariantBlock(@NotNull Material materialIn) {
         super(materialIn);
-        if (VALUES.length > 0 && VALUES[0] instanceof IStateHarvestLevel) {
+        updateHarvestLevels();
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH);
+        setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, 0));
+    }
+
+    protected void updateHarvestLevels() {
+        if (VALUES.length > 0 && VALUES[0] instanceof IStateHarvestLevel stateHarvestLevel) {
             for (T t : VALUES) {
-                IStateHarvestLevel stateHarvestLevel = (IStateHarvestLevel) t;
                 IBlockState state = getState(t);
-                setHarvestLevel(stateHarvestLevel.getHarvestTool(state), stateHarvestLevel.getHarvestLevel(state),
-                        state);
+                setHarvestLevel(stateHarvestLevel.getHarvestTool(state),
+                        stateHarvestLevel.getHarvestLevel(state), state);
             }
         }
-        setCreativeTab(GTCreativeTabs.TAB_GREGTECH);
-        setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, VALUES[0]));
     }
 
     @Override
@@ -58,11 +69,11 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     }
 
     public IBlockState getState(T variant) {
-        return getDefaultState().withProperty(VARIANT, variant);
+        return getDefaultState().withProperty(VARIANT, VARIANT.getIndexOf(variant));
     }
 
     public T getState(IBlockState blockState) {
-        return blockState.getValue(VARIANT);
+        return VARIANT.getValue(blockState.getValue(VARIANT));
     }
 
     public T getState(ItemStack stack) {
@@ -74,16 +85,32 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     }
 
     public ItemStack getItemVariant(T variant, int amount) {
-        return new ItemStack(this, amount, variant.ordinal());
+        return new ItemStack(this, amount, VARIANT.getIndexOf(variant));
     }
 
     @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
-        Class<T> enumClass = getActualTypeParameter(getClass(), VariantBlock.class);
-        this.VARIANT = PropertyEnum.create("variant", enumClass);
-        this.VALUES = enumClass.getEnumConstants();
+        this.VARIANT = new PropertyIntMap<>("variant", computeVariants());
+        this.VALUES = VARIANT.getValues();
         return new BlockStateContainer(this, VARIANT);
+    }
+
+    @NotNull
+    protected Collection<T> computeVariants() {
+        Class<T> enumClass = null;
+        for (Class<?> innerClazz : getClass().getClasses()) {
+            var enums = innerClazz.getEnumConstants();
+            if (enums != null && enums[0] instanceof IStringSerializable) {
+                // noinspection unchecked
+                enumClass = (Class<T>) innerClazz;
+                break;
+            }
+        }
+        if (enumClass == null) {
+            enumClass = getActualTypeParameter(getClass(), VariantBlock.class);;
+        }
+        return Arrays.asList(enumClass.getEnumConstants());
     }
 
     @Override
@@ -109,12 +136,12 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(VARIANT, VALUES[meta % VALUES.length]);
+        return getDefaultState().withProperty(VARIANT, meta % VALUES.length);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(VARIANT).ordinal();
+        return state.getValue(VARIANT);
     }
 
     @NotNull
@@ -141,13 +168,87 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     protected static <T, R> Class<T> getActualTypeParameter(Class<? extends R> thisClass, Class<R> declaringClass) {
         Type type = thisClass.getGenericSuperclass();
 
-        while (!(type instanceof ParameterizedType) || ((ParameterizedType) type).getRawType() != declaringClass) {
+        while (!(type instanceof ParameterizedType pType) || pType.getRawType() != declaringClass) {
             if (type instanceof ParameterizedType) {
                 type = ((Class<?>) ((ParameterizedType) type).getRawType()).getGenericSuperclass();
             } else {
                 type = ((Class<?>) type).getGenericSuperclass();
             }
         }
-        return (Class<T>) ((ParameterizedType) type).getActualTypeArguments()[0];
+        var arg = pType.getActualTypeArguments()[0];
+        if (!(arg instanceof Class<?>)) {
+            throw new ClassCastException(String.format("cannot cast %s to a class!", arg));
+        }
+        return (Class<T>) pType.getActualTypeArguments()[0];
+    }
+
+    protected static class PropertyIntMap<O extends Comparable<O> & IStringSerializable>
+                                         extends PropertyHelper<Integer> {
+
+        private final Int2ObjectMap<O> intMap;
+        private final Object2IntMap<O> reverse;
+        private final O[] allowedObjects;
+
+        @SuppressWarnings("unchecked")
+        protected PropertyIntMap(String name, Collection<O> values) {
+            super(name, Integer.class);
+            if (values.isEmpty()) throw new IllegalArgumentException("values are empty!");
+            if (values.size() > 16) throw new IllegalArgumentException("values cannot be greater than 16!");
+
+            this.intMap = new Int2ObjectArrayMap<>(values.size());
+            this.reverse = new Object2IntArrayMap<>(values.size());
+
+            O first = values.iterator().next();
+            this.allowedObjects = (O[]) Array.newInstance(first.getClass(), values.size());
+
+            for (O value : values) {
+                int size = this.intMap.size();
+                this.allowedObjects[size] = value;
+                this.intMap.put(size, value);
+                this.reverse.put(value, size);
+            }
+        }
+
+        @Override
+        public @NotNull Collection<Integer> getAllowedValues() {
+            return this.intMap.keySet();
+        }
+
+        public @NotNull O[] getValues() {
+            return this.allowedObjects;
+        }
+
+        @Override
+        @Deprecated
+        public @NotNull String getName(@NotNull Integer value) {
+            return getNameByInt(value);
+        }
+
+        public @NotNull String getNameByInt(int value) {
+            return getValue(value).getName();
+        }
+
+        @Override
+        public @NotNull Optional<Integer> parseValue(@NotNull String value) {
+            for (O object : reverse.keySet()) {
+                if (object.getName().equals(value)) {
+                    return Optional.of(getIndexOf(object));
+                }
+            }
+            return Optional.absent();
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * super.hashCode() + this.allowedObjects.hashCode();
+        }
+
+        public int getIndexOf(O value) {
+            return this.reverse.getInt(value);
+        }
+
+        public O getValue(int index) {
+            return this.intMap.get(index);
+        }
     }
 }

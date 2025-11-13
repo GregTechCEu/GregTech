@@ -3,6 +3,8 @@ package gregtech.common;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
+import gregtech.api.block.coil.CoilRegistry;
+import gregtech.api.block.coil.CustomCoilBlock;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
@@ -91,6 +93,12 @@ public class CommonProxy {
         for (MTERegistry r : GregTechAPI.mteManager.getRegistries()) {
             if (!registry.getKeys().isEmpty()) {
                 registry.register(r.getBlock());
+            }
+        }
+
+        for (CoilRegistry r : GregTechAPI.coilManager.getRegistries()) {
+            for (CustomCoilBlock block : r) {
+                registry.register(block);
             }
         }
 
@@ -289,6 +297,13 @@ public class CommonProxy {
         registry.register(createItemBlock(STEAM_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(MULTIBLOCK_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(TRANSPARENT_CASING, VariantItemBlock::new));
+
+        for (CoilRegistry coilRegistry : GregTechAPI.coilManager.getRegistries()) {
+            for (CustomCoilBlock block : coilRegistry) {
+                registry.register(createItemBlock(block, VariantItemBlock::new));
+            }
+        }
+
         registry.register(createItemBlock(WIRE_COIL, VariantItemBlock::new));
         registry.register(createItemBlock(FUSION_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN, VariantItemBlock::new));
