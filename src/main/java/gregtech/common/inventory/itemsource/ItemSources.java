@@ -1,6 +1,6 @@
 package gregtech.common.inventory.itemsource;
 
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 import gregtech.common.inventory.IItemInfo;
 import gregtech.common.inventory.IItemList;
 
@@ -19,7 +19,7 @@ public class ItemSources implements IItemList {
     protected final World world;
     protected final List<ItemSource> handlerInfoList = new ArrayList<>();
     protected final Map<ItemStack, NetworkItemInfo> itemInfoMap = new Object2ObjectLinkedOpenCustomHashMap<>(
-            ItemStackHashStrategy.comparingAllButCount());
+            ItemStackHashStrategy.comparingAllButCount);
     private final Comparator<ItemSource> comparator = Comparator.comparing(ItemSource::getPriority);
     private final Set<ItemStack> storedItemsView = Collections.unmodifiableSet(itemInfoMap.keySet());
 

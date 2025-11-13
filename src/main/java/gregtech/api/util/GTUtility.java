@@ -20,6 +20,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.function.impl.TimedProgressSupplier;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -878,7 +879,7 @@ public class GTUtility {
             if (tab == null || tab == CreativeTabs.SEARCH) continue;
             item.getSubItems(tab, subItems);
         }
-        return new ObjectOpenCustomHashSet<>(subItems, ItemStackHashStrategy.comparingItemDamageCount());
+        return new ObjectOpenCustomHashSet<>(subItems, ItemStackHashStrategy.comparingAllButNBT);
     }
 
     /**

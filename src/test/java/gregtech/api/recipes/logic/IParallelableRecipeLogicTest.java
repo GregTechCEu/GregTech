@@ -16,7 +16,7 @@ import gregtech.api.recipes.RecipeMapBuilder;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
@@ -44,7 +44,7 @@ import static org.hamcrest.CoreMatchers.*;
 
 public class IParallelableRecipeLogicTest {
 
-    private static final ItemStackHashStrategy hashStrategy = ItemStackHashStrategy.comparingAll();
+    private static final ItemStackHashStrategy hashStrategy = ItemStackHashStrategy.comparingAll;
     private static RecipeMapMultiblockController mbt;
     private static MetaTileEntityItemBus importItemBus;
     private static MetaTileEntityItemBus exportItemBus;

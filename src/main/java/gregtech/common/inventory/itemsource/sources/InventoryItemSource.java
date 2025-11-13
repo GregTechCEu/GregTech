@@ -1,6 +1,6 @@
 package gregtech.common.inventory.itemsource.sources;
 
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 import gregtech.common.inventory.itemsource.ItemSource;
 
 import net.minecraft.item.ItemStack;
@@ -18,7 +18,7 @@ public class InventoryItemSource extends ItemSource {
     protected final int priority;
     protected IItemHandler itemHandler = EmptyHandler.INSTANCE;
     private Object2IntMap<ItemStack> itemStackByAmountMap = new Object2IntLinkedOpenCustomHashMap<>(
-            ItemStackHashStrategy.comparingAllButCount());
+            ItemStackHashStrategy.comparingAllButCount);
 
     public InventoryItemSource(World world, int priority) {
         this.world = world;
@@ -72,7 +72,7 @@ public class InventoryItemSource extends ItemSource {
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack stackInSlot = itemHandler.getStackInSlot(i);
             if (stackInSlot.isEmpty()) continue;
-            if (!ItemStackHashStrategy.comparingAllButCount().equals(stack, stackInSlot)) continue;
+            if (!ItemStackHashStrategy.comparingAllButCount.equals(stack, stackInSlot)) continue;
             ItemStack extractedStack = itemHandler.extractItem(i, amount - itemsExtracted, simulate);
             if (!extractedStack.isEmpty()) {
                 itemsExtracted += extractedStack.getCount();
@@ -94,7 +94,7 @@ public class InventoryItemSource extends ItemSource {
 
     private void recomputeItemStackCount() {
         Object2IntMap<ItemStack> amountMap = new Object2IntLinkedOpenCustomHashMap<>(
-                ItemStackHashStrategy.comparingAllButCount());
+                ItemStackHashStrategy.comparingAllButCount);
         if (itemHandler == null) {
             this.itemStackByAmountMap = amountMap;
             return;

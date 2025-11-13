@@ -7,7 +7,7 @@ import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -116,7 +116,7 @@ public class CTRecipeBuilder {
         } else {
             // multiple inputs for a single input entry
             final Map<ItemStack, List<NBTTagCompound>> map = new Object2ObjectOpenCustomHashMap<>(
-                    ItemStackHashStrategy.comparingItemDamageCount());
+                    ItemStackHashStrategy.comparingAllButNBT);
 
             ItemStack[] stacks = new ItemStack[items.size()];
             for (int i = 0; i < stacks.length; i++) {

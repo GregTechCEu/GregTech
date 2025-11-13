@@ -1,6 +1,6 @@
 package gregtech.common.metatileentities.storage;
 
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,8 +37,8 @@ public class CraftingRecipeMemory extends SyncHandler {
     public static final int MOUSE_CLICK = 2;
 
     private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder()
-            .compareItem(true)
-            .compareMetadata(true)
+            .compareItem()
+            .compareMetadata()
             .build();
 
     private final MemorizedRecipe[] memorizedRecipes;
@@ -98,8 +98,7 @@ public class CraftingRecipeMemory extends SyncHandler {
         // search preexisting recipe with identical recipe result
         MemorizedRecipe existing = null;
         for (MemorizedRecipe memorizedRecipe : memorizedRecipes) {
-            if (memorizedRecipe != null &&
-                    strategy.equals(memorizedRecipe.recipeResult, resultItemStack)) {
+            if (memorizedRecipe != null && strategy.equals(memorizedRecipe.recipeResult, resultItemStack)) {
                 existing = memorizedRecipe;
                 break;
             }

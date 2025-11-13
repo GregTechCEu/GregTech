@@ -6,12 +6,12 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
-import gregtech.api.util.FluidStackHashStrategy;
 import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.OverlayedFluidHandler;
 import gregtech.api.util.OverlayedItemHandler;
+import gregtech.api.util.hash.FluidStackHashStrategy;
+import gregtech.api.util.hash.ItemStackHashStrategy;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -182,7 +182,7 @@ public abstract class ParallelLogic {
         Object2IntMap<ItemStack> recipeOutputsToAppend = GTHashMaps.fromItemStackCollection(outputsToAppend);
 
         Object2IntMap<ItemStack> appendedResultMap = new Object2IntLinkedOpenCustomHashMap<>(recipeOutputs,
-                ItemStackHashStrategy.comparingAllButCount());
+                ItemStackHashStrategy.comparingAllButCount);
         recipeOutputsToAppend
                 .forEach((stackKey, amt) -> appendedResultMap.merge(stackKey, amt * multiplier, Integer::sum));
 
@@ -405,8 +405,6 @@ public abstract class ParallelLogic {
             }
         }
 
-        FluidStackHashStrategy fluidStrategy = FluidStackHashStrategy.comparingAllButAmount();
-
         // Iterate through the recipe inputs, excluding the not consumable fluids from the fluid inventory map
         for (FluidStack notConsumableFluid : notConsumableMap.keySet()) {
             int needed = notConsumableMap.getInt(notConsumableFluid);
@@ -416,7 +414,7 @@ public abstract class ParallelLogic {
                 // Strip the Non-consumable tags here, as FluidKey compares the tags, which causes finding matching
                 // fluids
                 // in the input tanks to fail, because there is nothing in those hatches with a non-consumable tag
-                if (fluidStrategy.equals(notConsumableFluid, inputFluid)) {
+                if (FluidStackHashStrategy.comparingAllButAmount.equals(notConsumableFluid, inputFluid)) {
                     available = countFluid.getInt(inputFluid);
                     if (available > needed) {
                         countFluid.replace(inputFluid, available - needed);
@@ -453,7 +451,7 @@ public abstract class ParallelLogic {
             int available = 0;
             // For every fluid gathered from the fluid inputs.
             for (FluidStack inputFluid : countFluid.keySet()) {
-                if (fluidStrategy.equals(stack, inputFluid)) {
+                if (FluidStackHashStrategy.comparingAllButAmount.equals(stack, inputFluid)) {
                     available += countFluid.getInt(inputFluid);
                 }
             }
