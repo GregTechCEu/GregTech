@@ -32,6 +32,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
@@ -142,7 +143,7 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         RecipeMap<?> workableRecipeMap = Objects.requireNonNull(workable.getRecipeMap(), "recipe map is null");
         int yOffset = 0;
         if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
@@ -155,7 +156,7 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
                 .constructPanel(this, workable::getProgressPercent,
                         importItems, exportItems,
                         importFluids, exportFluids,
-                        yOffset, guiSyncManager)
+                        yOffset, panelSyncManager)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .bindPlayerInventory();
 

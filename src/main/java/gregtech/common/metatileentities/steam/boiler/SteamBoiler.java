@@ -29,7 +29,11 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -49,12 +53,13 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -348,15 +353,15 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         IntSyncValue temp = new IntSyncValue(this::getCurrentTemperature);
-        guiSyncManager.syncValue("temperature", temp);
+        panelSyncManager.syncValue("temperature", temp);
         return GTGuis.defaultPanel(this)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(new ProgressWidget()
                         .texture(getEmptyBarDrawable(), GTGuiTextures.PROGRESS_BAR_BOILER_HEAT, -1)
                         .direction(ProgressWidget.Direction.UP)
-                        .debugName("temp")
+                        .name("temp")
                         .tooltipBuilder(
                                 tooltip -> tooltip.addLine(IKey.lang("gregtech.machine.steam_boiler.heat_tooltip",
                                         temp.getIntValue(), getMaxTemperate())))
@@ -364,7 +369,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                         .pos(96, 26)
                         .size(10, 54))
                 .child(new GTFluidSlot()
-                        .debugName("water")
+                        .name("water")
                         .background(getEmptyBarDrawable())
                         .syncHandler(GTFluidSlot.sync(waterFluidTank)
                                 .showAmountOnSlot(false)
@@ -372,7 +377,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                         .pos(83, 26)
                         .size(10, 54))
                 .child(new GTFluidSlot()
-                        .debugName("steam")
+                        .name("steam")
                         .background(getEmptyBarDrawable())
                         .syncHandler(GTFluidSlot.sync(steamFluidTank)
                                 .showAmountOnSlot(false)
@@ -380,13 +385,13 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                         .pos(70, 26)
                         .size(10, 54))
                 .child(new ItemSlot()
-                        .debugName("fluid in")
+                        .name("fluid in")
                         .background(getSlotBackground(false))
                         .slot(new ModularSlot(containerInventory, 0)
                                 .singletonSlotGroup())
                         .pos(43, 26))
                 .child(new ItemSlot()
-                        .debugName("fluid out")
+                        .name("fluid out")
                         .background(getSlotBackground(true))
                         .slot(new ModularSlot(containerInventory, 1)
                                 .accessibility(false, true))

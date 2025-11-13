@@ -25,9 +25,9 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.sizer.Area;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
@@ -571,7 +571,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
         Flow row = Flow.row()
                 .height(h)
-                .debugName("row:recipemapui.parent")
+                .name("row:recipemapui.parent")
                 .alignX(0.5f)
                 .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                 .top(23 - 7);
@@ -593,7 +593,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         }
         row.child(progressWidget
                 .recipeMap(recipeMap)
-                .debugName("recipe.progress")
+                .name("recipe.progress")
                 .size(progressSize)
                 .margin(margin, 0)
                 .value(progressValue)
@@ -624,7 +624,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         Flow col = Flow.column()
                 .mainAxisAlignment(Alignment.MainAxis.END)
                 .coverChildren()
-                .debugName("col:item_grid");
+                .name("col:item_grid");
         int width = grid.getItemGridWidth();
         int height = grid.getItemGridHeight();
 
@@ -633,7 +633,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
             Flow row = Flow.row()
                     .mainAxisAlignment(isOutputs ? Alignment.MainAxis.START : Alignment.MainAxis.END)
                     .coverChildren()
-                    .debugName("row:item_" + i);
+                    .name("row:item_" + i);
             for (int j = 0; j < width; j++) {
                 row.child(makeItemSlot(slotGroup, (i * height) + j, handler, isOutputs));
             }
@@ -646,7 +646,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         Flow col = Flow.column()
                 .mainAxisAlignment(Alignment.MainAxis.START)
                 .coverChildren()
-                .debugName("col:fluid_grid");
+                .name("col:fluid_grid");
 
         int width = grid.getFluidGridWidth();
         int height = grid.getFluidGridHeight();
@@ -655,7 +655,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
             Flow row = Flow.row()
                     .mainAxisAlignment(isOutputs ? Alignment.MainAxis.START : Alignment.MainAxis.END)
                     .coverChildren()
-                    .debugName("row:fluid_" + i);
+                    .name("row:fluid_" + i);
             for (int j = 0; j < width; j++) {
                 row.child(makeFluidSlot((i * height) + j, handler, isOutputs));
             }
@@ -685,7 +685,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
         Flow flow = (singleRow ? Flow.row() : Flow.column())
                 .coverChildren()
-                .debugName(singleRow ? "row:parent" : "col:parent");
+                .name(singleRow ? "row:parent" : "col:parent");
         flow.crossAxisAlignment(isOutputs ? Alignment.CrossAxis.START : Alignment.CrossAxis.END);
 
         if (!onlyFluids && fluidGridHeight > 1) {
@@ -712,7 +712,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     protected ItemSlot makeItemSlot(SlotGroup group, int slotIndex, IItemHandlerModifiable itemHandler,
                                     boolean isOutputs) {
         return new ItemSlot()
-                .debugName("item.slot." + slotIndex + ":" + group.getName())
+                .name("item.slot." + slotIndex + ":" + group.getName())
                 .slot(SyncHandlers.itemSlot(itemHandler, slotIndex)
                         .slotGroup(group)
                         .accessibility(!isOutputs, true))
@@ -721,7 +721,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
     protected GTFluidSlot makeFluidSlot(int slotIndex, FluidTankList fluidHandler, boolean isOutputs) {
         return new GTFluidSlot()
-                .debugName("fluid.slot." + slotIndex)
+                .name("fluid.slot." + slotIndex)
                 .syncHandler(GTFluidSlot.sync(fluidHandler.getTankAt(slotIndex))
                         .accessibility(true, !isOutputs)
                         .drawAlwaysFull(true))

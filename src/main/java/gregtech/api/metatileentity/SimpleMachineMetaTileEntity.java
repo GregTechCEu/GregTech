@@ -54,14 +54,15 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -494,7 +495,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         RecipeMap<?> workableRecipeMap = Objects.requireNonNull(workable.getRecipeMap(), "recipe map is null");
         int yOffset = 0;
         if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
@@ -503,29 +504,29 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         }
 
         Flow col = Flow.column()
-                .debugName("col:special.buttons")
+                .name("col:special.buttons")
                 .right(7).bottom(7)
                 .height(18 * 4 + 4)
                 .width(18);
 
         BooleanSyncValue hasEnergy = new BooleanSyncValue(workable::isHasNotEnoughEnergy);
-        guiSyncManager.syncValue("has_energy", hasEnergy);
+        panelSyncManager.syncValue("has_energy", hasEnergy);
 
         ModularPanel panel = workableRecipeMap.getRecipeMapUI()
                 .setSize(176 + 20, 166 + yOffset)
                 .constructPanel(this, workable::getProgressPercent,
                         importItems, exportItems,
                         importFluids, exportFluids,
-                        yOffset, guiSyncManager)
+                        yOffset, panelSyncManager)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(GTGuiTextures.INDICATOR_NO_ENERGY.asWidget()
-                        .debugName("energy.indicator")
+                        .name("energy.indicator")
                         .size(18)
                         .alignX(0.5f)
                         .top(42 + yOffset + 18)
                         .setEnabledIf($ -> hasEnergy.getBoolValue()))
                 .child(col)
-                .child(SlotGroupWidget.playerInventory().left(7));
+                .child(SlotGroupWidget.playerInventory(true).left(7));
 
         if (exportItems.getSlots() > 0) {
             col.child(new ToggleButton()
@@ -544,7 +545,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         }
 
         col.child(new ItemSlot()
-                .debugName("charger.slot")
+                .name("charger.slot")
                 .slot(SyncHandlers.itemSlot(chargerInventory, 0))
                 .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
                 .bottom(18 + 4)
@@ -561,7 +562,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         if (hasGhostCircuitInventory() && circuitInventory != null) {
             col.child(new GhostCircuitSlotWidget()
                     .bottom(0)
-                    .slot(SyncHandlers.itemSlot(circuitInventory, 0))
+                    .slot(circuitInventory, 0)
                     .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY));
         }
         return panel;
