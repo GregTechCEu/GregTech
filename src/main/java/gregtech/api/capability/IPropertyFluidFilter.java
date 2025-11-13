@@ -25,7 +25,7 @@ import static gregtech.api.fluids.FluidConstants.CRYOGENIC_FLUID_THRESHOLD;
  * @see gregtech.api.fluids.attribute.FluidAttributes
  * @see AttributedFluid
  */
-public interface IPropertyFluidFilter extends IFilter<FluidStack> {
+public interface IPropertyFluidFilter<R> extends IFilter<FluidStack> {
 
     @Override
     default boolean test(@NotNull FluidStack stack) {
@@ -79,7 +79,7 @@ public interface IPropertyFluidFilter extends IFilter<FluidStack> {
      * @param attribute  the attribute to change containment status for
      * @param canContain whether the attribute can be contained
      */
-    void setCanContain(@NotNull FluidAttribute attribute, boolean canContain);
+    R setCanContain(@NotNull FluidAttribute attribute, boolean canContain);
 
     @NotNull
     @UnmodifiableView

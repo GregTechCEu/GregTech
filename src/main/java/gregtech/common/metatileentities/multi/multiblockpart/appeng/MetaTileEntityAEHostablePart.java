@@ -234,6 +234,10 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
         return true;
     }
 
+    public boolean isOnline() {
+        return isOnline;
+    }
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);

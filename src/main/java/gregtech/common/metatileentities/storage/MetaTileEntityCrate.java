@@ -11,6 +11,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.items.MetaItems;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,10 +35,11 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -140,16 +142,27 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
-        guiSyncManager.registerSlotGroup("item_inv", rowSize);
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+        panelSyncManager.registerSlotGroup("item_inv", rowSize);
 
         int rows = inventorySize / rowSize;
         List<List<IWidget>> widgets = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             widgets.add(new ArrayList<>());
             for (int j = 0; j < this.rowSize; j++) {
-                widgets.get(i).add(new ItemSlot().slot(SyncHandlers.itemSlot(inventory, i * rowSize + j)
-                        .slotGroup("item_inv")));
+                int index = i * rowSize + j;
+                widgets.get(i).add(new ItemSlot().slot(SyncHandlers.itemSlot(inventory, index)
+                        .slotGroup("item_inv")
+                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                            if (client || init) return;
+
+                            for (var facing : EnumFacing.VALUES) {
+                                var neighbor = getNeighbor(facing);
+                                if (neighbor instanceof IGregTechTileEntity gtte) {
+                                    gtte.getMetaTileEntity().onNeighborChanged();
+                                }
+                            }
+                        })));
             }
         }
         return GTGuis.createPanel(this, rowSize * 18 + 14, 18 + 4 * 18 + 5 + 14 + 18 * rows)
@@ -267,5 +280,11 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return ModHandler.isMaterialWood(material) ? SoundType.WOOD : SoundType.METAL;
     }
 }

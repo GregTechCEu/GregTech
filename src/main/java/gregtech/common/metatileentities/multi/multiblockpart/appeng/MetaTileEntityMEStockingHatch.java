@@ -44,7 +44,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     private Predicate<FluidStack> autoPullTest;
 
     public MetaTileEntityMEStockingHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.LuV);
+        super(metaTileEntityId, GTValues.IV);
         this.autoPullTest = $ -> false;
     }
 

@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -10,6 +11,7 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
@@ -26,6 +28,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.render.CCRenderState;
@@ -39,7 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider,
-                                                    ICleanroomReceiver, IDistinctBusController {
+                                                    ICleanroomReceiver, IDistinctBusController,
+                                                    IControllable {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
@@ -47,10 +51,12 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected IItemHandlerModifiable outputInventory;
     protected IMultipleTankHandler inputFluidInventory;
     protected IMultipleTankHandler outputFluidInventory;
+    protected IMultipleTankHandler extendedFluidInputs;
     protected IEnergyContainer energyContainer;
 
     private boolean isDistinct = false;
 
+    @Nullable
     private ICleanroomProvider cleanroom;
 
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
@@ -73,7 +79,10 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     public IMultipleTankHandler getInputFluidInventory() {
-        return inputFluidInventory;
+        // if distinct, return the normal input fluid inventory,
+        // as recipe logic handles gathering extra fluids
+        // if not distinct, return all the fluids instead
+        return isDistinct() ? inputFluidInventory : extendedFluidInputs;
     }
 
     public IMultipleTankHandler getOutputFluidInventory() {
@@ -121,6 +130,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.inputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.IMPORT_ITEMS));
         this.inputFluidInventory = new FluidTankList(allowSameFluidFillForOutputs(),
                 getAbilities(MultiblockAbility.IMPORT_FLUIDS));
+        this.extendedFluidInputs = extendedImportFluidList(this.inputFluidInventory);
         this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.EXPORT_ITEMS));
         this.outputFluidInventory = new FluidTankList(allowSameFluidFillForOutputs(),
                 getAbilities(MultiblockAbility.EXPORT_FLUIDS));
@@ -134,31 +144,47 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     private void resetTileAbilities() {
         this.inputInventory = new GTItemStackHandler(this, 0);
         this.inputFluidInventory = new FluidTankList(true);
+        this.extendedFluidInputs = new FluidTankList(true);
         this.outputInventory = new GTItemStackHandler(this, 0);
         this.outputFluidInventory = new FluidTankList(true);
         this.energyContainer = new EnergyContainerList(Lists.newArrayList());
+    }
+
+    protected IMultipleTankHandler extendedImportFluidList(IMultipleTankHandler fluids) {
+        List<IFluidTank> tanks = new ArrayList<>(fluids.getFluidTanks());
+        // iterate import items to look for and tanks that we might have missed
+        // honestly this might not be worth checking because
+        // it might already be handled in ARL/MRL
+        for (var handler : getAbilities(MultiblockAbility.IMPORT_ITEMS)) {
+            if (handler instanceof IFluidTank tank) {
+                if (!tanks.contains(tank)) tanks.add(tank);
+            } else if (handler instanceof IMultipleTankHandler multipleTankHandler) {
+                for (var tank : multipleTankHandler.getFluidTanks()) {
+                    if (!tanks.contains(tank)) tanks.add(tank);
+                }
+            }
+        }
+
+        return new FluidTankList(allowSameFluidFillForOutputs(), tanks);
     }
 
     protected boolean allowSameFluidFillForOutputs() {
         return true;
     }
 
-    @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
+        builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .addEnergyUsageLine(this.getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                 .addParallelsLine(recipeMapWorkable.getParallelLimit())
                 .addWorkingStatusLine()
-                .addProgressLine(recipeMapWorkable.getProgressPercent());
+                .addProgressLine(recipeMapWorkable.getProgress(), recipeMapWorkable.getMaxProgress())
+                .addRecipeOutputLine(recipeMapWorkable);
     }
 
-    @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
-                .addMaintenanceProblemLines(getMaintenanceProblems());
+    protected void configureWarningText(MultiblockUIBuilder builder) {
+        builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy());
+        super.configureWarningText(builder);
     }
 
     @Override
@@ -253,7 +279,8 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         getMultiblockParts().forEach(part -> part.onDistinctChange(isDistinct));
         // mark buses as changed on distinct toggle
         if (this.isDistinct) {
-            this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+            this.notifiedItemInputList
+                    .addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
         } else {
             this.notifiedItemInputList.add(this.inputInventory);
         }
@@ -320,7 +347,24 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     @Override
-    public void setCleanroom(ICleanroomProvider provider) {
-        this.cleanroom = provider;
+    public void setCleanroom(@NotNull ICleanroomProvider provider) {
+        if (cleanroom == null || provider.getPriority() > cleanroom.getPriority()) {
+            this.cleanroom = provider;
+        }
+    }
+
+    @Override
+    public void unsetCleanroom() {
+        this.cleanroom = null;
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return recipeMapWorkable.isWorkingEnabled();
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        recipeMapWorkable.setWorkingEnabled(isWorkingAllowed);
     }
 }

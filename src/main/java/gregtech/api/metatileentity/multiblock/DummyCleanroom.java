@@ -64,4 +64,11 @@ public final class DummyCleanroom implements ICleanroomProvider {
 
     @Override
     public void adjustCleanAmount(int amount) {}
+
+    // Have a higher priority than the cleanroom multiblock (which doesn't override getPriority so it'll return 0)
+    // doesn't replace the set cleanroom in multiblocks.
+    @Override
+    public int getPriority() {
+        return Integer.MAX_VALUE;
+    }
 }

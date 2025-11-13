@@ -39,7 +39,7 @@ public abstract class BasicRecipeCategory<T, W extends IRecipeWrapper>
     @NotNull
     @Override
     public String getUid() {
-        return getModName() + ":" + uniqueName;
+        return getModName() + "." + uniqueName;
     }
 
     @NotNull

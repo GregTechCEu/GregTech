@@ -1,16 +1,21 @@
 package gregtech.api.recipes.builders;
 
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IDataItem;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.properties.impl.ResearchProperty;
 import gregtech.api.recipes.properties.impl.ResearchPropertyData;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
@@ -126,7 +131,66 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * @return this
      */
     public AssemblyLineRecipeBuilder scannerResearch(@NotNull ItemStack researchStack) {
-        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder().researchStack(researchStack));
+        return scannerResearch(b -> b.researchStack(researchStack));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull MetaItem<?>.MetaValueItem metaItem) {
+        return scannerResearch(b -> b.researchStack(metaItem));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull MetaItem<?>.MetaValueItem metaItem, int amount) {
+        return scannerResearch(b -> b.researchStack(metaItem, amount));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull MetaItem<?>.MetaValueItem metaItem, int amount,
+                                                     boolean ignoreNBT) {
+        return scannerResearch(b -> b.researchStack(metaItem, amount, ignoreNBT));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull MetaTileEntity mte) {
+        return scannerResearch(b -> b.researchStack(mte));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull MetaTileEntity mte, int amount) {
+        return scannerResearch(b -> b.researchStack(mte, amount));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull MetaTileEntity mte, int amount, boolean ignoreNBT) {
+        return scannerResearch(b -> b.researchStack(mte, amount, ignoreNBT));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull OrePrefix prefix, @NotNull Material material) {
+        return scannerResearch(b -> b.researchStack(prefix, material));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull OrePrefix prefix, @NotNull Material material,
+                                                     int amount) {
+        return scannerResearch(b -> b.researchStack(prefix, material, amount));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull OrePrefix prefix, @NotNull Material material, int amount,
+                                                     boolean ignoreNBT) {
+        return scannerResearch(b -> b.researchStack(prefix, material, amount, ignoreNBT));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull Block block) {
+        return scannerResearch(b -> b.researchStack(block));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull Block block, int amount) {
+        return scannerResearch(b -> b.researchStack(block, amount));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull Block block, int amount, int meta) {
+        return scannerResearch(b -> b.researchStack(block, amount, meta));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull Block block, int amount, boolean ignoreNBT) {
+        return scannerResearch(b -> b.researchStack(block, amount, ignoreNBT));
+    }
+
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull Block block, int amount, int meta, boolean ignoreNBT) {
+        return scannerResearch(b -> b.researchStack(block, amount, meta, ignoreNBT));
     }
 
     /**
@@ -155,7 +219,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         private final ItemStack dataStack;
         private final boolean ignoreNBT;
         private final int duration;
-        private final int EUt;
+        private final long EUt;
         private final int CWUt;
 
         /**
@@ -167,10 +231,10 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
          * @param CWUt          how much computation per tick this recipe needs if in Research Station
          *                      <p>
          *                      By default, will ignore NBT on researchStack input. If NBT matching is desired, see
-         *                      {@link #ResearchRecipeEntry(String, ItemStack, ItemStack, boolean, int, int, int)}
+         *                      {@link #ResearchRecipeEntry(String, ItemStack, ItemStack, boolean, int, long, int)}
          */
         public ResearchRecipeEntry(@NotNull String researchId, @NotNull ItemStack researchStack,
-                                   @NotNull ItemStack dataStack, int duration, int EUt, int CWUt) {
+                                   @NotNull ItemStack dataStack, int duration, long EUt, int CWUt) {
             this.researchId = researchId;
             this.researchStack = researchStack;
             this.dataStack = dataStack;
@@ -189,7 +253,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
          * @param CWUt          how much computation per tick this recipe needs if in Research Station
          */
         public ResearchRecipeEntry(@NotNull String researchId, @NotNull ItemStack researchStack,
-                                   @NotNull ItemStack dataStack, boolean ignoreNBT, int duration, int EUt, int CWUt) {
+                                   @NotNull ItemStack dataStack, boolean ignoreNBT, int duration, long EUt, int CWUt) {
             this.researchId = researchId;
             this.researchStack = researchStack;
             this.dataStack = dataStack;
@@ -222,7 +286,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
             return duration;
         }
 
-        public int getEUt() {
+        public long getEUt() {
             return EUt;
         }
 

@@ -15,7 +15,7 @@ public class VertexLighterSmoothAoSpecial extends VertexLighterFlatSpecial {
 
     @Override
     protected void updateLightmap(float[] normal, float[] lightmap, float x, float y, float z) {
-        if (Mods.Optifine.isModLoaded()) {
+        if (Mods.ShadersMod.isModLoaded()) {
             super.updateLightmap(normal, lightmap, x, y, z);
             return;
         }
@@ -28,7 +28,7 @@ public class VertexLighterSmoothAoSpecial extends VertexLighterFlatSpecial {
     protected void updateColor(float[] normal, float[] color, float x, float y, float z, float tint, int multiplier) {
         super.updateColor(normal, color, x, y, z, tint, multiplier);
 
-        if (Mods.Optifine.isModLoaded()) {
+        if (Mods.ShadersMod.isModLoaded()) {
             return;
         }
 
@@ -146,7 +146,7 @@ public class VertexLighterSmoothAoSpecial extends VertexLighterFlatSpecial {
 
     @Override
     public void updateBlockInfo() {
-        if (Mods.Optifine.isModLoaded()) {
+        if (Mods.ShadersMod.isModLoaded()) {
             super.updateBlockInfo();
             return;
         }

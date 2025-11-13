@@ -1,10 +1,8 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.block.BlockStateTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.network.PacketDataList;
-import gregtech.api.util.GTLog;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTBase;
@@ -15,6 +13,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 
 import io.netty.buffer.ByteBuf;
@@ -27,6 +26,7 @@ import java.util.function.Consumer;
 
 public abstract class SyncedTileEntityBase extends BlockStateTileEntity implements ISyncedTileEntity {
 
+    public static final int SIZE_THRESHOLD = 10;
     private final PacketDataList updates = new PacketDataList();
 
     public @Nullable TileEntity getNeighbor(EnumFacing facing) {
@@ -59,7 +59,26 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
     private void notifyWorld() {
         @SuppressWarnings("deprecation")
         IBlockState blockState = getBlockType().getStateFromMeta(getBlockMetadata());
-        world.notifyBlockUpdate(getPos(), blockState, blockState, 0);
+        if (canNotifyWorld()) {
+            world.notifyBlockUpdate(getPos(), blockState, blockState, 0);
+        }
+    }
+
+    private boolean canNotifyWorld() {
+        // short circuit with packet size to avoid too many hash lookups and instanceof casts
+        if (updates.size() > SIZE_THRESHOLD && getWorld() instanceof WorldServer server) {
+            int x = getPos().getX() >> 4;
+            int z = getPos().getZ() >> 4;
+            if (server.getPlayerChunkMap().contains(x, z)) {
+                return true;
+            } else {
+                // cannot send, so clear
+                updates.clear();
+                return false;
+            }
+        }
+        // assume we can send data regardless
+        return true;
     }
 
     @Override
@@ -80,20 +99,10 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
             NBTTagCompound entryTag = (NBTTagCompound) entryBase;
             for (String discriminatorKey : entryTag.getKeySet()) {
                 ByteBuf backedBuffer = Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey));
-                receiveCustomData(Integer.parseInt(discriminatorKey), new PacketBuffer(backedBuffer));
-                if (backedBuffer.readableBytes() != 0) {
-                    String className = null;
-                    if (this instanceof IGregTechTileEntity gtte) {
-                        MetaTileEntity mte = gtte.getMetaTileEntity();
-                        if (mte != null) className = mte.getClass().getName();
-                    }
-                    if (className == null) {
-                        className = this.getClass().getName();
-                    }
-                    GTLog.logger.error(
-                            "Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
-                            className, discriminatorKey, backedBuffer.readableBytes());
-                }
+                int dataId = Integer.parseInt(discriminatorKey);
+                ISyncedTileEntity.addCode(dataId, this);
+                receiveCustomData(dataId, new PacketBuffer(backedBuffer));
+                ISyncedTileEntity.checkData(backedBuffer);
             }
         }
     }
@@ -113,19 +122,8 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         super.readFromNBT(tag); // deserializes Forge data and capabilities
         byte[] updateData = tag.getByteArray("d");
         ByteBuf backedBuffer = Unpooled.copiedBuffer(updateData);
+        ISyncedTileEntity.track(this);
         receiveInitialSyncData(new PacketBuffer(backedBuffer));
-        if (backedBuffer.readableBytes() != 0) {
-            String className = null;
-            if (this instanceof IGregTechTileEntity gtte) {
-                MetaTileEntity mte = gtte.getMetaTileEntity();
-                if (mte != null) className = mte.getClass().getName();
-            }
-            if (className == null) {
-                className = this.getClass().getName();
-            }
-
-            GTLog.logger.error("Class {} failed to finish reading initialSyncData with {} bytes remaining",
-                    className, backedBuffer.readableBytes());
-        }
+        ISyncedTileEntity.checkData(backedBuffer);
     }
 }

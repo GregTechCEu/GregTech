@@ -23,6 +23,7 @@ import java.util.List;
 public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
     protected long totalContinuousRunningTime;
+    private int previousDuration = 0;
 
     public MultiblockFuelRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity);
@@ -95,19 +96,9 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected boolean drawEnergy(long recipeEUt, boolean simulate) {
-        long euToDraw = boostProduction(recipeEUt);
-        long resultEnergy = getEnergyStored() - euToDraw;
-        if (resultEnergy >= 0L && resultEnergy <= getEnergyCapacity()) {
-            if (!simulate) getEnergyContainer().changeEnergy(-euToDraw);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public long getInfoProviderEUt() {
-        return boostProduction(super.getInfoProviderEUt());
+    protected void setupRecipe(@NotNull Recipe recipe) {
+        super.setupRecipe(recipe);
+        this.recipeEUt = boostProduction(this.recipeEUt);
     }
 
     @Override
@@ -137,16 +128,22 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         } else {
             recipe = previousRecipe;
         }
+        previousDuration = recipe.getDuration();
         FluidStack requiredFluidInput = recipe.getFluidInputs().get(0).getInputFluidStack();
 
         int ocAmount = GTUtility.safeCastLongToInt(getMaxVoltage() / recipe.getEUt());
         int neededAmount = ocAmount * requiredFluidInput.amount;
         if (rotorHolder != null && rotorHolder.hasRotor()) {
-            neededAmount /= (rotorHolder.getTotalEfficiency() / 100.0);
+            neededAmount /= (int) (rotorHolder.getTotalEfficiency() / 100.0);
         } else if (rotorHolder != null && !rotorHolder.hasRotor()) {
             return null;
         }
         return TextFormatting.RED + TextFormattingUtil.formatNumbers(neededAmount) + "L";
+    }
+
+    @Override
+    public int getPreviousRecipeDuration() {
+        return previousDuration;
     }
 
     public FluidStack getInputFluidStack() {

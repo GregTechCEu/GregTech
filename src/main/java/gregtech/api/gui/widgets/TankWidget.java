@@ -30,7 +30,6 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -124,15 +123,6 @@ public class TankWidget extends Widget implements IIngredientSlot {
 
     public String getFluidLocalizedName() {
         return lastFluidInTank == null ? "" : lastFluidInTank.getLocalizedName();
-    }
-
-    /**
-     * @deprecated use {@link #getFluidTextComponent()}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public String getFluidUnlocalizedName() {
-        return lastFluidInTank == null ? "" : lastFluidInTank.getUnlocalizedName();
     }
 
     @Nullable

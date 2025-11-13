@@ -7,7 +7,8 @@ import net.minecraft.util.IStringSerializable;
 
 import org.jetbrains.annotations.NotNull;
 
-public class VariantItemBlock<R extends Enum<R> & IStringSerializable, T extends VariantBlock<R>> extends ItemBlock {
+public class VariantItemBlock<R extends IStringSerializable & Comparable<R>, T extends VariantBlock<R>>
+                             extends ItemBlock {
 
     private final T genericBlock;
 

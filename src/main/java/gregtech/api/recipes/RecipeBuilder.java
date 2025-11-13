@@ -1,6 +1,8 @@
 package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
+import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
@@ -24,6 +26,7 @@ import gregtech.api.recipes.properties.impl.DimensionProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.RecyclingData;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -92,6 +95,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected boolean ignoreAllBuildActions = false;
     protected Map<ResourceLocation, RecipeBuildAction<R>> ignoredBuildActions;
 
+    private boolean withItemRecycling;
+
     protected RecipeBuilder() {
         this.inputs = new ArrayList<>();
         this.outputs = new ArrayList<>();
@@ -136,6 +141,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (recipeBuilder.ignoredBuildActions != null) {
             this.ignoredBuildActions = new Object2ObjectOpenHashMap<>(recipeBuilder.ignoredBuildActions);
         }
+        this.withItemRecycling = recipeBuilder.hasItemRecycling();
     }
 
     public R cleanroom(@Nullable CleanroomType cleanroom) {
@@ -258,6 +264,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R input(Block block, int count) {
         return input(new GTRecipeItemInput(new ItemStack(block, count)));
+    }
+
+    public R input(Block block, int count, int meta) {
+        return input(new GTRecipeItemInput(new ItemStack(block, count, meta)));
     }
 
     public R input(Block block, int count, @SuppressWarnings("unused") boolean wild) {
@@ -516,6 +526,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return outputs(new ItemStack(item, count));
     }
 
+    public R output(Block item, int count, int meta) {
+        return outputs(new ItemStack(item, count, meta));
+    }
+
     public R output(MetaItem<?>.MetaValueItem item, int count) {
         return outputs(item.getStackForm(count));
     }
@@ -555,6 +569,14 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R fluidInput(@NotNull Fluid fluid) {
+        return fluidInputs(new GTRecipeFluidInput(fluid, 1));
+    }
+
+    public R fluidInput(@NotNull Fluid fluid, int amount) {
+        return fluidInputs(new GTRecipeFluidInput(fluid, amount));
+    }
+
     public R fluidInputs(Collection<GTRecipeInput> fluidIngredients) {
         this.fluidInputs.addAll(fluidIngredients);
         return (R) this;
@@ -569,11 +591,20 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (input != null && input.amount > 0) {
             this.fluidInputs.add(new GTRecipeFluidInput(input));
         } else if (input != null) {
-            GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", input.amount, new Throwable());
+            GTLog.logger.error("Fluid Input count cannot be less than 1. Actual: {}.", input.amount,
+                    new IllegalArgumentException());
         } else {
             GTLog.logger.error("FluidStack cannot be null.");
         }
         return (R) this;
+    }
+
+    public R fluidInputs(@NotNull Material material, int amount) {
+        return fluidInputs(material.getFluid(amount));
+    }
+
+    public R fluidInputs(@NotNull Material material, @NotNull FluidStorageKey storageKey, int amount) {
+        return fluidInputs(material.getFluid(storageKey, amount));
     }
 
     public R fluidInputs(FluidStack... fluidStacks) {
@@ -582,7 +613,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             if (fluidStack != null && fluidStack.amount > 0) {
                 fluidIngredients.add(new GTRecipeFluidInput(fluidStack));
             } else if (fluidStack != null) {
-                GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", fluidStack.amount,
+                GTLog.logger.error("Fluid Input count cannot be less than 1. Actual: {}.", fluidStack.amount,
                         new Throwable());
             } else {
                 GTLog.logger.error("FluidStack cannot be null.");
@@ -597,11 +628,27 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R fluidOutputs(@NotNull Fluid fluid) {
+        return fluidOutputs(new FluidStack(fluid, 1));
+    }
+
+    public R fluidOutputs(@NotNull Fluid fluid, int amount) {
+        return fluidOutputs(new FluidStack(fluid, amount));
+    }
+
     public R fluidOutputs(FluidStack output) {
         if (output != null && output.amount > 0) {
             this.fluidOutputs.add(output);
         }
         return (R) this;
+    }
+
+    public R fluidOutputs(@NotNull Material material, int amount) {
+        return fluidOutputs(material.getFluid(amount));
+    }
+
+    public R fluidOutputs(@NotNull Material material, @NotNull FluidStorageKey storageKey, int amount) {
+        return fluidOutputs(material.getFluid(storageKey, amount));
     }
 
     public R fluidOutputs(FluidStack... outputs) {
@@ -922,6 +969,14 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    /**
+     * Generate Recycling Data based on this recipe's Items
+     */
+    public R withRecycling() {
+        this.withItemRecycling = true;
+        return (R) this;
+    }
+
     public ValidationResult<Recipe> build() {
         EnumValidationResult result = recipePropertyStorageErrored ? EnumValidationResult.INVALID : validate();
         return ValidationResult.newResult(result, new Recipe(inputs, outputs,
@@ -1029,6 +1084,15 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 buildAction.getValue().accept((R) this);
             }
         }
+        if (hasItemRecycling()) {
+            // ignore input fluids for item-only recycling
+            ItemStack outputStack = getOutputs().get(0);
+            RecyclingData data = RecyclingHandler.getRecyclingIngredients(getInputs(), outputStack.getCount());
+            if (data != null) {
+                GregTechAPI.RECYCLING_MANAGER.registerRecyclingData(outputStack, data);
+            }
+        }
+
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);
     }
@@ -1107,6 +1171,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
 
         return ignoredBuildActions;
+    }
+
+    public boolean hasItemRecycling() {
+        return withItemRecycling;
     }
 
     @Override

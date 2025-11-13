@@ -52,15 +52,15 @@ public class FacadeHelper {
     }
 
     private static IBlockState lookupBlockForItemUnsafe(ItemStack itemStack) {
-        if (!(itemStack.getItem() instanceof ItemBlock)) {
+        if (!(itemStack.getItem() instanceof ItemBlock itemBlock)) {
             return null;
         }
-        Block block = ((ItemBlock) itemStack.getItem()).getBlock();
+        Block block = itemBlock.getBlock();
         int blockMetadata = itemStack.getItem().getMetadata(itemStack);
         try {
             // noinspection deprecation
             return block.getStateFromMeta(blockMetadata);
-        } catch (Throwable e) {
+        } catch (RuntimeException e) {
             return null;
         }
     }

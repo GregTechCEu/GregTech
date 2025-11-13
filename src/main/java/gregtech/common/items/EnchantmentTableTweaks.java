@@ -53,7 +53,7 @@ public class EnchantmentTableTweaks {
                     resultSlot.slotNumber = previousLapisSlot.slotNumber;
                     container.inventorySlots.set(index, resultSlot);
                 }
-            } catch (Throwable exception) {
+            } catch (RuntimeException exception) {
                 GTLog.logger.warn("Failed to replace enchantment container slot", exception);
             }
         }

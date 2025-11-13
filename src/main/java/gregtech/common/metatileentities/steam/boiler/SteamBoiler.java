@@ -49,7 +49,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -402,15 +401,5 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                         SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
             }
         }
-    }
-
-    /** @deprecated No longer used, look at {@link VanillaParticleEffects#defaultFrontEffect} to see old logic. */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @SideOnly(Side.CLIENT)
-    protected void randomDisplayTick(float x, float y, float z) {
-        getWorld().spawnParticle(isHighPressure ? EnumParticleTypes.SMOKE_LARGE : EnumParticleTypes.SMOKE_NORMAL, x, y,
-                z, 0, 0, 0);
-        getWorld().spawnParticle(EnumParticleTypes.FLAME, x, y, z, 0, 0, 0);
     }
 }

@@ -208,13 +208,12 @@ public class IParallelableRecipeLogicTest {
         int parallelLimit = 4;
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                3,
-                2,
-                1,
-                1,
-                new BlastRecipeBuilder(),
-                false);
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMapBuilder<>("electric_blast_furnace", new BlastRecipeBuilder())
+                .itemInputs(3)
+                .itemOutputs(2)
+                .fluidInputs(1)
+                .fluidOutputs(1)
+                .build();
 
         // Create a simple recipe to be used for testing
         Recipe recipe = map.recipeBuilder()
@@ -261,13 +260,12 @@ public class IParallelableRecipeLogicTest {
         int parallelLimit = 4;
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                3,
-                2,
-                1,
-                1,
-                new BlastRecipeBuilder(),
-                false);
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMapBuilder<>("electric_blast_furnace", new BlastRecipeBuilder())
+                .itemInputs(3)
+                .itemOutputs(2)
+                .fluidInputs(1)
+                .fluidOutputs(1)
+                .build();
 
         // Create a simple recipe to be used for testing
         Recipe recipe = map.recipeBuilder()
@@ -313,13 +311,12 @@ public class IParallelableRecipeLogicTest {
         int parallelLimit = 4;
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                3,
-                2,
-                1,
-                1,
-                new BlastRecipeBuilder(),
-                false);
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMapBuilder<>("electric_blast_furnace", new BlastRecipeBuilder())
+                .itemInputs(3)
+                .itemOutputs(2)
+                .fluidInputs(1)
+                .fluidOutputs(1)
+                .build();
 
         // Create a simple recipe to be used for testing
         Recipe recipe = map.recipeBuilder()
@@ -366,13 +363,12 @@ public class IParallelableRecipeLogicTest {
         int parallelLimit = 4;
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                3,
-                2,
-                2,
-                1,
-                new BlastRecipeBuilder(),
-                false);
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMapBuilder<>("electric_blast_furnace", new BlastRecipeBuilder())
+                .itemInputs(3)
+                .itemOutputs(2)
+                .fluidInputs(1)
+                .fluidOutputs(1)
+                .build();
 
         // Create a simple recipe to be used for testing
         Recipe recipe = map.recipeBuilder()
@@ -419,13 +415,12 @@ public class IParallelableRecipeLogicTest {
         int parallelLimit = 4;
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("test_blast_furnace",
-                3,
-                2,
-                1,
-                1,
-                new BlastRecipeBuilder(),
-                false);
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMapBuilder<>("test_blast_furnace", new BlastRecipeBuilder())
+                .itemInputs(3)
+                .itemOutputs(2)
+                .fluidInputs(1)
+                .fluidOutputs(1)
+                .build();
 
         // Create a simple recipe to be used for testing
         map.recipeBuilder()
@@ -466,13 +461,12 @@ public class IParallelableRecipeLogicTest {
         int parallelLimit = 4;
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("test_blast_furnace_2",
-                3,
-                2,
-                1,
-                1,
-                new BlastRecipeBuilder(),
-                false);
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMapBuilder<>("test_blast_furnace_2", new BlastRecipeBuilder())
+                .itemInputs(3)
+                .itemOutputs(2)
+                .fluidInputs(1)
+                .fluidOutputs(1)
+                .build();
 
         // Create a simple recipe to be used for testing
         map.recipeBuilder()
@@ -543,13 +537,12 @@ public class IParallelableRecipeLogicTest {
         };
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                3,
-                2,
-                1,
-                1,
-                new BlastRecipeBuilder(),
-                false);
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMapBuilder<>("electric_blast_furnace", new BlastRecipeBuilder())
+                .itemInputs(3)
+                .itemOutputs(2)
+                .fluidInputs(1)
+                .fluidOutputs(1)
+                .build();
 
         // Create a simple recipe to be used for testing
         Recipe recipe = map.recipeBuilder()
@@ -618,13 +611,12 @@ public class IParallelableRecipeLogicTest {
         };
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                3,
-                2,
-                1,
-                1,
-                new BlastRecipeBuilder(),
-                false);
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMapBuilder<>("electric_blast_furnace", new BlastRecipeBuilder())
+                .itemInputs(3)
+                .itemOutputs(2)
+                .fluidInputs(1)
+                .fluidOutputs(1)
+                .build();
 
         // Create a simple recipe to be used for testing
         Recipe recipe = map.recipeBuilder()
@@ -683,13 +675,12 @@ public class IParallelableRecipeLogicTest {
         };
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                3,
-                2,
-                1,
-                1,
-                new BlastRecipeBuilder(),
-                false);
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMapBuilder<>("electric_blast_furnace", new BlastRecipeBuilder())
+                .itemInputs(3)
+                .itemOutputs(2)
+                .fluidInputs(1)
+                .fluidOutputs(1)
+                .build();
 
         // Create a simple recipe to be used for testing
         Recipe recipe = map.recipeBuilder()
@@ -788,13 +779,12 @@ public class IParallelableRecipeLogicTest {
         };
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                3,
-                2,
-                1,
-                1,
-                new BlastRecipeBuilder(),
-                false);
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMapBuilder<>("electric_blast_furnace", new BlastRecipeBuilder())
+                .itemInputs(3)
+                .itemOutputs(2)
+                .fluidInputs(1)
+                .fluidOutputs(1)
+                .build();
 
         // Create a simple recipe to be used for testing
         Recipe recipe = map.recipeBuilder()

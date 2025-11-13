@@ -3,6 +3,7 @@ package gregtech.common.items.behaviors;
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.metaitem.stats.IItemModelDispatcher;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.GTGuiTextures;
@@ -21,9 +22,11 @@ import net.minecraft.world.World;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
@@ -32,7 +35,7 @@ import com.cleanroommc.modularui.widgets.layout.Grid;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubItemHandler {
+public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubItemHandler, IItemModelDispatcher {
 
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
@@ -64,7 +67,8 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     }
 
     @Override
-    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+        var panel = GTGuis.createPanel(guiData.getUsedItemStack(), 176, 120);
         ItemDrawable circuitPreview = new ItemDrawable(guiData.getUsedItemStack());
         for (int i = 0; i <= 32; i++) {
             int finalI = i;
@@ -73,6 +77,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                         ItemStack item = IntCircuitIngredient.getIntegratedCircuit(finalI);
                         item.setCount(guiData.getUsedItemStack().getCount());
                         circuitPreview.setItem(item);
+                        if (Interactable.hasShiftDown()) panel.animateClose();
                         guiData.getPlayer().setHeldItem(guiData.getHand(), item);
                     }));
         }
@@ -91,8 +96,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                         .syncHandler("config", index));
             }
         }
-        return GTGuis.createPanel(guiData.getUsedItemStack(), 176, 120)
-                .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
+        return panel.child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
                 .child(circuitPreview.asIcon().size(16).asWidget()
                         .size(18)
                         .top(19).alignX(0.5f)
@@ -112,5 +116,10 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     @Override
     public void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         subItems.add(itemStack.copy());
+    }
+
+    @Override
+    public int getModelIndex(ItemStack itemStack, int maxIndex) {
+        return IntCircuitIngredient.getCircuitConfiguration(itemStack);
     }
 }

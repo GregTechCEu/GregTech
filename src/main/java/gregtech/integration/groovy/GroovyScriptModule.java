@@ -33,6 +33,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -93,8 +94,9 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     @SubscribeEvent
     @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     public static void afterScriptLoad(ScriptRunEvent.Post event) {
-        // Not Needed if JEI Module is enabled
-        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI))
+        // Not Needed if JEI Module is enabled, unless we are on server (JEI Plugin Register doesn't take place)
+        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI) ||
+                FMLCommonHandler.instance().getSide().isServer())
             GTRecipeOreInput.refreshStackCache();
     }
 
@@ -313,9 +315,11 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         ExpansionHelper.mixinMethod(RecipeBuilder.class, GroovyExpansions.class, "property");
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "materialBuilder");
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "toolBuilder");
+        ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "overrideToolBuilder");
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "fluidBuilder");
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "addElement");
         ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "toolBuilder");
+        ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "overrideToolBuilder");
         ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "fluidBuilder");
         ExpansionHelper.mixinMethod(FluidBuilder.class, GroovyExpansions.class, "acidic");
     }

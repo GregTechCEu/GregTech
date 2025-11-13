@@ -40,13 +40,12 @@ public class RecipeMapTest {
 
     @BeforeEach
     public void setupRecipes() {
-        map = new RecipeMap<>("test_reactor_" + mapId++,
-                2,
-                2,
-                3,
-                2,
-                new SimpleRecipeBuilder().EUt(30),
-                false);
+        map = new RecipeMapBuilder<>("test_reactor_" + mapId++, new SimpleRecipeBuilder().EUt(30))
+                .itemInputs(2)
+                .itemOutputs(2)
+                .fluidInputs(3)
+                .fluidOutputs(2)
+                .build();
 
         map.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.COBBLESTONE))
@@ -257,7 +256,10 @@ public class RecipeMapTest {
     @Test
     public void wildcardInput() {
         // test that all variants of a wildcard input can be used to find a recipe
-        RecipeMap<?> recipeMap = new RecipeMap<>("test", 1, 4, 0, 0, new SimpleRecipeBuilder(), false);
+        RecipeMap<?> recipeMap = new RecipeMapBuilder<>("test", new SimpleRecipeBuilder())
+                .itemInputs(1)
+                .itemOutputs(4)
+                .build();
         recipeMap.recipeBuilder()
                 .inputs(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, GTValues.W))
                 .outputs(new ItemStack(Blocks.COBBLESTONE, 1))

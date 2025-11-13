@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.XSTR;
+import gregtech.api.util.random.XoShiRo256PlusPlusRandom;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.core.network.packets.PacketFluidVeinList;
 
@@ -82,7 +82,8 @@ public class BedrockFluidVeinHandler {
                 }
             }
 
-            Random random = new XSTR(31L * 31 * chunkX + chunkZ * 31L + Long.hashCode(world.getSeed()));
+            Random random = new XoShiRo256PlusPlusRandom(
+                    31L * 31 * chunkX + chunkZ * 31L + Long.hashCode(world.getSeed()));
 
             int maximumYield = 0;
             if (definition != null) {

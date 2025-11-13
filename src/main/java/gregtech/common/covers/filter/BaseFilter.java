@@ -21,7 +21,6 @@ import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseFilter implements IFilter {
 
@@ -64,14 +63,14 @@ public abstract class BaseFilter implements IFilter {
         return this.getFilterReader().getContainer();
     }
 
-    public static @Nullable BaseFilter getFilterFromStack(ItemStack stack) {
+    public static @NotNull BaseFilter getFilterFromStack(ItemStack stack) {
         if (stack.getItem() instanceof MetaItem<?>metaItem) {
             var metaValueItem = metaItem.getItem(stack);
             var factory = metaValueItem == null ? null : metaValueItem.getFilterFactory();
             if (factory != null)
                 return factory.create(stack);
         }
-        return null;
+        return ERROR_FILTER;
     }
 
     public final void setBlacklistFilter(boolean blacklistFilter) {
@@ -144,7 +143,8 @@ public abstract class BaseFilter implements IFilter {
                         .value(new BooleanSyncValue(
                                 this::isBlacklistFilter,
                                 this::setBlacklistFilter))
-                        .textureGetter(state -> GTGuiTextures.BUTTON_BLACKLIST[state])
+                        .stateBackground(0, GTGuiTextures.BUTTON_BLACKLIST[0])
+                        .stateBackground(1, GTGuiTextures.BUTTON_BLACKLIST[1])
                         .addTooltip(0, IKey.lang("cover.filter.blacklist.disabled"))
                         .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")));
     }

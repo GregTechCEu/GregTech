@@ -63,6 +63,14 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
         return modelLocation;
     }
 
+    public ModelResourceLocation getActiveModelLocation() {
+        return activeModelLocation;
+    }
+
+    public ModelResourceLocation getInactiveModelLocation() {
+        return inactiveModelLocation;
+    }
+
     protected boolean getBloomConfig() {
         return bloomConfig == null || bloomConfig.getAsBoolean();
     }

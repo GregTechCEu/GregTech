@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
@@ -22,6 +23,8 @@ import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Contains utilities for recipe compatibility with scripting mods
@@ -51,7 +54,11 @@ public final class RecipeCompatUtil {
     public static String getMetaItemId(ItemStack item) {
         if (item.getItem() instanceof MetaItem) {
             MetaItem<?>.MetaValueItem metaValueItem = ((MetaItem<?>) item.getItem()).getItem(item);
-            if (metaValueItem != null) return metaValueItem.unlocalizedName;
+            if (metaValueItem != null) {
+                String nameSpace = Objects.requireNonNull(metaValueItem.getMetaItem().getRegistryName()).getNamespace();
+                String name = metaValueItem.unlocalizedName;
+                return nameSpace.equals(GTValues.MODID) ? name : (nameSpace + ":" + name);
+            }
         }
         if (item.getItem() instanceof ItemBlock) {
             Block block = ((ItemBlock) item.getItem()).getBlock();
@@ -62,14 +69,17 @@ public final class RecipeCompatUtil {
                             mte.metaTileEntityId.getPath() : mte.metaTileEntityId.toString());
                 }
             }
-            if (block instanceof BlockCompressed) {
-                return "block" + ((BlockCompressed) block).getGtMaterial(item).toCamelCaseString();
+            if (block instanceof BlockCompressed blockCompressed) {
+                Material material = blockCompressed.getGtMaterial(item);
+                return getRLPrefix(material) + "block" + material.toCamelCaseString();
             }
-            if (block instanceof BlockFrame) {
-                return "frame" + ((BlockFrame) block).getGtMaterial(item).toCamelCaseString();
+            if (block instanceof BlockFrame blockFrame) {
+                Material material = blockFrame.getGtMaterial(item);
+                return getRLPrefix(material) + "frame" + material.toCamelCaseString();
             }
-            if (block instanceof BlockMaterialPipe blockMaterialPipe) {
-                return blockMaterialPipe.getPrefix().name + blockMaterialPipe.getItemMaterial(item).toCamelCaseString();
+            if (block instanceof BlockMaterialPipe<?, ?, ?>blockMaterialPipe) {
+                Material material = blockMaterialPipe.getItemMaterial(item);
+                return getRLPrefix(material) + blockMaterialPipe.getPrefix().name + material.toCamelCaseString();
             }
         }
         return null;
@@ -95,6 +105,10 @@ public final class RecipeCompatUtil {
             return TweakerType.CRAFTTWEAKER;
         }
         return TweakerType.NONE;
+    }
+
+    public static String getRLPrefix(Material material) {
+        return material.getModid().equals(GTValues.MODID) ? "" : material.getModid() + ":";
     }
 
     public static boolean isTweakerLoaded() {

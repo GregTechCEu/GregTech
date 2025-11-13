@@ -116,7 +116,6 @@ public final class CoverBehaviors {
                 CoverDetectorActivityAdvanced::new);
         registerBehavior(gregtechId("maintenance_detector"), MetaItems.COVER_MAINTENANCE_DETECTOR,
                 CoverDetectorMaintenance::new);
-        registerCover(gregtechId("crafting_table"), ItemStack.EMPTY, CoverCraftingTable::new);
         registerBehavior(gregtechId("infinite_water"), MetaItems.COVER_INFINITE_WATER, CoverInfiniteWater::new);
         registerBehavior(gregtechId("ender_fluid_link"), MetaItems.COVER_ENDER_FLUID_LINK, CoverEnderFluidLink::new);
         registerBehavior(gregtechId("cover.digital"), MetaItems.COVER_DIGITAL_INTERFACE, CoverDigitalInterface::new);

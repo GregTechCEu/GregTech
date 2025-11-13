@@ -14,8 +14,8 @@ import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -26,7 +26,7 @@ import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -41,14 +41,13 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -115,63 +114,64 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
         ProcessingArrayWorkable logic = (ProcessingArrayWorkable) recipeMapWorkable;
 
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
-                .addEnergyTierLine(logic.currentMachineStack == ItemStack.EMPTY ? -1 : logic.machineTier)
-                .addCustom(tl -> {
-                    if (isStructureFormed()) {
+        builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .addEnergyUsageLine(this.getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addCustom((manager, syncer) -> {
+                    if (!isStructureFormed()) return;
 
-                        // Machine mode text
-                        // Shared text components for both states
-                        ITextComponent maxMachinesText = TextComponentUtil.stringWithColor(TextFormatting.DARK_PURPLE,
-                                Integer.toString(getMachineLimit()));
-                        maxMachinesText = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                                "gregtech.machine.machine_hatch.machines_max", maxMachinesText);
+                    // Machine mode text
+                    // Shared text components for both states
+                    IKey maxMachinesText = KeyUtil.number(TextFormatting.DARK_PURPLE,
+                            syncer.syncInt(getMachineLimit()));
+                    maxMachinesText = KeyUtil.lang(TextFormatting.GRAY,
+                            "gregtech.machine.machine_hatch.machines_max", maxMachinesText);
 
-                        if (logic.activeRecipeMap == null) {
-                            // No machines in hatch
-                            ITextComponent noneText = TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
-                                    "gregtech.machine.machine_hatch.machines_none");
-                            ITextComponent bodyText = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                                    "gregtech.machine.machine_hatch.machines", noneText);
-                            ITextComponent hoverText1 = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                                    "gregtech.machine.machine_hatch.machines_none_hover");
-                            tl.add(TextComponentUtil.setHover(bodyText, hoverText1, maxMachinesText));
-                        } else {
-                            // Some amount of machines in hatch
-                            String key = logic.getMachineStack().getTranslationKey();
-                            ITextComponent mapText = TextComponentUtil.translationWithColor(TextFormatting.DARK_PURPLE,
-                                    key + ".name");
-                            mapText = TextComponentUtil.translationWithColor(
-                                    TextFormatting.DARK_PURPLE,
-                                    "%sx %s",
-                                    logic.getParallelLimit(), mapText);
-                            ITextComponent bodyText = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                                    "gregtech.machine.machine_hatch.machines", mapText);
-                            ITextComponent voltageName = new TextComponentString(GTValues.VNF[logic.machineTier]);
-                            int amps = logic.getMachineStack().getCount();
-                            String energyFormatted = TextFormattingUtil
-                                    .formatNumbers(GTValues.V[logic.machineTier] * amps);
-                            ITextComponent hoverText = TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.machine.machine_hatch.machines_max_eut",
-                                    energyFormatted, amps, voltageName);
-                            tl.add(TextComponentUtil.setHover(bodyText, hoverText, maxMachinesText));
-                        }
+                    if (syncer.syncBoolean(logic.activeRecipeMap == null)) {
+                        // No machines in hatch
+                        IKey noneText = KeyUtil.lang(TextFormatting.YELLOW,
+                                "gregtech.machine.machine_hatch.machines_none");
+                        IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.machine.machine_hatch.machines", noneText);
+                        IKey hoverText1 = KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.machine.machine_hatch.machines_none_hover");
+                        manager.add(KeyUtil.setHover(bodyText, hoverText1, maxMachinesText));
+                    } else {
+                        // Some amount of machines in hatch
+                        String key = syncer.syncString(logic.getMachineStack().getTranslationKey());
+                        IKey mapText = KeyUtil.lang(TextFormatting.DARK_PURPLE,
+                                key + ".name");
+                        mapText = KeyUtil.string(
+                                TextFormatting.DARK_PURPLE,
+                                "%sx %s",
+                                syncer.syncInt(logic.getParallelLimit()), mapText);
+                        IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.machine.machine_hatch.machines", mapText);
+                        int tier = syncer.syncInt(logic.machineTier);
+                        IKey voltageName = KeyUtil.string(GTValues.VNF[tier]);
+                        int amps = syncer.syncInt(logic.getMachineStack().getCount());
+                        String energyFormatted = TextFormattingUtil
+                                .formatNumbers(GTValues.V[tier] * amps);
+                        IKey hoverText = KeyUtil.lang(
+                                TextFormatting.GRAY,
+                                "gregtech.machine.machine_hatch.machines_max_eut",
+                                energyFormatted, amps, voltageName);
+                        manager.add(KeyUtil.setHover(bodyText, hoverText, maxMachinesText));
+                    }
 
-                        // Hatch locked status
-                        if (isActive()) {
-                            tl.add(TextComponentUtil.translationWithColor(TextFormatting.DARK_RED,
-                                    "gregtech.machine.machine_hatch.locked"));
-                        }
+                    // Hatch locked status
+                    if (syncer.syncBoolean(isActive())) {
+                        manager.add(KeyUtil.lang(TextFormatting.DARK_RED,
+                                "gregtech.machine.machine_hatch.locked"));
                     }
                 })
+                .addParallelsLine(recipeMapWorkable.getParallelLimit())
                 .addWorkingStatusLine()
-                .addProgressLine(recipeMapWorkable.getProgressPercent());
+                .addProgressLine(recipeMapWorkable.getProgress(), recipeMapWorkable.getMaxProgress())
+                .addRecipeOutputLine(recipeMapWorkable);
     }
 
     @SideOnly(Side.CLIENT)
@@ -239,10 +239,17 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
-    public void setCleanroom(ICleanroomProvider provider) {
+    public void setCleanroom(@NotNull ICleanroomProvider provider) {
         super.setCleanroom(provider);
 
         // Sync Cleanroom Change to Internal Workable MTE
+        ((ProcessingArrayWorkable) this.recipeMapWorkable).updateCleanroom();
+    }
+
+    @Override
+    public void unsetCleanroom() {
+        super.unsetCleanroom();
+
         ((ProcessingArrayWorkable) this.recipeMapWorkable).updateCleanroom();
     }
 
@@ -269,8 +276,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             super.invalidate();
 
             // invalidate mte's cleanroom reference
-            if (mte != null && mte instanceof ICleanroomReceiver) {
-                ((ICleanroomReceiver) mte).setCleanroom(null);
+            if (mte != null && mte instanceof ICleanroomReceiver cleanroomMTE) {
+                cleanroomMTE.unsetCleanroom();
             }
 
             // Reset locally cached variables upon invalidation
@@ -284,7 +291,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
         /**
          * Checks if a provided Recipe Map is valid to be used in the processing array
-         * Will filter out anything in the config blacklist, and also any non-singleblock machines
+         * Will filter out anything in the config blacklist, and also any non-single block machines
          *
          * @param recipeMap The recipeMap to check
          * @return {@code true} if the provided recipeMap is valid for use
@@ -360,7 +367,11 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                     receiver.setCleanroom(DUMMY_CLEANROOM);
                 } else {
                     ICleanroomProvider provider = ((RecipeMapMultiblockController) metaTileEntity).getCleanroom();
-                    if (provider != null) receiver.setCleanroom(provider);
+                    if (provider == null) {
+                        receiver.unsetCleanroom();
+                    } else {
+                        receiver.setCleanroom(provider);
+                    }
                 }
             }
         }

@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
-import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
 import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.recipes.builders.CircuitAssemblerRecipeBuilder;
@@ -29,15 +28,12 @@ import gregtech.api.recipes.ui.impl.CrackerUnitUI;
 import gregtech.api.recipes.ui.impl.DistillationTowerUI;
 import gregtech.api.recipes.ui.impl.FormingPressUI;
 import gregtech.api.recipes.ui.impl.ResearchStationUI;
-import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTUtility;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemStack;
 
 import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -144,8 +140,8 @@ public final class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<AssemblerRecipeBuilder> ASSEMBLER_RECIPES = new RecipeMapBuilder<>("assembler",
-            new AssemblerRecipeBuilder())
+    public static final RecipeMap<SimpleRecipeBuilder> ASSEMBLER_RECIPES = new RecipeMapBuilder<>("assembler",
+            new SimpleRecipeBuilder())
                     .itemInputs(9)
                     .itemOutputs(1)
                     .fluidInputs(1)
@@ -160,17 +156,6 @@ public final class RecipeMaps {
 
                             recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.Tin.getFluid(amount * 2))
                                     .buildAndRegister();
-                        }
-                    })
-                    .onBuild(gregtechId("assembler_recycling"), recipeBuilder -> {
-                        if (recipeBuilder.isWithRecycling()) {
-                            // ignore input fluids for recycling
-                            ItemStack outputStack = recipeBuilder.getOutputs().get(0);
-                            ItemMaterialInfo info = RecyclingHandler.getRecyclingIngredients(recipeBuilder.getInputs(),
-                                    outputStack.getCount());
-                            if (info != null) {
-                                OreDictUnifier.registerOre(outputStack, info);
-                            }
                         }
                     })
                     .build();

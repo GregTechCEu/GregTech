@@ -2,8 +2,6 @@ package gregtech.common.covers.filter.oreglob.impl;
 
 import gregtech.api.util.LocalizationUtils;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.Locale;
 
 interface OreGlobMessages {
@@ -102,37 +100,6 @@ interface OreGlobMessages {
     static String compileErrorUnexpectedTokenAfterEOF(String token) {
         // Unexpected token '%s' after end of expression
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "unexpected_token_after_eof", token);
-    }
-
-    // compilation flags are expected to be removed in future release
-
-    @Deprecated
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    static String compileErrorUnexpectedCompilationFlag() {
-        // Compilation flags in the middle of expression
-        return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "unexpected_compilation_flag");
-    }
-
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    static String compileErrorEmptyCompilationFlag() {
-        // No compilation flags given
-        return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "empty_compilation_flag");
-    }
-
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    static String compileErrorUnknownCompilationFlag(String flag) {
-        // Unknown compilation flag '%s'
-        return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "unknown_compilation_flag", flag);
-    }
-
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    static String compileErrorRedundantCompilationFlag(String flag) {
-        // Compilation flag '%s' written twice
-        return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "redundant_compilation_flag", flag);
     }
 
     static String compileErrorEOFAfterEscape() {

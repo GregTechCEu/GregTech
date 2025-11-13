@@ -6,24 +6,24 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.fluids.store.FluidStorageKeys;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.IProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.sync.FixedIntArraySyncValue;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.RelativeDirection;
-import gregtech.api.util.TextComponentUtil;
-import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
@@ -36,23 +36,29 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.UnaryOperator;
 
-public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockController implements IProgressBarMultiblock {
+public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockController implements ProgressBarMultiblock {
 
     private final int tier;
     private final boolean isExtreme;
     private boolean boostAllowed;
+    private boolean hasLubricant;
 
     public MetaTileEntityLargeCombustionEngine(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, RecipeMaps.COMBUSTION_GENERATOR_FUELS, tier);
@@ -68,11 +74,10 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        LargeCombustionEngineWorkableHandler recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
+        var recipeLogic = (LargeCombustionEngineWorkableHandler) recipeMapWorkable;
 
-        MultiblockDisplayText.Builder builder = MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
+        builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive() && !isDynamoFull());
 
         if (isExtreme) {
             builder.addEnergyProductionLine(GTValues.V[tier + 1], recipeLogic.getRecipeEUt());
@@ -81,34 +86,48 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         }
 
         builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
-                .addCustom(tl -> {
-                    if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
-                        String key = isExtreme ? "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
+                .addCustom((richText, syncer) -> {
+                    if (isStructureFormed() && syncer.syncBoolean(recipeLogic.isOxygenBoosted)) {
+                        String key = isExtreme ?
+                                "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
                                 "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
-                        tl.add(TextComponentUtil.translationWithColor(TextFormatting.AQUA, key));
+                        richText.add(KeyUtil.lang(TextFormatting.AQUA, key));
                     }
                 })
                 .addWorkingStatusLine();
     }
 
     @Override
-    protected void addErrorText(List<ITextComponent> textList) {
-        super.addErrorText(textList);
-        if (isStructureFormed()) {
-            if (checkIntakesObstructed()) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
+    protected void configureErrorText(MultiblockUIBuilder builder) {
+        super.configureErrorText(builder);
+        var recipeLogic = (LargeCombustionEngineWorkableHandler) recipeMapWorkable;
+
+        builder.addCustom((keyList, syncer) -> {
+            if (!isStructureFormed()) return;
+
+            if (syncer.syncBoolean(checkIntakesObstructed())) {
+                keyList.add(KeyUtil.lang(TextFormatting.RED,
                         "gregtech.multiblock.large_combustion_engine.obstructed"));
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
             }
 
-            FluidStack lubricantStack = getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE),
-                    false);
-            if (lubricantStack == null || lubricantStack.amount == 0) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
+            if (syncer.syncBoolean(!recipeLogic.checkLubricant())) {
+                keyList.add(KeyUtil.lang(TextFormatting.RED,
                         "gregtech.multiblock.large_combustion_engine.no_lubricant"));
             }
-        }
+        });
+    }
+
+    @Override
+    protected void configureWarningText(MultiblockUIBuilder builder) {
+        super.configureWarningText(builder);
+        builder.addCustom((manager, syncer) -> {
+            if (syncer.syncBoolean(this::isDynamoFull)) {
+                manager.add(KeyUtil.lang(TextFormatting.YELLOW,
+                        "gregtech.multiblock.large_combustion_engine.dynamo_hatch_full"));
+            }
+        });
     }
 
     @Override
@@ -126,7 +145,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
-    protected BlockPattern createStructurePattern() {
+    protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XDX", "XXX")
                 .aisle("XCX", "CGC", "XCX")
@@ -216,7 +235,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return false;
     }
 
@@ -225,107 +244,129 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
-    public int getNumProgressBars() {
+    public int getProgressBarCount() {
         return 3;
     }
 
     @Override
-    public double getFillPercentage(int index) {
-        if (index == 0) {
-            int[] fuelAmount = new int[2];
-            if (getInputFluidInventory() != null) {
-                MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
-                if (recipeLogic.getInputFluidStack() != null) {
-                    FluidStack testStack = recipeLogic.getInputFluidStack().copy();
-                    testStack.amount = Integer.MAX_VALUE;
-                    fuelAmount = getTotalFluidAmount(testStack, getInputFluidInventory());
-                }
+    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
+        FixedIntArraySyncValue fuelValue = new FixedIntArraySyncValue(this::getFuelAmount, null);
+        syncManager.syncValue("fuel_amount", fuelValue);
+        StringSyncValue fuelNameValue = new StringSyncValue(() -> {
+            FluidStack stack = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getInputFluidStack();
+            if (stack == null) {
+                return null;
             }
-            return fuelAmount[1] != 0 ? 1.0 * fuelAmount[0] / fuelAmount[1] : 0;
-        } else if (index == 1) {
-            int[] lubricantAmount = new int[2];
-            if (getInputFluidInventory() != null) {
-                lubricantAmount = getTotalFluidAmount(Materials.Lubricant.getFluid(Integer.MAX_VALUE),
-                        getInputFluidInventory());
+            Fluid fluid = stack.getFluid();
+            if (fluid == null) {
+                return null;
             }
-            return lubricantAmount[1] != 0 ? 1.0 * lubricantAmount[0] / lubricantAmount[1] : 0;
-        } else {
-            int[] oxygenAmount = new int[2];
-            if (getInputFluidInventory() != null) {
-                if (isBoostAllowed()) {
-                    FluidStack oxygenStack = isExtreme ?
-                            Materials.Oxygen.getFluid(FluidStorageKeys.LIQUID, Integer.MAX_VALUE) :
-                            Materials.Oxygen.getFluid(Integer.MAX_VALUE);
-                    oxygenAmount = getTotalFluidAmount(oxygenStack, getInputFluidInventory());
-                }
-            }
-            return oxygenAmount[1] != 0 ? 1.0 * oxygenAmount[0] / oxygenAmount[1] : 0;
-        }
+            return fluid.getName();
+        });
+        syncManager.syncValue("fuel_name", fuelNameValue);
+        FixedIntArraySyncValue lubricantValue = new FixedIntArraySyncValue(this::getLubricantAmount, null);
+        syncManager.syncValue("lubricant_amount", lubricantValue);
+        FixedIntArraySyncValue oxygenValue = new FixedIntArraySyncValue(this::getOxygenAmount, null);
+        syncManager.syncValue("oxygen_amount", oxygenValue);
+        BooleanSyncValue boostValue = new BooleanSyncValue(this::isBoostAllowed);
+        syncManager.syncValue("boost_allowed", boostValue);
+
+        bars.add(barTest -> barTest
+                .progress(() -> fuelValue.getValue(1) == 0 ? 0 :
+                        1.0 * fuelValue.getValue(0) / fuelValue.getValue(1))
+                .texture(GTGuiTextures.PROGRESS_BAR_LCE_FUEL)
+                .tooltipBuilder(t -> createFuelTooltip(t, fuelValue, fuelNameValue)));
+
+        bars.add(barTest -> barTest
+                .progress(() -> lubricantValue.getValue(1) == 0 ? 0 :
+                        1.0 * lubricantValue.getValue(0) / lubricantValue.getValue(1))
+                .texture(GTGuiTextures.PROGRESS_BAR_LCE_LUBRICANT)
+                .tooltipBuilder(t -> {
+                    if (isStructureFormed()) {
+                        if (lubricantValue.getValue(0) == 0) {
+                            t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.no_lubricant"));
+                        } else {
+                            t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.lubricant_amount",
+                                    lubricantValue.getValue(0), lubricantValue.getValue(1)));
+                        }
+                    } else {
+                        t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                    }
+                }));
+
+        bars.add(barTest -> barTest
+                .progress(() -> oxygenValue.getValue(1) == 0 ? 0 :
+                        1.0 * oxygenValue.getValue(0) / oxygenValue.getValue(1))
+                .texture(GTGuiTextures.PROGRESS_BAR_LCE_OXYGEN)
+                .tooltipBuilder(t -> {
+                    if (isStructureFormed()) {
+                        if (boostValue.getBoolValue()) {
+                            if (oxygenValue.getValue(0) == 0) {
+                                t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.oxygen_none"));
+                            } else if (isExtreme) {
+                                t.addLine(IKey.lang(
+                                        "gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount",
+                                        oxygenValue.getValue(0), oxygenValue.getValue(1)));
+                            } else {
+                                t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.oxygen_amount",
+                                        oxygenValue.getValue(0), oxygenValue.getValue(1)));
+                            }
+                        } else if (isExtreme) {
+                            t.addLine(IKey.lang(
+                                    "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boost_disallowed"));
+                        } else {
+                            t.addLine(IKey.lang(
+                                    "gregtech.multiblock.large_combustion_engine.oxygen_boost_disallowed"));
+                        }
+                    } else {
+                        t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                    }
+                }));
     }
 
-    @Override
-    public TextureArea getProgressBarTexture(int index) {
-        if (index == 0) {
-            return GuiTextures.PROGRESS_BAR_LCE_FUEL;
-        } else if (index == 1) {
-            return GuiTextures.PROGRESS_BAR_LCE_LUBRICANT;
-        } else {
-            return GuiTextures.PROGRESS_BAR_LCE_OXYGEN;
+    /**
+     * @return an array of [fuel stored, fuel capacity]
+     */
+    private int[] getFuelAmount() {
+        if (getInputFluidInventory() != null) {
+            MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
+            if (recipeLogic.getInputFluidStack() != null) {
+                FluidStack testStack = recipeLogic.getInputFluidStack().copy();
+                testStack.amount = Integer.MAX_VALUE;
+                return getTotalFluidAmount(testStack, getInputFluidInventory());
+            }
         }
+        return new int[2];
     }
 
-    @Override
-    public void addBarHoverText(List<ITextComponent> hoverList, int index) {
-        if (index == 0) {
-            addFuelText(hoverList);
-        } else if (index == 1) {
-            // Lubricant
-            int lubricantStored = 0;
-            int lubricantCapacity = 0;
-            if (isStructureFormed() && getInputFluidInventory() != null) {
-                // Hunt for tanks with lubricant in them
-                int[] lubricantAmount = getTotalFluidAmount(Materials.Lubricant.getFluid(Integer.MAX_VALUE),
-                        getInputFluidInventory());
-                lubricantStored = lubricantAmount[0];
-                lubricantCapacity = lubricantAmount[1];
-            }
+    /**
+     * @return an array of [lubricant stored, lubricant capacity]
+     */
+    private int[] getLubricantAmount() {
+        if (getInputFluidInventory() != null) {
+            return getTotalFluidAmount(Materials.Lubricant.getFluid(Integer.MAX_VALUE),
+                    getInputFluidInventory());
+        }
+        return new int[2];
+    }
 
-            ITextComponent lubricantInfo = TextComponentUtil.stringWithColor(
-                    TextFormatting.GOLD,
-                    TextFormattingUtil.formatNumbers(lubricantStored) + " / " +
-                            TextFormattingUtil.formatNumbers(lubricantCapacity) + " L");
-            hoverList.add(TextComponentUtil.translationWithColor(
-                    TextFormatting.GRAY,
-                    "gregtech.multiblock.large_combustion_engine.lubricant_amount",
-                    lubricantInfo));
-        } else {
-            // Oxygen/LOX
+    /**
+     * @return an array of [oxygen stored, oxygen capacity]
+     */
+    private int[] getOxygenAmount() {
+        if (getInputFluidInventory() != null) {
             if (isBoostAllowed()) {
-                int oxygenStored = 0;
-                int oxygenCapacity = 0;
-                if (isStructureFormed() && getInputFluidInventory() != null) {
-                    // Hunt for tanks with Oxygen or LOX (depending on tier) in them
-                    FluidStack oxygenStack = isExtreme ?
-                            Materials.Oxygen.getFluid(FluidStorageKeys.LIQUID, Integer.MAX_VALUE) :
-                            Materials.Oxygen.getFluid(Integer.MAX_VALUE);
-                    int[] oxygenAmount = getTotalFluidAmount(oxygenStack, getInputFluidInventory());
-                    oxygenStored = oxygenAmount[0];
-                    oxygenCapacity = oxygenAmount[1];
-                }
-
-                ITextComponent oxygenInfo = TextComponentUtil.stringWithColor(
-                        TextFormatting.AQUA,
-                        TextFormattingUtil.formatNumbers(oxygenStored) + " / " +
-                                TextFormattingUtil.formatNumbers(oxygenCapacity) + " L");
-                String key = isExtreme ? "gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount" :
-                        "gregtech.multiblock.large_combustion_engine.oxygen_amount";
-                hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, key, oxygenInfo));
-            } else {
-                String key = isExtreme ? "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boost_disallowed" :
-                        "gregtech.multiblock.large_combustion_engine.oxygen_boost_disallowed";
-                hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, key));
+                FluidStack oxygenStack = isExtreme ?
+                        Materials.Oxygen.getFluid(FluidStorageKeys.LIQUID, Integer.MAX_VALUE) :
+                        Materials.Oxygen.getFluid(Integer.MAX_VALUE);
+                return getTotalFluidAmount(oxygenStack, getInputFluidInventory());
             }
         }
+        return new int[2];
+    }
+
+    public boolean isDynamoFull() {
+        return getEnergyContainer().getEnergyCanBeInserted() < recipeMapWorkable.getRecipeEUt();
     }
 
     private static class LargeCombustionEngineWorkableHandler extends MultiblockFuelRecipeLogic {

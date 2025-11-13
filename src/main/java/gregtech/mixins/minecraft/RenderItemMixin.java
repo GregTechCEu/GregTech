@@ -1,13 +1,18 @@
 package gregtech.mixins.minecraft;
 
+import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.util.Mods;
-import gregtech.asm.hooks.RenderItemHooks;
+import gregtech.client.renderer.handler.LampItemOverlayRenderer;
+import gregtech.client.utils.ToolChargeBarRenderer;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,7 +25,7 @@ public class RenderItemMixin {
     private void renderItemOverlayIntoGUIInject(FontRenderer fr, ItemStack stack, int xPosition, int yPosition,
                                                 String text, CallbackInfo ci) {
         if (!stack.isEmpty()) {
-            RenderItemHooks.renderLampOverlay(stack, xPosition, yPosition);
+            gregTechCEu$renderLampOverlay(stack, xPosition, yPosition);
         }
     }
 
@@ -32,7 +37,24 @@ public class RenderItemMixin {
     public void showDurabilityBarMixin(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text,
                                        CallbackInfo ci) {
         if (!Mods.EnderCore.isModLoaded()) {
-            RenderItemHooks.renderElectricBar(stack, xPosition, yPosition);
+            gregTechCEu$renderElectricBar(stack, xPosition, yPosition);
+        }
+    }
+
+    @Unique
+    private static void gregTechCEu$renderElectricBar(@NotNull ItemStack stack, int xPosition, int yPosition) {
+        if (stack.getItem() instanceof IGTTool) {
+            ToolChargeBarRenderer.renderBarsTool((IGTTool) stack.getItem(), stack, xPosition, yPosition);
+        } else if (stack.getItem() instanceof MetaItem) {
+            ToolChargeBarRenderer.renderBarsItem((MetaItem<?>) stack.getItem(), stack, xPosition, yPosition);
+        }
+    }
+
+    @Unique
+    private static void gregTechCEu$renderLampOverlay(@NotNull ItemStack stack, int xPosition, int yPosition) {
+        LampItemOverlayRenderer.OverlayType overlayType = LampItemOverlayRenderer.getOverlayType(stack);
+        if (overlayType != LampItemOverlayRenderer.OverlayType.NONE) {
+            LampItemOverlayRenderer.renderOverlay(overlayType, xPosition, yPosition);
         }
     }
 }

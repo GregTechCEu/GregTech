@@ -5,7 +5,10 @@ import gregtech.api.recipes.RecipeMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 public final class GTRecipeCategory {
@@ -18,6 +21,7 @@ public final class GTRecipeCategory {
     private final String translationKey;
     private final RecipeMap<?> recipeMap;
     private Object icon;
+    private boolean sortToBack;
 
     /**
      * Create a GTRecipeCategory
@@ -44,11 +48,18 @@ public final class GTRecipeCategory {
         return categories.get(categoryName);
     }
 
+    /**
+     * @return all of the GTRecipeCategory instances
+     */
+    public static @NotNull @UnmodifiableView Collection<GTRecipeCategory> getCategories() {
+        return Collections.unmodifiableCollection(categories.values());
+    }
+
     private GTRecipeCategory(@NotNull String modid, @NotNull String name, @NotNull String translationKey,
                              @NotNull RecipeMap<?> recipeMap) {
         this.modid = modid;
         this.name = name;
-        this.uniqueID = modid + ':' + this.name;
+        this.uniqueID = modid + '.' + this.name;
         this.translationKey = translationKey;
         this.recipeMap = recipeMap;
     }
@@ -85,7 +96,7 @@ public final class GTRecipeCategory {
      * @param icon the icon to use as a JEI category
      * @return this
      */
-    public GTRecipeCategory jeiIcon(@Nullable Object icon) {
+    public @NotNull GTRecipeCategory jeiIcon(@Nullable Object icon) {
         this.icon = icon;
         return this;
     }
@@ -93,6 +104,19 @@ public final class GTRecipeCategory {
     @Nullable
     public Object getJEIIcon() {
         return this.icon;
+    }
+
+    /**
+     * @param sortToBack if the category should be at the end of the JEI category list
+     * @return this
+     */
+    public @NotNull GTRecipeCategory jeiSortToBack(boolean sortToBack) {
+        this.sortToBack = sortToBack;
+        return this;
+    }
+
+    public boolean shouldSortToBackJEI() {
+        return sortToBack;
     }
 
     @Override

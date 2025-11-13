@@ -1,5 +1,6 @@
 package gregtech.api.unification.material;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidState;
@@ -7,11 +8,13 @@ import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.ExtraToolProperty;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.GemProperty;
@@ -19,14 +22,15 @@ import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.IngotProperty;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.material.properties.MaterialProperties;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PolymerProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.RotorProperty;
-import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.material.properties.WoodProperty;
 import gregtech.api.unification.material.registry.MaterialRegistry;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
@@ -34,6 +38,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -41,9 +46,10 @@ import net.minecraftforge.fluids.FluidStack;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
-import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 import stanhebben.zenscript.annotations.OperatorType;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
@@ -277,6 +283,27 @@ public class Material implements Comparable<Material> {
         return new FluidStack(getFluid(key), amount);
     }
 
+    /**
+     * Gets the item form of this material in the form of an {@link OrePrefix}
+     * 
+     * @param prefix the ore prefix to use
+     * @return an item stack of the ore prefix using this material
+     */
+    public @NotNull ItemStack getItemForm(@NotNull OrePrefix prefix) {
+        return OreDictUnifier.get(prefix, this);
+    }
+
+    /**
+     * Gets the item form of this material in the form of an {@link OrePrefix}
+     * 
+     * @param prefix the ore prefix to use
+     * @param count  the amount the ItemStack will have
+     * @return an item stack of the ore prefix using this material
+     */
+    public @NotNull ItemStack getItemForm(@NotNull OrePrefix prefix, int count) {
+        return OreDictUnifier.get(prefix, this, count);
+    }
+
     public int getBlockHarvestLevel() {
         if (!hasProperty(PropertyKey.DUST)) {
             throw new IllegalArgumentException(
@@ -367,6 +394,26 @@ public class Material implements Comparable<Material> {
     public int getBlastTemperature() {
         BlastProperty prop = properties.getProperty(PropertyKey.BLAST);
         return prop == null ? 0 : prop.getBlastTemperature();
+    }
+
+    @ZenGetter("workingTier")
+    public int getWorkingTier() {
+        return materialInfo.workingTier;
+    }
+
+    @ZenMethod
+    public void setWorkingTier(int workingTier) {
+        if (workingTier < 0) {
+            throw new IllegalArgumentException(
+                    "Cannot set working tier for material " + materialInfo.resourceLocation + "to less than 0 (ULV)!");
+        }
+        if (workingTier > GTValues.MAX) {
+            throw new IllegalArgumentException(
+                    "Cannot set working tier for material " + materialInfo.resourceLocation +
+                            "to greater than 14 (MAX)!");
+
+        }
+        materialInfo.workingTier = workingTier;
     }
 
     public FluidStack getPlasma(int amount) {
@@ -472,6 +519,18 @@ public class Material implements Comparable<Material> {
     @NotNull
     public MaterialRegistry getRegistry() {
         return GregTechAPI.materialManager.getRegistry(getModid());
+    }
+
+    /**
+     * Create a new {@link Material.Builder}.
+     *
+     * @param id               The MetaItemSubID for this Material. Must be unique to your mods material registry.
+     * @param resourceLocation The ModId and Name of this Material. Will be formatted as "<modid>.material.<name>" for
+     *                         the Translation Key.
+     */
+    @Contract("_, _ -> new")
+    public static @NotNull Builder builder(int id, @NotNull ResourceLocation resourceLocation) {
+        return new Builder(id, resourceLocation);
     }
 
     /**
@@ -637,7 +696,7 @@ public class Material implements Comparable<Material> {
          * Will be created with no Burn Time (Furnace Fuel).
          *
          * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     If this Material also has a {@link MaterialToolProperty}, this value will
          *                     also be used to determine the tool's Mining Level.
          * @throws IllegalArgumentException If a {@link DustProperty} has already been added to this Material.
          */
@@ -649,7 +708,7 @@ public class Material implements Comparable<Material> {
          * Add a {@link DustProperty} to this Material.
          *
          * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     If this Material also has a {@link MaterialToolProperty}, this value will
          *                     also be used to determine the tool's Mining Level.
          * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.
          * @throws IllegalArgumentException If a {@link DustProperty} has already been added to this Material.
@@ -672,7 +731,7 @@ public class Material implements Comparable<Material> {
          * Will be created with a Burn Time of 300 (Furnace Fuel).
          *
          * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     If this Material also has a {@link MaterialToolProperty}, this value will
          *                     also be used to determine the tool's Mining Level.
          */
         public Builder wood(int harvestLevel) {
@@ -683,7 +742,7 @@ public class Material implements Comparable<Material> {
          * Add a {@link WoodProperty} to this Material.
          *
          * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     If this Material also has a {@link MaterialToolProperty}, this value will
          *                     also be used to determine the tool's Mining Level.
          * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.
          */
@@ -711,7 +770,7 @@ public class Material implements Comparable<Material> {
          * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
          *
          * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require a iron tool.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     If this Material also has a {@link MaterialToolProperty}, this value will
          *                     also be used to determine the tool's Mining level (-1). So 2 will make the tool harvest
          *                     diamonds.<br>
          *                     If this Material already had a Harvest Level defined, it will be overridden.
@@ -726,7 +785,7 @@ public class Material implements Comparable<Material> {
          * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
          *
          * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require a iron tool.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     If this Material also has a {@link MaterialToolProperty}, this value will
          *                     also be used to determine the tool's Mining level (-1). So 2 will make the tool harvest
          *                     diamonds.<br>
          *                     If this Material already had a Harvest Level defined, it will be overridden.
@@ -763,7 +822,7 @@ public class Material implements Comparable<Material> {
          * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
          *
          * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     If this Material also has a {@link MaterialToolProperty}, this value will
          *                     also be used to determine the tool's Mining level.<br>
          *                     If this Material already had a Harvest Level defined, it will be overridden.
          * @throws IllegalArgumentException If a {@link GemProperty} has already been added to this Material.
@@ -777,7 +836,7 @@ public class Material implements Comparable<Material> {
          * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
          *
          * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     If this Material also has a {@link MaterialToolProperty}, this value will
          *                     also be used to determine the tool's Mining level.<br>
          *                     If this Material already had a Harvest Level defined, it will be overridden.
          * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.<br>
@@ -812,7 +871,7 @@ public class Material implements Comparable<Material> {
          * Will have a burn time of 0
          *
          * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     If this Material also has a {@link MaterialToolProperty}, this value will
          *                     also be used to determine the tool's Mining level.<br>
          *                     If this Material already had a Harvest Level defined, it will be overridden.
          * @throws IllegalArgumentException If an {@link PolymerProperty} has already been added to this Material.
@@ -845,6 +904,20 @@ public class Material implements Comparable<Material> {
         public Builder color(int color) {
             this.materialInfo.color = color;
             return this;
+        }
+
+        /**
+         * Set the color of this Material.
+         * Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called, where it will be a weighted average of
+         * the components of the Material.
+         *
+         * @param r the red component of the color
+         * @param g the green component of the color
+         * @param b the blue component of the color
+         */
+        public Builder color(@Range(from = 0, to = 255) int r, @Range(from = 0, to = 255) int g,
+                             @Range(from = 0, to = 255) int b) {
+            return color(GTUtility.combineRGB(r, g, b));
         }
 
         public Builder colorAverage() {
@@ -929,44 +1002,25 @@ public class Material implements Comparable<Material> {
 
         /**
          * Replaced the old toolStats methods which took many parameters.
-         * Use {@link ToolProperty.Builder} instead to create a Tool Property.
+         * Use {@link MaterialToolProperty.Builder} instead to create a Tool Property.
          */
-        public Builder toolStats(ToolProperty toolProperty) {
-            properties.setProperty(PropertyKey.TOOL, toolProperty);
+        public Builder toolStats(MaterialToolProperty materialToolProperty) {
+            properties.setProperty(PropertyKey.TOOL, materialToolProperty);
+            return this;
+        }
+
+        /**
+         * Use {@link ExtraToolProperty.Builder} to create a Tool Property Override.
+         */
+        public Builder overrideToolStats(String toolId, ExtraToolProperty.OverrideToolProperty toolProperty) {
+            properties.ensureSet(PropertyKey.EXTRATOOL);
+            properties.getProperty(PropertyKey.EXTRATOOL).setOverrideProperty(toolId, toolProperty);
             return this;
         }
 
         public Builder rotorStats(float speed, float damage, int durability) {
             properties.setProperty(PropertyKey.ROTOR, new RotorProperty(speed, damage, durability));
             return this;
-        }
-
-        /** @deprecated use {@link Material.Builder#blast(int)}. */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder blastTemp(int temp) {
-            return blast(temp);
-        }
-
-        /** @deprecated use {@link Material.Builder#blast(int, BlastProperty.GasTier)}. */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier) {
-            return blast(temp, gasTier);
-        }
-
-        /** @deprecated use {@link Material.Builder#blast(UnaryOperator)} for more detailed stats. */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride) {
-            return blast(b -> b.temp(temp, gasTier).blastStats(eutOverride));
-        }
-
-        /** @deprecated use {@link Material.Builder#blast(UnaryOperator)} for more detailed stats. */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride, int durationOverride) {
-            return blast(b -> b.temp(temp, gasTier).blastStats(eutOverride, durationOverride));
         }
 
         public Builder blast(int temp) {
@@ -1100,6 +1154,28 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        /**
+         * Sets the tier for "working" recipes to require, such as extruding, bending, etc.
+         *
+         * @param tier The tier. Defaults to {@link GTValues#LV} if unset,
+         *             though some recipes may still vary (such as Extruder recipes or Dense Plates).
+         */
+        public Builder workingTier(int tier) {
+            if (tier < 0) {
+                throw new IllegalArgumentException(
+                        "Cannot set working tier for material " + materialInfo.resourceLocation +
+                                "to less than 0 (ULV)!");
+            }
+            if (tier > GTValues.MAX) {
+                throw new IllegalArgumentException(
+                        "Cannot set working tier for material " + materialInfo.resourceLocation +
+                                "to greater than 14 (MAX)!");
+
+            }
+            materialInfo.workingTier = tier;
+            return this;
+        }
+
         public Material build() {
             materialInfo.componentList = ImmutableList.copyOf(composition);
             materialInfo.verifyInfo(properties, averageRGB);
@@ -1157,6 +1233,13 @@ public class Material implements Comparable<Material> {
          * Default: none.
          */
         private Element element;
+
+        /**
+         * The tier for "working" recipes to require, such as extruding, bending, etc.
+         * <p>
+         * Default: {@link GTValues#LV}, though some recipes may still vary (such as Dense Plates being MV).
+         */
+        private int workingTier = GTValues.LV;
 
         private MaterialInfo(int metaItemSubId, @NotNull ResourceLocation resourceLocation) {
             this.metaItemSubId = metaItemSubId;

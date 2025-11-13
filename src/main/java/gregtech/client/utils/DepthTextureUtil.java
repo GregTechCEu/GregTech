@@ -40,7 +40,7 @@ public class DepthTextureUtil {
     private static int lastWidth, lastHeight;
 
     private static boolean shouldRenderDepthTexture() {
-        return lastBind && !Mods.Optifine.isModLoaded() && ConfigHolder.client.hookDepthTexture &&
+        return lastBind && !Mods.ShadersMod.isModLoaded() && ConfigHolder.client.hookDepthTexture &&
                 OpenGlHelper.isFramebufferEnabled();
     }
 

@@ -142,10 +142,10 @@ public class GTParticleManager {
 
     private static void renderGlParticlesInLayer(@NotNull Map<@Nullable IRenderSetup, ArrayDeque<GTParticle>> renderQueue,
                                                  @NotNull EffectRenderContext context) {
-        for (var e : renderQueue.entrySet()) {
+        for (var entry : renderQueue.entrySet()) {
             @Nullable
-            IRenderSetup handler = e.getKey();
-            ArrayDeque<GTParticle> particles = e.getValue();
+            IRenderSetup handler = entry.getKey();
+            ArrayDeque<GTParticle> particles = entry.getValue();
             if (particles.isEmpty()) continue;
 
             boolean initialized = false;
@@ -160,8 +160,8 @@ public class GTParticleManager {
                             }
                         }
                         particle.renderParticle(buffer, context);
-                    } catch (Throwable throwable) {
-                        GTLog.logger.error("particle render error: {}", particle.toString(), throwable);
+                    } catch (RuntimeException e) {
+                        GTLog.logger.error("particle render error: {}", particle.toString(), e);
                         particle.setExpired();
                     }
                 }

@@ -20,7 +20,7 @@ public interface IQuantumController extends ICapabilityProvider {
 
     BlockPos getPos();
 
-    IDualHandler getHandler();
+    DualHandler getHandler();
 
     boolean isPowered();
 
@@ -30,5 +30,5 @@ public interface IQuantumController extends ICapabilityProvider {
 
     long getTypeEnergy(IQuantumStorage<?> storage);
 
-    void updateHandler();
+    void onHandlerUpdate();
 }

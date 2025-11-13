@@ -30,6 +30,8 @@ import java.util.List;
 
 public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, MaterialTree> {
 
+    public static final String UID = String.format("%s.material_tree", GTValues.MODID);
+
     protected String materialName;
     protected String materialFormula;
     protected int materialBFTemp;

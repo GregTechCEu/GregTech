@@ -38,8 +38,12 @@ public class DataItemBehavior implements IItemBehaviour, IDataItem {
     public void addInformation(@NotNull ItemStack itemStack, List<String> lines) {
         String researchId = AssemblyLineManager.readResearchId(itemStack);
         if (researchId == null) return;
+        collectResearchItems(researchId, lines);
+    }
+
+    public static void collectResearchItems(String id, List<String> lines) {
         Collection<Recipe> recipes = ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES)
-                .getDataStickEntry(researchId);
+                .getDataStickEntry(id);
         if (recipes != null && !recipes.isEmpty()) {
             lines.add(I18n.format("behavior.data_item.assemblyline.title"));
             Collection<ItemStack> added = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount());

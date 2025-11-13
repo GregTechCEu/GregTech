@@ -32,7 +32,7 @@ import java.time.Instant;
 import java.util.List;
 
 public class ElectricStats implements IItemComponent, IItemCapabilityProvider, IItemMaxStackSizeProvider,
-                           IItemBehaviour, ISubItemHandler {
+                           IItemBehaviour, ISubItemHandler, IItemModelDispatcher {
 
     public static final ElectricStats EMPTY = new ElectricStats(0, 0, false, false);
 
@@ -216,5 +216,15 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
 
     public static ElectricStats createBattery(long maxCharge, int tier, boolean rechargeable) {
         return new ElectricStats(maxCharge, tier, rechargeable, true);
+    }
+
+    @Override
+    public int getModelIndex(ItemStack itemStack, int maxIndex) {
+        IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (electricItem != null) {
+            return (int) Math.min(((electricItem.getCharge() / (electricItem.getMaxCharge() * 1.0)) * maxIndex),
+                    maxIndex);
+        }
+        return 0;
     }
 }

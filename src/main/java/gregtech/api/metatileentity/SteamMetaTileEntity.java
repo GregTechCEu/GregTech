@@ -36,7 +36,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -155,15 +154,6 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
                         SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
             }
         }
-    }
-
-    /** @deprecated No longer used, look at {@link VanillaParticleEffects#defaultFrontEffect} to see old logic. */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @SideOnly(Side.CLIENT)
-    protected void randomDisplayTick(float x, float y, float z, EnumParticleTypes flame, EnumParticleTypes smoke) {
-        getWorld().spawnParticle(smoke, x, y, z, 0, 0, 0);
-        getWorld().spawnParticle(flame, x, y, z, 0, 0, 0);
     }
 
     @Override

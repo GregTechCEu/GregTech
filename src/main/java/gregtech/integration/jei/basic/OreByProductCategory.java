@@ -31,6 +31,8 @@ import java.util.List;
 
 public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreByProduct> {
 
+    public static final String UID = String.format("%s.ore_by_product", GTValues.MODID);
+
     protected final IDrawable slot;
     protected final IDrawable fluidSlot;
     protected final IDrawable arrowsBase;

@@ -25,21 +25,6 @@ public abstract class OreGlob {
      * Tries to compile the string expression into OreGlob instance.
      *
      * @param expression OreGlob expression
-     * @return Compilation result
-     * @throws IllegalStateException If compiler is not provided yet
-     * @deprecated use {@link #compile(String, boolean)}
-     */
-    @NotNull
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static OreGlobCompileResult compile(@NotNull String expression) {
-        return compile(expression, true);
-    }
-
-    /**
-     * Tries to compile the string expression into OreGlob instance.
-     *
-     * @param expression OreGlob expression
      * @param ignoreCase Whether the resulting OreGlob instance should do case-insensitive matches
      * @return Compilation result
      * @throws IllegalStateException If compiler is not provided yet
@@ -72,26 +57,6 @@ public abstract class OreGlob {
      * @return Whether this instance matches the input
      */
     public abstract boolean matches(@NotNull String input);
-
-    /**
-     * <p>
-     * Tries to match each ore dictionary entries associated with given item. If any of them matches, {@code true} is
-     * returned.
-     * </p>
-     * <p>
-     * For items not associated with any ore dictionary entries, this method returns {@code true} if this instance
-     * matches empty string instead.
-     * </p>
-     *
-     * @param stack Item input
-     * @return Whether this instance matches the input
-     * @deprecated use {@link #matchesAll(ItemStack)} or {@link #matchesAny(ItemStack)}
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public final boolean matches(@NotNull ItemStack stack) {
-        return matchesAny(stack);
-    }
 
     /**
      * <p>

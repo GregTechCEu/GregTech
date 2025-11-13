@@ -19,6 +19,7 @@ public class GregTechLateMixinLoadingPlugin implements ILateMixinLoader {
         configs.add("mixins.gregtech.ccl.json");
         configs.add("mixins.gregtech.littletiles.json");
         configs.add("mixins.gregtech.vintagium.json");
+        configs.add("mixins.gregtech.mui2.json");
         configs.add("mixins.gregtech.nothirium.json");
 
         return configs;

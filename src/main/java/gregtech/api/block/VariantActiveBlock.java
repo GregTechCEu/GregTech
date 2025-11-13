@@ -8,7 +8,6 @@ import gregtech.common.ConfigHolder;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -25,6 +24,7 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -32,14 +32,12 @@ import it.unimi.dsi.fastutil.objects.ObjectSet;
 import org.jetbrains.annotations.NotNull;
 import team.chisel.ctm.client.state.CTMExtendedState;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
-public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> {
+public abstract class VariantActiveBlock<T extends IStringSerializable & Comparable<T>> extends VariantBlock<T> {
 
     private static final Int2ObjectMap<ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Int2ObjectOpenHashMap<>();
     private static final ReadWriteLock ACTIVE_BLOCKS_LOCK = new ReentrantReadWriteLock();
@@ -92,12 +90,17 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     @NotNull
     @Override
     public BlockRenderLayer getRenderLayer() {
+        return getRenderLayer(VALUES[0]);
+    }
+
+    @NotNull
+    public BlockRenderLayer getRenderLayer(T value) {
         return BlockRenderLayer.CUTOUT;
     }
 
     @Override
     public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
-        return layer == getRenderLayer() ||
+        return layer == getRenderLayer(getState(state)) ||
                 layer == BloomEffectUtil.getEffectiveBloomLayer(isBloomEnabled(getState(state)));
     }
 
@@ -113,16 +116,15 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         if (state.getValue(ACTIVE_DEPRECATED)) {
             meta += 8;
         }
-        return meta + state.getValue(VARIANT).ordinal();
+        return meta + state.getValue(VARIANT);
     }
 
     @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
-        Class<T> enumClass = getActualTypeParameter(getClass(), VariantActiveBlock.class);
-        this.VARIANT = PropertyEnum.create("variant", enumClass);
-        this.VALUES = enumClass.getEnumConstants();
-        return new ExtendedBlockState(this, new IProperty[] { VARIANT, ACTIVE_DEPRECATED },
+        super.createBlockState();
+        return new ExtendedBlockState(this,
+                new IProperty[] { VARIANT, ACTIVE_DEPRECATED },
                 new IUnlistedProperty[] { ACTIVE });
     }
 
@@ -144,17 +146,18 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
 
     @SideOnly(Side.CLIENT)
     public void onModelRegister() {
-        Map<T, ModelResourceLocation> models = new EnumMap<>(VALUES[0].getDeclaringClass());
+        Int2ObjectMap<ModelResourceLocation> models = new Int2ObjectArrayMap<>();
         for (T value : VALUES) {
+            int index = VARIANT.getIndexOf(value);
             ModelResourceLocation inactiveModel = model(false, value);
             ModelResourceLocation activeModel = model(true, value);
 
             ActiveVariantBlockBakedModel model = new ActiveVariantBlockBakedModel(inactiveModel, activeModel,
                     () -> isBloomEnabled(value));
-            models.put(value, model.getModelLocation());
+            models.put(index, model.getModelLocation());
 
             Item item = Item.getItemFromBlock(this);
-            ModelLoader.setCustomModelResourceLocation(item, value.ordinal(), inactiveModel);
+            ModelLoader.setCustomModelResourceLocation(item, index, inactiveModel);
             ModelLoader.registerItemVariants(item, activeModel);
         }
         ModelLoader.setCustomStateMapper(this,
@@ -166,11 +169,11 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     private ModelResourceLocation model(boolean active, T variant) {
         return new ModelResourceLocation(
                 Objects.requireNonNull(getRegistryName()),
-                "active=" + active + ",variant=" + VARIANT.getName(variant));
+                "active=" + active + ",variant=" + variant.getName());
     }
 
     @SideOnly(Side.CLIENT)
-    protected boolean isBloomEnabled(T value) {
+    public boolean isBloomEnabled(T value) {
         return ConfigHolder.client.machinesEmissiveTextures;
     }
 }

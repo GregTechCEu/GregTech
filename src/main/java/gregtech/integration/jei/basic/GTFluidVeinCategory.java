@@ -1,5 +1,6 @@
 package gregtech.integration.jei.basic;
 
+import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.GTStringUtils;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -20,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GTFluidVeinInfo> {
+
+    public static final String UID = String.format("%s.fluid_spawn_location", GTValues.MODID);
 
     private static final int SLOT_CENTER = 79;
     private static final int TEXT_START_X = 5;

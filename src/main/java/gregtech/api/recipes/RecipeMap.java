@@ -106,6 +106,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private int maxFluidInputs;
     private int maxFluidOutputs;
 
+    private final GTRecipeCategory primaryRecipeCategory;
+
     /**
      * @deprecated {@link RecipeMapUI#isJEIVisible()}
      */
@@ -129,80 +131,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private @Nullable RecipeMap<?> smallRecipeMap;
 
     /**
-     * Create and register new instance of RecipeMap with specified properties. All
-     * maximum I/O size for item and fluids will be able to be modified.
-     *
-     * @param unlocalizedName      the unlocalized name for the RecipeMap
-     * @param maxInputs            the maximum item inputs
-     * @param maxOutputs           the maximum item outputs
-     * @param maxFluidInputs       the maximum fluid inputs
-     * @param maxFluidOutputs      the maximum fluid outputs
-     * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
-     * @param isHidden             if the RecipeMap should have a category in JEI
-     *
-     * @deprecated {@link RecipeMap#RecipeMap(String, R, RecipeMapUIFunction, int, int, int, int)}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public RecipeMap(@NotNull String unlocalizedName,
-                     int maxInputs, int maxOutputs, int maxFluidInputs, int maxFluidOutputs,
-                     @NotNull R defaultRecipeBuilder,
-                     boolean isHidden) {
-        this(unlocalizedName,
-                maxInputs, true, maxOutputs, true,
-                maxFluidInputs, true, maxFluidOutputs, true,
-                defaultRecipeBuilder, isHidden);
-    }
-
-    /**
-     * Create and register new instance of RecipeMap with specified properties.
-     *
-     * @param unlocalizedName      the unlocalized name for the RecipeMap
-     * @param maxInputs            the maximum item inputs
-     * @param modifyItemInputs     if modification of the maximum item input is permitted
-     * @param maxOutputs           the maximum item outputs
-     * @param modifyItemOutputs    if modification of the maximum item output is permitted
-     * @param maxFluidInputs       the maximum fluid inputs
-     * @param modifyFluidInputs    if modification of the maximum fluid input is permitted
-     * @param maxFluidOutputs      the maximum fluid outputs
-     * @param modifyFluidOutputs   if modification of the maximum fluid output is permitted
-     * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
-     * @param isHidden             if the RecipeMap should have a category in JEI
-     *
-     * @deprecated {@link RecipeMap#RecipeMap(String, R, RecipeMapUIFunction, int, int, int, int)}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public RecipeMap(@NotNull String unlocalizedName,
-                     int maxInputs, boolean modifyItemInputs,
-                     int maxOutputs, boolean modifyItemOutputs,
-                     int maxFluidInputs, boolean modifyFluidInputs,
-                     int maxFluidOutputs, boolean modifyFluidOutputs,
-                     @NotNull R defaultRecipeBuilder,
-                     boolean isHidden) {
-        this.unlocalizedName = unlocalizedName;
-
-        this.maxInputs = maxInputs;
-        this.maxFluidInputs = maxFluidInputs;
-        this.maxOutputs = maxOutputs;
-        this.maxFluidOutputs = maxFluidOutputs;
-
-        defaultRecipeBuilder.setRecipeMap(this);
-        defaultRecipeBuilder
-                .category(GTRecipeCategory.create(GTValues.MODID, unlocalizedName, getTranslationKey(), this));
-        this.recipeBuilderSample = defaultRecipeBuilder;
-
-        this.recipeMapUI = new RecipeMapUI<>(this, modifyItemInputs, modifyItemOutputs, modifyFluidInputs,
-                modifyFluidOutputs, false);
-        this.recipeMapUI.setJEIVisible(!isHidden);
-
-        RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
-
-        this.grsVirtualizedRecipeMap = GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS) ?
-                new VirtualizedRecipeMap(this) : null;
-    }
-
-    /**
      * Create and register new instance of RecipeMap with specified properties.
      *
      * @param unlocalizedName      the unlocalized name for the RecipeMap
@@ -223,10 +151,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.maxFluidInputs = maxFluidInputs;
         this.maxOutputs = maxOutputs;
         this.maxFluidOutputs = maxFluidOutputs;
+        this.primaryRecipeCategory = GTRecipeCategory.create(GTValues.MODID, unlocalizedName, getTranslationKey(),
+                this);
 
         defaultRecipeBuilder.setRecipeMap(this);
-        defaultRecipeBuilder
-                .category(GTRecipeCategory.create(GTValues.MODID, unlocalizedName, getTranslationKey(), this));
+        defaultRecipeBuilder.category(primaryRecipeCategory);
         this.recipeBuilderSample = defaultRecipeBuilder;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
 
@@ -1512,6 +1441,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     "' does not match this RecipeMap '" + this.unlocalizedName + "'");
         }
         this.recipeMapUI = recipeMapUI;
+    }
+
+    public @NotNull GTRecipeCategory getPrimaryRecipeCategory() {
+        return primaryRecipeCategory;
     }
 
     @Override

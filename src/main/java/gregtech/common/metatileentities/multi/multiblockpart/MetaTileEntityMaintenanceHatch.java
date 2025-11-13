@@ -9,14 +9,12 @@ import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
+import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IMaintenance;
-import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -45,6 +43,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -260,24 +259,12 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             if (((problems >> index) & 1) == 0) {
                 proceed = true;
                 switch (index) {
-                    case 0:
-                        toolsToMatch.set(0, ToolClasses.WRENCH);
-                        break;
-                    case 1:
-                        toolsToMatch.set(1, ToolClasses.SCREWDRIVER);
-                        break;
-                    case 2:
-                        toolsToMatch.set(2, ToolClasses.SOFT_MALLET);
-                        break;
-                    case 3:
-                        toolsToMatch.set(3, ToolClasses.HARD_HAMMER);
-                        break;
-                    case 4:
-                        toolsToMatch.set(4, ToolClasses.WIRE_CUTTER);
-                        break;
-                    case 5:
-                        toolsToMatch.set(5, ToolClasses.CROWBAR);
-                        break;
+                    case 0 -> toolsToMatch.set(0, ToolClasses.WRENCH);
+                    case 1 -> toolsToMatch.set(1, ToolClasses.SCREWDRIVER);
+                    case 2 -> toolsToMatch.set(2, ToolClasses.SOFT_MALLET);
+                    case 3 -> toolsToMatch.set(3, ToolClasses.HARD_HAMMER);
+                    case 4 -> toolsToMatch.set(4, ToolClasses.WIRE_CUTTER);
+                    case 5 -> toolsToMatch.set(5, ToolClasses.CROWBAR);
                 }
             }
         }
@@ -285,38 +272,66 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             return;
         }
 
+        mainfor:
         for (int i = 0; i < toolsToMatch.size(); i++) {
             String toolToMatch = toolsToMatch.get(i);
             if (toolToMatch != null) {
                 // Try to use the item in the player's "hand" (under the cursor)
                 ItemStack heldItem = entityPlayer.inventory.getItemStack();
-                if (ToolHelper.isTool(heldItem, toolToMatch)) {
+                if (heldItem.getItem() instanceof ItemGTToolbelt toolbelt) {
+                    if (toolbelt.damageAgainstMaintenanceProblem(heldItem, toolToMatch, entityPlayer)) {
+                        ((IMaintenance) getController()).setMaintenanceFixed(i);
+                        setTaped(false);
+                        continue;
+                    }
+                } else if (ToolHelper.isTool(heldItem, toolToMatch)) {
                     fixProblemWithTool(i, heldItem, entityPlayer);
 
                     if (toolsToMatch.stream().allMatch(Objects::isNull)) {
                         return;
                     }
+                    continue;
                 }
 
                 // Then try all the remaining inventory slots
                 for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
-                    if (ToolHelper.isTool(itemStack, toolToMatch)) {
+                    if (itemStack.getItem() instanceof ItemGTToolbelt toolbelt) {
+                        if (toolbelt.damageAgainstMaintenanceProblem(itemStack, toolToMatch, entityPlayer)) {
+                            ((IMaintenance) getController()).setMaintenanceFixed(i);
+                            setTaped(false);
+                            continue mainfor;
+                        }
+                    } else if (ToolHelper.isTool(itemStack, toolToMatch)) {
                         fixProblemWithTool(i, itemStack, entityPlayer);
 
                         if (toolsToMatch.stream().allMatch(Objects::isNull)) {
                             return;
                         }
+                        continue mainfor;
                     }
                 }
+            }
+        }
+    }
 
-                for (ItemStack stack : entityPlayer.inventory.mainInventory) {
-                    if (ToolHelper.isTool(stack, toolToMatch)) {
-                        ((IMaintenance) this.getController()).setMaintenanceFixed(i);
-                        ToolHelper.damageItemWhenCrafting(stack, entityPlayer);
-                        if (toolsToMatch.stream().allMatch(Objects::isNull)) {
-                            return;
-                        }
-                    }
+    @ApiStatus.Internal
+    public void fixMaintenanceProblemsWithToolbelt(@NotNull EntityPlayer entityPlayer, ItemGTToolbelt toolbelt,
+                                                   ItemStack toolbeltStack) {
+        byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
+        for (byte index = 0; index < 6; index++) {
+            if (((problems >> index) & 1) == 0) {
+                String toolToMatch = switch (index) {
+                    case 0 -> ToolClasses.WRENCH;
+                    case 1 -> ToolClasses.SCREWDRIVER;
+                    case 2 -> ToolClasses.SOFT_MALLET;
+                    case 3 -> ToolClasses.HARD_HAMMER;
+                    case 4 -> ToolClasses.WIRE_CUTTER;
+                    case 5 -> ToolClasses.CROWBAR;
+                    default -> null;
+                };
+                if (toolbelt.damageAgainstMaintenanceProblem(toolbeltStack, toolToMatch, entityPlayer)) {
+                    ((IMaintenance) getController()).setMaintenanceFixed(index);
+                    setTaped(false);
                 }
             }
         }
@@ -498,8 +513,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void registerAbilities(List<IMaintenanceHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(this);
     }
 
     @Override

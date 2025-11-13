@@ -1,7 +1,7 @@
 package gregtech.api.worldgen.generator;
 
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.XSTR;
+import gregtech.api.util.random.XoShiRo256PlusPlusRandom;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.api.worldgen.populator.IBlockModifierAccess;
@@ -81,7 +81,7 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
         this.gridX = gridX;
         this.gridZ = gridZ;
         long worldSeed = world.getSeed();
-        this.gridRandom = new XSTR(31L * 31 * gridX + gridZ * 31L + Long.hashCode(worldSeed));
+        this.gridRandom = new XoShiRo256PlusPlusRandom(31L * 31 * gridX + gridZ * 31L + Long.hashCode(worldSeed));
 
         int gridSizeX = WorldGeneratorImpl.GRID_SIZE_X * 16;
         int gridSizeZ = WorldGeneratorImpl.GRID_SIZE_Z * 16;

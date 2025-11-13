@@ -127,7 +127,7 @@ public class QuantumStorageRenderer implements IconRegistrar {
         if (canRender(x, y, z, 8 *
                 MathHelper.clamp((double) Minecraft.getMinecraft().gameSettings.renderDistanceChunks / 8, 1.0, 2.5))) {
             RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
-            float tick = world.getWorldTime() + partialTicks;
+            float tick = world.getTotalWorldTime() + partialTicks;
             GlStateManager.pushMatrix();
             GlStateManager.translate(x, y, z);
             GlStateManager.translate(0.5D, 0.5D, 0.5D);

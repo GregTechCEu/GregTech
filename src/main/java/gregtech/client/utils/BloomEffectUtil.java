@@ -25,7 +25,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -48,13 +46,6 @@ public class BloomEffectUtil {
 
     private static final ReentrantLock BLOOM_RENDER_LOCK = new ReentrantLock();
 
-    /**
-     * @deprecated use {@link #getBloomLayer()}
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static BlockRenderLayer BLOOM;
-
     private static BlockRenderLayer bloom;
     private static Framebuffer bloomFBO;
 
@@ -64,16 +55,6 @@ public class BloomEffectUtil {
     @NotNull
     public static BlockRenderLayer getBloomLayer() {
         return Objects.requireNonNull(bloom, "Bloom effect is not initialized yet");
-    }
-
-    /**
-     * @deprecated renamed for clarity; use {@link #getEffectiveBloomLayer()}.
-     */
-    @NotNull
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static BlockRenderLayer getRealBloomLayer() {
-        return getEffectiveBloomLayer();
     }
 
     /**
@@ -102,7 +83,7 @@ public class BloomEffectUtil {
      */
     @Contract("null -> _; !null -> !null")
     public static BlockRenderLayer getEffectiveBloomLayer(BlockRenderLayer fallback) {
-        return Mods.Optifine.isModLoaded() ? fallback : bloom;
+        return Mods.ShadersMod.isModLoaded() ? fallback : bloom;
     }
 
     /**
@@ -134,7 +115,7 @@ public class BloomEffectUtil {
      */
     @Contract("_, null -> _; _, !null -> !null")
     public static BlockRenderLayer getEffectiveBloomLayer(boolean isBloomActive, BlockRenderLayer fallback) {
-        return Mods.Optifine.isModLoaded() || !isBloomActive ? fallback : bloom;
+        return Mods.ShadersMod.isModLoaded() || !isBloomActive ? fallback : bloom;
     }
 
     /**
@@ -272,7 +253,7 @@ public class BloomEffectUtil {
                                                         @NotNull IBloomEffect render,
                                                         @Nullable Predicate<BloomRenderTicket> validityChecker,
                                                         @Nullable Supplier<World> worldContext) {
-        if (Mods.Optifine.isModLoaded()) return BloomRenderTicket.INVALID;
+        if (Mods.ShadersMod.isModLoaded()) return BloomRenderTicket.INVALID;
         BloomRenderTicket ticket = new BloomRenderTicket(setup, bloomType, render, validityChecker, worldContext);
         BLOOM_RENDER_LOCK.lock();
         try {
@@ -310,41 +291,10 @@ public class BloomEffectUtil {
         }
     }
 
-    /**
-     * @deprecated use ticket-based bloom render hooks
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static void requestCustomBloom(IBloomRenderFast handler, Consumer<BufferBuilder> render) {
-        BloomType bloomType = BloomType.fromValue(handler.customBloomStyle());
-        var validityChecker = new Predicate<BloomRenderTicket>() {
-
-            boolean invalid;
-
-            @Override
-            public boolean test(BloomRenderTicket bloomRenderTicket) {
-                return !invalid;
-            }
-        };
-        registerBloomRender(handler, bloomType, (b, c) -> {
-            render.accept(b);
-            validityChecker.invalid = true;
-        }, validityChecker);
-    }
-
     public static void init() {
         bloom = BlockRenderLayer.valueOf("BLOOM");
-        BLOOM = bloom;
     }
 
-    // Calls injected via ASM
-    @SuppressWarnings("unused")
-    public static void initBloomRenderLayer(BufferBuilder[] worldRenderers) {
-        worldRenderers[bloom.ordinal()] = new BufferBuilder(131072);
-    }
-
-    // Calls injected via ASM
-    @SuppressWarnings("unused")
     public static int renderBloomBlockLayer(RenderGlobal renderGlobal,
                                             BlockRenderLayer blockRenderLayer, // 70% sure it's translucent uh yeah
                                             double partialTicks,
@@ -352,7 +302,7 @@ public class BloomEffectUtil {
                                             @NotNull Entity entity) {
         Minecraft.getMinecraft().profiler.endStartSection("BTLayer");
 
-        if (Mods.Optifine.isModLoaded()) {
+        if (Mods.ShadersMod.isModLoaded()) {
             return renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
         }
 
@@ -600,20 +550,6 @@ public class BloomEffectUtil {
             this.worldContext = worldContext;
         }
 
-        @Nullable
-        @Deprecated
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        public IRenderSetup getRenderSetup() {
-            return this.renderSetup;
-        }
-
-        @NotNull
-        @Deprecated
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        public BloomType getBloomType() {
-            return this.bloomType;
-        }
-
         public boolean isValid() {
             return !this.invalidated;
         }
@@ -627,26 +563,5 @@ public class BloomEffectUtil {
                 invalidate();
             }
         }
-    }
-
-    /**
-     * @deprecated use ticket-based bloom render hooks
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public interface IBloomRenderFast extends IRenderSetup {
-
-        /**
-         * Custom Bloom Style.
-         *
-         * @return 0 - Simple Gaussian Blur Bloom
-         *         <p>
-         *         1 - Unity Bloom
-         *         </p>
-         *         <p>
-         *         2 - Unreal Bloom
-         *         </p>
-         */
-        int customBloomStyle();
     }
 }

@@ -10,6 +10,7 @@ public enum OreDictNames {
     cobblestone, // For just cobblestone.
     stoneCobble, // For any kind of cobblestone (e.g. mossy cobblestone).
     stoneBricks, // For any kind of stone bricks
+    sand, // For either type of sand
 
     craftingAnvil,
     craftingFurnace,

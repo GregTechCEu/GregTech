@@ -16,8 +16,8 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
     /**
      * @return a builder object for producing a custom ItemStackHashStrategy.
      */
-    static ItemStackHashStrategyBuilder builder() {
-        return new ItemStackHashStrategyBuilder();
+    static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -56,9 +56,9 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
     /**
      * Builder pattern class for generating customized ItemStackHashStrategy
      */
-    class ItemStackHashStrategyBuilder {
+    class Builder {
 
-        private boolean item, count, damage, tag;
+        private boolean item, count, damage, tag, meta;
 
         /**
          * Defines whether the Item type should be considered for equality.
@@ -66,7 +66,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
          * @param choice {@code true} to consider this property, {@code false} to ignore it.
          * @return {@code this}
          */
-        public ItemStackHashStrategyBuilder compareItem(boolean choice) {
+        public Builder compareItem(boolean choice) {
             item = choice;
             return this;
         }
@@ -77,7 +77,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
          * @param choice {@code true} to consider this property, {@code false} to ignore it.
          * @return {@code this}
          */
-        public ItemStackHashStrategyBuilder compareCount(boolean choice) {
+        public Builder compareCount(boolean choice) {
             count = choice;
             return this;
         }
@@ -88,8 +88,19 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
          * @param choice {@code true} to consider this property, {@code false} to ignore it.
          * @return {@code this}
          */
-        public ItemStackHashStrategyBuilder compareDamage(boolean choice) {
+        public Builder compareDamage(boolean choice) {
             damage = choice;
+            return this;
+        }
+
+        /**
+         * Defines whether metadata values should be considered for equality.
+         *
+         * @param choice {@code true} to consider this property, {@code false} to ignore it.
+         * @return {@code this}
+         */
+        public Builder compareMetadata(boolean choice) {
+            meta = choice;
             return this;
         }
 
@@ -99,7 +110,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
          * @param choice {@code true} to consider this property, {@code false} to ignore it.
          * @return {@code this}
          */
-        public ItemStackHashStrategyBuilder compareTag(boolean choice) {
+        public Builder compareTag(boolean choice) {
             tag = choice;
             return this;
         }
@@ -116,7 +127,8 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
                             item ? o.getItem() : null,
                             count ? o.getCount() : null,
                             damage ? o.getItemDamage() : null,
-                            tag ? o.getTagCompound() : null);
+                            tag ? o.getTagCompound() : null,
+                            meta ? o.getMetadata() : null);
                 }
 
                 @Override
@@ -127,6 +139,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
                     return (!item || a.getItem() == b.getItem()) &&
                             (!count || a.getCount() == b.getCount()) &&
                             (!damage || a.getItemDamage() == b.getItemDamage()) &&
+                            (!meta || a.getMetadata() == b.getMetadata()) &&
                             (!tag || Objects.equals(a.getTagCompound(), b.getTagCompound()));
                 }
             };

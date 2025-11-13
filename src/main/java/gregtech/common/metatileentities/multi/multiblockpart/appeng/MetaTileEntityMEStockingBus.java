@@ -44,7 +44,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     private Predicate<ItemStack> autoPullTest;
 
     public MetaTileEntityMEStockingBus(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.LuV);
+        super(metaTileEntityId, GTValues.IV);
         this.autoPullTest = $ -> false;
     }
 

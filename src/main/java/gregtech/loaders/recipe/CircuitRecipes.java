@@ -1019,7 +1019,7 @@ public class CircuitRecipes {
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(16).duration(300)
                 .input(GOOD_CIRCUIT_BOARD)
-                .input(circuit, Tier.LV, 2)
+                .input(ELECTRONIC_CIRCUIT_LV, 2)
                 .input(component, Component.Diode, 2)
                 .input(wireGtSingle, Copper, 2)
                 .output(ELECTRONIC_CIRCUIT_MV)
@@ -1457,7 +1457,7 @@ public class CircuitRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 10))
                 .output(CRYSTAL_MAINFRAME_UV)
                 .stationResearch(b -> b
-                        .researchStack(CRYSTAL_COMPUTER_ZPM.getStackForm())
+                        .researchStack(CRYSTAL_COMPUTER_ZPM)
                         .CWUt(16))
                 .buildAndRegister();
 
@@ -1524,7 +1524,7 @@ public class CircuitRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(1152))
                 .output(WETWARE_SUPER_COMPUTER_UV)
                 .stationResearch(b -> b
-                        .researchStack(WETWARE_PROCESSOR_ASSEMBLY_ZPM.getStackForm())
+                        .researchStack(WETWARE_PROCESSOR_ASSEMBLY_ZPM)
                         .CWUt(16))
                 .buildAndRegister();
 
@@ -1545,7 +1545,7 @@ public class CircuitRecipes {
                 .fluidInputs(Polybenzimidazole.getFluid(L * 8))
                 .output(WETWARE_MAINFRAME_UHV)
                 .stationResearch(b -> b
-                        .researchStack(WETWARE_SUPER_COMPUTER_UV.getStackForm())
+                        .researchStack(WETWARE_SUPER_COMPUTER_UV)
                         .CWUt(96)
                         .EUt(VA[UV]))
                 .EUt(300000).duration(2000).buildAndRegister();

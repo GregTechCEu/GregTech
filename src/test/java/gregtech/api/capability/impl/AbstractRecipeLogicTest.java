@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMapBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.world.DummyWorld;
@@ -116,13 +117,13 @@ public class AbstractRecipeLogicTest {
         World world = DummyWorld.INSTANCE;
 
         // Create an empty recipe map to work with
-        RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("test_reactor_" + TEST_ID,
-                2,
-                2,
-                3,
-                2,
-                new SimpleRecipeBuilder().EUt(30),
-                false);
+        RecipeMap<SimpleRecipeBuilder> map = new RecipeMapBuilder<>("test_reactor_" + TEST_ID,
+                new SimpleRecipeBuilder().EUt(30))
+                        .itemInputs(2)
+                        .itemOutputs(2)
+                        .fluidInputs(3)
+                        .fluidOutputs(2)
+                        .build();
 
         MetaTileEntity at = MetaTileEntities.registerMetaTileEntity(TEST_ID,
                 new SimpleMachineMetaTileEntity(

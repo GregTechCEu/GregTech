@@ -397,5 +397,15 @@
         "stream" : false
       }
     ]
+  },
+  "click" : {
+    "subtitle" : "gregtech.subtitle.click",
+    "category" : "players",
+    "sounds" : [
+      {
+        "name" : "gregtech:click",
+        "stream" : false
+      }
+    ]
   }
 }

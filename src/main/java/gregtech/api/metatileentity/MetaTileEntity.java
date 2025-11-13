@@ -12,7 +12,6 @@ import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
-import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.cover.CoverRayTracer;
@@ -42,6 +41,7 @@ import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -73,7 +73,6 @@ import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -95,11 +94,13 @@ import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
@@ -107,6 +108,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -165,6 +167,13 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @Nullable
     private UUID owner = null;
+
+    private final Set<CreativeTabs> creativeTabs = new ObjectArraySet<>();
+
+    {
+        creativeTabs.add(CreativeTabs.SEARCH);
+        creativeTabs.add(GTCreativeTabs.TAB_GREGTECH_MACHINES);
+    }
 
     protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -235,7 +244,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
-                               boolean advanced) {}
+                               boolean advanced) {
+        if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant())
+            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
+    }
 
     /**
      * Override this to add extended tool information to the "Hold SHIFT to show Tool Info" tooltip section.
@@ -362,7 +374,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *      MachineItemBlock#addCreativeTab(CreativeTabs)
      */
     public boolean isInCreativeTab(CreativeTabs creativeTab) {
-        return creativeTab == CreativeTabs.SEARCH || creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES;
+        return creativeTabs.contains(creativeTab);
     }
 
     public String getItemSubTypeId(ItemStack itemStack) {
@@ -381,26 +393,28 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return getMetaName() + ".name";
     }
 
-    public <T> void addNotifiedInput(T input) {
+    public void addNotifiedInput(Object input) {
         if (input instanceof IItemHandlerModifiable) {
             if (!notifiedItemInputList.contains(input)) {
                 this.notifiedItemInputList.add((IItemHandlerModifiable) input);
             }
-        } else if (input instanceof IFluidHandler) {
+        }
+        if (input instanceof IFluidHandler) {
             if (!notifiedFluidInputList.contains(input)) {
                 this.notifiedFluidInputList.add((IFluidHandler) input);
             }
         }
     }
 
-    public <T> void addNotifiedOutput(T output) {
+    public void addNotifiedOutput(Object output) {
         if (output instanceof IItemHandlerModifiable) {
             if (!notifiedItemOutputList.contains(output)) {
                 this.notifiedItemOutputList.add((IItemHandlerModifiable) output);
             }
-        } else if (output instanceof NotifiableFluidTank) {
+        }
+        if (output instanceof IFluidHandler) {
             if (!notifiedFluidOutputList.contains(output)) {
-                this.notifiedFluidOutputList.add((NotifiableFluidTank) output);
+                this.notifiedFluidOutputList.add((IFluidHandler) output);
             }
         }
     }
@@ -480,7 +494,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         return null;
     }
 
@@ -725,7 +739,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public final boolean acceptsCovers() {
+    public boolean acceptsCovers() {
         return covers.size() < EnumFacing.VALUES.length;
     }
 
@@ -815,26 +829,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         }
     }
 
-    /**
-     * @deprecated Will be removed in 2.9. Comparators no longer supported for MetaTileEntities, as cover are
-     *             interactions favored.
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public int getActualComparatorValue() {
-        return 0;
-    }
-
     public int getActualLightValue() {
-        return 0;
-    }
-
-    /**
-     * @deprecated Will be removed in 2.9.
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public final int getComparatorValue() {
         return 0;
     }
 
@@ -853,8 +848,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void update() {
-        if (!getWorld().isRemote && !allowTickAcceleration()) {
-            int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        if (!allowTickAcceleration() && getWorld().getMinecraftServer() != null) {
+            int currentTick = getWorld().getMinecraftServer().getTickCounter();
             if (currentTick == lastTick) {
                 return;
             }
@@ -899,7 +894,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (sound == null) {
             return;
         }
-        if (isValid() && isActive()) {
+        boolean canPlay = isValid() && isActive();
+        if (this instanceof IControllable controllable) {
+            canPlay &= controllable.isWorkingEnabled();
+        }
+        if (canPlay) {
             if (--playSoundCooldown > 0) {
                 return;
             }
@@ -909,6 +908,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             GregTechAPI.soundManager.stopTileSound(getPos());
             playSoundCooldown = 0;
         }
+    }
+
+    /**
+     * @return The sound type used when this block is broken, placed, stepped on, hit, or fallen on.
+     */
+    @NotNull
+    public SoundType getSoundType() {
+        return SoundType.METAL;
     }
 
     public final @NotNull ItemStack getStackForm(int amount) {
@@ -1011,7 +1018,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         buf.writeShort(this.mteTraitByNetworkId.size());
         for (Int2ObjectMap.Entry<MTETrait> entry : mteTraitByNetworkId.int2ObjectEntrySet()) {
             buf.writeVarInt(entry.getIntKey());
-            entry.getValue().writeInitialData(buf);
+            entry.getValue().writeInitialSyncData(buf);
         }
         CoverSaveHandler.writeInitialSyncData(buf, this);
         buf.writeBoolean(muffled);
@@ -1031,7 +1038,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
-            } else trait.receiveInitialData(buf);
+            } else {
+                trait.receiveInitialSyncData(buf);
+            }
         }
         CoverSaveHandler.receiveInitialSyncData(buf, this);
         this.muffled = buf.readBoolean();
@@ -1064,10 +1073,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             scheduleRenderUpdate();
         } else if (dataId == SYNC_MTE_TRAITS) {
             int traitNetworkId = buf.readVarInt();
+            int internalId = buf.readVarInt();
             MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
-            } else trait.receiveCustomData(buf.readVarInt(), buf);
+            } else {
+                ISyncedTileEntity.addCode(internalId, trait);
+                trait.receiveCustomData(internalId, buf);
+            }
         } else if (dataId == COVER_ATTACHED_MTE) {
             CoverSaveHandler.readCoverPlacement(buf, this);
         } else if (dataId == COVER_REMOVED_MTE) {
@@ -1082,6 +1095,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();
             if (cover != null) {
+                ISyncedTileEntity.addCode(internalId, cover);
                 cover.readCustomData(internalId, buf);
             }
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
@@ -1143,6 +1157,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public void fillInternalTankFromFluidContainer(IFluidHandler fluidHandler) {
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack inputContainerStack = importItems.extractItem(i, 1, true);
+            if (inputContainerStack.isEmpty() ||
+                    !inputContainerStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                continue;
+            }
             FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE,
                     null, false);
             if (result.isSuccess()) {
@@ -1165,6 +1183,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public void fillContainerFromInternalTank(IFluidHandler fluidHandler) {
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack emptyContainer = importItems.extractItem(i, 1, true);
+            if (emptyContainer.isEmpty() ||
+                    !emptyContainer.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                continue;
+            }
             FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, fluidHandler, Integer.MAX_VALUE, null,
                     false);
             if (result.isSuccess()) {
@@ -1318,8 +1340,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
         data.setBoolean(TAG_KEY_MUFFLED, muffled);
 
-        if (owner != null)
-            data.setUniqueId("Owner", owner);
+        if (owner != null) {
+            NBTTagCompound ownerTag = new NBTTagCompound();
+            ownerTag.setUniqueId("UUID", owner);
+            data.setTag("Owner", ownerTag);
+        }
 
         return data;
     }
@@ -1347,8 +1372,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         CoverSaveHandler.readCoverNBT(data, this, covers::put);
         this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
 
-        if (data.hasKey("Owner"))
-            this.owner = data.getUniqueId("Owner");
+        if (data.hasKey("Owner", 10)) {
+            this.owner = data.getCompoundTag("Owner").getUniqueId("UUID");
+        }
     }
 
     @Override
@@ -1661,4 +1687,45 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public void gridChanged() {}
+
+    /**
+     * Add MTE to a creative tab. Ensure that the creative tab has been registered via
+     * {@link gregtech.api.block.machines.MachineItemBlock#addCreativeTab(CreativeTabs)
+     * MachineItemBlock#addCreativeTab(CreativeTabs)} beforehand.
+     */
+    public void addAdditionalCreativeTabs(CreativeTabs creativeTab) {
+        Preconditions.checkNotNull(creativeTab, "creativeTab");
+        if (creativeTabs.contains(creativeTab)) {
+            GTLog.logger.error("{} is already in the creative tab {}.", this, creativeTab.tabLabel,
+                    new IllegalArgumentException());
+            return;
+        }
+
+        creativeTabs.add(creativeTab);
+    }
+
+    public void removeFromCreativeTab(CreativeTabs creativeTab) {
+        Preconditions.checkNotNull(creativeTab, "creativeTab");
+        if (creativeTab == CreativeTabs.SEARCH) {
+            GTLog.logger.error("Cannot remove MTEs from the creative search tab.",
+                    new IllegalArgumentException());
+            return;
+        }
+        if (creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES &&
+                metaTileEntityId.getNamespace().equals(GTValues.MODID)) {
+            GTLog.logger.error("Cannot remove GT MTEs from the GT machines tab.", new IllegalArgumentException());
+            return;
+        }
+        if (!creativeTabs.contains(creativeTab)) {
+            GTLog.logger.error("{} is not in the creative tab {}.", this, creativeTab.tabLabel,
+                    new IllegalArgumentException());
+            return;
+        }
+
+        creativeTabs.remove(creativeTab);
+    }
+
+    public Set<CreativeTabs> getCreativeTabs() {
+        return Collections.unmodifiableSet(creativeTabs);
+    }
 }

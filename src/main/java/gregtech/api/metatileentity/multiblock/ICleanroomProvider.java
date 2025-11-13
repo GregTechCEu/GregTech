@@ -49,4 +49,13 @@ public interface ICleanroomProvider {
      * @return the tier {@link gregtech.api.GTValues#V} of energy the cleanroom uses at minimum
      */
     int getEnergyTier();
+
+    /**
+     * Get the priority of this cleanroom provider to determine which should be used.
+     * 
+     * @return the priority this cleanroom provider should have over other cleanrooms.
+     */
+    default int getPriority() {
+        return 0;
+    }
 }

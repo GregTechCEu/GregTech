@@ -92,8 +92,8 @@ public class WidgetCoverList extends ScrollableListWidget {
         if (!result && mouseY >= this.getPosition().y && mouseY <= this.getPosition().y + this.getSize().height) {
             Widget widget = this.widgets.stream().filter(it -> it.isMouseOverElement(mouseX, mouseY)).findFirst()
                     .orElse(null);
-            if (widget instanceof WidgetGroup) {
-                List<Widget> children = ((WidgetGroup) widget).getContainedWidgets(true);
+            if (widget instanceof WidgetGroup wg) {
+                List<Widget> children = wg.getContainedWidgets(true);
                 if (children.get(0).isMouseOverElement(mouseX, mouseY)) {
                     try {
                         String posString = ObfuscationReflectionHelper.getPrivateValue(LabelWidget.class,
@@ -108,7 +108,7 @@ public class WidgetCoverList extends ScrollableListWidget {
                                 ((SlotWidget) children.get(0)).getHandle().getStack().getDisplayName() +
                                         ": " + posString));
                         return false;
-                    } catch (Throwable e) {
+                    } catch (NumberFormatException e) {
                         GTLog.logger.error("Could not reflect GregTech WidgetLabel text", e);
                     }
                 }

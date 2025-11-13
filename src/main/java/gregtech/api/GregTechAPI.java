@@ -3,6 +3,7 @@ package gregtech.api;
 import gregtech.api.advancement.IAdvancementManager;
 import gregtech.api.block.ICleanroomFilter;
 import gregtech.api.block.IHeatingCoilBlockStats;
+import gregtech.api.block.coil.CoilManager;
 import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.event.HighTierEvent;
@@ -13,6 +14,7 @@ import gregtech.api.modules.IModuleManager;
 import gregtech.api.network.INetworkHandler;
 import gregtech.api.recipes.properties.RecipePropertyRegistry;
 import gregtech.api.sound.ISoundManager;
+import gregtech.api.unification.RecyclingManager;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.registry.IMaterialRegistryManager;
 import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
@@ -55,9 +57,15 @@ public class GregTechAPI {
     public static MarkerMaterialRegistry markerMaterialRegistry;
     /** Will be available at the Pre-Initialization stage */
     public static MTEManager mteManager;
+    /** Will be available at the Pre-Initialization stage */
+    public static CoilManager coilManager;
     /** GT's data migrations API */
     public static final MigrationAPI MIGRATIONS = new MigrationAPI();
     public static final RecipePropertyRegistry RECIPE_PROPERTIES = new RecipePropertyRegistry();
+    /**
+     * Manager for Item Recycling Data
+     */
+    public static final RecyclingManager RECYCLING_MANAGER = new RecyclingManager();
 
     /** Will be available at the Pre-Initialization stage */
     private static boolean highTier;

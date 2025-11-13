@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class InteractableText<T extends VirtualEntry> extends TextWidget implements Interactable {
+public class InteractableText<T extends VirtualEntry> extends TextWidget<InteractableText<T>> implements Interactable {
 
     private final T entry;
     private final EntryColorSH syncHandler;
@@ -36,6 +36,11 @@ public class InteractableText<T extends VirtualEntry> extends TextWidget impleme
         this.syncHandler.setColor(this.entry.getColorStr());
         this.syncHandler.syncToServer(1, buf -> NetworkUtils.writeStringSafe(buf, this.entry.getColorStr()));
         return Result.SUCCESS;
+    }
+
+    @Override
+    public boolean isValidSyncHandler(SyncHandler syncHandler) {
+        return syncHandler instanceof EntryColorSH;
     }
 
     private static class EntryColorSH extends SyncHandler {
