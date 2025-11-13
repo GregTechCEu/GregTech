@@ -30,11 +30,12 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
+import com.cleanroommc.modularui.widgets.slot.PhantomItemSlot;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,8 +59,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.itemInventory = this.modifiableHandler = new ModifiableHandler();
-        this.creativeHandler = new CreativeItemStackHandler(1);
+        this.modifiableHandler = new ModifiableHandler();
+        this.itemInventory = this.creativeHandler = new CreativeItemStackHandler(1);
     }
 
     @Override
@@ -87,7 +88,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         guiSyncManager.syncValue("handler", this.modifiableHandler);
         return appendCreativeUI(GTGuis.createPanel(this, 176, 166), false,
                 new BoolValue.Dynamic(() -> active, b -> active = b),
@@ -95,8 +96,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
                 new IntSyncValue(() -> ticksPerCycle, v -> ticksPerCycle = v))
                         .child(IKey.lang("gregtech.creative.chest.item").asWidget()
                                 .pos(7, 9))
-                        .child(new ItemSlot()
-                                .slot(SyncHandlers.phantomItemSlot(modifiableHandler, 0)
+                        .child(new PhantomItemSlot()
+                                .slot(new ModularSlot(modifiableHandler, 0)
                                         .changeListener((newItem, onlyAmountChanged, client, init) -> markDirty()))
                                 .pos(36, 6));
     }
