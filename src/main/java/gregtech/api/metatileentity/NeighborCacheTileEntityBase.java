@@ -75,9 +75,16 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
 
     private boolean invalidRef(EnumFacing facing) {
         WeakReference<TileEntity> ref = getRef(facing);
-        if (ref == INVALID) return true;
+        if (ref == INVALID || crossesChunk(facing)) return true;
         TileEntity te = ref.get();
         return te != null && te.isInvalid();
+    }
+
+    private boolean crossesChunk(EnumFacing facing) {
+        BlockPos pos = getPos();
+        BlockPos offset = getPos().offset(facing);
+        return pos.getX() >> 4 != offset.getX() >> 4 ||
+                pos.getZ() >> 4 != offset.getZ() >> 4;
     }
 
     @NotNull
