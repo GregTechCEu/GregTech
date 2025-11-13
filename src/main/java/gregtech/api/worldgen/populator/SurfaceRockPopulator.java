@@ -99,8 +99,8 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
             int baseZ = chunkZ * 16 + 8;
 
             for (int i = 0; i < stonesCount; i++) {
-                int randomX = baseX + random.nextInt(8);
-                int randomZ = baseZ + random.nextInt(8);
+                int randomX = baseX + random.nextInt(16);
+                int randomZ = baseZ + random.nextInt(16);
 
                 generateSurfaceRock(world, new BlockPos(randomX, 0, randomZ));
 
