@@ -33,6 +33,7 @@ import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
@@ -136,7 +137,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         var panel = GTGuis.createPanel(this, 176, 192);
 
         this.playerUUID = guiData.getPlayer().getUniqueID();
@@ -362,7 +363,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                         .background(GTGuiTextures.SLOT.asIcon().size(18))
                         .top(1))
                 .child(new InteractableText<>(entry, this::updateColor)
-                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                        .tooltipAutoUpdate(true)
                         .tooltipBuilder(tooltip -> {
                             String desc = entry.getDescription();
                             if (!desc.isEmpty()) tooltip.add(desc);

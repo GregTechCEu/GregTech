@@ -8,18 +8,10 @@
     "maxShiftBy": 10
   },
   "mixins": [
-    "AbstractCycleButtonWidgetMixin",
-    "IconMixin",
-    "IconMixin$DelegateMixin",
-    "ModularPanelMixin",
-    "RichTextCompilerMixin",
-    "TextWidgetMixin",
-    "TextWidgetMixin$TextRenderMixin"
+    "TextWidgetMixin"
   ],
   "client": [
-    "ItemSlotMixin",
-    "LangKeyMixin",
-    "ModularUIJeiPluginMixin"
+    "LangKeyMixin"
   ],
   "server": []
 }
