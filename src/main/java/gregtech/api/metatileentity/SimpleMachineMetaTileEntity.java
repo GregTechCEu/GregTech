@@ -14,13 +14,10 @@ import gregtech.api.cover.Cover;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -54,11 +51,24 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -478,6 +488,92 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         clearInventory(itemBuffer, chargerInventory);
     }
 
+    @Override
+    public boolean usesMui2() {
+        RecipeMap<?> map = getRecipeMap();
+        return map != null && map.getRecipeMapUI().usesMui2();
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+        RecipeMap<?> workableRecipeMap = Objects.requireNonNull(workable.getRecipeMap(), "recipe map is null");
+        int yOffset = 0;
+        if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
+                workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
+            yOffset = FONT_HEIGHT;
+        }
+
+        Flow col = Flow.column()
+                .name("col:special.buttons")
+                .right(7).bottom(7)
+                .height(18 * 4 + 4)
+                .width(18);
+
+        BooleanSyncValue hasEnergy = new BooleanSyncValue(workable::isHasNotEnoughEnergy);
+        panelSyncManager.syncValue("has_energy", hasEnergy);
+
+        ModularPanel panel = workableRecipeMap.getRecipeMapUI()
+                .setSize(176 + 20, 166 + yOffset)
+                .constructPanel(this, workable::getProgressPercent,
+                        importItems, exportItems,
+                        importFluids, exportFluids,
+                        yOffset, panelSyncManager)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(GTGuiTextures.INDICATOR_NO_ENERGY.asWidget()
+                        .name("energy.indicator")
+                        .size(18)
+                        .alignX(0.5f)
+                        .top(42 + yOffset + 18)
+                        .setEnabledIf($ -> hasEnergy.getBoolValue()))
+                .child(col)
+                .child(SlotGroupWidget.playerInventory(true).left(7));
+
+        if (exportItems.getSlots() > 0) {
+            col.child(new ToggleButton()
+                    .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
+                    .value(new BooleanSyncValue(() -> autoOutputItems, val -> autoOutputItems = val))
+                    .addTooltip(true, IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled"))
+                    .addTooltip(false, IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")));
+        }
+
+        if (exportFluids.getTanks() > 0) {
+            col.child(new ToggleButton()
+                    .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
+                    .value(new BooleanSyncValue(() -> autoOutputFluids, val -> autoOutputFluids = val))
+                    .addTooltip(true, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.enabled"))
+                    .addTooltip(false, IKey.lang("gregtech.gui.fluid_auto_output.tooltip.disabled")));
+        }
+
+        col.child(new ItemSlot()
+                .name("charger.slot")
+                .slot(SyncHandlers.itemSlot(chargerInventory, 0))
+                .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
+                .bottom(18 + 4)
+                .addTooltipLine(IKey.lang("gregtech.gui.charger_slot.tooltip",
+                        GTValues.VNF[getTier()], GTValues.VNF[getTier()])));
+
+        col.child(new Widget<>()
+                .size(17)
+                .marginTop(1)
+                .marginRight(1)
+                .top(-17 - 2)
+                .background(GTGuiTextures.getLogo(getUITheme())));
+
+        if (hasGhostCircuitInventory() && circuitInventory != null) {
+            col.child(new GhostCircuitSlotWidget()
+                    .bottom(0)
+                    .slot(circuitInventory, 0)
+                    .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY));
+        }
+        return panel;
+    }
+
+    @Override
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return createGuiTemplate(entityPlayer).build(getHolder(), entityPlayer);
+    }
+
+    @Deprecated
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
         RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
         int yOffset = 0;
@@ -489,38 +585,42 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         ModularUI.Builder builder = workableRecipeMap.getRecipeMapUI()
                 .createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids,
                         yOffset)
-                .widget(new LabelWidget(5, 5, getMetaFullName()))
-                .widget(new SlotWidget(chargerInventory, 0, 79, 62 + yOffset, true, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY)
-                        .setTooltipText("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
-                                GTValues.VNF[getTier()]))
-                .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_ENERGY).setIgnoreColor(true)
-                        .setPredicate(workable::isHasNotEnoughEnergy))
+                .widget(new gregtech.api.gui.widgets.LabelWidget(5, 5, getMetaFullName()))
+                .widget(new gregtech.api.gui.widgets.SlotWidget(chargerInventory, 0, 79, 62 + yOffset, true, true,
+                        false)
+                                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY)
+                                .setTooltipText("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
+                                        GTValues.VNF[getTier()]))
+                .widget(new gregtech.api.gui.widgets.ImageWidget(79, 42 + yOffset, 18, 18,
+                        GuiTextures.INDICATOR_NO_ENERGY).setIgnoreColor(true)
+                                .setPredicate(workable::isHasNotEnoughEnergy))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
         int leftButtonStartX = 7;
 
         if (exportItems.getSlots() > 0) {
-            builder.widget(new ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
+            builder.widget(new gregtech.api.gui.widgets.ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
                     GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
                             .setTooltipText("gregtech.gui.item_auto_output.tooltip")
                             .shouldUseBaseBackground());
             leftButtonStartX += 18;
         }
         if (exportFluids.getTanks() > 0) {
-            builder.widget(new ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
+            builder.widget(new gregtech.api.gui.widgets.ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
                     GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
                             .setTooltipText("gregtech.gui.fluid_auto_output.tooltip")
                             .shouldUseBaseBackground());
         }
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
-            ImageWidget logo = new ImageWidget(152, 63 + yOffset, 17, 17,
+            gregtech.api.gui.widgets.ImageWidget logo = new gregtech.api.gui.widgets.ImageWidget(152, 63 + yOffset, 17,
+                    17,
                     GTValues.XMAS.get() ? getXmasLogo() : getLogo()).setIgnoreColor(true);
 
             if (this.circuitInventory != null) {
-                SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62 + yOffset)
-                        .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
+                gregtech.api.gui.widgets.SlotWidget circuitSlot = new gregtech.api.gui.widgets.GhostCircuitSlotWidget(
+                        circuitInventory, 0, 124, 62 + yOffset)
+                                .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
                 builder.widget(circuitSlot.setConsumer(this::getCircuitSlotTooltip)).widget(logo);
             }
         }
@@ -546,7 +646,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
     }
 
     // Method provided to override
-    protected void getCircuitSlotTooltip(SlotWidget widget) {
+    protected void getCircuitSlotTooltip(gregtech.api.gui.widgets.SlotWidget widget) {
         String configString;
         if (circuitInventory == null || circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
             configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
@@ -555,11 +655,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         }
 
         widget.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return createGuiTemplate(entityPlayer).build(getHolder(), entityPlayer);
     }
 
     @Override
