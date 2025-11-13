@@ -44,6 +44,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.command.CommandHand;
 import gregtech.common.command.CommandRecipeCheck;
 import gregtech.common.command.CommandShaders;
+import gregtech.common.command.benchmark.CommandBenchmark;
 import gregtech.common.command.worldgen.CommandWorldgen;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
@@ -321,6 +322,7 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.commandManager.addCommand(new CommandRecipeCheck());
         GregTechAPI.commandManager.addCommand(new CommandShaders());
         GregTechAPI.commandManager.addCommand(new CommandDataFix());
+        GregTechAPI.commandManager.addCommand(new CommandBenchmark());
         CapesRegistry.load();
 
         if (Mods.BetterQuestingUnofficial.isModLoaded()) {
