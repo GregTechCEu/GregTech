@@ -139,8 +139,8 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                         if (data.shift) {
                             ItemStack finalStack = outputStack.copy();
                             while (quickTransfer(finalStack, true) &&
-                                    finalStack.getCount() < outputStack.getMaxStackSize()) {
-                                if (!recipeLogic.performRecipe()) break;
+                                    canStack(finalStack, outputStack) &&
+                                    recipeLogic.performRecipe()) {
                                 finalStack.setCount(finalStack.getCount() + outputStack.getCount());
                                 handleItemCraft(outputStack, player);
                             }
@@ -152,6 +152,11 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                 }
                 ForgeHooks.setCraftingPlayer(null);
             }
+        }
+
+        private static boolean canStack(ItemStack a, ItemStack b) {
+            return ItemHandlerHelper.canItemStacksStackRelaxed(a, b) &&
+                    a.getCount() + b.getCount() < b.getMaxStackSize();
         }
 
         private boolean insertStack(ItemStack fromStack, ModularSlot toSlot, boolean simulate) {
