@@ -11,6 +11,7 @@ import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.crafting.CraftingComponent;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
 import gregtech.api.unification.material.Material;
@@ -49,7 +50,7 @@ import gregtech.datafix.GTDataFixers;
 import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
-import gregtech.loaders.recipe.CraftingComponent;
+import gregtech.loaders.recipe.CraftingComponents;
 import gregtech.loaders.recipe.GTRecipeManager;
 import gregtech.modules.GregTechModules;
 
@@ -350,7 +351,7 @@ public class CommonProxy {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void initComponents(RegistryEvent.Register<IRecipe> event) {
         GTRecipeInputCache.enableCache();
-        CraftingComponent.initializeComponents();
+        CraftingComponents.initializeComponents();
         MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, CraftingComponent.class));
     }
 
