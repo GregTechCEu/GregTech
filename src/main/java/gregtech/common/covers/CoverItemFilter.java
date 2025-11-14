@@ -8,6 +8,7 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.ITranslatable;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.BaseFilterContainer;
@@ -156,8 +157,9 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                 .child(Flow.column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new EnumRowBuilder<>(ItemFilterMode.class)
                                 .value(filteringMode)
-                                .lang("cover.filter.mode.title")
+                                .rowDescription(IKey.lang("cover.filter.mode.title"))
                                 .overlay(16, GTGuiTextures.FILTER_MODE_OVERLAY)
+                                .widgetExtras(ITranslatable::handleTooltip)
                                 .build())
                         .child(Flow.row()
                                 .marginBottom(2)
@@ -176,10 +178,17 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                                         .asWidget()
                                         .height(18)
                                         .alignX(1f)))
-                        .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
-                                .height(1).widthRel(0.95f).margin(0, 4))
-                        .child(getFilter().createWidgets(guiSyncManager).left(0)))
-                .child(SlotGroupWidget.playerInventory(false).bottom(7).left(7));
+                        .child(new Rectangle()
+                                .setColor(UI_TEXT_COLOR)
+                                .asWidget()
+                                .widthRel(0.95f)
+                                .height(1)
+                                .margin(0, 4))
+                        .child(getFilter().createWidgets(guiSyncManager)
+                                .left(0)))
+                .child(SlotGroupWidget.playerInventory(false)
+                        .left(7)
+                        .bottom(7));
     }
 
     @Override

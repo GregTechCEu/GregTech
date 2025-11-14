@@ -4,6 +4,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.ITranslatable;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -254,26 +255,33 @@ public class CoverFluidRegulator extends CoverPump {
 
     @Override
     protected Flow createUI(GuiData data, PanelSyncManager syncManager) {
-        var transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode, this::setTransferMode);
-        transferMode.updateCacheFromSource(true);
-        syncManager.syncValue("transfer_mode", transferMode);
+        EnumSyncValue<TransferMode> transferModeSync = new EnumSyncValue<>(TransferMode.class, this::getTransferMode,
+                this::setTransferMode);
+        transferModeSync.updateCacheFromSource(true);
+        syncManager.syncValue("transfer_mode", transferModeSync);
 
-        var bucketMode = new EnumSyncValue<>(BucketMode.class, this::getBucketMode, this::setBucketMode);
-        bucketMode.updateCacheFromSource(true);
-        syncManager.syncValue("bucket_mode", bucketMode);
+        EnumSyncValue<BucketMode> bucketModeSync = new EnumSyncValue<>(BucketMode.class, this::getBucketMode,
+                this::setBucketMode);
+        bucketModeSync.updateCacheFromSource(true);
+        syncManager.syncValue("bucket_mode", bucketModeSync);
 
-        var filterTransferSize = new StringSyncValue(this::getStringTransferRate, this::setStringTransferRate);
+        StringSyncValue filterTransferSize = new StringSyncValue(this::getStringTransferRate,
+                this::setStringTransferRate);
         filterTransferSize.updateCacheFromSource(true);
 
         return super.createUI(data, syncManager)
                 .child(new EnumRowBuilder<>(TransferMode.class)
-                        .value(transferMode)
-                        .lang("cover.generic.transfer_mode")
+                        .value(transferModeSync)
+                        .rowDescription(IKey.lang("cover.generic.transfer_mode"))
                         .overlay(GTGuiTextures.FLUID_TRANSFER_MODE_OVERLAY)
+                        .widgetExtras(
+                                (transferMode, toggleButton) -> transferMode.handleTooltip(toggleButton,
+                                        "fluid_regulator"))
                         .build())
                 .child(new EnumRowBuilder<>(BucketMode.class)
-                        .value(bucketMode)
+                        .value(bucketModeSync)
                         .overlay(IKey.str("kL"), IKey.str("L"))
+                        .widgetExtras(ITranslatable::handleTooltip)
                         .build()
                         .child(new TextFieldWidget().widthRel(0.5f).right(0)
                                 .setEnabledIf(w -> shouldDisplayAmountSlider())
@@ -313,7 +321,7 @@ public class CoverFluidRegulator extends CoverPump {
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         this.transferMode = TransferMode.VALUES[tagCompound.getInteger("TransferMode")];
-        this.fluidFilterContainer.setMaxTransferSize(this.transferMode.maxStackSize);
+        this.fluidFilterContainer.setMaxTransferSize(getMaxTransferRate());
         super.readFromNBT(tagCompound);
         // legacy NBT tag
         if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {

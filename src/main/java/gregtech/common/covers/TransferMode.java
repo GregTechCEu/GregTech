@@ -1,28 +1,38 @@
 package gregtech.common.covers;
 
-import net.minecraft.util.IStringSerializable;
+import gregtech.api.util.ITranslatable;
 
+import com.cleanroommc.modularui.api.widget.ITooltip;
 import org.jetbrains.annotations.NotNull;
 
-public enum TransferMode implements IStringSerializable {
+public enum TransferMode implements ITranslatable {
 
-    TRANSFER_ANY("cover.robotic_arm.transfer_mode.transfer_any", 1),
-    TRANSFER_EXACT("cover.robotic_arm.transfer_mode.transfer_exact", 1024),
-    KEEP_EXACT("cover.robotic_arm.transfer_mode.keep_exact", Integer.MAX_VALUE),
-    RETAIN_EXACT("cover.robotic_arm.transfer_mode.retain_exact", Integer.MAX_VALUE);
+    TRANSFER_ANY("cover.%s.transfer_mode.transfer_any"),
+    TRANSFER_EXACT("cover.%s.transfer_mode.transfer_exact"),
+    KEEP_EXACT("cover.%s.transfer_mode.keep_exact"),
+    RETAIN_EXACT("cover.%s.transfer_mode.retain_exact");
 
     public static final TransferMode[] VALUES = values();
-    public final String localeName;
-    public final int maxStackSize;
+    private final String localeName;
 
-    TransferMode(String localeName, int maxStackSize) {
+    TransferMode(String localeName) {
         this.localeName = localeName;
-        this.maxStackSize = maxStackSize;
     }
 
-    @NotNull
     @Override
-    public String getName() {
-        return localeName;
+    public @NotNull String getName() {
+        throw new UnsupportedOperationException(
+                "TransferMode#getName() called, this wouldn't produce any usable output, use the keyed getName instead!");
+    }
+
+    @Override
+    public @NotNull String getName(@NotNull String key) {
+        return String.format(localeName, key);
+    }
+
+    @Override
+    public void handleTooltip(@NotNull ITooltip<?> tooltip, @NotNull String key) {
+        tooltip.addTooltipLine(getName(key));
+        tooltip.addTooltipLine(getName(key) + ".description");
     }
 }

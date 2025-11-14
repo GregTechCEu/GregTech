@@ -28,6 +28,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
@@ -154,7 +155,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                 .child(new EnumRowBuilder<>(CoverPump.PumpMode.class)
                         .value(pumpMode)
                         .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
-                        .lang("cover.pump.mode")
+                        .rowDescription(IKey.lang("cover.pump.mode"))
                         .build());
     }
 

@@ -17,6 +17,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -109,10 +110,12 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         return super.createUI(data, guiSyncManager)
                 .child(new EnumRowBuilder<>(VoidingMode.class)
                         .value(voidingMode)
-                        .lang("cover.voiding.voiding_mode")
+                        .rowDescription(IKey.lang("cover.voiding.voiding_mode"))
                         .overlay(16, GTGuiTextures.VOIDING_MODE_OVERLAY)
                         .build())
-                .child(Flow.row().right(0).coverChildrenHeight()
+                .child(Flow.row()
+                        .right(0)
+                        .coverChildrenHeight()
                         .child(transferTextField
                                 .setEnabledIf(w -> this.itemFilterContainer.showGlobalTransferLimitSlider() &&
                                         this.voidingMode == VoidingMode.VOID_OVERFLOW)
@@ -123,7 +126,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
     @Override
     protected int getMaxStackSize() {
-        return getVoidingMode().maxStackSize;
+        return getVoidingMode().getMaxStackSize();
     }
 
     @Override
@@ -163,7 +166,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         this.voidingMode = VoidingMode.VALUES[tagCompound.getInteger("VoidMode")];
-        this.itemFilterContainer.setMaxTransferSize(this.voidingMode.maxStackSize);
+        this.itemFilterContainer.setMaxTransferSize(getMaxStackSize());
         super.readFromNBT(tagCompound);
     }
 }

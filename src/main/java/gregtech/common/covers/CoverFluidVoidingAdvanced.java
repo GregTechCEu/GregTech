@@ -123,7 +123,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         return super.createUI(data, syncManager)
                 .child(new EnumRowBuilder<>(VoidingMode.class)
                         .value(voidingMode)
-                        .lang("cover.voiding.voiding_mode")
+                        .rowDescription(IKey.lang("cover.voiding.voiding_mode"))
                         .overlay(16, GTGuiTextures.VOIDING_MODE_OVERLAY)
                         .build())
                 .child(new EnumRowBuilder<>(BucketMode.class)
@@ -140,7 +140,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     @Override
     protected int getMaxTransferRate() {
-        return getVoidingMode().maxStackSize;
+        return getVoidingMode().getMaxStackSize();
     }
 
     @Override
@@ -171,7 +171,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         this.voidingMode = VoidingMode.VALUES[tagCompound.getInteger("VoidingMode")];
-        this.fluidFilterContainer.setMaxTransferSize(this.voidingMode.maxStackSize);
+        this.fluidFilterContainer.setMaxTransferSize(getMaxTransferRate());
         this.transferAmount = tagCompound.getInteger("TransferAmount");
         super.readFromNBT(tagCompound);
     }

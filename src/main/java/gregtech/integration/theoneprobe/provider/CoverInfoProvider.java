@@ -61,21 +61,21 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     private static void conveyorInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverConveyor conveyor) {
         String rateUnit = lang("cover.conveyor.transfer_rate");
 
-        if (conveyor instanceof CoverItemVoiding) {
-            itemVoidingInfo(probeInfo, (CoverItemVoiding) conveyor);
-        } else if (!(conveyor instanceof CoverRoboticArm arm) ||
-                arm.getTransferMode() == TransferMode.TRANSFER_ANY) {
-                    // only display the regular rate if the cover does not have a specialized rate
-                    transferRateText(probeInfo, conveyor.getConveyorMode(), " " + rateUnit, conveyor.getTransferRate());
-                }
+        if (conveyor instanceof CoverItemVoiding coverItemVoiding) {
+            itemVoidingInfo(probeInfo, coverItemVoiding);
+        } else if (!(conveyor instanceof CoverRoboticArm arm) || arm.getTransferMode() == TransferMode.TRANSFER_ANY) {
+            // only display the regular rate if the cover does not have a specialized rate
+            transferRateText(probeInfo, conveyor.getConveyorMode(), " " + rateUnit, conveyor.getTransferRate());
+        }
 
         ItemFilterContainer filter = conveyor.getItemFilterContainer();
         if (conveyor instanceof CoverRoboticArm roboticArm) {
-            if (roboticArm.getTransferMode() != TransferMode.TRANSFER_ANY)
+            if (roboticArm.getTransferMode() != TransferMode.TRANSFER_ANY) {
                 rateUnit = lang("cover.robotic_arm.exact");
+            }
 
-            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit,
-                    filter.getTransferSize(), filter.hasFilter());
+            transferModeText(probeInfo, roboticArm.getTransferMode(), "robotic_arm", rateUnit, filter.getTransferSize(),
+                    filter.hasFilter());
         }
         itemFilterText(probeInfo, filter.getFilter());
     }
@@ -108,8 +108,8 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
                 "cover.bucket.mode.bucket_rate" :
                 "cover.bucket.mode.milli_bucket_rate");
 
-        if (pump instanceof CoverFluidVoiding) {
-            fluidVoidingInfo(probeInfo, (CoverFluidVoiding) pump);
+        if (pump instanceof CoverFluidVoiding coverFluidVoiding) {
+            fluidVoidingInfo(probeInfo, coverFluidVoiding);
         } else if (!(pump instanceof CoverFluidRegulator regulator) ||
                 regulator.getTransferMode() == TransferMode.TRANSFER_ANY) {
                     // do not display the regular rate if the cover has a specialized rate
@@ -125,8 +125,8 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
                         "gregtech.top.unit.fluid_buckets" :
                         "gregtech.top.unit.fluid_milibuckets");
 
-            transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator
-                    .getFluidFilterContainer().getTransferSize(), filter.hasFilter() && !filter.isBlacklistFilter());
+            transferModeText(probeInfo, regulator.getTransferMode(), "fluid_regulator", rateUnit,
+                    filter.getTransferSize(), filter.hasFilter() && !filter.isBlacklistFilter());
         }
         fluidFilterText(probeInfo, filter.getFilter());
     }
@@ -217,11 +217,12 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      * @param hasFilter whether the cover has a filter installed
      */
     private static void transferModeText(@NotNull IProbeInfo probeInfo, @NotNull TransferMode mode,
-                                         @NotNull String rateUnit, int rate, boolean hasFilter) {
-        String text = TextStyleClass.OK + lang(mode.getName());
-        if (!hasFilter && mode != TransferMode.TRANSFER_ANY)
+                                         @NotNull String coverName, @NotNull String rateUnit, int rate,
+                                         boolean hasFilter) {
+        String text = TextStyleClass.OK + lang(mode.getName(coverName));
+        if (!hasFilter && mode != TransferMode.TRANSFER_ANY) {
             text += TextStyleClass.LABEL + " " + TextFormattingUtil.formatNumbers(rate) + " " + rateUnit;
-
+        }
         probeInfo.text(text);
     }
 

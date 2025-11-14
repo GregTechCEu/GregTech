@@ -8,7 +8,6 @@ import gregtech.api.mui.factory.CoverGuiFactory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,7 +33,9 @@ import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -139,7 +140,7 @@ public interface CoverWithUI extends Cover, IGuiHolder<SidedPosGuiData>, gregtec
     /**
      * Create a dynamic lang key that switches between {@code cover.generic.enabled} and {@code cover.generic.disabled}
      * depending on the result of the given boolean supplier. <br/>
-     * 
+     *
      * @param keyBase the base of the lang key to use. {@code .enabled} and {@code .disabled} will be appended.
      */
     default IKey createEnabledKey(@NotNull String keyBase, @NotNull BooleanSupplier enabledState) {
@@ -194,10 +195,16 @@ public interface CoverWithUI extends Cover, IGuiHolder<SidedPosGuiData>, gregtec
 
         private EnumSyncValue<T> syncValue;
         private final Class<T> enumValue;
-        private String lang;
+        @Nullable
+        private IKey rowDescription;
+        @Nullable
         private IDrawable[] background;
+        @Nullable
         private IDrawable selectedBackground;
+        @Nullable
         private IDrawable[] overlay;
+        @Nullable
+        private BiConsumer<T, ToggleButton> widgetExtras;
 
         public EnumRowBuilder(Class<T> enumValue) {
             this.enumValue = enumValue;
@@ -208,31 +215,65 @@ public interface CoverWithUI extends Cover, IGuiHolder<SidedPosGuiData>, gregtec
             return this;
         }
 
-        public EnumRowBuilder<T> lang(String lang) {
-            this.lang = lang;
+        /**
+         * Add an {@link IKey} to the row that will be right aligned at the end.
+         */
+        public EnumRowBuilder<T> rowDescription(IKey lang) {
+            this.rowDescription = lang;
             return this;
         }
 
+        /**
+         * Add a background to each {@link ToggleButton} when the button is not selected.
+         *
+         * @param background an array of {@link IDrawable}s in the same order as the {@link Enum} used to make this
+         *                   {@link EnumRowBuilder}
+         */
         public EnumRowBuilder<T> background(IDrawable... background) {
             this.background = background;
             return this;
         }
 
+        /**
+         * Add a background to each {@link ToggleButton} when the button is selected.
+         *
+         * @param selectedBackground an array of {@link IDrawable}s in the same order as the {@link Enum} used to make
+         *                           this {@link EnumRowBuilder}
+         */
         public EnumRowBuilder<T> selectedBackground(IDrawable selectedBackground) {
             this.selectedBackground = selectedBackground;
             return this;
         }
 
+        /**
+         * Add an overlay to each {@link ToggleButton}.
+         *
+         * @param overlay an array of {@link IDrawable}s in the same order as the {@link Enum} used to make this
+         *                {@link EnumRowBuilder}
+         */
         public EnumRowBuilder<T> overlay(IDrawable... overlay) {
             this.overlay = overlay;
             return this;
         }
 
+        /**
+         * Add an overlay to each {@link ToggleButton} with a specific size.
+         *
+         * @param size    the size to set the {@link IDrawable} to.
+         * @param overlay an array of {@link IDrawable}s in the same order as the {@link Enum} used to make this
+         *                {@link EnumRowBuilder}
+         */
         public EnumRowBuilder<T> overlay(int size, IDrawable... overlay) {
             this.overlay = new IDrawable[overlay.length];
             for (int i = 0; i < overlay.length; i++) {
-                this.overlay[i] = overlay[i].asIcon().size(size);
+                this.overlay[i] = overlay[i].asIcon()
+                        .size(size);
             }
+            return this;
+        }
+
+        public EnumRowBuilder<T> widgetExtras(BiConsumer<T, ToggleButton> widgetExtras) {
+            this.widgetExtras = widgetExtras;
             return this;
         }
 
@@ -241,34 +282,47 @@ public interface CoverWithUI extends Cover, IGuiHolder<SidedPosGuiData>, gregtec
         }
 
         public Flow build() {
-            var row = Flow.row().marginBottom(2).coverChildrenHeight().widthRel(1f);
+            Flow row = Flow.row()
+                    .marginBottom(2)
+                    .widthRel(1f)
+                    .coverChildrenHeight();
+
             if (this.enumValue != null && this.syncValue != null) {
-                for (var enumVal : enumValue.getEnumConstants()) {
-                    var button = new ToggleButton().size(18).marginRight(2)
+                for (T enumVal : enumValue.getEnumConstants()) {
+                    ToggleButton button = new ToggleButton()
+                            .marginRight(2)
+                            .size(18)
                             .value(boolValueOf(this.syncValue, enumVal));
 
-                    if (this.background != null && this.background.length > 0)
+                    if (this.background != null && this.background.length > 0) {
                         button.background(this.background);
-                    else
+                    } else {
                         button.background(GTGuiTextures.MC_BUTTON);
-
-                    if (this.selectedBackground != null)
-                        button.selectedBackground(this.selectedBackground);
-                    else
-                        button.selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED);
-
-                    if (this.overlay != null)
-                        button.overlay(this.overlay[enumVal.ordinal()]);
-
-                    if (enumVal instanceof IStringSerializable serializable) {
-                        button.addTooltipLine(IKey.lang(serializable.getName()));
                     }
+
+                    if (this.selectedBackground != null) {
+                        button.selectedBackground(this.selectedBackground);
+                    } else {
+                        button.selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED);
+                    }
+
+                    if (this.overlay != null) {
+                        button.overlay(this.overlay[enumVal.ordinal()]);
+                    }
+
+                    if (this.widgetExtras != null) {
+                        this.widgetExtras.accept(enumVal, button);
+                    }
+
                     row.child(button);
                 }
             }
 
-            if (this.lang != null && !this.lang.isEmpty())
-                row.child(IKey.lang(this.lang).asWidget().align(Alignment.CenterRight).height(18));
+            if (this.rowDescription != null && !this.rowDescription.get().isEmpty()) {
+                row.child(this.rowDescription.asWidget()
+                        .align(Alignment.CenterRight)
+                        .height(18));
+            }
 
             return row;
         }
