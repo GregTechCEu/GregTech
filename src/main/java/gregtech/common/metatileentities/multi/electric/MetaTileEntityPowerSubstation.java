@@ -587,8 +587,10 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         syncManager.syncValue("energy_capacity", energyCapacityValue);
 
         bars.add(b -> b.progress(() -> {
-            if (energyCapacityValue.getValue().equals(BigInteger.ZERO)) return 0;
-            return energyStoredValue.getValue().divide(energyCapacityValue.getValue()).doubleValue();
+                    BigInteger capacity = energyCapacityValue.getValue();
+                    BigInteger stored = energyStoredValue.getValue();
+                    if (capacity.equals(BigInteger.ZERO) || stored.equals(BigInteger.ZERO)) return 0;
+                    return 1 / capacity.divide(stored).doubleValue();
         })
                 .texture(GTGuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW)
                 .tooltipBuilder(t -> {
