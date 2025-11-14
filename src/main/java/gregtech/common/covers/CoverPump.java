@@ -11,6 +11,7 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.ITranslatable;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -25,7 +26,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
@@ -41,6 +41,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
@@ -48,10 +49,10 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
@@ -201,31 +202,32 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     protected ParentWidget<?> createUI(GuiData data, PanelSyncManager syncManager) {
-        var manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
+        EnumSyncValue<ManualImportExportMode> manualIOModeSync = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
+        IntSyncValue throughputSync = new IntSyncValue(this::getTransferRate, this::setTransferRate);
+        EnumSyncValue<PumpMode> pumpModeSync = new EnumSyncValue<>(PumpMode.class, this::getPumpMode,
+                this::setPumpMode);
 
-        var throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
+        syncManager.syncValue("manual_io", manualIOModeSync);
+        syncManager.syncValue("pump_mode", pumpModeSync);
+        syncManager.syncValue("throughput", throughputSync);
 
-        var throughputString = new StringSyncValue(
-                throughput::getStringValue, throughput::setStringValue);
-
-        var pumpMode = new EnumSyncValue<>(PumpMode.class, this::getPumpMode, this::setPumpMode);
-
-        syncManager.syncValue("manual_io", manualIOmode);
-        syncManager.syncValue("pump_mode", pumpMode);
-        syncManager.syncValue("throughput", throughput);
-
-        var column = Flow.column().top(24).margin(7, 0)
-                .widthRel(1f).coverChildrenHeight();
+        Flow column = Flow.column()
+                .top(24)
+                .margin(7, 0)
+                .widthRel(1f)
+                .coverChildrenHeight();
 
         if (createThroughputRow())
-            column.child(Flow.row().coverChildrenHeight()
-                    .marginBottom(2).widthRel(1f)
+            column.child(Flow.row()
+                    .widthRel(1f)
+                    .marginBottom(2)
+                    .coverChildrenHeight()
                     .child(new ButtonWidget<>()
                             .left(0).width(18)
                             .onMousePressed(mouseButton -> {
-                                int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
-                                throughput.setValue(val);
+                                int val = throughputSync.getValue() - getIncrementValue(MouseData.create(mouseButton));
+                                throughputSync.setValue(val);
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
@@ -233,40 +235,47 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             .left(18).right(18)
                             .setTextColor(Color.WHITE.darker(1))
                             .setNumbers(1, maxFluidTransferRate)
-                            .value(throughputString)
+                            .value(new IntValue.Dynamic(throughputSync::getIntValue, throughputSync::setIntValue))
                             .background(GTGuiTextures.DISPLAY))
                     .child(new ButtonWidget<>()
-                            .right(0).width(18)
+                            .right(0)
+                            .width(18)
                             .onMousePressed(mouseButton -> {
-                                int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
-                                throughput.setValue(val);
+                                int val = throughputSync.getValue() + getIncrementValue(MouseData.create(mouseButton));
+                                throughputSync.setValue(val);
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
 
-        if (createFilterRow())
+        if (createFilterRow()) {
             column.child(getFluidFilterContainer().initUI(data, syncManager));
+        }
 
-        if (createManualIOModeRow())
+        if (createManualIOModeRow()) {
+            // noinspection DuplicatedCode
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
-                    .value(manualIOmode)
-                    .lang("cover.generic.manual_io")
+                    .value(manualIOModeSync)
+                    .rowDescription(IKey.lang("cover.generic.manual_io"))
                     .overlay(new IDrawable[] {
-                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ?
+                            new DynamicDrawable(() -> pumpModeSync.getValue().isImport() ?
                                     GTGuiTextures.MANUAL_IO_OVERLAY_OUT[0] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[0]),
-                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ?
+                            new DynamicDrawable(() -> pumpModeSync.getValue().isImport() ?
                                     GTGuiTextures.MANUAL_IO_OVERLAY_OUT[1] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[1]),
-                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ?
+                            new DynamicDrawable(() -> pumpModeSync.getValue().isImport() ?
                                     GTGuiTextures.MANUAL_IO_OVERLAY_OUT[2] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[2])
                     })
+                    .widgetExtras(ITranslatable::handleTooltip)
                     .build());
+        }
 
-        if (createPumpModeRow())
+        if (createPumpModeRow()) {
             column.child(new EnumRowBuilder<>(PumpMode.class)
-                    .value(pumpMode)
-                    .lang("cover.pump.mode")
+                    .value(pumpModeSync)
+                    .rowDescription(IKey.lang("cover.pump.mode"))
                     .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY) // todo pump mode overlays
+                    .widgetExtras(ITranslatable::handleTooltip)
                     .build());
+        }
 
         return column;
     }
@@ -410,7 +419,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         return Textures.VOLTAGE_CASINGS[this.tier].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
     }
 
-    public enum PumpMode implements IStringSerializable, IIOMode {
+    public enum PumpMode implements ITranslatable, IIOMode {
 
         IMPORT("cover.pump.mode.import"),
         EXPORT("cover.pump.mode.export");
@@ -434,7 +443,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         }
     }
 
-    public enum BucketMode implements IStringSerializable {
+    public enum BucketMode implements ITranslatable {
 
         BUCKET("cover.bucket.mode.bucket"),
         MILLI_BUCKET("cover.bucket.mode.milli_bucket");

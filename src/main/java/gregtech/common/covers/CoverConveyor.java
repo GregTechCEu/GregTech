@@ -11,6 +11,7 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.ITranslatable;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
@@ -28,7 +29,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
@@ -43,6 +43,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
@@ -50,10 +51,10 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
@@ -515,29 +516,26 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
-        var column = Flow.column().top(24).margin(7, 0)
-                .widthRel(1f).coverChildrenHeight();
+        var column = Flow.column()
+                .top(24)
+                .widthRel(1f)
+                .margin(7, 0)
+                .coverChildrenHeight();
 
-        EnumSyncValue<ManualImportExportMode> manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
+        EnumSyncValue<ManualImportExportMode> manualIOModeSync = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
-
-        EnumSyncValue<ConveyorMode> conveyorMode = new EnumSyncValue<>(ConveyorMode.class,
-                this::getConveyorMode, this::setConveyorMode);
-
+        EnumSyncValue<ConveyorMode> conveyorModeSync = new EnumSyncValue<>(ConveyorMode.class, this::getConveyorMode,
+                this::setConveyorMode);
         IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
-
-        StringSyncValue formattedThroughput = new StringSyncValue(throughput::getStringValue,
-                throughput::setStringValue);
-
-        EnumSyncValue<DistributionMode> distributionMode = new EnumSyncValue<>(DistributionMode.class,
+        EnumSyncValue<DistributionMode> distributionModeSync = new EnumSyncValue<>(DistributionMode.class,
                 this::getDistributionMode, this::setDistributionMode);
 
-        guiSyncManager.syncValue("manual_io", manualIOmode);
-        guiSyncManager.syncValue("conveyor_mode", conveyorMode);
-        guiSyncManager.syncValue("distribution_mode", distributionMode);
+        guiSyncManager.syncValue("manual_io", manualIOModeSync);
+        guiSyncManager.syncValue("conveyor_mode", conveyorModeSync);
+        guiSyncManager.syncValue("distribution_mode", distributionModeSync);
         guiSyncManager.syncValue("throughput", throughput);
 
-        if (createThroughputRow())
+        if (createThroughputRow()) {
             column.child(Flow.row().coverChildrenHeight()
                     .marginBottom(2).widthRel(1f)
                     .child(new ButtonWidget<>()
@@ -549,50 +547,61 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
                     .child(new TextFieldWidget()
-                            .left(18).right(18)
+                            .left(18)
+                            .right(18)
                             .setTextColor(Color.WHITE.darker(1))
                             .setNumbers(1, maxItemTransferRate)
-                            .value(formattedThroughput)
+                            .value(new IntValue.Dynamic(throughput::getIntValue, throughput::setIntValue))
                             .background(GTGuiTextures.DISPLAY))
                     .child(new ButtonWidget<>()
-                            .right(0).width(18)
+                            .right(0)
+                            .width(18)
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
                                 throughput.setValue(val, true, true);
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
+        }
 
-        if (createFilterRow())
+        if (createFilterRow()) {
             column.child(getItemFilterContainer().initUI(data, guiSyncManager));
+        }
 
-        if (createManualIOModeRow())
+        if (createManualIOModeRow()) {
+            // noinspection DuplicatedCode
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
-                    .value(manualIOmode)
-                    .lang("cover.generic.manual_io")
+                    .value(manualIOModeSync)
+                    .rowDescription(IKey.lang("cover.generic.manual_io"))
                     .overlay(new IDrawable[] {
-                            new DynamicDrawable(() -> conveyorMode.getValue().isImport() ?
+                            new DynamicDrawable(() -> conveyorModeSync.getValue().isImport() ?
                                     GTGuiTextures.MANUAL_IO_OVERLAY_OUT[0] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[0]),
-                            new DynamicDrawable(() -> conveyorMode.getValue().isImport() ?
+                            new DynamicDrawable(() -> conveyorModeSync.getValue().isImport() ?
                                     GTGuiTextures.MANUAL_IO_OVERLAY_OUT[1] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[1]),
-                            new DynamicDrawable(() -> conveyorMode.getValue().isImport() ?
+                            new DynamicDrawable(() -> conveyorModeSync.getValue().isImport() ?
                                     GTGuiTextures.MANUAL_IO_OVERLAY_OUT[2] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[2])
                     })
+                    .widgetExtras(ITranslatable::handleTooltip)
                     .build());
+        }
 
-        if (createConveyorModeRow())
+        if (createConveyorModeRow()) {
             column.child(new EnumRowBuilder<>(ConveyorMode.class)
-                    .value(conveyorMode)
-                    .lang("cover.generic.io")
+                    .value(conveyorModeSync)
+                    .rowDescription(IKey.lang("cover.generic.io"))
                     .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
+                    .widgetExtras(ITranslatable::handleTooltip)
                     .build());
+        }
 
-        if (createDistributionModeRow())
+        if (createDistributionModeRow()) {
             column.child(new EnumRowBuilder<>(DistributionMode.class)
-                    .value(distributionMode)
+                    .value(distributionModeSync)
+                    .rowDescription(IKey.lang("cover.conveyor.distribution.name"))
                     .overlay(16, GTGuiTextures.DISTRIBUTION_MODE_OVERLAY)
-                    .lang("cover.conveyor.distribution.name")
+                    .widgetExtras(ITranslatable::handleTooltip)
                     .build());
+        }
 
         return column;
     }
@@ -693,7 +702,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         return Textures.VOLTAGE_CASINGS[this.tier].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
     }
 
-    public enum ConveyorMode implements IStringSerializable, IIOMode {
+    public enum ConveyorMode implements ITranslatable, IIOMode {
 
         IMPORT("cover.conveyor.mode.import"),
         EXPORT("cover.conveyor.mode.export");

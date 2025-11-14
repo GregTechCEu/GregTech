@@ -1,17 +1,18 @@
 package gregtech.common.covers;
 
-import net.minecraft.util.IStringSerializable;
+import gregtech.api.util.ITranslatable;
 
+import com.cleanroommc.modularui.api.widget.ITooltip;
 import org.jetbrains.annotations.NotNull;
 
-public enum ManualImportExportMode implements IStringSerializable {
+public enum ManualImportExportMode implements ITranslatable {
 
     DISABLED("cover.universal.manual_import_export.mode.disabled"),
     FILTERED("cover.universal.manual_import_export.mode.filtered"),
     UNFILTERED("cover.universal.manual_import_export.mode.unfiltered");
 
     public static final ManualImportExportMode[] VALUES = values();
-    public final String localeName;
+    private final String localeName;
 
     ManualImportExportMode(String localeName) {
         this.localeName = localeName;
@@ -21,5 +22,11 @@ public enum ManualImportExportMode implements IStringSerializable {
     @Override
     public String getName() {
         return localeName;
+    }
+
+    @Override
+    public void handleTooltip(@NotNull ITooltip<?> tooltip) {
+        tooltip.addTooltipLine(getName());
+        tooltip.addTooltipLine(getName() + ".description");
     }
 }
