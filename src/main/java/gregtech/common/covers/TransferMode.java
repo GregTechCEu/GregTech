@@ -2,6 +2,7 @@ package gregtech.common.covers;
 
 import gregtech.api.util.ITranslatable;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.ITooltip;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +33,7 @@ public enum TransferMode implements ITranslatable {
 
     @Override
     public void handleTooltip(@NotNull ITooltip<?> tooltip, @NotNull String key) {
-        tooltip.addTooltipLine(getName(key));
-        tooltip.addTooltipLine(getName(key) + ".description");
+        tooltip.addTooltipLine(IKey.lang(getName(key)));
+        tooltip.addTooltipLine(IKey.lang(getName(key) + ".description"));
     }
 }
