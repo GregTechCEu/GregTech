@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 public enum ManualImportExportMode implements ITranslatable {
 
-    DISABLED("cover.universal.manual_import_export.mode.disabled"),
-    FILTERED("cover.universal.manual_import_export.mode.filtered"),
-    UNFILTERED("cover.universal.manual_import_export.mode.unfiltered");
+    DISABLED("cover.%s.manual_import_export.mode.disabled"),
+    FILTERED("cover.%s.manual_import_export.mode.filtered"),
+    UNFILTERED("cover.%s.manual_import_export.mode.unfiltered");
 
     public static final ManualImportExportMode[] VALUES = values();
     private final String localeName;
@@ -22,12 +22,17 @@ public enum ManualImportExportMode implements ITranslatable {
     @NotNull
     @Override
     public String getName() {
-        return localeName;
+        return getName("universal");
     }
 
     @Override
-    public void handleTooltip(@NotNull ITooltip<?> tooltip) {
-        tooltip.addTooltipLine(IKey.lang(getName()));
-        tooltip.addTooltipLine(IKey.lang(getName() + ".description"));
+    public @NotNull String getName(@NotNull String key) {
+        return String.format(localeName, key);
+    }
+
+    @Override
+    public void handleTooltip(@NotNull ITooltip<?> tooltip, @NotNull String key) {
+        tooltip.addTooltipLine(getKey());
+        tooltip.addTooltipLine(IKey.lang(getName(key) + ".description"));
     }
 }

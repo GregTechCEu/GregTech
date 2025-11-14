@@ -33,7 +33,7 @@ public enum TransferMode implements ITranslatable {
 
     @Override
     public void handleTooltip(@NotNull ITooltip<?> tooltip, @NotNull String key) {
-        tooltip.addTooltipLine(IKey.lang(getName(key)));
+        tooltip.addTooltipLine(getKey(key));
         tooltip.addTooltipLine(IKey.lang(getName(key) + ".description"));
     }
 }
