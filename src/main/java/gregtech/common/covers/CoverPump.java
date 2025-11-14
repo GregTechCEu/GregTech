@@ -257,7 +257,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             new DynamicDrawable(() -> pumpModeSync.getValue().isImport() ?
                                     GTGuiTextures.MANUAL_IO_OVERLAY_OUT[2] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[2])
                     })
-                    .widgetExtras(ITranslatable::handleTooltip)
+                    .widgetExtras((manualImportExportMode, toggleButton) -> manualImportExportMode
+                            .handleTooltip(toggleButton, "pump"))
                     .build());
         }
 
