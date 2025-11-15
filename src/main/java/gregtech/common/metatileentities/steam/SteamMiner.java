@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.TextStandards;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.texture.Textures;
@@ -186,19 +187,23 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
                                     radius, radius));
 
                             if (isDone) {
-                                text.addLine(KeyUtil.lang(TextFormatting.GREEN, "gregtech.machine.miner.done"));
+                                text.addLine(KeyUtil.lang(TextStandards.Colors.MACHINE_DONE,
+                                        "gregtech.machine.miner.done"));
                             } else if (isWorking) {
-                                text.addLine(KeyUtil.lang(TextFormatting.GOLD, "gregtech.machine.miner.working"));
+                                text.addLine(KeyUtil.lang(TextStandards.Colors.MACHINE_WORKING,
+                                        "gregtech.machine.miner.working"));
                             } else if (!isWorkingEnabled) {
-                                text.addLine(KeyUtil.lang("gregtech.multiblock.work_paused"));
+                                text.addLine(TextStandards.Keys.MACHINE_PAUSED);
                             }
 
                             if (isInventoryFull) {
-                                text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.miner.invfull"));
+                                text.addLine(KeyUtil.lang(TextStandards.Colors.NO_OUTPUT_SPACE,
+                                        "gregtech.machine.miner.invfull"));
                             }
 
                             if (isVentBlocked) {
-                                text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.steam_miner.vent"));
+                                text.addLine(KeyUtil.lang(TextStandards.Colors.STEAM_VENT_BLOCKED,
+                                        "gregtech.machine.steam_miner.vent"));
                             }
 
                             // Drain energy always returns false when the vent is blocked, so check that it isn't
@@ -206,7 +211,8 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
                             // It should be fine since I don't think it can even enter the vent blocked state without
                             // having steam.
                             if (!hasEnoughEnergy && !isVentBlocked) {
-                                text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.steam_miner.steam"));
+                                text.addLine(KeyUtil.lang(TextStandards.Colors.NO_POWER,
+                                        "gregtech.machine.steam_miner.steam"));
                             }
                         })
                                 .left(10)
