@@ -35,4 +35,16 @@ public enum ManualImportExportMode implements ITranslatable {
         tooltip.addTooltipLine(getKey());
         tooltip.addTooltipLine(IKey.lang(getName(key) + ".description"));
     }
+
+    public boolean isDisabled() {
+        return this == DISABLED;
+    }
+
+    public boolean isFiltered() {
+        return this == FILTERED;
+    }
+
+    public boolean isUnfiltered() {
+        return this == UNFILTERED;
+    }
 }

@@ -10,6 +10,7 @@ import gregtech.common.covers.CoverConveyor;
 import gregtech.common.covers.CoverItemFilter;
 import gregtech.common.covers.CoverRoboticArm;
 import gregtech.common.covers.DistributionMode;
+import gregtech.common.covers.IOMode;
 import gregtech.common.covers.ItemFilterMode;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
@@ -85,56 +86,67 @@ public class ItemNetHandler implements IItemHandler {
         // abort if there are two conveyors
         if (pipeConveyor && tileConveyor) return stack;
 
-        if (tileCover != null && !checkImportCover(tileCover, false, stack))
+        if (tileCover != null && !checkImportCover(tileCover, false, stack)) {
             return stack;
+        }
 
-        if (!pipeConveyor && !tileConveyor)
+        if (!pipeConveyor && !tileConveyor) {
             return insertFirst(stack, simulate);
+        }
 
         CoverConveyor conveyor = (CoverConveyor) (pipeConveyor ? pipeCover : tileCover);
-        if (conveyor.getConveyorMode() ==
-                (pipeConveyor ? CoverConveyor.ConveyorMode.IMPORT : CoverConveyor.ConveyorMode.EXPORT)) {
-            boolean roundRobinGlobal = conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN_GLOBAL;
-            if (roundRobinGlobal || conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN_PRIO)
-                return insertRoundRobin(stack, simulate, roundRobinGlobal);
+        IOMode conveyorIOMode = conveyor.getIOMode();
+        if (pipeConveyor ? conveyorIOMode.isImport() : conveyorIOMode.isExport()) {
+            DistributionMode distributionMode = conveyor.getDistributionMode();
+            if (!distributionMode.isInsertFirst()) {
+                return insertRoundRobin(stack, simulate, distributionMode.isRoundRobinGlobal());
+            }
         }
 
         return insertFirst(stack, simulate);
     }
 
     public static boolean checkImportCover(Cover cover, boolean onPipe, ItemStack stack) {
-        if (cover == null) return true;
         if (cover instanceof CoverItemFilter filter) {
-            return (filter.getFilterMode() != ItemFilterMode.FILTER_BOTH &&
-                    (filter.getFilterMode() != ItemFilterMode.FILTER_INSERT || !onPipe) &&
-                    (filter.getFilterMode() != ItemFilterMode.FILTER_EXTRACT || onPipe)) || filter.testItemStack(stack);
+            ItemFilterMode filterMode = filter.getFilterMode();
+            return (!filterMode.isFilterBoth() &&
+                    (!filterMode.isFilterInsert() || !onPipe) &&
+                    (!filterMode.isFilterExtract() || onPipe)) ||
+                    filter.testItemStack(stack);
+        } else {
+            return true;
         }
-        return true;
     }
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {
         for (ItemRoutePath inv : net.getNetData(pipe.getPipePos(), facing)) {
             stack = insert(inv, stack, simulate);
-            if (stack.isEmpty())
+            if (stack.isEmpty()) {
                 return ItemStack.EMPTY;
+            }
         }
         return stack;
     }
 
     public ItemStack insertRoundRobin(ItemStack stack, boolean simulate, boolean global) {
         List<ItemRoutePath> routePaths = net.getNetData(pipe.getPipePos(), facing);
-        if (routePaths.isEmpty())
+        if (routePaths.isEmpty()) {
             return stack;
-        if (routePaths.size() == 1)
+        }
+
+        if (routePaths.size() == 1) {
             return insert(routePaths.get(0), stack, simulate);
+        }
+
         List<ItemRoutePath> routePathsCopy = new ArrayList<>(routePaths);
 
         if (global) {
             stack = insertToHandlersEnhanced(routePathsCopy, stack, routePaths.size(), simulate);
         } else {
             stack = insertToHandlers(routePathsCopy, stack, simulate);
-            if (!stack.isEmpty() && !routePathsCopy.isEmpty())
+            if (!stack.isEmpty() && !routePathsCopy.isEmpty()) {
                 stack = insertToHandlers(routePathsCopy, stack, simulate);
+            }
         }
 
         return stack;
@@ -307,7 +319,8 @@ public class ItemNetHandler implements IItemHandler {
         if (allowed == 0 || !routePath.matchesFilters(stack)) {
             return stack;
         }
-        Cover pipeCover = routePath.getTargetPipe().getCoverableImplementation()
+        Cover pipeCover = routePath.getTargetPipe()
+                .getCoverableImplementation()
                 .getCoverAtSide(routePath.getTargetFacing());
         Cover tileCover = getCoverOnNeighbour(routePath.getTargetPipe(), routePath.getTargetFacing());
 
@@ -322,16 +335,12 @@ public class ItemNetHandler implements IItemHandler {
             }
             testHandler.setStackInSlot(0, ItemStack.EMPTY);
         }
+
         IItemHandler neighbourHandler = routePath.getHandler();
-        if (pipeCover instanceof CoverRoboticArm &&
-                ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT) {
-            return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) pipeCover, stack, simulate, allowed,
-                    ignoreLimit);
-        }
-        if (tileCover instanceof CoverRoboticArm &&
-                ((CoverRoboticArm) tileCover).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT) {
-            return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) tileCover, stack, simulate, allowed,
-                    ignoreLimit);
+        if (pipeCover instanceof CoverRoboticArm coverRoboticArm && coverRoboticArm.getIOMode().isExport()) {
+            return insertOverRobotArm(neighbourHandler, coverRoboticArm, stack, simulate, allowed, ignoreLimit);
+        } else if (tileCover instanceof CoverRoboticArm coverRoboticArm && coverRoboticArm.getIOMode().isImport()) {
+            return insertOverRobotArm(neighbourHandler, coverRoboticArm, stack, simulate, allowed, ignoreLimit);
         }
 
         return insert(neighbourHandler, stack, simulate, allowed, ignoreLimit);

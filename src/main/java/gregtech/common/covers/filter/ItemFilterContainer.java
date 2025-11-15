@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class ItemFilterContainer extends BaseFilterContainer {
+public class ItemFilterContainer extends BaseFilterContainer<ItemStack> {
 
     public ItemFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super(dirtyNotifiable);

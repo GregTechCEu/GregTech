@@ -3,6 +3,7 @@ package gregtech.common.covers.filter;
 import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import org.jetbrains.annotations.ApiStatus;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class FluidFilterContainer extends BaseFilterContainer {
+public class FluidFilterContainer extends BaseFilterContainer<FluidStack> {
 
     public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super(dirtyNotifiable);
