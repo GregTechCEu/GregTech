@@ -1356,6 +1356,7 @@ cover.generic.io=IO Mode
 cover.universal.mode.export=Mode: Export
 cover.universal.mode.import=Mode: Import
 
+cover.universal.filter_slot.tooltip_header=Valid filters:
 cover.conveyor.title=Conveyor Cover Settings (%s)
 cover.conveyor.transfer_rate=§7items/sec
 cover.conveyor.mode.export=Mode: Export

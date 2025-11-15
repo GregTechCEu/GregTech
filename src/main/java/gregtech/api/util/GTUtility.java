@@ -67,6 +67,7 @@ import org.jetbrains.annotations.Range;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1024,9 +1025,14 @@ public class GTUtility {
         return map.get(key.toWildcard());
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean areFluidStacksEqual(@Nullable FluidStack a, @Nullable FluidStack b) {
         if (a == b) return true;
         if (a == null) return false;
         return a.isFluidEqual(b);
+    }
+
+    public static <T> @NotNull List<T> unmodifiableOrEmpty(@Nullable List<T> sourceList) {
+        return sourceList == null ? Collections.emptyList() : Collections.unmodifiableList(sourceList);
     }
 }
