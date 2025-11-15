@@ -187,21 +187,14 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     protected Flow createUI(GuiData data, PanelSyncManager syncManager) {
         // noinspection DuplicatedCode
-        EnumSyncValue<ManualImportExportMode> manualIOModeSync = new EnumSyncValue<>(ManualImportExportMode.class,
-                this::getManualImportExportMode, this::setManualImportExportMode);
-        EnumSyncValue<IOMode> pumpModeSync = new EnumSyncValue<>(IOMode.class, this::getIoMode, this::setIoMode);
-        IntSyncValue throughputSync = new IntSyncValue(this::getTransferRate, this::setTransferRate);
-
-        syncManager.syncValue("manual_io", manualIOModeSync);
-        syncManager.syncValue("pump_mode", pumpModeSync);
-
         Flow column = Flow.column()
                 .top(24)
                 .margin(7, 0)
                 .widthRel(1f)
                 .coverChildrenHeight();
 
-        if (createThroughputRow())
+        if (createThroughputRow()) {
+            IntSyncValue throughputSync = new IntSyncValue(this::getTransferRate, this::setTransferRate);
             column.child(Flow.row()
                     .widthRel(1f)
                     .marginBottom(2)
@@ -230,12 +223,20 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
+        }
 
         if (createFilterRow()) {
             column.child(getFluidFilterContainer().initUI(data, syncManager));
         }
 
+        EnumSyncValue<IOMode> pumpModeSync = new EnumSyncValue<>(IOMode.class, this::getIoMode, this::setIoMode);
+        syncManager.syncValue("pump_mode", pumpModeSync);
+
         if (createManualIOModeRow()) {
+            EnumSyncValue<ManualImportExportMode> manualIOModeSync = new EnumSyncValue<>(ManualImportExportMode.class,
+                    this::getManualImportExportMode, this::setManualImportExportMode);
+            syncManager.syncValue("manual_io", manualIOModeSync);
+
             // noinspection DuplicatedCode
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
                     .value(manualIOModeSync)
