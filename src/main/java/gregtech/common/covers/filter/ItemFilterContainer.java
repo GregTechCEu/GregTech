@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class ItemFilterContainer extends BaseFilterContainer {
+public class ItemFilterContainer extends BaseFilterContainer<ItemStack> {
 
     public ItemFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super(dirtyNotifiable);
@@ -52,15 +52,14 @@ public class ItemFilterContainer extends BaseFilterContainer {
     }
 
     @Override
-    protected boolean isItemValid(ItemStack stack) {
-        var filter = BaseFilter.getFilterFromStack(stack);
-        return filter != BaseFilter.ERROR_FILTER && filter.getType() == IFilter.FilterType.ITEM;
-    }
-
-    @Override
     protected @NotNull IKey getFilterKey() {
         return IKey.lang(() -> hasFilter() ?
                 getFilterStack().getTranslationKey() + ".name" :
                 "metaitem.item_filter.name");
+    }
+
+    @Override
+    protected IFilter.@NotNull FilterType getFilterType() {
+        return IFilter.FilterType.ITEM;
     }
 }
