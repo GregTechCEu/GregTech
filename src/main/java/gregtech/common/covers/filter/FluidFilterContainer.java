@@ -2,7 +2,6 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.util.IDirtyNotifiable;
 
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -15,15 +14,14 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack> {
     }
 
     @Override
-    protected boolean isItemValid(ItemStack stack) {
-        var filter = BaseFilter.getFilterFromStack(stack);
-        return filter != BaseFilter.ERROR_FILTER && filter.getType() == IFilter.FilterType.FLUID;
-    }
-
-    @Override
     protected @NotNull IKey getFilterKey() {
         return IKey.lang(() -> hasFilter() ?
                 getFilterStack().getTranslationKey() + ".name" :
                 "metaitem.fluid_filter.name");
+    }
+
+    @Override
+    protected IFilter.@NotNull FilterType getFilterType() {
+        return IFilter.FilterType.FLUID;
     }
 }

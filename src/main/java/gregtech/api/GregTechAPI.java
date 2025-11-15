@@ -5,7 +5,7 @@ import gregtech.api.block.ICleanroomFilter;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.coil.CoilManager;
 import gregtech.api.command.ICommandManager;
-import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.registry.CoverRegistry;
 import gregtech.api.event.HighTierEvent;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
@@ -74,8 +74,7 @@ public class GregTechAPI {
     @Deprecated
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(
             Short.MAX_VALUE);
-    public static final GTControlledRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTControlledRegistry<>(
-            Integer.MAX_VALUE);
+    public static final CoverRegistry COVER_REGISTRY = new CoverRegistry(Integer.MAX_VALUE);
 
     public static final Map<Material, Map<StoneType, IBlockOre>> oreBlockTable = new HashMap<>();
     public static final Object2ObjectMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
