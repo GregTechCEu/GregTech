@@ -1,5 +1,9 @@
 package gregtech.api.mui.factory;
 
+import com.cleanroommc.modularui.factory.inventory.InventoryTypes;
+
+import com.cleanroommc.modularui.utils.Platform;
+
 import gregtech.api.items.metaitem.MetaItem;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,12 +15,12 @@ import net.minecraft.util.EnumHand;
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.AbstractUIFactory;
 import com.cleanroommc.modularui.factory.GuiManager;
-import com.cleanroommc.modularui.factory.HandGuiData;
+import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class MetaItemGuiFactory extends AbstractUIFactory<HandGuiData> {
+public class MetaItemGuiFactory extends AbstractUIFactory<PlayerInventoryGuiData> {
 
     public static final MetaItemGuiFactory INSTANCE = new MetaItemGuiFactory();
 
@@ -27,12 +31,13 @@ public class MetaItemGuiFactory extends AbstractUIFactory<HandGuiData> {
     public static void open(EntityPlayer player, EnumHand hand) {
         Objects.requireNonNull(player);
         Objects.requireNonNull(hand);
-        HandGuiData guiData = new HandGuiData(player, hand);
-        GuiManager.open(INSTANCE, guiData, (EntityPlayerMP) player);
+        int index = hand == EnumHand.OFF_HAND ? 40 : Platform.getClientPlayer().inventory.currentItem;
+        PlayerInventoryGuiData guiData = new PlayerInventoryGuiData(player, InventoryTypes.PLAYER, index);
+        GuiManager.open(INSTANCE, guiData, verifyServerSide(player));
     }
 
     @Override
-    public @NotNull IGuiHolder<HandGuiData> getGuiHolder(HandGuiData data) {
+    public @NotNull IGuiHolder<PlayerInventoryGuiData> getGuiHolder(PlayerInventoryGuiData data) {
         ItemStack stack = data.getUsedItemStack();
         if (!(stack.getItem() instanceof MetaItem<?>metaItem)) {
             throw new IllegalArgumentException("Found item is not a valid MetaItem!");
@@ -45,12 +50,12 @@ public class MetaItemGuiFactory extends AbstractUIFactory<HandGuiData> {
     }
 
     @Override
-    public void writeGuiData(HandGuiData guiData, PacketBuffer buffer) {
-        buffer.writeByte(guiData.getHand().ordinal());
+    public void writeGuiData(PlayerInventoryGuiData guiData, PacketBuffer buffer) {
+        buffer.writeByte(guiData.getSlotIndex());
     }
 
     @Override
-    public @NotNull HandGuiData readGuiData(EntityPlayer player, PacketBuffer buffer) {
-        return new HandGuiData(player, EnumHand.values()[buffer.readByte()]);
+    public @NotNull PlayerInventoryGuiData readGuiData(EntityPlayer player, PacketBuffer buffer) {
+        return new PlayerInventoryGuiData(player, InventoryTypes.PLAYER, buffer.readByte());
     }
 }
