@@ -4883,6 +4883,7 @@ gregtech.machine.miner.hv.name=Advanced Miner II
 gregtech.machine.miner.tooltip=Mines ores below the Miner! Starts as §f%sx%s §7area
 gregtech.machine.miner.per_block=§7takes §f%,ds §7per Block
 
+
 gregtech.machine.large_miner.ev.name=Basic Ore Drilling Plant
 gregtech.machine.large_miner.iv.name=Advanced Ore Drilling Plant
 gregtech.machine.large_miner.luv.name=Advanced Ore Drilling Plant II
@@ -4891,8 +4892,17 @@ gregtech.machine.miner.multi.production=Produces §f3x§7 more crushed ore than 
 gregtech.machine.miner.fluid_usage=Uses §f%,d L/t §7of §f%s§7, doubled per overclock.
 gregtech.machine.miner.multi.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
 gregtech.machine.miner.multi.needsfluid=No Drilling Fluid!
+gregtech.machine.miner.done=Done!
+gregtech.machine.miner.working=Mining...
+gregtech.machine.miner.invfull=Inventory Full!
+gregtech.machine.miner.needspower=Needs Power!
+gregtech.machine.steam_miner.vent=Venting Blocked!
+gregtech.machine.steam_miner.steam=Needs Steam!
+gregtech.machine.miner.errorradius=§cCannot change radius while working!
 gregtech.machine.miner.mining_at=Currently mining at:
-gregtech.machine.miner.mining_pos=X: %s Y: %s Z: %s
+gregtech.machine.miner.mining_pos_x=§bX§r: §a%s§r
+gregtech.machine.miner.mining_pos_y=§bY§r: §a%s§r
+gregtech.machine.miner.mining_pos_z=§bZ§r: §a%s§r
 gregtech.machine.miner.radius=Radius: %d
 gregtech.machine.miner.working_area=Working Area: %dx%d blocks
 gregtech.machine.miner.working_area_chunks=Working Area: %dx%d chunks
@@ -5907,14 +5917,6 @@ gregtech.multiblock.large_boiler.heat_time_tooltip=§7Takes §f%,d seconds §7to
 gregtech.multiblock.large_boiler.explosion_tooltip=Will explode if provided Fuel with no Water
 gregtech.multiblock.large_boiler.water_bar_hover=§7Water: §9%,d / %,d L
 gregtech.multiblock.large_boiler.no_water=§eNo Water!
-
-gregtech.machine.miner.done=Done!
-gregtech.machine.miner.working=Working...
-gregtech.machine.miner.invfull=Inventory Full!
-gregtech.machine.miner.needspower=Needs Power!
-gregtech.machine.steam_miner.vent=Venting Blocked!
-gregtech.machine.steam_miner.steam=Needs Steam!
-gregtech.machine.miner.errorradius=§cCannot change radius while working!
 
 gregtech.multiblock.miner.neither_mode=Chunk Mode: §cDisabled§r/nSilk Touch Mode: §cDisabled§r/n§7Switching requires an idle machine.
 gregtech.multiblock.miner.chunk_mode=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §cDisabled§r/n§7Switching requires an idle machine.
