@@ -505,17 +505,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
         // noinspection DuplicatedCode
-        EnumSyncValue<ManualImportExportMode> manualIOModeSync = new EnumSyncValue<>(ManualImportExportMode.class,
-                this::getManualImportExportMode, this::setManualImportExportMode);
-        EnumSyncValue<IOMode> conveyorModeSync = new EnumSyncValue<>(IOMode.class, this::getIOMode, this::setIOMode);
-        EnumSyncValue<DistributionMode> distributionModeSync = new EnumSyncValue<>(DistributionMode.class,
-                this::getDistributionMode, this::setDistributionMode);
-        IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
-
-        guiSyncManager.syncValue("manual_io", manualIOModeSync);
-        guiSyncManager.syncValue("conveyor_mode", conveyorModeSync);
-        guiSyncManager.syncValue("distribution_mode", distributionModeSync);
-
         Flow column = Flow.column()
                 .top(24)
                 .widthRel(1f)
@@ -523,6 +512,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 .coverChildrenHeight();
 
         if (createThroughputRow()) {
+            IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
             column.child(Flow.row()
                     .widthRel(1f)
                     .coverChildrenHeight()
@@ -558,7 +548,14 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             column.child(getItemFilterContainer().initUI(data, guiSyncManager));
         }
 
+        EnumSyncValue<IOMode> conveyorModeSync = new EnumSyncValue<>(IOMode.class, this::getIOMode, this::setIOMode);
+        guiSyncManager.syncValue("conveyor_mode", conveyorModeSync);
+
         if (createManualIOModeRow()) {
+            EnumSyncValue<ManualImportExportMode> manualIOModeSync = new EnumSyncValue<>(ManualImportExportMode.class,
+                    this::getManualImportExportMode, this::setManualImportExportMode);
+            guiSyncManager.syncValue("manual_io", manualIOModeSync);
+
             // noinspection DuplicatedCode
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
                     .value(manualIOModeSync)
@@ -586,6 +583,10 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         }
 
         if (createDistributionModeRow()) {
+            EnumSyncValue<DistributionMode> distributionModeSync = new EnumSyncValue<>(DistributionMode.class,
+                    this::getDistributionMode, this::setDistributionMode);
+            guiSyncManager.syncValue("distribution_mode", distributionModeSync);
+
             column.child(new EnumRowBuilder<>(DistributionMode.class)
                     .value(distributionModeSync)
                     .rowDescription(IKey.lang("cover.conveyor.distribution.name"))

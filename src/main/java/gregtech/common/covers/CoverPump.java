@@ -49,7 +49,6 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
-import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -194,22 +193,14 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     protected ParentWidget<?> createUI(GuiData data, PanelSyncManager syncManager) {
         // noinspection DuplicatedCode
-        EnumSyncValue<ManualImportExportMode> manualIOModeSync = new EnumSyncValue<>(ManualImportExportMode.class,
-                this::getManualImportExportMode, this::setManualImportExportMode);
-        EnumSyncValue<IOMode> pumpModeSync = new EnumSyncValue<>(IOMode.class, this::getIoMode, this::setIoMode);
-        IntSyncValue throughputSync = new IntSyncValue(this::getTransferRate, this::setTransferRate);
-
-        syncManager.syncValue("manual_io", manualIOModeSync);
-        syncManager.syncValue("pump_mode", pumpModeSync);
-        syncManager.syncValue("throughput", throughputSync);
-
         Flow column = Flow.column()
                 .top(24)
                 .margin(7, 0)
                 .widthRel(1f)
                 .coverChildrenHeight();
 
-        if (createThroughputRow())
+        if (createThroughputRow()) {
+            IntSyncValue throughputSync = new IntSyncValue(this::getTransferRate, this::setTransferRate);
             column.child(Flow.row()
                     .widthRel(1f)
                     .marginBottom(2)
@@ -226,7 +217,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             .left(18).right(18)
                             .setTextColor(Color.WHITE.darker(1))
                             .setNumbers(1, maxFluidTransferRate)
-                            .value(new IntValue.Dynamic(throughputSync::getIntValue, throughputSync::setIntValue))
+                            .value(throughputSync)
                             .background(GTGuiTextures.DISPLAY))
                     .child(new ButtonWidget<>()
                             .right(0)
@@ -237,12 +228,20 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
+        }
 
         if (createFilterRow()) {
             column.child(getFluidFilterContainer().initUI(data, syncManager));
         }
 
+        EnumSyncValue<IOMode> pumpModeSync = new EnumSyncValue<>(IOMode.class, this::getIoMode, this::setIoMode);
+        syncManager.syncValue("pump_mode", pumpModeSync);
+
         if (createManualIOModeRow()) {
+            EnumSyncValue<ManualImportExportMode> manualIOModeSync = new EnumSyncValue<>(ManualImportExportMode.class,
+                    this::getManualImportExportMode, this::setManualImportExportMode);
+            syncManager.syncValue("manual_io", manualIOModeSync);
+
             // noinspection DuplicatedCode
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
                     .value(manualIOModeSync)
