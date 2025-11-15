@@ -25,8 +25,8 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
@@ -203,6 +203,9 @@ public class CoverRoboticArm extends CoverConveyor {
     protected Flow createUI(GuiData data, PanelSyncManager guiSyncManager) {
         EnumSyncValue<TransferMode> transferModeSync = new EnumSyncValue<>(TransferMode.class, this::getTransferMode,
                 this::setTransferMode);
+        IntSyncValue filterTransferSize = new IntSyncValue(this.itemFilterContainer::getTransferSize,
+                this.itemFilterContainer::setTransferSize);
+
         guiSyncManager.syncValue("transfer_mode", transferModeSync);
 
         return super.createUI(data, guiSyncManager)
@@ -221,8 +224,7 @@ public class CoverRoboticArm extends CoverConveyor {
                                 .widthRel(0.5f)
                                 .setEnabledIf(w -> shouldDisplayAmountSlider())
                                 .setNumbers(0, Integer.MAX_VALUE)
-                                .value(new IntValue.Dynamic(transferModeSync::getIntValue,
-                                        transferModeSync::setIntValue))
+                                .value(filterTransferSize)
                                 .setTextColor(Color.WHITE.darker(1))));
     }
 
