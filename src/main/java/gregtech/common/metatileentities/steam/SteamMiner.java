@@ -160,30 +160,44 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
                         .pos(5, 5))
                 .child(createMinerWidgets(panelSyncManager, exportItems, inventorySize, GTGuiTextures.DISPLAY_BRONZE,
                         text -> {
-                            text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_at"));
-                            text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_x",
-                                    xPosSync.getIntValue()));
-                            text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_y",
-                                    yPosSync.getIntValue()));
-                            text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_z",
-                                    zPosSync.getIntValue()));
+                            boolean isDone = isDoneSync.getBoolValue();
+                            boolean isWorking = isWorkingSync.getBoolValue();
+                            boolean isWorkingEnabled = isWorkingEnabledSync.getBoolValue();
+                            boolean isInventoryFull = isInventoryFullSync.getBoolValue();
+                            boolean hasEnoughEnergy = hasEnoughEnergySync.getBoolValue();
+                            boolean isVentBlocked = isVentBlockedSync.getBoolValue();
+
+                            int xPos = xPosSync.getIntValue();
+                            int yPos = yPosSync.getIntValue();
+                            int zPos = zPosSync.getIntValue();
+                            int radius = radiusSync.getIntValue();
+
+                            if (isWorking) {
+                                text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_at"));
+                                text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_x",
+                                        xPos));
+                                text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_y",
+                                        yPos));
+                                text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_z",
+                                        zPos));
+                            }
 
                             text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.working_area",
-                                    radiusSync.getIntValue(), radiusSync.getIntValue()));
+                                    radius, radius));
 
-                            if (isDoneSync.getBoolValue()) {
+                            if (isDone) {
                                 text.addLine(KeyUtil.lang(TextFormatting.GREEN, "gregtech.machine.miner.done"));
-                            } else if (isWorkingSync.getBoolValue()) {
+                            } else if (isWorking) {
                                 text.addLine(KeyUtil.lang(TextFormatting.GOLD, "gregtech.machine.miner.working"));
-                            } else if (!isWorkingEnabledSync.getBoolValue()) {
+                            } else if (!isWorkingEnabled) {
                                 text.addLine(KeyUtil.lang("gregtech.multiblock.work_paused"));
                             }
 
-                            if (isInventoryFullSync.getBoolValue()) {
+                            if (isInventoryFull) {
                                 text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.miner.invfull"));
                             }
 
-                            if (isVentBlockedSync.getBoolValue()) {
+                            if (isVentBlocked) {
                                 text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.steam_miner.vent"));
                             }
 
@@ -191,7 +205,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
                             // blocked.
                             // It should be fine since I don't think it can even enter the vent blocked state without
                             // having steam.
-                            if (!hasEnoughEnergySync.getBoolValue() && !isVentBlockedSync.getBoolValue()) {
+                            if (!hasEnoughEnergy && !isVentBlocked) {
                                 text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.steam_miner.steam"));
                             }
                         })

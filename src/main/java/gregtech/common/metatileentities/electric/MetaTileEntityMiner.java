@@ -135,30 +135,38 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
                         .asWidget()
                         .pos(5, 5))
                 .child(createMinerWidgets(panelSyncManager, exportItems, inventorySize, GTGuiTextures.DISPLAY, text -> {
-                    text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_at"));
-                    text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_x",
-                            xPosSync.getIntValue()));
-                    text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_y",
-                            yPosSync.getIntValue()));
-                    text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_z",
-                            zPosSync.getIntValue()));
+                    boolean isDone = isDoneSync.getBoolValue();
+                    boolean isWorking = isWorkingSync.getBoolValue();
+                    boolean isWorkingEnabled = isWorkingEnabledSync.getBoolValue();
+                    boolean isInventoryFull = isInventoryFullSync.getBoolValue();
+                    boolean hasEnoughEnergy = hasEnoughEnergySync.getBoolValue();
+
+                    if (isWorking) {
+                        text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_at"));
+                        text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_x",
+                                xPosSync.getIntValue()));
+                        text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_y",
+                                yPosSync.getIntValue()));
+                        text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.mining_pos_z",
+                                zPosSync.getIntValue()));
+                    }
 
                     text.addLine(KeyUtil.lang(TextFormatting.WHITE, "gregtech.machine.miner.working_area",
                             radiusSync.getIntValue(), radiusSync.getIntValue()));
 
-                    if (isDoneSync.getBoolValue()) {
+                    if (isDone) {
                         text.addLine(KeyUtil.lang(TextFormatting.GREEN, "gregtech.machine.miner.done"));
-                    } else if (isWorkingSync.getBoolValue()) {
+                    } else if (isWorking) {
                         text.addLine(KeyUtil.lang(TextFormatting.GOLD, "gregtech.machine.miner.working"));
-                    } else if (!isWorkingEnabledSync.getBoolValue()) {
+                    } else if (!isWorkingEnabled) {
                         text.addLine(KeyUtil.lang("gregtech.multiblock.work_paused"));
                     }
 
-                    if (isInventoryFullSync.getBoolValue()) {
+                    if (isInventoryFull) {
                         text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.miner.invfull"));
                     }
 
-                    if (!hasEnoughEnergySync.getBoolValue()) {
+                    if (!hasEnoughEnergy) {
                         text.addLine(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.miner.needspower"));
                     }
                 })
