@@ -69,8 +69,8 @@ import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.factory.ItemGuiFactory;
+import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -947,7 +947,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     @Override
-    default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager manager, UISettings settings) {
+    default ModularPanel buildUI(PlayerInventoryGuiData guiData, PanelSyncManager manager, UISettings settings) {
         final var usedStack = guiData.getUsedItemStack();
         final var behaviorsTag = getBehaviorsTag(usedStack);
         final var defaultDefinition = getMaxAoEDefinition(usedStack);

@@ -190,13 +190,13 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         var panel = GTGuis.createPanel(this, 176, 192);
 
         getFluidFilterContainer().setMaxTransferSize(getMaxTransferRate());
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(createUI(guiData, guiSyncManager))
+                .child(createUI(guiData, panelSyncManager))
                 .bindPlayerInventory();
     }
 

@@ -322,9 +322,9 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         int rowSize = (int) Math.sqrt(getInventorySize());
-        guiSyncManager.registerSlotGroup("item_inv", rowSize);
+        panelSyncManager.registerSlotGroup("item_inv", rowSize);
 
         List<List<IWidget>> widgets = new ArrayList<>();
         for (int i = 0; i < rowSize; i++) {

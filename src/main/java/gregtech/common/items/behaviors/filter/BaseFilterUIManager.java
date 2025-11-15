@@ -15,7 +15,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
-import com.cleanroommc.modularui.factory.HandGuiData;
+import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -37,7 +37,8 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
     }
 
     @Override
-    public abstract ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings);
+    public abstract ModularPanel buildUI(PlayerInventoryGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings);
 
     protected final ModularPanel createBasePanel(ItemStack stack) {
         return GTGuis.createPanel(stack, 176, 188)

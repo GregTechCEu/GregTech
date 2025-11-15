@@ -49,7 +49,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.factory.HandGuiData;
+import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -107,18 +107,19 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     @Override
-    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(PlayerInventoryGuiData guiData, PanelSyncManager panelSyncManager,
+                                UISettings settings) {
         final var usedStack = guiData.getUsedItemStack();
         final var handler = getHandler(usedStack);
         final var selected = handler.getSelectedStack();
         if (!selected.isEmpty() && selected.getItem() instanceof ItemUIFactory factory) {
-            return factory.buildUI(guiData, guiSyncManager, settings);
+            return factory.buildUI(guiData, panelSyncManager, settings);
         }
 
         int heightBonus = (handler.getSlots() / 9) * 18;
 
         SlotGroup group = new SlotGroup("toolbelt_inventory", Math.min(handler.getSlots(), 9));
-        guiSyncManager.registerSlotGroup(group);
+        panelSyncManager.registerSlotGroup(group);
 
         List<ItemSlot> slots = new ArrayList<>();
         for (int i = 0; i < handler.getSlots(); i++) {
@@ -141,8 +142,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                                                 (newItem, onlyAmountChanged, client, init) -> handler
                                                         .onContentsChanged(index)))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
-                                .debugName("slot_" + index))
-                        .debugName("toolbelt_inventory"))
+                                .name("slot_" + index))
+                        .name("toolbelt_inventory"))
                 .bindPlayerInventory();
     }
 

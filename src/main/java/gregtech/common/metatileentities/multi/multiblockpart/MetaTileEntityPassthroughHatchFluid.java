@@ -139,7 +139,7 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         int rowSize = (int) Math.sqrt(getTier() + 1);
 
         int backgroundWidth = 9 * 18 + 14;

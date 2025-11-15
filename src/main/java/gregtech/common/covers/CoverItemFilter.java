@@ -148,12 +148,12 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         var filteringMode = new EnumSyncValue<>(ItemFilterMode.class, this::getFilterMode, this::setFilterMode);
 
-        guiSyncManager.syncValue("filtering_mode", filteringMode);
+        panelSyncManager.syncValue("filtering_mode", filteringMode);
 
-        return getFilter().createPanel(guiSyncManager)
+        return getFilter().createPanel(panelSyncManager)
                 .size(176, 212).padding(7)
                 .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()).left(4))
                 .child(Flow.column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
@@ -182,7 +182,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                                         .alignX(1f)))
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
-                        .child(getFilter().createWidgets(guiSyncManager).left(0)))
+                        .child(getFilter().createWidgets(panelSyncManager).left(0)))
                 .child(SlotGroupWidget.playerInventory(false).bottom(7).left(7));
     }
 

@@ -4,7 +4,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -36,7 +35,7 @@ public class MetaTileEntityGuiFactory extends AbstractUIFactory<PosGuiData> {
         }
         BlockPos pos = mte.getPos();
         PosGuiData data = new PosGuiData(player, pos.getX(), pos.getY(), pos.getZ());
-        GuiManager.open(INSTANCE, data, (EntityPlayerMP) player);
+        GuiManager.open(INSTANCE, data, verifyServerSide(player));
     }
 
     @Override

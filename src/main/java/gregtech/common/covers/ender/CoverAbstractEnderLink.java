@@ -137,13 +137,13 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         var panel = GTGuis.createPanel(this, 176, 192);
 
         this.playerUUID = guiData.getPlayer().getUniqueID();
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(createWidgets(guiData, guiSyncManager))
+                .child(createWidgets(guiData, panelSyncManager))
                 .bindPlayerInventory();
     }
 

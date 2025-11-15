@@ -282,7 +282,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
                 .showAmountOnSlot(false)
                 .accessibility(true, !isExportHatch);

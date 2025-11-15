@@ -86,9 +86,9 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         int invTier = tier + 2;
-        guiSyncManager.registerSlotGroup("item_inv", invTier);
+        panelSyncManager.registerSlotGroup("item_inv", invTier);
 
         List<List<IWidget>> slotWidgets = new ArrayList<>();
         for (int y = 0; y < invTier; y++) {

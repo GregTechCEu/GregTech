@@ -24,7 +24,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
-import com.cleanroommc.modularui.factory.HandGuiData;
+import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
@@ -67,18 +67,19 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     }
 
     @Override
-    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(PlayerInventoryGuiData guiData, PanelSyncManager panelSyncManager,
+                                UISettings settings) {
         var panel = GTGuis.createPanel(guiData.getUsedItemStack(), 176, 120);
         ItemDrawable circuitPreview = new ItemDrawable(guiData.getUsedItemStack());
         for (int i = 0; i <= 32; i++) {
             int finalI = i;
-            guiSyncManager.syncValue("config", i, new InteractionSyncHandler()
+            panelSyncManager.syncValue("config", i, new InteractionSyncHandler()
                     .setOnMousePressed(b -> {
                         ItemStack item = IntCircuitIngredient.getIntegratedCircuit(finalI);
                         item.setCount(guiData.getUsedItemStack().getCount());
                         circuitPreview.setItem(item);
-                        if (Interactable.hasShiftDown()) panel.animateClose();
-                        guiData.getPlayer().setHeldItem(guiData.getHand(), item);
+                        if (Interactable.hasShiftDown()) panel.closeIfOpen();
+                        guiData.setUsedItemStack(item);
                     }));
         }
 

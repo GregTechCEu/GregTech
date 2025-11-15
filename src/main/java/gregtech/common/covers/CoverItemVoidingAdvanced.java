@@ -90,14 +90,14 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        return super.buildUI(guiData, guiSyncManager, settings).height(192 + 18);
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+        return super.buildUI(guiData, panelSyncManager, settings).height(192 + 18);
     }
 
     @Override
-    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
+    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager panelSyncManager) {
         var voidingMode = new EnumSyncValue<>(VoidingMode.class, this::getVoidingMode, this::setVoidingMode);
-        guiSyncManager.syncValue("voiding_mode", voidingMode);
+        panelSyncManager.syncValue("voiding_mode", voidingMode);
 
         var filterTransferSize = new StringSyncValue(
                 () -> String.valueOf(this.itemFilterContainer.getTransferSize()),
@@ -107,7 +107,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         transferTextField.setEnabled(this.itemFilterContainer.showGlobalTransferLimitSlider() &&
                 this.voidingMode == VoidingMode.VOID_OVERFLOW);
 
-        return super.createUI(data, guiSyncManager)
+        return super.createUI(data, panelSyncManager)
                 .child(new EnumRowBuilder<>(VoidingMode.class)
                         .value(voidingMode)
                         .lang("cover.voiding.voiding_mode")
