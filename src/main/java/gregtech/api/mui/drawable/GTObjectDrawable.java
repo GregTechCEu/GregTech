@@ -22,30 +22,33 @@ import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
-public class GTObjectDrawable implements IDrawable, RecipeViewerIngredientProvider {
+public class GTObjectDrawable<T> implements IDrawable, RecipeViewerIngredientProvider {
 
     private static final TextRenderer renderer = new TextRenderer();
 
-    private final Object object;
+    private final T object;
     private final long amount;
-    private Function<BoostableChanceEntry<?>, Integer> boostFunction;
+    private ToIntFunction<T> boostFunction;
     @NotNull
-    private Predicate<Object> drawBackground = $ -> true;
+    private Predicate<T> drawBackground = $ -> true;
 
-    public GTObjectDrawable(Object object, long amount) {
+    public GTObjectDrawable(T object, long amount) {
         this.object = object;
         this.amount = amount;
     }
 
-    public GTObjectDrawable setBoostFunction(Function<BoostableChanceEntry<?>, Integer> boostFunction) {
+    /**
+     * Set the function used to
+     */
+    public GTObjectDrawable<T> setBoostFunction(ToIntFunction<T> boostFunction) {
         this.boostFunction = boostFunction;
         return this;
     }
 
-    public void setDrawBackground(@NotNull Predicate<Object> drawBackground) {
+    public void setDrawBackground(@NotNull Predicate<T> drawBackground) {
         this.drawBackground = drawBackground;
     }
 
@@ -59,7 +62,7 @@ public class GTObjectDrawable implements IDrawable, RecipeViewerIngredientProvid
     public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
         if (!(context instanceof ModularGuiContext modularGuiContext)) return;
         renderer.setAlignment(Alignment.BottomRight, width - 1, height - 1);
-        drawObject(object, modularGuiContext, x, y, width, height);
+        drawObject(object, modularGuiContext, x, y, width, height, drawBackground.test(object));
         if (amount > 0) {
             renderer.setPos(x + 1, y + 1);
             String amount = TextFormattingUtil.formatLongToCompactString(this.amount, 3);
@@ -68,11 +71,12 @@ public class GTObjectDrawable implements IDrawable, RecipeViewerIngredientProvid
         }
     }
 
-    private void drawObject(Object object, ModularGuiContext context, int x, int y, int width, int height) {
+    protected void drawObject(Object object, ModularGuiContext context, int x, int y, int width, int height,
+                              boolean drawBackground) {
         if (object instanceof ItemStack stack) {
             SlotTheme theme = context.getTheme().getItemSlotTheme().getTheme();
             IDrawable background = theme.getBackground();
-            if (drawBackground.test(object)) {
+            if (drawBackground) {
                 if (background == null) background = GTGuiTextures.SLOT;
                 background.draw(context, x, y, width, height, theme);
             }
@@ -80,14 +84,15 @@ public class GTObjectDrawable implements IDrawable, RecipeViewerIngredientProvid
         } else if (object instanceof FluidStack stack) {
             SlotTheme theme = context.getTheme().getFluidSlotTheme().getTheme();
             IDrawable background = theme.getBackground();
-            if (drawBackground.test(object)) {
+            if (drawBackground) {
                 if (background == null) background = GTGuiTextures.FLUID_SLOT;
                 background.draw(context, x, y, width, height, theme);
             }
             GuiDraw.drawFluidTexture(stack, x + 1, y + 1, width - 2, height - 2, 0);
         } else if (object instanceof BoostableChanceEntry<?>entry) {
-            drawObject(entry.getIngredient(), context, x, y, width, height);
-            String chance = "~" + this.boostFunction.apply(entry) / 100 + "%";
+            drawObject(entry.getIngredient(), context, x, y, width, height, drawBackground);
+            // noinspection unchecked
+            String chance = "~" + this.boostFunction.applyAsInt((T) entry) / 100 + "%";
             if (amount > 0) y -= 4;
             renderer.setPos(x + 1, y + 1);
             renderer.draw(chance);
@@ -106,9 +111,10 @@ public class GTObjectDrawable implements IDrawable, RecipeViewerIngredientProvid
 
     @Override
     public @Nullable Object getIngredient() {
-        if (object instanceof BoostableChanceEntry<?>entry) {
-            return entry.getIngredient();
-        }
+        return object instanceof BoostableChanceEntry<?>boostableEntry ? boostableEntry.getIngredient() : object;
+    }
+
+    public T getObject() {
         return object;
     }
 }

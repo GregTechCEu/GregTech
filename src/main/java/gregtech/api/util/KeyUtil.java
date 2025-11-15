@@ -3,6 +3,7 @@ package gregtech.api.util;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluid;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -144,5 +145,9 @@ public class KeyUtil {
         }
         if (stack == null) return IKey.lang(fluid.getUnlocalizedName());
         else return IKey.lang(fluid.getUnlocalizedName(stack));
+    }
+
+    public static @NotNull IKey item(@NotNull ItemStack itemStack) {
+        return IKey.str(itemStack.getDisplayName());
     }
 }
