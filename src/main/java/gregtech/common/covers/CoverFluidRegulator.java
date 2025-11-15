@@ -244,8 +244,8 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        return super.buildUI(guiData, guiSyncManager, settings).height(192 + 36);
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+        return super.buildUI(guiData, panelSyncManager, settings).height(192 + 36);
     }
 
     @Override

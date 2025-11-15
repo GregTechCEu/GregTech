@@ -193,22 +193,22 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        return super.buildUI(guiData, guiSyncManager, settings).height(192 + 36 + 18 + 2);
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+        return super.buildUI(guiData, panelSyncManager, settings).height(192 + 36 + 18 + 2);
     }
 
     @Override
-    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
+    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager panelSyncManager) {
         EnumSyncValue<TransferMode> transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode,
                 this::setTransferMode);
-        guiSyncManager.syncValue("transfer_mode", transferMode);
+        panelSyncManager.syncValue("transfer_mode", transferMode);
 
         var filterTransferSize = new StringSyncValue(
                 () -> String.valueOf(this.itemFilterContainer.getTransferSize()),
                 s -> this.itemFilterContainer.setTransferSize(Integer.parseInt(s)));
         filterTransferSize.updateCacheFromSource(true);
 
-        return super.createUI(data, guiSyncManager)
+        return super.createUI(data, panelSyncManager)
                 .child(new EnumRowBuilder<>(TransferMode.class)
                         .value(transferMode)
                         .lang("cover.generic.transfer_mode")

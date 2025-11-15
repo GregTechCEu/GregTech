@@ -88,7 +88,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         return appendCreativeUI(GTGuis.createPanel(this, 176, 166), true,
                 new BoolValue.Dynamic(() -> active, b -> active = b),
                 new IntSyncValue(() -> mBPerCycle, v -> mBPerCycle = v),

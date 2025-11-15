@@ -87,8 +87,8 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        guiSyncManager.registerSlotGroup("item_inv", this.storageHandler.getSlots());
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+        panelSyncManager.registerSlotGroup("item_inv", this.storageHandler.getSlots());
 
         int rowSize = this.storageHandler.getSlots();
         List<List<IWidget>> widgets = new ArrayList<>();

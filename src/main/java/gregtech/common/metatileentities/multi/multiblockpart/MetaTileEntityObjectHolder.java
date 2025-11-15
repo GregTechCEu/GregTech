@@ -68,8 +68,8 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        guiSyncManager.registerSlotGroup("item_inv", 2);
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+        panelSyncManager.registerSlotGroup("item_inv", 2);
 
         // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, 176, 166)

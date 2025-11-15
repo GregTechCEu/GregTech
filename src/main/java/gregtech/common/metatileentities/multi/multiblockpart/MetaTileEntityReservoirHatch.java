@@ -150,8 +150,8 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        guiSyncManager.registerSlotGroup("item_inv", 2);
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+        panelSyncManager.registerSlotGroup("item_inv", 2);
 
         GTFluidSyncHandler tankSyncHandler = GTFluidSlot.sync(this.fluidTank)
                 .showAmountOnSlot(false)

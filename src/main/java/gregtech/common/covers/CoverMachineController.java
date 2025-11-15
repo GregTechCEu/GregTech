@@ -112,13 +112,13 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         EnumSyncValue<ControllerMode> controllerModeValue = new EnumSyncValue<>(ControllerMode.class,
                 this::getControllerMode, this::setControllerMode);
         BooleanSyncValue invertedValue = new BooleanSyncValue(this::isInverted, this::setInverted);
 
-        guiSyncManager.syncValue("controller_mode", controllerModeValue);
-        guiSyncManager.syncValue("inverted", invertedValue);
+        panelSyncManager.syncValue("controller_mode", controllerModeValue);
+        panelSyncManager.syncValue("inverted", invertedValue);
 
         return GTGuis.createPanel(this, 176, 112)
                 .child(CoverWithUI.createTitleRow(getPickItem()))

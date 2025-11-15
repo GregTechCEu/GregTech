@@ -174,9 +174,9 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         var panel = GTGuis.createPanel(this, 176, 166);
-        createWidgets(panel, guiSyncManager);
+        createWidgets(panel, panelSyncManager);
         return panel.padding(4)
                 .child(IKey.lang(getMetaFullName()).asWidget())
                 .child(createQuantumIO(importItems, exportItems))
