@@ -51,7 +51,6 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
-import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -509,14 +508,13 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         EnumSyncValue<ManualImportExportMode> manualIOModeSync = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
         EnumSyncValue<IOMode> conveyorModeSync = new EnumSyncValue<>(IOMode.class, this::getIOMode, this::setIOMode);
-        IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
         EnumSyncValue<DistributionMode> distributionModeSync = new EnumSyncValue<>(DistributionMode.class,
                 this::getDistributionMode, this::setDistributionMode);
+        IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
 
         guiSyncManager.syncValue("manual_io", manualIOModeSync);
         guiSyncManager.syncValue("conveyor_mode", conveyorModeSync);
         guiSyncManager.syncValue("distribution_mode", distributionModeSync);
-        guiSyncManager.syncValue("throughput", throughput);
 
         Flow column = Flow.column()
                 .top(24)
@@ -543,7 +541,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .right(18)
                             .setTextColor(Color.WHITE.darker(1))
                             .setNumbers(1, maxItemTransferRate)
-                            .value(new IntValue.Dynamic(throughput::getIntValue, throughput::setIntValue))
+                            .value(throughput)
                             .background(GTGuiTextures.DISPLAY))
                     .child(new ButtonWidget<>()
                             .right(0)
