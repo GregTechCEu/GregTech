@@ -2,7 +2,6 @@ package gregtech.api.metatileentity;
 
 import gregtech.api.metatileentity.interfaces.INeighborCache;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -26,20 +25,12 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
     private boolean neighborsInvalidated = false;
 
     public NeighborCacheTileEntityBase() {
-        invalidateNeighbors(false);
+        invalidateNeighbors();
     }
 
-    protected void invalidateNeighbors(boolean notify) {
+    protected void invalidateNeighbors() {
         if (!this.neighborsInvalidated) {
             for (EnumFacing value : EnumFacing.VALUES) {
-                if (notify && crossesChunk(value)) {
-                    // notify neighbor on a different chunk to invalidate us
-                    TileEntity neighbor = getNeighbor(value);
-                    if (neighbor != null) {
-                        IBlockState state = getWorld().getBlockState(neighbor.getPos());
-                        state.neighborChanged(getWorld(), neighbor.getPos(), getBlockType(), getPos());
-                    }
-                }
                 this.neighbors.set(value.getIndex(), INVALID);
             }
             this.neighborsInvalidated = true;
@@ -50,28 +41,28 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
     @Override
     public void setWorld(@NotNull World worldIn) {
         super.setWorld(worldIn);
-        invalidateNeighbors(false);
+        invalidateNeighbors();
     }
 
     @MustBeInvokedByOverriders
     @Override
     public void setPos(@NotNull BlockPos posIn) {
         super.setPos(posIn);
-        invalidateNeighbors(false);
+        invalidateNeighbors();
     }
 
     @MustBeInvokedByOverriders
     @Override
     public void invalidate() {
         super.invalidate();
-        invalidateNeighbors(false);
+        invalidateNeighbors();
     }
 
     @MustBeInvokedByOverriders
     @Override
     public void onChunkUnload() {
         super.onChunkUnload();
-        invalidateNeighbors(true);
+        invalidateNeighbors();
     }
 
     @Override
