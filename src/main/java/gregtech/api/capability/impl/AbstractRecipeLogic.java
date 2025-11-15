@@ -714,7 +714,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         modifyOverclockPost(ocResult, recipe.propertyStorage());
 
-        if (ocResult.parallel() > 1) {
+        int subtickParallels = ocResult.parallel();
+        if (subtickParallels > 1) {
             recipe = subTickOC(ocResult, recipe, importInventory, importFluids);
             if (recipe == null) {
                 invalidateInputs();
@@ -731,6 +732,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             this.isOutputsFull = false;
             if (recipe.matches(true, importInventory, importFluids)) {
                 this.metaTileEntity.addNotifiedInput(importInventory);
+                if (subtickParallels > 1) {
+                    // If this machine had intrinsic parallels, they will have been set in
+                    // IParallelableRecipeLogic#findParallelRecipe
+                    int normalParallels = getParallelRecipesPerformed();
+                    if (normalParallels > 0) {
+                        // todo * or +, base ceu doesn't have any multis with "normal" parallels to test it with.
+                        setParallelRecipesPerformed(normalParallels * subtickParallels);
+                    } else {
+                        setParallelRecipesPerformed(subtickParallels);
+                    }
+                }
+
                 return recipe;
             }
         }
