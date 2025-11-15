@@ -229,8 +229,10 @@ public abstract class BaseFilterContainer<T> extends ItemStackHandler implements
         });
         ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingItemDamageCount();
 
-        return Flow.row().coverChildrenHeight()
-                .marginBottom(2).widthRel(1f)
+        return Flow.row()
+                .coverChildrenHeight()
+                .widthRel(1f)
+                .marginBottom(2)
                 .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(this, 0)
                                 .filter(this::isItemValid)
@@ -247,12 +249,15 @@ public abstract class BaseFilterContainer<T> extends ItemStackHandler implements
                                         manager.callSyncedAction("update_filter_panel", packetBuffer -> {});
                                     }
                                 }))
-                        .size(18).marginRight(2)
-                        .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY.asIcon().size(16)))
+                        .marginRight(2)
+                        .size(18)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY.asIcon()
+                                .size(16)))
                 .child(new ButtonWidget<>()
-                        .background(GTGuiTextures.MC_BUTTON, GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
-                        .hoverBackground(GuiTextures.MC_BUTTON_HOVERED,
-                                GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
+                        .background(GTGuiTextures.MC_BUTTON, GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon()
+                                .size(16))
+                        .hoverBackground(GuiTextures.MC_BUTTON_HOVERED, GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon()
+                                .size(16))
                         .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
                             IPanelHandler panel = filterPanel.get();
@@ -268,8 +273,11 @@ public abstract class BaseFilterContainer<T> extends ItemStackHandler implements
                 .child(getFilterKey()
                         .color(CoverWithUI.UI_TEXT_COLOR)
                         .shadow(false)
-                        .alignment(Alignment.CenterRight).asWidget()
-                        .left(36).right(0).height(18));
+                        .alignment(Alignment.CenterRight)
+                        .asWidget()
+                        .right(0)
+                        .left(36)
+                        .height(18));
     }
 
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
