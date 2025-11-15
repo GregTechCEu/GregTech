@@ -82,32 +82,25 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.fluidFilterContainer = new FluidFilterContainer(this);
     }
 
-    public void setStringTransferRate(String s) {
-        this.fluidFilterContainer.setTransferSize(
-                getBucketMode() == BucketMode.MILLI_BUCKET ?
-                        Integer.parseInt(s) :
-                        Integer.parseInt(s) * 1000);
+    public void setStringTransferRate(String str) {
+        this.fluidFilterContainer.setTransferSize(getBucketMode().toMilliBuckets(str));
     }
 
     public String getStringTransferRate() {
-        return String.valueOf(getBucketMode() == BucketMode.MILLI_BUCKET ?
-                this.fluidFilterContainer.getTransferSize() :
-                this.fluidFilterContainer.getTransferSize() / 1000);
+        return String.valueOf(getBucketMode().fromMilliBuckets(this.fluidFilterContainer.getTransferSize()));
     }
 
     public void setTransferRate(int transferRate) {
-        if (bucketMode == BucketMode.BUCKET) transferRate *= 1000;
-        this.transferRate = MathHelper.clamp(transferRate, 1, maxFluidTransferRate);
+        this.transferRate = MathHelper.clamp(this.bucketMode.toMilliBuckets(transferRate), 1, maxFluidTransferRate);
         markDirty();
     }
 
     public int getTransferRate() {
-        return bucketMode == BucketMode.BUCKET ? transferRate / 1000 : transferRate;
+        return this.bucketMode.fromMilliBuckets(transferRate);
     }
 
     protected void adjustTransferRate(int amount) {
-        amount *= this.bucketMode == BucketMode.BUCKET ? 1000 : 1;
-        setTransferRate(this.transferRate + amount);
+        setTransferRate(this.transferRate + this.bucketMode.toMilliBuckets(amount));
     }
 
     public void setIoMode(IOMode ioMode) {
@@ -217,7 +210,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             .left(0).width(18)
                             .onMousePressed(mouseButton -> {
                                 int val = throughputSync.getValue() - getIncrementValue(MouseData.create(mouseButton));
-                                throughputSync.setValue(val);
+                                throughputSync.setValue(Math.max(val, 1));
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
@@ -233,7 +226,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             .width(18)
                             .onMousePressed(mouseButton -> {
                                 int val = throughputSync.getValue() + getIncrementValue(MouseData.create(mouseButton));
-                                throughputSync.setValue(val);
+                                throughputSync.setValue(Math.min(val, maxFluidTransferRate));
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
@@ -441,14 +434,22 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         }
 
         /**
-         * Convert from buckets to this unit. Will return the input value on {@link #BUCKET} and multiply by 1000 on
-         * {@link #MILLI_BUCKET}.
+         * Convert from milli buckets to this unit. Will return the input value on {@link #MILLI_BUCKET} and multiply by
+         * 1000 on {@link #BUCKET}.
          */
-        public int fromBuckets(int B) {
+        public int toMilliBuckets(int mB) {
             return switch (this) {
-                case BUCKET -> B;
-                case MILLI_BUCKET -> B * 1000;
+                case BUCKET -> mB * 1000;
+                case MILLI_BUCKET -> mB;
             };
+        }
+
+        /**
+         * Parse a string into milli buckets. Will return the string value unmodified on {@link #MILLI_BUCKET} and
+         * multiplied by 1000 on {@link #BUCKET}.
+         */
+        public int toMilliBuckets(@NotNull String val) {
+            return toMilliBuckets(Integer.parseInt(val));
         }
 
         public boolean isFullBuckets() {

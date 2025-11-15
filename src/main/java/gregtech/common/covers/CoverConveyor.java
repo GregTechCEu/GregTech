@@ -526,7 +526,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .left(0)
                             .onMousePressed(mouseButton -> {
                                 int val = throughputSync.getValue() - getIncrementValue(MouseData.create(mouseButton));
-                                throughputSync.setValue(val, true, true);
+                                throughputSync.setValue(Math.max(val, 1), true, true);
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
@@ -543,7 +543,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .width(18)
                             .onMousePressed(mouseButton -> {
                                 int val = throughputSync.getValue() + getIncrementValue(MouseData.create(mouseButton));
-                                throughputSync.setValue(val, true, true);
+                                throughputSync.setValue(Math.min(val, maxItemTransferRate), true, true);
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
