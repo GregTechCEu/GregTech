@@ -25,12 +25,16 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
     private boolean neighborsInvalidated = false;
 
     public NeighborCacheTileEntityBase() {
-        invalidateNeighbors();
+        invalidateNeighbors(false);
     }
 
-    protected void invalidateNeighbors() {
+    protected void invalidateNeighbors(boolean notify) {
         if (!this.neighborsInvalidated) {
             for (EnumFacing value : EnumFacing.VALUES) {
+                if (notify && crossesChunk(value) && getNeighbor(value) instanceof INeighborCache neighborCache) {
+                    // notify neighbor on a different chunk to invalidate us
+                    neighborCache.onNeighborChanged(value.getOpposite());
+                }
                 this.neighbors.set(value.getIndex(), INVALID);
             }
             this.neighborsInvalidated = true;
@@ -41,28 +45,28 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
     @Override
     public void setWorld(@NotNull World worldIn) {
         super.setWorld(worldIn);
-        invalidateNeighbors();
+        invalidateNeighbors(false);
     }
 
     @MustBeInvokedByOverriders
     @Override
     public void setPos(@NotNull BlockPos posIn) {
         super.setPos(posIn);
-        invalidateNeighbors();
+        invalidateNeighbors(false);
     }
 
     @MustBeInvokedByOverriders
     @Override
     public void invalidate() {
         super.invalidate();
-        invalidateNeighbors();
+        invalidateNeighbors(false);
     }
 
     @MustBeInvokedByOverriders
     @Override
     public void onChunkUnload() {
         super.onChunkUnload();
-        invalidateNeighbors();
+        invalidateNeighbors(true);
     }
 
     @Override
@@ -81,14 +85,19 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
     }
 
     private boolean crossesUnloadedChunk(EnumFacing facing) {
-        int cx = getPos().getX() >> 4, cz = getPos().getZ() >> 4;
-        BlockPos offset = getPos().offset(facing);
-        int ncx = offset.getX() >> 4, ncz = offset.getZ() >> 4;
-
-        if (cx != ncx || cz != ncz) {
+        if (crossesChunk(facing)) {
+            int ncx = getPos().offset(facing).getX() >> 4;
+            int ncz = getPos().offset(facing).getZ() >> 4;
             return getWorld().getChunkProvider().getLoadedChunk(ncx, ncz) == null;
         }
         return false;
+    }
+
+    private boolean crossesChunk(EnumFacing facing) {
+        int cx = getPos().getX() >> 4, cz = getPos().getZ() >> 4;
+        BlockPos offset = getPos().offset(facing);
+        int ncx = offset.getX() >> 4, ncz = offset.getZ() >> 4;
+        return cx != ncx || cz != ncz;
     }
 
     @NotNull
