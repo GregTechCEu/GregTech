@@ -2,6 +2,7 @@ package gregtech.api.metatileentity;
 
 import gregtech.api.metatileentity.interfaces.INeighborCache;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -31,9 +32,13 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
     protected void invalidateNeighbors(boolean notify) {
         if (!this.neighborsInvalidated) {
             for (EnumFacing value : EnumFacing.VALUES) {
-                if (notify && crossesChunk(value) && getNeighbor(value) instanceof INeighborCache neighborCache) {
+                if (notify && crossesChunk(value)) {
                     // notify neighbor on a different chunk to invalidate us
-                    neighborCache.onNeighborChanged(value.getOpposite());
+                    TileEntity neighbor = getNeighbor(value);
+                    if (neighbor != null) {
+                        IBlockState state = getWorld().getBlockState(neighbor.getPos());
+                        state.neighborChanged(getWorld(), neighbor.getPos(), getBlockType(), getPos());
+                    }
                 }
                 this.neighbors.set(value.getIndex(), INVALID);
             }
