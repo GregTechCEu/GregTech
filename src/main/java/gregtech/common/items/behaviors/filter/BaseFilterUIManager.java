@@ -5,7 +5,6 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
-
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 
 import net.minecraft.client.resources.I18n;

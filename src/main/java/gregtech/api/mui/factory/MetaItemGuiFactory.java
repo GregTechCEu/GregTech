@@ -1,13 +1,8 @@
 package gregtech.api.mui.factory;
 
-import com.cleanroommc.modularui.factory.inventory.InventoryTypes;
-
-import com.cleanroommc.modularui.utils.Platform;
-
 import gregtech.api.items.metaitem.MetaItem;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumHand;
@@ -16,6 +11,7 @@ import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.AbstractUIFactory;
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.factory.PlayerInventoryGuiData;
+import com.cleanroommc.modularui.factory.inventory.InventoryTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -31,7 +27,7 @@ public class MetaItemGuiFactory extends AbstractUIFactory<PlayerInventoryGuiData
     public static void open(EntityPlayer player, EnumHand hand) {
         Objects.requireNonNull(player);
         Objects.requireNonNull(hand);
-        int index = hand == EnumHand.OFF_HAND ? 40 : Platform.getClientPlayer().inventory.currentItem;
+        int index = hand == EnumHand.OFF_HAND ? 40 : player.inventory.currentItem;
         PlayerInventoryGuiData guiData = new PlayerInventoryGuiData(player, InventoryTypes.PLAYER, index);
         GuiManager.open(INSTANCE, guiData, verifyServerSide(player));
     }
