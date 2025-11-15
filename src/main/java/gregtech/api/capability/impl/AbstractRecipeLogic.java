@@ -737,7 +737,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                     // IParallelableRecipeLogic#findParallelRecipe
                     int normalParallels = getParallelRecipesPerformed();
                     if (normalParallels > 0) {
-                        // todo * or +, base ceu doesn't have any multis with "normal" parallels to test it with.
                         setParallelRecipesPerformed(normalParallels * subtickParallels);
                     } else {
                         setParallelRecipesPerformed(subtickParallels);
