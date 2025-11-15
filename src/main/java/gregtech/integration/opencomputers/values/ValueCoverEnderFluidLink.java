@@ -1,7 +1,7 @@
 package gregtech.integration.opencomputers.values;
 
 import gregtech.api.cover.Cover;
-import gregtech.common.covers.CoverPump.PumpMode;
+import gregtech.common.covers.IOMode;
 import gregtech.common.covers.ender.CoverEnderFluidLink;
 import gregtech.integration.opencomputers.InputValidator;
 
@@ -52,7 +52,7 @@ public class ValueCoverEnderFluidLink extends ValueCoverBehavior {
             return NULL_COVER;
         }
 
-        PumpMode mode = InputValidator.getEnumArrayIndex(args, 0, PumpMode.values());
+        IOMode mode = InputValidator.getEnumArrayIndex(args, 0, IOMode.VALUES);
         cover.setPumpMode(mode);
         return new Object[] {};
     }

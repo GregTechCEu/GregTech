@@ -22,4 +22,16 @@ public enum ItemFilterMode implements ITranslatable {
     public String getName() {
         return this.localeName;
     }
+
+    public boolean isFilterInsert() {
+        return this == FILTER_INSERT;
+    }
+
+    public boolean isFilterExtract() {
+        return this == FILTER_EXTRACT;
+    }
+
+    public boolean isFilterBoth() {
+        return this == FILTER_BOTH;
+    }
 }

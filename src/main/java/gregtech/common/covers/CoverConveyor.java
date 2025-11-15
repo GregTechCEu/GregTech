@@ -64,7 +64,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -73,7 +72,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public final int tier;
     public final int maxItemTransferRate;
     private int transferRate;
-    protected ConveyorMode conveyorMode;
+    protected IOMode ioMode = IOMode.EXPORT;
     protected DistributionMode distributionMode;
     protected ManualImportExportMode manualImportExportMode = ManualImportExportMode.DISABLED;
     protected final ItemFilterContainer itemFilterContainer;
@@ -88,7 +87,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         this.maxItemTransferRate = itemsPerSecond;
         this.transferRate = maxItemTransferRate;
         this.itemsLeftToTransferLastSecond = transferRate;
-        this.conveyorMode = ConveyorMode.EXPORT;
         this.distributionMode = DistributionMode.INSERT_FIRST;
         this.itemFilterContainer = new ItemFilterContainer(this);
     }
@@ -120,14 +118,14 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         setTransferRate(MathHelper.clamp(transferRate + amount, 1, maxItemTransferRate));
     }
 
-    public void setConveyorMode(ConveyorMode conveyorMode) {
-        this.conveyorMode = conveyorMode;
-        writeCustomData(GregtechDataCodes.UPDATE_COVER_MODE, buf -> buf.writeEnumValue(conveyorMode));
+    public void setIOMode(IOMode ioMode) {
+        this.ioMode = ioMode;
+        writeCustomData(GregtechDataCodes.UPDATE_COVER_MODE, buf -> buf.writeEnumValue(ioMode));
         markDirty();
     }
 
-    public ConveyorMode getConveyorMode() {
-        return conveyorMode;
+    public IOMode getIOMode() {
+        return ioMode;
     }
 
     public DistributionMode getDistributionMode() {
@@ -177,52 +175,42 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     protected int doTransferItemsAny(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
-        if (conveyorMode == ConveyorMode.IMPORT) {
-            return moveInventoryItems(itemHandler, myItemHandler, maxTransferAmount);
-        } else if (conveyorMode == ConveyorMode.EXPORT) {
-            return moveInventoryItems(myItemHandler, itemHandler, maxTransferAmount);
-        }
-        return 0;
+        return switch (ioMode) {
+            case IMPORT -> moveInventoryItems(itemHandler, myItemHandler, maxTransferAmount);
+            case EXPORT -> moveInventoryItems(myItemHandler, itemHandler, maxTransferAmount);
+        };
     }
 
     protected int doTransferItemsByGroup(IItemHandler itemHandler, IItemHandler myItemHandler,
                                          Map<Integer, GroupItemInfo> itemInfos, int maxTransferAmount) {
-        if (conveyorMode == ConveyorMode.IMPORT) {
-            return moveInventoryItems(itemHandler, myItemHandler, itemInfos, maxTransferAmount);
-        } else if (conveyorMode == ConveyorMode.EXPORT) {
-            return moveInventoryItems(myItemHandler, itemHandler, itemInfos, maxTransferAmount);
-        }
-        return 0;
+        return switch (ioMode) {
+            case IMPORT -> moveInventoryItems(itemHandler, myItemHandler, itemInfos, maxTransferAmount);
+            case EXPORT -> moveInventoryItems(myItemHandler, itemHandler, itemInfos, maxTransferAmount);
+        };
     }
 
     protected Map<Integer, GroupItemInfo> doCountDestinationInventoryItemsByMatchIndex(IItemHandler itemHandler,
                                                                                        IItemHandler myItemHandler) {
-        if (conveyorMode == ConveyorMode.IMPORT) {
-            return countInventoryItemsByMatchSlot(myItemHandler);
-        } else if (conveyorMode == ConveyorMode.EXPORT) {
-            return countInventoryItemsByMatchSlot(itemHandler);
-        }
-        return Collections.emptyMap();
+        return switch (ioMode) {
+            case IMPORT -> countInventoryItemsByMatchSlot(myItemHandler);
+            case EXPORT -> countInventoryItemsByMatchSlot(itemHandler);
+        };
     }
 
     protected Map<ItemStack, TypeItemInfo> doCountSourceInventoryItemsByType(IItemHandler itemHandler,
                                                                              IItemHandler myItemHandler) {
-        if (conveyorMode == ConveyorMode.IMPORT) {
-            return countInventoryItemsByType(itemHandler);
-        } else if (conveyorMode == ConveyorMode.EXPORT) {
-            return countInventoryItemsByType(myItemHandler);
-        }
-        return Collections.emptyMap();
+        return switch (ioMode) {
+            case IMPORT -> countInventoryItemsByType(itemHandler);
+            case EXPORT -> countInventoryItemsByType(myItemHandler);
+        };
     }
 
     protected boolean doTransferItemsExact(IItemHandler itemHandler, IItemHandler myItemHandler,
                                            TypeItemInfo itemInfo) {
-        if (conveyorMode == ConveyorMode.IMPORT) {
-            return moveInventoryItemsExact(itemHandler, myItemHandler, itemInfo);
-        } else if (conveyorMode == ConveyorMode.EXPORT) {
-            return moveInventoryItemsExact(myItemHandler, itemHandler, itemInfo);
-        }
-        return false;
+        return switch (ioMode) {
+            case IMPORT -> moveInventoryItemsExact(itemHandler, myItemHandler, itemInfo);
+            case EXPORT -> moveInventoryItemsExact(myItemHandler, itemHandler, itemInfo);
+        };
     }
 
     protected static boolean moveInventoryItemsExact(IItemHandler sourceInventory, IItemHandler targetInventory,
@@ -460,9 +448,10 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
-                            Cuboid6 plateBox, BlockRenderLayer layer) {
-        if (conveyorMode == ConveyorMode.EXPORT) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline,
+                            @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        if (ioMode.isExport()) {
             Textures.CONVEYOR_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         } else {
             Textures.CONVEYOR_OVERLAY_INVERTED.renderSided(getAttachedSide(), plateBox, renderState, pipeline,
@@ -480,7 +469,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, T defaultValue) {
+    public <T> T getCapability(@NotNull Capability<T> capability, T defaultValue) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (defaultValue == null) {
                 return null;
@@ -490,16 +479,16 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 this.itemHandlerWrapper = new CoverableItemHandlerWrapper(delegate);
             }
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandlerWrapper);
-        }
-        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+        } else if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
+
         return defaultValue;
     }
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        var panel = GTGuis.createPanel(this, 176, 192 + 18);
+        ModularPanel panel = GTGuis.createPanel(this, 176, 192 + 18);
 
         getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
 
@@ -509,16 +498,10 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     protected Flow createUI(GuiData data, PanelSyncManager guiSyncManager) {
-        var column = Flow.column()
-                .top(24)
-                .widthRel(1f)
-                .margin(7, 0)
-                .coverChildrenHeight();
-
+        // noinspection DuplicatedCode
         EnumSyncValue<ManualImportExportMode> manualIOModeSync = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
-        EnumSyncValue<ConveyorMode> conveyorModeSync = new EnumSyncValue<>(ConveyorMode.class, this::getConveyorMode,
-                this::setConveyorMode);
+        EnumSyncValue<IOMode> conveyorModeSync = new EnumSyncValue<>(IOMode.class, this::getIOMode, this::setIOMode);
         EnumSyncValue<DistributionMode> distributionModeSync = new EnumSyncValue<>(DistributionMode.class,
                 this::getDistributionMode, this::setDistributionMode);
         IntSyncValue throughputSync = new IntSyncValue(this::getTransferRate, this::setTransferRate);
@@ -527,11 +510,20 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         guiSyncManager.syncValue("conveyor_mode", conveyorModeSync);
         guiSyncManager.syncValue("distribution_mode", distributionModeSync);
 
+        Flow column = Flow.column()
+                .top(24)
+                .widthRel(1f)
+                .margin(7, 0)
+                .coverChildrenHeight();
+
         if (createThroughputRow()) {
-            column.child(Flow.row().coverChildrenHeight()
-                    .marginBottom(2).widthRel(1f)
+            column.child(Flow.row()
+                    .widthRel(1f)
+                    .coverChildrenHeight()
+                    .marginBottom(2)
                     .child(new ButtonWidget<>()
-                            .left(0).width(18)
+                            .width(18)
+                            .left(0)
                             .onMousePressed(mouseButton -> {
                                 int val = throughputSync.getValue() - getIncrementValue(MouseData.create(mouseButton));
                                 throughputSync.setValue(val, true, true);
@@ -580,11 +572,11 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         }
 
         if (createConveyorModeRow()) {
-            column.child(new EnumRowBuilder<>(ConveyorMode.class)
+            column.child(new EnumRowBuilder<>(IOMode.class)
                     .value(conveyorModeSync)
                     .rowDescription(IKey.lang("cover.generic.io"))
                     .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
-                    .widgetExtras(ITranslatable::handleTooltip)
+                    .widgetExtras((ioMode, toggleButton) -> ioMode.handleTooltip(toggleButton, "conveyor"))
                     .build());
         }
 
@@ -638,7 +630,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void readCustomData(int discriminator, @NotNull PacketBuffer buf) {
         super.readCustomData(discriminator, buf);
         if (discriminator == GregtechDataCodes.UPDATE_COVER_MODE) {
-            this.conveyorMode = buf.readEnumValue(ConveyorMode.class);
+            this.ioMode = buf.readEnumValue(IOMode.class);
             getCoverableView().scheduleRenderUpdate();
         }
     }
@@ -647,7 +639,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeInt(transferRate);
-        packetBuffer.writeByte(conveyorMode.ordinal());
+        packetBuffer.writeByte(ioMode.ordinal());
         packetBuffer.writeByte(distributionMode.ordinal());
         packetBuffer.writeByte(manualImportExportMode.ordinal());
         getItemFilterContainer().writeInitialSyncData(packetBuffer);
@@ -657,7 +649,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.transferRate = packetBuffer.readInt();
-        this.conveyorMode = ConveyorMode.VALUES[packetBuffer.readByte()];
+        this.ioMode = IOMode.VALUES[packetBuffer.readByte()];
         this.distributionMode = DistributionMode.VALUES[packetBuffer.readByte()];
         this.manualImportExportMode = ManualImportExportMode.VALUES[packetBuffer.readByte()];
         getItemFilterContainer().readInitialSyncData(packetBuffer);
@@ -667,7 +659,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferRate", transferRate);
-        tagCompound.setInteger("ConveyorMode", conveyorMode.ordinal());
+        tagCompound.setInteger("ConveyorMode", ioMode.ordinal());
         tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
@@ -678,7 +670,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
-        this.conveyorMode = ConveyorMode.VALUES[tagCompound.getInteger("ConveyorMode")];
+        this.ioMode = IOMode.VALUES[tagCompound.getInteger("ConveyorMode")];
         this.distributionMode = DistributionMode.VALUES[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.VALUES[tagCompound.getInteger("ManualImportExportMode")];
@@ -696,30 +688,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         return Textures.VOLTAGE_CASINGS[this.tier].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
     }
 
-    public enum ConveyorMode implements ITranslatable, IIOMode {
-
-        IMPORT("cover.conveyor.mode.import"),
-        EXPORT("cover.conveyor.mode.export");
-
-        public static final ConveyorMode[] VALUES = values();
-        public final String localeName;
-
-        ConveyorMode(String localeName) {
-            this.localeName = localeName;
-        }
-
-        @NotNull
-        @Override
-        public String getName() {
-            return localeName;
-        }
-
-        @Override
-        public boolean isImport() {
-            return this == IMPORT;
-        }
-    }
-
     private class CoverableItemHandlerWrapper extends ItemHandlerDelegate {
 
         public CoverableItemHandlerWrapper(IItemHandler delegate) {
@@ -729,29 +697,26 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         @NotNull
         @Override
         public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            if (conveyorMode == ConveyorMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
-                return stack;
-            }
-            if (manualImportExportMode == ManualImportExportMode.FILTERED &&
-                    !itemFilterContainer.test(stack)) {
-                return stack;
-            }
-            return super.insertItem(slot, stack, simulate);
+            boolean block = ioMode.isExport() && manualImportExportMode.isDisabled();
+            block |= manualImportExportMode.isFiltered() && !itemFilterContainer.test(stack);
+
+            return block ? stack : super.insertItem(slot, stack, simulate);
         }
 
         @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (conveyorMode == ConveyorMode.IMPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
+            if (ioMode.isImport() && manualImportExportMode.isDisabled()) {
                 return ItemStack.EMPTY;
-            }
-            if (manualImportExportMode == ManualImportExportMode.FILTERED) {
+            } else if (manualImportExportMode.isFiltered()) {
                 ItemStack result = super.extractItem(slot, amount, true);
                 if (result.isEmpty() || !itemFilterContainer.test(result)) {
                     return ItemStack.EMPTY;
                 }
+
                 return simulate ? result : super.extractItem(slot, amount, false);
             }
+
             return super.extractItem(slot, amount, simulate);
         }
     }

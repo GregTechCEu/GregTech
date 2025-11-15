@@ -2,7 +2,7 @@ package gregtech.integration.opencomputers.values;
 
 import gregtech.api.cover.Cover;
 import gregtech.common.covers.CoverPump;
-import gregtech.common.covers.CoverPump.PumpMode;
+import gregtech.common.covers.IOMode;
 import gregtech.integration.opencomputers.InputValidator;
 
 import net.minecraft.util.EnumFacing;
@@ -66,8 +66,8 @@ public class ValueCoverPump extends ValueCoverBehavior {
             return NULL_COVER;
         }
 
-        PumpMode mode = InputValidator.getEnumArrayIndex(args, 0, PumpMode.values());
-        cover.setPumpMode(mode);
+        IOMode mode = InputValidator.getEnumArrayIndex(args, 0, IOMode.VALUES);
+        cover.setIoMode(mode);
         return new Object[] {};
     }
 
@@ -78,6 +78,6 @@ public class ValueCoverPump extends ValueCoverBehavior {
             return NULL_COVER;
         }
 
-        return new Object[] { cover.getPumpMode().ordinal() };
+        return new Object[] { cover.getIoMode().ordinal() };
     }
 }

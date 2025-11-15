@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemFilterContainer extends BaseFilterContainer {
+public class ItemFilterContainer extends BaseFilterContainer<ItemStack> {
 
     public ItemFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super(dirtyNotifiable);

@@ -22,4 +22,16 @@ public enum DistributionMode implements ITranslatable {
     public String getName() {
         return localeName;
     }
+
+    public boolean isRoundRobinGlobal() {
+        return this == ROUND_ROBIN_GLOBAL;
+    }
+
+    public boolean isRoundRobinPriority() {
+        return this == ROUND_ROBIN_PRIO;
+    }
+
+    public boolean isInsertFirst() {
+        return this == INSERT_FIRST;
+    }
 }

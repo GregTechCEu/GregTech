@@ -27,8 +27,8 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -53,28 +53,21 @@ public class CoverFluidRegulator extends CoverPump {
     @Override
     protected int doTransferFluidsInternal(IFluidHandler myFluidHandler, IFluidHandler fluidHandler,
                                            int transferLimit) {
-        IFluidHandler sourceHandler;
-        IFluidHandler destHandler;
+        return switch (ioMode) {
+            case IMPORT -> doTransferFluidsAny(fluidHandler, myFluidHandler, transferLimit);
+            case EXPORT -> doTransferFluidsAny(myFluidHandler, fluidHandler, transferLimit);
+        };
+    }
 
-        if (pumpMode == PumpMode.IMPORT) {
-            sourceHandler = fluidHandler;
-            destHandler = myFluidHandler;
-        } else if (pumpMode == PumpMode.EXPORT) {
-            sourceHandler = myFluidHandler;
-            destHandler = fluidHandler;
-        } else {
-            return 0;
-        }
+    protected int doTransferFluidsAny(IFluidHandler sourceHandler, IFluidHandler destHandler, int transferLimit) {
         return switch (transferMode) {
             case TRANSFER_ANY -> GTTransferUtils.transferFluids(sourceHandler, destHandler, transferLimit,
-                    fluidFilterContainer::test);
-            case TRANSFER_EXACT -> doTransferExact(transferLimit, sourceHandler, destHandler,
-                    fluidFilterContainer::test, this.fluidFilterContainer.getTransferSize());
-            case KEEP_EXACT -> doKeepExact(transferLimit, sourceHandler, destHandler,
-                    fluidFilterContainer::test,
+                    fluidFilterContainer);
+            case TRANSFER_EXACT -> doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilterContainer,
+                    this.fluidFilterContainer.getTransferSize());
+            case KEEP_EXACT -> doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilterContainer,
                     this.fluidFilterContainer.getTransferSize(), true);
-            case RETAIN_EXACT -> doKeepExact(transferLimit, sourceHandler, destHandler,
-                    fluidFilterContainer::test,
+            case RETAIN_EXACT -> doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilterContainer,
                     this.fluidFilterContainer.getTransferSize(), false);
         };
     }
@@ -85,6 +78,7 @@ public class CoverFluidRegulator extends CoverPump {
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
             FluidStack sourceFluid = tankProperties.getContents();
             if (this.fluidFilterContainer.hasFilter()) {
+                // noinspection DataFlowIssue
                 supplyAmount = this.fluidFilterContainer.getFilter().getTransferLimit(sourceFluid, supplyAmount);
             }
             if (fluidLeftToTransfer < supplyAmount)
@@ -128,6 +122,7 @@ public class CoverFluidRegulator extends CoverPump {
                 break;
 
             if (this.fluidFilterContainer.hasFilter()) {
+                // noinspection DataFlowIssue
                 keepAmount = this.fluidFilterContainer.getFilter().getTransferLimit(fluidStack, keepAmount);
             }
 
@@ -257,17 +252,12 @@ public class CoverFluidRegulator extends CoverPump {
     protected Flow createUI(GuiData data, PanelSyncManager syncManager) {
         EnumSyncValue<TransferMode> transferModeSync = new EnumSyncValue<>(TransferMode.class, this::getTransferMode,
                 this::setTransferMode);
-        transferModeSync.updateCacheFromSource(true);
-        syncManager.syncValue("transfer_mode", transferModeSync);
-
         EnumSyncValue<BucketMode> bucketModeSync = new EnumSyncValue<>(BucketMode.class, this::getBucketMode,
                 this::setBucketMode);
-        bucketModeSync.updateCacheFromSource(true);
-        syncManager.syncValue("bucket_mode", bucketModeSync);
+        IntSyncValue filterTransferSize = new IntSyncValue(this::getTransferRate, this::setTransferRate);
 
-        StringSyncValue filterTransferSize = new StringSyncValue(this::getStringTransferRate,
-                this::setStringTransferRate);
-        filterTransferSize.updateCacheFromSource(true);
+        syncManager.syncValue("transfer_mode", transferModeSync);
+        syncManager.syncValue("bucket_mode", bucketModeSync);
 
         return super.createUI(data, syncManager)
                 .child(new EnumRowBuilder<>(TransferMode.class)

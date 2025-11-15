@@ -36,4 +36,20 @@ public enum TransferMode implements ITranslatable {
         tooltip.addTooltipLine(getKey(key));
         tooltip.addTooltipLine(IKey.lang(getName(key) + ".description"));
     }
+
+    public boolean isTransferAny() {
+        return this == TRANSFER_ANY;
+    }
+
+    public boolean isTransferExact() {
+        return this == TRANSFER_EXACT;
+    }
+
+    public boolean isKeepExact() {
+        return this == KEEP_EXACT;
+    }
+
+    public boolean isRetainExact() {
+        return this == RETAIN_EXACT;
+    }
 }

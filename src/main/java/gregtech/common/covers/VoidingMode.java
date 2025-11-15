@@ -27,4 +27,12 @@ public enum VoidingMode implements ITranslatable {
     public int getMaxStackSize() {
         return maxStackSize;
     }
+
+    public boolean isVoidingAny() {
+        return this == VOID_ANY;
+    }
+
+    public boolean isVoidingOverflow() {
+        return this == VOID_OVERFLOW;
+    }
 }

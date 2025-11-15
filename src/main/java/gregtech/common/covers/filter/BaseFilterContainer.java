@@ -28,8 +28,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
-public abstract class BaseFilterContainer extends ItemStackHandler {
+public abstract class BaseFilterContainer<T> extends ItemStackHandler implements Predicate<T> {
 
     private int maxTransferSize = 1;
     private int transferSize;
@@ -42,18 +43,18 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         this.dirtyNotifiable = dirtyNotifiable;
     }
 
-    public boolean test(Object toTest) {
+    public boolean test(T toTest) {
         return !hasFilter() || getFilter().test(toTest);
     }
 
-    public MatchResult match(Object toMatch) {
+    public MatchResult match(T toMatch) {
         if (!hasFilter())
             return MatchResult.create(true, toMatch, -1);
 
         return getFilter().match(toMatch);
     }
 
-    public int getTransferLimit(Object stack) {
+    public int getTransferLimit(T stack) {
         if (!hasFilter() || isBlacklistFilter()) {
             return getTransferSize();
         }

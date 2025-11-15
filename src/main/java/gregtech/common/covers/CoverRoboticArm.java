@@ -47,9 +47,10 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
-                            Cuboid6 plateBox, BlockRenderLayer layer) {
-        if (conveyorMode == ConveyorMode.EXPORT) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline,
+                            @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        if (ioMode.isExport()) {
             Textures.ARM_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         } else {
             Textures.ARM_OVERLAY_INVERTED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
@@ -58,15 +59,10 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     protected int doTransferItems(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
-        if (conveyorMode == ConveyorMode.EXPORT && itemHandler instanceof ItemNetHandler &&
-                transferMode == TransferMode.KEEP_EXACT) {
-            return 0;
-        }
-        if (conveyorMode == ConveyorMode.IMPORT && myItemHandler instanceof ItemNetHandler &&
-                transferMode == TransferMode.KEEP_EXACT) {
-            return 0;
-        }
-        return switch (transferMode) {
+        boolean block = ioMode.isExport() && transferMode.isKeepExact() && itemHandler instanceof ItemNetHandler;
+        block |= ioMode.isImport() && transferMode.isKeepExact() && myItemHandler instanceof ItemNetHandler;
+
+        return block ? 0 : switch (transferMode) {
             case TRANSFER_ANY -> doTransferItemsAny(itemHandler, myItemHandler, maxTransferAmount);
             case TRANSFER_EXACT -> doTransferExact(itemHandler, myItemHandler, maxTransferAmount);
             case KEEP_EXACT -> doKeepExact(itemHandler, myItemHandler, maxTransferAmount, true);
@@ -195,10 +191,7 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     private boolean shouldDisplayAmountSlider() {
-        if (transferMode == TransferMode.TRANSFER_ANY) {
-            return false;
-        }
-        return itemFilterContainer.showGlobalTransferLimitSlider();
+        return !transferMode.isTransferAny() && itemFilterContainer.showGlobalTransferLimitSlider();
     }
 
     @Override
@@ -220,8 +213,12 @@ public class CoverRoboticArm extends CoverConveyor {
                         .widgetExtras(
                                 (transferMode, toggleButton) -> transferMode.handleTooltip(toggleButton, "robotic_arm"))
                         .build())
-                .child(Flow.row().right(0).coverChildrenHeight()
-                        .child(new TextFieldWidget().widthRel(0.5f).right(0)
+                .child(Flow.row()
+                        .right(0)
+                        .coverChildrenHeight()
+                        .child(new TextFieldWidget()
+                                .right(0)
+                                .widthRel(0.5f)
                                 .setEnabledIf(w -> shouldDisplayAmountSlider())
                                 .setNumbers(0, Integer.MAX_VALUE)
                                 .value(new IntValue.Dynamic(transferModeSync::getIntValue,
@@ -261,13 +258,13 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferMode", transferMode.ordinal());
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         this.transferMode = TransferMode.VALUES[tagCompound.getInteger("TransferMode")];
         this.itemFilterContainer.setMaxTransferSize(getMaxStackSize());
         super.readFromNBT(tagCompound);

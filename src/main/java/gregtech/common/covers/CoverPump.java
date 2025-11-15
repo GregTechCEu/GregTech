@@ -63,7 +63,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     public final int tier;
     public final int maxFluidTransferRate;
     protected int transferRate;
-    protected PumpMode pumpMode = PumpMode.EXPORT;
+    protected IOMode ioMode = IOMode.EXPORT;
     protected ManualImportExportMode manualImportExportMode = ManualImportExportMode.DISABLED;
     protected DistributionMode distributionMode = DistributionMode.INSERT_FIRST;
     protected int fluidLeftToTransferLastSecond;
@@ -110,14 +110,14 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         setTransferRate(this.transferRate + amount);
     }
 
-    public void setPumpMode(PumpMode pumpMode) {
-        this.pumpMode = pumpMode;
-        writeCustomData(GregtechDataCodes.UPDATE_COVER_MODE, buf -> buf.writeEnumValue(pumpMode));
+    public void setIoMode(IOMode ioMode) {
+        this.ioMode = ioMode;
+        writeCustomData(GregtechDataCodes.UPDATE_COVER_MODE, buf -> buf.writeEnumValue(ioMode));
         markDirty();
     }
 
-    public PumpMode getPumpMode() {
-        return pumpMode;
+    public IOMode getIoMode() {
+        return ioMode;
     }
 
     public void setBucketMode(BucketMode bucketMode) {
@@ -157,35 +157,33 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     protected int doTransferFluids(int transferLimit) {
         TileEntity tileEntity = getNeighbor(getAttachedSide());
-        IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity
-                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide().getOpposite());
+        if (tileEntity == null) return 0;
+        IFluidHandler fluidHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                getAttachedSide().getOpposite());
         IFluidHandler myFluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
                 getAttachedSide());
-        if (fluidHandler == null || myFluidHandler == null) {
-            return 0;
-        }
-        return doTransferFluidsInternal(myFluidHandler, fluidHandler, transferLimit);
+        return fluidHandler != null && myFluidHandler != null ?
+                doTransferFluidsInternal(myFluidHandler, fluidHandler, transferLimit) : 0;
     }
 
     protected int doTransferFluidsInternal(IFluidHandler myFluidHandler, IFluidHandler fluidHandler,
                                            int transferLimit) {
-        if (pumpMode == PumpMode.IMPORT) {
-            return GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit,
-                    fluidFilterContainer::test);
-        } else if (pumpMode == PumpMode.EXPORT) {
-            return GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit,
-                    fluidFilterContainer::test);
-        }
-        return 0;
+        return switch (ioMode) {
+            case IMPORT -> GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit,
+                    fluidFilterContainer);
+            case EXPORT -> GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit,
+                    fluidFilterContainer);
+        };
     }
 
-    protected boolean checkInputFluid(FluidStack fluidStack) {
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    protected boolean isFluidAllowed(FluidStack fluidStack) {
         return fluidFilterContainer.test(fluidStack);
     }
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        var panel = GTGuis.createPanel(this, 176, 192);
+        ModularPanel panel = GTGuis.createPanel(this, 176, 192);
 
         getFluidFilterContainer().setMaxTransferSize(getMaxTransferRate());
 
@@ -195,10 +193,10 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     protected Flow createUI(GuiData data, PanelSyncManager syncManager) {
+        // noinspection DuplicatedCode
         EnumSyncValue<ManualImportExportMode> manualIOModeSync = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
-        EnumSyncValue<PumpMode> pumpModeSync = new EnumSyncValue<>(PumpMode.class, this::getPumpMode,
-                this::setPumpMode);
+        EnumSyncValue<IOMode> pumpModeSync = new EnumSyncValue<>(IOMode.class, this::getIoMode, this::setIoMode);
         IntSyncValue throughputSync = new IntSyncValue(this::getTransferRate, this::setTransferRate);
 
         syncManager.syncValue("manual_io", manualIOModeSync);
@@ -263,11 +261,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         }
 
         if (createPumpModeRow()) {
-            column.child(new EnumRowBuilder<>(PumpMode.class)
+            column.child(new EnumRowBuilder<>(IOMode.class)
                     .value(pumpModeSync)
                     .rowDescription(IKey.lang("cover.pump.mode"))
                     .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY) // todo pump mode overlays
-                    .widgetExtras(ITranslatable::handleTooltip)
+                    .widgetExtras((ioMode, toggleButton) -> ioMode.handleTooltip(toggleButton, "pump"))
                     .build());
         }
 
@@ -307,7 +305,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     public void readCustomData(int discriminator, @NotNull PacketBuffer buf) {
         super.readCustomData(discriminator, buf);
         if (discriminator == GregtechDataCodes.UPDATE_COVER_MODE) {
-            this.pumpMode = buf.readEnumValue(PumpMode.class);
+            this.ioMode = buf.readEnumValue(IOMode.class);
             scheduleRenderUpdate();
         }
     }
@@ -315,14 +313,14 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
-        packetBuffer.writeByte(pumpMode.ordinal());
+        packetBuffer.writeByte(ioMode.ordinal());
         getFluidFilterContainer().writeInitialSyncData(packetBuffer);
     }
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        this.pumpMode = PumpMode.VALUES[packetBuffer.readByte()];
+        this.ioMode = IOMode.VALUES[packetBuffer.readByte()];
         getFluidFilterContainer().readInitialSyncData(packetBuffer);
     }
 
@@ -344,7 +342,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     @Override
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                             IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
-        if (pumpMode == PumpMode.EXPORT) {
+        if (ioMode.isExport()) {
             Textures.PUMP_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         } else {
             Textures.PUMP_OVERLAY_INVERTED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
@@ -362,10 +360,10 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                 this.fluidHandlerWrapper = new CoverableFluidHandlerWrapper(delegate);
             }
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandlerWrapper);
-        }
-        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+        } else if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
+
         return defaultValue;
     }
 
@@ -383,7 +381,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferRate", transferRate);
-        tagCompound.setInteger("PumpMode", pumpMode.ordinal());
+        tagCompound.setInteger("PumpMode", ioMode.ordinal());
         tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
@@ -395,7 +393,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
-        this.pumpMode = PumpMode.VALUES[tagCompound.getInteger("PumpMode")];
+        this.ioMode = IOMode.VALUES[tagCompound.getInteger("PumpMode")];
         this.distributionMode = DistributionMode.VALUES[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.VALUES[tagCompound.getInteger("ManualImportExportMode")];
@@ -411,30 +409,6 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     @SideOnly(Side.CLIENT)
     protected @NotNull TextureAtlasSprite getPlateSprite() {
         return Textures.VOLTAGE_CASINGS[this.tier].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
-    }
-
-    public enum PumpMode implements ITranslatable, IIOMode {
-
-        IMPORT("cover.pump.mode.import"),
-        EXPORT("cover.pump.mode.export");
-
-        public static final PumpMode[] VALUES = values();
-        public final String localeName;
-
-        PumpMode(String localeName) {
-            this.localeName = localeName;
-        }
-
-        @NotNull
-        @Override
-        public String getName() {
-            return localeName;
-        }
-
-        @Override
-        public boolean isImport() {
-            return this == IMPORT;
-        }
     }
 
     public enum BucketMode implements ITranslatable {
@@ -454,6 +428,36 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         public String getName() {
             return localeName;
         }
+
+        /**
+         * Convert from milli buckets to this unit. Will return the input value on {@link #MILLI_BUCKET} and divide by
+         * 1000 on {@link #BUCKET}.
+         */
+        public int fromMilliBuckets(int mB) {
+            return switch (this) {
+                case BUCKET -> mB / 1000;
+                case MILLI_BUCKET -> mB;
+            };
+        }
+
+        /**
+         * Convert from buckets to this unit. Will return the input value on {@link #BUCKET} and multiply by 1000 on
+         * {@link #MILLI_BUCKET}.
+         */
+        public int fromBuckets(int B) {
+            return switch (this) {
+                case BUCKET -> B;
+                case MILLI_BUCKET -> B * 1000;
+            };
+        }
+
+        public boolean isFullBuckets() {
+            return this == BUCKET;
+        }
+
+        public boolean isMilliBuckets() {
+            return this == MILLI_BUCKET;
+        }
     }
 
     private class CoverableFluidHandlerWrapper extends FluidHandlerDelegate {
@@ -463,41 +467,36 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         }
 
         @Override
-        public int fill(FluidStack resource, boolean doFill) {
-            if (pumpMode == PumpMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
-                return 0;
-            }
-            if (!checkInputFluid(resource) && manualImportExportMode == ManualImportExportMode.FILTERED) {
-                return 0;
-            }
-            return super.fill(resource, doFill);
+        public int fill(FluidStack stack, boolean doFill) {
+            boolean block = ioMode.isExport() && manualImportExportMode.isDisabled();
+            block |= manualImportExportMode.isFiltered() && !isFluidAllowed(stack);
+
+            return block ? 0 : super.fill(stack, doFill);
         }
 
         @Nullable
         @Override
-        public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (pumpMode == PumpMode.IMPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
-                return null;
-            }
-            if (manualImportExportMode == ManualImportExportMode.FILTERED && !checkInputFluid(resource)) {
-                return null;
-            }
-            return super.drain(resource, doDrain);
+        public FluidStack drain(FluidStack stack, boolean doDrain) {
+            boolean block = ioMode.isImport() && manualImportExportMode.isDisabled();
+            block |= manualImportExportMode.isFiltered() && !isFluidAllowed(stack);
+
+            return block ? null : super.drain(stack, doDrain);
         }
 
         @Nullable
         @Override
         public FluidStack drain(int maxDrain, boolean doDrain) {
-            if (pumpMode == PumpMode.IMPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
+            if (ioMode.isImport() && manualImportExportMode.isDisabled()) {
                 return null;
-            }
-            if (manualImportExportMode == ManualImportExportMode.FILTERED) {
+            } else if (manualImportExportMode.isFiltered()) {
                 FluidStack result = super.drain(maxDrain, false);
-                if (result == null || result.amount <= 0 || !checkInputFluid(result)) {
+                if (result == null || result.amount <= 0 || !isFluidAllowed(result)) {
                     return null;
                 }
+
                 return doDrain ? super.drain(maxDrain, true) : result;
             }
+
             return super.drain(maxDrain, doDrain);
         }
     }
