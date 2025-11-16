@@ -5809,7 +5809,6 @@ gregtech.multiblock.rate.per_tick=Per tick: §6%s§r
 gregtech.multiblock.rate.per_second=Per second: §6%s§r
 gregtech.multiblock.rate.per_minute=Per minute: §6%s§r
 gregtech.multiblock.rate.per_hour=Per hour: §6%s§r
-gregtech.multiblock.rate.per_day=Per day: §6%s§r
 gregtech.multiblock.invalid_structure=§cInvalid structure.
 gregtech.multiblock.invalid_structure.tooltip=This block is a controller of the multiblock structure. For building help, see structure template in JEI.
 gregtech.multiblock.validation_failed=Invalid amount of inputs/outputs.

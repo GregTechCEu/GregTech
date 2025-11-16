@@ -758,8 +758,6 @@ public class MultiblockUIBuilder {
                             "gregtech.multiblock.rate.per_minute", tooltip::addLine);
                     addRecipeTooltipLine(amountPerRecipe * (20.0f * 60.0f * 60.0f / recipeLength), isFluid,
                             "gregtech.multiblock.rate.per_hour", tooltip::addLine);
-                    addRecipeTooltipLine(amountPerRecipe * (20.0f * 60.0f * 60.0f * 24.0f / recipeLength),
-                            isFluid, "gregtech.multiblock.rate.per_day", tooltip::addLine);
                 }), Operation::add);
     }
 
