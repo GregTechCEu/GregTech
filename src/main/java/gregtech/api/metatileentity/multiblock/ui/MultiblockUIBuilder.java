@@ -31,6 +31,7 @@ import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.utils.serialization.ByteBufAdapters;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import com.cleanroommc.modularui.utils.serialization.IByteBufSerializer;
@@ -696,9 +697,9 @@ public class MultiblockUIBuilder {
      * @param recipeLength    the length of the recipe in ticks.
      * @param <T>             the type of the object being drawn and described.
      */
-    protected <T> void addRecipeOutput(@NotNull final T recipeOutput,
-                                       @NotNull final Function<@NotNull T, @NotNull IKey> nameFunction,
-                                       final long amountPerRecipe, final int recipeLength) {
+    protected <T> void addRecipeOutput(@NotNull T recipeOutput,
+                                       @NotNull Function<@NotNull T, @NotNull IKey> nameFunction, long amountPerRecipe,
+                                       int recipeLength) {
         addRecipeOutput(new GTObjectDrawable<>(recipeOutput, amountPerRecipe), nameFunction, amountPerRecipe,
                 recipeLength);
     }
@@ -715,10 +716,10 @@ public class MultiblockUIBuilder {
      * @param <B>             the type of the {@link BoostableChanceEntry} holding type {@link T}.
      */
     protected <T,
-            B extends BoostableChanceEntry<T>> void addRecipeOutput(@NotNull final B recipeOutput,
-                                                                    @NotNull final Function<@NotNull T, @NotNull IKey> nameFunction,
-                                                                    final long amountPerRecipe, final int recipeLength,
-                                                                    @NotNull final ToIntFunction<B> chanceFunction) {
+            B extends BoostableChanceEntry<T>> void addRecipeOutput(@NotNull B recipeOutput,
+                                                                    @NotNull Function<@NotNull T, @NotNull IKey> nameFunction,
+                                                                    long amountPerRecipe, int recipeLength,
+                                                                    @NotNull ToIntFunction<B> chanceFunction) {
         GTObjectDrawable<B> objectDrawable = new GTObjectDrawable<>(recipeOutput, amountPerRecipe)
                 .setBoostFunction(chanceFunction);
         Function<B, IKey> nestedNameFunction = boostableEntry -> IKey.comp(
@@ -738,9 +739,9 @@ public class MultiblockUIBuilder {
      * @param recipeLength    the length of the recipe in ticks.
      * @param <T>             the type of the object being drawn and described.
      */
-    protected <T> void addRecipeOutput(@NotNull final GTObjectDrawable<@NotNull T> objectDrawable,
-                                       @NotNull final Function<@NotNull T, @NotNull IKey> nameFunction,
-                                       final double amountPerRecipe, final int recipeLength) {
+    protected <T> void addRecipeOutput(@NotNull GTObjectDrawable<@NotNull T> objectDrawable,
+                                       @NotNull Function<@NotNull T, @NotNull IKey> nameFunction,
+                                       double amountPerRecipe, int recipeLength) {
         addKey(objectDrawable.asIcon()
                 .asHoverable()
                 .tooltipBuilder(tooltip -> {
@@ -750,37 +751,43 @@ public class MultiblockUIBuilder {
                     tooltip.addLine(nameKey);
 
                     boolean isFluid = objectToDraw instanceof FluidStack;
-                    addRecipeTooltipLine(amountPerRecipe / recipeLength, isFluid,
-                            "gregtech.multiblock.rate.per_tick", tooltip::addLine);
-                    addRecipeTooltipLine(amountPerRecipe * (20.0f / recipeLength), isFluid,
-                            "gregtech.multiblock.rate.per_second", tooltip::addLine);
-                    addRecipeTooltipLine(amountPerRecipe * (20.0f * 60.0f / recipeLength), isFluid,
-                            "gregtech.multiblock.rate.per_minute", tooltip::addLine);
-                    addRecipeTooltipLine(amountPerRecipe * (20.0f * 60.0f * 60.0f / recipeLength), isFluid,
-                            "gregtech.multiblock.rate.per_hour", tooltip::addLine);
+                    for (RecipeRateFormat rateFormat : RecipeRateFormat.VALUES) {
+                        addRecipeTooltipLine(rateFormat, amountPerRecipe, recipeLength, isFluid, tooltip);
+                    }
                 }), Operation::add);
     }
 
-    protected void addRecipeTooltipLine(double amount, boolean isFluid, @NotNull String translationKey,
-                                        @NotNull Consumer<@NotNull IKey> addKeyToTooltip) {
-        if (amount >= 0.1d) {
-            IKey largeSuffix = null;
-            if (amount >= (isFluid ? 1_000_000.0d : 250_000.0d)) {
-                largeSuffix = isFluid ? KeyUtil.compactNumber(TextFormatting.GRAY, "[", (long) amount, 4, "L]") :
-                        KeyUtil.compactNumber(TextFormatting.GRAY, "[", (long) amount, 4, "]");
-            }
+    /**
+     * Add formatted rate of recipe to the tooltip of a recipe output.
+     * 
+     * @param rateFormat      which timespan the rate will be based on.
+     * @param amountPerRecipe the amount of the output made per recipe
+     * @param recipeLength    the length of the recipe in ticks.
+     * @param isFluid         if this output is a fluid or not.
+     * @param tooltip         the tooltip to add the rate to.
+     */
+    protected void addRecipeTooltipLine(@NotNull RecipeRateFormat rateFormat, double amountPerRecipe, int recipeLength,
+                                        boolean isFluid, @NotNull RichTooltip tooltip) {
+        double amount = amountPerRecipe * (rateFormat.getDividend() / recipeLength);
+        if (amount < rateFormat.getMinimum() || amount >= rateFormat.getMaximum()) return;
 
-            IKey rateKey;
-            if (isFluid && amount > 1_000L) {
-                rateKey = IKey.lang(translationKey, RECIPE_RATE_FORMAT.format(amount / 1_000d) + "kL");
-            } else if (isFluid) {
-                rateKey = IKey.lang(translationKey, RECIPE_RATE_FORMAT.format(amount) + "L");
-            } else {
-                rateKey = IKey.lang(translationKey, RECIPE_RATE_FORMAT.format(amount));
-            }
-
-            addKeyToTooltip.accept(largeSuffix == null ? rateKey : IKey.comp(rateKey, IKey.SPACE, largeSuffix));
+        IKey largeSuffix = null;
+        if (amount >= (isFluid ? 1_000_000.0d : 250_000.0d)) {
+            largeSuffix = isFluid ? KeyUtil.compactNumber(TextFormatting.GRAY, "[", (long) amount, 4, "L]") :
+                    KeyUtil.compactNumber(TextFormatting.GRAY, "[", (long) amount, 4, "]");
         }
+
+        String rateFormatted;
+        if (isFluid && amount > 1_000L) {
+            rateFormatted = RECIPE_RATE_FORMAT.format(amount / 1_000d) + "kL";
+        } else if (isFluid) {
+            rateFormatted = RECIPE_RATE_FORMAT.format(amount) + "L";
+        } else {
+            rateFormatted = RECIPE_RATE_FORMAT.format(amount);
+        }
+
+        IKey rateKey = IKey.lang(rateFormat.getTranslationKey(), rateFormatted);
+        tooltip.addLine(largeSuffix == null ? rateKey : IKey.comp(rateKey, IKey.SPACE, largeSuffix));
     }
 
     /** Insert an empty line into the text list. */
@@ -1063,5 +1070,44 @@ public class MultiblockUIBuilder {
 
         @Override
         public void readOnServer(int id, PacketBuffer buf) {}
+    }
+
+    protected enum RecipeRateFormat {
+
+        TICK("gregtech.multiblock.rate.per_tick", 0.1d, Double.MAX_VALUE, 1.0d),
+        SECOND("gregtech.multiblock.rate.per_second", 0.1d, Double.MAX_VALUE, 20.0d),
+        MINUTE("gregtech.multiblock.rate.per_minute", 0.1d, Double.MAX_VALUE, 20.0d * 60.0d),
+        HOUR("gregtech.multiblock.rate.per_hour", 0.1d, Double.MAX_VALUE, 20.0d * 60.0d * 60.0d);
+
+        public static final RecipeRateFormat[] VALUES = values();
+
+        @NotNull
+        private final String translationKey;
+        private final double minimum;
+        private final double maximum;
+        private final double dividend;
+
+        RecipeRateFormat(@NotNull String translationKey, double minimum, double maximum, double dividend) {
+            this.translationKey = translationKey;
+            this.minimum = minimum;
+            this.maximum = maximum;
+            this.dividend = dividend;
+        }
+
+        public @NotNull String getTranslationKey() {
+            return translationKey;
+        }
+
+        public double getMinimum() {
+            return minimum;
+        }
+
+        public double getMaximum() {
+            return maximum;
+        }
+
+        public double getDividend() {
+            return dividend;
+        }
     }
 }
