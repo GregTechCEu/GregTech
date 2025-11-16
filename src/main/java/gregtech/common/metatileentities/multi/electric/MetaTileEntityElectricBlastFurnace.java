@@ -63,7 +63,6 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     public MetaTileEntityElectricBlastFurnace(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.BLAST_RECIPES);
         this.recipeMapWorkable = new HeatingCoilRecipeLogic(this);
-        this.recipeMapWorkable.setParallelLimit(8); // todo remove when done testing normal parallels + subticks
     }
 
     @Override
