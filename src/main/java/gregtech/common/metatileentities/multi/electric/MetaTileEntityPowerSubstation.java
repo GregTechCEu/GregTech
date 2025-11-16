@@ -589,10 +589,10 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         bars.add(b -> b.progress(() -> {
             BigInteger capacity = energyCapacityValue.getValue();
             BigInteger stored = energyStoredValue.getValue();
-            if (capacity.compareTo(stored) < 0) return 0;
-            double r = capacity.divide(stored).doubleValue();
-            if (r == 0) return 0;
-            return 1 / r;
+            if (stored.equals(BigInteger.ZERO)) return 0;
+            double factor = capacity.divide(stored).doubleValue();
+            if (factor == 0) return 0;
+            return 1 / factor;
         })
                 .texture(GTGuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW)
                 .tooltipBuilder(t -> {
