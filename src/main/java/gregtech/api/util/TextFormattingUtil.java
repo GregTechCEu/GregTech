@@ -1,7 +1,11 @@
 package gregtech.api.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigInteger;
 import java.text.NumberFormat;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class TextFormattingUtil {
 
@@ -81,19 +85,42 @@ public class TextFormattingUtil {
                 .toString();
     }
 
+    public static String formatLongToCompactString(long value, @NotNull String suffix) {
+        return formatLongToCompactString(value, 3) + suffix;
+    }
+
     public static String formatLongToCompactString(long value) {
         return formatLongToCompactString(value, 3);
+    }
+
+    public static String formatNumbers(long number, @NotNull String suffix) {
+        return formatNumbers(number) + suffix;
     }
 
     public static String formatNumbers(long number) {
         return NUMBER_FORMAT.format(number);
     }
 
+    public static String formatNumbers(double number, @NotNull String suffix) {
+        return formatNumbers(number) + suffix;
+    }
+
     public static String formatNumbers(double number) {
         return NUMBER_FORMAT.format(number);
     }
 
-    /** Allows for formatting Long, Integer, Short, Byte, Number, AtomicInteger, AtomicLong, and BigInteger. */
+    /**
+     * Allows for formatting {@link Long}, {@link Integer}, {@link Short}, {@link Byte}, {@link Number},
+     * {@link AtomicInteger}, {@link AtomicLong}, and {@link BigInteger}.
+     */
+    public static String formatNumbers(Object number, @NotNull String suffix) {
+        return formatNumbers(number) + suffix;
+    }
+
+    /**
+     * Allows for formatting {@link Long}, {@link Integer}, {@link Short}, {@link Byte}, {@link Number},
+     * {@link AtomicInteger}, {@link AtomicLong}, and {@link BigInteger}.
+     */
     public static String formatNumbers(Object number) {
         return NUMBER_FORMAT.format(number);
     }

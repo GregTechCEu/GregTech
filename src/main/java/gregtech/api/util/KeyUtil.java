@@ -108,6 +108,31 @@ public class KeyUtil {
         return string(formatting, () -> TextFormattingUtil.formatNumbers(supplier.getAsLong()) + suffix);
     }
 
+    public static IKey compactNumber(@NotNull String prefix, @NotNull TextFormatting formatting, long number,
+                                     @NotNull String suffix) {
+        return compactNumber(prefix, number, suffix).style(formatting);
+    }
+
+    public static IKey compactNumber(@NotNull String prefix, long number, @NotNull String suffix) {
+        return string(prefix + TextFormattingUtil.formatLongToCompactString(number) + suffix);
+    }
+
+    public static IKey compactNumber(@NotNull TextFormatting formatting, long number, @NotNull String suffix) {
+        return compactNumber(number, suffix).style(formatting);
+    }
+
+    public static IKey compactNumber(long number, @NotNull String suffix) {
+        return string(TextFormattingUtil.formatLongToCompactString(number) + suffix);
+    }
+
+    public static IKey compactNumber(@NotNull TextFormatting formatting, long number) {
+        return compactNumber(number).style(formatting);
+    }
+
+    public static IKey compactNumber(long number) {
+        return string(TextFormattingUtil.formatLongToCompactString(number));
+    }
+
     public static IDrawable setHover(IKey body, IDrawable... hover) {
         if (ArrayUtils.isEmpty(hover)) return body;
         if (!GTValues.isClientSide()) return IDrawable.NONE;
