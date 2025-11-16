@@ -60,4 +60,9 @@ public class MetaTileEntitySteamSieve extends SteamMetaTileEntity {
         }
         return builder;
     }
+
+    @Override
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return createUITemplate(entityPlayer).build(getHolder(), entityPlayer);
+    }
 }
