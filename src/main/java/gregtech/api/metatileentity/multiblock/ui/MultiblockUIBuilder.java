@@ -359,14 +359,15 @@ public class MultiblockUIBuilder {
         progress = getSyncer().syncInt(progress);
         maxProgress = getSyncer().syncInt(maxProgress);
 
+        float percentage = (float) progress / maxProgress * 100f;
         if (maxProgress <= 20) {
+            String format = maxProgress < 10 ? "%01d" : "%02d";
             addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.recipe_progress.ticks",
                     // %02d is not supported by lang
-                    String.format("%02d", progress), String.format("%02d", maxProgress),
-                    (float) progress / maxProgress * 100f));
+                    String.format(format, progress), String.format(format, maxProgress), percentage));
         } else {
             addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.recipe_progress.seconds",
-                    progress / 20f, maxProgress / 20f, (float) progress / maxProgress * 100f));
+                    progress / 20f, maxProgress / 20f, percentage));
         }
 
         return this;
