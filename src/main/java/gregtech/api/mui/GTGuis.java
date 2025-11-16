@@ -6,20 +6,40 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.factory.CoverGuiFactory;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
+import gregtech.api.util.GTLog;
 
 import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.api.IPanelHandler;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.RichTextWidget;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public class GTGuis {
 
     public static final int DEFAULT_WIDTH = 176, DEFAULT_HIEGHT = 166;
+
+    private static final ModularPanel ERROR = createPanel("error")
+            .size(100)
+            .child(new RichTextWidget()
+                    .sizeRel(1)
+                    .margin(6)
+                    .align(Alignment.Center)
+                    .alignment(Alignment.Center)
+                    .textBuilder(richText -> {
+                        richText.addLine(IKey.str("ERROR!").style(IKey.RED, IKey.ITALIC)).newLine();
+                        richText.addLine("You shouldn't be able to see this. If you do, report it to a dev.");
+                    }));
+
+    public static ModularPanel errorPanel() {
+        GTLog.logger.error("Error Panel Opened!", new Throwable());
+        return ERROR;
+    }
 
     @ApiStatus.Internal
     public static void registerFactories() {
