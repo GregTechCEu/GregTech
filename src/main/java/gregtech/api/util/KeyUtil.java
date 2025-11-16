@@ -108,7 +108,16 @@ public class KeyUtil {
         return string(formatting, () -> TextFormattingUtil.formatNumbers(supplier.getAsLong()) + suffix);
     }
 
-    public static IKey compactNumber(@NotNull String prefix, @NotNull TextFormatting formatting, long number,
+    public static IKey compactNumber(@NotNull TextFormatting formatting, @NotNull String prefix, long number,
+                                     int precision, @NotNull String suffix) {
+        return compactNumber(prefix, number, precision, suffix).style(formatting);
+    }
+
+    public static IKey compactNumber(@NotNull String prefix, long number, int precision, @NotNull String suffix) {
+        return string(prefix + TextFormattingUtil.formatLongToCompactString(number, precision) + suffix);
+    }
+
+    public static IKey compactNumber(@NotNull TextFormatting formatting, @NotNull String prefix, long number,
                                      @NotNull String suffix) {
         return compactNumber(prefix, number, suffix).style(formatting);
     }
@@ -117,12 +126,29 @@ public class KeyUtil {
         return string(prefix + TextFormattingUtil.formatLongToCompactString(number) + suffix);
     }
 
+    public static IKey compactNumber(@NotNull TextFormatting formatting, long number, int precision,
+                                     @NotNull String suffix) {
+        return compactNumber(number, precision, suffix).style(formatting);
+    }
+
+    public static IKey compactNumber(long number, int precision, @NotNull String suffix) {
+        return string(TextFormattingUtil.formatLongToCompactString(number, precision) + suffix);
+    }
+
     public static IKey compactNumber(@NotNull TextFormatting formatting, long number, @NotNull String suffix) {
         return compactNumber(number, suffix).style(formatting);
     }
 
     public static IKey compactNumber(long number, @NotNull String suffix) {
         return string(TextFormattingUtil.formatLongToCompactString(number) + suffix);
+    }
+
+    public static IKey compactNumber(@NotNull TextFormatting formatting, long number, int precision) {
+        return compactNumber(number, precision).style(formatting);
+    }
+
+    public static IKey compactNumber(long number, int precision) {
+        return string(TextFormattingUtil.formatLongToCompactString(number, precision));
     }
 
     public static IKey compactNumber(@NotNull TextFormatting formatting, long number) {

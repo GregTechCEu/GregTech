@@ -766,8 +766,8 @@ public class MultiblockUIBuilder {
         if (amount >= 0.1d) {
             IKey largeSuffix = null;
             if (amount >= (isFluid ? 1_000_000.0d : 250_000.0d)) {
-                largeSuffix = isFluid ? KeyUtil.compactNumber("[", TextFormatting.GRAY, (long) amount, "L]") :
-                        KeyUtil.compactNumber("[", TextFormatting.GRAY, (long) amount, "]");
+                largeSuffix = isFluid ? KeyUtil.compactNumber(TextFormatting.GRAY, "[", (long) amount, 4, "L]") :
+                        KeyUtil.compactNumber(TextFormatting.GRAY, "[", (long) amount, 4, "]");
             }
 
             IKey rateKey;
