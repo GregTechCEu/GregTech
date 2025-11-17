@@ -173,11 +173,12 @@ public abstract class CoverDetectorBase extends CoverBase {
                                           @Nullable Supplier<String> postFix,
                                           @Nullable Consumer<GTTextFieldWidget> listener) {
         return Flow.row()
-                .widthRel(1f)
+                .name("min/max row")
                 .coverChildrenHeight()
                 .marginBottom(5)
                 .child(IKey.lang(lang).asWidget())
                 .child(new GTTextFieldWidget()
+                        .name("min/max field")
                         .right(0)
                         .size(90, 18 - 4)
                         .setTextColor(Color.WHITE.main)

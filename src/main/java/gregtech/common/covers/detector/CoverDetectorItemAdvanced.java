@@ -65,18 +65,20 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                 .height(202)
                 .child(CoverWithUI.createTitleRow(getPickItem()))
                 .child(Flow.column()
+                        .name("min/max parent column")
                         .top(28)
-                        .left(5).right(5)
+                        .margin(5, 0)
                         .coverChildrenHeight()
                         .child(createMinMaxRow("cover.advanced_item_detector.min",
                                 this::getMinValue, this::setMinValue))
                         .child(createMinMaxRow("cover.advanced_item_detector.max",
                                 this::getMaxValue, this::setMaxValue))
                         .child(Flow.row()
-                                .widthRel(1f)
+                                .name("config row")
                                 .coverChildrenHeight()
                                 .marginBottom(5)
                                 .child(new ToggleButton()
+                                        .name("inverted button")
                                         .size(72, 18)
                                         .overlay(new DynamicDrawable(() -> {
                                             String lang = "cover.advanced_energy_detector.";
@@ -86,6 +88,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                                         .addTooltipLine(IKey.lang("cover.generic.advanced_detector.invert_tooltip"))
                                         .value(new BooleanSyncValue(this::isInverted, this::setInverted)))
                                 .child(new ToggleButton()
+                                        .name("latch button")
                                         .size(72, 18)
                                         .right(0)
                                         .overlay(new DynamicDrawable(() -> {

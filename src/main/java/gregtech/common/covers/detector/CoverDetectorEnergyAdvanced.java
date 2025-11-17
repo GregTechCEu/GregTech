@@ -36,8 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements CoverWithUI {
 
-    private static final long DEFAULT_MIN_EU = 0, DEFAULT_MAX_EU = 2048;
-    private static final int DEFAULT_MIN_PERCENT = 33, DEFAULT_MAX_PERCENT = 66;
+    private static final long DEFAULT_MIN_EU = 0;
+    private static final long DEFAULT_MAX_EU = 2048;
 
     public long minValue = DEFAULT_MIN_EU;
     public long maxValue = DEFAULT_MAX_EU;
@@ -92,8 +92,9 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
                 .height(202)
                 .child(CoverWithUI.createTitleRow(getPickItem()))
                 .child(Flow.column()
+                        .name("min/max parent column")
                         .top(28)
-                        .left(10).right(10)
+                        .margin(10, 0)
                         .coverChildrenHeight()
                         .child(createMinMaxRow("cover.advanced_energy_detector.min",
                                 this::getMinValue, this::setMinValue,
@@ -102,12 +103,13 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
                                 this::getMaxValue, this::setMaxValue,
                                 this::getPostFix, this::updateWidget))
                         .child(Flow.row()
-                                .widthRel(1f)
+                                .name("mode row")
                                 .coverChildrenHeight()
                                 .marginBottom(5)
                                 .child(IKey.lang("cover.advanced_energy_detector.modes_label").asWidget()
                                         .size(72, 18))
                                 .child(new ToggleButton()
+                                        .name("mode button")
                                         .right(0)
                                         .size(72, 18)
                                         .addTooltipLine(IKey.lang("cover.advanced_energy_detector.modes_tooltip"))
@@ -117,11 +119,12 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
                                                         (isUsePercent() ? "percent" : "eu"))
                                                 .style(TextFormatting.WHITE)))))
                         .child(Flow.row()
-                                .widthRel(1f)
+                                .name("inverted row")
                                 .coverChildrenHeight()
                                 .child(IKey.lang("cover.generic.advanced_detector.invert_label").asWidget()
                                         .size(72, 18))
                                 .child(new ToggleButton()
+                                        .name("inverted button")
                                         .right(0)
                                         .size(72, 18)
                                         .addTooltipLine(IKey.lang("cover.advanced_energy_detector.invert_tooltip"))

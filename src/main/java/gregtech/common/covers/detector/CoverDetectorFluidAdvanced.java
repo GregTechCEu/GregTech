@@ -75,8 +75,10 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                 .height(202)
                 .child(CoverWithUI.createTitleRow(getPickItem()))
                 .child(Flow.column()
+                        .name("min/max parent column")
                         .top(28)
-                        .left(5).right(5)
+                        .margin(5, 0)
+                        .coverChildrenHeight()
                         .child(createMinMaxRow("cover.advanced_fluid_detector.min",
                                 this::getMinValue, this::setMinValue,
                                 () -> " L", w -> w.setMaxLength(10)))
@@ -84,10 +86,11 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                                 this::getMaxValue, this::setMaxValue,
                                 () -> " L", w -> w.setMaxLength(10)))
                         .child(Flow.row()
-                                .widthRel(1f)
+                                .name("config row")
                                 .coverChildrenHeight()
                                 .marginBottom(5)
                                 .child(new ToggleButton()
+                                        .name("inverted button")
                                         .size(72, 18)
                                         .value(new BooleanSyncValue(this::isInverted, this::setInverted))
                                         .addTooltipLine(IKey.lang("cover.generic.advanced_detector.invert_tooltip"))
@@ -97,6 +100,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                                             return IKey.lang(lang).style(TextFormatting.WHITE);
                                         })))
                                 .child(new ToggleButton()
+                                        .name("latch button")
                                         .size(72, 18)
                                         .right(0)
                                         .overlay(new DynamicDrawable(() -> {
