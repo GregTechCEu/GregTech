@@ -210,24 +210,17 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
             getFilter().getFilterReader().handleLegacyNBT(nbt);
     }
 
-    public IPanelHandler getFilterHandler(PanelSyncManager syncManager, int id) {
-        if (hasFilter()) {
-            return getFilter().createPanelHandler(syncManager, id);
-        }
-        return BaseFilter.ERROR_FILTER.createPanelHandler(syncManager, id);
-    }
-
     /** Uses Cleanroom MUI */
     public IWidget initUI(GuiData data, PanelSyncManager manager) {
         // i bet brachy is gonna really hate this, but it *does* work
-        AtomicReference<IPanelHandler> test = new AtomicReference<>(getFilterHandler(manager, 0));
-        AtomicInteger counter = new AtomicInteger(1);
+        AtomicReference<IPanelHandler> filterPanel = new AtomicReference<>();
         AtomicReference<ItemStack> oldStack = new AtomicReference<>(getFilterStack());
+        AtomicInteger counter = new AtomicInteger();
+        if (hasFilter()) filterPanel.set(getFilter().createPanelHandler(manager, counter.getAndIncrement()));
         manager.registerSyncedAction("update_filter_panel", packet -> {
             if (hasFilter()) {
-                oldStack.set(getFilterStack());
                 // make new panel handler only when we have a filter
-                test.set(getFilterHandler(manager, counter.getAndIncrement()));
+                filterPanel.set(getFilter().createPanelHandler(manager, counter.getAndIncrement()));
             }
         });
         ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingItemDamageCount();
@@ -240,12 +233,14 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                                 .filter(this::isItemValid)
                                 .singletonSlotGroup(101)
                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                    IPanelHandler panel = test.get();
-                                    if (!isItemValid(newItem) ||
-                                            (!strategy.equals(oldStack.get(), newItem) && panel.isPanelOpen())) {
+                                    if (strategy.equals(oldStack.get(), newItem)) return;
+                                    oldStack.set(newItem);
+
+                                    IPanelHandler panel = filterPanel.get();
+                                    if (panel != null && panel.isPanelOpen()) {
                                         panel.closePanel();
                                     }
-                                    if (!init && client && !strategy.equals(oldStack.get(), newItem)) {
+                                    if (client) {
                                         manager.callSyncedAction("update_filter_panel", packetBuffer -> {});
                                     }
                                 }))
@@ -257,7 +252,8 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                                 GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
                         .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
-                            IPanelHandler panel = test.get();
+                            IPanelHandler panel = filterPanel.get();
+                            if (panel == null) return false;
                             if (!panel.isPanelOpen()) {
                                 setMaxTransferSize(getMaxTransferSize());
                                 panel.openPanel();
