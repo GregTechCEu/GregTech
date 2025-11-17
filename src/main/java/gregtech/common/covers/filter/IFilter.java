@@ -30,7 +30,7 @@ public interface IFilter {
 
     default IPanelHandler createPanelHandler(PanelSyncManager syncManager) {
         return syncManager.panel(getContainerStack().getTranslationKey(), (syncManager1, syncHandler) ->
-                createPopupPanel(syncManager).child(createWidgets(syncManager)), true);
+                createPopupPanel(syncManager), true);
     }
 
     ItemStack getContainerStack();
