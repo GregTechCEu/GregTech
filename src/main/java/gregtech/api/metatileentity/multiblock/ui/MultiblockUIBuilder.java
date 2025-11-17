@@ -78,7 +78,6 @@ public class MultiblockUIBuilder {
     private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused").style(TextFormatting.GOLD);
     private IKey runningKey = IKey.lang("gregtech.multiblock.running").style(TextFormatting.GREEN);
     private Runnable onRebuild;
-    private Runnable postRebuild;
 
     @NotNull
     InternalSyncer getSyncer() {
