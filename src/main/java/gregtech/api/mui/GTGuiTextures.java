@@ -460,15 +460,15 @@ public class GTGuiTextures {
 
     // Texture Areas
     public static final UITexture[] BUTTON_FLUID = slice("textures/blocks/cover/cover_interface_fluid_button.png", 18,
-            36, false);
+            36, null);
     public static final UITexture[] BUTTON_ITEM = slice("textures/blocks/cover/cover_interface_item_button.png", 18, 36,
-            false);
+            null);
     public static final UITexture[] BUTTON_ENERGY = slice("textures/blocks/cover/cover_interface_energy_button.png", 18,
-            36, false);
+            36, null);
     public static final UITexture[] BUTTON_MACHINE = slice("textures/blocks/cover/cover_interface_machine_button.png",
-            18, 36, false);
+            18, 36, null);
     public static final UITexture[] BUTTON_INTERFACE = slice(
-            "textures/blocks/cover/cover_interface_computer_button.png", 18, 36, false);
+            "textures/blocks/cover/cover_interface_computer_button.png", 18, 36, null);
     public static final UITexture COVER_INTERFACE_MACHINE_ON_PROXY = fullImage(
             "textures/blocks/cover/cover_interface_machine_on_proxy.png");
     public static final UITexture COVER_INTERFACE_MACHINE_OFF_PROXY = fullImage(

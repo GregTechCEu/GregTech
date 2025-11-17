@@ -3,7 +3,6 @@ package gregtech.common.covers.detector;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
-import gregtech.common.mui.widget.GTTextFieldWidget;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -164,25 +163,25 @@ public abstract class CoverDetectorBase extends CoverBase {
     protected static Flow createMinMaxRow(@NotNull String lang, @NotNull LongSupplier getter,
                                           @Nullable LongConsumer setter,
                                           @Nullable Supplier<String> postFix,
-                                          @Nullable Consumer<GTTextFieldWidget> listener) {
+                                          @Nullable Consumer<TextFieldWidget> listener) {
         return createMinMaxRow(lang, new LongSyncValue(getter, setter), postFix, listener);
     }
 
     protected static Flow createMinMaxRow(@NotNull String lang,
                                           @NotNull LongSyncValue syncValue,
                                           @Nullable Supplier<String> postFix,
-                                          @Nullable Consumer<GTTextFieldWidget> listener) {
+                                          @Nullable Consumer<TextFieldWidget> listener) {
         return Flow.row()
                 .widthRel(1f)
                 .coverChildrenHeight()
                 .marginBottom(5)
                 .child(IKey.lang(lang).asWidget())
-                .child(new GTTextFieldWidget()
+                .child(new TextFieldWidget()
                         .right(0)
                         .size(90, 18 - 4)
                         .setTextColor(Color.WHITE.main)
                         .setPattern(TextFieldWidget.WHOLE_NUMS)
-                        .setPostFix(postFix)
+                        // .setPostFix(postFix)
                         .onUpdateListener(listener)
                         .value(syncValue));
     }

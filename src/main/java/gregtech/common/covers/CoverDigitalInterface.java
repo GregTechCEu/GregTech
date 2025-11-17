@@ -20,7 +20,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.gui.widget.prospector.widget.WidgetOreList;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
-import gregtech.common.mui.widget.GTTextFieldWidget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -67,6 +66,7 @@ import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.StringValue;
@@ -75,6 +75,7 @@ import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -487,7 +488,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         Flow row = Flow.row()
                 .pos(10, 20)
                 .coverChildren()
@@ -533,13 +534,12 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
                                     slotValue.setIntValue(s);
                                     return true;
                                 }))
-                        .child(new GTTextFieldWidget()
+                        .child(new TextFieldWidget()
                                 .setNumbers(0, Integer.MAX_VALUE)
                                 .value(new StringValue.Dynamic(
                                         () -> String.valueOf(slotValue.getIntValue()),
                                         s -> slotValue.setIntValue(Integer.parseInt(s))))
                                 .size(80, 20)
-                                .keepScrollBarInArea()
                                 .setTextColor(Color.WHITE.main)
                                 .background(GTGuiTextures.DISPLAY))
                         .child(new ButtonWidget<>()

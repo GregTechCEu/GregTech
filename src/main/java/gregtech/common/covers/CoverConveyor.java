@@ -15,7 +15,6 @@ import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
-import gregtech.common.mui.widget.GTTextFieldWidget;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -58,6 +57,7 @@ import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -548,11 +548,9 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
-                    .child(new GTTextFieldWidget()
+                    .child(new TextFieldWidget()
                             .left(18).right(18)
-                            // todo remove 'keepScrollBarInArea' when this is fixed in mui2
-                            .keepScrollBarInArea(true)
-                            .setPostFix(" items/s")
+                            // .setPostFix(" items/s")
                             .setTextColor(Color.WHITE.darker(1))
                             .setNumbers(1, maxItemTransferRate)
                             .value(formattedThroughput)
