@@ -483,11 +483,6 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         Flow row = Flow.row()
                 .pos(10, 20)

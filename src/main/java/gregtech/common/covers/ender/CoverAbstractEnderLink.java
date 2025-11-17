@@ -138,11 +138,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         if (!isPrivate()) {
             // if we're public, we update the player uuid

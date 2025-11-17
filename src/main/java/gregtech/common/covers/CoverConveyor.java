@@ -499,11 +499,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         var panel = GTGuis.createPanel(this, 176, 192 + 18);
 
