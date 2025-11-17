@@ -142,7 +142,7 @@ public class FluidTooltipUtil {
             if (extra != 0) {
                 fluidAmount += String.format(" + %d L", extra);
             }
-            tooltip.add(TextFormatting.GRAY + LocalizationUtils.format("gregtech.gui.amount_raw") + fluidAmount);
+            tooltip.addLine(TextFormatting.GRAY + LocalizationUtils.format("gregtech.gui.amount_raw") + fluidAmount);
         }
     }
 }

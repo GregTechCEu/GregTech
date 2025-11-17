@@ -15,26 +15,26 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class HigherDegreeMaterials {
 
     public static void register() {
-        Electrotine = new Material.Builder(2507, gregtechId("electrotine"))
+        Electrotine = Material.builder(2507, gregtechId("electrotine"))
                 .dust().ore(5, 1, true)
                 .color(0x3CB4C8).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Redstone, 1, Electrum, 1)
                 .build();
 
-        EnderEye = new Material.Builder(2508, gregtechId("ender_eye"))
+        EnderEye = Material.builder(2508, gregtechId("ender_eye"))
                 .gem(1)
                 .color(0x66FF66)
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
                 .build();
 
-        Diatomite = new Material.Builder(2509, gregtechId("diatomite"))
+        Diatomite = Material.builder(2509, gregtechId("diatomite"))
                 .dust(1).ore()
                 .color(0xE1E1E1)
                 .components(Flint, 8, BandedIron, 1, Sapphire, 1)
                 .build();
 
-        RedSteel = new Material.Builder(2510, gregtechId("red_steel"))
+        RedSteel = Material.builder(2510, gregtechId("red_steel"))
                 .ingot(3).fluid()
                 .color(0x8C6464).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_GEAR)
@@ -44,7 +44,7 @@ public class HigherDegreeMaterials {
                 .blast(b -> b.temp(1813, GasTier.LOW).blastStats(VA[HV], 1000))
                 .build();
 
-        BlueSteel = new Material.Builder(2511, gregtechId("blue_steel"))
+        BlueSteel = Material.builder(2511, gregtechId("blue_steel"))
                 .ingot(3).fluid()
                 .color(0x64648C).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FRAME, GENERATE_GEAR)
@@ -54,35 +54,35 @@ public class HigherDegreeMaterials {
                 .blast(b -> b.temp(1813, GasTier.LOW).blastStats(VA[HV], 1000))
                 .build();
 
-        Basalt = new Material.Builder(2512, gregtechId("basalt"))
+        Basalt = Material.builder(2512, gregtechId("basalt"))
                 .dust(1)
                 .color(0x3C3232).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4)
                 .build();
 
-        GraniticMineralSand = new Material.Builder(2513, gregtechId("granitic_mineral_sand"))
+        GraniticMineralSand = Material.builder(2513, gregtechId("granitic_mineral_sand"))
                 .dust(1).ore()
                 .color(0x283C3C).iconSet(SAND)
                 .components(Magnetite, 1, GraniteBlack, 1)
                 .flags(BLAST_FURNACE_CALCITE_DOUBLE)
                 .build();
 
-        Redrock = new Material.Builder(2514, gregtechId("redrock"))
+        Redrock = Material.builder(2514, gregtechId("redrock"))
                 .dust(1)
                 .color(0xFF5032).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Calcite, 2, Flint, 1)
                 .build();
 
-        GarnetSand = new Material.Builder(2515, gregtechId("garnet_sand"))
+        GarnetSand = Material.builder(2515, gregtechId("garnet_sand"))
                 .dust(1).ore()
                 .color(0xC86400).iconSet(SAND)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Almandine, 1, Andradite, 1, Grossular, 1, Pyrope, 1, Spessartine, 1, Uvarovite, 1)
                 .build();
 
-        HSSG = new Material.Builder(2516, gregtechId("hssg"))
+        HSSG = Material.builder(2516, gregtechId("hssg"))
                 .ingot(3).fluid()
                 .color(0x999900).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_SPRING, GENERATE_FINE_WIRE,
@@ -96,7 +96,7 @@ public class HigherDegreeMaterials {
                         .vacuumStats(VA[HV]))
                 .build();
 
-        RedAlloy = new Material.Builder(2517, gregtechId("red_alloy"))
+        RedAlloy = Material.builder(2517, gregtechId("red_alloy"))
                 .ingot(0)
                 .liquid(new FluidBuilder().temperature(1400))
                 .color(0xC80000)
@@ -105,14 +105,14 @@ public class HigherDegreeMaterials {
                 .cableProperties(V[ULV], 1, 0)
                 .build();
 
-        BasalticMineralSand = new Material.Builder(2518, gregtechId("basaltic_mineral_sand"))
+        BasalticMineralSand = Material.builder(2518, gregtechId("basaltic_mineral_sand"))
                 .dust(1).ore()
                 .color(0x283228).iconSet(SAND)
                 .components(Magnetite, 1, Basalt, 1)
                 .flags(BLAST_FURNACE_CALCITE_DOUBLE)
                 .build();
 
-        HSSE = new Material.Builder(2519, gregtechId("hsse"))
+        HSSE = Material.builder(2519, gregtechId("hsse"))
                 .ingot(4).fluid()
                 .color(0x336600).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING, GENERATE_GEAR)
@@ -126,7 +126,7 @@ public class HigherDegreeMaterials {
                         .vacuumStats(VA[HV]))
                 .build();
 
-        HSSS = new Material.Builder(2520, gregtechId("hsss"))
+        HSSS = Material.builder(2520, gregtechId("hsss"))
                 .ingot(4).fluid()
                 .color(0x660033).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME, GENERATE_ROTOR, GENERATE_ROUND,
@@ -141,42 +141,42 @@ public class HigherDegreeMaterials {
 
         // FREE ID: 2521
 
-        IridiumMetalResidue = new Material.Builder(2522, gregtechId("iridium_metal_residue"))
+        IridiumMetalResidue = Material.builder(2522, gregtechId("iridium_metal_residue"))
                 .dust()
                 .color(0x5C5D68).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Iridium, 1, Chlorine, 3, PlatinumSludgeResidue, 1)
                 .build();
 
-        Granite = new Material.Builder(2523, gregtechId("granite"))
+        Granite = Material.builder(2523, gregtechId("granite"))
                 .dust()
                 .color(0xCFA18C).iconSet(ROUGH)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 4, Redrock, 1)
                 .build();
 
-        Brick = new Material.Builder(2524, gregtechId("brick"))
+        Brick = Material.builder(2524, gregtechId("brick"))
                 .dust()
                 .color(0x9B5643).iconSet(ROUGH)
                 .flags(EXCLUDE_BLOCK_CRAFTING_RECIPES, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Clay, 1)
                 .build();
 
-        Fireclay = new Material.Builder(2525, gregtechId("fireclay"))
+        Fireclay = Material.builder(2525, gregtechId("fireclay"))
                 .dust()
                 .color(0xADA09B).iconSet(ROUGH)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING, NO_SMELTING)
                 .components(Clay, 1, Brick, 1)
                 .build();
 
-        Diorite = new Material.Builder(2526, gregtechId("diorite"))
+        Diorite = Material.builder(2526, gregtechId("diorite"))
                 .dust()
                 .iconSet(ROUGH)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Mirabilite, 2, Clay, 7)
                 .build();
 
-        BlueAlloy = new Material.Builder(2527, gregtechId("blue_alloy"))
+        BlueAlloy = Material.builder(2527, gregtechId("blue_alloy"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1400))
                 .color(0x64B4FF).iconSet(DULL)

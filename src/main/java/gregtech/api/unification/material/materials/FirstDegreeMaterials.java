@@ -22,19 +22,19 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class FirstDegreeMaterials {
 
     public static void register() {
-        Almandine = new Material.Builder(250, gregtechId("almandine"))
+        Almandine = Material.builder(250, gregtechId("almandine"))
                 .gem(1).ore(3, 1)
                 .color(0xFF0000)
                 .components(Aluminium, 2, Iron, 3, Silicon, 3, Oxygen, 12)
                 .build();
 
-        Andradite = new Material.Builder(251, gregtechId("andradite"))
+        Andradite = Material.builder(251, gregtechId("andradite"))
                 .gem(1)
                 .color(0x967800).iconSet(RUBY)
                 .components(Calcium, 3, Iron, 2, Silicon, 3, Oxygen, 12)
                 .build();
 
-        AnnealedCopper = new Material.Builder(252, gregtechId("annealed_copper"))
+        AnnealedCopper = Material.builder(252, gregtechId("annealed_copper"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1358))
                 .color(0xFF8D3B).iconSet(BRIGHT)
@@ -44,26 +44,26 @@ public class FirstDegreeMaterials {
                 .build();
         Copper.getProperty(PropertyKey.INGOT).setArcSmeltingInto(AnnealedCopper);
 
-        Asbestos = new Material.Builder(253, gregtechId("asbestos"))
+        Asbestos = Material.builder(253, gregtechId("asbestos"))
                 .dust(1).ore(3, 1)
                 .color(0xE6E6E6)
                 .components(Magnesium, 3, Silicon, 2, Hydrogen, 4, Oxygen, 9)
                 .build();
 
-        Ash = new Material.Builder(254, gregtechId("ash"))
+        Ash = Material.builder(254, gregtechId("ash"))
                 .dust(1)
                 .color(0x969696)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
                 .build();
 
-        BandedIron = new Material.Builder(255, gregtechId("banded_iron"))
+        BandedIron = Material.builder(255, gregtechId("banded_iron"))
                 .dust().ore()
                 .color(0x915A5A)
                 .components(Iron, 2, Oxygen, 3)
                 .build();
 
-        BatteryAlloy = new Material.Builder(256, gregtechId("battery_alloy"))
+        BatteryAlloy = Material.builder(256, gregtechId("battery_alloy"))
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(660))
                 .color(0x9C7CA0)
@@ -71,21 +71,21 @@ public class FirstDegreeMaterials {
                 .components(Lead, 4, Antimony, 1)
                 .build();
 
-        BlueTopaz = new Material.Builder(257, gregtechId("blue_topaz"))
+        BlueTopaz = Material.builder(257, gregtechId("blue_topaz"))
                 .gem(3).ore(2, 1)
                 .color(0x7B96DC).iconSet(GEM_HORIZONTAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6)
                 .build();
 
-        Bone = new Material.Builder(258, gregtechId("bone"))
+        Bone = Material.builder(258, gregtechId("bone"))
                 .dust(1)
                 .color(0xFAFAFA)
                 .flags(MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Calcium, 1)
                 .build();
 
-        Brass = new Material.Builder(259, gregtechId("brass"))
+        Brass = Material.builder(259, gregtechId("brass"))
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(1160))
                 .color(0xFFB400).iconSet(METALLIC)
@@ -95,7 +95,7 @@ public class FirstDegreeMaterials {
                 .itemPipeProperties(2048, 1)
                 .build();
 
-        Bronze = new Material.Builder(260, gregtechId("bronze"))
+        Bronze = Material.builder(260, gregtechId("bronze"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1357))
                 .color(0xFF8000).iconSet(METALLIC)
@@ -108,72 +108,72 @@ public class FirstDegreeMaterials {
                 .fluidPipeProperties(1696, 20, true)
                 .build();
 
-        BrownLimonite = new Material.Builder(261, gregtechId("brown_limonite"))
+        BrownLimonite = Material.builder(261, gregtechId("brown_limonite"))
                 .dust(1).ore()
                 .color(0xC86400).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING, BLAST_FURNACE_CALCITE_TRIPLE)
                 .components(Iron, 1, Hydrogen, 1, Oxygen, 2)
                 .build();
 
-        Calcite = new Material.Builder(262, gregtechId("calcite"))
+        Calcite = Material.builder(262, gregtechId("calcite"))
                 .dust(1).ore()
                 .color(0xFAE6DC)
                 .components(Calcium, 1, Carbon, 1, Oxygen, 3)
                 .build();
 
-        Cassiterite = new Material.Builder(263, gregtechId("cassiterite"))
+        Cassiterite = Material.builder(263, gregtechId("cassiterite"))
                 .dust(1).ore(2, 1)
                 .color(0xDCDCDC).iconSet(METALLIC)
                 .components(Tin, 1, Oxygen, 2)
                 .build();
 
-        CassiteriteSand = new Material.Builder(264, gregtechId("cassiterite_sand"))
+        CassiteriteSand = Material.builder(264, gregtechId("cassiterite_sand"))
                 .dust(1).ore(2, 1)
                 .color(0xDCDCDC).iconSet(SAND)
                 .components(Tin, 1, Oxygen, 2)
                 .build();
 
-        Chalcopyrite = new Material.Builder(265, gregtechId("chalcopyrite"))
+        Chalcopyrite = Material.builder(265, gregtechId("chalcopyrite"))
                 .dust(1).ore()
                 .color(0xA07828)
                 .components(Copper, 1, Iron, 1, Sulfur, 2)
                 .build();
 
-        Charcoal = new Material.Builder(266, gregtechId("charcoal"))
+        Charcoal = Material.builder(266, gregtechId("charcoal"))
                 .gem(1, 1600) // default charcoal burn time in vanilla
                 .color(0x644646).iconSet(FINE)
                 .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE)
                 .components(Carbon, 1)
                 .build();
 
-        Chromite = new Material.Builder(267, gregtechId("chromite"))
+        Chromite = Material.builder(267, gregtechId("chromite"))
                 .dust(1).ore()
                 .color(0x23140F).iconSet(METALLIC)
                 .components(Iron, 1, Chrome, 2, Oxygen, 4)
                 .build();
 
-        Cinnabar = new Material.Builder(268, gregtechId("cinnabar"))
+        Cinnabar = Material.builder(268, gregtechId("cinnabar"))
                 .dust(1).ore()
                 .color(0x960000).iconSet(EMERALD)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Mercury, 1, Sulfur, 1)
                 .build();
 
-        Water = new Material.Builder(269, gregtechId("water"))
+        Water = Material.builder(269, gregtechId("water"))
                 .fluid(FluidRegistry.WATER, FluidStorageKeys.LIQUID, FluidState.LIQUID)
                 .color(0x0000FF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
-        Zircon = new Material.Builder(270, gregtechId("zircon"))
+        Zircon = Material.builder(270, gregtechId("zircon"))
                 .gem().ore()
                 .color(0xC31313)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zirconium, 1, Silicon, 1, Oxygen, 4)
                 .build();
 
-        Coal = new Material.Builder(271, gregtechId("coal"))
+        Coal = Material.builder(271, gregtechId("coal"))
                 .gem(1, 1600).ore(2, 1) // default coal burn time in vanilla
                 .color(0x464646).iconSet(LIGNITE)
                 .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
@@ -181,19 +181,19 @@ public class FirstDegreeMaterials {
                 .components(Carbon, 1)
                 .build();
 
-        Cobaltite = new Material.Builder(272, gregtechId("cobaltite"))
+        Cobaltite = Material.builder(272, gregtechId("cobaltite"))
                 .dust(1).ore()
                 .color(0x5050FA).iconSet(METALLIC)
                 .components(Cobalt, 1, Arsenic, 1, Sulfur, 1)
                 .build();
 
-        Cooperite = new Material.Builder(273, gregtechId("cooperite"))
+        Cooperite = Material.builder(273, gregtechId("cooperite"))
                 .dust(1).ore()
                 .color(0xFFFFC8).iconSet(METALLIC)
                 .components(Platinum, 3, Nickel, 1, Sulfur, 1, Palladium, 1)
                 .build();
 
-        Cupronickel = new Material.Builder(274, gregtechId("cupronickel"))
+        Cupronickel = Material.builder(274, gregtechId("cupronickel"))
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(1542))
                 .color(0xE39680).iconSet(METALLIC)
@@ -203,14 +203,14 @@ public class FirstDegreeMaterials {
                 .cableProperties(V[MV], 1, 1)
                 .build();
 
-        DarkAsh = new Material.Builder(275, gregtechId("dark_ash"))
+        DarkAsh = Material.builder(275, gregtechId("dark_ash"))
                 .dust(1)
                 .color(0x323232)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
                 .build();
 
-        Diamond = new Material.Builder(276, gregtechId("diamond"))
+        Diamond = Material.builder(276, gregtechId("diamond"))
                 .gem(3).ore()
                 .color(0xC8FFFF).iconSet(DIAMOND)
                 .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING,
@@ -220,7 +220,7 @@ public class FirstDegreeMaterials {
                         .attackSpeed(0.1F).enchantability(18).build())
                 .build();
 
-        Electrum = new Material.Builder(277, gregtechId("electrum"))
+        Electrum = Material.builder(277, gregtechId("electrum"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1285))
                 .color(0xFFFF64).iconSet(SHINY)
@@ -230,7 +230,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(V[HV], 2, 2)
                 .build();
 
-        Emerald = new Material.Builder(278, gregtechId("emerald"))
+        Emerald = Material.builder(278, gregtechId("emerald"))
                 .gem().ore(2, 1)
                 .color(0x50FF50).iconSet(EMERALD)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
@@ -238,32 +238,32 @@ public class FirstDegreeMaterials {
                 .components(Beryllium, 3, Aluminium, 2, Silicon, 6, Oxygen, 18)
                 .build();
 
-        Galena = new Material.Builder(279, gregtechId("galena"))
+        Galena = Material.builder(279, gregtechId("galena"))
                 .dust(3).ore()
                 .color(0x643C64)
                 .components(Lead, 1, Sulfur, 1)
                 .build();
 
-        Garnierite = new Material.Builder(280, gregtechId("garnierite"))
+        Garnierite = Material.builder(280, gregtechId("garnierite"))
                 .dust(3).ore()
                 .color(0x32C846).iconSet(METALLIC)
                 .components(Nickel, 1, Oxygen, 1)
                 .build();
 
-        GreenSapphire = new Material.Builder(281, gregtechId("green_sapphire"))
+        GreenSapphire = Material.builder(281, gregtechId("green_sapphire"))
                 .gem().ore()
                 .color(0x64C882).iconSet(GEM_HORIZONTAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Oxygen, 3)
                 .build();
 
-        Grossular = new Material.Builder(282, gregtechId("grossular"))
+        Grossular = Material.builder(282, gregtechId("grossular"))
                 .gem(1).ore(3, 1)
                 .color(0xC86400).iconSet(RUBY)
                 .components(Calcium, 3, Aluminium, 2, Silicon, 3, Oxygen, 12)
                 .build();
 
-        Ice = new Material.Builder(283, gregtechId("ice"))
+        Ice = Material.builder(283, gregtechId("ice"))
                 .dust(0)
                 .liquid(new FluidBuilder()
                         .temperature(273)
@@ -274,28 +274,28 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
-        Ilmenite = new Material.Builder(284, gregtechId("ilmenite"))
+        Ilmenite = Material.builder(284, gregtechId("ilmenite"))
                 .dust(3).ore()
                 .color(0x463732).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Iron, 1, Titanium, 1, Oxygen, 3)
                 .build();
 
-        Rutile = new Material.Builder(285, gregtechId("rutile"))
+        Rutile = Material.builder(285, gregtechId("rutile"))
                 .gem()
                 .color(0xD40D5C).iconSet(GEM_HORIZONTAL)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Titanium, 1, Oxygen, 2)
                 .build();
 
-        Bauxite = new Material.Builder(286, gregtechId("bauxite"))
+        Bauxite = Material.builder(286, gregtechId("bauxite"))
                 .dust(1).ore()
                 .color(0xC86400)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Aluminium, 2, Oxygen, 3)
                 .build();
 
-        Invar = new Material.Builder(287, gregtechId("invar"))
+        Invar = Material.builder(287, gregtechId("invar"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1916))
                 .color(0xB4B478).iconSet(METALLIC)
@@ -308,7 +308,7 @@ public class FirstDegreeMaterials {
                 .rotorStats(7.0f, 3.0f, 512)
                 .build();
 
-        Kanthal = new Material.Builder(288, gregtechId("kanthal"))
+        Kanthal = Material.builder(288, gregtechId("kanthal"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1708))
                 .color(0xC2D2DF).iconSet(METALLIC)
@@ -318,7 +318,7 @@ public class FirstDegreeMaterials {
                 .blast(b -> b.temp(1800, GasTier.LOW).blastStats(VA[HV], 900))
                 .build();
 
-        Lazurite = new Material.Builder(289, gregtechId("lazurite"))
+        Lazurite = Material.builder(289, gregtechId("lazurite"))
                 .gem(1).ore(6, 4)
                 .color(0x6478FF).iconSet(LAPIS)
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_ROD,
@@ -326,7 +326,7 @@ public class FirstDegreeMaterials {
                 .components(Aluminium, 6, Silicon, 6, Calcium, 8, Sodium, 8)
                 .build();
 
-        Magnalium = new Material.Builder(290, gregtechId("magnalium"))
+        Magnalium = Material.builder(290, gregtechId("magnalium"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(929))
                 .color(0xC8BEFF)
@@ -336,25 +336,25 @@ public class FirstDegreeMaterials {
                 .itemPipeProperties(1024, 2)
                 .build();
 
-        Magnesite = new Material.Builder(291, gregtechId("magnesite"))
+        Magnesite = Material.builder(291, gregtechId("magnesite"))
                 .dust().ore()
                 .color(0xFAFAB4).iconSet(METALLIC)
                 .components(Magnesium, 1, Carbon, 1, Oxygen, 3)
                 .build();
 
-        Magnetite = new Material.Builder(292, gregtechId("magnetite"))
+        Magnetite = Material.builder(292, gregtechId("magnetite"))
                 .dust().ore()
                 .color(0x1E1E1E).iconSet(METALLIC)
                 .components(Iron, 3, Oxygen, 4)
                 .build();
 
-        Molybdenite = new Material.Builder(293, gregtechId("molybdenite"))
+        Molybdenite = Material.builder(293, gregtechId("molybdenite"))
                 .dust().ore()
                 .color(0x191919).iconSet(METALLIC)
                 .components(Molybdenum, 1, Sulfur, 2)
                 .build();
 
-        Nichrome = new Material.Builder(294, gregtechId("nichrome"))
+        Nichrome = Material.builder(294, gregtechId("nichrome"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1818))
                 .color(0xCDCEF6).iconSet(METALLIC)
@@ -367,7 +367,7 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[HV]))
                 .build();
 
-        NiobiumNitride = new Material.Builder(295, gregtechId("niobium_nitride"))
+        NiobiumNitride = Material.builder(295, gregtechId("niobium_nitride"))
                 .ingot().fluid()
                 .color(0x1D291D)
                 .flags(EXT_METAL, GENERATE_FOIL)
@@ -376,7 +376,7 @@ public class FirstDegreeMaterials {
                 .blast(2846, GasTier.MID)
                 .build();
 
-        NiobiumTitanium = new Material.Builder(296, gregtechId("niobium_titanium"))
+        NiobiumTitanium = Material.builder(296, gregtechId("niobium_titanium"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(2345))
                 .color(0x1D1D29)
@@ -391,28 +391,28 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[HV], 200))
                 .build();
 
-        Obsidian = new Material.Builder(297, gregtechId("obsidian"))
+        Obsidian = Material.builder(297, gregtechId("obsidian"))
                 .dust(3)
                 .color(0x503264)
                 .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, GENERATE_PLATE, GENERATE_DENSE)
                 .components(Magnesium, 1, Iron, 1, Silicon, 2, Oxygen, 4)
                 .build();
 
-        Phosphate = new Material.Builder(298, gregtechId("phosphate"))
+        Phosphate = Material.builder(298, gregtechId("phosphate"))
                 .dust(1)
                 .color(0xFFFF00)
                 .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE)
                 .components(Phosphorus, 1, Oxygen, 4)
                 .build();
 
-        PlatinumRaw = new Material.Builder(299, gregtechId("platinum_raw"))
+        PlatinumRaw = Material.builder(299, gregtechId("platinum_raw"))
                 .dust()
                 .color(0xFFFFC8).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Platinum, 1, Chlorine, 2)
                 .build();
 
-        SterlingSilver = new Material.Builder(300, gregtechId("sterling_silver"))
+        SterlingSilver = Material.builder(300, gregtechId("sterling_silver"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1258))
                 .color(0xFADCE1).iconSet(SHINY)
@@ -426,7 +426,7 @@ public class FirstDegreeMaterials {
                 .blast(b -> b.temp(1700, GasTier.LOW).blastStats(VA[MV], 1000))
                 .build();
 
-        RoseGold = new Material.Builder(301, gregtechId("rose_gold"))
+        RoseGold = Material.builder(301, gregtechId("rose_gold"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1341))
                 .color(0xFFE61E).iconSet(SHINY)
@@ -440,7 +440,7 @@ public class FirstDegreeMaterials {
                 .blast(b -> b.temp(1600, GasTier.LOW).blastStats(VA[MV], 1000))
                 .build();
 
-        BlackBronze = new Material.Builder(302, gregtechId("black_bronze"))
+        BlackBronze = Material.builder(302, gregtechId("black_bronze"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1328))
                 .color(0x64327D)
@@ -451,7 +451,7 @@ public class FirstDegreeMaterials {
                 .blast(b -> b.temp(2000, GasTier.LOW).blastStats(VA[MV], 1000))
                 .build();
 
-        BismuthBronze = new Material.Builder(303, gregtechId("bismuth_bronze"))
+        BismuthBronze = Material.builder(303, gregtechId("bismuth_bronze"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1036))
                 .color(0x647D7D)
@@ -461,45 +461,45 @@ public class FirstDegreeMaterials {
                 .blast(b -> b.temp(1100, GasTier.LOW).blastStats(VA[MV], 1000))
                 .build();
 
-        Biotite = new Material.Builder(304, gregtechId("biotite"))
+        Biotite = Material.builder(304, gregtechId("biotite"))
                 .dust(1)
                 .color(0x141E14).iconSet(METALLIC)
                 .components(Potassium, 1, Magnesium, 3, Aluminium, 3, Fluorine, 2, Silicon, 3, Oxygen, 10)
                 .build();
 
-        Powellite = new Material.Builder(305, gregtechId("powellite"))
+        Powellite = Material.builder(305, gregtechId("powellite"))
                 .dust().ore()
                 .color(0xFFFF00)
                 .components(Calcium, 1, Molybdenum, 1, Oxygen, 4)
                 .build();
 
-        Pyrite = new Material.Builder(306, gregtechId("pyrite"))
+        Pyrite = Material.builder(306, gregtechId("pyrite"))
                 .dust(1).ore()
                 .color(0x967828).iconSet(ROUGH)
                 .flags(BLAST_FURNACE_CALCITE_DOUBLE)
                 .components(Iron, 1, Sulfur, 2)
                 .build();
 
-        Pyrolusite = new Material.Builder(307, gregtechId("pyrolusite"))
+        Pyrolusite = Material.builder(307, gregtechId("pyrolusite"))
                 .dust().ore()
                 .color(0x9696AA)
                 .components(Manganese, 1, Oxygen, 2)
                 .build();
 
-        Pyrope = new Material.Builder(308, gregtechId("pyrope"))
+        Pyrope = Material.builder(308, gregtechId("pyrope"))
                 .gem().ore(3, 1)
                 .color(0x783264).iconSet(RUBY)
                 .components(Aluminium, 2, Magnesium, 3, Silicon, 3, Oxygen, 12)
                 .build();
 
-        RockSalt = new Material.Builder(309, gregtechId("rock_salt"))
+        RockSalt = Material.builder(309, gregtechId("rock_salt"))
                 .gem(1).ore(2, 1)
                 .color(0xF0C8C8).iconSet(FINE)
                 .flags(NO_SMASHING)
                 .components(Potassium, 1, Chlorine, 1)
                 .build();
 
-        Ruridit = new Material.Builder(310, gregtechId("ruridit"))
+        Ruridit = Material.builder(310, gregtechId("ruridit"))
                 .ingot(3).fluid()
                 .colorAverage().iconSet(BRIGHT)
                 .flags(GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW, GENERATE_FRAME)
@@ -510,35 +510,35 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[HV], 300))
                 .build();
 
-        Ruby = new Material.Builder(311, gregtechId("ruby"))
+        Ruby = Material.builder(311, gregtechId("ruby"))
                 .gem().ore()
                 .color(0xFF6464).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Chrome, 1, Aluminium, 2, Oxygen, 3)
                 .build();
 
-        Salt = new Material.Builder(312, gregtechId("salt"))
+        Salt = Material.builder(312, gregtechId("salt"))
                 .gem(1).ore(2, 1)
                 .color(0xFAFAFA).iconSet(FINE)
                 .flags(NO_SMASHING)
                 .components(Sodium, 1, Chlorine, 1)
                 .build();
 
-        Saltpeter = new Material.Builder(313, gregtechId("saltpeter"))
+        Saltpeter = Material.builder(313, gregtechId("saltpeter"))
                 .dust(1).ore(2, 1)
                 .color(0xE6E6E6).iconSet(FINE)
                 .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE)
                 .components(Potassium, 1, Nitrogen, 1, Oxygen, 3)
                 .build();
 
-        Sapphire = new Material.Builder(314, gregtechId("sapphire"))
+        Sapphire = Material.builder(314, gregtechId("sapphire"))
                 .gem().ore()
                 .color(0x6464C8).iconSet(GEM_VERTICAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Aluminium, 2, Oxygen, 3)
                 .build();
 
-        Scheelite = new Material.Builder(315, gregtechId("scheelite"))
+        Scheelite = Material.builder(315, gregtechId("scheelite"))
                 .dust(3).ore()
                 .color(0xC88C14)
                 .flags(DISABLE_DECOMPOSITION)
@@ -546,7 +546,7 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("Ca(WO3)O", true);
 
-        Sodalite = new Material.Builder(316, gregtechId("sodalite"))
+        Sodalite = Material.builder(316, gregtechId("sodalite"))
                 .gem(1).ore(6, 4)
                 .color(0x1414FF).iconSet(LAPIS)
                 .flags(GENERATE_PLATE, GENERATE_ROD, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE,
@@ -554,46 +554,46 @@ public class FirstDegreeMaterials {
                 .components(Aluminium, 3, Silicon, 3, Sodium, 4, Chlorine, 1)
                 .build();
 
-        AluminiumSulfite = new Material.Builder(317, gregtechId("aluminium_sulfite"))
+        AluminiumSulfite = Material.builder(317, gregtechId("aluminium_sulfite"))
                 .dust()
                 .color(0xCC4BBB).iconSet(DULL)
                 .components(Aluminium, 2, Sulfur, 3, Oxygen, 9)
                 .build().setFormula("Al2(SO3)3", true);
 
-        Tantalite = new Material.Builder(318, gregtechId("tantalite"))
+        Tantalite = Material.builder(318, gregtechId("tantalite"))
                 .dust(3).ore()
                 .color(0x915028).iconSet(METALLIC)
                 .components(Manganese, 1, Tantalum, 2, Oxygen, 6)
                 .build();
 
-        Coke = new Material.Builder(319, gregtechId("coke"))
+        Coke = Material.builder(319, gregtechId("coke"))
                 .gem(2, 3200) // 2x burn time of coal
                 .color(0x666666).iconSet(LIGNITE)
                 .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE)
                 .components(Carbon, 1)
                 .build();
 
-        SolderingAlloy = new Material.Builder(320, gregtechId("soldering_alloy"))
+        SolderingAlloy = Material.builder(320, gregtechId("soldering_alloy"))
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(544))
                 .color(0x9696A0)
                 .components(Tin, 6, Lead, 3, Antimony, 1)
                 .build();
 
-        Spessartine = new Material.Builder(321, gregtechId("spessartine"))
+        Spessartine = Material.builder(321, gregtechId("spessartine"))
                 .gem().ore(3, 1)
                 .color(0xFF6464).iconSet(RUBY)
                 .components(Aluminium, 2, Manganese, 3, Silicon, 3, Oxygen, 12)
                 .build();
 
-        Sphalerite = new Material.Builder(322, gregtechId("sphalerite"))
+        Sphalerite = Material.builder(322, gregtechId("sphalerite"))
                 .dust(1).ore()
                 .color(0xFFFFFF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zinc, 1, Sulfur, 1)
                 .build();
 
-        StainlessSteel = new Material.Builder(323, gregtechId("stainless_steel"))
+        StainlessSteel = Material.builder(323, gregtechId("stainless_steel"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(2011))
                 .color(0xC8C8DC).iconSet(SHINY)
@@ -607,7 +607,7 @@ public class FirstDegreeMaterials {
                 .blast(b -> b.temp(1700, GasTier.LOW).blastStats(VA[HV], 1100))
                 .build();
 
-        Steel = new Material.Builder(324, gregtechId("steel"))
+        Steel = Material.builder(324, gregtechId("steel"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(2046))
                 .color(0x808080).iconSet(METALLIC)
@@ -623,27 +623,27 @@ public class FirstDegreeMaterials {
                 .blast(b -> b.temp(1000).blastStats(VA[MV], 800)) // no gas tier for steel
                 .build();
 
-        Stibnite = new Material.Builder(325, gregtechId("stibnite"))
+        Stibnite = Material.builder(325, gregtechId("stibnite"))
                 .dust().ore()
                 .color(0x464646).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Antimony, 2, Sulfur, 3)
                 .build();
 
-        Zirconia = new Material.Builder(326, gregtechId("zirconia"))
+        Zirconia = Material.builder(326, gregtechId("zirconia"))
                 .dust()
                 .color(0x689F9F).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zirconium, 1, Oxygen, 2)
                 .build();
 
-        Tetrahedrite = new Material.Builder(327, gregtechId("tetrahedrite"))
+        Tetrahedrite = Material.builder(327, gregtechId("tetrahedrite"))
                 .dust().ore()
                 .color(0xC82000)
                 .components(Copper, 3, Antimony, 1, Sulfur, 3, Iron, 1)
                 .build();
 
-        TinAlloy = new Material.Builder(328, gregtechId("tin_alloy"))
+        TinAlloy = Material.builder(328, gregtechId("tin_alloy"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1258))
                 .color(0xC8C8C8).iconSet(METALLIC)
@@ -652,14 +652,14 @@ public class FirstDegreeMaterials {
                 .fluidPipeProperties(1572, 20, true)
                 .build();
 
-        Topaz = new Material.Builder(329, gregtechId("topaz"))
+        Topaz = Material.builder(329, gregtechId("topaz"))
                 .gem(3).ore()
                 .color(0xFF8000).iconSet(GEM_HORIZONTAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 1, Hydrogen, 2)
                 .build();
 
-        Tungstate = new Material.Builder(330, gregtechId("tungstate"))
+        Tungstate = Material.builder(330, gregtechId("tungstate"))
                 .dust(3).ore()
                 .color(0x373223)
                 .flags(DISABLE_DECOMPOSITION)
@@ -667,7 +667,7 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("Li2(WO3)O", true);
 
-        Ultimet = new Material.Builder(331, gregtechId("ultimet"))
+        Ultimet = Material.builder(331, gregtechId("ultimet"))
                 .ingot(4)
                 .liquid(new FluidBuilder().temperature(1980))
                 .color(0xB4B4E6).iconSet(SHINY)
@@ -680,20 +680,20 @@ public class FirstDegreeMaterials {
                 .blast(b -> b.temp(2700, GasTier.MID).blastStats(VA[HV], 1300))
                 .build();
 
-        Uraninite = new Material.Builder(332, gregtechId("uraninite"))
+        Uraninite = Material.builder(332, gregtechId("uraninite"))
                 .dust(3).ore(true)
                 .color(0x232323).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium, 1, Oxygen, 2)
                 .build();
 
-        Uvarovite = new Material.Builder(333, gregtechId("uvarovite"))
+        Uvarovite = Material.builder(333, gregtechId("uvarovite"))
                 .gem()
                 .color(0xB4ffB4).iconSet(RUBY)
                 .components(Calcium, 3, Chrome, 2, Silicon, 3, Oxygen, 12)
                 .build();
 
-        VanadiumGallium = new Material.Builder(334, gregtechId("vanadium_gallium"))
+        VanadiumGallium = Material.builder(334, gregtechId("vanadium_gallium"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1712))
                 .color(0x80808C).iconSet(SHINY)
@@ -706,7 +706,7 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[HV]))
                 .build();
 
-        WroughtIron = new Material.Builder(335, gregtechId("wrought_iron"))
+        WroughtIron = Material.builder(335, gregtechId("wrought_iron"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(2011))
                 .color(0xC8B4B4).iconSet(METALLIC)
@@ -720,20 +720,20 @@ public class FirstDegreeMaterials {
         Iron.getProperty(PropertyKey.INGOT).setSmeltingInto(WroughtIron);
         Iron.getProperty(PropertyKey.INGOT).setArcSmeltingInto(WroughtIron);
 
-        Wulfenite = new Material.Builder(336, gregtechId("wulfenite"))
+        Wulfenite = Material.builder(336, gregtechId("wulfenite"))
                 .dust(3).ore()
                 .color(0xFF8000)
                 .components(Lead, 1, Molybdenum, 1, Oxygen, 4)
                 .build();
 
-        YellowLimonite = new Material.Builder(337, gregtechId("yellow_limonite"))
+        YellowLimonite = Material.builder(337, gregtechId("yellow_limonite"))
                 .dust().ore()
                 .color(0xC8C800).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING, BLAST_FURNACE_CALCITE_DOUBLE)
                 .components(Iron, 1, Hydrogen, 1, Oxygen, 2)
                 .build();
 
-        YttriumBariumCuprate = new Material.Builder(338, gregtechId("yttrium_barium_cuprate"))
+        YttriumBariumCuprate = Material.builder(338, gregtechId("yttrium_barium_cuprate"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1799))
                 .color(0x504046).iconSet(METALLIC)
@@ -747,7 +747,7 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[EV], 150))
                 .build();
 
-        NetherQuartz = new Material.Builder(339, gregtechId("nether_quartz"))
+        NetherQuartz = Material.builder(339, gregtechId("nether_quartz"))
                 .gem(1).ore(2, 1)
                 .color(0xE6D2D2).iconSet(QUARTZ)
                 .flags(GENERATE_PLATE, NO_SMELTING, CRYSTALLIZABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
@@ -755,28 +755,28 @@ public class FirstDegreeMaterials {
                 .components(Silicon, 1, Oxygen, 2)
                 .build();
 
-        CertusQuartz = new Material.Builder(214, gregtechId("certus_quartz"))
+        CertusQuartz = Material.builder(214, gregtechId("certus_quartz"))
                 .gem(1).ore(2, 1)
                 .color(0xD2D2E6).iconSet(CERTUS)
                 .flags(GENERATE_PLATE, NO_SMELTING, CRYSTALLIZABLE, DISABLE_DECOMPOSITION)
                 .components(Silicon, 1, Oxygen, 2)
                 .build();
 
-        Quartzite = new Material.Builder(340, gregtechId("quartzite"))
+        Quartzite = Material.builder(340, gregtechId("quartzite"))
                 .gem(1).ore(2, 1)
                 .color(0xD2E6D2).iconSet(QUARTZ)
                 .flags(NO_SMELTING, CRYSTALLIZABLE, DISABLE_DECOMPOSITION, GENERATE_PLATE)
                 .components(Silicon, 1, Oxygen, 2)
                 .build();
 
-        Graphite = new Material.Builder(341, gregtechId("graphite"))
+        Graphite = Material.builder(341, gregtechId("graphite"))
                 .ore()
                 .color(0x808080)
                 .flags(NO_SMELTING, FLAMMABLE, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
                 .build();
 
-        Graphene = new Material.Builder(342, gregtechId("graphene"))
+        Graphene = Material.builder(342, gregtechId("graphene"))
                 .dust()
                 .color(0x808080).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
@@ -784,14 +784,14 @@ public class FirstDegreeMaterials {
                 .cableProperties(V[IV], 1, 1)
                 .build();
 
-        TungsticAcid = new Material.Builder(343, gregtechId("tungstic_acid"))
+        TungsticAcid = Material.builder(343, gregtechId("tungstic_acid"))
                 .dust()
                 .color(0xBCC800).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Tungsten, 1, Oxygen, 4)
                 .build();
 
-        Osmiridium = new Material.Builder(344, gregtechId("osmiridium"))
+        Osmiridium = Material.builder(344, gregtechId("osmiridium"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(3012))
                 .color(0x6464FF).iconSet(METALLIC)
@@ -806,45 +806,45 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[EV], 200))
                 .build();
 
-        LithiumChloride = new Material.Builder(345, gregtechId("lithium_chloride"))
+        LithiumChloride = Material.builder(345, gregtechId("lithium_chloride"))
                 .dust()
                 .color(0xDEDEFA).iconSet(FINE)
                 .components(Lithium, 1, Chlorine, 1)
                 .build();
 
-        CalciumChloride = new Material.Builder(346, gregtechId("calcium_chloride"))
+        CalciumChloride = Material.builder(346, gregtechId("calcium_chloride"))
                 .dust()
                 .color(0xEBEBFA).iconSet(FINE)
                 .components(Calcium, 1, Chlorine, 2)
                 .build();
 
-        Bornite = new Material.Builder(347, gregtechId("bornite"))
+        Bornite = Material.builder(347, gregtechId("bornite"))
                 .dust(1).ore()
                 .color(0x97662B).iconSet(METALLIC)
                 .components(Copper, 5, Iron, 1, Sulfur, 4)
                 .build();
 
-        Chalcocite = new Material.Builder(348, gregtechId("chalcocite"))
+        Chalcocite = Material.builder(348, gregtechId("chalcocite"))
                 .dust().ore()
                 .color(0x353535).iconSet(GEM_VERTICAL)
                 .components(Copper, 2, Sulfur, 1)
                 .build();
 
-        ZirconiumTetrachloride = new Material.Builder(349, gregtechId("zirconium_tetrachloride"))
+        ZirconiumTetrachloride = Material.builder(349, gregtechId("zirconium_tetrachloride"))
                 .dust()
                 .color(0x689FBF).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zirconium, 1, Chlorine, 4)
                 .build();
 
-        Hafnia = new Material.Builder(350, gregtechId("hafnia"))
+        Hafnia = Material.builder(350, gregtechId("hafnia"))
                 .dust()
                 .color(0x39393A).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hafnium, 1, Oxygen, 2)
                 .build();
 
-        GalliumArsenide = new Material.Builder(351, gregtechId("gallium_arsenide"))
+        GalliumArsenide = Material.builder(351, gregtechId("gallium_arsenide"))
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(1511))
                 .color(0xA0A0A0)
@@ -853,19 +853,19 @@ public class FirstDegreeMaterials {
                 .blast(b -> b.temp(1200, GasTier.LOW).blastStats(VA[MV], 1200))
                 .build();
 
-        Potash = new Material.Builder(352, gregtechId("potash"))
+        Potash = Material.builder(352, gregtechId("potash"))
                 .dust(1)
                 .color(0x784137)
                 .components(Potassium, 2, Oxygen, 1)
                 .build();
 
-        SodaAsh = new Material.Builder(353, gregtechId("soda_ash"))
+        SodaAsh = Material.builder(353, gregtechId("soda_ash"))
                 .dust(1)
                 .color(0xDCDCFF)
                 .components(Sodium, 2, Carbon, 1, Oxygen, 3)
                 .build();
 
-        IndiumGalliumPhosphide = new Material.Builder(354, gregtechId("indium_gallium_phosphide"))
+        IndiumGalliumPhosphide = Material.builder(354, gregtechId("indium_gallium_phosphide"))
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(350))
                 .color(0xA08CBE)
@@ -873,7 +873,7 @@ public class FirstDegreeMaterials {
                 .components(Indium, 1, Gallium, 1, Phosphorus, 1)
                 .build();
 
-        NickelZincFerrite = new Material.Builder(355, gregtechId("nickel_zinc_ferrite"))
+        NickelZincFerrite = Material.builder(355, gregtechId("nickel_zinc_ferrite"))
                 .ingot(0)
                 .liquid(new FluidBuilder().temperature(1410))
                 .color(0x3C3C3C).iconSet(METALLIC)
@@ -881,98 +881,98 @@ public class FirstDegreeMaterials {
                 .components(Nickel, 1, Zinc, 1, Iron, 4, Oxygen, 8)
                 .build();
 
-        SiliconDioxide = new Material.Builder(356, gregtechId("silicon_dioxide"))
+        SiliconDioxide = Material.builder(356, gregtechId("silicon_dioxide"))
                 .dust(1)
                 .color(0xC8C8C8).iconSet(QUARTZ)
                 .flags(NO_SMASHING, NO_SMELTING)
                 .components(Silicon, 1, Oxygen, 2)
                 .build();
 
-        MagnesiumChloride = new Material.Builder(357, gregtechId("magnesium_chloride"))
+        MagnesiumChloride = Material.builder(357, gregtechId("magnesium_chloride"))
                 .dust(1)
                 .color(0xD40D5C)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Magnesium, 1, Chlorine, 2)
                 .build();
 
-        SodiumSulfide = new Material.Builder(358, gregtechId("sodium_sulfide"))
+        SodiumSulfide = Material.builder(358, gregtechId("sodium_sulfide"))
                 .dust(1)
                 .color(0xFFE680)
                 .components(Sodium, 2, Sulfur, 1)
                 .build();
 
-        PhosphorusPentoxide = new Material.Builder(359, gregtechId("phosphorus_pentoxide"))
+        PhosphorusPentoxide = Material.builder(359, gregtechId("phosphorus_pentoxide"))
                 .dust(1)
                 .color(0xDCDC00)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Phosphorus, 4, Oxygen, 10)
                 .build();
 
-        Quicklime = new Material.Builder(360, gregtechId("quicklime"))
+        Quicklime = Material.builder(360, gregtechId("quicklime"))
                 .dust(1)
                 .color(0xF0F0F0)
                 .components(Calcium, 1, Oxygen, 1)
                 .build();
 
-        SodiumBisulfate = new Material.Builder(361, gregtechId("sodium_bisulfate"))
+        SodiumBisulfate = Material.builder(361, gregtechId("sodium_bisulfate"))
                 .dust(1)
                 .color(0x004455)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Hydrogen, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        FerriteMixture = new Material.Builder(362, gregtechId("ferrite_mixture"))
+        FerriteMixture = Material.builder(362, gregtechId("ferrite_mixture"))
                 .dust(1)
                 .color(0xB4B4B4).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Nickel, 1, Zinc, 1, Iron, 4)
                 .build();
 
-        Magnesia = new Material.Builder(363, gregtechId("magnesia"))
+        Magnesia = Material.builder(363, gregtechId("magnesia"))
                 .dust(1)
                 .color(0x887878)
                 .components(Magnesium, 1, Oxygen, 1)
                 .build();
 
-        PlatinumGroupSludge = new Material.Builder(364, gregtechId("platinum_group_sludge"))
+        PlatinumGroupSludge = Material.builder(364, gregtechId("platinum_group_sludge"))
                 .dust(1)
                 .color(0x001E00).iconSet(FINE)
                 .flags(DISABLE_DECOMPOSITION)
                 .build();
 
-        Realgar = new Material.Builder(365, gregtechId("realgar"))
+        Realgar = Material.builder(365, gregtechId("realgar"))
                 .gem().ore()
                 .color(0x9D2123).iconSet(EMERALD)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Arsenic, 4, Sulfur, 4)
                 .build();
 
-        SodiumBicarbonate = new Material.Builder(366, gregtechId("sodium_bicarbonate"))
+        SodiumBicarbonate = Material.builder(366, gregtechId("sodium_bicarbonate"))
                 .dust(1)
                 .color(0x565b96).iconSet(ROUGH)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Hydrogen, 1, Carbon, 1, Oxygen, 3)
                 .build();
 
-        PotassiumDichromate = new Material.Builder(367, gregtechId("potassium_dichromate"))
+        PotassiumDichromate = Material.builder(367, gregtechId("potassium_dichromate"))
                 .dust(1)
                 .color(0xFF084E)
                 .components(Potassium, 2, Chrome, 2, Oxygen, 7)
                 .build();
 
-        ChromiumTrioxide = new Material.Builder(368, gregtechId("chromium_trioxide"))
+        ChromiumTrioxide = Material.builder(368, gregtechId("chromium_trioxide"))
                 .dust(1)
                 .color(0xFFE4E1)
                 .components(Chrome, 1, Oxygen, 3)
                 .build();
 
-        AntimonyTrioxide = new Material.Builder(369, gregtechId("antimony_trioxide"))
+        AntimonyTrioxide = Material.builder(369, gregtechId("antimony_trioxide"))
                 .dust(1)
                 .color(0xE6E6F0)
                 .components(Antimony, 2, Oxygen, 3)
                 .build();
 
-        Zincite = new Material.Builder(370, gregtechId("zincite"))
+        Zincite = Material.builder(370, gregtechId("zincite"))
                 .dust(1)
                 .color(0xFFFFF5)
                 .components(Zinc, 1, Oxygen, 1)
@@ -980,19 +980,19 @@ public class FirstDegreeMaterials {
 
         // FREE ID 371
 
-        CobaltOxide = new Material.Builder(372, gregtechId("cobalt_oxide"))
+        CobaltOxide = Material.builder(372, gregtechId("cobalt_oxide"))
                 .dust(1)
                 .color(0x788000)
                 .components(Cobalt, 1, Oxygen, 1)
                 .build();
 
-        ArsenicTrioxide = new Material.Builder(373, gregtechId("arsenic_trioxide"))
+        ArsenicTrioxide = Material.builder(373, gregtechId("arsenic_trioxide"))
                 .dust(1)
                 .iconSet(ROUGH)
                 .components(Arsenic, 2, Oxygen, 3)
                 .build();
 
-        Massicot = new Material.Builder(374, gregtechId("massicot"))
+        Massicot = Material.builder(374, gregtechId("massicot"))
                 .dust(1)
                 .color(0xFFDD55)
                 .components(Lead, 1, Oxygen, 1)
@@ -1000,81 +1000,81 @@ public class FirstDegreeMaterials {
 
         // FREE ID 375
 
-        MetalMixture = new Material.Builder(376, gregtechId("metal_mixture"))
+        MetalMixture = Material.builder(376, gregtechId("metal_mixture"))
                 .dust(1)
                 .color(0x502d16).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .build();
 
-        SodiumHydroxide = new Material.Builder(377, gregtechId("sodium_hydroxide"))
+        SodiumHydroxide = Material.builder(377, gregtechId("sodium_hydroxide"))
                 .dust(1)
                 .color(0x003380)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Oxygen, 1, Hydrogen, 1)
                 .build();
 
-        SodiumPersulfate = new Material.Builder(378, gregtechId("sodium_persulfate"))
+        SodiumPersulfate = Material.builder(378, gregtechId("sodium_persulfate"))
                 .liquid(new FluidBuilder().customStill())
                 .color(0x045C5C)
                 .components(Sodium, 2, Sulfur, 2, Oxygen, 8)
                 .build();
 
-        Bastnasite = new Material.Builder(379, gregtechId("bastnasite"))
+        Bastnasite = Material.builder(379, gregtechId("bastnasite"))
                 .dust().ore(2, 1)
                 .color(0xC86E2D).iconSet(FINE)
                 .components(Cerium, 1, Carbon, 1, Fluorine, 1, Oxygen, 3)
                 .build();
 
-        Pentlandite = new Material.Builder(380, gregtechId("pentlandite"))
+        Pentlandite = Material.builder(380, gregtechId("pentlandite"))
                 .dust().ore()
                 .color(0xA59605)
                 .components(Nickel, 9, Sulfur, 8)
                 .build();
 
-        Spodumene = new Material.Builder(381, gregtechId("spodumene"))
+        Spodumene = Material.builder(381, gregtechId("spodumene"))
                 .dust().ore()
                 .color(0xBEAAAA)
                 .components(Lithium, 1, Aluminium, 1, Silicon, 2, Oxygen, 6)
                 .build();
 
-        Lepidolite = new Material.Builder(382, gregtechId("lepidolite"))
+        Lepidolite = Material.builder(382, gregtechId("lepidolite"))
                 .dust().ore(2, 1)
                 .color(0xF0328C).iconSet(FINE)
                 .components(Potassium, 1, Lithium, 3, Aluminium, 4, Fluorine, 2, Oxygen, 10)
                 .build();
 
-        HafniumTetrachloride = new Material.Builder(383, gregtechId("hafnium_tetrachloride"))
+        HafniumTetrachloride = Material.builder(383, gregtechId("hafnium_tetrachloride"))
                 .dust()
                 .color(0x69699A).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hafnium, 1, Chlorine, 4)
                 .build();
 
-        GlauconiteSand = new Material.Builder(384, gregtechId("glauconite_sand"))
+        GlauconiteSand = Material.builder(384, gregtechId("glauconite_sand"))
                 .dust().ore(3, 1)
                 .color(0x82B43C).iconSet(SAND)
                 .components(Potassium, 1, Magnesium, 2, Aluminium, 4, Hydrogen, 2, Oxygen, 12)
                 .build();
 
-        Malachite = new Material.Builder(385, gregtechId("malachite"))
+        Malachite = Material.builder(385, gregtechId("malachite"))
                 .gem().ore()
                 .color(0x055F05).iconSet(LAPIS)
                 .components(Copper, 2, Carbon, 1, Hydrogen, 2, Oxygen, 5)
                 .build();
 
-        Mica = new Material.Builder(386, gregtechId("mica"))
+        Mica = Material.builder(386, gregtechId("mica"))
                 .dust().ore(2, 1)
                 .color(0xC3C3CD).iconSet(FINE)
                 .components(Potassium, 1, Aluminium, 3, Silicon, 3, Fluorine, 2, Oxygen, 10)
                 .build();
 
-        Barite = new Material.Builder(387, gregtechId("barite"))
+        Barite = Material.builder(387, gregtechId("barite"))
                 .dust().ore()
                 .color(0xE6EBEB)
                 .components(Barium, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        Alunite = new Material.Builder(388, gregtechId("alunite"))
+        Alunite = Material.builder(388, gregtechId("alunite"))
                 .dust().ore(3, 1)
                 .color(0xE1B441).iconSet(METALLIC)
                 .components(Potassium, 1, Aluminium, 3, Silicon, 2, Hydrogen, 6, Oxygen, 14)
@@ -1082,7 +1082,7 @@ public class FirstDegreeMaterials {
 
         /* Free IDs: 389-390 */
 
-        Zircaloy4 = new Material.Builder(391, gregtechId("zircaloy_4"))
+        Zircaloy4 = Material.builder(391, gregtechId("zircaloy_4"))
                 .ingot()
                 .color(0x8A6E68).iconSet(METALLIC)
                 .components(Zirconium, 16, Tin, 2, Chrome, 1)
@@ -1090,25 +1090,25 @@ public class FirstDegreeMaterials {
                         .blastStats(GTValues.VA[EV]))
                 .build();
 
-        Talc = new Material.Builder(392, gregtechId("talc"))
+        Talc = Material.builder(392, gregtechId("talc"))
                 .dust().ore(2, 1)
                 .color(0x5AB45A).iconSet(FINE)
                 .components(Magnesium, 3, Silicon, 4, Hydrogen, 2, Oxygen, 12)
                 .build();
 
-        Soapstone = new Material.Builder(393, gregtechId("soapstone"))
+        Soapstone = Material.builder(393, gregtechId("soapstone"))
                 .dust(1).ore(3, 1)
                 .color(0x5F915F)
                 .components(Magnesium, 3, Silicon, 4, Hydrogen, 2, Oxygen, 12)
                 .build();
 
-        Kyanite = new Material.Builder(394, gregtechId("kyanite"))
+        Kyanite = Material.builder(394, gregtechId("kyanite"))
                 .dust().ore()
                 .color(0x6E6EFA).iconSet(FLINT)
                 .components(Aluminium, 2, Silicon, 1, Oxygen, 5)
                 .build();
 
-        IronMagnetic = new Material.Builder(395, gregtechId("iron_magnetic"))
+        IronMagnetic = Material.builder(395, gregtechId("iron_magnetic"))
                 .ingot()
                 .color(0xC8C8C8).iconSet(MAGNETIC)
                 .flags(GENERATE_BOLT_SCREW, IS_MAGNETIC)
@@ -1119,7 +1119,7 @@ public class FirstDegreeMaterials {
                 .build();
         Iron.getProperty(PropertyKey.INGOT).setMagneticMaterial(IronMagnetic);
 
-        TungstenCarbide = new Material.Builder(396, gregtechId("tungsten_carbide"))
+        TungstenCarbide = Material.builder(396, gregtechId("tungsten_carbide"))
                 .ingot(4).fluid()
                 .color(0x330066).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR, DECOMPOSITION_BY_CENTRIFUGING, GENERATE_DOUBLE_PLATE)
@@ -1134,39 +1134,39 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[HV]))
                 .build();
 
-        CarbonDioxide = new Material.Builder(397, gregtechId("carbon_dioxide"))
+        CarbonDioxide = Material.builder(397, gregtechId("carbon_dioxide"))
                 .gas()
                 .color(0xA9D0F5)
                 .components(Carbon, 1, Oxygen, 2)
                 .build();
 
-        TitaniumTetrachloride = new Material.Builder(398, gregtechId("titanium_tetrachloride"))
+        TitaniumTetrachloride = Material.builder(398, gregtechId("titanium_tetrachloride"))
                 .liquid(new FluidBuilder().customStill())
                 .color(0xD40D5C)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Titanium, 1, Chlorine, 4)
                 .build();
 
-        NitrogenDioxide = new Material.Builder(399, gregtechId("nitrogen_dioxide"))
+        NitrogenDioxide = Material.builder(399, gregtechId("nitrogen_dioxide"))
                 .gas()
                 .color(0xF05800)
                 .components(Nitrogen, 1, Oxygen, 2)
                 .build();
 
-        HydrogenSulfide = new Material.Builder(400, gregtechId("hydrogen_sulfide"))
+        HydrogenSulfide = Material.builder(400, gregtechId("hydrogen_sulfide"))
                 .gas(new FluidBuilder().customStill())
                 .color(0xFC5304)
                 .components(Hydrogen, 2, Sulfur, 1)
                 .build();
 
-        NitricAcid = new Material.Builder(401, gregtechId("nitric_acid"))
+        NitricAcid = Material.builder(401, gregtechId("nitric_acid"))
                 .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xCCCC00)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 1, Nitrogen, 1, Oxygen, 3)
                 .build();
 
-        SulfuricAcid = new Material.Builder(402, gregtechId("sulfuric_acid"))
+        SulfuricAcid = Material.builder(402, gregtechId("sulfuric_acid"))
                 .liquid(new FluidBuilder()
                         .attribute(FluidAttributes.ACID)
                         .customStill())
@@ -1175,70 +1175,70 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        PhosphoricAcid = new Material.Builder(403, gregtechId("phosphoric_acid"))
+        PhosphoricAcid = Material.builder(403, gregtechId("phosphoric_acid"))
                 .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xDCDC01)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 3, Phosphorus, 1, Oxygen, 4)
                 .build();
 
-        SulfurTrioxide = new Material.Builder(404, gregtechId("sulfur_trioxide"))
+        SulfurTrioxide = Material.builder(404, gregtechId("sulfur_trioxide"))
                 .gas()
                 .color(0xA0A014)
                 .components(Sulfur, 1, Oxygen, 3)
                 .build();
 
-        SulfurDioxide = new Material.Builder(405, gregtechId("sulfur_dioxide"))
+        SulfurDioxide = Material.builder(405, gregtechId("sulfur_dioxide"))
                 .gas()
                 .color(0xC8C819)
                 .components(Sulfur, 1, Oxygen, 2)
                 .build();
 
-        CarbonMonoxide = new Material.Builder(406, gregtechId("carbon_monoxide"))
+        CarbonMonoxide = Material.builder(406, gregtechId("carbon_monoxide"))
                 .gas()
                 .color(0x0E4880)
                 .components(Carbon, 1, Oxygen, 1)
                 .build();
 
-        HypochlorousAcid = new Material.Builder(407, gregtechId("hypochlorous_acid"))
+        HypochlorousAcid = Material.builder(407, gregtechId("hypochlorous_acid"))
                 .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0x6F8A91)
                 .components(Hydrogen, 1, Chlorine, 1, Oxygen, 1)
                 .build();
 
-        Ammonia = new Material.Builder(408, gregtechId("ammonia"))
+        Ammonia = Material.builder(408, gregtechId("ammonia"))
                 .gas()
                 .color(0x3F3480)
                 .components(Nitrogen, 1, Hydrogen, 3)
                 .build();
 
-        HydrofluoricAcid = new Material.Builder(409, gregtechId("hydrofluoric_acid"))
+        HydrofluoricAcid = Material.builder(409, gregtechId("hydrofluoric_acid"))
                 .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0x0088AA)
                 .components(Hydrogen, 1, Fluorine, 1)
                 .build();
 
-        NitricOxide = new Material.Builder(410, gregtechId("nitric_oxide"))
+        NitricOxide = Material.builder(410, gregtechId("nitric_oxide"))
                 .gas()
                 .color(0x7DC8F0)
                 .components(Nitrogen, 1, Oxygen, 1)
                 .build();
 
-        Iron3Chloride = new Material.Builder(411, gregtechId("iron_iii_chloride"))
+        Iron3Chloride = Material.builder(411, gregtechId("iron_iii_chloride"))
                 .liquid()
                 .color(0x060B0B)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Iron, 1, Chlorine, 3)
                 .build();
 
-        UraniumHexafluoride = new Material.Builder(412, gregtechId("uranium_hexafluoride"))
+        UraniumHexafluoride = Material.builder(412, gregtechId("uranium_hexafluoride"))
                 .gas()
                 .color(0x42D126)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium, 1, Fluorine, 6)
                 .build();
 
-        EnrichedUraniumHexafluoride = new Material.Builder(413, gregtechId("enriched_uranium_hexafluoride"))
+        EnrichedUraniumHexafluoride = Material.builder(413, gregtechId("enriched_uranium_hexafluoride"))
                 .gas()
                 .color(0x4BF52A)
                 .flags(DISABLE_DECOMPOSITION)
@@ -1246,7 +1246,7 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("(U-235)F6", true);
 
-        DepletedUraniumHexafluoride = new Material.Builder(414, gregtechId("depleted_uranium_hexafluoride"))
+        DepletedUraniumHexafluoride = Material.builder(414, gregtechId("depleted_uranium_hexafluoride"))
                 .gas()
                 .color(0x74BA66)
                 .flags(DISABLE_DECOMPOSITION)
@@ -1254,26 +1254,26 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("(U-238)F6", true);
 
-        NitrousOxide = new Material.Builder(415, gregtechId("nitrous_oxide"))
+        NitrousOxide = Material.builder(415, gregtechId("nitrous_oxide"))
                 .gas()
                 .color(0x7DC8FF)
                 .components(Nitrogen, 2, Oxygen, 1)
                 .build();
 
-        EnderPearl = new Material.Builder(416, gregtechId("ender_pearl"))
+        EnderPearl = Material.builder(416, gregtechId("ender_pearl"))
                 .gem(1)
                 .color(0x6CDCC8)
                 .flags(NO_SMASHING, NO_SMELTING, GENERATE_PLATE)
                 .components(Beryllium, 1, Potassium, 4, Nitrogen, 5)
                 .build();
 
-        PotassiumFeldspar = new Material.Builder(417, gregtechId("potassium_feldspar"))
+        PotassiumFeldspar = Material.builder(417, gregtechId("potassium_feldspar"))
                 .dust(1)
                 .color(0x782828).iconSet(FINE)
                 .components(Potassium, 1, Aluminium, 1, Silicon, 1, Oxygen, 8)
                 .build();
 
-        NeodymiumMagnetic = new Material.Builder(418, gregtechId("neodymium_magnetic"))
+        NeodymiumMagnetic = Material.builder(418, gregtechId("neodymium_magnetic"))
                 .ingot()
                 .color(0x646464).iconSet(MAGNETIC)
                 .flags(GENERATE_ROD, IS_MAGNETIC)
@@ -1284,7 +1284,7 @@ public class FirstDegreeMaterials {
                 .build();
         Neodymium.getProperty(PropertyKey.INGOT).setMagneticMaterial(NeodymiumMagnetic);
 
-        HydrochloricAcid = new Material.Builder(419, gregtechId("hydrochloric_acid"))
+        HydrochloricAcid = Material.builder(419, gregtechId("hydrochloric_acid"))
                 .liquid(new FluidBuilder()
                         .attribute(FluidAttributes.ACID)
                         .customStill())
@@ -1292,7 +1292,7 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 1, Chlorine, 1)
                 .build();
 
-        Steam = new Material.Builder(420, gregtechId("steam"))
+        Steam = Material.builder(420, gregtechId("steam"))
                 .gas(new FluidBuilder()
                         .temperature(373)
                         .customStill())
@@ -1301,21 +1301,21 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
-        DistilledWater = new Material.Builder(421, gregtechId("distilled_water"))
+        DistilledWater = Material.builder(421, gregtechId("distilled_water"))
                 .liquid(new FluidBuilder().alternativeName("fluidDistWater"))
                 .color(0x4A94FF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
-        SodiumPotassium = new Material.Builder(422, gregtechId("sodium_potassium"))
+        SodiumPotassium = Material.builder(422, gregtechId("sodium_potassium"))
                 .fluid()
                 .color(0x64FCB4)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Sodium, 1, Potassium, 1)
                 .build();
 
-        SamariumMagnetic = new Material.Builder(423, gregtechId("samarium_magnetic"))
+        SamariumMagnetic = Material.builder(423, gregtechId("samarium_magnetic"))
                 .ingot()
                 .color(0xFFFFCD).iconSet(MAGNETIC)
                 .flags(GENERATE_LONG_ROD, IS_MAGNETIC)
@@ -1326,7 +1326,7 @@ public class FirstDegreeMaterials {
                 .build();
         Samarium.getProperty(PropertyKey.INGOT).setMagneticMaterial(SamariumMagnetic);
 
-        ManganesePhosphide = new Material.Builder(424, gregtechId("manganese_phosphide"))
+        ManganesePhosphide = Material.builder(424, gregtechId("manganese_phosphide"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1368))
                 .color(0xE1B454).iconSet(METALLIC)
@@ -1336,7 +1336,7 @@ public class FirstDegreeMaterials {
                 .blast(1200, GasTier.LOW)
                 .build();
 
-        MagnesiumDiboride = new Material.Builder(425, gregtechId("magnesium_diboride"))
+        MagnesiumDiboride = Material.builder(425, gregtechId("magnesium_diboride"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1103))
                 .color(0x331900).iconSet(METALLIC)
@@ -1349,7 +1349,7 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[MV], 200))
                 .build();
 
-        MercuryBariumCalciumCuprate = new Material.Builder(426, gregtechId("mercury_barium_calcium_cuprate"))
+        MercuryBariumCalciumCuprate = Material.builder(426, gregtechId("mercury_barium_calcium_cuprate"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1075))
                 .color(0x555555).iconSet(SHINY)
@@ -1362,7 +1362,7 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[HV]))
                 .build();
 
-        UraniumTriplatinum = new Material.Builder(427, gregtechId("uranium_triplatinum"))
+        UraniumTriplatinum = Material.builder(427, gregtechId("uranium_triplatinum"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1882))
                 .color(0x008700).iconSet(SHINY)
@@ -1375,7 +1375,7 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[EV], 200))
                 .build();
 
-        SamariumIronArsenicOxide = new Material.Builder(428, gregtechId("samarium_iron_arsenic_oxide"))
+        SamariumIronArsenicOxide = Material.builder(428, gregtechId("samarium_iron_arsenic_oxide"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1347))
                 .color(0x330033).iconSet(SHINY)
@@ -1388,7 +1388,7 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[IV], 200))
                 .build();
 
-        IndiumTinBariumTitaniumCuprate = new Material.Builder(429, gregtechId("indium_tin_barium_titanium_cuprate"))
+        IndiumTinBariumTitaniumCuprate = Material.builder(429, gregtechId("indium_tin_barium_titanium_cuprate"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1012))
                 .color(0x994C00).iconSet(METALLIC)
@@ -1401,7 +1401,7 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[LuV]))
                 .build();
 
-        UraniumRhodiumDinaquadide = new Material.Builder(430, gregtechId("uranium_rhodium_dinaquadide"))
+        UraniumRhodiumDinaquadide = Material.builder(430, gregtechId("uranium_rhodium_dinaquadide"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(3410))
                 .color(0x0A0A0A)
@@ -1414,70 +1414,70 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[ZPM], 200))
                 .build();
 
-        EnrichedNaquadahTriniumEuropiumDuranide = new Material.Builder(431,
+        EnrichedNaquadahTriniumEuropiumDuranide = Material.builder(431,
                 gregtechId("enriched_naquadah_trinium_europium_duranide"))
-                        .ingot()
-                        .liquid(new FluidBuilder().temperature(5930))
-                        .color(0x7D9673).iconSet(METALLIC)
-                        .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
-                        .components(NaquadahEnriched, 4, Trinium, 3, Europium, 2, Duranium, 1)
-                        .cableProperties(GTValues.V[GTValues.UV], 16, 0, true, 3)
-                        .blast(b -> b
-                                .temp(9900, GasTier.HIGH)
-                                .blastStats(VA[LuV], 1200)
-                                .vacuumStats(VA[UV], 200))
-                        .build();
+                .ingot()
+                .liquid(new FluidBuilder().temperature(5930))
+                .color(0x7D9673).iconSet(METALLIC)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
+                .components(NaquadahEnriched, 4, Trinium, 3, Europium, 2, Duranium, 1)
+                .cableProperties(GTValues.V[GTValues.UV], 16, 0, true, 3)
+                .blast(b -> b
+                        .temp(9900, GasTier.HIGH)
+                        .blastStats(VA[LuV], 1200)
+                        .vacuumStats(VA[UV], 200))
+                .build();
 
-        RutheniumTriniumAmericiumNeutronate = new Material.Builder(432,
+        RutheniumTriniumAmericiumNeutronate = Material.builder(432,
                 gregtechId("ruthenium_trinium_americium_neutronate"))
-                        .ingot()
-                        .liquid(new FluidBuilder().temperature(23691))
-                        .color(0xFFFFFF).iconSet(BRIGHT)
-                        .flags(DECOMPOSITION_BY_ELECTROLYZING)
-                        .components(Ruthenium, 1, Trinium, 2, Americium, 1, Neutronium, 2, Oxygen, 8)
-                        .cableProperties(GTValues.V[GTValues.UHV], 24, 0, true, 3)
-                        .blast(b -> b
-                                .temp(10800, GasTier.HIGHER)
-                                .blastStats(VA[ZPM], 1000)
-                                .vacuumStats(VA[UHV], 200))
-                        .build();
+                .ingot()
+                .liquid(new FluidBuilder().temperature(23691))
+                .color(0xFFFFFF).iconSet(BRIGHT)
+                .flags(DECOMPOSITION_BY_ELECTROLYZING)
+                .components(Ruthenium, 1, Trinium, 2, Americium, 1, Neutronium, 2, Oxygen, 8)
+                .cableProperties(GTValues.V[GTValues.UHV], 24, 0, true, 3)
+                .blast(b -> b
+                        .temp(10800, GasTier.HIGHER)
+                        .blastStats(VA[ZPM], 1000)
+                        .vacuumStats(VA[UHV], 200))
+                .build();
 
-        InertMetalMixture = new Material.Builder(433, gregtechId("inert_metal_mixture"))
+        InertMetalMixture = Material.builder(433, gregtechId("inert_metal_mixture"))
                 .dust()
                 .color(0xE2AE72).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Rhodium, 1, Ruthenium, 1, Oxygen, 4)
                 .build();
 
-        RhodiumSulfate = new Material.Builder(434, gregtechId("rhodium_sulfate"))
+        RhodiumSulfate = Material.builder(434, gregtechId("rhodium_sulfate"))
                 .liquid(new FluidBuilder().temperature(1128))
                 .color(0xEEAA55)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Rhodium, 2, Sulfur, 3, Oxygen, 12)
                 .build().setFormula("Rh2(SO4)3", true);
 
-        RutheniumTetroxide = new Material.Builder(435, gregtechId("ruthenium_tetroxide"))
+        RutheniumTetroxide = Material.builder(435, gregtechId("ruthenium_tetroxide"))
                 .dust()
                 .color(0xC7C7C7)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Ruthenium, 1, Oxygen, 4)
                 .build();
 
-        OsmiumTetroxide = new Material.Builder(436, gregtechId("osmium_tetroxide"))
+        OsmiumTetroxide = Material.builder(436, gregtechId("osmium_tetroxide"))
                 .dust()
                 .color(0xACAD71).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Osmium, 1, Oxygen, 4)
                 .build();
 
-        IridiumChloride = new Material.Builder(437, gregtechId("iridium_chloride"))
+        IridiumChloride = Material.builder(437, gregtechId("iridium_chloride"))
                 .dust()
                 .color(0x013220).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Iridium, 1, Chlorine, 3)
                 .build();
 
-        FluoroantimonicAcid = new Material.Builder(438, gregtechId("fluoroantimonic_acid"))
+        FluoroantimonicAcid = Material.builder(438, gregtechId("fluoroantimonic_acid"))
                 .liquid(new FluidBuilder()
                         .attribute(FluidAttributes.ACID)
                         .customStill())
@@ -1485,80 +1485,80 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Antimony, 1, Fluorine, 7)
                 .build();
 
-        TitaniumTrifluoride = new Material.Builder(439, gregtechId("titanium_trifluoride"))
+        TitaniumTrifluoride = Material.builder(439, gregtechId("titanium_trifluoride"))
                 .dust()
                 .color(0x8F00FF).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Titanium, 1, Fluorine, 3)
                 .build();
 
-        CalciumPhosphide = new Material.Builder(440, gregtechId("calcium_phosphide"))
+        CalciumPhosphide = Material.builder(440, gregtechId("calcium_phosphide"))
                 .dust()
                 .color(0xA52A2A).iconSet(METALLIC)
                 .components(Calcium, 1, Phosphorus, 1)
                 .build();
 
-        IndiumPhosphide = new Material.Builder(441, gregtechId("indium_phosphide"))
+        IndiumPhosphide = Material.builder(441, gregtechId("indium_phosphide"))
                 .dust()
                 .color(0x582E5C).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Indium, 1, Phosphorus, 1)
                 .build();
 
-        BariumSulfide = new Material.Builder(442, gregtechId("barium_sulfide"))
+        BariumSulfide = Material.builder(442, gregtechId("barium_sulfide"))
                 .dust()
                 .color(0xF0EAD6).iconSet(METALLIC)
                 .components(Barium, 1, Sulfur, 1)
                 .build();
 
-        TriniumSulfide = new Material.Builder(443, gregtechId("trinium_sulfide"))
+        TriniumSulfide = Material.builder(443, gregtechId("trinium_sulfide"))
                 .dust()
                 .color(0xE68066).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Trinium, 1, Sulfur, 1)
                 .build();
 
-        ZincSulfide = new Material.Builder(444, gregtechId("zinc_sulfide"))
+        ZincSulfide = Material.builder(444, gregtechId("zinc_sulfide"))
                 .dust()
                 .color(0xFFFFF6).iconSet(DULL)
                 .components(Zinc, 1, Sulfur, 1)
                 .build();
 
-        GalliumSulfide = new Material.Builder(445, gregtechId("gallium_sulfide"))
+        GalliumSulfide = Material.builder(445, gregtechId("gallium_sulfide"))
                 .dust()
                 .color(0xFFF59E).iconSet(SHINY)
                 .components(Gallium, 1, Sulfur, 1)
                 .build();
 
-        AntimonyTrifluoride = new Material.Builder(446, gregtechId("antimony_trifluoride"))
+        AntimonyTrifluoride = Material.builder(446, gregtechId("antimony_trifluoride"))
                 .dust()
                 .color(0xF7EABC).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Antimony, 1, Fluorine, 3)
                 .build();
 
-        EnrichedNaquadahSulfate = new Material.Builder(447, gregtechId("enriched_naquadah_sulfate"))
+        EnrichedNaquadahSulfate = Material.builder(447, gregtechId("enriched_naquadah_sulfate"))
                 .dust()
                 .color(0x2E2E1C).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NaquadahEnriched, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        NaquadriaSulfate = new Material.Builder(448, gregtechId("naquadria_sulfate"))
+        NaquadriaSulfate = Material.builder(448, gregtechId("naquadria_sulfate"))
                 .dust()
                 .color(0x006633).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Naquadria, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        Pyrochlore = new Material.Builder(449, gregtechId("pyrochlore"))
+        Pyrochlore = Material.builder(449, gregtechId("pyrochlore"))
                 .dust().ore()
                 .color(0x2B1100).iconSet(METALLIC)
                 .flags()
                 .components(Calcium, 2, Niobium, 2, Oxygen, 7)
                 .build();
 
-        Inconel718 = new Material.Builder(450, gregtechId("inconel_718"))
+        Inconel718 = Material.builder(450, gregtechId("inconel_718"))
                 .ingot()
                 .color(0x566570).iconSet(SHINY)
                 .components(Nickel, 5, Chrome, 2, Iron, 2, Niobium, 1, Molybdenum, 1)
@@ -1566,7 +1566,7 @@ public class FirstDegreeMaterials {
                         .blastStats(GTValues.VA[HV]))
                 .build();
 
-        RTMAlloy = new Material.Builder(451, gregtechId("rtm_alloy"))
+        RTMAlloy = Material.builder(451, gregtechId("rtm_alloy"))
                 .ingot().fluid()
                 .color(0x30306B).iconSet(SHINY)
                 .components(Ruthenium, 4, Tungsten, 2, Molybdenum, 1)
@@ -1578,7 +1578,7 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[HV], 250))
                 .build();
 
-        IlmeniteSlag = new Material.Builder(452, gregtechId("ilmenite_slag"))
+        IlmeniteSlag = Material.builder(452, gregtechId("ilmenite_slag"))
                 .dust(1)
                 .color(0x8B0000).iconSet(SAND)
                 .build();

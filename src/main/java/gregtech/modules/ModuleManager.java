@@ -421,7 +421,7 @@ public final class ModuleManager implements IModuleManager {
         for (ASMDataTable.ASMData data : dataSet) {
             try {
                 Class<?> clazz = Class.forName(data.getClassName());
-                if (IGregTechModule.class.isAssignableFrom(clazz)) {
+                if (IModuleContainer.class.isAssignableFrom(clazz)) {
                     registerContainer((IModuleContainer) clazz.getConstructor().newInstance());
                 } else {
                     logger.error("Module Container Class {} is not an instanceof IModuleContainer", clazz.getName());

@@ -10,16 +10,16 @@ import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerIngredientProvider;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Interactable, JeiIngredientProvider {
+public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Interactable, RecipeViewerIngredientProvider {
 
     private final CraftingRecipeMemory memory;
     private final int index;
@@ -44,19 +44,19 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         ItemStack itemStack = this.memory.getRecipeOutputAtIndex(this.index);
 
         if (!itemStack.isEmpty()) {
             int cachedCount = itemStack.getCount();
             itemStack.setCount(1); // required to not render the amount overlay
-            RenderUtil.renderItem(itemStack, 1, 1, 16, 16);
+            RenderUtil.drawItemStack(itemStack, 1, 1, true);
             itemStack.setCount(cachedCount);
 
             // noinspection DataFlowIssue
             if (this.memory.getRecipeAtIndex(this.index).isRecipeLocked()) {
                 GlStateManager.disableDepth();
-                GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
+                GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme.getTheme());
                 GlStateManager.enableDepth();
             }
         }

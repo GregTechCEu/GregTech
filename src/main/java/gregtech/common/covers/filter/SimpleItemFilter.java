@@ -24,9 +24,9 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.slot.PhantomItemSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import org.jetbrains.annotations.NotNull;
 
@@ -118,32 +118,31 @@ public class SimpleItemFilter extends BaseFilter {
                         .matrix("XXX",
                                 "XXX",
                                 "XXX")
-                        .key('X', index -> new ItemSlot()
-                                .tooltip(tooltip -> {
-                                    tooltip.setAutoUpdate(true);
-                                    tooltip.textColor(Color.GREY.main);
-                                })
-                                .tooltipBuilder(tooltip -> {
-                                    if (dirtyNotifiable instanceof CoverRoboticArm coverArm &&
-                                            coverArm.getTransferMode() != TransferMode.TRANSFER_ANY ||
-                                            dirtyNotifiable instanceof CoverItemVoidingAdvanced coverItem &&
-                                                    coverItem.getVoidingMode() != VoidingMode.VOID_ANY) {
-                                        tooltip.addLine(IKey.lang("cover.item_filter.config_amount"));
-                                        int count = this.filterReader.getTagAt(index)
-                                                .getInteger(SimpleItemFilterReader.COUNT);
-                                        if (count > 0)
-                                            tooltip.addLine(
-                                                    IKey.str("Count: %s", TextFormattingUtil.formatNumbers(count)));
-                                    }
-                                })
-                                .slot(SyncHandlers.phantomItemSlot(this.filterReader, index)
+                        .key('X', index -> new PhantomItemSlot()
+                                .slot(SyncHandlers.itemSlot(this.filterReader, index)
                                         .ignoreMaxStackSize(true)
                                         .slotGroup(filterInventory)
                                         .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                             if (onlyAmountChanged && !init) {
                                                 markDirty();
                                             }
-                                        })))
+                                        }))
+                                .tooltipAutoUpdate(true)
+                                .tooltipTextColor(Color.GREY.main)
+                                .tooltipBuilder(tooltip -> {
+                                    if (dirtyNotifiable instanceof CoverRoboticArm coverArm &&
+                                            coverArm.getTransferMode() != TransferMode.TRANSFER_ANY ||
+                                            dirtyNotifiable instanceof CoverItemVoidingAdvanced coverItem &&
+                                                    coverItem.getVoidingMode() != VoidingMode.VOID_ANY) {
+                                        int count = this.filterReader.getTagAt(index)
+                                                .getInteger(SimpleItemFilterReader.COUNT);
+                                        if (count > 0) {
+                                            tooltip.addLine(IKey.lang("cover.item_filter.config_amount"));
+                                            tooltip.addLine(
+                                                    IKey.str("Count: %s", TextFormattingUtil.formatNumbers(count)));
+                                        }
+                                    }
+                                }))
                         .build().marginRight(4))
                 .child(Flow.column().width(18).coverChildren()
                         .child(createBlacklistUI())

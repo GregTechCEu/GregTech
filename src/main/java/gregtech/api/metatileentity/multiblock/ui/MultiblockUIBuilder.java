@@ -108,7 +108,7 @@ public class MultiblockUIBuilder {
     }
 
     public MultiblockUIBuilder title(String lang) {
-        addKey(KeyUtil.lang(TextFormatting.WHITE, lang));
+        addOperation(Operation.addLine(KeyUtil.lang(TextFormatting.WHITE, lang)).spaceLine(2));
         return this;
     }
 
