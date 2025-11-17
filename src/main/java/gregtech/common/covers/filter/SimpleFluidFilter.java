@@ -15,8 +15,6 @@ import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
-
 public class SimpleFluidFilter extends BaseFilter {
 
     private static final int MAX_FLUID_SLOTS = 9;
@@ -90,15 +88,6 @@ public class SimpleFluidFilter extends BaseFilter {
             }
         }
         return false;
-    }
-
-    @Override
-    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        for (int i = 0; i < 9; ++i) {
-            widgetGroup.accept((new gregtech.api.gui.widgets.PhantomFluidWidget(10 + 18 * (i % 3), 18 * (i / 3), 18, 18,
-                    filterReader.getFluidTank(i)))
-                            .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT));
-        }
     }
 
     @Override

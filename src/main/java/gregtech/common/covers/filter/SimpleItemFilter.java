@@ -1,9 +1,6 @@
 package gregtech.common.covers.filter;
 
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.widgets.PhantomSlotWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.TextFormattingUtil;
@@ -29,8 +26,6 @@ import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.slot.PhantomItemSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Consumer;
 
 public class SimpleItemFilter extends BaseFilter {
 
@@ -77,19 +72,6 @@ public class SimpleItemFilter extends BaseFilter {
         int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(),
                 stack);
         return getTransferLimit(matchedSlot, transferSize);
-    }
-
-    @Override
-    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        for (int i = 0; i < 9; i++) {
-            widgetGroup.accept(new PhantomSlotWidget(filterReader, i, 10 + 18 * (i % 3), 18 * (i / 3))
-                    .setBackgroundTexture(GuiTextures.SLOT));
-        }
-        widgetGroup.accept(new ToggleButtonWidget(74, 0, 20, 20, GuiTextures.BUTTON_FILTER_DAMAGE,
-                filterReader::isIgnoreDamage, filterReader::setIgnoreDamage)
-                        .setTooltipText("cover.item_filter.ignore_damage"));
-        widgetGroup.accept(new ToggleButtonWidget(99, 0, 20, 20, GuiTextures.BUTTON_FILTER_NBT,
-                filterReader::isIgnoreNBT, filterReader::setIgnoreNBT).setTooltipText("cover.item_filter.ignore_nbt"));
     }
 
     @Override
