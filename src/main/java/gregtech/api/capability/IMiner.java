@@ -5,8 +5,8 @@ import gregtech.common.mui.widget.ScrollableTextWidget;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.vec.Cuboid6;
+import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.drawable.UITexture;
-import com.cleanroommc.modularui.drawable.text.RichText;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -39,7 +39,7 @@ public interface IMiner {
     default Widget<?> createMinerWidgets(@NotNull PanelSyncManager panelSyncManager,
                                          @NotNull IItemHandlerModifiable inventory, int inventorySize,
                                          @NotNull UITexture textDisplayBackground,
-                                         @NotNull Consumer<RichText> textBuilder) {
+                                         @NotNull Consumer<IRichTextBuilder<?>> textBuilder) {
         int rowSize = (int) Math.sqrt(inventorySize);
         panelSyncManager.registerSlotGroup("export_items", rowSize);
 
