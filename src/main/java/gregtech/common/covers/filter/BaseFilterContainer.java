@@ -206,15 +206,15 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
             getFilter().getFilterReader().handleLegacyNBT(nbt);
     }
 
+    public IPanelHandler getFilterHandler(PanelSyncManager syncManager) {
+        if (hasFilter()) {
+            return getFilter().createPanelHandler(syncManager);
+        }
+        return BaseFilter.ERROR_FILTER.createPanelHandler(syncManager);
+    }
+
     /** Uses Cleanroom MUI */
     public IWidget initUI(GuiData data, PanelSyncManager manager) {
-        IPanelHandler panel = manager.panel("filter_panel", (syncManager, syncHandler) -> {
-            if (hasFilter()) {
-                return getFilter().createPopupPanel(syncManager);
-            }
-            return BaseFilter.ERROR_FILTER.createPopupPanel(syncManager);
-        }, true);
-
         return Flow.row().coverChildrenHeight()
                 .marginBottom(2).widthRel(1f)
                 .child(new ItemSlot()
@@ -222,6 +222,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                                 .filter(this::isItemValid)
                                 .singletonSlotGroup(101)
                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                    IPanelHandler panel = getFilterHandler(manager);
                                     if (!isItemValid(newItem) || (newItem.isEmpty() && panel.isPanelOpen())) {
                                         panel.closePanel();
                                     }
@@ -234,6 +235,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                                 GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
                         .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
+                            IPanelHandler panel = getFilterHandler(manager);
                             if (!panel.isPanelOpen()) {
                                 setMaxTransferSize(getMaxTransferSize());
                                 panel.openPanel();

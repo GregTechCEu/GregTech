@@ -6,6 +6,7 @@ import gregtech.api.util.IDirtyNotifiable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
@@ -26,6 +27,11 @@ public interface IFilter {
 
     @NotNull
     Widget<?> createWidgets(PanelSyncManager syncManager);
+
+    default IPanelHandler createPanelHandler(PanelSyncManager syncManager) {
+        return syncManager.panel(getContainerStack().getTranslationKey(), (syncManager1, syncHandler) ->
+                createPopupPanel(syncManager).child(createWidgets(syncManager)), true);
+    }
 
     ItemStack getContainerStack();
 
