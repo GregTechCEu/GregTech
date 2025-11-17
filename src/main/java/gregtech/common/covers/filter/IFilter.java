@@ -12,12 +12,7 @@ import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
-
 public interface IFilter {
-
-    @Deprecated
-    default void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {}
 
     /** Uses Cleanroom MUI */
     @NotNull

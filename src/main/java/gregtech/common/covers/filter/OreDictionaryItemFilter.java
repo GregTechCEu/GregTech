@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public class OreDictionaryItemFilter extends BaseFilter {
 
@@ -69,9 +68,6 @@ public class OreDictionaryItemFilter extends BaseFilter {
         this.matchCache.clear();
         this.noOreDictMatch.clear();
     }
-
-    @Override
-    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {}
 
     @Override
     public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
