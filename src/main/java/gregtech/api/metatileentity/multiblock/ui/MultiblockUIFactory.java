@@ -359,7 +359,7 @@ public class MultiblockUIFactory {
             parent.child(new ScrollableTextWidget()
                     .debugName("display_text")
                     .sizeRel(1f)
-                    .alignment(Alignment.Center)
+                    .alignment(Alignment.TopLeft)
                     .margin(4)
                     .autoUpdate(true)
                     .textBuilder(display::build));
