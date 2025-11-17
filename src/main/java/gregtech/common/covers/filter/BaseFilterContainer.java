@@ -232,6 +232,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         });
         ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingItemDamageCount();
 
+        // todo could i use a dynamic synced widget for this row?
         return Flow.row().coverChildrenHeight()
                 .marginBottom(2).widthRel(1f)
                 .child(new ItemSlot()
