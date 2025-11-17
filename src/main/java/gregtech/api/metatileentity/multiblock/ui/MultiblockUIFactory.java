@@ -305,7 +305,7 @@ public class MultiblockUIFactory {
                 .widthRel(1f)
                 .height(Bars.HEIGHT * calculatedRows);
 
-        List<UnaryOperator<TemplateBarBuilder>> barBuilders = new ArrayList<>(progressMulti.getProgressBarCount());
+        List<UnaryOperator<ProgressWidget>> barBuilders = new ArrayList<>(progressMulti.getProgressBarCount());
         progressMulti.registerBars(barBuilders, panelSyncManager);
 
         for (int r = 0; r < calculatedRows; r++) {
@@ -330,8 +330,7 @@ public class MultiblockUIFactory {
                 ProgressWidget widget;
                 if (i < barBuilders.size()) {
                     widget = barBuilders.get(i)
-                            .apply(new TemplateBarBuilder())
-                            .build();
+                            .apply(new ProgressWidget());
                 } else {
                     widget = new ProgressWidget()
                             .addTooltipLine("Error! no bar for index: " + i)

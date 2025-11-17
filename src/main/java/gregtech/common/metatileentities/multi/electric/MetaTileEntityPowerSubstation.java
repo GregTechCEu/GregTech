@@ -15,7 +15,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
-import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -55,6 +54,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.BigIntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -578,7 +578,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
+    public void registerBars(List<UnaryOperator<ProgressWidget>> bars, PanelSyncManager syncManager) {
         BigIntSyncValue energyStoredValue = new BigIntSyncValue(
                 () -> energyBank == null ? BigInteger.ZERO : energyBank.getStored(), null);
         BigIntSyncValue energyCapacityValue = new BigIntSyncValue(
@@ -586,11 +586,11 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         syncManager.syncValue("energy_stored", energyStoredValue);
         syncManager.syncValue("energy_capacity", energyCapacityValue);
 
-        bars.add(b -> b.progress(() -> {
+        bars.add(progressWidget -> progressWidget.progress(() -> {
             if (energyCapacityValue.getValue().equals(BigInteger.ZERO)) return 0;
             return energyStoredValue.getValue().divide(energyCapacityValue.getValue()).doubleValue();
         })
-                .texture(GTGuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW)
+                .texture(GTGuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW, -1)
                 .tooltipBuilder(t -> {
                     if (isStructureFormed()) {
                         t.addLine(IKey.lang("gregtech.multiblock.energy_stored", energyStoredValue.getValue(),
