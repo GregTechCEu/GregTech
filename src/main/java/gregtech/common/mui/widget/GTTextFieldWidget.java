@@ -19,7 +19,6 @@ import com.cleanroommc.modularui.widgets.textfield.TextFieldRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.text.ParsePosition;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
@@ -254,10 +253,6 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
                 text += postFix.getFormatted();
             }
             super.draw(text, x, y);
-        }
-
-        private static boolean isNumber(String text) {
-            return !BaseTextFieldWidget.LETTERS.matcher(text).matches();
         }
 
         public void setPostFix(@NotNull IKey postFix) {
