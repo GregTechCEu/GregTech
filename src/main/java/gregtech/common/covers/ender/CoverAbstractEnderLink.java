@@ -174,8 +174,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                         .child(createPrivateButton(uuid))
                         .child(createColorIcon())
                         .child(new TextFieldWidget()
-                                // todo remove 'keepScrollBarInArea' when this is fixed in mui2
-                                .keepScrollBarInArea(true)
                                 .height(18)
                                 .value(name)
                                 .setTextColor(Color.WHITE.main)

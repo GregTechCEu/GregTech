@@ -6,7 +6,6 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.mui.widget.GTTextFieldWidget;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -27,10 +26,12 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 
 public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements CoverWithUI {
@@ -86,7 +87,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager syncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager syncManager, UISettings settings) {
         return GTGuis.defaultPanel(this)
                 .height(202)
                 .child(CoverWithUI.createTitleRow(getPickItem()))
@@ -132,7 +133,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
                 .bindPlayerInventory();
     }
 
-    private void updateWidget(GTTextFieldWidget w) {
+    private void updateWidget(TextFieldWidget w) {
         w.setMaxLength(getLength());
         w.setNumbers(0, isUsePercent() ? 100 : Integer.MAX_VALUE);
     }

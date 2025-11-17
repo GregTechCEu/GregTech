@@ -4,12 +4,11 @@ import gregtech.api.util.GTLog;
 
 import net.minecraft.client.renderer.GlStateManager;
 
-import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.value.IStringValue;
+import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTextFieldTheme;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.TextFieldTheme;
 import com.cleanroommc.modularui.utils.MathUtils;
 import com.cleanroommc.modularui.utils.ParseResult;
 import com.cleanroommc.modularui.value.StringValue;
@@ -31,6 +30,7 @@ import java.util.function.LongUnaryOperator;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
+// todo text is rendering incorrectly, figure out why
 public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
 
     private IStringValue<?> stringValue;
@@ -72,11 +72,7 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
     }
 
     public int getMarkedColor() {
-        WidgetTheme theme = getWidgetTheme(getContext().getTheme());
-        if (theme instanceof WidgetTextFieldTheme textFieldTheme) {
-            return textFieldTheme.getMarkedColor();
-        }
-        return ITheme.getDefault().getTextFieldTheme().getMarkedColor();
+        return getWidgetTheme(getContext().getTheme()).getTheme().getTextColor();
     }
 
     @Override
@@ -105,20 +101,22 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
     }
 
     @Override
-    public void drawText(ModularGuiContext context) {
+    protected void drawText(ModularGuiContext context, TextFieldTheme widgetTheme) {
         this.renderer.setSimulate(false);
-        this.renderer.setPos(getArea().getPadding().left, 0);
+        this.renderer.setPos(getArea().getPadding().getLeft(), 0);
         this.renderer.setScale(this.scale);
         this.renderer.setAlignment(this.textAlignment, -1, getArea().height);
         this.renderer.draw(this.handler.getText());
-        getScrollData().setScrollSize(Math.max(0, (int) this.renderer.getLastWidth()));
+        getScrollData().setScrollSize(Math.max(0, (int) (this.renderer.getLastActualWidth() + 0.5f)));
     }
 
     @Override
     public void drawForeground(ModularGuiContext context) {
-        if (hasTooltip() && getScrollData().isScrollBarActive(getScrollArea()) &&
-                isHoveringFor(getTooltip().getShowUpTimer())) {
-            getTooltip().draw(getContext());
+        RichTooltip tooltip = getTooltip();
+        if (tooltip != null &&
+                getScrollData().isScrollBarActive(getScrollArea()) &&
+                isHoveringFor(tooltip.getShowUpTimer())) {
+            tooltip.draw(getContext());
         }
     }
 
@@ -189,7 +187,6 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
 
     public GTTextFieldWidget setTextColor(int textColor) {
         this.renderer.setColor(textColor);
-        this.changedTextColor = true;
         return this;
     }
 
