@@ -10,7 +10,6 @@ import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.KeyManager;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
-import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
 import gregtech.api.metatileentity.multiblock.ui.UISyncer;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
@@ -539,7 +538,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
+    public void registerBars(List<UnaryOperator<ProgressWidget>> bars, PanelSyncManager syncManager) {
         IntSyncValue currentCWUtValue = new IntSyncValue(() -> hpcaHandler.cachedCWUt);
         IntSyncValue maxCWUtValue = new IntSyncValue(hpcaHandler::getMaxCWUt);
         syncManager.syncValue("current_cwut", currentCWUtValue);
@@ -547,9 +546,9 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
         DoubleSyncValue temperatureValue = new DoubleSyncValue(() -> temperature);
         syncManager.syncValue("temperature", temperatureValue);
 
-        bars.add(barTest -> barTest
+        bars.add(progressWidget -> progressWidget
                 .progress(() -> 1.0 * currentCWUtValue.getIntValue() / maxCWUtValue.getIntValue())
-                .texture(GTGuiTextures.PROGRESS_BAR_HPCA_COMPUTATION)
+                .texture(GTGuiTextures.PROGRESS_BAR_HPCA_COMPUTATION, -1)
                 .tooltipBuilder(t -> {
                     if (isStructureFormed()) {
                         t.addLine(IKey.lang("gregtech.multiblock.hpca.computation",
@@ -559,9 +558,9 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                     }
                 }));
 
-        bars.add(barTest -> barTest
+        bars.add(progressWidget -> progressWidget
                 .progress(() -> Math.min(1.0, temperatureValue.getDoubleValue() / DAMAGE_TEMPERATURE))
-                .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT)
+                .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT, -1)
                 .tooltipBuilder(t -> {
                     if (isStructureFormed()) {
                         double temp = temperatureValue.getDoubleValue();

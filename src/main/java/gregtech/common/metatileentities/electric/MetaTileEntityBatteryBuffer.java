@@ -149,7 +149,7 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         int rowSize = (int) Math.sqrt(inventorySize);
         int colSize = rowSize;
         if (inventorySize == 8) {
@@ -157,7 +157,7 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
             colSize = 2;
         }
 
-        guiSyncManager.registerSlotGroup("item_inv", rowSize);
+        panelSyncManager.registerSlotGroup("item_inv", rowSize);
 
         int index = 0;
         List<List<IWidget>> widgets = new ArrayList<>();

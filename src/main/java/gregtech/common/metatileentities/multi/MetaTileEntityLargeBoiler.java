@@ -12,7 +12,6 @@ import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.KeyManager;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
-import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
 import gregtech.api.metatileentity.multiblock.ui.UISyncer;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
@@ -53,6 +52,7 @@ import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
@@ -414,16 +414,16 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
+    public void registerBars(List<UnaryOperator<ProgressWidget>> bars, PanelSyncManager syncManager) {
         IntSyncValue waterFilledValue = new IntSyncValue(this::getWaterFilled);
         IntSyncValue waterCapacityValue = new IntSyncValue(this::getWaterCapacity);
         syncManager.syncValue("water_filled", waterFilledValue);
         syncManager.syncValue("water_capacity", waterCapacityValue);
 
-        bars.add(barTest -> barTest
+        bars.add(progressWidget -> progressWidget
                 .progress(() -> waterCapacityValue.getIntValue() == 0 ? 0 :
                         waterFilledValue.getIntValue() * 1.0 / waterCapacityValue.getIntValue())
-                .texture(GTGuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION)
+                .texture(GTGuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION, -1)
                 .tooltipBuilder(tooltip -> {
                     if (isStructureFormed()) {
                         if (waterFilledValue.getIntValue() == 0) {

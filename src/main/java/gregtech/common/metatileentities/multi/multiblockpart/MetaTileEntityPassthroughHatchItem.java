@@ -141,10 +141,10 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         int rowSize = (int) Math.sqrt(getInventorySize());
 
-        guiSyncManager.registerSlotGroup("item_inv", rowSize);
+        panelSyncManager.registerSlotGroup("item_inv", rowSize);
 
         int backgroundWidth = 9 * 18 + 14;
         int backgroundHeight = 18 + 18 * rowSize + 94;

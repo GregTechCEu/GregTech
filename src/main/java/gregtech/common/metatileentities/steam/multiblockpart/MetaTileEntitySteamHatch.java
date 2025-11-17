@@ -141,8 +141,8 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        guiSyncManager.registerSlotGroup("item_inv", 2);
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+        panelSyncManager.registerSlotGroup("item_inv", 2);
 
         GTFluidSyncHandler tankSyncHandler = GTFluidSlot.sync(this.importFluids.getTankAt(0))
                 .showAmountOnSlot(false);

@@ -504,17 +504,17 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         var panel = GTGuis.createPanel(this, 176, 192 + 18);
 
         getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(createUI(guiData, guiSyncManager))
+                .child(createUI(guiData, panelSyncManager))
                 .bindPlayerInventory();
     }
 
-    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
+    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager panelSyncManager) {
         var column = Flow.column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight();
 
@@ -532,10 +532,10 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         EnumSyncValue<DistributionMode> distributionMode = new EnumSyncValue<>(DistributionMode.class,
                 this::getDistributionMode, this::setDistributionMode);
 
-        guiSyncManager.syncValue("manual_io", manualIOmode);
-        guiSyncManager.syncValue("conveyor_mode", conveyorMode);
-        guiSyncManager.syncValue("distribution_mode", distributionMode);
-        guiSyncManager.syncValue("throughput", throughput);
+        panelSyncManager.syncValue("manual_io", manualIOmode);
+        panelSyncManager.syncValue("conveyor_mode", conveyorMode);
+        panelSyncManager.syncValue("distribution_mode", distributionMode);
+        panelSyncManager.syncValue("throughput", throughput);
 
         if (createThroughputRow())
             column.child(Flow.row().coverChildrenHeight()
@@ -564,7 +564,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
 
         if (createFilterRow())
-            column.child(getItemFilterContainer().initUI(data, guiSyncManager));
+            column.child(getItemFilterContainer().initUI(data, panelSyncManager));
 
         if (createManualIOModeRow())
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)

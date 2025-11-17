@@ -230,7 +230,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         return GTGuis.createPanel(this, 176, 224)
                 .child(Flow.row()
-                        .debugName("tab row")
+                        .name("tab row")
                         .widthRel(1f)
                         .leftRel(0.5f)
                         .margin(3, 0)
@@ -257,10 +257,10 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .coverChildrenHeight()
                         // workstation page
                         .addPage(Flow.column()
-                                .debugName("crafting page")
+                                .name("crafting page")
                                 .coverChildrenWidth()
                                 .child(Flow.row()
-                                        .debugName("crafting row")
+                                        .name("crafting row")
                                         .coverChildrenHeight()
                                         .widthRel(1f)
                                         // crafting grid
@@ -365,7 +365,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     public IWidget createInventoryPage(PanelSyncManager syncManager) {
         if (this.connectedInventory.getSlots() == 0) {
             return Flow.column()
-                    .debugName("inventory page - empty")
+                    .name("inventory page - empty")
                     .leftRel(0.5f)
                     .padding(2)
                     .height(18 * 6)
@@ -404,7 +404,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         });
 
         return Flow.column()
-                .debugName("inventory page")
+                .name("inventory page")
                 .padding(2)
                 .leftRel(0.5f)
                 .coverChildren()

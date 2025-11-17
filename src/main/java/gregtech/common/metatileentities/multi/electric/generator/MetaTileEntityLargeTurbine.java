@@ -9,7 +9,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
-import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.FixedIntArraySyncValue;
 import gregtech.api.pattern.BlockPattern;
@@ -35,6 +34,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -271,7 +271,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     }
 
     @Override
-    public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
+    public void registerBars(List<UnaryOperator<ProgressWidget>> bars, PanelSyncManager syncManager) {
         FixedIntArraySyncValue fuelValue = new FixedIntArraySyncValue(this::getFuelAmount, null);
         StringSyncValue fuelNameValue = new StringSyncValue(() -> {
             FluidStack stack = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getInputFluidStack();
@@ -323,16 +323,16 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
         syncManager.syncValue("rotor_durability", durabilityValue);
         syncManager.syncValue("rotor_efficiency", efficiencyValue);
 
-        bars.add(barTest -> barTest
+        bars.add(progressWidget -> progressWidget
                 .progress(() -> fuelValue.getValue(1) == 0 ? 0 :
                         1.0 * fuelValue.getValue(0) / fuelValue.getValue(1))
-                .texture(GTGuiTextures.PROGRESS_BAR_LCE_FUEL)
+                .texture(GTGuiTextures.PROGRESS_BAR_LCE_FUEL, -1)
                 .tooltipBuilder(t -> createFuelTooltip(t, fuelValue, fuelNameValue)));
 
-        bars.add(barTest -> barTest
+        bars.add(progressWidget -> progressWidget
                 .progress(() -> rotorMaxSpeedValue.getIntValue() == 0 ? 0 :
                         1.0 * rotorSpeedValue.getIntValue() / rotorMaxSpeedValue.getIntValue())
-                .texture(GTGuiTextures.PROGRESS_BAR_TURBINE_ROTOR_SPEED)
+                .texture(GTGuiTextures.PROGRESS_BAR_TURBINE_ROTOR_SPEED, -1)
                 .tooltipBuilder(t -> {
                     if (isStructureFormed()) {
                         int speed = rotorSpeedValue.getIntValue();
@@ -345,9 +345,9 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                     }
                 }));
 
-        bars.add(barTest -> barTest
+        bars.add(progressWidget -> progressWidget
                 .progress(() -> durabilityValue.getIntValue() / 100.0)
-                .texture(GTGuiTextures.PROGRESS_BAR_TURBINE_ROTOR_DURABILITY)
+                .texture(GTGuiTextures.PROGRESS_BAR_TURBINE_ROTOR_DURABILITY, -1)
                 .tooltipBuilder(t -> {
                     if (isStructureFormed()) {
                         if (efficiencyValue.getIntValue() <= 0) {

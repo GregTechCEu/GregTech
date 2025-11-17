@@ -74,15 +74,15 @@ public class CoverItemVoiding extends CoverConveyor {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        return super.buildUI(guiData, guiSyncManager, settings).height(192 - 22);
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+        return super.buildUI(guiData, panelSyncManager, settings).height(192 - 22);
     }
 
     @Override
-    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
+    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager panelSyncManager) {
         var isWorking = new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled);
 
-        return super.createUI(data, guiSyncManager)
+        return super.createUI(data, panelSyncManager)
                 .child(Flow.row().height(18).widthRel(1f)
                         .marginBottom(2)
                         .child(new ToggleButton()
