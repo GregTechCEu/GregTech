@@ -20,11 +20,13 @@ import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.TextFieldTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.theme.WidgetThemeEntry;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.HoveredWidgetList;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.ScrollArea;
 import com.cleanroommc.modularui.widget.scroll.ScrollData;
 import com.cleanroommc.modularui.widget.sizer.Area;
+import com.cleanroommc.modularui.widget.sizer.Box;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,13 +37,13 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
                                   RecipeViewerIngredientProvider {
 
     private final RichText text = new RichText();
-    private Consumer<RichText> builder;
+    private Consumer<IRichTextBuilder<?>> builder;
     private boolean dirty = false;
     private boolean autoUpdate = false;
     private Object lastIngredient;
 
     private final ScrollArea scroll = new ScrollArea();
-    private final TextRenderer renderer = new TextRenderer();
+    private final TextRenderer renderer = new ScrollingTextRenderer();
 
     public ScrollableTextWidget() {
         listenGuiAction((IGuiAction.MouseReleased) mouseButton -> {
@@ -176,14 +178,27 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
             this.dirty = false;
         }
 
-        TextFieldTheme textFieldTheme = context.getTheme().getTextFieldTheme().getTheme();
-        this.text.setupRenderer(this.renderer, getArea().getPadding().getLeft(),
-                getArea().getPadding().getTop() - getScrollY(), getArea().paddedWidth(), getArea().paddedHeight(),
-                textFieldTheme.getTextColor(), textFieldTheme.getTextShadow());
-        this.text.compileAndDraw(this.renderer, context, false);
+        Alignment alignment = this.text.getAlignment();
+        Area area = getArea();
+        Box padding = area.getPadding();
+        WidgetThemeEntry<TextFieldTheme> textThemeEntry = context.getTheme().getTextFieldTheme();
+        TextFieldTheme textTheme = textThemeEntry.getTheme();
+
+        this.text.compileAndDraw(this.renderer, context, true);
+
         // this isn't perfect, but i hope it's good enough
-        int diff = (int) Math.ceil((this.renderer.getLastTrimmedHeight() - getArea().h()) / 2);
-        this.scroll.getScrollY().setScrollSize(getArea().h() + Math.max(0, diff));
+        int diff = (int) Math.ceil((this.renderer.getLastTrimmedHeight() - area.h()) / 2);
+        this.scroll.getScrollY().setScrollSize(area.h() + Math.max(0, diff));
+
+        // this is responsible for centering the text if there's not enough to scroll
+        int x = padding.getLeft();
+        int y = (int) (area.h() * alignment.y);
+        y -= (int) (this.renderer.getLastTrimmedHeight() * alignment.y);
+        y = Math.min(Math.max(padding.getTop(), y), area.h() - padding.getBottom());
+        this.text.setupRenderer(this.renderer, x, y - getScrollY(), area.paddedWidth(), area.paddedHeight(),
+                textTheme.getTextColor(), textTheme.getTextShadow());
+
+        this.text.compileAndDraw(this.renderer, context, false);
     }
 
     @Override
@@ -222,7 +237,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
      * @param builder text builder
      * @return this
      */
-    public ScrollableTextWidget textBuilder(Consumer<RichText> builder) {
+    public ScrollableTextWidget textBuilder(Consumer<IRichTextBuilder<?>> builder) {
         this.builder = builder;
         markDirty();
         return this;
@@ -231,5 +246,26 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     @Override
     public @Nullable Object getIngredient() {
         return this.lastIngredient;
+    }
+
+    public static class ScrollingTextRenderer extends TextRenderer {
+
+        @Override
+        protected int getStartX(float maxWidth, float lineWidth) {
+            return super.getStartX(this.maxWidth, lineWidth);
+        }
+
+        public int getLastY() {
+            return (int) lastY;
+        }
+
+        public int getLastX() {
+            return (int) lastX;
+        }
+
+        @Override
+        protected int getStartY(float height) {
+            return this.y; // always draw at the top
+        }
     }
 }
