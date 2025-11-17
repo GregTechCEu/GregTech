@@ -163,13 +163,16 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     private void setUsePercent(boolean b) {
         this.usePercent = b;
 
+        long minValue, maxValue;
         if (this.usePercent) { // using percent
-            this.minValue = (long) Math.ceil(((double) this.minValue / getCoverHolderCapacity()) * 100d);
-            this.maxValue = (long) Math.ceil(((double) this.maxValue / getCoverHolderCapacity()) * 100d);
+            minValue = (long) Math.ceil(((double) this.minValue / getCoverHolderCapacity()) * 100d);
+            maxValue = (long) Math.ceil(((double) this.maxValue / getCoverHolderCapacity()) * 100d);
         } else { // using discrete EU
-            this.minValue = (long) Math.floor((this.minValue / 100d) * getCoverHolderCapacity());
-            this.maxValue = (long) Math.floor((this.maxValue / 100d) * getCoverHolderCapacity());
+            minValue = (long) Math.floor((this.minValue / 100d) * getCoverHolderCapacity());
+            maxValue = (long) Math.floor((this.maxValue / 100d) * getCoverHolderCapacity());
         }
+        this.minValue = clamp(minValue, 0, maxValue - 1);
+        this.maxValue = clamp(maxValue, minValue + 1, isUsePercent() ? 100 : Integer.MAX_VALUE);
     }
 
     private String getPostFix() {
