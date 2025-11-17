@@ -18,8 +18,10 @@ import com.cleanroommc.modularui.widgets.textfield.TextFieldHandler;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.input.Keyboard;
 
 import java.text.ParsePosition;
+import java.util.function.Consumer;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
@@ -37,6 +39,7 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
     private double defaultNumber = 0;
     private boolean tooltipOverride = false;
     private final GTTextFieldRenderer renderer;
+    private Consumer<String> onTextAccept = null;
 
     public GTTextFieldWidget() {
         this.renderer = new GTTextFieldRenderer(this.handler);
@@ -92,6 +95,19 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
     }
 
     @Override
+    public @NotNull Result onKeyPressed(char character, int keyCode) {
+        Result result = super.onKeyPressed(character, keyCode);
+        if (result == Result.SUCCESS) switch (keyCode) {
+            case Keyboard.KEY_RETURN, Keyboard.KEY_NUMPADENTER -> {
+                if (this.onTextAccept != null) {
+                    this.onTextAccept.accept(getText());
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
     public void drawForeground(ModularGuiContext context) {
         RichTooltip tooltip = getTooltip();
         if (tooltip != null &&
@@ -113,6 +129,14 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
     public GTTextFieldWidget setPostFix(IKey postFix) {
         this.renderer.setPostFix(postFix);
         return getThis();
+    }
+
+    /**
+     * @param onTextAccept Called when {@link Keyboard#KEY_RETURN} or {@link Keyboard#KEY_NUMPADENTER} is pressed.
+     */
+    public GTTextFieldWidget onTextAccept(Consumer<String> onTextAccept) {
+        this.onTextAccept = onTextAccept;
+        return this;
     }
 
     @NotNull
