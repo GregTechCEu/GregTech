@@ -250,6 +250,11 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
 
     public static class ScrollingTextRenderer extends TextRenderer {
 
+        @Override
+        protected int getStartX(float maxWidth, float lineWidth) {
+            return super.getStartX(this.maxWidth, lineWidth);
+        }
+
         public int getLastY() {
             return (int) lastY;
         }
