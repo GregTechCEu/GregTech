@@ -11,6 +11,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
@@ -149,7 +150,7 @@ public abstract class CoverDetectorBase extends CoverBase {
      * @return Capped value of either parsed result or {@code fallbackValue}
      */
     protected final int clamp(int val, int minValue, int maxValue) {
-        return Math.min(Math.max(val, minValue), maxValue);
+        return MathHelper.clamp(val, minValue, maxValue);
     }
 
     protected static Flow createMinMaxRow(@NotNull String lang, @NotNull LongSupplier getter,
