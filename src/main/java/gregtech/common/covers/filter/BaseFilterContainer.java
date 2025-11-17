@@ -3,6 +3,7 @@ package gregtech.common.covers.filter;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
+import gregtech.api.util.ItemStackHashStrategy;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,6 +25,9 @@ import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class BaseFilterContainer extends ItemStackHandler {
 
@@ -206,16 +210,27 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
             getFilter().getFilterReader().handleLegacyNBT(nbt);
     }
 
-    public IPanelHandler getFilterHandler(PanelSyncManager syncManager) {
+    public IPanelHandler getFilterHandler(PanelSyncManager syncManager, int id) {
         if (hasFilter()) {
-            return getFilter().createPanelHandler(syncManager);
+            return getFilter().createPanelHandler(syncManager, id);
         }
-        return BaseFilter.ERROR_FILTER.createPanelHandler(syncManager);
+        return BaseFilter.ERROR_FILTER.createPanelHandler(syncManager, id);
     }
 
     /** Uses Cleanroom MUI */
     public IWidget initUI(GuiData data, PanelSyncManager manager) {
-        IPanelHandler panel = getFilterHandler(manager);
+        // i bet brachy is gonna really hate this, but it *does* work
+        AtomicReference<IPanelHandler> test = new AtomicReference<>(getFilterHandler(manager, 0));
+        AtomicInteger counter = new AtomicInteger(1);
+        AtomicReference<ItemStack> oldStack = new AtomicReference<>(getFilterStack());
+        manager.registerSyncedAction("update_filter_panel", packet -> {
+            if (hasFilter()) {
+                oldStack.set(getFilterStack());
+                // make new panel handler only when we have a filter
+                test.set(getFilterHandler(manager, counter.getAndIncrement()));
+            }
+        });
+        ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingItemDamageCount();
 
         return Flow.row().coverChildrenHeight()
                 .marginBottom(2).widthRel(1f)
@@ -224,8 +239,13 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                                 .filter(this::isItemValid)
                                 .singletonSlotGroup(101)
                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                    if (!isItemValid(newItem) || (newItem.isEmpty() && panel.isPanelOpen())) {
+                                    IPanelHandler panel = test.get();
+                                    if (!isItemValid(newItem) ||
+                                            (!strategy.equals(oldStack.get(), newItem) && panel.isPanelOpen())) {
                                         panel.closePanel();
+                                    }
+                                    if (!init && client && !strategy.equals(oldStack.get(), newItem)) {
+                                        manager.callSyncedAction("update_filter_panel", packetBuffer -> {});
                                     }
                                 }))
                         .size(18).marginRight(2)
@@ -236,6 +256,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                                 GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
                         .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
+                            IPanelHandler panel = test.get();
                             if (!panel.isPanelOpen()) {
                                 setMaxTransferSize(getMaxTransferSize());
                                 panel.openPanel();
