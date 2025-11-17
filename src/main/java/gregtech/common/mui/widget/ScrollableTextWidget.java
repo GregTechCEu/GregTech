@@ -181,7 +181,8 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
         Alignment alignment = this.text.getAlignment();
         Area area = getArea();
         Box padding = area.getPadding();
-        WidgetTheme widgetTheme = getWidgetTheme(context.getTheme());
+        WidgetThemeEntry<TextFieldTheme> textThemeEntry = context.getTheme().getTextFieldTheme();
+        TextFieldTheme textTheme = textThemeEntry.getTheme();
 
         this.text.compileAndDraw(this.renderer, context, true);
 
@@ -190,13 +191,12 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
         this.scroll.getScrollY().setScrollSize(area.h() + Math.max(0, diff));
 
         // this is responsible for centering the text if there's not enough to scroll
-        int x = padding.left;
+        int x = padding.getLeft();
         int y = (int) (area.h() * alignment.y);
-        y -= (int) (this.renderer.getLastHeight() * alignment.y);
-        y = Math.min(Math.max(padding.top, y), area.h() - padding.bottom);
-        this.text.setupRenderer(this.renderer, x, y - getScrollY(),
-                area.paddedWidth(), area.paddedHeight(),
-                widgetTheme.getTextColor(), widgetTheme.getTextShadow());
+        y -= (int) (this.renderer.getLastTrimmedHeight() * alignment.y);
+        y = Math.min(Math.max(padding.getTop(), y), area.h() - padding.getBottom());
+        this.text.setupRenderer(this.renderer, x, y - getScrollY(), area.paddedWidth(), area.paddedHeight(),
+                textTheme.getTextColor(), textTheme.getTextShadow());
 
         this.text.compileAndDraw(this.renderer, context, false);
     }
