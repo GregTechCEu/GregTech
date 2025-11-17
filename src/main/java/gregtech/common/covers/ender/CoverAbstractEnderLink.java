@@ -11,6 +11,7 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.util.virtualregistry.EntryTypes;
 import gregtech.api.util.virtualregistry.VirtualEnderRegistry;
 import gregtech.api.util.virtualregistry.VirtualEntry;
+import gregtech.common.mui.widget.GTTextFieldWidget;
 import gregtech.common.mui.widget.InteractableText;
 import gregtech.integration.ftb.utility.FTBTeamHelper;
 
@@ -49,7 +50,6 @@ import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -339,21 +339,13 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .asWidget()
                             .left(4)
                             .top(6))
-                    .child(new TextFieldWidget() {
-
-                        // todo move this to new class?
-                        @Override
-                        public @NotNull Result onKeyPressed(char character, int keyCode) {
-                            var result = super.onKeyPressed(character, keyCode);
-                            if (result == Result.SUCCESS && keyCode == Keyboard.KEY_RETURN) {
-                                sync.setStringValue(getText());
+                    .child(new GTTextFieldWidget()
+                            .onTextAccept(string -> {
                                 if (syncHandler.isPanelOpen()) {
                                     syncHandler.closePanel();
                                 }
-                            }
-                            return result;
-                        }
-                    }.setTextColor(Color.WHITE.darker(1))
+                            })
+                            .setTextColor(Color.WHITE.darker(1))
                             .value(sync)
                             .widthRel(0.95f)
                             .height(18)
