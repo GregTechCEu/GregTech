@@ -20,6 +20,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.gui.widget.prospector.widget.WidgetOreList;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
+import gregtech.common.mui.widget.GTTextFieldWidget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -75,7 +76,6 @@ import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -534,7 +534,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
                                     slotValue.setIntValue(s);
                                     return true;
                                 }))
-                        .child(new TextFieldWidget()
+                        .child(new GTTextFieldWidget()
                                 .setNumbers(0, Integer.MAX_VALUE)
                                 .value(new StringValue.Dynamic(
                                         () -> String.valueOf(slotValue.getIntValue()),

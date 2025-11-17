@@ -2,13 +2,10 @@ package gregtech.common.mui.widget;
 
 import gregtech.api.util.GTLog;
 
-import net.minecraft.client.renderer.GlStateManager;
-
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.value.IStringValue;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.TextFieldTheme;
 import com.cleanroommc.modularui.utils.MathUtils;
 import com.cleanroommc.modularui.utils.ParseResult;
 import com.cleanroommc.modularui.value.StringValue;
@@ -22,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.text.ParsePosition;
-import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
@@ -30,16 +26,14 @@ import java.util.function.LongUnaryOperator;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-// todo text is rendering incorrectly, figure out why
 public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
 
     private IStringValue<?> stringValue;
     private Function<String, String> validator = val -> val;
     private boolean numbers = false;
     private double defaultNumber = 0;
+    private boolean tooltipOverride = false;
     private final GTTextFieldRenderer renderer;
-
-    protected boolean changedMarkedColor = false;
 
     public GTTextFieldWidget() {
         this.renderer = new GTTextFieldRenderer(this.handler);
@@ -65,14 +59,8 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
         setText(this.stringValue.getStringValue());
         if (!hasTooltip()) {
             tooltipBuilder(tooltip -> tooltip.addLine(IKey.str(getText())));
+            tooltipOverride = false;
         }
-        if (!this.changedMarkedColor) {
-            this.renderer.setMarkedColor(getMarkedColor());
-        }
-    }
-
-    public int getMarkedColor() {
-        return getWidgetTheme(getContext().getTheme()).getTheme().getTextColor();
     }
 
     @Override
@@ -101,20 +89,10 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
     }
 
     @Override
-    protected void drawText(ModularGuiContext context, TextFieldTheme widgetTheme) {
-        this.renderer.setSimulate(false);
-        this.renderer.setPos(getArea().getPadding().getLeft(), 0);
-        this.renderer.setScale(this.scale);
-        this.renderer.setAlignment(this.textAlignment, -1, getArea().height);
-        this.renderer.draw(this.handler.getText());
-        getScrollData().setScrollSize(Math.max(0, (int) (this.renderer.getLastActualWidth() + 0.5f)));
-    }
-
-    @Override
     public void drawForeground(ModularGuiContext context) {
         RichTooltip tooltip = getTooltip();
         if (tooltip != null &&
-                getScrollData().isScrollBarActive(getScrollArea()) &&
+                (tooltipOverride || getScrollData().isScrollBarActive(getScrollArea())) &&
                 isHoveringFor(tooltip.getShowUpTimer())) {
             tooltip.draw(getContext());
         }
@@ -154,15 +132,6 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
     }
 
     @Override
-    public void onFocus(ModularGuiContext context) {
-        super.onFocus(context);
-        Point main = this.handler.getMainCursor();
-        if (main.x == 0) {
-            this.handler.setCursor(main.y, getText().length(), true, true);
-        }
-    }
-
-    @Override
     public void onRemoveFocus(ModularGuiContext context) {
         super.onRemoveFocus(context);
         this.setText(this.validator.apply(getText()));
@@ -182,17 +151,6 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
 
     public GTTextFieldWidget setPattern(Pattern pattern) {
         this.handler.setPattern(pattern);
-        return this;
-    }
-
-    public GTTextFieldWidget setTextColor(int textColor) {
-        this.renderer.setColor(textColor);
-        return this;
-    }
-
-    public GTTextFieldWidget setMarkedColor(int color) {
-        this.renderer.setMarkedColor(color);
-        this.changedMarkedColor = true;
         return this;
     }
 
@@ -268,9 +226,15 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
         return this;
     }
 
+    @Override
+    public @NotNull RichTooltip tooltip() {
+        tooltipOverride = true;
+        return super.tooltip();
+    }
+
     private static class GTTextFieldRenderer extends TextFieldRenderer {
 
-        IKey postFix = IKey.EMPTY;
+        private @Nullable IKey postFix = null;
 
         public GTTextFieldRenderer(TextFieldHandler handler) {
             super(handler);
@@ -278,47 +242,18 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
 
         @Override
         protected void draw(String text, float x, float y) {
-            if (this.simulate) return;
-            GlStateManager.disableBlend();
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(this.scale, this.scale, 0f);
-            getFontRenderer().drawString(text + this.postFix.getFormatted(),
-                    x / this.scale, y / this.scale,
-                    this.color, this.shadow);
-            GlStateManager.popMatrix();
-            GlStateManager.enableBlend();
+            if (postFix != null) {
+                text += postFix.getFormatted();
+            }
+            super.draw(text, x, y);
+        }
+
+        private static boolean isNumber(String text) {
+            return !BaseTextFieldWidget.LETTERS.matcher(text).matches();
         }
 
         public void setPostFix(@NotNull IKey postFix) {
             this.postFix = postFix;
-        }
-
-        @Override
-        public Point getCursorPos(List<String> lines, int x, int y) {
-            if (lines.isEmpty()) {
-                return new Point();
-            }
-            List<Line> measuredLines = measureLines(lines);
-            y -= getStartY(measuredLines.size()) + this.y;
-            int index = (int) (y / (getFontHeight()));
-            if (index < 0) return new Point();
-            if (index >= measuredLines.size())
-                return new Point(measuredLines.get(measuredLines.size() - 1).getText().length(),
-                        measuredLines.size() - 1);
-            Line line = measuredLines.get(index);
-            x -= getStartX(line.getWidth()) + this.x;
-            if (x < 0) return new Point(0, index);
-            if (x > line.getWidth()) return new Point(line.getText().length(), index);
-            float currentX = 0;
-            for (int i = 0; i < line.getText().length(); i++) {
-                char c = line.getText().charAt(i);
-                float cw = getFontRenderer().getCharWidth(c) * this.scale;
-                currentX += cw;
-                if (currentX >= x + (cw / 2)) {
-                    return new Point(i + 1, index);
-                }
-            }
-            return new Point();
         }
     }
 }

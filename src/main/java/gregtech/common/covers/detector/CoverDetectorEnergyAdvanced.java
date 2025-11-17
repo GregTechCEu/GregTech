@@ -6,6 +6,7 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.mui.widget.GTTextFieldWidget;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -31,7 +32,6 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 
 public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements CoverWithUI {
@@ -133,7 +133,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
                 .bindPlayerInventory();
     }
 
-    private void updateWidget(TextFieldWidget w) {
+    private void updateWidget(GTTextFieldWidget w) {
         w.setMaxLength(getLength());
         w.setNumbers(0, isUsePercent() ? 100 : Integer.MAX_VALUE);
     }
