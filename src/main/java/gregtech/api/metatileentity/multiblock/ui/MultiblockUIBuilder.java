@@ -31,7 +31,6 @@ import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
-import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.utils.serialization.ByteBufAdapters;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import com.cleanroommc.modularui.utils.serialization.IByteBufSerializer;
@@ -69,8 +68,6 @@ public class MultiblockUIBuilder {
     private final InternalSyncHandler syncHandler = new InternalSyncHandler();
 
     private static final int DEFAULT_MAX_RECIPE_LINES = 25;
-    // comma separated every three digits and only one decimal place max.
-    protected static final DecimalFormat RECIPE_RATE_FORMAT = new DecimalFormat("#,###.#");
 
     @Nullable
     private InternalSyncer syncer;
@@ -749,45 +746,9 @@ public class MultiblockUIBuilder {
                     IKey nameKey = nameFunction.apply(objectToDraw)
                             .style(TextFormatting.AQUA);
                     tooltip.addLine(nameKey);
-
-                    boolean isFluid = objectToDraw instanceof FluidStack;
-                    for (RecipeRateFormat rateFormat : RecipeRateFormat.VALUES) {
-                        addRecipeTooltipLine(rateFormat, amountPerRecipe, recipeLength, isFluid, tooltip);
-                    }
+                    RecipeRateFormat.addRateLines(amountPerRecipe, recipeLength, objectToDraw instanceof FluidStack,
+                            tooltip::addLine);
                 }), Operation::add);
-    }
-
-    /**
-     * Add formatted rate of recipe to the tooltip of a recipe output.
-     * 
-     * @param rateFormat      which timespan the rate will be based on.
-     * @param amountPerRecipe the amount of the output made per recipe
-     * @param recipeLength    the length of the recipe in ticks.
-     * @param isFluid         if this output is a fluid or not.
-     * @param tooltip         the tooltip to add the rate to.
-     */
-    protected void addRecipeTooltipLine(@NotNull RecipeRateFormat rateFormat, double amountPerRecipe, int recipeLength,
-                                        boolean isFluid, @NotNull RichTooltip tooltip) {
-        double amount = amountPerRecipe * (rateFormat.getDividend() / recipeLength);
-        if (amount < rateFormat.getMinimum() || amount >= rateFormat.getMaximum()) return;
-
-        IKey largeSuffix = null;
-        if (amount >= (isFluid ? 1_000_000.0d : 250_000.0d)) {
-            largeSuffix = isFluid ? KeyUtil.compactNumber(TextFormatting.GRAY, "[", (long) amount, 4, "L]") :
-                    KeyUtil.compactNumber(TextFormatting.GRAY, "[", (long) amount, 4, "]");
-        }
-
-        String rateFormatted;
-        if (isFluid && amount > 1_000L) {
-            rateFormatted = RECIPE_RATE_FORMAT.format(amount / 1_000d) + "kL";
-        } else if (isFluid) {
-            rateFormatted = RECIPE_RATE_FORMAT.format(amount) + "L";
-        } else {
-            rateFormatted = RECIPE_RATE_FORMAT.format(amount);
-        }
-
-        IKey rateKey = IKey.lang(rateFormat.getTranslationKey(), rateFormatted);
-        tooltip.addLine(largeSuffix == null ? rateKey : IKey.comp(rateKey, IKey.SPACE, largeSuffix));
     }
 
     /** Insert an empty line into the text list. */
@@ -1074,40 +1035,70 @@ public class MultiblockUIBuilder {
 
     protected enum RecipeRateFormat {
 
-        TICK("gregtech.multiblock.rate.per_tick", 0.1d, Double.MAX_VALUE, 1.0d),
-        SECOND("gregtech.multiblock.rate.per_second", 0.1d, Double.MAX_VALUE, 20.0d),
-        MINUTE("gregtech.multiblock.rate.per_minute", 0.1d, Double.MAX_VALUE, 20.0d * 60.0d),
-        HOUR("gregtech.multiblock.rate.per_hour", 0.1d, Double.MAX_VALUE, 20.0d * 60.0d * 60.0d);
+        TICK("gregtech.multiblock.rate.per_tick", "gregtech.multiblock.rate.ticks_per", 1.0d, 20 * 30),
+        SECOND("gregtech.multiblock.rate.per_second", "gregtech.multiblock.rate.seconds_per", 20.0d, 120),
+        MINUTE("gregtech.multiblock.rate.per_minute", "gregtech.multiblock.rate.minutes_per", 20.0d * 60.0d, 240),
+        HOUR("gregtech.multiblock.rate.per_hour", "gregtech.multiblock.rate.hours_per", 20.0d * 60.0d * 60.0d,
+                Integer.MAX_VALUE);
 
         public static final RecipeRateFormat[] VALUES = values();
+        // comma separated every three digits and only one decimal place max.
+        private static final DecimalFormat FORMATTING = new DecimalFormat("#,###.#");
 
         @NotNull
-        private final String translationKey;
-        private final double minimum;
-        private final double maximum;
+        private final String fastKey;
+        @NotNull
+        private final String slowKey;
+        @NotNull
+        private final String slowKeyLiters;
         private final double dividend;
+        private final int maxSlowRate;
 
-        RecipeRateFormat(@NotNull String translationKey, double minimum, double maximum, double dividend) {
-            this.translationKey = translationKey;
-            this.minimum = minimum;
-            this.maximum = maximum;
+        RecipeRateFormat(@NotNull String fastKey, @NotNull String slowKey, double dividend, int maxSlowRate) {
+            this.fastKey = fastKey;
+            this.slowKey = slowKey;
+            this.slowKeyLiters = slowKey + "_l";
             this.dividend = dividend;
+            this.maxSlowRate = maxSlowRate;
         }
 
-        public @NotNull String getTranslationKey() {
-            return translationKey;
+        public static void addRateLines(double amountPerRecipe, int recipeLength, boolean isFluid,
+                                        @NotNull Consumer<@NotNull IKey> addLine) {
+            for (RecipeRateFormat rate : VALUES) {
+                rate.addRateLine(amountPerRecipe, recipeLength, isFluid, addLine);
+            }
         }
 
-        public double getMinimum() {
-            return minimum;
+        public void addRateLine(double amountPerRecipe, int recipeLength, boolean isFluid,
+                                @NotNull Consumer<@NotNull IKey> addLine) {
+            double amount = amountPerRecipe * (dividend / recipeLength);
+            if (amount > 1) {
+                addLine.accept(formatFast(amount, isFluid));
+            } else {
+                double slowRate = 1 / amount;
+                if (slowRate > maxSlowRate || (this == SECOND && amountPerRecipe == 1)) return;
+                addLine.accept(IKey.lang(isFluid ? slowKeyLiters : slowKey, FORMATTING.format(slowRate)));
+            }
         }
 
-        public double getMaximum() {
-            return maximum;
-        }
+        private @NotNull IKey formatFast(double amount, boolean isFluid) {
+            IKey largeSuffix = null;
+            if (amount >= (isFluid ? 1_000_000.0d : 250_000.0d)) {
+                largeSuffix = isFluid ? KeyUtil.compactNumber(TextFormatting.GRAY, "[", (long) amount, 4, "L]") :
+                        KeyUtil.compactNumber(TextFormatting.GRAY, "[", (long) amount, 4, "]");
+            }
 
-        public double getDividend() {
-            return dividend;
+            String rateFormatted;
+            if (isFluid && amount > 1_000d) {
+                rateFormatted = FORMATTING.format(amount / 1_000d) + "kL";
+            } else if (isFluid) {
+                rateFormatted = FORMATTING.format(amount) + "L";
+            } else {
+                rateFormatted = FORMATTING.format(amount);
+            }
+
+            IKey rateKey = IKey.lang(fastKey, rateFormatted);
+            return largeSuffix == null ? rateKey : IKey.comp(rateKey, IKey.SPACE, largeSuffix);
         }
     }
 }
