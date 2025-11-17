@@ -81,11 +81,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         if (ItemStack.areItemStacksEqual(stack, getFilterStack()))
             return;
 
-        if (stack.isEmpty()) {
-            setFilter(null);
-        } else if (isItemValid(stack)) {
-            setFilter(BaseFilter.getFilterFromStack(stack));
-        }
+        setFilter(BaseFilter.getFilterFromStack(stack));
 
         super.setStackInSlot(slot, stack);
     }
@@ -140,7 +136,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     public final void setFilter(@Nullable BaseFilter newFilter) {
-        this.currentFilter = newFilter;
+        this.currentFilter = BaseFilter.ERROR_FILTER == newFilter ? null : newFilter;
         if (hasFilter()) {
             this.currentFilter.setDirtyNotifiable(this.dirtyNotifiable);
             this.currentFilter.setMaxTransferSize(this.maxTransferSize);
