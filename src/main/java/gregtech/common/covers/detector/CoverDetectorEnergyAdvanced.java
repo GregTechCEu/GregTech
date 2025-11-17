@@ -138,7 +138,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
 
     private void updateWidget(GTTextFieldWidget w) {
         w.setMaxLength(getLength());
-        w.setNumbers(0, isUsePercent() ? 100 : Integer.MAX_VALUE);
+        w.setNumbersLong(0, isUsePercent() ? 100 : Long.MAX_VALUE);
     }
 
     private long getMinValue() {

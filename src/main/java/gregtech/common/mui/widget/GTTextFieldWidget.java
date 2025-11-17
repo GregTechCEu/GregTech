@@ -2,6 +2,8 @@ package gregtech.common.mui.widget;
 
 import gregtech.api.util.GTLog;
 
+import net.minecraft.util.math.MathHelper;
+
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.value.IStringValue;
 import com.cleanroommc.modularui.screen.RichTooltip;
@@ -21,7 +23,9 @@ import java.awt.*;
 import java.text.ParsePosition;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
+import java.util.function.IntSupplier;
 import java.util.function.IntUnaryOperator;
+import java.util.function.LongSupplier;
 import java.util.function.LongUnaryOperator;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -57,7 +61,7 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
             this.stringValue = new StringValue("");
         }
         setText(this.stringValue.getStringValue());
-        if (!hasTooltip()) {
+        if (!hasTooltip() && !tooltipOverride) {
             tooltipBuilder(tooltip -> tooltip.addLine(IKey.str(getText())));
             tooltipOverride = false;
         }
@@ -199,16 +203,20 @@ public class GTTextFieldWidget extends BaseTextFieldWidget<GTTextFieldWidget> {
         });
     }
 
-    public GTTextFieldWidget setNumbers(Supplier<Integer> min, Supplier<Integer> max) {
-        return setNumbers(val -> Math.min(max.get(), Math.max(min.get(), val)));
+    public GTTextFieldWidget setNumbers(IntSupplier min, IntSupplier max) {
+        return setNumbers(val -> Math.min(max.getAsInt(), Math.max(min.getAsInt(), val)));
     }
 
-    public GTTextFieldWidget setNumbersLong(Supplier<Long> min, Supplier<Long> max) {
-        return setNumbersLong(val -> Math.min(max.get(), Math.max(min.get(), val)));
+    public GTTextFieldWidget setNumbersLong(LongSupplier min, LongSupplier max) {
+        return setNumbersLong(val -> Math.min(max.getAsLong(), Math.max(min.getAsLong(), val)));
+    }
+
+    public GTTextFieldWidget setNumbersLong(long min, long max) {
+        return setNumbersLong(val -> Math.min(Math.max(val, min), max));
     }
 
     public GTTextFieldWidget setNumbers(int min, int max) {
-        return setNumbers(val -> Math.min(max, Math.max(min, val)));
+        return setNumbers(val -> MathHelper.clamp(val, min, max));
     }
 
     public GTTextFieldWidget setNumbers() {
