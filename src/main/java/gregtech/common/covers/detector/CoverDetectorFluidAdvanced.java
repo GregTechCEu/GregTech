@@ -4,6 +4,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -81,10 +82,10 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                         .coverChildrenHeight()
                         .child(createMinMaxRow("cover.advanced_fluid_detector.min",
                                 this::getMinValue, this::setMinValue,
-                                () -> " L", w -> w.setMaxLength(10)))
+                                this::getPostFix, w -> w.setMaxLength(10)))
                         .child(createMinMaxRow("cover.advanced_fluid_detector.max",
                                 this::getMaxValue, this::setMaxValue,
-                                () -> " L", w -> w.setMaxLength(10)))
+                                this::getPostFix, w -> w.setMaxLength(10)))
                         .child(Flow.row()
                                 .name("config row")
                                 .coverChildrenHeight()
@@ -114,6 +115,10 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                 .bindPlayerInventory();
     }
 
+    private @NotNull String getPostFix() {
+        return " mL";
+    }
+
     private long getMinValue() {
         return min;
     }
@@ -127,7 +132,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     }
 
     private void setMaxValue(long val) {
-        this.max = clamp((int) val, min + 1, Integer.MAX_VALUE);
+        this.max = GTUtility.safeCastLongToInt(clamp(val, min + 1, Long.MAX_VALUE));
     }
 
     private void setLatched(boolean isLatched) {
