@@ -4,7 +4,6 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.terminal2.ITerminalApp;
 import gregtech.api.terminal2.Terminal2Theme;
 import gregtech.api.util.CapesRegistry;
-import gregtech.common.mui.widget.ColorableVScrollData;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -19,6 +18,7 @@ import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 
@@ -46,9 +46,8 @@ public class CapeSelectorApp implements ITerminalApp {
                 .sizeRel(1f)
                 .posRel(0.5f, 0.5f)
                 .minElementMargin(18)
-                .scrollable(new ColorableVScrollData())
+                .scrollable(new VerticalScrollData().texture(Terminal2Theme.COLOR_FOREGROUND_BRIGHT))
                 .nextRow();
-        Terminal2Theme.COLOR_FOREGROUND_BRIGHT.bindScrollFG(capeGrid);
 
         for (ResourceLocation cape : CapesRegistry.allCapes()) {
             if (capeGrid.getChildren().size() % 4 == 0 && !capeGrid.getChildren().isEmpty()) {
@@ -58,7 +57,7 @@ public class CapeSelectorApp implements ITerminalApp {
             IWidget capeButton = new ButtonWidget<>()
                     .size(40, 72)
                     .posRel(0.5F, 0.5F)
-                    .background(new UITexture(cape, 1f / 64, 1f / 32, 11f / 64, 17f / 32, false))
+                    .background(new UITexture(cape, 1f / 64, 1f / 32, 11f / 64, 17f / 32, null, false))
                     .overlay(new DynamicDrawable(capeForeground(cape)))
                     .disableHoverOverlay()
                     .disableHoverBackground()

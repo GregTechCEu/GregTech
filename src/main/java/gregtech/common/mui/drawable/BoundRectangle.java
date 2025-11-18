@@ -1,7 +1,5 @@
 package gregtech.common.mui.drawable;
 
-import gregtech.common.mui.widget.IColorableScrollData;
-
 import com.cleanroommc.modularui.drawable.Circle;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.widget.AbstractScrollWidget;
@@ -57,11 +55,11 @@ public class BoundRectangle extends Rectangle {
     public BoundRectangle bindScrollFG(AbstractScrollWidget<?, ?> widget) {
         HorizontalScrollData scrollX = widget.getScrollArea().getScrollX();
         VerticalScrollData scrollY = widget.getScrollArea().getScrollY();
-        if (scrollX instanceof IColorableScrollData scroll) {
-            bind(scroll::setColor, () -> !widget.isValid());
+        if (scrollX != null) {
+            scrollX.texture(this);
         }
-        if (scrollY instanceof IColorableScrollData scroll) {
-            bind(scroll::setColor, () -> !widget.isValid());
+        if (scrollY != null) {
+            scrollY.texture(this);
         }
         return this;
     }
