@@ -13,14 +13,14 @@ import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widgets.TextWidget;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class InteractableText<T extends VirtualEntry> extends TextWidget<InteractableText<T>> implements Interactable {
 
     private final T entry;
     private final EntryColorSH syncHandler;
 
-    public InteractableText(T entry, Function<String, Boolean> setter) {
+    public InteractableText(T entry, Predicate<String> setter) {
         super(IKey.str(entry.getColorStr())
                 .alignment(Alignment.CenterLeft)
                 .color(Color.WHITE.darker(1)));
@@ -46,14 +46,14 @@ public class InteractableText<T extends VirtualEntry> extends TextWidget<Interac
 
     private static class EntryColorSH extends SyncHandler {
 
-        private final Function<String, Boolean> setter;
+        private final Predicate<String> setter;
 
-        private EntryColorSH(Function<String, Boolean> setter) {
+        private EntryColorSH(Predicate<String> setter) {
             this.setter = setter;
         }
 
         public boolean setColor(String c) {
-            return this.setter.apply(c);
+            return this.setter.test(c);
         }
 
         @Override
