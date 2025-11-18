@@ -15,6 +15,7 @@ import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.ParentWidget;
@@ -35,7 +36,8 @@ public class CapeSelectorApp implements ITerminalApp {
     private CapeSelectorSyncHandler syncHandler;
 
     @Override
-    public IWidget buildWidgets(HandGuiData guiData, PanelSyncManager guiSyncManager, ModularPanel panel) {
+    public IWidget buildWidgets(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings,
+                                ModularPanel panel) {
         UUID uuid = guiData.getPlayer().getPersistentID();
         syncHandler = new CapeSelectorSyncHandler(uuid);
         guiSyncManager.syncValue("cape_handler", syncHandler);

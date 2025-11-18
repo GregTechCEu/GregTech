@@ -24,6 +24,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
@@ -45,7 +46,7 @@ public class Terminal2Behavior implements IItemBehaviour, ItemUIFactory {
     }
 
     @Override
-    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         ModularPanel panel = GTGuis.createPanel(guiData.getUsedItemStack(), 364, 248);
 
         // to avoid tying the custom disposal logic to IDPagedWidget itself
@@ -62,7 +63,7 @@ public class Terminal2Behavior implements IItemBehaviour, ItemUIFactory {
             }
         };
         for (var app : Terminal2.appMap.entrySet()) {
-            appPages.addPage(app.getKey(), app.getValue().buildWidgets(guiData, guiSyncManager, panel));
+            appPages.addPage(app.getKey(), app.getValue().buildWidgets(guiData, guiSyncManager, settings, panel));
         }
         appPages.size(Terminal2.SCREEN_WIDTH, Terminal2.SCREEN_HEIGHT).pos(4, 4);
 
