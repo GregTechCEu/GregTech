@@ -1,6 +1,5 @@
 package gregtech.common.gui.widget.prospector.widget;
 
-import com.google.common.primitives.UnsignedBytes;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.unification.OreDictUnifier;
@@ -37,6 +36,7 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.google.common.primitives.UnsignedBytes;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
