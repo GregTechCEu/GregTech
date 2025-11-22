@@ -1,6 +1,7 @@
 package gregtech.api.color;
 
 import gregtech.api.color.containers.AE2ColorContainer;
+import gregtech.api.color.containers.BedColorContainer;
 import gregtech.api.color.containers.GTPipeColorContainer;
 import gregtech.api.color.containers.MTEColorContainer;
 import gregtech.api.color.containers.NullColorContainer;
@@ -55,6 +56,7 @@ public abstract class ColoredBlockContainer {
             registerContainer(new AE2ColorContainer());
         }
         registerContainer(new VanillaColorContainer());
+        registerContainer(new BedColorContainer());
     }
 
     public abstract boolean isBlockValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
