@@ -36,6 +36,7 @@ import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.DoubleValue;
 import com.cleanroommc.modularui.value.IntValue;
@@ -66,7 +67,7 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
     private static final String NBT_KEY_RGB_COLOR = "rgbColor";
 
     @Override
-    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         ItemStack usedStack = guiData.getUsedItemStack();
         IntSyncValue colorSync = SyncHandlers.intNumber(() -> getColorOrdinal(usedStack),
                 newColor -> setColorOrdinal(usedStack, newColor));
