@@ -36,7 +36,6 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.google.common.primitives.UnsignedBytes;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -272,7 +271,7 @@ public class WidgetProspectingMap extends Widget {
                                 if (ProspectingTexture.SELECTED_ALL.equals(texture.getSelected()) ||
                                         texture.getSelected().equals(dict)) {
                                     oreInfo.put(name, oreInfo.getOrDefault(name, 0) + 1);
-                                    oreHeight.put(name, oreHeight.getOrDefault(name, 0) + UnsignedBytes.toInt(height));
+                                    oreHeight.put(name, oreHeight.getOrDefault(name, 0) + Byte.toUnsignedInt(height));
                                     if (oreInfo.get(name) > maxAmount[0]) {
                                         maxAmount[0] = oreInfo.get(name);
                                         MaterialStack m = OreDictUnifier.getMaterial(OreDictUnifier.get(dict));
