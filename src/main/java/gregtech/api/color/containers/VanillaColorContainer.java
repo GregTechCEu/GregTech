@@ -113,12 +113,7 @@ public class VanillaColorContainer extends ColoredBlockContainer {
     public boolean isValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                            @NotNull EntityPlayer player) {
         IBlockState state = world.getBlockState(pos);
-        for (IProperty<?> prop : state.getPropertyKeys()) {
-            if (prop.getValueClass() == EnumDyeColor.class) {
-                return !world.isAirBlock(pos);
-            }
-        }
-
-        return false;
+        Block block = state.getBlock();
+        return TRANSFORMATIONS.containsKey(block) || TRANSFORMATIONS.containsValue(block);
     }
 }
