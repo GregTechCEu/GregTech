@@ -7,6 +7,8 @@ import org.jetbrains.annotations.Range;
 
 public class ColorUtil {
 
+    public static final EnumDyeColor[] DYE_COLORS = EnumDyeColor.values();
+
     public static int combineRGB(@Range(from = 0, to = 255) int r, @Range(from = 0, to = 255) int g,
                                  @Range(from = 0, to = 255) int b) {
         return (r << 16) | (g << 8) | b;
@@ -20,7 +22,7 @@ public class ColorUtil {
     public static @Nullable EnumDyeColor getDyeColorFromRGB(int color) {
         if (color == -1) return null;
 
-        for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
+        for (EnumDyeColor dyeColor : DYE_COLORS) {
             if (color == dyeColor.colorValue) {
                 return dyeColor;
             }

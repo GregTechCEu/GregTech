@@ -28,7 +28,8 @@ import org.jetbrains.annotations.Range;
 public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
     /**
-     * Get the color of the spray can. {@code null} = solvent
+     * Get the color of the spray can. <br/>
+     * {@code null} = solvent
      */
     public abstract @Nullable EnumDyeColor getColor(@NotNull ItemStack sprayCan);
 
