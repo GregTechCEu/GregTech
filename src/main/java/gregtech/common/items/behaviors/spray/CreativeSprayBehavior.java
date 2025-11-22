@@ -151,7 +151,7 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
     }
 
     protected static Flow createColorRow(@NotNull ARGBHelper helper, @NotNull IntSyncValue rgbColorSync,
-                                       @NotNull BooleanSupplier allowSetting) {
+                                         @NotNull BooleanSupplier allowSetting) {
         return Flow.row()
                 .widthRel(1.0f)
                 .coverChildrenHeight()
