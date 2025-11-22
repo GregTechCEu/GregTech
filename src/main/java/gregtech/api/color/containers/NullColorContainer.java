@@ -1,6 +1,7 @@
 package gregtech.api.color.containers;
 
 import gregtech.api.color.ColoredBlockContainer;
+import gregtech.api.util.GTUtility;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -15,8 +16,8 @@ public class NullColorContainer extends ColoredBlockContainer {
 
     public static final NullColorContainer NULL_CONTAINER = new NullColorContainer();
 
-    public NullColorContainer() {
-        super();
+    private NullColorContainer() {
+        super(GTUtility.gregtechId("null"));
     }
 
     @Override
