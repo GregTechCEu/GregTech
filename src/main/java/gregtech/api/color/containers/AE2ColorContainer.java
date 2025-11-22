@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -15,6 +16,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AE2ColorContainer extends ColoredBlockContainer {
+
+    public AE2ColorContainer(@NotNull ResourceLocation id) {
+        super(id);
+    }
 
     @Override
     public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,

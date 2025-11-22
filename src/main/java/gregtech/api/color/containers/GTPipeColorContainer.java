@@ -7,6 +7,7 @@ import gregtech.api.util.ColorUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -14,6 +15,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class GTPipeColorContainer extends ColoredBlockContainer {
+
+    public GTPipeColorContainer(@NotNull ResourceLocation id) {
+        super(id);
+    }
 
     @Override
     public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,

@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -34,6 +35,10 @@ public class VanillaColorContainer extends ColoredBlockContainer {
             Blocks.GLASS, BlockStainedGlass.COLOR,
             Blocks.GLASS_PANE, BlockStainedGlassPane.COLOR,
             Blocks.HARDENED_CLAY, BlockColored.COLOR);
+
+    public VanillaColorContainer(@NotNull ResourceLocation id) {
+        super(id);
+    }
 
     @Override
     public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,

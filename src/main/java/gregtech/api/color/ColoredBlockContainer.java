@@ -6,21 +6,23 @@ import gregtech.api.color.containers.GTPipeColorContainer;
 import gregtech.api.color.containers.MTEColorContainer;
 import gregtech.api.color.containers.NullColorContainer;
 import gregtech.api.color.containers.VanillaColorContainer;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Used to provide a consistent interface for dealing with colored blocks, whether vanilla or modded. <br/>
@@ -30,16 +32,24 @@ import java.util.Set;
 public abstract class ColoredBlockContainer {
 
     @NotNull
-    private static final Set<ColoredBlockContainer> CONTAINERS = new ObjectArraySet<>(4);
+    private static final Map<ResourceLocation, ColoredBlockContainer> CONTAINERS = new Object2ObjectOpenHashMap<>(5);
 
     public static void registerContainer(@NotNull ColoredBlockContainer container) {
-        CONTAINERS.add(Objects.requireNonNull(container, "A null ColoredBlockContainer cannot be registered!"));
+        Objects.requireNonNull(container, "A null ColoredBlockContainer cannot be registered!");
+        ResourceLocation id = container.id;
+        Objects.requireNonNull(id, "A null ColoredBlockContainer cannot have a null ID!");
+        if (CONTAINERS.containsKey(id)) {
+            throw new IllegalArgumentException(
+                    String.format("A ColoredBlockContainer with an ID of %s already exists!", id));
+        }
+
+        CONTAINERS.put(id, container);
     }
 
     public static @NotNull ColoredBlockContainer getContainer(@NotNull World world, @NotNull BlockPos pos,
                                                               @NotNull EnumFacing facing,
                                                               @NotNull EntityPlayer player) {
-        for (ColoredBlockContainer container : CONTAINERS) {
+        for (ColoredBlockContainer container : CONTAINERS.values()) {
             if (container.isBlockValid(world, pos, facing, player)) {
                 return container;
             }
@@ -50,13 +60,20 @@ public abstract class ColoredBlockContainer {
 
     @ApiStatus.Internal
     public static void registerCEuContainers() {
-        registerContainer(new GTPipeColorContainer());
-        registerContainer(new MTEColorContainer());
+        registerContainer(new GTPipeColorContainer(GTUtility.gregtechId("pipe")));
+        registerContainer(new MTEColorContainer(GTUtility.gregtechId("mte")));
         if (Mods.AppliedEnergistics2.isModLoaded()) {
-            registerContainer(new AE2ColorContainer());
+            registerContainer(new AE2ColorContainer(GTUtility.gregtechId("ae2")));
         }
-        registerContainer(new VanillaColorContainer());
-        registerContainer(new BedColorContainer());
+        registerContainer(new VanillaColorContainer(GTUtility.gregtechId("vanilla")));
+        registerContainer(new BedColorContainer(GTUtility.gregtechId("bed")));
+    }
+
+    @NotNull
+    protected final ResourceLocation id;
+
+    public ColoredBlockContainer(@NotNull ResourceLocation id) {
+        this.id = id;
     }
 
     public abstract boolean isBlockValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,

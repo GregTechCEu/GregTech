@@ -15,6 +15,10 @@ public class NullColorContainer extends ColoredBlockContainer {
 
     public static final NullColorContainer NULL_CONTAINER = new NullColorContainer();
 
+    public NullColorContainer() {
+        super();
+    }
+
     @Override
     public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @Nullable EnumFacing facing,
                             @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
