@@ -200,18 +200,17 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     protected int getModelIndex(ItemStack itemStack) {
         T metaValueItem = getItem(itemStack);
+        Objects.requireNonNull(metaValueItem);
 
-        // Electric Items
-        IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem != null) {
-            return (int) Math.min(((electricItem.getCharge() / (electricItem.getMaxCharge() * 1.0)) * 7), 7);
-        }
+        var modelDispatcher = metaValueItem.getItemModelDispatcher();
+        if (modelDispatcher == null) return 0;
 
-        // Integrated (Config) Circuit
-        if (metaValueItem != null) {
-            return IntCircuitIngredient.getCircuitConfiguration(itemStack);
-        }
-        return 0;
+        int maxIndex = metaValueItem.getModelAmount() - 1;
+        int index = modelDispatcher.getModelIndex(itemStack, maxIndex);
+        Validate.inclusiveBetween(0, maxIndex, index,
+                "Model index should be in range from 0 to %d (inclusive), where %d is supplied", maxIndex, index);
+
+        return index;
     }
 
     @SideOnly(Side.CLIENT)
@@ -797,6 +796,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private IItemColorProvider colorProvider;
         private IItemDurabilityManager durabilityManager;
         private IEnchantabilityHelper enchantabilityHelper;
+        private IItemModelDispatcher itemModelDispatcher;
         private IMouseEventHandler mouseEventHandler;
         private EnumRarity rarity;
 
@@ -942,6 +942,9 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 if (itemComponent instanceof IMouseEventHandler mouseEventHandler) {
                     this.mouseEventHandler = mouseEventHandler;
                 }
+                if (itemComponent instanceof IItemModelDispatcher iItemModelDispatcher) {
+                    this.itemModelDispatcher = iItemModelDispatcher;
+                }
                 this.allStats.add(itemComponent);
             }
         }
@@ -1000,6 +1003,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         @Nullable
         public IEnchantabilityHelper getEnchantabilityHelper() {
             return enchantabilityHelper;
+        }
+
+        @Nullable
+        public IItemModelDispatcher getItemModelDispatcher() {
+            return itemModelDispatcher;
         }
 
         @Nullable

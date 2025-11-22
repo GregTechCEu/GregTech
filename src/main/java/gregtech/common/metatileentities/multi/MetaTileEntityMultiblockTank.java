@@ -20,6 +20,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.mui.widget.GTFluidSlot;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,7 +40,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.widgets.TextWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -144,7 +144,8 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
                 .disableDisplay()
                 .disableButtons()
                 .addScreenChildren((parent, syncManager) -> {
-                    parent.child(new TextWidget(IKey.lang(getMetaFullName()))
+                    parent.child(IKey.lang(getMetaFullName())
+                            .asWidget()
                             .pos(5, 5));
                     parent.child(new GTFluidSlot()
                             .pos(52, 18)
@@ -190,5 +191,11 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
             }
         }
         return super.getCapability(capability, side);
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return this.isMetal ? SoundType.METAL : SoundType.WOOD;
     }
 }

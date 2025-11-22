@@ -13,6 +13,7 @@ import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -40,7 +41,7 @@ public interface ItemUIFactory extends IItemComponent, IGuiHolder<HandGuiData> {
 
     // TODO: change to abstract once MUI2 port is complete
     @Override
-    default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
+    default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         return null;
     }
 }

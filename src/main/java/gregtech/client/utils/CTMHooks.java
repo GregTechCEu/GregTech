@@ -36,7 +36,7 @@ public class CTMHooks {
     public static ThreadLocal<Boolean> ENABLE = new ThreadLocal<>();
 
     public static boolean checkLayerWithOptiFine(boolean canRenderInLayer, byte layers, BlockRenderLayer layer) {
-        if (Mods.Optifine.isModLoaded()) {
+        if (Mods.ShadersMod.isModLoaded()) {
             if (canRenderInLayer) {
                 if (layer == BloomEffectUtil.getBloomLayer()) return false;
             } else if ((layers >> BloomEffectUtil.getBloomLayer().ordinal() & 1) == 1 &&
@@ -50,7 +50,7 @@ public class CTMHooks {
     public static List<BakedQuad> getQuadsWithOptiFine(List<BakedQuad> ret, BlockRenderLayer layer,
                                                        IBakedModel bakedModel, IBlockState state, EnumFacing side,
                                                        long rand) {
-        if (Mods.Optifine.isModLoaded() && CTMHooks.ENABLE.get() == null) {
+        if (Mods.ShadersMod.isModLoaded() && CTMHooks.ENABLE.get() == null) {
             if (layer == BloomEffectUtil.getBloomLayer()) {
                 return Collections.emptyList();
             } else if (layer == BloomEffectUtil.getEffectiveBloomLayer()) {

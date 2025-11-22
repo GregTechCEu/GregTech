@@ -757,7 +757,7 @@ public class GTUtility {
 
     /**
      * Get the {@link MetaTileEntity} at the position in the given world.
-     * 
+     *
      * @param world the world to check
      * @param pos   the position of the mte
      * @return the mte if there is one at the position, otherwise null
@@ -1027,7 +1027,7 @@ public class GTUtility {
 
     /**
      * Calculate the durability percentage based on how much damage something has taken
-     * 
+     *
      * @param damageTaken   how many points of durability damage the item has
      * @param maxDurability the maximum durability the item can have
      * @return 0 = full durability, 1 = zero durability
@@ -1038,12 +1038,18 @@ public class GTUtility {
 
     /**
      * Calculate the durability percentage based on how much durability out of the maximum is remaining
-     * 
+     *
      * @param remainingDurability how much durability out of the maximum the item has left
      * @param maxDurability       the maximum durability the item can have
      * @return 0 = full durability, 1 = zero durability
      */
     public static double calculateDurabilityFromRemaining(int remainingDurability, int maxDurability) {
         return (double) (maxDurability - remainingDurability) / maxDurability;
+    }
+
+    public static boolean areFluidStacksEqual(@Nullable FluidStack a, @Nullable FluidStack b) {
+        if (a == b) return true;
+        if (a == null) return false;
+        return a.isFluidEqual(b);
     }
 }

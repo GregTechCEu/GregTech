@@ -29,11 +29,13 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Build
         uses: ./.github/actions/build_setup
 
+      # When updating to RFG 2.0, enable Gradle Configuration Cache
+      # https://github.com/gradle/actions/blob/main/docs/setup-gradle.md#saving-configuration-cache-data
       - name: Build Project
         run: ./gradlew build --warning-mode all --build-cache
 

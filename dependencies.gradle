@@ -40,9 +40,10 @@
 dependencies {
     // Published dependencies
     api("codechicken:codechickenlib:3.2.3.358")
-    api("com.cleanroommc:modularui:2.5.0-rc4") { transitive = false }
+    api("com.cleanroommc:modularui:3.0.4") { transitive = false }
     api("com.cleanroommc:groovyscript:1.2.0-hotfix1") { transitive = false }
-    api("curse.maven:inventory-bogosorter-632327:4951607-deobf-4951608-sources-4951609")
+    api("curse.maven:inventory-bogosorter-632327:7102721-deobf-6717233-sources-6717234") // Inventory BogoSorter − v1.5.0
+    api("curse.maven:key-binding-patch-928895:5951859") // Key Binding Patch v1.3.3.3, needed by Inventory BogoSorter v1.5.0+
     api("CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.700")
     api("appeng:ae2-uel:v0.56.4") { transitive = false }
     api rfg.deobf("curse.maven:ctm-267602:2915363") // CTM 1.0.2.31
@@ -52,6 +53,8 @@ dependencies {
     compileOnly("curse.maven:journeymap-32274:5172461") // Journeymap 5.7.1p3
     compileOnly("curse.maven:voxelmap-225179:3029445") // VoxelMap 1.9.28
     compileOnly("curse.maven:xaeros-263420:5394758") // Xaero's Minimap 24.2.0
+    devOnlyNonPublishable rfg.deobf("curse.maven:ftb-library-legacy-forge-237167:2985811") // FTB Library 5.4.7.2
+    devOnlyNonPublishable rfg.deobf("curse.maven:ftb-utilities-forge-237102:3157548") // FTB Utilities 5.4.1.131
     compileOnly rfg.deobf("curse.maven:opencomputers-223008:5274236") // OpenComputers 1.8.5+179e1c3
     compileOnly rfg.deobf("curse.maven:hwyla-253449:2568751") // HWYLA 1.8.26-B41
     compileOnly rfg.deobf("curse.maven:baubles-227083:2518667") // Baubles 1.5.2

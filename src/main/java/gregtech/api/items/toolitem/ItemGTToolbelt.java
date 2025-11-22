@@ -60,10 +60,11 @@ import net.minecraftforge.oredict.OreIngredient;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -115,12 +116,12 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem, IMouseEv
     }
 
     @Override
-    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         final var usedStack = guiData.getUsedItemStack();
         final var handler = getHandler(usedStack);
         final var selected = handler.getSelectedStack();
         if (!selected.isEmpty() && selected.getItem() instanceof ItemUIFactory factory) {
-            return factory.buildUI(guiData, guiSyncManager);
+            return factory.buildUI(guiData, guiSyncManager, settings);
         }
 
         int heightBonus = (handler.getSlots() / 9) * 18;
