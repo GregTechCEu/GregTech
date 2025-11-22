@@ -39,7 +39,7 @@ public abstract class ColoredBlockContainer {
                                                               @NotNull EnumFacing facing,
                                                               @NotNull EntityPlayer player) {
         for (ColoredBlockContainer container : CONTAINERS) {
-            if (container.isValid(world, pos, facing, player)) {
+            if (container.isBlockValid(world, pos, facing, player)) {
                 return container;
             }
         }
@@ -57,8 +57,8 @@ public abstract class ColoredBlockContainer {
         registerContainer(new VanillaColorContainer());
     }
 
-    public abstract boolean isValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                                    @NotNull EntityPlayer player);
+    public abstract boolean isBlockValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                         @NotNull EntityPlayer player);
 
     public abstract boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                                      @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor);

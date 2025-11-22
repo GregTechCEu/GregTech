@@ -34,8 +34,8 @@ public class NullColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean isValid(@NotNull World world, @NotNull BlockPos pos, @Nullable EnumFacing facing,
-                           @NotNull EntityPlayer player) {
+    public boolean isBlockValid(@NotNull World world, @NotNull BlockPos pos, @Nullable EnumFacing facing,
+                                @NotNull EntityPlayer player) {
         return false;
     }
 

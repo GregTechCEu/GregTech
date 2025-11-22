@@ -86,8 +86,8 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean isValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                           @NotNull EntityPlayer player) {
+    public boolean isBlockValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                @NotNull EntityPlayer player) {
         return world.getTileEntity(pos) instanceof IPipeTile<?, ?>;
     }
 }

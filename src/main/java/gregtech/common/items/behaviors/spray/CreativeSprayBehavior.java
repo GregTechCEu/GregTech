@@ -258,7 +258,7 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                 ColoredBlockContainer container = ColoredBlockContainer.getContainer(world, pos, facing,
                         playerClient);
 
-                if (container.isValid(world, pos, facing, playerClient)) {
+                if (container.isBlockValid(world, pos, facing, playerClient)) {
                     if (usesRGB(sprayCan) && container.supportsARGB() &&
                             !container.colorMatches(world, pos, facing, playerClient, getColorInt(sprayCan))) {
                         int color = container.getColorInt(world, pos, facing, playerClient);
