@@ -9,7 +9,6 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.drawable.DynamicColorRectangle;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
-import gregtech.api.mui.sync.PagedWidgetSyncHandler;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 
@@ -55,7 +54,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.IntConsumer;
 
 import static gregtech.api.util.ColorUtil.*;
 
@@ -81,8 +79,7 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                 newColor -> setColor(usedStack, newColor));
         guiSyncManager.syncValue("rgbColor", 0, rgbColorSync);
 
-        var pageController = new InterceptedPageController(page -> usesRGBSync.setBoolValue(page == 1));
-        guiSyncManager.syncValue("page_controller", 0, new PagedWidgetSyncHandler(pageController));
+        PagedWidget.Controller pageController = new PagedWidget.Controller();
 
         return GTGuis.createPanel(usedStack, 176, 95)
                 .child(Flow.row()
@@ -106,11 +103,13 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
                         .asWidget()
                         .left(7)
                         .top(7))
-                .child(new DefaultPagePagedWidget<>(usesRGBSync.getIntValue())
+                .child(new PagedWidget<>()
                         .margin(7, 7, 22, 7)
                         .widthRel(1.0f)
                         .heightRel(1.0f)
                         .controller(pageController)
+                        .onPageChange(usesRGBSync::setIntValue)
+                        .initialPage(usesRGBSync.getIntValue())
                         .addPage(SlotGroupWidget.builder()
                                 .matrix("SCCCCCCCC",
                                         "CCCCCCCC")
@@ -295,48 +294,6 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
             case 0 -> MetaItemGuiFactory.open(playerServer, EnumHand.MAIN_HAND);
             case 1 -> setColor(sprayCan, buf.readInt());
             case 2 -> setColor(sprayCan, EnumDyeColor.values()[buf.readByte()]);
-        }
-    }
-
-    private static class InterceptedPageController extends PagedWidget.Controller {
-
-        @NotNull
-        private final IntConsumer onPageSwitch;
-
-        public InterceptedPageController(@NotNull IntConsumer onPageSwitch) {
-            this.onPageSwitch = onPageSwitch;
-        }
-
-        @Override
-        public void setPage(int page) {
-            super.setPage(page);
-            onPageSwitch.accept(getActivePageIndex());
-        }
-
-        @Override
-        public void nextPage() {
-            super.nextPage();
-            onPageSwitch.accept(getActivePageIndex());
-        }
-
-        @Override
-        public void previousPage() {
-            super.previousPage();
-            onPageSwitch.accept(getActivePageIndex());
-        }
-    }
-
-    private static class DefaultPagePagedWidget<T extends PagedWidget<T>> extends PagedWidget<T> {
-
-        private final int defaultPage;
-
-        public DefaultPagePagedWidget(int defaultPage) {
-            this.defaultPage = defaultPage;
-        }
-
-        @Override
-        public void afterInit() {
-            setPage(defaultPage);
         }
     }
 }
