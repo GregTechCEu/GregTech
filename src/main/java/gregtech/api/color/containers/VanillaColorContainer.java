@@ -53,8 +53,7 @@ public class VanillaColorContainer extends ColoredBlockContainer {
             IBlockState newBlockState = TRANSFORMATIONS.get(block)
                     .getDefaultState()
                     .withProperty(PROPERTY_MAP.get(block), newColor);
-            world.setBlockState(pos, newBlockState);
-            return true;
+            return world.setBlockState(pos, newBlockState);
         }
 
         return block.recolorBlock(world, pos, facing, newColor);
@@ -70,8 +69,7 @@ public class VanillaColorContainer extends ColoredBlockContainer {
             IBlockState newBlockState = TRANSFORMATIONS.inverse()
                     .get(block)
                     .getDefaultState();
-            world.setBlockState(pos, newBlockState);
-            return true;
+            return world.setBlockState(pos, newBlockState);
         } else {
             for (IProperty<?> prop : state.getPropertyKeys()) {
                 if (prop.getName().equals("color") && prop.getValueClass() == EnumDyeColor.class) {
