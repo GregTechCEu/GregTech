@@ -8,6 +8,7 @@ import gregtech.api.color.containers.NullColorContainer;
 import gregtech.api.color.containers.VanillaColorContainer;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
+import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -109,7 +110,5 @@ public abstract class ColoredBlockContainer {
         return getColorInt(world, pos, facing, player) == color;
     }
 
-    public boolean supportsARGB() {
-        return false;
-    }
+    public abstract boolean supportsMode(@NotNull AbstractSprayBehavior.ColorMode colorMode);
 }

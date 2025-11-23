@@ -1,6 +1,7 @@
 package gregtech.api.color.containers;
 
 import gregtech.api.color.ColoredBlockContainer;
+import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
@@ -129,5 +130,10 @@ public class VanillaColorContainer extends ColoredBlockContainer {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean supportsMode(AbstractSprayBehavior.@NotNull ColorMode colorMode) {
+        return colorMode == AbstractSprayBehavior.ColorMode.DYE_ONLY;
     }
 }

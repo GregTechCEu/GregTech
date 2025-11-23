@@ -11,6 +11,7 @@ import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -82,7 +83,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
     /**
      * Call from your items
-     * {@link net.minecraft.item.Item#onItemUseFirst(EntityPlayer, World, BlockPos, EnumFacing, float, float, float, EnumHand)}
+     * {@link Item#onItemUseFirst(EntityPlayer, World, BlockPos, EnumFacing, float, float, float, EnumHand)}
      * or the meta item equivalent to check if block is sprayable early enough in the click handling chain.
      */
     @SuppressWarnings("UnusedReturnValue")
@@ -94,7 +95,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
     /**
      * Call from your items
-     * {@link net.minecraft.item.Item#onItemUseFirst(EntityPlayer, World, BlockPos, EnumFacing, float, float, float, EnumHand)}
+     * {@link Item#onItemUseFirst(EntityPlayer, World, BlockPos, EnumFacing, float, float, float, EnumHand)}
      * or the meta item equivalent to check if block is sprayable early enough in the click handling chain.
      */
     public static @NotNull EnumActionResult handleExternalSpray(@NotNull EntityPlayer player,
@@ -138,6 +139,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
                     int color = getColorInt(sprayCan);
                     if (hitSide != null && firstPipe != null && firstPipe.isConnected(hitSide) &&
                             (firstPipe.isPainted() ? firstPipe.getPaintingColor() != color : color != -1)) {
+                        if (world.isRemote) return EnumActionResult.SUCCESS;
                         traversePipes(firstPipe, hitSide, player, sprayCan, color);
                         return EnumActionResult.SUCCESS;
                     }
@@ -146,14 +148,10 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         }
 
         ColoredBlockContainer colorContainer = ColoredBlockContainer.getContainer(world, pos, facing, player);
-        if (colorContainer.supportsARGB() ? colorContainer.setColor(world, pos, facing, player, getColorInt(sprayCan)) :
-                colorContainer.setColor(world, pos, facing, player, getColor(sprayCan))) {
-            onSpray(player, sprayCan);
-            return EnumActionResult.SUCCESS;
-        }
-
-        return EnumActionResult.PASS;
+        //TODO: reimplement spraying according to the mode of the spray can
     }
+
+    public abstract @NotNull AbstractSprayBehavior.ColorMode getColorMode(@NotNull ItemStack sprayCan);
 
     protected void traversePipes(@NotNull IPipeTile<?, ?> pipeTile, @NotNull EnumFacing facing,
                                  @NotNull EntityPlayer player, @NotNull ItemStack sprayCan, int color) {
@@ -194,5 +192,11 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
     private static boolean canPipeBePainted(@NotNull IPipeTile<?, ?> pipeTile, int color) {
         return pipeTile.isPainted() ? pipeTile.getPaintingColor() != color : color != -1;
+    }
+
+    public enum ColorMode {
+        DYE_ONLY,
+        ARGB_ONLY,
+        EITHER
     }
 }

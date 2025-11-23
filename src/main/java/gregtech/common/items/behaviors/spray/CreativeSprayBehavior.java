@@ -202,24 +202,29 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
         return tag.getBoolean(NBT_KEY_USES_RGB) ? tag.getInteger(NBT_KEY_RGB_COLOR) : super.getColorInt(sprayCan);
     }
 
-    public static void setColor(@NotNull ItemStack sprayCan, @Nullable EnumDyeColor color) {
+    @Override
+    public @NotNull ColorMode getColorMode(@NotNull ItemStack sprayCan) {
+        return usesRGB(sprayCan) ? ColorMode.ARGB_ONLY : ColorMode.DYE_ONLY;
+    }
+
+    public void setColor(@NotNull ItemStack sprayCan, @Nullable EnumDyeColor color) {
         GTUtility.getOrCreateNbtCompound(sprayCan).setInteger(NBT_KEY_COLOR, color == null ? -1 : color.ordinal());
     }
 
-    public static void setColorOrdinal(@NotNull ItemStack sprayCan, int ordinal) {
+    public void setColorOrdinal(@NotNull ItemStack sprayCan, int ordinal) {
         GTUtility.getOrCreateNbtCompound(sprayCan).setInteger(NBT_KEY_COLOR,
                 ordinal >= 0 && ordinal <= 15 ? ordinal : -1);
     }
 
-    public static void setColor(@NotNull ItemStack sprayCan, int argbColor) {
+    public void setColor(@NotNull ItemStack sprayCan, int argbColor) {
         GTUtility.getOrCreateNbtCompound(sprayCan).setInteger(NBT_KEY_RGB_COLOR, argbColor);
     }
 
-    public static boolean usesRGB(@NotNull ItemStack sprayCan) {
+    public boolean usesRGB(@NotNull ItemStack sprayCan) {
         return GTUtility.getOrCreateNbtCompound(sprayCan).getBoolean(NBT_KEY_USES_RGB);
     }
 
-    public static void useRGB(@NotNull ItemStack sprayCan, boolean bool) {
+    public void useRGB(@NotNull ItemStack sprayCan, boolean bool) {
         GTUtility.getOrCreateNbtCompound(sprayCan).setBoolean(NBT_KEY_USES_RGB, bool);
     }
 

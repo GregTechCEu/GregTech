@@ -1,6 +1,7 @@
 package gregtech.api.color.containers;
 
 import gregtech.api.color.ColoredBlockContainer;
+import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockHorizontal;
@@ -66,5 +67,10 @@ public class BedColorContainer extends ColoredBlockContainer {
     public boolean isBlockValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                                 @NotNull EntityPlayer player) {
         return world.getTileEntity(pos) instanceof TileEntityBed;
+    }
+
+    @Override
+    public boolean supportsMode(AbstractSprayBehavior.@NotNull ColorMode colorMode) {
+        return colorMode == AbstractSprayBehavior.ColorMode.DYE_ONLY;
     }
 }

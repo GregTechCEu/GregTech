@@ -3,6 +3,7 @@ package gregtech.api.color.containers;
 import gregtech.api.color.ColoredBlockContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.ColorUtil;
+import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -99,7 +100,7 @@ public class MTEColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean supportsARGB() {
+    public boolean supportsMode(AbstractSprayBehavior.@NotNull ColorMode colorMode) {
         return true;
     }
 }

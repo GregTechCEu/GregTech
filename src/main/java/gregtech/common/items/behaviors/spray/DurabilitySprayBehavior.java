@@ -77,6 +77,11 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
         return this.color;
     }
 
+    @Override
+    public @NotNull ColorMode getColorMode(@NotNull ItemStack sprayCan) {
+        return ColorMode.DYE_ONLY;
+    }
+
     protected int getUsesLeft(@NotNull ItemStack stack) {
         if (stack.isItemEqual(replacementStack)) return 0;
 

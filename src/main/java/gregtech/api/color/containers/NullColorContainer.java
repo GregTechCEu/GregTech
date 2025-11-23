@@ -2,6 +2,7 @@ package gregtech.api.color.containers;
 
 import gregtech.api.color.ColoredBlockContainer;
 import gregtech.api.util.GTUtility;
+import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -47,6 +48,11 @@ public class NullColorContainer extends ColoredBlockContainer {
     @Override
     public boolean colorMatches(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                                 @NotNull EntityPlayer player, @Nullable EnumDyeColor color) {
+        return false;
+    }
+
+    @Override
+    public boolean supportsMode(AbstractSprayBehavior.@NotNull ColorMode colorMode) {
         return false;
     }
 }
