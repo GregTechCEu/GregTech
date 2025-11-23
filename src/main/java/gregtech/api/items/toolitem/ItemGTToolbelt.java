@@ -504,32 +504,20 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem, IMouseEv
                                                     @NotNull BlockPos pos, @NotNull EnumFacing side, float hitX,
                                                     float hitY, float hitZ, @NotNull EnumHand hand) {
         EnumActionResult result = IDyeableItem.super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
-        if (result == EnumActionResult.PASS) {
-            ItemStack stack = player.getHeldItem(hand);
-            ToolStackHandler handler = getHandler(stack);
-            if (handler.getSelectedStack().isEmpty() &&
-                    world.getTileEntity(pos) instanceof MetaTileEntityHolder holder &&
-                    holder.getMetaTileEntity() instanceof MetaTileEntityMaintenanceHatch maintenance) {
-                maintenance.fixMaintenanceProblemsWithToolbelt(player, this, stack);
-                return EnumActionResult.SUCCESS;
-            }
-            return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
-        } else return result;
-    }
+        if (result != EnumActionResult.PASS) return result;
 
-    @Override
-    public @NotNull EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world,
-                                               @NotNull BlockPos pos, @NotNull EnumHand hand,
-                                               @NotNull EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ToolStackHandler handler = getHandler(player.getHeldItem(hand));
-        ItemStack selected = handler.getSelectedStack();
-        if (!selected.isEmpty()) {
-            EnumActionResult result = AbstractSprayBehavior.handleExternalSpray(player, world, pos, facing, selected);
-            if (result != EnumActionResult.PASS) {
-                return result;
-            }
+        ItemStack thisToolBelt = player.getHeldItem(hand);
+        ToolStackHandler handler = getHandler(thisToolBelt);
+        ItemStack selectedToolBeltStack = handler.getSelectedStack();
+        if (selectedToolBeltStack.isEmpty() && world.getTileEntity(pos) instanceof MetaTileEntityHolder holder &&
+                holder.getMetaTileEntity() instanceof MetaTileEntityMaintenanceHatch maintenance) {
+            maintenance.fixMaintenanceProblemsWithToolbelt(player, this, thisToolBelt);
+            return EnumActionResult.SUCCESS;
+        } else if (AbstractSprayBehavior.isSprayCan(selectedToolBeltStack)) {
+            return AbstractSprayBehavior.handleExternalSpray(player, world, pos, side, selectedToolBeltStack);
         }
-        return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+
+        return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
     }
 
     @Override

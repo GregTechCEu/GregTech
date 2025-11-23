@@ -80,6 +80,11 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         return getSprayCanBehavior(stack) != null;
     }
 
+    /**
+     * Call from your items
+     * {@link net.minecraft.item.Item#onItemUseFirst(EntityPlayer, World, BlockPos, EnumFacing, float, float, float, EnumHand)}
+     * or the meta item equivalent to check if block is sprayable early enough in the click handling chain.
+     */
     @SuppressWarnings("UnusedReturnValue")
     public static @NotNull EnumActionResult handleExternalSpray(@NotNull EntityPlayer player, @NotNull EnumHand hand,
                                                                 @NotNull World world, @NotNull BlockPos pos,
@@ -87,6 +92,11 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         return handleExternalSpray(player, world, pos, facing, player.getHeldItem(hand));
     }
 
+    /**
+     * Call from your items
+     * {@link net.minecraft.item.Item#onItemUseFirst(EntityPlayer, World, BlockPos, EnumFacing, float, float, float, EnumHand)}
+     * or the meta item equivalent to check if block is sprayable early enough in the click handling chain.
+     */
     public static @NotNull EnumActionResult handleExternalSpray(@NotNull EntityPlayer player,
                                                                 @NotNull World world, @NotNull BlockPos pos,
                                                                 @NotNull EnumFacing facing,
