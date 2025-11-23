@@ -38,7 +38,7 @@ public abstract class ColoredBlockContainer {
     public static void registerContainer(@NotNull ColoredBlockContainer container) {
         Objects.requireNonNull(container, "A null ColoredBlockContainer cannot be registered!");
         ResourceLocation id = container.id;
-        Objects.requireNonNull(id, "A null ColoredBlockContainer cannot have a null ID!");
+        Objects.requireNonNull(id, "A ColoredBlockContainer cannot have a null ID!");
         if (CONTAINERS.containsKey(id)) {
             throw new IllegalArgumentException(
                     String.format("A ColoredBlockContainer with an ID of %s already exists!", id));
