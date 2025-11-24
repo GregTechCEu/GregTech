@@ -4,14 +4,13 @@ import gregtech.api.color.containers.AE2ColorContainer;
 import gregtech.api.color.containers.BedColorContainer;
 import gregtech.api.color.containers.GTPipeColorContainer;
 import gregtech.api.color.containers.MTEColorContainer;
-import gregtech.api.color.containers.NullColorContainer;
 import gregtech.api.color.containers.VanillaColorContainer;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
-import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -47,16 +46,20 @@ public abstract class ColoredBlockContainer {
         CONTAINERS.put(id, container);
     }
 
-    public static @NotNull ColoredBlockContainer getContainer(@NotNull World world, @NotNull BlockPos pos,
-                                                              @NotNull EnumFacing facing,
-                                                              @NotNull EntityPlayer player) {
+    /**
+     * Get the color container for the block or tile entity at the provided position. <br/>
+     * Will return {@code null} if no container was valid.
+     */
+    public static @Nullable ColoredBlockContainer getContainer(@NotNull World world, @NotNull BlockPos pos,
+                                                               @NotNull EnumFacing facing,
+                                                               @NotNull EntityPlayer player) {
         for (ColoredBlockContainer container : CONTAINERS.values()) {
             if (container.isBlockValid(world, pos, facing, player)) {
                 return container;
             }
         }
 
-        return NullColorContainer.NULL_CONTAINER;
+        return null;
     }
 
     @ApiStatus.Internal
@@ -80,19 +83,26 @@ public abstract class ColoredBlockContainer {
     public abstract boolean isBlockValid(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                                          @NotNull EntityPlayer player);
 
-    public abstract boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                                     @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor);
-
-    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                            @NotNull EntityPlayer player, int newColor) {
-        return false;
+    public @NotNull EnumActionResult setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                              @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
+        return EnumActionResult.PASS;
     }
 
-    public abstract boolean removeColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                                        @NotNull EntityPlayer player);
+    public @NotNull EnumActionResult setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                              @NotNull EntityPlayer player, int newColor) {
+        return EnumActionResult.PASS;
+    }
 
-    public abstract @Nullable EnumDyeColor getColor(@NotNull World world, @NotNull BlockPos pos,
-                                                    @NotNull EnumFacing facing, @NotNull EntityPlayer player);
+    public @NotNull EnumActionResult removeColor(@NotNull World world, @NotNull BlockPos pos,
+                                                 @NotNull EnumFacing facing,
+                                                 @NotNull EntityPlayer player) {
+        return EnumActionResult.PASS;
+    }
+
+    public @Nullable EnumDyeColor getColor(@NotNull World world, @NotNull BlockPos pos,
+                                           @NotNull EnumFacing facing, @NotNull EntityPlayer player) {
+        return null;
+    }
 
     public int getColorInt(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                            @NotNull EntityPlayer player) {
@@ -110,5 +120,5 @@ public abstract class ColoredBlockContainer {
         return getColorInt(world, pos, facing, player) == color;
     }
 
-    public abstract boolean supportsMode(@NotNull AbstractSprayBehavior.ColorMode colorMode);
+    public abstract @NotNull ColorModeSupport getSupportedColorMode();
 }

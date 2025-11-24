@@ -1,5 +1,6 @@
 package gregtech.common.items.behaviors.spray;
 
+import gregtech.api.color.ColorMode;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GradientUtil;
@@ -79,7 +80,7 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
 
     @Override
     public @NotNull ColorMode getColorMode(@NotNull ItemStack sprayCan) {
-        return ColorMode.DYE_ONLY;
+        return ColorMode.DYE;
     }
 
     protected int getUsesLeft(@NotNull ItemStack stack) {

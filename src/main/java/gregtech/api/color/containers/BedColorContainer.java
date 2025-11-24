@@ -1,7 +1,7 @@
 package gregtech.api.color.containers;
 
+import gregtech.api.color.ColorModeSupport;
 import gregtech.api.color.ColoredBlockContainer;
-import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockHorizontal;
@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityBed;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -25,11 +26,13 @@ public class BedColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                            @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
+    public @NotNull EnumActionResult setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                              @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
         // There are no uncolored beds.
-        if (newColor == null || getColor(world, pos, facing, player) == newColor) {
-            return false;
+        if (newColor == null) {
+            return EnumActionResult.FAIL;
+        } else if (colorMatches(world, pos, facing, player, newColor)) {
+            return EnumActionResult.PASS;
         }
 
         IBlockState bedPart1 = world.getBlockState(pos);
@@ -43,18 +46,12 @@ public class BedColorContainer extends ColoredBlockContainer {
         TileEntity bed1TE = world.getTileEntity(pos);
         TileEntity bed2TE = world.getTileEntity(otherPartPos);
         if (!(bed1TE instanceof TileEntityBed bed1 && bed2TE instanceof TileEntityBed bed2)) {
-            return false;
+            return EnumActionResult.FAIL;
         }
 
         bed1.setColor(newColor);
         bed2.setColor(newColor);
-        return true;
-    }
-
-    @Override
-    public boolean removeColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                               @NotNull EntityPlayer player) {
-        return false;
+        return EnumActionResult.SUCCESS;
     }
 
     @Override
@@ -70,7 +67,7 @@ public class BedColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean supportsMode(AbstractSprayBehavior.@NotNull ColorMode colorMode) {
-        return colorMode == AbstractSprayBehavior.ColorMode.DYE_ONLY;
+    public @NotNull ColorModeSupport getSupportedColorMode() {
+        return ColorModeSupport.DYE_ONLY;
     }
 }

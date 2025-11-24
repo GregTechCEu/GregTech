@@ -1,12 +1,13 @@
 package gregtech.api.color.containers;
 
+import gregtech.api.color.ColorModeSupport;
 import gregtech.api.color.ColoredBlockContainer;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.ColorUtil;
-import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -22,52 +23,53 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                            @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
+    public @NotNull EnumActionResult setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                              @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
         if (newColor == null) {
             return removeColor(world, pos, facing, player);
         }
 
-        if (getColorInt(world, pos, facing, player) == newColor.colorValue) {
-            return false;
+        if (colorMatches(world, pos, facing, player, newColor.colorValue)) {
+            return EnumActionResult.PASS;
         }
 
         if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile) {
             pipeTile.setPaintingColor(newColor.colorValue);
-            return true;
+            return EnumActionResult.SUCCESS;
         }
 
-        return false;
+        return EnumActionResult.PASS;
     }
 
     @Override
-    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                            @NotNull EntityPlayer player, int newColor) {
+    public @NotNull EnumActionResult setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                              @NotNull EntityPlayer player, int newColor) {
         if (newColor == -1) {
             return removeColor(world, pos, facing, player);
         }
 
         if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile) {
-            if (pipeTile.isPainted() && getColorInt(world, pos, facing, player) == newColor) {
-                return false;
+            if (pipeTile.isPainted() && colorMatches(world, pos, facing, player, newColor)) {
+                return EnumActionResult.PASS;
             } else {
                 pipeTile.setPaintingColor(newColor);
-                return true;
+                return EnumActionResult.SUCCESS;
             }
         }
 
-        return false;
+        return EnumActionResult.PASS;
     }
 
     @Override
-    public boolean removeColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                               @NotNull EntityPlayer player) {
+    public @NotNull EnumActionResult removeColor(@NotNull World world, @NotNull BlockPos pos,
+                                                 @NotNull EnumFacing facing,
+                                                 @NotNull EntityPlayer player) {
         if (world.getTileEntity(pos) instanceof IPipeTile<?, ?>pipeTile && pipeTile.isPainted()) {
             pipeTile.setPaintingColor(-1);
-            return true;
+            return EnumActionResult.SUCCESS;
         }
 
-        return false;
+        return EnumActionResult.PASS;
     }
 
     @Override
@@ -93,7 +95,7 @@ public class GTPipeColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean supportsMode(AbstractSprayBehavior.@NotNull ColorMode colorMode) {
-        return true;
+    public @NotNull ColorModeSupport getSupportedColorMode() {
+        return ColorModeSupport.EITHER;
     }
 }

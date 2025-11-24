@@ -1,11 +1,12 @@
 package gregtech.api.color.containers;
 
+import gregtech.api.color.ColorModeSupport;
 import gregtech.api.color.ColoredBlockContainer;
-import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -23,37 +24,38 @@ public class AE2ColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                            @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
+    public @NotNull EnumActionResult setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                              @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
         if (newColor == null) {
             return removeColor(world, pos, facing, player);
         }
 
-        if (getColor(world, pos, facing, player) == newColor) {
-            return false;
+        if (colorMatches(world, pos, facing, player, newColor)) {
+            return EnumActionResult.PASS;
         }
 
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IColorableTile colorableTile) {
             if (colorableTile.getColor().dye != newColor) {
-                colorableTile.recolourBlock(facing, AEColor.values()[newColor.ordinal()], player);
-                return true;
+                return colorableTile.recolourBlock(facing, AEColor.values()[newColor.ordinal()], player) ?
+                        EnumActionResult.SUCCESS : EnumActionResult.FAIL;
             }
         }
 
-        return false;
+        return EnumActionResult.PASS;
     }
 
     @Override
-    public boolean removeColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                               @NotNull EntityPlayer player) {
+    public @NotNull EnumActionResult removeColor(@NotNull World world, @NotNull BlockPos pos,
+                                                 @NotNull EnumFacing facing,
+                                                 @NotNull EntityPlayer player) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IColorableTile colorableTile && colorableTile.getColor() != AEColor.TRANSPARENT) {
-            colorableTile.recolourBlock(facing, AEColor.TRANSPARENT, player);
-            return true;
+            return colorableTile.recolourBlock(facing, AEColor.TRANSPARENT, player) ? EnumActionResult.SUCCESS :
+                    EnumActionResult.PASS;
         }
 
-        return false;
+        return EnumActionResult.PASS;
     }
 
     @Override
@@ -74,7 +76,7 @@ public class AE2ColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean supportsMode(AbstractSprayBehavior.@NotNull ColorMode colorMode) {
-        return colorMode == AbstractSprayBehavior.ColorMode.DYE_ONLY;
+    public @NotNull ColorModeSupport getSupportedColorMode() {
+        return ColorModeSupport.DYE_ONLY;
     }
 }

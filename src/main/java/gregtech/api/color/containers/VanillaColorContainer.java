@@ -1,7 +1,7 @@
 package gregtech.api.color.containers;
 
+import gregtech.api.color.ColorModeSupport;
 import gregtech.api.color.ColoredBlockContainer;
-import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
@@ -12,6 +12,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -42,14 +43,14 @@ public class VanillaColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                            @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
+    public @NotNull EnumActionResult setColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                              @NotNull EntityPlayer player, @Nullable EnumDyeColor newColor) {
         if (newColor == null) {
             return removeColor(world, pos, facing, player);
         }
 
-        if (getColor(world, pos, facing, player) == newColor) {
-            return false;
+        if (colorMatches(world, pos, facing, player, newColor)) {
+            return EnumActionResult.PASS;
         }
 
         IBlockState state = world.getBlockState(pos);
@@ -59,15 +60,16 @@ public class VanillaColorContainer extends ColoredBlockContainer {
             IBlockState newBlockState = TRANSFORMATIONS.get(block)
                     .getDefaultState()
                     .withProperty(PROPERTY_MAP.get(block), newColor);
-            return world.setBlockState(pos, newBlockState);
+            return world.setBlockState(pos, newBlockState) ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
         }
 
-        return block.recolorBlock(world, pos, facing, newColor);
+        return block.recolorBlock(world, pos, facing, newColor) ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
     }
 
     @Override
-    public boolean removeColor(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                               @NotNull EntityPlayer player) {
+    public @NotNull EnumActionResult removeColor(@NotNull World world, @NotNull BlockPos pos,
+                                                 @NotNull EnumFacing facing,
+                                                 @NotNull EntityPlayer player) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
@@ -75,7 +77,7 @@ public class VanillaColorContainer extends ColoredBlockContainer {
             IBlockState newBlockState = TRANSFORMATIONS.inverse()
                     .get(block)
                     .getDefaultState();
-            return world.setBlockState(pos, newBlockState);
+            return world.setBlockState(pos, newBlockState) ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
         } else {
             for (IProperty<?> prop : state.getPropertyKeys()) {
                 if (prop.getName().equals("color") && prop.getValueClass() == EnumDyeColor.class) {
@@ -91,12 +93,13 @@ public class VanillaColorContainer extends ColoredBlockContainer {
                         // special cases above on a case-by-case basis
                     }
 
-                    return block.recolorBlock(world, pos, facing, defaultColor);
+                    return block.recolorBlock(world, pos, facing, defaultColor) ? EnumActionResult.SUCCESS :
+                            EnumActionResult.FAIL;
                 }
             }
         }
 
-        return false;
+        return EnumActionResult.PASS;
     }
 
     @Override
@@ -133,7 +136,7 @@ public class VanillaColorContainer extends ColoredBlockContainer {
     }
 
     @Override
-    public boolean supportsMode(AbstractSprayBehavior.@NotNull ColorMode colorMode) {
-        return colorMode == AbstractSprayBehavior.ColorMode.DYE_ONLY;
+    public @NotNull ColorModeSupport getSupportedColorMode() {
+        return ColorModeSupport.DYE_ONLY;
     }
 }

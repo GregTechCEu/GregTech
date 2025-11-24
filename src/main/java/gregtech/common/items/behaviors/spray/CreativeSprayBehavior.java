@@ -1,5 +1,6 @@
 package gregtech.common.items.behaviors.spray;
 
+import gregtech.api.color.ColorMode;
 import gregtech.api.color.ColoredBlockContainer;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemColorProvider;
@@ -204,7 +205,7 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
 
     @Override
     public @NotNull ColorMode getColorMode(@NotNull ItemStack sprayCan) {
-        return usesRGB(sprayCan) ? ColorMode.ARGB_ONLY : ColorMode.DYE_ONLY;
+        return usesRGB(sprayCan) ? ColorMode.ARGB : ColorMode.DYE;
     }
 
     public void setColor(@NotNull ItemStack sprayCan, @Nullable EnumDyeColor color) {
@@ -254,42 +255,68 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
         // Middle click pressed down
         if (event.getButton() == 2 && event.isButtonstate()) {
             event.setCanceled(true);
+            if (tryCopyColor(playerClient, hand, sprayCan)) return;
 
-            RayTraceResult rayTrace = RayTracer.retrace(playerClient);
-            if (rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
-                World world = playerClient.world;
-                BlockPos pos = rayTrace.getBlockPos();
-                EnumFacing facing = rayTrace.sideHit;
-                ColoredBlockContainer container = ColoredBlockContainer.getContainer(world, pos, facing,
-                        playerClient);
-
-                if (container.isBlockValid(world, pos, facing, playerClient)) {
-                    if (usesRGB(sprayCan) && container.supportsARGB() &&
-                            !container.colorMatches(world, pos, facing, playerClient, getColorInt(sprayCan))) {
-                        int color = container.getColorInt(world, pos, facing, playerClient);
-                        if (color != -1) {
-                            setColor(sprayCan, color);
-                            sendToServer(hand, buf -> buf
-                                    .writeByte(1)
-                                    .writeInt(color));
-                            return;
-                        }
-                    } else if (!container.colorMatches(world, pos, facing, playerClient, getColor(sprayCan))) {
-                        EnumDyeColor color = container.getColor(world, pos, facing, playerClient);
-                        if (color != null) {
-                            setColor(sprayCan, color);
-                            sendToServer(hand, buf -> buf
-                                    .writeByte(2)
-                                    .writeByte(color.ordinal()));
-                            return;
-                        }
-                    }
-                }
-            }
-
-            // If the player isn't sneaking and wasn't looking at a colored block, open gui
+            // If the player wasn't looking at a colored block, open gui
             sendToServer(hand, buf -> buf.writeByte(0));
         }
+    }
+
+    protected boolean tryCopyColor(@NotNull EntityPlayerSP playerClient, @NotNull EnumHand hand,
+                                   @NotNull ItemStack sprayCan) {
+        RayTraceResult rayTrace = RayTracer.retrace(playerClient);
+        if (rayTrace == null || rayTrace.typeOfHit != RayTraceResult.Type.BLOCK) return false;
+
+        World world = playerClient.world;
+        BlockPos pos = rayTrace.getBlockPos();
+        EnumFacing facing = rayTrace.sideHit;
+        ColoredBlockContainer container = ColoredBlockContainer.getContainer(world, pos, facing, playerClient);
+        if (container == null) return false;
+
+        return switch (getColorMode(sprayCan)) {
+            case DYE, PREFER_DYE -> {
+                if (tryCopyDyeColor(container, world, pos, facing, playerClient, hand, sprayCan)) {
+                    yield true;
+                }
+
+                yield tryCopyARGBColor(container, world, pos, facing, playerClient, hand, sprayCan);
+            }
+            case ARGB, PREFER_ARGB -> {
+                if (tryCopyARGBColor(container, world, pos, facing, playerClient, hand, sprayCan)) {
+                    yield true;
+                }
+
+                yield tryCopyDyeColor(container, world, pos, facing, playerClient, hand, sprayCan);
+            }
+        };
+    }
+
+    protected boolean tryCopyDyeColor(@NotNull ColoredBlockContainer container, @NotNull World world,
+                                      @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                      @NotNull EntityPlayerSP playerClient, @NotNull EnumHand hand,
+                                      @NotNull ItemStack sprayCan) {
+        EnumDyeColor blockColor = container.getColor(world, pos, facing, playerClient);
+        if (blockColor == null || blockColor == getColor(sprayCan)) return false;
+
+        setColor(sprayCan, blockColor);
+        sendToServer(hand, buf -> buf
+                .writeByte(2)
+                .writeByte(blockColor.ordinal()));
+        return true;
+    }
+
+    protected boolean tryCopyARGBColor(@NotNull ColoredBlockContainer container, @NotNull World world,
+                                       @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                       @NotNull EntityPlayerSP playerClient, @NotNull EnumHand hand,
+                                       @NotNull ItemStack sprayCan) {
+        int blockColor = container.getColorInt(world, pos, facing, playerClient);
+        if (blockColor == -1 || blockColor == getColorInt(sprayCan)) return false;
+
+        setColor(sprayCan, blockColor);
+        sendToServer(hand, buf -> buf
+                .writeByte(1)
+                .writeInt(blockColor));
+        return true;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package gregtech.common.items.behaviors.spray;
 
+import gregtech.api.color.ColorMode;
+import gregtech.api.color.ColorModeSupport;
 import gregtech.api.color.ColoredBlockContainer;
 import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.items.metaitem.MetaItem;
@@ -122,6 +124,7 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         return result;
     }
 
+    @SuppressWarnings("ConstantValue")
     protected @NotNull EnumActionResult spray(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
                                               @NotNull EnumFacing facing, @NotNull ItemStack sprayCan) {
         if (!canSpray(sprayCan)) {
@@ -148,10 +151,53 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
         }
 
         ColoredBlockContainer colorContainer = ColoredBlockContainer.getContainer(world, pos, facing, player);
-        //TODO: reimplement spraying according to the mode of the spray can
+        if (colorContainer == null) {
+            return EnumActionResult.PASS;
+        }
+
+        ColorModeSupport containerColorMode = colorContainer.getSupportedColorMode();
+        ColorMode sprayColorMode = getColorMode(sprayCan);
+        if (!containerColorMode.supportsMode(sprayColorMode)) {
+            if (!world.isRemote) {
+                player.sendStatusMessage(containerColorMode.getErrorText(), true);
+            }
+
+            return EnumActionResult.FAIL;
+        }
+
+        return switch (sprayColorMode) {
+            case DYE -> colorContainer.setColor(world, pos, facing, player, getColor(sprayCan));
+            case ARGB -> colorContainer.setColor(world, pos, facing, player, getColorInt(sprayCan));
+            case PREFER_DYE -> {
+                EnumActionResult result = null;
+                if (containerColorMode.supportsMode(ColorMode.DYE)) {
+                    result = colorContainer.setColor(world, pos, facing, player, getColor(sprayCan));
+                } else if (result != EnumActionResult.SUCCESS && containerColorMode.supportsMode(ColorMode.ARGB)) {
+                    result = colorContainer.setColor(world, pos, facing, player, getColorInt(sprayCan));
+                } else if (result == null) {
+                    throw new IllegalStateException(
+                            "Container mode didn't support either color mode, this shouldn't be possible!");
+                }
+
+                yield result;
+            }
+            case PREFER_ARGB -> {
+                EnumActionResult result = null;
+                if (containerColorMode.supportsMode(ColorMode.ARGB)) {
+                    result = colorContainer.setColor(world, pos, facing, player, getColorInt(sprayCan));
+                } else if (result != EnumActionResult.SUCCESS && containerColorMode.supportsMode(ColorMode.DYE)) {
+                    result = colorContainer.setColor(world, pos, facing, player, getColor(sprayCan));
+                } else if (result == null) {
+                    throw new IllegalStateException(
+                            "Container mode didn't support either color mode, this shouldn't be possible!");
+                }
+
+                yield result;
+            }
+        };
     }
 
-    public abstract @NotNull AbstractSprayBehavior.ColorMode getColorMode(@NotNull ItemStack sprayCan);
+    public abstract @NotNull ColorMode getColorMode(@NotNull ItemStack sprayCan);
 
     protected void traversePipes(@NotNull IPipeTile<?, ?> pipeTile, @NotNull EnumFacing facing,
                                  @NotNull EntityPlayer player, @NotNull ItemStack sprayCan, int color) {
@@ -192,11 +238,5 @@ public abstract class AbstractSprayBehavior implements IItemBehaviour {
 
     private static boolean canPipeBePainted(@NotNull IPipeTile<?, ?> pipeTile, int color) {
         return pipeTile.isPainted() ? pipeTile.getPaintingColor() != color : color != -1;
-    }
-
-    public enum ColorMode {
-        DYE_ONLY,
-        ARGB_ONLY,
-        EITHER
     }
 }
