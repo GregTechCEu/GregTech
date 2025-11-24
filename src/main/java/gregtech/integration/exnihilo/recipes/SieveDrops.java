@@ -49,8 +49,26 @@ public class SieveDrops {
 
     @SuppressWarnings("unused")
     public static void removeDrop(ItemStack input, ItemStack output) {
-        siftables.entrySet().removeIf(siftable -> siftable.getKey().test(input) &&
-                siftable.getValue().removeIf(drop -> drop.getDrop().getItemStack().isItemEqual(output)));
+        if (input.isEmpty()) {
+            IntegrationModule.logger.error("Input stack is empty!", new Throwable());
+            return;
+        }
+        if (output.isEmpty()) {
+            IntegrationModule.logger.error("Output stack is empty!", new Throwable());
+            return;
+        }
+        Optional<Ingredient> optionalIngredient = siftables.keySet().stream()
+                .filter(ingredient -> ingredient.apply(input)).findFirst();
+        if (optionalIngredient.isPresent()) {
+            Ingredient ingredient = optionalIngredient.get();
+            if (!siftables.get(ingredient)
+                    .removeIf(siftable -> siftable.getDrop().getItemStack().isItemEqual(output))) {
+                IntegrationModule.logger.error("Cannot find Output for stack {} and Input stack {}",
+                        output.getDisplayName(), input.getDisplayName(), new Throwable());
+            }
+        } else {
+            IntegrationModule.logger.error("Cannot find Input for stack {}", input.getDisplayName(), new Throwable());
+        }
     }
 
     public static void addDrop(Block input, ItemStack output, int meshLevel, float chance) {
