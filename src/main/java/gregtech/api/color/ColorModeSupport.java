@@ -12,11 +12,11 @@ public enum ColorModeSupport {
     /**
      * This block only supports being colored to an {@link EnumDyeColor}.
      */
-    DYE_ONLY("gregtech.color_mode.error.dye"),
+    DYE_ONLY("gregtech.color_mode.error.argb"),
     /**
      * This block only supports being colored to an ARGB value.
      */
-    ARGB_ONLY("gregtech.color_mode.error.argb"),
+    ARGB_ONLY("gregtech.color_mode.error.dye"),
     /**
      * This block supports being colored to a {@link EnumDyeColor} or ARGB value.
      */
