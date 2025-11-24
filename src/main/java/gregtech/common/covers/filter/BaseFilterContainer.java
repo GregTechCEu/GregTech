@@ -213,6 +213,9 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     /** Uses Cleanroom MUI */
     public IWidget initUI(GuiData data, PanelSyncManager manager) {
         // i bet brachy is gonna really hate this, but it *does* work
+        // todo Find a better way to handle the filter popup panel than making
+        //  a new panel handler every time it changes
+        //  Could use a DynamicSyncedWidget or a client only panel in a future PR
         AtomicReference<IPanelHandler> filterPanel = new AtomicReference<>();
         AtomicReference<ItemStack> oldStack = new AtomicReference<>(getFilterStack());
         AtomicInteger counter = new AtomicInteger();
@@ -225,7 +228,6 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         });
         ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingItemDamageCount();
 
-        // todo could i use a dynamic synced widget for this row?
         return Flow.row().coverChildrenHeight()
                 .marginBottom(2).widthRel(1f)
                 .child(new ItemSlot()
