@@ -12,7 +12,8 @@ public interface IItemModelDispatcher extends IItemComponent {
      * The index range will be checked at
      * {@link MetaItem#getModelIndex(ItemStack)}.
      *
-     * @param itemStack The specific item stack.
+     * @param itemStack The specific item stack, which is granted non-empty at
+     *                  {@link MetaItem.MetaValueItem#getModelAmount()}
      * @param maxIndex  The max model index, from
      *                  {@link MetaItem.MetaValueItem#getModelAmount()} - 1.
      * @return The model index for the specific stack, should be ranged between
