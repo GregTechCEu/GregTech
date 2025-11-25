@@ -41,8 +41,8 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     private static final int DEFAULT_MIN = 64;
     private static final int DEFAULT_MAX = 512;
 
-    private int min = DEFAULT_MIN;
-    private int max = DEFAULT_MAX;
+    private long min = DEFAULT_MIN;
+    private long max = DEFAULT_MAX;
     private int outputAmount;
     private boolean isLatched = false;
     protected ItemFilterContainer itemFilter;
@@ -111,11 +111,11 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     }
 
     private void setMinValue(long val) {
-        this.min = clamp((int) val, 0, this.max - 1);
+        this.min = clamp(val, 0, this.max - 1);
     }
 
     private void setMaxValue(long val) {
-        this.max = clamp((int) val, this.min + 1, Integer.MAX_VALUE);
+        this.max = clamp(val, this.min + 1, Long.MAX_VALUE);
     }
 
     private void setLatched(boolean isLatched) {
@@ -163,8 +163,8 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     @Override
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("min", this.min);
-        tagCompound.setInteger("max", this.max);
+        tagCompound.setLong("min", this.min);
+        tagCompound.setLong("max", this.max);
         tagCompound.setBoolean("isLatched", this.isLatched);
         tagCompound.setTag("filter", this.itemFilter.serializeNBT());
     }
@@ -172,8 +172,8 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.min = tagCompound.getInteger("min");
-        this.max = tagCompound.getInteger("max");
+        this.min = tagCompound.getLong("min");
+        this.max = tagCompound.getLong("max");
         this.isLatched = tagCompound.getBoolean("isLatched");
         this.itemFilter.deserializeNBT(tagCompound.getCompoundTag("filter"));
     }
@@ -181,16 +181,16 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
-        packetBuffer.writeInt(this.min);
-        packetBuffer.writeInt(this.max);
+        packetBuffer.writeLong(this.min);
+        packetBuffer.writeLong(this.max);
         packetBuffer.writeBoolean(this.isLatched);
     }
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        this.min = packetBuffer.readInt();
-        this.max = packetBuffer.readInt();
+        this.min = packetBuffer.readLong();
+        this.max = packetBuffer.readLong();
         this.isLatched = packetBuffer.readBoolean();
     }
 }
