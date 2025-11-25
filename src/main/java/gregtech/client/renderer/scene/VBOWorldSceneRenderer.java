@@ -151,7 +151,7 @@ public class VBOWorldSceneRenderer extends ImmediateWorldSceneRenderer {
     }
 
     protected void setupArrayPointers() {
-        if (Mods.Optifine.isModLoaded()) {
+        if (Mods.ShadersMod.isModLoaded()) {
             ShadersRender.setupArrayPointersVbo();
         } else {
             // 28 == DefaultVertexFormats.BLOCK.getSize();
