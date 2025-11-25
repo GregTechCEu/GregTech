@@ -4,7 +4,6 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -44,7 +43,9 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     private static final int DEFAULT_MIN = 1000; // 1 Bucket
     private static final int DEFAULT_MAX = 16000; // 16 Buckets
 
-    private int min = DEFAULT_MIN, max = DEFAULT_MAX, outputAmount;
+    private long min = DEFAULT_MIN;
+    private long max = DEFAULT_MAX;
+    private int outputAmount;
     private boolean isLatched = false;
 
     protected FluidFilterContainer fluidFilter;
@@ -128,11 +129,11 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     }
 
     private void setMinValue(long val) {
-        this.min = clamp((int) val, 0, max - 1);
+        this.min = clamp(val, 0, max - 1);
     }
 
     private void setMaxValue(long val) {
-        this.max = GTUtility.safeCastLongToInt(clamp(val, min + 1, Long.MAX_VALUE));
+        this.max = clamp(val, min + 1, Long.MAX_VALUE);
     }
 
     private void setLatched(boolean isLatched) {
@@ -174,8 +175,8 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     @Override
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("min", this.min);
-        tagCompound.setInteger("max", this.max);
+        tagCompound.setLong("min", this.min);
+        tagCompound.setLong("max", this.max);
         tagCompound.setBoolean("isLatched", this.isLatched);
         tagCompound.setTag("filter", this.fluidFilter.serializeNBT());
     }
@@ -183,8 +184,8 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.min = tagCompound.getInteger("min");
-        this.max = tagCompound.getInteger("max");
+        this.min = tagCompound.getLong("min");
+        this.max = tagCompound.getLong("max");
         this.isLatched = tagCompound.getBoolean("isLatched");
         this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("filter"));
     }
@@ -192,16 +193,16 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
-        packetBuffer.writeInt(this.min);
-        packetBuffer.writeInt(this.max);
+        packetBuffer.writeLong(this.min);
+        packetBuffer.writeLong(this.max);
         packetBuffer.writeBoolean(this.isLatched);
     }
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        this.min = packetBuffer.readInt();
-        this.max = packetBuffer.readInt();
+        this.min = packetBuffer.readLong();
+        this.max = packetBuffer.readLong();
         this.isLatched = packetBuffer.readBoolean();
     }
 }
