@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.FilteredItemHandler;
@@ -10,7 +12,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.widget.AmongUsWiringTaskWidget;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -38,7 +39,6 @@ import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.DoubleValue;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -351,8 +351,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        BooleanSyncValue wiringMinigameSync = new BooleanSyncValue(GTValues.FOOLS);
-        panelSyncManager.syncValue("wiringMinigame", 0, wiringMinigameSync);
+        BooleanSyncValue minigameSync = new BooleanSyncValue(GTValues.FOOLS);
+        panelSyncManager.syncValue("wiringMinigame", 0, minigameSync);
         InteractionSyncHandler maintenanceClickSync = new InteractionSyncHandler()
                 .setOnMousePressed(mouse -> {
                     if (panelSyncManager.isClient()) return;
@@ -367,11 +367,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 .child(IKey.lang(getMetaFullName())
                         .asWidget()
                         .pos(5, 5))
-                .childIf(!isConfigurable && wiringMinigameSync.getBoolValue(),
-                        () -> new AmongUsWiringTaskWidget(this::isAttachedToMultiBlock,
-                                () -> ((IMaintenance) getController()).fixAllMaintenance())
-                                        .pos(48, 15))
-                .childIf(!wiringMinigameSync.getBoolValue(), () -> Flow.column()
+                // TODO: minigame .childIf(!isConfigurable && wiringMinigameSync.getBoolValue(), )
+                .childIf(!minigameSync.getBoolValue(), () -> Flow.column()
                         .top(17)
                         .widthRel(1.0f)
                         .coverChildrenHeight()
