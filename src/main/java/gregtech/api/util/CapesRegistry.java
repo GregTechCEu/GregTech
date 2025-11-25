@@ -59,6 +59,7 @@ public class CapesRegistry {
         unlockCape(UUID.fromString("e6e784af-bd04-46ad-8141-47b8b9102cb9"), Textures.GREGTECH_CAPE_TEXTURE); // Tictim
         unlockCape(UUID.fromString("2fa297a6-7803-4629-8360-7059155cf43e"), Textures.GREGTECH_CAPE_TEXTURE); // KilaBash
         unlockCape(UUID.fromString("56bd41d0-06ef-4ed7-ab48-926ce45651f9"), Textures.GREGTECH_CAPE_TEXTURE); // Zalgo239
+        unlockCape(UUID.fromString("2c69579f-a7fa-46ad-814e-9837e01215c1"), Textures.GREGTECH_CAPE_TEXTURE); // Z_orbatron
         save();
     }
 
