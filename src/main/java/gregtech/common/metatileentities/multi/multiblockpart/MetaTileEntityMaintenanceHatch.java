@@ -1,7 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.FilteredItemHandler;
@@ -37,8 +35,10 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.DoubleValue;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -46,10 +46,10 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import it.unimi.dsi.fastutil.doubles.DoubleLists;
@@ -350,7 +350,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         BooleanSyncValue minigameSync = new BooleanSyncValue(GTValues.FOOLS);
         panelSyncManager.syncValue("wiringMinigame", 0, minigameSync);
         InteractionSyncHandler maintenanceClickSync = new InteractionSyncHandler()
@@ -437,7 +437,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                                     .stopperTexture(IDrawable.EMPTY)
                                     .sliderHeight(8));
                 })
-                .child(SlotGroupWidget.playerInventory()
+                .child(SlotGroupWidget.playerInventory(false)
                         .left(7)
                         .bottom(7));
     }

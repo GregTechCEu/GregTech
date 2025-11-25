@@ -37,17 +37,18 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -276,7 +277,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         int rowSize = (int) Math.sqrt(exportItems.getSlots());
 
         IntSyncValue rangeSync = SyncHandlers.intNumber(this::getItemSuckingRange, this::setItemSuckingRange);
@@ -346,7 +347,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
                                         .tooltipBuilder(tooltip -> tooltip.addLine(autoOutputSync.getBoolValue() ?
                                                 IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
                                                 IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled"))))))
-                .child(SlotGroupWidget.playerInventory()
+                .child(SlotGroupWidget.playerInventory(false)
                         .bottom(7)
                         .left(7));
     }

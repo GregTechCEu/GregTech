@@ -20,11 +20,12 @@ import net.minecraftforge.items.ItemStackHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,7 +87,7 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         int rowSize = (int) Math.sqrt(inventorySize);
         panelSyncManager.registerSlotGroup("slots", rowSize);
 
@@ -107,7 +108,7 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
                                         new BatteryIndicatorDrawable(
                                                 () -> GTUtility.itemChargeLevel(importItems.getStackInSlot(index)),
                                                 0.85f))))
-                .child(SlotGroupWidget.playerInventory()
+                .child(SlotGroupWidget.playerInventory(false)
                         .bottom(7)
                         .left(7));
     }

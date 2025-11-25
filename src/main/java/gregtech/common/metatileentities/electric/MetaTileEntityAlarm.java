@@ -28,6 +28,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -86,7 +87,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         AlarmSyncHandler alarmSyncHandler = new AlarmSyncHandler();
         panelSyncManager.syncValue("alarm_data", 0, alarmSyncHandler);
         IPanelHandler soundSelector = panelSyncManager.panel("sound_selector_popup",
