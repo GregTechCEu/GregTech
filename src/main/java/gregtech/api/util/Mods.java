@@ -4,17 +4,19 @@ import gregtech.api.GTValues;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.optifine.shaders.Shaders;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +48,9 @@ public enum Mods {
     ForestryApiculture(Names.FORESTRY, forestryModule(Names.FORESTRY_APICULTURE)),
     ForestryArboriculture(Names.FORESTRY, forestryModule(Names.FORESTRY_ARBORICULTURE)),
     ForestryLepidopterology(Names.FORESTRY, forestryModule(Names.FORESTRY_LEPIDOPTEROLOGY)),
+    FTB_LIB(Names.FTB_LIB),
+    // FTB Utilities hard deps on ftb lib so you don't have to check if both are loaded
+    FTB_UTILITIES(Names.FTB_UTILITIES),
     GalacticraftCore(Names.GALACTICRAFT_CORE),
     Genetics(Names.GENETICS),
     GregTech(Names.GREGTECH),
@@ -76,22 +81,25 @@ public enum Mods {
     Vintagium(Names.VINTAGIUM),
     Alfheim(Names.ALFHEIM),
 
-    // Special Optifine handler, but consolidated here for simplicity
-    Optifine(null) {
+    OptiFine(null) {
 
         @Override
         public boolean isModLoaded() {
             if (this.modLoaded == null) {
-                try {
-                    Class<?> c = Class.forName("net.optifine.shaders.Shaders");
-                    Field f = c.getDeclaredField("shaderPackLoaded");
-                    f.setAccessible(true);
-                    this.modLoaded = f.getBoolean(null);
-                } catch (Exception ignored) {
-                    this.modLoaded = false;
-                }
+                this.modLoaded = FMLCommonHandler.instance().getSide().isClient() &&
+                        FMLClientHandler.instance().hasOptifine();
             }
             return this.modLoaded;
+        }
+    },
+
+    // Special Optifine shader handler, but consolidated here for simplicity
+    ShadersMod(null) {
+
+        @Override
+        public boolean isModLoaded() {
+            // Check shader pack state at real time instead of caching it
+            return OptiFine.isModLoaded() && Shaders.shaderPackLoaded;
         }
     };
 
@@ -118,6 +126,8 @@ public enum Mods {
         public static final String FORESTRY_APICULTURE = "apiculture";
         public static final String FORESTRY_ARBORICULTURE = "arboriculture";
         public static final String FORESTRY_LEPIDOPTEROLOGY = "lepidopterology";
+        public static final String FTB_LIB = "ftblib";
+        public static final String FTB_UTILITIES = "ftbutilities";
         public static final String GALACTICRAFT_CORE = "galacticraftcore";
         public static final String GENETICS = "genetics";
         public static final String GREGTECH = GTValues.MODID;

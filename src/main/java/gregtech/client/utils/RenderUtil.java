@@ -1,7 +1,7 @@
 package gregtech.client.utils;
 
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.util.Mods;
+import gregtech.api.util.JEIUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -27,12 +27,15 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.MCHelper;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
-import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
+import com.cleanroommc.modularui.drawable.GuiDraw;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
+import com.cleanroommc.modularui.theme.SlotTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
+import com.cleanroommc.modularui.utils.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
@@ -43,6 +46,7 @@ import java.util.*;
 public class RenderUtil {
 
     private static final Deque<int[]> scissorFrameStack = new ArrayDeque<>();
+    public static final int defaultSlotHoverColor = Color.withAlpha(Color.WHITE.main, 0x60);
 
     public static void useScissor(int x, int y, int width, int height, Runnable codeBlock) {
         pushScissorFrame(x, y, width, height);
@@ -165,7 +169,7 @@ public class RenderUtil {
     public static void useLightMap(float x, float y, Runnable codeBlock) {
         /* hack the lightmap */
         GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+        RenderHelper.disableStandardItemLighting();
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, x, y);
@@ -174,7 +178,7 @@ public class RenderUtil {
         }
         /* restore the lightmap */
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
-        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
         GL11.glPopAttrib();
     }
 
@@ -379,32 +383,14 @@ public class RenderUtil {
     }
 
     public static void renderItemOverLay(float x, float y, float z, float scale, ItemStack itemStack) {
-        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
         GlStateManager.pushMatrix();
         GlStateManager.scale(scale, scale, 0.0001f);
         GlStateManager.translate(x * 16, y * 16, z * 16);
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         renderItem.renderItemAndEffectIntoGUI(itemStack, 0, 0);
         GlStateManager.popMatrix();
-        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
-    }
-
-    // adapted from com.cleanroommc.modularui.drawable.GuiDraw.java
-    // todo merge this with the method from the qstorage mui2 port
-    public static void renderItem(ItemStack item, int x, int y, float width, float height) {
-        if (item.isEmpty()) return;
-        GlStateManager.pushMatrix();
-        RenderHelper.enableGUIStandardItemLighting();
-        GlStateManager.enableDepth();
-        GlStateManager.translate(x, y, 0);
-        GlStateManager.scale(width / 16f, height / 16f, 1);
-        RenderItem renderItem = MCHelper.getMc().getRenderItem();
-        renderItem.renderItemAndEffectIntoGUI(MCHelper.getPlayer(), item, 0, 0);
-        renderItem.renderItemOverlayIntoGUI(MCHelper.getFontRenderer(), item, 0, 0, null);
-        GlStateManager.disableDepth();
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.disableLighting();
-        GlStateManager.popMatrix();
+        RenderHelper.disableStandardItemLighting();
     }
 
     public static void renderFluidOverLay(float x, float y, float width, float height, float z, FluidStack fluidStack,
@@ -634,10 +620,10 @@ public class RenderUtil {
         OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, fbo.framebufferObject);
         if (fbo.isStencilEnabled()) {
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER,
-                    org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER,
+                    EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER,
                     depthBuffer);
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER,
-                    org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER,
+                    EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER,
                     depthBuffer);
         } else {
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT,
@@ -716,14 +702,61 @@ public class RenderUtil {
         return getTextureMap().getMissingSprite();
     }
 
-    public static void handleJeiGhostHighlight(IWidget slot) {
-        if (!Mods.JustEnoughItems.isModLoaded()) return;
-        if (!(slot instanceof JeiGhostIngredientSlot<?>ingredientSlot)) return;
-        if (ModularUIJeiPlugin.hasDraggingGhostIngredient() ||
-                ModularUIJeiPlugin.hoveringOverIngredient(ingredientSlot)) {
-            GlStateManager.colorMask(true, true, true, false);
-            ingredientSlot.drawHighlight(slot.getArea(), slot.isHovering());
-            GlStateManager.colorMask(true, true, true, true);
+    @SideOnly(Side.CLIENT)
+    public static void drawItemStack(ItemStack itemStack, int x, int y, boolean drawCount) {
+        int cache = itemStack.getCount();
+        if (!drawCount) itemStack.setCount(1);
+        drawItemStack(itemStack, x, y);
+        if (!drawCount) itemStack.setCount(cache);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawItemStack(ItemStack itemStack, int x, int y) {
+        drawItemStack(itemStack, x, y, 16, 16);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawItemStack(ItemStack itemStack, int x, int y, int w, int h) {
+        GuiDraw.drawItem(itemStack, x, y, w, h, 0);
+    }
+
+    public static void drawSlotOverlay(@NotNull IWidget slot, int overlayColor) {
+        GlStateManager.colorMask(true, true, true, false);
+        GuiDraw.drawRect(1, 1, slot.getArea().w() - 2, slot.getArea().h() - 2, overlayColor);
+        GlStateManager.colorMask(true, true, true, true);
+    }
+
+    public static void drawSlotOverlay(@NotNull IWidget slot, SlotTheme theme) {
+        drawSlotOverlay(slot, theme.getSlotHoverColor());
+    }
+
+    public static void handleSlotOverlay(@NotNull IWidget slot, @NotNull WidgetThemeEntry<?> themeEntry) {
+        if (slot.isHovering()) {
+            if (themeEntry.getTheme() instanceof SlotTheme slotTheme) {
+                drawSlotOverlay(slot, slotTheme);
+            } else {
+                drawSlotOverlay(slot, defaultSlotHoverColor);
+            }
         }
+    }
+
+    public static <
+            T extends IWidget & RecipeViewerGhostIngredientSlot<?>> void drawJEIGhostSlotOverlay(@NotNull T jeiGhostIngredientSlot) {
+        GlStateManager.colorMask(true, true, true, false);
+        jeiGhostIngredientSlot.drawHighlight(jeiGhostIngredientSlot.getArea(), jeiGhostIngredientSlot.isHovering());
+        GlStateManager.colorMask(true, true, true, true);
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public static <
+            T extends IWidget & RecipeViewerGhostIngredientSlot<?>> boolean handleJEIGhostSlotOverlay(@NotNull T jeiGhostIngredientSlot,
+                                                                                                      @NotNull WidgetThemeEntry<?> themeEntry) {
+        if (JEIUtil.hoveringOverIngredient(jeiGhostIngredientSlot)) {
+            drawJEIGhostSlotOverlay(jeiGhostIngredientSlot);
+            return true;
+        }
+
+        handleSlotOverlay(jeiGhostIngredientSlot, themeEntry);
+        return false;
     }
 }

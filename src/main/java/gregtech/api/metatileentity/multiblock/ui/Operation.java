@@ -20,7 +20,7 @@ public interface Operation extends Consumer<IRichTextBuilder<?>> {
     }
 
     static Operation addLineSpace(IDrawable drawable) {
-        return addLine(drawable).spaceLine(2);
+        return addLine(drawable).spaceLine(1);
     }
 
     @Override

@@ -19,8 +19,8 @@ import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,7 +96,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
     protected abstract boolean isItemValid(ItemStack stack);
 
-    protected abstract String getFilterName();
+    protected abstract @NotNull IKey getFilterKey();
 
     @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
@@ -212,9 +212,10 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     /** Uses Cleanroom MUI */
     public Flow initUI(GuiData data, PanelSyncManager manager) {
         IPanelHandler panel = manager.panel("filter_panel", (syncManager, syncHandler) -> {
-            var filter = hasFilter() ? getFilter() : BaseFilter.ERROR_FILTER;
-            filter.setMaxTransferSize(getMaxTransferSize());
-            return filter.createPopupPanel(syncManager);
+            if (hasFilter()) {
+                return getFilter().createPopupPanel(syncManager);
+            }
+            return BaseFilter.ERROR_FILTER.createPopupPanel(syncManager);
         }, true);
 
         return Flow.row().coverChildrenHeight()
@@ -224,7 +225,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                                 .filter(this::isItemValid)
                                 .singletonSlotGroup(101)
                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                    if (!isItemValid(newItem) && panel.isPanelOpen()) {
+                                    if (!isItemValid(newItem) || (newItem.isEmpty() && panel.isPanelOpen())) {
                                         panel.closePanel();
                                     }
                                 }))
@@ -237,13 +238,14 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                         .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
                             if (!panel.isPanelOpen()) {
+                                setMaxTransferSize(getMaxTransferSize());
                                 panel.openPanel();
                             } else {
                                 panel.closePanel();
                             }
                             return true;
                         }))
-                .child(IKey.dynamic(this::getFilterName)
+                .child(getFilterKey()
                         .color(CoverWithUI.UI_TEXT_COLOR)
                         .shadow(false)
                         .alignment(Alignment.CenterRight).asWidget()

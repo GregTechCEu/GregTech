@@ -24,6 +24,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.SoundEvents;
@@ -42,9 +43,10 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
-import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import org.apache.commons.lang3.ArrayUtils;
@@ -110,7 +112,6 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
                             .child(Flow.row()
                                     .top(20)
                                     .alignX(0.5f)
-                                    // .pos(52, 20)
                                     .crossAxisAlignment(Alignment.CrossAxis.CENTER)
                                     .coverChildren()
                                     .child(new Grid()
@@ -120,15 +121,13 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
                                                     .slot(new ModularSlot(importItems, value)
                                                             .slotGroup(importGroup)))
                                             .marginRight(6))
-                                    .child(new com.cleanroommc.modularui.widgets.ProgressWidget()
-                                            // .pos(77, 39)
+                                    .child(new ProgressWidget()
                                             .size(20, 15)
                                             .marginRight(6)
                                             .texture(GTGuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, 20)
                                             .value(new DoubleSyncValue(recipeMapWorkable::getProgressPercent)))
                                     .child(new Grid()
                                             .coverChildren()
-                                            // .pos(104, 38)
                                             .mapTo(3, 3, value -> new ItemSlot()
                                                     .background(GTGuiTextures.SLOT_PRIMITIVE, exportOverlays[value])
                                                     .slot(new ModularSlot(exportItems, value)
@@ -208,5 +207,11 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
                         SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
             }
         }
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return SoundType.STONE;
     }
 }

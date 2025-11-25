@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -52,13 +53,13 @@ public class FluidFilterContainer extends BaseFilterContainer {
     @Override
     protected boolean isItemValid(ItemStack stack) {
         var filter = BaseFilter.getFilterFromStack(stack);
-        return filter != null && filter.getType() == IFilter.FilterType.FLUID;
+        return filter != BaseFilter.ERROR_FILTER && filter.getType() == IFilter.FilterType.FLUID;
     }
 
     @Override
-    protected String getFilterName() {
-        return hasFilter() ?
-                getFilterStack().getDisplayName() :
-                IKey.lang("metaitem.fluid_filter.name").get();
+    protected @NotNull IKey getFilterKey() {
+        return IKey.lang(() -> hasFilter() ?
+                getFilterStack().getTranslationKey() + ".name" :
+                "metaitem.fluid_filter.name");
     }
 }

@@ -47,13 +47,14 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.RichTextWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -281,7 +282,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
                 .showAmountOnSlot(false)
                 .accessibility(true, !isExportHatch);
@@ -291,7 +292,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 setLocked(fluidStack != null);
                 this.lockedFluid = fluidStack;
                 this.fluidTank.onContentsChanged();
-            }, this::setLocked);
+                markDirty();
+            }, this::setLocked, this::isLocked);
         }
 
         return GTGuis.createPanel(this, 176, 166)
@@ -306,7 +308,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 .childIf(isExportHatch, new ToggleButton()
                         .pos(7, 63)
                         .overlay(GTGuiTextures.BUTTON_LOCK)
-                        .value(new BooleanSyncValue(this::isLocked, b -> fluidSyncHandler.lockFluid(b, false)))
+                        .value(new BooleanSyncValue(this::isLocked, fluidSyncHandler::lockFluid))
                         .addTooltip(true, IKey.lang("gregtech.gui.fluid_lock.tooltip.enabled"))
                         .addTooltip(false, IKey.lang("gregtech.gui.fluid_lock.tooltip.disabled")))
 
@@ -325,6 +327,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                         .pos(124, 62))
 
                 // common ui
+                // todo split up these lines into their own widgets and use a scrolling text widget for the name
                 .child(new RichTextWidget()
                         .size(81 - 6, (isExportHatch ? 46 : 55) - 8)
                         // .padding(3, 4)
@@ -412,6 +415,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             this.lockedFluid = fluidTank.getFluid().copy();
             this.lockedFluid.amount = 1;
             fluidTank.onContentsChanged();
+            markDirty();
             return;
         }
         this.lockedFluid = null;

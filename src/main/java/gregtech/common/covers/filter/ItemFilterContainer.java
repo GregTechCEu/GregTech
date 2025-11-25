@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -53,13 +54,13 @@ public class ItemFilterContainer extends BaseFilterContainer {
     @Override
     protected boolean isItemValid(ItemStack stack) {
         var filter = BaseFilter.getFilterFromStack(stack);
-        return filter != null && filter.getType() == IFilter.FilterType.ITEM;
+        return filter != BaseFilter.ERROR_FILTER && filter.getType() == IFilter.FilterType.ITEM;
     }
 
     @Override
-    protected String getFilterName() {
-        return hasFilter() ?
-                getFilterStack().getDisplayName() :
-                IKey.lang("metaitem.item_filter.name").get();
+    protected @NotNull IKey getFilterKey() {
+        return IKey.lang(() -> hasFilter() ?
+                getFilterStack().getTranslationKey() + ".name" :
+                "metaitem.item_filter.name");
     }
 }

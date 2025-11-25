@@ -13,6 +13,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -149,5 +150,11 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @NotNull
+    @Override
+    public SoundType getSoundType() {
+        return this.isMetal ? SoundType.METAL : SoundType.WOOD;
     }
 }

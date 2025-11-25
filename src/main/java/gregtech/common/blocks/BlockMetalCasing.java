@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.block.IStateHarvestLevel;
+import gregtech.api.block.IStateSoundType;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 
@@ -31,27 +32,33 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
         return false;
     }
 
-    public enum MetalCasingType implements IStringSerializable, IStateHarvestLevel {
+    public enum MetalCasingType implements IStringSerializable, IStateHarvestLevel, IStateSoundType {
 
         BRONZE_BRICKS("bronze_bricks", 1),
-        PRIMITIVE_BRICKS("primitive_bricks", 1),
+        PRIMITIVE_BRICKS("primitive_bricks", 1, SoundType.STONE),
         INVAR_HEATPROOF("invar_heatproof", 1),
         ALUMINIUM_FROSTPROOF("aluminium_frostproof", 1),
         STEEL_SOLID("steel_solid", 2),
         STAINLESS_CLEAN("stainless_clean", 2),
         TITANIUM_STABLE("titanium_stable", 2),
         TUNGSTENSTEEL_ROBUST("tungstensteel_robust", 3),
-        COKE_BRICKS("coke_bricks", 1),
+        COKE_BRICKS("coke_bricks", 1, SoundType.STONE),
         PTFE_INERT_CASING("ptfe_inert", 0),
         HSSE_STURDY("hsse_sturdy", 3),
         PALLADIUM_SUBSTATION("palladium_substation", 3);
 
         private final String name;
         private final int harvestLevel;
+        private final SoundType soundType;
 
-        MetalCasingType(String name, int harvestLevel) {
+        MetalCasingType(String name, int harvestLevel, SoundType soundType) {
             this.name = name;
             this.harvestLevel = harvestLevel;
+            this.soundType = soundType;
+        }
+
+        MetalCasingType(String name, int harvestLevel) {
+            this(name, harvestLevel, SoundType.METAL);
         }
 
         @NotNull
@@ -68,6 +75,12 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
         @Override
         public String getHarvestTool(IBlockState state) {
             return ToolClasses.WRENCH;
+        }
+
+        @NotNull
+        @Override
+        public SoundType getSoundType(@NotNull IBlockState state) {
+            return soundType;
         }
     }
 }

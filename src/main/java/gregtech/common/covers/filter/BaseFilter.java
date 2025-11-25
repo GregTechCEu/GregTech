@@ -21,7 +21,6 @@ import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseFilter implements IFilter {
 
@@ -64,14 +63,14 @@ public abstract class BaseFilter implements IFilter {
         return this.getFilterReader().getContainer();
     }
 
-    public static @Nullable BaseFilter getFilterFromStack(ItemStack stack) {
+    public static @NotNull BaseFilter getFilterFromStack(ItemStack stack) {
         if (stack.getItem() instanceof MetaItem<?>metaItem) {
             var metaValueItem = metaItem.getItem(stack);
             var factory = metaValueItem == null ? null : metaValueItem.getFilterFactory();
             if (factory != null)
                 return factory.create(stack);
         }
-        return null;
+        return ERROR_FILTER;
     }
 
     public final void setBlacklistFilter(boolean blacklistFilter) {

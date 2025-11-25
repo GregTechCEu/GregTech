@@ -1035,7 +1035,7 @@ public class GTUtility {
 
     /**
      * Check if an {@link ItemStack} is chargeable.
-     * 
+     *
      * @param stack       the stack to check
      * @param tier        if the item is a GT energy item, the minimum tier it has to be
      * @param checkCharge whether to check if it is fully charged or not
@@ -1064,7 +1064,7 @@ public class GTUtility {
 
     /**
      * Get the level of charge from 0 to 1 of an item
-     * 
+     *
      * @return 0 if the supplied item is not electric
      */
     public static float itemChargeLevel(@NotNull ItemStack stack) {
@@ -1085,7 +1085,7 @@ public class GTUtility {
 
     /**
      * Lerp between two ARGB colors
-     * 
+     *
      * @param start    the start point of the lerp
      * @param end      the end point of the lerp
      * @param position the position of the lerp. Must be between 0 and 1.
@@ -1123,5 +1123,11 @@ public class GTUtility {
         for (int index = shufflingArray.length; index > 1; index--) {
             swap(shufflingArray, index - 1, GTValues.RNG.nextInt(index));
         }
+    }
+
+    public static boolean areFluidStacksEqual(@Nullable FluidStack a, @Nullable FluidStack b) {
+        if (a == b) return true;
+        if (a == null) return false;
+        return a.isFluidEqual(b);
     }
 }

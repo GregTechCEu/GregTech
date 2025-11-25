@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
+import com.cleanroommc.modularui.api.MCHelper;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.RichTooltip;
@@ -26,6 +27,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -41,6 +43,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     private final IFluidTank tank;
     private Consumer<FluidStack> jeiHandler;
     private BooleanConsumer lockHandler;
+    private BooleanSupplier isLocked;
     private Supplier<FluidStack> lockedFluid;
     private FluidStack lastFluid;
     private FluidStack phantomFluid;
@@ -50,6 +53,8 @@ public class GTFluidSyncHandler extends SyncHandler {
     private BooleanSupplier showAmountInTooltip = () -> true;
     private BooleanSupplier showAmountOnSlot = () -> true;
     private BooleanSupplier drawAlwaysFull = () -> true;
+    @Nullable
+    private Consumer<@Nullable FluidStack> changeConsumer;
 
     public GTFluidSyncHandler(IFluidTank tank) {
         this.tank = tank;
@@ -57,38 +62,41 @@ public class GTFluidSyncHandler extends SyncHandler {
 
     @Override
     public void detectAndSendChanges(boolean init) {
-        var current = getFluid();
-        if (init || current == null || lastFluid == null || current.isFluidEqual(lastFluid)) {
+        FluidStack current = getFluid();
+        if (init || !GTUtility.areFluidStacksEqual(current, lastFluid)) {
             lastFluid = current == null ? null : current.copy();
             syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, current));
         } else if (lastFluid != null && current.amount != lastFluid.amount) {
             lastFluid.amount = current.amount;
             syncToClient(UPDATE_AMOUNT, buffer -> buffer.writeInt(current.amount));
+        } else if (!isPhantom() && canLockFluid() &&
+                !GTUtility.areFluidStacksEqual(this.phantomFluid, this.lockedFluid.get())) {
+                    this.phantomFluid = this.lockedFluid.get();
+                    sync(LOCK_FLUID, buffer -> {
+                        buffer.writeBoolean(this.isLocked.getAsBoolean());
+                        NetworkUtils.writeFluidStack(buffer, this.phantomFluid);
+                    });
+                }
+    }
+
+    public void lockFluid(FluidStack stack) {
+        if (canLockFluid() && GTUtility.isEmpty(getLockedFluid())) {
+            this.jeiHandler.accept(stack);
         }
     }
 
-    public void lockFluid(FluidStack stack, boolean sync) {
+    public void lockFluid(boolean locked) {
         if (!canLockFluid()) return;
-        this.jeiHandler.accept(stack);
-        if (sync) sync(LOCK_FLUID, buffer -> {
-            buffer.writeBoolean(stack != null);
-            NetworkUtils.writeFluidStack(buffer, stack);
-        });
-    }
-
-    public void lockFluid(boolean locked, boolean sync) {
         this.lockHandler.accept(locked);
-        if (sync) sync(LOCK_FLUID, buffer -> {
-            buffer.writeBoolean(locked);
-            NetworkUtils.writeFluidStack(buffer, null);
-        });
     }
 
-    public GTFluidSyncHandler handleLocking(Supplier<FluidStack> lockedFluid, Consumer<FluidStack> jeiHandler,
-                                            BooleanConsumer lockHandler) {
+    public GTFluidSyncHandler handleLocking(@NotNull Supplier<FluidStack> lockedFluid,
+                                            @NotNull Consumer<FluidStack> jeiHandler,
+                                            @NotNull BooleanConsumer lockHandler, @NotNull BooleanSupplier isLocked) {
         this.lockedFluid = lockedFluid;
         this.jeiHandler = jeiHandler;
         this.lockHandler = lockHandler;
+        this.isLocked = isLocked;
         return this;
     }
 
@@ -101,10 +109,13 @@ public class GTFluidSyncHandler extends SyncHandler {
             fluidTank.setFluid(fluid);
         } else {
             tank.drain(Integer.MAX_VALUE, true);
-            if (fluid != null) tank.fill(fluid, true);
+            if (!GTUtility.isEmpty(fluid)) tank.fill(fluid, true);
         }
-        if (!isPhantom() || fluid == null) return;
-        if (this.phantomFluid == null || this.phantomFluid.getFluid() != fluid.getFluid()) {
+        if (canLockFluid() && isLocked.getAsBoolean() && !GTUtility.isEmpty(fluid)) {
+            lockFluid(fluid);
+        }
+        if (!isPhantom() || GTUtility.isEmpty(fluid)) return;
+        if (GTUtility.isEmpty(this.phantomFluid) || this.phantomFluid.getFluid() != fluid.getFluid()) {
             this.phantomFluid = fluid;
         }
     }
@@ -148,9 +159,16 @@ public class GTFluidSyncHandler extends SyncHandler {
         return phantom;
     }
 
+    public GTFluidSyncHandler showAmount(boolean inSlot, boolean inTooltip) {
+        return showAmount(() -> inSlot, () -> inTooltip);
+    }
+
+    public GTFluidSyncHandler showAmount(BooleanSupplier inSlot, BooleanSupplier inTooltip) {
+        return showAmountOnSlot(inSlot).showAmountInTooltip(inTooltip);
+    }
+
     public GTFluidSyncHandler showAmountInTooltip(boolean showAmount) {
-        this.showAmountInTooltip = () -> showAmount;
-        return this;
+        return showAmountInTooltip(() -> showAmount);
     }
 
     public GTFluidSyncHandler showAmountInTooltip(BooleanSupplier showAmount) {
@@ -165,8 +183,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public GTFluidSyncHandler showAmountOnSlot(boolean showAmount) {
-        this.showAmountOnSlot = () -> showAmount;
-        return this;
+        return showAmountOnSlot(() -> showAmount);
     }
 
     public GTFluidSyncHandler showAmountOnSlot(BooleanSupplier showAmount) {
@@ -194,6 +211,16 @@ public class GTFluidSyncHandler extends SyncHandler {
         return this.drawAlwaysFull.getAsBoolean();
     }
 
+    public void setChangeConsumer(@Nullable Consumer<@Nullable FluidStack> changeConsumer) {
+        this.changeConsumer = changeConsumer;
+    }
+
+    protected void onChange(@Nullable FluidStack fluidStack) {
+        if (changeConsumer != null) {
+            changeConsumer.accept(fluidStack);
+        }
+    }
+
     public @NotNull String getFormattedFluidAmount() {
         var tankFluid = this.tank.getFluid();
         return String.format("%,d", tankFluid == null ? 0 : tankFluid.amount);
@@ -206,41 +233,39 @@ public class GTFluidSyncHandler extends SyncHandler {
 
     public @Nullable String getFluidLocalizedName() {
         var tankFluid = this.tank.getFluid();
-        if (tankFluid == null && canLockFluid())
-            tankFluid = this.lockedFluid.get();
+        if (tankFluid == null)
+            tankFluid = getLockedFluid();
 
         return tankFluid == null ? null : tankFluid.getLocalizedName();
     }
 
     public @NotNull IKey getFluidNameKey() {
         FluidStack tankFluid = tank.getFluid();
-        if (tankFluid == null && canLockFluid()) {
-            tankFluid = lockedFluid.get();
+        if (tankFluid == null) {
+            tankFluid = getLockedFluid();
         }
         return tankFluid == null ? IKey.EMPTY : KeyUtil.fluid(tankFluid);
     }
 
     public void handleTooltip(@NotNull RichTooltip tooltip) {
-        tooltip.addLine(getFluidNameKey());
-
-        if (showAmountInTooltip()) {
-            tooltip.addLine(IKey.lang("gregtech.fluid.amount", getFluidAmount(), getCapacity()));
-        }
-
-        if (isPhantom() && showAmountInTooltip()) {
-            tooltip.addLine(IKey.lang("modularui.fluid.phantom.control"));
-        }
-
         FluidStack tankFluid = getFluid();
-        if (tankFluid == null) {
+        if (GTUtility.isEmpty(tankFluid)) {
             tankFluid = getLockedFluid();
         }
 
-        if (tankFluid != null) {
+        if (!GTUtility.isEmpty(tankFluid)) {
+            tooltip.addLine(KeyUtil.fluid(tankFluid));
+
             FluidTooltipUtil.handleFluidTooltip(tooltip, tankFluid);
 
             if (showAmountInTooltip()) {
                 FluidTooltipUtil.addIngotMolFluidTooltip(tooltip, tankFluid);
+            }
+
+            tooltip.addLine(MCHelper.getFluidModName(tankFluid));
+
+            if (isPhantom() && showAmountInTooltip()) {
+                tooltip.addLine(IKey.lang("modularui.fluid.phantom.control"));
             }
         }
     }
@@ -249,9 +274,21 @@ public class GTFluidSyncHandler extends SyncHandler {
     public void readOnClient(int id, PacketBuffer buf) {
         switch (id) {
             case TRY_CLICK_CONTAINER -> replaceCursorItemStack(NetworkUtils.readItemStack(buf));
-            case UPDATE_TANK -> setFluid(NetworkUtils.readFluidStack(buf));
-            case UPDATE_AMOUNT -> setAmount(buf.readInt());
-            case LOCK_FLUID -> lockFluid(NetworkUtils.readFluidStack(buf), false);
+            case UPDATE_TANK -> {
+                FluidStack stack = NetworkUtils.readFluidStack(buf);
+                setFluid(stack);
+                onChange(stack);
+            }
+            case UPDATE_AMOUNT -> {
+                setAmount(buf.readInt());
+                onChange(getFluid());
+            }
+            case LOCK_FLUID -> {
+                lockHandler.accept(buf.readBoolean());
+                lockFluid(NetworkUtils.readFluidStack(buf));
+                FluidStack stack = getFluid();
+                onChange(stack == null ? getLockedFluid() : stack);
+            }
         }
     }
 
@@ -294,8 +331,7 @@ public class GTFluidSyncHandler extends SyncHandler {
         EntityPlayer player = getSyncManager().getPlayer();
         ItemStack currentStack = player.inventory.getItemStack();
         FluidStack currentFluid = this.tank.getFluid();
-        if (currentStack.getCount() > 1) currentStack = GTUtility.copy(1, currentStack);
-        var fluidHandlerItem = FluidUtil.getFluidHandler(currentStack);
+        IFluidHandlerItem fluidHandlerItem = FluidUtil.getFluidHandler(currentStack);
 
         switch (data.mouseButton) {
             case 0 -> {
@@ -387,15 +423,21 @@ public class GTFluidSyncHandler extends SyncHandler {
             return ItemStack.EMPTY;
 
         ItemStack useStack = GTUtility.copy(1, playerHeldStack);
-        var fluidHandlerItem = FluidUtil.getFluidHandler(useStack);
-        if (fluidHandlerItem == null) return ItemStack.EMPTY;
-
+        IFluidHandlerItem fluidHandlerItem = FluidUtil.getFluidHandler(useStack);
+        FluidStack heldFluid = FluidUtil.getFluidContained(playerHeldStack);
         FluidStack tankFluid = tank.getFluid();
-        FluidStack heldFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
 
-        // nothing to do, return
-        if (tankFluid == null && heldFluid == null)
+        if (fluidHandlerItem == null || heldFluid == tankFluid)
             return ItemStack.EMPTY;
+
+        if (canLockFluid() && isLocked.getAsBoolean()) {
+            FluidStack lockedFluid = getLockedFluid();
+            if (lockedFluid == null && heldFluid != null) {
+                lockFluid(heldFluid);
+            } else if (!Objects.equals(heldFluid, lockedFluid)) {
+                return ItemStack.EMPTY;
+            }
+        }
 
         ItemStack returnable = ItemStack.EMPTY;
 
@@ -545,23 +587,24 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public boolean canLockFluid() {
-        return jeiHandler != null && lockHandler != null && lockedFluid != null;
+        return jeiHandler != null && lockHandler != null && lockedFluid != null && isLocked != null;
     }
 
     public void toggleLockFluid() {
-        var cursorItem = getSyncManager().getCursorItem();
-        if (getLockedFluid() == null) {
-            if (cursorItem.isEmpty()) return;
-            if (cursorItem.getCount() > 1) cursorItem = GTUtility.copy(1, cursorItem);
-
-            var fluidHandler = FluidUtil.getFluidHandler(cursorItem);
-            if (fluidHandler == null) return;
-
-            var fluidStack = fluidHandler.getTankProperties()[0].getContents();
-            if (fluidStack == null) return;
-            lockFluid(fluidStack.copy(), true);
-        } else if (cursorItem.isEmpty()) {
-            lockFluid(null, true);
+        ItemStack cursorItem = getSyncManager().getCursorItem();
+        FluidStack fluidStack = FluidUtil.getFluidContained(cursorItem);
+        FluidStack stack;
+        if (GTUtility.isEmpty(getLockedFluid()) && !GTUtility.isEmpty(fluidStack)) {
+            stack = fluidStack.copy();
+        } else if (!GTUtility.isEmpty(getLockedFluid()) && !Objects.equals(getLockedFluid(), fluidStack)) {
+            return;
+        } else {
+            stack = null;
         }
+        lockFluid(stack);
+        sync(LOCK_FLUID, buffer -> {
+            buffer.writeBoolean(this.isLocked.getAsBoolean());
+            NetworkUtils.writeFluidStack(buffer, stack);
+        });
     }
 }
