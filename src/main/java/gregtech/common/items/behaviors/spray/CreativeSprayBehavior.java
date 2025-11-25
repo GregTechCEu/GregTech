@@ -61,24 +61,24 @@ import static gregtech.api.util.ColorUtil.*;
 public class CreativeSprayBehavior extends AbstractSprayBehavior implements ItemUIFactory, IItemColorProvider,
                                    IItemNameProvider, IMouseEventHandler {
 
-    private static final String NBT_KEY_COLOR = "color";
-    private static final String NBT_KEY_USES_RGB = "usesRGB";
-    private static final String NBT_KEY_RGB_COLOR = "rgbColor";
+    private static final String KEY_COLOR = "color";
+    private static final String KEY_USES_RGB = "usesRGB";
+    private static final String KEY_RGB_COLOR = "rgbColor";
 
     @Override
     public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         ItemStack usedStack = guiData.getUsedItemStack();
         IntSyncValue colorSync = SyncHandlers.intNumber(() -> getColorOrdinal(usedStack),
                 newColor -> setColorOrdinal(usedStack, newColor));
-        guiSyncManager.syncValue("color", 0, colorSync);
+        guiSyncManager.syncValue(KEY_COLOR, 0, colorSync);
         BooleanSyncValue usesRGBSync = SyncHandlers.bool(() -> usesRGB(usedStack), bool -> useRGB(usedStack, bool));
-        guiSyncManager.syncValue("usesRGB", 0, usesRGBSync);
+        guiSyncManager.syncValue(KEY_USES_RGB, 0, usesRGBSync);
         // Doesn't use getColorInt because the slider widgets take a moment to update so it ended up showing the normal
         // can colors when you switched to RGB mode.
         IntSyncValue rgbColorSync = SyncHandlers.intNumber(
-                () -> GTUtility.getOrCreateNbtCompound(usedStack).getInteger(NBT_KEY_RGB_COLOR),
+                () -> GTUtility.getOrCreateNbtCompound(usedStack).getInteger(KEY_RGB_COLOR),
                 newColor -> setColor(usedStack, newColor));
-        guiSyncManager.syncValue("rgbColor", 0, rgbColorSync);
+        guiSyncManager.syncValue(KEY_RGB_COLOR, 0, rgbColorSync);
 
         PagedWidget.Controller pageController = new PagedWidget.Controller();
 
@@ -188,8 +188,8 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
     @Override
     public @Nullable EnumDyeColor getColor(@NotNull ItemStack sprayCan) {
         NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(sprayCan);
-        if (tag.hasKey(NBT_KEY_COLOR, Constants.NBT.TAG_INT)) {
-            int color = tag.getInteger(NBT_KEY_COLOR);
+        if (tag.hasKey(KEY_COLOR, Constants.NBT.TAG_INT)) {
+            int color = tag.getInteger(KEY_COLOR);
             if (color < 0 || color > 15) return null;
             return EnumDyeColor.values()[color];
         }
@@ -200,7 +200,7 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
     @Override
     public int getColorInt(@NotNull ItemStack sprayCan) {
         NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(sprayCan);
-        return tag.getBoolean(NBT_KEY_USES_RGB) ? tag.getInteger(NBT_KEY_RGB_COLOR) : super.getColorInt(sprayCan);
+        return tag.getBoolean(KEY_USES_RGB) ? tag.getInteger(KEY_RGB_COLOR) : super.getColorInt(sprayCan);
     }
 
     @Override
@@ -209,24 +209,24 @@ public class CreativeSprayBehavior extends AbstractSprayBehavior implements Item
     }
 
     public void setColor(@NotNull ItemStack sprayCan, @Nullable EnumDyeColor color) {
-        GTUtility.getOrCreateNbtCompound(sprayCan).setInteger(NBT_KEY_COLOR, color == null ? -1 : color.ordinal());
+        GTUtility.getOrCreateNbtCompound(sprayCan).setInteger(KEY_COLOR, color == null ? -1 : color.ordinal());
     }
 
     public void setColorOrdinal(@NotNull ItemStack sprayCan, int ordinal) {
-        GTUtility.getOrCreateNbtCompound(sprayCan).setInteger(NBT_KEY_COLOR,
+        GTUtility.getOrCreateNbtCompound(sprayCan).setInteger(KEY_COLOR,
                 ordinal >= 0 && ordinal <= 15 ? ordinal : -1);
     }
 
     public void setColor(@NotNull ItemStack sprayCan, int argbColor) {
-        GTUtility.getOrCreateNbtCompound(sprayCan).setInteger(NBT_KEY_RGB_COLOR, argbColor);
+        GTUtility.getOrCreateNbtCompound(sprayCan).setInteger(KEY_RGB_COLOR, argbColor);
     }
 
     public boolean usesRGB(@NotNull ItemStack sprayCan) {
-        return GTUtility.getOrCreateNbtCompound(sprayCan).getBoolean(NBT_KEY_USES_RGB);
+        return GTUtility.getOrCreateNbtCompound(sprayCan).getBoolean(KEY_USES_RGB);
     }
 
     public void useRGB(@NotNull ItemStack sprayCan, boolean bool) {
-        GTUtility.getOrCreateNbtCompound(sprayCan).setBoolean(NBT_KEY_USES_RGB, bool);
+        GTUtility.getOrCreateNbtCompound(sprayCan).setBoolean(KEY_USES_RGB, bool);
     }
 
     @Override
