@@ -60,7 +60,7 @@ public class DurabilitySprayBehavior extends AbstractSprayBehavior implements II
                 // Update held item to replacement stack
                 sprayCan.setItemDamage(replacementStack.getItemDamage());
                 // Clear NBT from old can
-                sprayCan.setTagCompound(new NBTTagCompound());
+                sprayCan.setTagCompound(null);
                 // Play sound manually since we aren't using player.setHeldItem(...)
                 player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 1.0f, 1.0f);
             }
