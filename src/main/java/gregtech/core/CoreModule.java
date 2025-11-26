@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.GregTechAPIInternal;
 import gregtech.api.block.IHeatingCoilBlockStats;
+import gregtech.api.block.coil.CoilManager;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverUIFactory;
@@ -44,6 +45,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.command.CommandHand;
 import gregtech.common.command.CommandRecipeCheck;
 import gregtech.common.command.CommandShaders;
+import gregtech.common.command.benchmark.CommandBenchmark;
 import gregtech.common.command.worldgen.CommandWorldgen;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
@@ -193,12 +195,16 @@ public class CoreModule implements IGregTechModule {
         // need to do this before MetaBlocks runs, to make sure all addons get their own BlockMachine
         /* Start MTE Registry Addition */
         GregTechAPI.mteManager = MTEManager.getInstance();
+        GregTechAPI.coilManager = CoilManager.getInstance();
         MinecraftForge.EVENT_BUS.post(new MTEManager.MTERegistryEvent());
         /* End MTE Registry Addition */
 
         OreDictUnifier.init();
 
         MetaBlocks.init();
+        logger.info("Registering Coils");
+        MinecraftForge.EVENT_BUS.post(new CoilManager.CoilRegistryEvent());
+
         MetaItems.init();
         ToolItems.init();
         GTFluidRegistration.INSTANCE.register();
@@ -215,7 +221,7 @@ public class CoreModule implements IGregTechModule {
         MetaEntities.init();
 
         /* Start API Block Registration */
-        for (BlockWireCoil.CoilType type : BlockWireCoil.CoilType.values()) {
+        for (BlockWireCoil.CoilType type : BlockWireCoil.getCoilTypes()) {
             HEATING_COILS.put(MetaBlocks.WIRE_COIL.getState(type), type);
         }
         for (BlockBatteryPart.BatteryPartType type : BlockBatteryPart.BatteryPartType.values()) {
@@ -321,6 +327,7 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.commandManager.addCommand(new CommandRecipeCheck());
         GregTechAPI.commandManager.addCommand(new CommandShaders());
         GregTechAPI.commandManager.addCommand(new CommandDataFix());
+        GregTechAPI.commandManager.addCommand(new CommandBenchmark());
         CapesRegistry.load();
 
         if (Mods.BetterQuestingUnofficial.isModLoaded()) {

@@ -17,7 +17,6 @@ import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.TemplateBarBuilder;
 import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.mui.sync.BigIntegerSyncValue;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
@@ -54,6 +53,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.BigIntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -579,16 +579,21 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
 
     @Override
     public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
-        BigIntegerSyncValue energyStoredValue = new BigIntegerSyncValue(
+        BigIntSyncValue energyStoredValue = new BigIntSyncValue(
                 () -> energyBank == null ? BigInteger.ZERO : energyBank.getStored(), null);
-        BigIntegerSyncValue energyCapacityValue = new BigIntegerSyncValue(
+        BigIntSyncValue energyCapacityValue = new BigIntSyncValue(
                 () -> energyBank == null ? BigInteger.ZERO : energyBank.getCapacity(), null);
         syncManager.syncValue("energy_stored", energyStoredValue);
         syncManager.syncValue("energy_capacity", energyCapacityValue);
 
-        bars.add(b -> b
-                .progress(
-                        () -> energyStoredValue.getValue().doubleValue() / energyCapacityValue.getValue().doubleValue())
+        bars.add(b -> b.progress(() -> {
+            BigInteger capacity = energyCapacityValue.getValue();
+            BigInteger stored = energyStoredValue.getValue();
+            if (stored.equals(BigInteger.ZERO)) return 0;
+            double factor = capacity.divide(stored).doubleValue();
+            if (factor == 0) return 0;
+            return 1 / factor;
+        })
                 .texture(GTGuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW)
                 .tooltipBuilder(t -> {
                     if (isStructureFormed()) {

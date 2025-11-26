@@ -323,6 +323,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                 .child(new GTFluidSlot()
                         .background(IDrawable.NONE)
                         .syncHandler(fluidSyncHandler
+                                .accessibility(true, false)
                                 .handleLocking(() -> lockedFluid, fluidStack -> {
                                     setLocked(fluidStack != null);
                                     lockedFluid = fluidStack;
@@ -463,10 +464,10 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
 
     @Override
     protected void setLocked(boolean locked) {
+        if (locked == this.isLocked()) return;
         super.setLocked(locked);
         if (locked && fluidTank.getFluid() != null) {
-            this.lockedFluid = fluidTank.getFluid().copy();
-            this.lockedFluid.amount = 1;
+            this.lockedFluid = GTUtility.copy(1, fluidTank.getFluid());
         } else this.lockedFluid = null;
     }
 

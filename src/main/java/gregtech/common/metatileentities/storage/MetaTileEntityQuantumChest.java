@@ -14,7 +14,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
-import gregtech.common.mui.widget.GTItemSlot;
+import gregtech.common.mui.widget.FakeItemSlot;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -46,7 +46,6 @@ import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
-import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -324,12 +323,12 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 () -> virtualItemStack.getDisplayName(),
                 textWidget -> !virtualItemStack.isEmpty(),
                 () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
-                .child(new GTItemSlot()
+                .child(new FakeItemSlot(true)
                         .showTooltip(true)
                         .showAmount(false)
                         .background(IDrawable.NONE)
-                        .slot(new ModularSlot(itemInventory, 0)
-                                .accessibility(false, false))
+                        .slot(itemInventory, 0)
+                        // TODO: lock from ghost item .receiveItemFromClient(this::setLocked)
                         .pos(148, 41));
     }
 
@@ -425,9 +424,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     @Override
     protected void setLocked(boolean locked) {
         super.setLocked(locked);
-        if (locked && !this.virtualItemStack.isEmpty() && this.lockedStack.isEmpty())
+        if (locked && !this.virtualItemStack.isEmpty() && this.lockedStack.isEmpty()) {
             this.lockedStack = this.virtualItemStack.copy();
-        else if (!locked) this.lockedStack = ItemStack.EMPTY;
+        } else if (!locked) {
+            this.lockedStack = ItemStack.EMPTY;
+        }
     }
 
     protected void setLocked(ItemStack stack) {

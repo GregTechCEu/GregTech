@@ -29,9 +29,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiDraw;
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
-import com.cleanroommc.modularui.theme.WidgetSlotTheme;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
+import com.cleanroommc.modularui.theme.SlotTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.utils.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -706,36 +706,18 @@ public class RenderUtil {
     public static void drawItemStack(ItemStack itemStack, int x, int y, boolean drawCount) {
         int cache = itemStack.getCount();
         if (!drawCount) itemStack.setCount(1);
-        drawItemStack(itemStack, x, y, null);
+        drawItemStack(itemStack, x, y);
         if (!drawCount) itemStack.setCount(cache);
     }
 
     @SideOnly(Side.CLIENT)
-    public static void drawItemStack(ItemStack itemStack, int x, int y, @Nullable String altTxt) {
-        drawItemStack(itemStack, x, y, 16, 16, altTxt);
+    public static void drawItemStack(ItemStack itemStack, int x, int y) {
+        drawItemStack(itemStack, x, y, 16, 16);
     }
 
     @SideOnly(Side.CLIENT)
-    public static void drawItemStack(ItemStack itemStack, int x, int y, int w, int h, @Nullable String altTxt) {
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(0.0F, 0.0F, 32.0F);
-        GlStateManager.scale(w / 16F, h / 16F, 1);
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        GlStateManager.enableDepth();
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.enableLighting();
-        RenderHelper.enableGUIStandardItemLighting();
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0f, 240.0f);
-        Minecraft mc = Minecraft.getMinecraft();
-        RenderItem itemRender = mc.getRenderItem();
-        itemRender.renderItemAndEffectIntoGUI(itemStack, x, y);
-        itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, itemStack, x, y, altTxt);
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.disableLighting();
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        GlStateManager.popMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.disableDepth();
+    public static void drawItemStack(ItemStack itemStack, int x, int y, int w, int h) {
+        GuiDraw.drawItem(itemStack, x, y, w, h, 0);
     }
 
     public static void drawSlotOverlay(@NotNull IWidget slot, int overlayColor) {
@@ -744,33 +726,37 @@ public class RenderUtil {
         GlStateManager.colorMask(true, true, true, true);
     }
 
-    public static void drawSlotOverlay(@NotNull IWidget slot, WidgetTheme widgetTheme) {
-        drawSlotOverlay(slot, widgetTheme instanceof WidgetSlotTheme slotTheme ? slotTheme.getSlotHoverColor() :
-                defaultSlotHoverColor);
+    public static void drawSlotOverlay(@NotNull IWidget slot, SlotTheme theme) {
+        drawSlotOverlay(slot, theme.getSlotHoverColor());
     }
 
-    public static void handleSlotOverlay(@NotNull IWidget slot, @NotNull WidgetTheme widgetTheme) {
+    public static void handleSlotOverlay(@NotNull IWidget slot, @NotNull WidgetThemeEntry<?> themeEntry) {
         if (slot.isHovering()) {
-            drawSlotOverlay(slot, widgetTheme);
+            if (themeEntry.getTheme() instanceof SlotTheme slotTheme) {
+                drawSlotOverlay(slot, slotTheme);
+            } else {
+                drawSlotOverlay(slot, defaultSlotHoverColor);
+            }
         }
     }
 
     public static <
-            T extends IWidget & JeiGhostIngredientSlot<?>> void drawJEIGhostSlotOverlay(@NotNull T jeiGhostIngredientSlot) {
+            T extends IWidget & RecipeViewerGhostIngredientSlot<?>> void drawJEIGhostSlotOverlay(@NotNull T jeiGhostIngredientSlot) {
         GlStateManager.colorMask(true, true, true, false);
         jeiGhostIngredientSlot.drawHighlight(jeiGhostIngredientSlot.getArea(), jeiGhostIngredientSlot.isHovering());
         GlStateManager.colorMask(true, true, true, true);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static <
-            T extends IWidget & JeiGhostIngredientSlot<?>> boolean handleJEIGhostSlotOverlay(@NotNull T jeiGhostIngredientSlot,
-                                                                                             @NotNull WidgetTheme widgetTheme) {
+            T extends IWidget & RecipeViewerGhostIngredientSlot<?>> boolean handleJEIGhostSlotOverlay(@NotNull T jeiGhostIngredientSlot,
+                                                                                                      @NotNull WidgetThemeEntry<?> themeEntry) {
         if (JEIUtil.hoveringOverIngredient(jeiGhostIngredientSlot)) {
             drawJEIGhostSlotOverlay(jeiGhostIngredientSlot);
             return true;
         }
 
-        handleSlotOverlay(jeiGhostIngredientSlot, widgetTheme);
+        handleSlotOverlay(jeiGhostIngredientSlot, themeEntry);
         return false;
     }
 }

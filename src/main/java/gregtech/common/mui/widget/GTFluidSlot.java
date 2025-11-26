@@ -9,16 +9,16 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 
 import com.cleanroommc.modularui.api.ITheme;
+import com.cleanroommc.modularui.api.UpOrDown;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
-import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerIngredientProvider;
 import com.cleanroommc.modularui.network.NetworkUtils;
-import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetSlotTheme;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
@@ -28,15 +28,20 @@ import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, JeiIngredientProvider,
-                               JeiGhostIngredientSlot<FluidStack> {
+public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, RecipeViewerIngredientProvider,
+                               RecipeViewerGhostIngredientSlot<FluidStack> {
 
     private final TextRenderer textRenderer = new TextRenderer();
     private GTFluidSyncHandler syncHandler;
-    private boolean disableBackground = false;
 
     public GTFluidSlot() {
         tooltip().titleMargin();
+        tooltipAutoUpdate(true);
+        tooltipBuilder(tooltip -> {
+            if (isSynced()) {
+                syncHandler.handleTooltip(tooltip);
+            }
+        });
     }
 
     public static GTFluidSyncHandler sync(IFluidTank tank) {
@@ -49,10 +54,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         this.textRenderer.setScale(0.5f);
         this.textRenderer.setColor(Color.WHITE.main);
         if (syncHandler.canLockFluid() || syncHandler.isPhantom()) {
-            getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
+            getContext().getRecipeViewerSettings().addGhostIngredientSlot(this);
         }
-        tooltipBuilder(syncHandler::handleTooltip);
-        syncHandler.setChangeConsumer($ -> markTooltipDirty());
     }
 
     public GTFluidSlot syncHandler(IFluidTank fluidTank) {
@@ -61,13 +64,11 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
     public GTFluidSlot syncHandler(GTFluidSyncHandler syncHandler) {
         setSyncHandler(syncHandler);
-        this.syncHandler = syncHandler;
         return this;
     }
 
     public GTFluidSlot disableBackground() {
-        this.disableBackground = true;
-        return this;
+        return background(IDrawable.NONE);
     }
 
     @Override
@@ -76,19 +77,13 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     }
 
     @Override
-    public void drawBackground(ModularGuiContext context, WidgetTheme widgetTheme) {
-        if (disableBackground) return;
-        super.drawBackground(context, widgetTheme);
+    protected void setSyncHandler(@Nullable SyncHandler syncHandler) {
+        super.setSyncHandler(syncHandler);
+        this.syncHandler = (GTFluidSyncHandler) syncHandler;
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        if (widgetTheme instanceof WidgetSlotTheme slotTheme) {
-            draw(context, slotTheme);
-        }
-    }
-
-    public void draw(ModularGuiContext context, WidgetSlotTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         FluidStack content = this.syncHandler.getFluid();
         if (content == null)
             content = this.syncHandler.getLockedFluid();
@@ -100,13 +95,13 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             float amt = content == null ? 0f : content.amount;
             float newHeight = height * (amt / this.syncHandler.getCapacity());
             y += (int) (height - newHeight);
-            height = newHeight;
+            height = (float) Math.ceil(newHeight);
         }
 
         GuiDraw.drawFluidTexture(content, 1, y, getArea().w() - 2, height, 0);
 
         if (content != null && this.syncHandler.showAmountOnSlot()) {
-            String amount = NumberFormat.formatWithMaxDigits(content.amount, 3) + "L";
+            String amount = NumberFormat.DEFAULT.format(content.amount) + "L";
             this.textRenderer.setAlignment(Alignment.CenterRight, getArea().width - 1f);
             this.textRenderer.setPos(0, 12);
             this.textRenderer.draw(amount);
@@ -131,7 +126,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     }
 
     @Override
-    public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int amount) {
+    public boolean onMouseScroll(UpOrDown scrollDirection, int amount) {
         if (!this.syncHandler.isPhantom()) return false;
         if ((scrollDirection.isUp() && !this.syncHandler.canFillSlot()) ||
                 (scrollDirection.isDown() && !this.syncHandler.canDrainSlot())) {
@@ -143,7 +138,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     }
 
     @Override
-    protected WidgetTheme getWidgetThemeInternal(ITheme theme) {
+    protected WidgetThemeEntry<?> getWidgetThemeInternal(ITheme theme) {
         return theme.getFluidSlotTheme();
     }
 

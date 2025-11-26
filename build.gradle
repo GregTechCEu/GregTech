@@ -1,4 +1,4 @@
-//version: 1753288091
+//version: 1762213476
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -318,14 +318,6 @@ tasks.withType(ScalaCompile).configureEach {
 }
 
 
-// Allow others using this buildscript to have custom gradle code run
-if (getFile('addon.gradle').exists()) {
-    apply from: 'addon.gradle'
-} else if (getFile('addon.gradle.kts').exists()) {
-    apply from: 'addon.gradle.kts'
-}
-
-
 // Configure Minecraft
 
 // Try to gather mod version from git tags if version is not manually specified
@@ -372,11 +364,14 @@ minecraft {
 
     // JVM arguments
     extraRunJvmArguments.add("-ea:${modGroup}")
+
+    // enable JLine Terminal since idea_rt.jar is no longer added to the classpath
+    extraRunJvmArguments.add('-Dterminal.jline=true')
     if (usesMixins.toBoolean()) {
         extraRunJvmArguments.addAll([
-            '-Dmixin.hotSwap=true',
-            '-Dmixin.checks.interfaces=true',
-            '-Dmixin.debug.export=true'
+                '-Dmixin.hotSwap=true',
+                '-Dmixin.checks.interfaces=true',
+                '-Dmixin.debug.export=true'
         ])
     }
 
@@ -874,7 +869,7 @@ if (enableJava17RunTasks.toBoolean()) {
         if (modId != 'lwjgl3ify') {
             java17Dependencies("io.github.twilightflower:lwjgl3ify:1.0.1")
             java17PatchDependencies("io.github.twilightflower:lwjgl3ify:1.0.1:forgePatches") {
-            transitive = false
+                transitive = false
             }
         }
     }
@@ -1548,4 +1543,12 @@ def getLastTag() {
     def githubTag = providers.environmentVariable('GITHUB_TAG')
     return runShell('git describe --abbrev=0 --tags ' +
             (githubTag.isPresent() ? runShell('git rev-list --tags --skip=1 --max-count=1') : ''))
+}
+
+
+// Allow others using this buildscript to have custom gradle code run
+if (getFile('addon.gradle').exists()) {
+    apply from: 'addon.gradle'
+} else if (getFile('addon.gradle.kts').exists()) {
+    apply from: 'addon.gradle.kts'
 }

@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
      acceptedMinecraftVersions = "[1.12.2,1.13)",
      version = GTInternalTags.VERSION,
      dependencies = "required:forge@[14.23.5.2847,);" + "required-after:codechickenlib@[3.2.3,);" +
-             "required-after:modularui@[2.5.0-rc,);" + "required-after:mixinbooter@[8.0,);" +
+             "required-after:modularui@[3.0.4,);" + "required-after:mixinbooter@[8.0,);" +
              "after:appliedenergistics2;" +
              "after:forestry;" + "after:extrabees;" + "after:extratrees;" + "after:genetics;" + "after:magicbees;" +
              "after:jei@[4.15.0,);" + "after:crafttweaker@[4.1.20,);" + "after:groovyscript@[1.2.0,);" +
