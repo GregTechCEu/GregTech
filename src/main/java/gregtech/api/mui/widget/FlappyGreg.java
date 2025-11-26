@@ -1,5 +1,7 @@
 package gregtech.api.mui.widget;
 
+import com.cleanroommc.modularui.drawable.Stencil;
+
 import gregtech.api.GTValues;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.SingleActionSyncHandler;
@@ -211,8 +213,6 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
     @Override
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         Area area = getArea();
-        int screenX = area.x;
-        int screenY = area.y;
         int width = area.width;
         int height = area.height;
 
@@ -220,13 +220,12 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
         GuiDraw.drawRect(0, 0, width, height, BACKGROUND_COLOR);
 
         // Obstacles
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        RenderUtil.applyScissor(screenX, screenY, width, height);
+        Stencil.applyAtZero(area, context);
         for (Rectangle obstacle : obstacles) {
             GuiDraw.drawRect(obstacle.getX(), obstacle.getY(), obstacle.getWidth(), obstacle.getHeight(),
                     OBSTACLE_COLOR);
         }
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        Stencil.remove();
 
         // "Character"
         GTGuiTextures.GREGTECH_LOGO.draw(gregArea.getX(), gregArea.getY(), gregArea.getWidth(), gregArea.getHeight());
