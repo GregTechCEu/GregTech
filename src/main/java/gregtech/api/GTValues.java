@@ -192,7 +192,7 @@ public class GTValues {
     public static final int FALLBACK = -1;
 
     public static BooleanSupplier FOOLS = () -> {
-        return true;
+        return true; // TODO: change back once done testing the maintenance hatch april fools minigame
         // String[] yearMonthDay = LocalDate.now().toString().split("-");
         // return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("04") && yearMonthDay[2].equals("01");
     };

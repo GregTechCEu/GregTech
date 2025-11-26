@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.FlappyGreg;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -198,6 +199,12 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         }
     }
 
+    protected void fixAllProblems() {
+        if (getController() instanceof IMaintenance iMaintenance) {
+            iMaintenance.fixAllMaintenance();
+        }
+    }
+
     /**
      * Fixes the maintenance problems of this hatch's Multiblock Controller
      * 
@@ -363,11 +370,15 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         panelSyncManager.syncValue("multiplierSync", 0, multiplierSync);
         panelSyncManager.registerSlotGroup("tape_slot", 1);
 
-        return GTGuis.createPanel(this, 176, 152)
+        return GTGuis.createPanel(this, 176, 152 + 25 + 25)
                 .child(IKey.lang(getMetaFullName())
                         .asWidget()
                         .pos(5, 5))
-                // TODO: minigame .childIf(!isConfigurable && wiringMinigameSync.getBoolValue(), )
+                .childIf(!isConfigurable && minigameSync.getBoolValue(), () -> new FlappyGreg()
+                        .alignX(0.5f)
+                        .top(5 + 9 + 7)
+                        .size(150, 45 + 25 + 25)
+                        .onFinish(this::fixAllProblems))
                 .childIf(!minigameSync.getBoolValue(), () -> Flow.column()
                         .top(17)
                         .widthRel(1.0f)
