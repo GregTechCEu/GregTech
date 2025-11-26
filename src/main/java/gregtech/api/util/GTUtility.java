@@ -69,6 +69,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
+import java.time.MonthDay;
+import java.time.ZoneId;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
@@ -1129,5 +1131,35 @@ public class GTUtility {
         if (a == b) return true;
         if (a == null) return false;
         return a.isFluidEqual(b);
+    }
+
+    /**
+     * Check if the provided month and day is today with a given time zone.
+     */
+    public static boolean isToday(@NotNull MonthDay monthDay, @Nullable ZoneId tz) {
+        MonthDay now = tz == null ? MonthDay.now() : MonthDay.now(tz);
+        return now.equals(monthDay);
+    }
+
+    /**
+     * Check if the provided month and day is today.
+     */
+    public static boolean isToday(@NotNull MonthDay monthDay) {
+        return isToday(monthDay, null);
+    }
+
+    /**
+     * Check if today is April 1st.
+     */
+    public static boolean isAprilFools() {
+        return true; // TODO: change back once done testing the maintenance hatch april fools minigame
+        // return isToday(GTValues.APRIL_FOOLS);
+    }
+
+    /**
+     * Check if today is December 30th.
+     */
+    public static boolean isXMAS() {
+        return isToday(GTValues.XMAS);
     }
 }

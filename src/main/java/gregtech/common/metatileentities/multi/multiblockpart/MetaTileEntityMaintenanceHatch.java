@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.items.toolitem.ItemGTToolbelt;
@@ -10,6 +9,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.sync.SingleActionSyncHandler;
 import gregtech.api.mui.widget.FlappyGreg;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -39,7 +39,6 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.DoubleValue;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -358,8 +357,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
-        BooleanSyncValue minigameSync = new BooleanSyncValue(GTValues.FOOLS);
-        panelSyncManager.syncValue("wiringMinigame", 0, minigameSync);
+        SingleActionSyncHandler minigameSync = new SingleActionSyncHandler()
+                .serverAction(this::fixAllProblems);
+        panelSyncManager.syncValue("minigame", 0, minigameSync);
         InteractionSyncHandler maintenanceClickSync = new InteractionSyncHandler()
                 .setOnMousePressed(mouse -> {
                     if (panelSyncManager.isClient()) return;
@@ -370,16 +370,17 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         panelSyncManager.syncValue("multiplierSync", 0, multiplierSync);
         panelSyncManager.registerSlotGroup("tape_slot", 1);
 
+        boolean aprilFools = GTUtility.isAprilFools();
         return GTGuis.createPanel(this, 176, 152 + 25 + 25)
                 .child(IKey.lang(getMetaFullName())
                         .asWidget()
                         .pos(5, 5))
-                .childIf(!isConfigurable && minigameSync.getBoolValue(), () -> new FlappyGreg()
+                .childIf(!isConfigurable && aprilFools, () -> new FlappyGreg()
                         .alignX(0.5f)
                         .top(5 + 9 + 7)
                         .size(150, 45 + 25 + 25)
-                        .onFinish(this::fixAllProblems))
-                .childIf(!minigameSync.getBoolValue(), () -> Flow.column()
+                        .onFinish(minigameSync, false))
+                .childIf(!aprilFools, () -> Flow.column()
                         .top(17)
                         .widthRel(1.0f)
                         .coverChildrenHeight()

@@ -29,6 +29,7 @@ import gregtech.api.unification.material.event.MaterialRegistryEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
 import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.util.CapesRegistry;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.virtualregistry.VirtualEnderRegistry;
@@ -147,7 +148,7 @@ public class CoreModule implements IGregTechModule {
         MetaTileEntityAlarm.addSound(GTSoundEvents.ARC);
         MetaTileEntityAlarm.addSound(SoundEvents.ENTITY_WOLF_HOWL);
         MetaTileEntityAlarm.addSound(SoundEvents.ENTITY_ENDERMEN_DEATH);
-        if ((GTValues.FOOLS.getAsBoolean() && ConfigHolder.misc.specialEvents) || GTValues.isDeobfEnvironment()) {
+        if ((GTUtility.isAprilFools() && ConfigHolder.misc.specialEvents) || GTValues.isDeobfEnvironment()) {
             MetaTileEntityAlarm.addSound(GTSoundEvents.SUS_RECORD);
         }
 

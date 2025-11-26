@@ -1,6 +1,7 @@
 package gregtech.api.mui;
 
 import gregtech.api.GTValues;
+import gregtech.api.util.GTUtility;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -789,12 +790,12 @@ public class GTGuiTextures {
     }
 
     // todo steam logos? multi indicator blinking logos?
-    public static @NotNull UITexture getLogo(GTGuiTheme theme) {
+    public static @NotNull UITexture getLogo(@Nullable GTGuiTheme theme) {
         if (theme != null) {
             UITexture logo = theme.getLogo();
             if (logo != null) return logo;
         }
-        return GTValues.XMAS.getAsBoolean() ? GREGTECH_LOGO_XMAS : GREGTECH_LOGO;
+        return GTUtility.isXMAS() ? GREGTECH_LOGO_XMAS : GREGTECH_LOGO;
     }
 
     public static IDrawable dynamic(UITexture[] textures, int rate) {

@@ -1,15 +1,13 @@
 package gregtech.api;
 
 import gregtech.api.util.random.XoShiRo256PlusPlusRandom;
-import gregtech.common.ConfigHolder;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.time.LocalDate;
+import java.time.MonthDay;
 import java.util.Random;
-import java.util.function.BooleanSupplier;
 
 import static net.minecraft.util.text.TextFormatting.*;
 
@@ -171,6 +169,9 @@ public class GTValues {
      */
     public static final String MOD_NAME = "GregTech";
 
+    public static final MonthDay APRIL_FOOLS = MonthDay.of(4, 1);
+    public static final MonthDay XMAS = MonthDay.of(12, 30);
+
     private static Boolean isClient;
 
     public static boolean isClientSide() {
@@ -190,16 +191,4 @@ public class GTValues {
      * Currently only used in {@link gregtech.loaders.recipe.CraftingComponent}.
      */
     public static final int FALLBACK = -1;
-
-    public static BooleanSupplier FOOLS = () -> {
-        return true; // TODO: change back once done testing the maintenance hatch april fools minigame
-        // String[] yearMonthDay = LocalDate.now().toString().split("-");
-        // return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("04") && yearMonthDay[2].equals("01");
-    };
-
-    public static BooleanSupplier XMAS = () -> {
-        String[] yearMonthDay = LocalDate.now().toString().split("-");
-        return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("12") &&
-                (yearMonthDay[2].equals("24") || yearMonthDay[2].equals("25"));
-    };
 }

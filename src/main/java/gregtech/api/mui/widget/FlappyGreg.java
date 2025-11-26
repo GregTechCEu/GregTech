@@ -1,12 +1,9 @@
 package gregtech.api.mui.widget;
 
-import com.cleanroommc.modularui.drawable.Stencil;
-
 import gregtech.api.GTValues;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.SingleActionSyncHandler;
 import gregtech.api.util.Rectangle;
-import gregtech.client.utils.RenderUtil;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.text.TextFormatting;
@@ -16,6 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
+import com.cleanroommc.modularui.drawable.Stencil;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.theme.WidgetThemeEntry;
@@ -26,7 +24,6 @@ import com.cleanroommc.modularui.widget.sizer.Area;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
@@ -51,11 +48,8 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
 
     @Nullable
     protected SingleActionSyncHandler syncHandler;
-    protected boolean showStart = true;
-    protected boolean setup = false;
-    protected boolean init = false;
-    protected boolean won = false;
-    protected boolean collided = false;
+    @NotNull
+    protected GameState gameState = GameState.INIT;
 
     protected IKey startMessage;
     protected IKey deathMessage;
@@ -68,13 +62,10 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
 
         startMessage = IKey.lang("gregtech.machine.maintenance_hatch.fools.start")
                 .style(TextFormatting.WHITE);
-
         deathMessage = IKey.lang("gregtech.machine.maintenance_hatch.fools.dead")
                 .style(TextFormatting.BOLD, TextFormatting.WHITE);
-
         respawnMessage = IKey.lang("gregtech.machine.maintenance_hatch.fools.respawn")
                 .style(TextFormatting.UNDERLINE, TextFormatting.WHITE);
-
         wonMessage = IKey.lang("gregtech.machine.maintenance_hatch.fools.won")
                 .style(TextFormatting.GREEN);
     }
@@ -83,8 +74,7 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
     public void onResized() {
         super.onResized();
         if (!GTValues.isClientSide()) return;
-        if (!setup) {
-            setup = true;
+        if (gameState == GameState.INIT) {
             // Has to be in onResized instead of onInit since it depends on the size of the widget.
             initializeState();
         }
@@ -95,33 +85,27 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
         return syncHandler instanceof SingleActionSyncHandler;
     }
 
-    /**
-     * Set the action to take on the server when the client finishes the game.
-     */
-    public FlappyGreg onFinish(@NotNull Runnable onFinish) {
-        if (this.syncHandler == null) {
-            this.syncHandler = new SingleActionSyncHandler();
+    public FlappyGreg onFinish(@NotNull SingleActionSyncHandler syncHandler, boolean registerSyncHandler) {
+        this.syncHandler = syncHandler;
+        if (registerSyncHandler) {
+            setSyncHandler(syncHandler);
         }
 
-        syncHandler.serverAction(onFinish);
-        setSyncHandler(syncHandler);
         return this;
     }
 
     @SideOnly(Side.CLIENT)
     protected void onFinish() {
-        collided = false;
         if (syncHandler != null) {
             syncHandler.notifyServer();
         }
     }
 
     protected boolean shouldUpdateGame() {
-        return !init && !won && !collided && GTValues.isClientSide();
+        return gameState == GameState.RUNNING && GTValues.isClientSide();
     }
 
     protected void initializeState() {
-        collided = false;
         obstacles.clear();
 
         Area area = getArea();
@@ -154,7 +138,7 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
             lastXPos += (width / 2.5f) + ((width / 15.0f) * GTValues.RNG.nextFloat());
         }
 
-        init = true;
+        gameState = GameState.INIT;
     }
 
     @Override
@@ -164,7 +148,7 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
 
         updateGregPosition();
         checkObstacleCollisions();
-        if (!collided) {
+        if (gameState != GameState.COLLIDED) {
             updateObstaclePositions();
             checkWinState();
         }
@@ -185,7 +169,7 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
     protected void checkObstacleCollisions() {
         for (Rectangle obstacle : obstacles) {
             if (obstacle.collides(gregArea, OBSTACLE_MOVEMENT_SPEED)) {
-                collided = true;
+                gameState = GameState.COLLIDED;
                 break;
             }
         }
@@ -204,8 +188,7 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
 
         Rectangle obstacle = obstacles.get(obstacles.size() - 1);
         if ((obstacle.getX() + obstacleWidth + WIN_DISTANCE) <= gregArea.getX()) {
-            won = true;
-            collided = false;
+            gameState = GameState.FINISHED;
             onFinish();
         }
     }
@@ -230,47 +213,45 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
         // "Character"
         GTGuiTextures.GREGTECH_LOGO.draw(gregArea.getX(), gregArea.getY(), gregArea.getWidth(), gregArea.getHeight());
 
-        if (showStart) {
-            WidgetTheme theme = widgetTheme.getTheme();
-            startMessage.draw(context, 0, (height / 2), width, 9, theme);
-        }
+        WidgetTheme theme = widgetTheme.getTheme();
+        switch (gameState) {
+            case INIT -> startMessage.draw(context, 0, (height / 2), width, 9, theme);
+            case COLLIDED -> {
+                GlStateManager.enableBlend();
+                GuiDraw.drawRect(0, 0, width, height, 0x75FFFFFF & BACKGROUND_COLOR);
+                GlStateManager.disableBlend();
 
-        if (collided) {
-            GlStateManager.enableBlend();
-            GuiDraw.drawRect(0, 0, width, height, 0x75FFFFFF & BACKGROUND_COLOR);
-            GlStateManager.disableBlend();
-
-            WidgetTheme theme = widgetTheme.getTheme();
-            deathMessage.draw(context, 0, (height / 2) - 5, width, 9, theme);
-            respawnMessage.draw(context, 0, (height / 2) + 5, width, 9, theme);
-        }
-
-        if (won) {
-            WidgetTheme theme = widgetTheme.getTheme();
-            wonMessage.draw(context, 0, (height / 2), width, 9, theme);
+                deathMessage.draw(context, 0, (height / 2) - 5, width, 9, theme);
+                respawnMessage.draw(context, 0, (height / 2) + 5, width, 9, theme);
+            }
+            case FINISHED -> wonMessage.draw(context, 0, (height / 2), width, 9, theme);
         }
     }
 
     @Override
     public @NotNull Result onMousePressed(int mouseButton) {
-        if (showStart) {
-            showStart = false;
+        if (gameState == GameState.FINISHED) return Result.IGNORE;
+
+        switch (gameState) {
+            case INIT -> {
+                impulseGreg();
+                gameState = GameState.RUNNING;
+            }
+            case RUNNING -> impulseGreg();
+            case COLLIDED -> initializeState();
         }
 
-        if (init) {
-            init = false;
-        }
+        return Result.SUCCESS;
+    }
 
-        if (collided) {
-            collided = false;
-            initializeState();
-        }
+    protected void impulseGreg() {
+        gregYSpeed = -CLICK_IMPULSE;
+    }
 
-        if (shouldUpdateGame()) {
-            gregYSpeed = -CLICK_IMPULSE;
-            return Result.SUCCESS;
-        } else {
-            return Result.IGNORE;
-        }
+    protected enum GameState {
+        INIT,
+        RUNNING,
+        COLLIDED,
+        FINISHED
     }
 }

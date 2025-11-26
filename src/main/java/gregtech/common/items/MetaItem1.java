@@ -1182,7 +1182,7 @@ public class MetaItem1 extends StandardMetaItem {
 
         LOGO = addItem(1003, "logo").setInvisible();
         LOGO.getMetaItem().addPropertyOverride(new ResourceLocation("xmas"),
-                (s, w, e) -> GTValues.XMAS.getAsBoolean() ? 1 : 0);
+                (s, w, e) -> GTUtility.isXMAS() ? 1 : 0);
 
         MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior())
                 .setMaxStackSize(1);

@@ -1,7 +1,5 @@
 package gregtech.api.mui.sync;
 
-import gregtech.api.GTValues;
-
 import net.minecraft.network.PacketBuffer;
 
 import com.cleanroommc.modularui.value.sync.SyncHandler;
@@ -19,17 +17,17 @@ public class SingleActionSyncHandler extends SyncHandler {
     /**
      * Set the action to run client side.
      */
-    public void clientAction(@Nullable Runnable clientAction) {
-        if (!GTValues.isClientSide()) return;
+    public SingleActionSyncHandler clientAction(@Nullable Runnable clientAction) {
         this.clientAction = clientAction;
+        return this;
     }
 
     /**
      * Set the action to run server side.
      */
-    public void serverAction(@Nullable Runnable serverAction) {
-        if (GTValues.isClientSide()) return;
+    public SingleActionSyncHandler serverAction(@Nullable Runnable serverAction) {
         this.serverAction = serverAction;
+        return this;
     }
 
     @Override
