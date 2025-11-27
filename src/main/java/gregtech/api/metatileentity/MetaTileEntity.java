@@ -494,6 +494,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return GTGuiTheme.STANDARD;
     }
 
+    // TODO: once everything has been moved over to MUI2, set this as @NotNull
+    @Override
     public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         return null;
     }
