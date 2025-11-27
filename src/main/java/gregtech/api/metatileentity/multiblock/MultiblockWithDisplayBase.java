@@ -88,12 +88,12 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      */
     @Override
     public void setMaintenanceFixed(int index) {
-        this.maintenance_problems |= 1 << index;
+        this.maintenance_problems |= (byte) (1 << index);
     }
 
     @Override
     public void fixAllMaintenance() {
-        maintenance_problems = 0b000000;
+        maintenance_problems = 0b111111;
     }
 
     /**
