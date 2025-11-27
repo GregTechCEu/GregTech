@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.mui.sync.SingleActionSyncHandler;
 import gregtech.api.mui.widget.FlappyGreg;
 import gregtech.api.util.GTUtility;
@@ -34,7 +35,6 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.Rectangle;
-import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
@@ -356,7 +356,12 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public void writeExtraGuiData(@NotNull PacketBuffer buffer) {
+        buffer.writeBoolean(GTUtility.isAprilFools());
+    }
+
+    @Override
+    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         SingleActionSyncHandler minigameSync = new SingleActionSyncHandler()
                 .serverAction(this::fixAllProblems);
         panelSyncManager.syncValue("minigame", 0, minigameSync);
@@ -370,7 +375,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         panelSyncManager.syncValue("multiplierSync", 0, multiplierSync);
         panelSyncManager.registerSlotGroup("tape_slot", 1);
 
-        boolean aprilFools = GTUtility.isAprilFools();
+        boolean aprilFools = guiData.getBuffer().readBoolean();
         return GTGuis.createPanel(this, 176, 152 + 25 + 25)
                 .child(IKey.lang(getMetaFullName())
                         .asWidget()

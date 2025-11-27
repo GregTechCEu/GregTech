@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.mui.TextStandards;
 import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.texture.Textures;
@@ -40,7 +41,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
@@ -110,7 +110,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
     @SuppressWarnings("DuplicatedCode")
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         IntSyncValue radiusSync = new IntSyncValue(() -> getWorkingArea(minerLogic.getCurrentRadius()));
         BooleanSyncValue isDoneSync = new BooleanSyncValue(minerLogic::isDone);
         BooleanSyncValue isWorkingSync = new BooleanSyncValue(minerLogic::isWorking);
