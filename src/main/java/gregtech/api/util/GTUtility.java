@@ -1152,8 +1152,7 @@ public class GTUtility {
      * Check if today is April 1st.
      */
     public static boolean isAprilFools() {
-        return true; // TODO: change back once done testing the maintenance hatch april fools minigame
-        // return isToday(GTValues.APRIL_FOOLS);
+        return isToday(GTValues.APRIL_FOOLS);
     }
 
     /**
