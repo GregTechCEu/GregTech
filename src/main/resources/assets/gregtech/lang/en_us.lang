@@ -877,7 +877,7 @@ metaitem.smart_item_filter.tooltip=Filters §fItem§7 I/O with §fMachine Recipe
 behaviour.filter_ui_manager=§fRight-Click§7 to configure, §fShift Right-Click§7 to clear configuration
 
 metaitem.cover.controller.name=Machine Controller
-metaitem.cover.controller.tooltip=Turns Machines §fON/OFF§7 as §fCover§7.
+metaitem.cover.controller.tooltip=Turns Machines §fON/OFF§7 using Redstone as §fCover§7.
 metaitem.cover.activity.detector.name=Activity Detector
 metaitem.cover.activity.detector.tooltip=Gives out §fActivity Status§7 as Redstone as §fCover§7.
 metaitem.cover.activity.detector_advanced.name=Advanced Activity Detector
