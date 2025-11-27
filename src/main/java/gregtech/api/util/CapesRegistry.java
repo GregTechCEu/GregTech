@@ -23,6 +23,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import crafttweaker.annotations.ZenRegister;
+import org.jetbrains.annotations.ApiStatus;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -208,8 +209,17 @@ public class CapesRegistry {
      * 
      * @param cape A ResourceLocation pointing to the cape texture.
      */
-    public static void addFreeCape(ResourceLocation cape) {
+    public static void registerFreeCape(ResourceLocation cape) {
         FREE_CAPES.add(cape);
+    }
+
+    /**
+     * Deprecated for naming consistency, use {@link #registerFreeCape(ResourceLocation)} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
+    @Deprecated
+    public static void addFreeCape(ResourceLocation cape) {
+        registerFreeCape(cape);
     }
 
     private static final List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<>();
