@@ -33,7 +33,8 @@ public class MetaTileEntityGuiFactory extends AbstractUIFactory<MetaTileEntityGu
             throw new IllegalArgumentException("MetaTileEntity must be in same dimension as the player!");
         }
         BlockPos pos = mte.getPos();
-        MetaTileEntityGuiData data = new MetaTileEntityGuiData(player, pos.getX(), pos.getY(), pos.getZ(), mte);
+        MetaTileEntityGuiData data = new MetaTileEntityGuiData(player, pos.getX(), pos.getY(), pos.getZ());
+        mte.writeExtraGuiData(data.getBuffer());
         GuiManager.open(INSTANCE, data, (EntityPlayerMP) player);
     }
 
@@ -51,11 +52,24 @@ public class MetaTileEntityGuiFactory extends AbstractUIFactory<MetaTileEntityGu
         buffer.writeVarInt(guiData.getX());
         buffer.writeVarInt(guiData.getY());
         buffer.writeVarInt(guiData.getZ());
-        buffer.writeBytes(guiData.getBuffer());
+
+        // We have to copy the bytes out ignoring the reader index because the server panel will have read from the same
+        // buffer earlier with "factory.createPanel(guiData, syncManager, settings);" in GuiManager#open.
+        PacketBuffer guiDataBuffer = guiData.getBuffer();
+        int length = guiDataBuffer.writerIndex();
+        buffer.writeVarInt(length);
+        buffer.writeBytes(guiDataBuffer, 0, length);
     }
 
     @Override
     public @NotNull MetaTileEntityGuiData readGuiData(EntityPlayer player, PacketBuffer buffer) {
-        return new MetaTileEntityGuiData(player, buffer.readVarInt(), buffer.readVarInt(), buffer.readVarInt(), buffer);
+        MetaTileEntityGuiData guiData = new MetaTileEntityGuiData(player, buffer.readVarInt(), buffer.readVarInt(),
+                buffer.readVarInt());
+
+        PacketBuffer guiDataBuffer = guiData.getBuffer();
+        int length = buffer.readVarInt();
+        buffer.readBytes(guiDataBuffer, length);
+
+        return guiData;
     }
 }
