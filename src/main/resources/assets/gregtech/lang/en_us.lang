@@ -6060,7 +6060,8 @@ terminal.settings.background_select=Select Background
 terminal.settings.color=Set color %s
 terminal.settings.reset_color=Reset to default color
 
-terminal.capes.locked=Unlock this cape by progressing through GregTech's advancements
+terminal.capes.locked=Locked
+terminal.capes.advancement=Unlock this cape by progressing through GregTech's advancements
 terminal.capes.selected=Equipped
 
 # old terminal

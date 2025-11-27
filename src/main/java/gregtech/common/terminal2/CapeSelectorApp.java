@@ -1,9 +1,14 @@
 package gregtech.common.terminal2;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.RichTooltip;
+
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.terminal2.ITerminalApp;
 import gregtech.api.terminal2.Terminal2Theme;
 import gregtech.api.util.CapesRegistry;
+
+import gregtech.common.mui.widget.DrawableNoHoverWidget;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -26,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class CapeSelectorApp implements ITerminalApp {
@@ -61,6 +67,7 @@ public class CapeSelectorApp implements ITerminalApp {
                     .overlay(new DynamicDrawable(capeForeground(cape)))
                     .disableHoverOverlay()
                     .disableHoverBackground()
+                    .tooltipDynamic(capeTooltip(cape))
                     .onMousePressed(b -> {
                         syncHandler.syncToServer(SELECT_CAPE, buf -> buf.writeString(cape.toString()));
                         return true;
@@ -70,7 +77,7 @@ public class CapeSelectorApp implements ITerminalApp {
                     .size(46, 78)
                     .background(new DynamicDrawable(capeBackground(cape)))
                     .child(capeButton)
-                    .child(new DynamicDrawable(capeOverlay(cape)).asWidget()
+                    .child(new DrawableNoHoverWidget(new DynamicDrawable(capeOverlay(cape)))
                             .size(24)
                             .posRel(0.5F, 0.5F)));
         }
@@ -114,6 +121,17 @@ public class CapeSelectorApp implements ITerminalApp {
 
     private Supplier<IDrawable> capeForeground(ResourceLocation cape) {
         return () -> syncHandler.unlockedCapes.contains(cape) ? IDrawable.EMPTY : Terminal2Theme.COLOR_FOREGROUND_DARK;
+    }
+
+    private Consumer<RichTooltip> capeTooltip(ResourceLocation cape) {
+        return (tooltip) -> {
+            if (cape.equals(CapesRegistry.getPlayerCape(syncHandler.uuid))) {
+                tooltip.addLine(IKey.lang("terminal.capes.selected"));
+            } else if (!syncHandler.unlockedCapes.contains(cape)) {
+                tooltip.addLine(IKey.lang("terminal.capes.locked"));
+                tooltip.addLine(IKey.lang("terminal.capes.advancement"));
+            }
+        };
     }
 
     private static final class CapeSelectorSyncHandler extends SyncHandler {
