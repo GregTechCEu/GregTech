@@ -376,7 +376,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         panelSyncManager.registerSlotGroup("tape_slot", 1);
 
         boolean aprilFools = guiData.getBuffer().readBoolean();
-        return GTGuis.createPanel(this, 176, 152 + 25 + 25)
+        return GTGuis.createPanel(this, 176, aprilFools ? 202 : 152)
                 .child(IKey.lang(getMetaFullName())
                         .asWidget()
                         .pos(5, 5))
