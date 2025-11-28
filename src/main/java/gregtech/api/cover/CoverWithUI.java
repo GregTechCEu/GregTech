@@ -122,10 +122,14 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
 
     /**
      * Create a dynamic lang key that switches between {@code cover.generic.enabled} and {@code cover.generic.disabled}
-     * depending on the result of the given boolean supplier.
+     * depending on the result of the given boolean supplier. <br/>
+     * 
+     * @param keyBase the base of the lang key to use. {@code .enabled} and {@code .disabled} will be appended.
      */
-    default IKey createEnabledKey(@NotNull BooleanSupplier enabledState) {
-        return IKey.lang(() -> enabledState.getAsBoolean() ? "cover.generic.enabled" : "cover.generic.disabled");
+    default IKey createEnabledKey(@NotNull String keyBase, @NotNull BooleanSupplier enabledState) {
+        String enabled = keyBase + ".enabled";
+        String disabled = keyBase + ".disabled";
+        return IKey.lang(() -> enabledState.getAsBoolean() ? enabled : disabled);
     }
 
     default int getIncrementValue(MouseData data) {

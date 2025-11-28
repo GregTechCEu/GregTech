@@ -168,7 +168,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                                 .coverChildrenHeight()
                                 .setEnabledIf(b -> getFilterMode() != ItemFilterMode.FILTER_BOTH)
                                 .child(new ToggleButton()
-                                        .overlay(createEnabledKey(() -> this.allowFlow)
+                                        .overlay(createEnabledKey("cover.generic", () -> this.allowFlow)
                                                 .color(Color.WHITE.main)
                                                 .shadow(false))
                                         .tooltip(tooltip -> tooltip

@@ -87,7 +87,7 @@ public class CoverItemVoiding extends CoverConveyor {
                         .marginBottom(2)
                         .child(new ToggleButton()
                                 .value(isWorking)
-                                .overlay(createEnabledKey(() -> this.isWorkingAllowed)
+                                .overlay(createEnabledKey("behaviour.soft_hammer", () -> this.isWorkingAllowed)
                                         .color(Color.WHITE.darker(1)))
                                 .widthRel(0.6f)
                                 .left(0)));
