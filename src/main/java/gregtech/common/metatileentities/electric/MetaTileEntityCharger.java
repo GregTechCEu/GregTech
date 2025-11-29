@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.mui.drawable.BatteryIndicatorDrawable;
 import gregtech.api.util.GTUtility;
@@ -31,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MetaTileEntityCharger extends TieredMetaTileEntity {
+public class MetaTileEntityCharger extends TieredMetaTileEntity implements IMetaTileEntityGuiHolder {
 
     private final int inventorySize;
 
@@ -82,12 +83,8 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
         int rowSize = (int) Math.sqrt(inventorySize);
         panelSyncManager.registerSlotGroup("slots", rowSize);
 

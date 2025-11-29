@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
@@ -38,8 +39,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiablePart
-                                        implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiablePart implements
+                                        IMultiblockAbilityPart<IItemHandlerModifiable>, IMetaTileEntityGuiHolder {
 
     private final IItemHandlerModifiable machineHandler;
 
@@ -70,12 +71,8 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         guiSyncManager.registerSlotGroup("item_inv", 1);
 
         // TODO: Change the position of the name when it's standardized.

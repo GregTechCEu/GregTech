@@ -5,6 +5,7 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
@@ -49,7 +50,7 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_TAPED;
 
-public class MetaTileEntityCrate extends MetaTileEntity {
+public class MetaTileEntityCrate extends MetaTileEntity implements IMetaTileEntityGuiHolder {
 
     private final Material material;
     private final int inventorySize;
@@ -137,12 +138,8 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
         panelSyncManager.registerSlotGroup("item_inv", rowSize);
 
         int rows = inventorySize / rowSize;

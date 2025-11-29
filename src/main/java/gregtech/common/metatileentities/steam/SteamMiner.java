@@ -59,7 +59,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class SteamMiner extends MetaTileEntity implements IMiner, IControllable, IVentable, IDataInfoProvider {
+public class SteamMiner extends MetaTileEntity
+                        implements IMiner, IControllable, IVentable, IDataInfoProvider, IMetaTileEntityGuiHolder {
 
     private boolean needsVenting = false;
     private boolean ventingStuck = false;
@@ -117,18 +118,14 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
     public GTGuiTheme getUITheme() {
         return GTGuiTheme.BRONZE;
     }
 
     @SuppressWarnings("DuplicatedCode")
     @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
         IntSyncValue radiusSync = new IntSyncValue(() -> getWorkingArea(minerLogic.getCurrentRadius()));
         BooleanSyncValue isDoneSync = new BooleanSyncValue(minerLogic::isDone);
         BooleanSyncValue isWorkingSync = new BooleanSyncValue(minerLogic::isWorking);

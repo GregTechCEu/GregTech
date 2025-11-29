@@ -88,7 +88,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         guiSyncManager.syncValue("handler", this.modifiableHandler);
         return appendCreativeUI(GTGuis.createPanel(this, 176, 166), false,
                 new BoolValue.Dynamic(() -> active, b -> active = b),

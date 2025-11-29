@@ -24,10 +24,7 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.metatileentity.registry.MTERegistry;
-import gregtech.api.mui.GTGuiTheme;
-import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.mui.IMetaTileEntityGuiHolder;
-import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
@@ -92,10 +89,6 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.screen.UISettings;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -103,7 +96,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -119,8 +111,7 @@ import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable,
-                                     IMetaTileEntityGuiHolder {
+public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
 
@@ -459,6 +450,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return new FluidTankList(false);
     }
 
+    @Deprecated
     protected boolean openGUIOnRightClick() {
         return true;
     }
@@ -477,27 +469,6 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     @Deprecated
     public ModularUI getModularUI(EntityPlayer entityPlayer) {
         return createUI(entityPlayer);
-    }
-
-    @ApiStatus.Experimental
-    public boolean usesMui2() {
-        return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public final ModularScreen createScreen(MetaTileEntityGuiData guiData, ModularPanel mainPanel) {
-        return new GregTechGuiScreen(mainPanel, getUITheme());
-    }
-
-    public GTGuiTheme getUITheme() {
-        return GTGuiTheme.STANDARD;
-    }
-
-    // TODO: once everything has been moved over to MUI2, set this as @NotNull
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
-        return null;
     }
 
     public final void onCoverLeftClick(EntityPlayer playerIn, CuboidRayTraceResult result) {
@@ -521,12 +492,16 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             }
         }
 
+        // TODO: once MUI0 support is gone from MTEs, remove openGUIOnRightClick and only use instanceof.
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
-                if (usesMui2()) {
-                    MetaTileEntityGuiFactory.open(playerIn, this);
+                EntityPlayerMP playerMP = (EntityPlayerMP) playerIn;
+                if (this instanceof IMetaTileEntityGuiHolder guiHolder) {
+                    if (guiHolder.shouldOpenUI(playerMP, hand, facing, hitResult)) {
+                        MetaTileEntityGuiFactory.open(playerMP, (MetaTileEntity & IMetaTileEntityGuiHolder) this);
+                    }
                 } else {
-                    MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                    MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), playerMP);
                 }
 
                 if (getOwner() == null) {

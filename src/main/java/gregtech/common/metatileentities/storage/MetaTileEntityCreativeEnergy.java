@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
@@ -64,7 +65,8 @@ import static gregtech.api.GTValues.MAX;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_ACTIVE;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_IO_SPEED;
 
-public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILaserContainer, IControllable {
+public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILaserContainer, IControllable,
+                                          IMetaTileEntityGuiHolder {
 
     private long voltage = GTValues.V[GTValues.ULV];
     private long amps = 1;
@@ -118,12 +120,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
         ModularPanel panel = GTGuis.createPanel(this, 176, 140);
 
         DoubleSyncValue tierSync = SyncHandlers.doubleNumber(() -> setTier, val -> {

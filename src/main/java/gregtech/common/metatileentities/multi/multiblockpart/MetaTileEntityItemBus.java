@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.api.util.GTHashMaps;
@@ -60,7 +61,7 @@ import java.util.List;
 
 public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart
                                    implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable,
-                                   IGhostSlotConfigurable {
+                                   IGhostSlotConfigurable, IMetaTileEntityGuiHolder {
 
     @Nullable
     protected GhostCircuitItemStackHandler circuitInventory;
@@ -261,12 +262,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
         int rowSize = (int) Math.sqrt(getInventorySize());
         panelSyncManager.registerSlotGroup("item_inv", rowSize);
 

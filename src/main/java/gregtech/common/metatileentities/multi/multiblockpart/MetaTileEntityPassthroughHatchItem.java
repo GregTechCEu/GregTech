@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.client.renderer.texture.Textures;
 
@@ -50,9 +51,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart implements IPassthroughHatch,
-                                                IMultiblockAbilityPart<IPassthroughHatch>,
-                                                IControllable {
+public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart
+                                                implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch>,
+                                                IControllable, IMetaTileEntityGuiHolder {
 
     private ItemStackHandler itemStackHandler;
 
@@ -136,12 +137,8 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         int rowSize = (int) Math.sqrt(getInventorySize());
 
         guiSyncManager.registerSlotGroup("item_inv", rowSize);

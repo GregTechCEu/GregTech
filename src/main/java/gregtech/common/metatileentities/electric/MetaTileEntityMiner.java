@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.mui.TextStandards;
 import gregtech.api.util.KeyUtil;
@@ -54,7 +55,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner, IControllable, IDataInfoProvider {
+public class MetaTileEntityMiner extends TieredMetaTileEntity
+                                 implements IMiner, IControllable, IDataInfoProvider, IMetaTileEntityGuiHolder {
 
     private final ItemStackHandler chargerInventory;
 
@@ -103,14 +105,10 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         minerLogic.renderPipe(renderState, translation, pipeline);
     }
 
-    @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
     @SuppressWarnings("DuplicatedCode")
     @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
         IntSyncValue radiusSync = new IntSyncValue(() -> getWorkingArea(minerLogic.getCurrentRadius()));
         BooleanSyncValue isDoneSync = new BooleanSyncValue(minerLogic::isDone);
         BooleanSyncValue isWorkingSync = new BooleanSyncValue(minerLogic::isWorking);

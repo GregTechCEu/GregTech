@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.mui.sync.SingleActionSyncHandler;
 import gregtech.api.mui.widget.FlappyGreg;
@@ -64,7 +65,8 @@ import java.util.function.Predicate;
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
-                                            implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
+                                            implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch,
+                                            IMetaTileEntityGuiHolder {
 
     private final boolean isConfigurable;
     private TapeStackHandler tapeHandler;
@@ -351,17 +353,13 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
     public void writeExtraGuiData(@NotNull PacketBuffer buffer) {
         buffer.writeBoolean(GTUtility.isAprilFools());
     }
 
     @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
         SingleActionSyncHandler minigameSync = new SingleActionSyncHandler()
                 .serverAction(this::fixAllProblems);
         panelSyncManager.syncValue("minigame", 0, minigameSync);

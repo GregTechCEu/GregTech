@@ -19,6 +19,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.client.renderer.texture.Textures;
@@ -65,7 +66,7 @@ import java.util.List;
 
 public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart
                                       implements IMultiblockAbilityPart<IFluidTank>, IControllable,
-                                      IGhostSlotConfigurable {
+                                      IGhostSlotConfigurable, IMetaTileEntityGuiHolder {
 
     public static final int INITIAL_INVENTORY_SIZE = 8000;
 
@@ -277,12 +278,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
                 .showAmountOnSlot(false)
                 .accessibility(true, !isExportHatch);

@@ -36,6 +36,7 @@ import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -88,7 +89,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     }
 
     @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         return appendCreativeUI(GTGuis.createPanel(this, 176, 166), true,
                 new BoolValue.Dynamic(() -> active, b -> active = b),
                 new IntSyncValue(() -> mBPerCycle, v -> mBPerCycle = v),

@@ -5,6 +5,7 @@ import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.*;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
@@ -34,7 +35,8 @@ import java.util.*;
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
 
-public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase implements IMaintenance {
+public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase implements IMaintenance,
+                                                IMetaTileEntityGuiHolder {
 
     private static final String NBT_VOIDING_MODE = "VoidingMode";
     private static final String NBT_VOIDING_ITEMS = "VoidingItems";
@@ -372,11 +374,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return VoidingMode.VALUES[mode].getName();
     }
 
-    @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
     protected void configureDisplayText(MultiblockUIBuilder builder) {}
 
     protected void configureErrorText(MultiblockUIBuilder builder) {
@@ -400,8 +397,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public final ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
-                                      UISettings settings) {
+    public final @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                               UISettings settings) {
         if (uiFactory == null) uiFactory = createUIFactory();
         return this.uiFactory.buildUI(guiData, panelSyncManager);
     }

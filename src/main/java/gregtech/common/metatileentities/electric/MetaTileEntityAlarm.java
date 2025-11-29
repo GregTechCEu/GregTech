@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.core.sound.GTSoundEvents;
@@ -43,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityAlarm extends TieredMetaTileEntity {
+public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTileEntityGuiHolder {
 
     public static final int BASE_EU_CONSUMPTION = 4;
     private boolean isActive;
@@ -82,12 +83,8 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
         AlarmSyncHandler alarmSyncHandler = new AlarmSyncHandler();
         panelSyncManager.syncValue("alarm_data", 0, alarmSyncHandler);
         IPanelHandler soundSelector = panelSyncManager.panel("sound_selector_popup",

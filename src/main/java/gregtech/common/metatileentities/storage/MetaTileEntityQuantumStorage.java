@@ -7,6 +7,7 @@ import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
@@ -63,7 +64,7 @@ import java.util.function.Supplier;
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity implements IQuantumStorage<T>,
-                                                  IActiveOutputSide {
+                                                  IActiveOutputSide, IMetaTileEntityGuiHolder {
 
     /** not synced, server only. lazily initialized from pos */
     private WeakReference<IQuantumController> controller = new WeakReference<>(null);
@@ -169,12 +170,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         var panel = GTGuis.createPanel(this, 176, 166);
         createWidgets(panel, guiSyncManager);
         return panel.padding(4)

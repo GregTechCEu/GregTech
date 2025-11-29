@@ -13,6 +13,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.texture.Textures;
@@ -51,8 +52,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiablePart
-                                       implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
+public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiablePart implements
+                                       IMultiblockAbilityPart<IRotorHolder>, IRotorHolder, IMetaTileEntityGuiHolder {
 
     static final int SPEED_INCREMENT = 1;
     static final int SPEED_DECREMENT = 3;
@@ -82,12 +83,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         guiSyncManager.registerSlotGroup("item_inv", 1);
         // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, 176, 166)

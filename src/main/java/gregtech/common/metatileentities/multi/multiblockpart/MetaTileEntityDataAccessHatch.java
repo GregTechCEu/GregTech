@@ -13,6 +13,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
@@ -27,7 +28,10 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityDataBank;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -36,6 +40,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -60,7 +65,7 @@ import java.util.*;
 
 public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart
                                            implements IMultiblockAbilityPart<IDataAccessHatch>, IDataAccessHatch,
-                                           IDataInfoProvider {
+                                           IDataInfoProvider, IMetaTileEntityGuiHolder {
 
     private final Set<Recipe> recipes;
     private final boolean isCreative;
@@ -115,17 +120,14 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    protected boolean openGUIOnRightClick() {
+    public boolean shouldOpenUI(@NotNull EntityPlayerMP player, @NotNull EnumHand hand, @NotNull EnumFacing side,
+                                @NotNull CuboidRayTraceResult hitResult) {
         return !isCreative;
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
         int rowSize = (int) Math.sqrt(getInventorySize());
         panelSyncManager.registerSlotGroup("slots", rowSize);
 

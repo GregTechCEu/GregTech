@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -43,7 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotifiablePart
-                                           implements IMultiblockAbilityPart<IFluidTank>, IControllable {
+                                           implements IMultiblockAbilityPart<IFluidTank>, IControllable,
+                                           IMetaTileEntityGuiHolder {
 
     private static final int BASE_TANK_SIZE = 8000;
 
@@ -204,12 +206,8 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         int rowSize = (int) Math.sqrt(numSlots);
 
         List<GTFluidSlot> fluidSlots = new ArrayList<>();

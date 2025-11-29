@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.KeyUtil;
@@ -57,7 +58,7 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_ITEMS;
 
-public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
+public class MetaTileEntityItemCollector extends TieredMetaTileEntity implements IMetaTileEntityGuiHolder {
 
     private static final int[] INVENTORY_SIZES = { 4, 9, 16, 25, 25 };
     private static final double MOTION_MULTIPLIER = 0.04;
@@ -272,12 +273,8 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
         int rowSize = (int) Math.sqrt(exportItems.getSlots());
 
         IntSyncValue rangeSync = SyncHandlers.intNumber(this::getItemSuckingRange, this::setItemSuckingRange);

@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.*;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
@@ -50,7 +51,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements IControllable, IDataInfoProvider {
+public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity
+                                         implements IControllable, IDataInfoProvider, IMetaTileEntityGuiHolder {
 
     private final int inventorySize;
     private boolean allowEnergyOutput = true;
@@ -144,12 +146,8 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         int rowSize = (int) Math.sqrt(inventorySize);
         int colSize = rowSize;
         if (inventorySize == 8) {

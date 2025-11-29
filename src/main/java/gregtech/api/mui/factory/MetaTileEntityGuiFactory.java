@@ -1,6 +1,7 @@
 package gregtech.api.mui.factory;
 
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +24,7 @@ public class MetaTileEntityGuiFactory extends AbstractUIFactory<MetaTileEntityGu
         super("gregtech:mte");
     }
 
-    public static <T extends MetaTileEntity & IGuiHolder<MetaTileEntityGuiData>> void open(EntityPlayer player, T mte) {
+    public static <T extends MetaTileEntity & IMetaTileEntityGuiHolder> void open(EntityPlayerMP player, T mte) {
         Objects.requireNonNull(player);
         Objects.requireNonNull(mte);
         if (!mte.isValid()) {
@@ -35,7 +36,7 @@ public class MetaTileEntityGuiFactory extends AbstractUIFactory<MetaTileEntityGu
         BlockPos pos = mte.getPos();
         MetaTileEntityGuiData data = new MetaTileEntityGuiData(player, pos.getX(), pos.getY(), pos.getZ());
         mte.writeExtraGuiData(data.getBuffer());
-        GuiManager.open(INSTANCE, data, (EntityPlayerMP) player);
+        GuiManager.open(INSTANCE, data, player);
     }
 
     @Override
@@ -53,9 +54,7 @@ public class MetaTileEntityGuiFactory extends AbstractUIFactory<MetaTileEntityGu
         buffer.writeVarInt(guiData.getY());
         buffer.writeVarInt(guiData.getZ());
 
-        // We have to copy the bytes out ignoring the reader index because the server panel will have read from the same
-        // buffer earlier with "factory.createPanel(guiData, syncManager, settings);" in GuiManager#open.
-        PacketBuffer guiDataBuffer = guiData.getBuffer();
+        PacketBuffer guiDataBuffer = guiData.getBufferInternal();
         int length = guiDataBuffer.writerIndex();
         buffer.writeVarInt(length);
         buffer.writeBytes(guiDataBuffer, 0, length);
@@ -65,10 +64,7 @@ public class MetaTileEntityGuiFactory extends AbstractUIFactory<MetaTileEntityGu
     public @NotNull MetaTileEntityGuiData readGuiData(EntityPlayer player, PacketBuffer buffer) {
         MetaTileEntityGuiData guiData = new MetaTileEntityGuiData(player, buffer.readVarInt(), buffer.readVarInt(),
                 buffer.readVarInt());
-
-        PacketBuffer guiDataBuffer = guiData.getBuffer();
-        int length = buffer.readVarInt();
-        buffer.readBytes(guiDataBuffer, length);
+        buffer.readBytes(guiData.getBufferInternal(), buffer.readVarInt());
 
         return guiData;
     }
