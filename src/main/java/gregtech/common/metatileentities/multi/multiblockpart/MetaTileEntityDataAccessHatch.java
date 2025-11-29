@@ -60,6 +60,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.*;
 
@@ -121,7 +122,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public boolean shouldOpenUI(@NotNull EntityPlayerMP player, @NotNull EnumHand hand, @NotNull EnumFacing side,
-                                @NotNull CuboidRayTraceResult hitResult) {
+                                @UnknownNullability CuboidRayTraceResult hitResult) {
         return !isCreative;
     }
 

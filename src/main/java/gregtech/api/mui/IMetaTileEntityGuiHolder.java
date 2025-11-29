@@ -20,6 +20,7 @@ import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 
 public interface IMetaTileEntityGuiHolder extends IGuiHolder<MetaTileEntityGuiData> {
 
@@ -38,7 +39,7 @@ public interface IMetaTileEntityGuiHolder extends IGuiHolder<MetaTileEntityGuiDa
      * @return whether this {@link MetaTileEntity} should open its UI.
      */
     default boolean shouldOpenUI(@NotNull EntityPlayerMP player, @NotNull EnumHand hand, @NotNull EnumFacing side,
-                                 @NotNull CuboidRayTraceResult hitResult) {
+                                 @UnknownNullability CuboidRayTraceResult hitResult) {
         return true;
     }
 
