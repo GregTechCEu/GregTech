@@ -39,7 +39,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +49,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
 
     private static final String LIGHTER_OPEN = "lighterOpen";
     private static final String USES_LEFT = "usesLeft";
-    private static final Pair<Color, Color> DURABILITY_BAR_COLORS = GradientUtil.getGradient(0xF07F1D, 10);
+    private static final long DURABILITY_BAR_COLORS = GradientUtil.getGradient(0xF07F1D, 10);
 
     private final ResourceLocation overrideLocation;
     private final boolean usesFluid;
@@ -221,7 +220,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack itemStack) {
+    public double getDurabilityForDisplay(@NotNull ItemStack itemStack) {
         if (usesFluid) {
             // Lighters
             IFluidHandlerItem fluidHandlerItem = itemStack
@@ -239,28 +238,27 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
         return 0.0;
     }
 
-    @Nullable
     @Override
-    public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
+    public long getDurabilityColorsForDisplay(@NotNull ItemStack itemStack) {
         if (hasMultipleUses && usesFluid) {
             return DURABILITY_BAR_COLORS;
         }
         // use default colors for Matchbox
-        return null;
+        return IItemDurabilityManager.super.getDurabilityColorsForDisplay(itemStack);
     }
 
     @Override
-    public boolean doDamagedStateColors(ItemStack itemStack) {
+    public boolean doDamagedStateColors(@NotNull ItemStack itemStack) {
         return hasMultipleUses && !usesFluid; // don't show for Matchbox
     }
 
     @Override
-    public boolean showEmptyBar(ItemStack itemStack) {
+    public boolean showEmptyBar(@NotNull ItemStack itemStack) {
         return hasMultipleUses; // don't show for Match
     }
 
     @Override
-    public boolean showFullBar(ItemStack itemStack) {
+    public boolean showFullBar(@NotNull ItemStack itemStack) {
         return hasMultipleUses; // don't show for Match
     }
 
