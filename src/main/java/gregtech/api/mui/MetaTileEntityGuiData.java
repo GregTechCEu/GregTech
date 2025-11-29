@@ -39,6 +39,8 @@ public class MetaTileEntityGuiData extends PosGuiData {
 
     /**
      * Get the byte buffer with data written server-side in
+     * {@link IMetaTileEntityGuiHolder#writeExtraGuiData(PacketBuffer)}. <br/>
+     * Important: this method returns a read only buffer! Writing to the buffer should only happen in
      * {@link IMetaTileEntityGuiHolder#writeExtraGuiData(PacketBuffer)}.
      */
     @NotNull
