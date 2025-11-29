@@ -485,6 +485,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      */
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                 CuboidRayTraceResult hitResult) {
+        World world = getWorld();
+        if (world == null) return false;
+
         ItemStack heldStack = playerIn.getHeldItem(hand);
         if (this instanceof IDataStickIntractable dsi) {
             if (MetaItems.TOOL_DATA_STICK.isItemEqual(heldStack) && dsi.onDataStickRightClick(playerIn, heldStack)) {
@@ -492,23 +495,28 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             }
         }
 
-        // TODO: once MUI0 support is gone from MTEs, remove openGUIOnRightClick and only use instanceof.
-        if (!playerIn.isSneaking() && openGUIOnRightClick()) {
-            if (getWorld() != null && !getWorld().isRemote) {
+        if (!playerIn.isSneaking()) {
+            if (!world.isRemote) {
                 EntityPlayerMP playerMP = (EntityPlayerMP) playerIn;
-                if (this instanceof IMetaTileEntityGuiHolder guiHolder) {
-                    if (guiHolder.shouldOpenUI(playerMP, hand, facing, hitResult)) {
-                        MetaTileEntityGuiFactory.open(playerMP, (MetaTileEntity & IMetaTileEntityGuiHolder) this);
-                    }
-                } else {
+                boolean uiOpened = false;
+
+                if (this instanceof IMetaTileEntityGuiHolder guiHolder &&
+                        guiHolder.shouldOpenUI(playerMP, hand, facing, hitResult)) {
+                    MetaTileEntityGuiFactory.open(playerMP, (MetaTileEntity & IMetaTileEntityGuiHolder) this);
+                    uiOpened = true;
+                } else if (openGUIOnRightClick()) {
                     MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), playerMP);
+                    uiOpened = true;
                 }
 
-                if (getOwner() == null) {
-                    this.owner = playerIn.getUniqueID();
+                if (uiOpened) {
+                    if (getOwner() == null) {
+                        this.owner = playerIn.getUniqueID();
+                    }
+
+                    return true;
                 }
             }
-            return true;
         } else {
             // Attempt to rename the MTE first
             if (heldStack.getItem() == Items.NAME_TAG) {
