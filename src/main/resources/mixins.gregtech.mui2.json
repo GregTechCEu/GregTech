@@ -12,7 +12,9 @@
     "TextWidgetMixin"
   ],
   "client": [
-    "LangKeyMixin"
+    "LangKeyMixin",
+    "ModularSyncManagerMixin",
+    "MCHelperMixin"
   ],
   "server": []
 }

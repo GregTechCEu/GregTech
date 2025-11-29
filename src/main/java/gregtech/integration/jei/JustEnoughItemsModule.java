@@ -12,7 +12,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
-import gregtech.api.mui.GregTechGuiTransferHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.category.GTRecipeCategory;
@@ -74,6 +73,7 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
+import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.config.Constants;
 import mezz.jei.input.IShowsRecipeFocuses;
 import mezz.jei.input.InputHandler;
@@ -105,6 +105,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
     public static IIngredientRegistry ingredientRegistry;
     public static IJeiRuntime jeiRuntime;
     public static IGuiHelper guiHelper;
+    public static IRecipeTransferHandlerHelper transferHelper;
 
     @Override
     public void loadComplete(FMLLoadCompleteEvent event) {
@@ -159,6 +160,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         // register transfer handler for all categories, but not for the crafting station
         ModularUIGuiHandler modularUIGuiHandler = new ModularUIGuiHandler(jeiHelpers.recipeTransferHandlerHelper());
+        transferHelper = jeiHelpers.recipeTransferHandlerHelper();
         modularUIGuiHandler.blacklistCategory(
                 IntCircuitCategory.UID,
                 MaterialTreeCategory.UID,
@@ -166,10 +168,6 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                 VanillaRecipeCategoryUid.FUEL);
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler,
                 Constants.UNIVERSAL_RECIPE_TRANSFER_UID);
-
-        // register transfer handler for crafting recipes
-        registry.getRecipeTransferRegistry().addRecipeTransferHandler(new GregTechGuiTransferHandler(
-                jeiHelpers.recipeTransferHandlerHelper()), VanillaRecipeCategoryUid.CRAFTING);
 
         registry.addAdvancedGuiHandlers(modularUIGuiHandler);
         registry.addGhostIngredientHandler(modularUIGuiHandler.getGuiContainerClass(), modularUIGuiHandler);

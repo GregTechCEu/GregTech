@@ -80,6 +80,7 @@ public enum Mods {
     XaerosMinimap(Names.XAEROS_MINIMAP),
     Vintagium(Names.VINTAGIUM),
     Alfheim(Names.ALFHEIM),
+    ModNameTooltip(Names.MOD_NAME_TOOLTIP),
 
     OptiFine(null) {
 
@@ -156,6 +157,7 @@ public enum Mods {
         public static final String XAEROS_MINIMAP = "xaerominimap";
         public static final String VINTAGIUM = "vintagium";
         public static final String ALFHEIM = "alfheim";
+        public static final String MOD_NAME_TOOLTIP = "modnametooltip";
     }
 
     private final String ID;
