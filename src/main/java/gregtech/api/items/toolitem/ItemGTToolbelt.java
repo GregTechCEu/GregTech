@@ -265,6 +265,14 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     @Override
+    public int getMetadata(ItemStack stack) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (!selected.isEmpty()) {
+            return selected.getItem().getMetadata(selected);
+        } else return super.getMetadata(stack);
+    }
+
+    @Override
     public boolean isDamaged(@NotNull ItemStack stack) {
         ItemStack selected = getHandler(stack).getSelectedStack();
         if (!selected.isEmpty()) {
