@@ -35,7 +35,7 @@ public class MetaTileEntityGuiFactory extends AbstractUIFactory<MetaTileEntityGu
         }
         BlockPos pos = mte.getPos();
         MetaTileEntityGuiData data = new MetaTileEntityGuiData(player, pos.getX(), pos.getY(), pos.getZ());
-        mte.writeExtraGuiData(data.getBuffer());
+        mte.writeExtraGuiData(data.getBufferInternal());
         GuiManager.open(INSTANCE, data, player);
     }
 
