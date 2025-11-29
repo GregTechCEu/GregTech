@@ -78,7 +78,6 @@ public class CoverFluidVoiding extends CoverPump {
 
     @Override
     protected ParentWidget<?> createUI(GuiData data, PanelSyncManager syncManager) {
-        // noinspection DuplicatedCode
         BooleanSyncValue isWorking = new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled);
 
         return super.createUI(data, syncManager)

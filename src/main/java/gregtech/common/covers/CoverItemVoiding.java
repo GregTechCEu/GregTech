@@ -79,7 +79,6 @@ public class CoverItemVoiding extends CoverConveyor {
 
     @Override
     protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
-        // noinspection DuplicatedCode
         BooleanSyncValue isWorking = new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled);
 
         return super.createUI(data, guiSyncManager)
