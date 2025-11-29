@@ -59,6 +59,20 @@ public class CapesRegistry {
         unlockCape(UUID.fromString("e6e784af-bd04-46ad-8141-47b8b9102cb9"), Textures.GREGTECH_CAPE_TEXTURE); // Tictim
         unlockCape(UUID.fromString("2fa297a6-7803-4629-8360-7059155cf43e"), Textures.GREGTECH_CAPE_TEXTURE); // KilaBash
         unlockCape(UUID.fromString("56bd41d0-06ef-4ed7-ab48-926ce45651f9"), Textures.GREGTECH_CAPE_TEXTURE); // Zalgo239
+        unlockCape(UUID.fromString("2c69579f-a7fa-46ad-814e-9837e01215c1"), Textures.GREGTECH_CAPE_TEXTURE); // Z_orbatron
+        unlockCape(UUID.fromString("3dbb689e-edcf-41b9-9c09-6ae4ebb6ca5b"), Textures.GREGTECH_CAPE_TEXTURE); // M_W_K
+
+        // GT:CEu Modern devs
+        unlockCape(UUID.fromString("274846e6-1d07-4e59-8dea-f4f73e76f9fb"), Textures.GREGTECH_CAPE_TEXTURE); // DilithiumThoride
+        unlockCape(UUID.fromString("c43b3c3d-7da6-4c2b-b335-703fce2ed795"), Textures.GREGTECH_CAPE_TEXTURE); // Ghostipedia
+        unlockCape(UUID.fromString("fe4bafe8-8ea9-494a-b4e9-29397cea89fc"), Textures.GREGTECH_CAPE_TEXTURE); // Gustavo
+        unlockCape(UUID.fromString("c18c1d7f-3174-42c6-81dc-3c7ff9f720c3"), Textures.GREGTECH_CAPE_TEXTURE); // jurrejelle
+        unlockCape(UUID.fromString("29f1e04c-58d8-4a3b-9eff-f85be7825256"), Textures.GREGTECH_CAPE_TEXTURE); // kross000
+        unlockCape(UUID.fromString("5cb66945-2ca4-498d-8c9a-29a676769363"), Textures.GREGTECH_CAPE_TEXTURE); // omergunr100
+        unlockCape(UUID.fromString("f76fc8b3-ac6b-44b9-9023-76edaf3d5909"), Textures.GREGTECH_CAPE_TEXTURE); // spicierspace153
+        unlockCape(UUID.fromString("24ab5496-0c9d-45d7-bfa6-c57760263be6"), Textures.GREGTECH_CAPE_TEXTURE); // TarLaboratories
+        unlockCape(UUID.fromString("60057953-6a71-4f11-9e72-bb0c81fa0085"), Textures.GREGTECH_CAPE_TEXTURE); // ursamina
+        unlockCape(UUID.fromString("3a27782d-6864-4814-a9fe-7c6931f29a8a"), Textures.GREGTECH_CAPE_TEXTURE); // YoungOnion
         save();
     }
 
