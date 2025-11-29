@@ -14,7 +14,7 @@ import appeng.api.storage.data.IAEFluidStack;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +48,7 @@ public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         WrappedFluidStack stock = (WrappedFluidStack) getSyncHandler().getStock(index);
         if (stock != null) {
             GuiDraw.drawFluidTexture(stock.getDefinition(), 1, 1, getArea().w() - 2, getArea().h() - 2, 0);

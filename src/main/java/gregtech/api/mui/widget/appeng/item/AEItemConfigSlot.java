@@ -13,10 +13,10 @@ import net.minecraft.item.ItemStack;
 import appeng.api.storage.data.IAEItemStack;
 import codechicken.lib.gui.GuiDraw;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
 
-public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiGhostIngredientSlot<ItemStack> {
+public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements RecipeViewerGhostIngredientSlot<ItemStack> {
 
     public AEItemConfigSlot(boolean isStocking, int index, @NotNull BooleanSupplier isAutoPull) {
         super(isStocking, index, isAutoPull);
@@ -34,7 +34,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
     @Override
     public void onInit() {
         super.onInit();
-        getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
+        getContext().getRecipeViewerSettings().addGhostIngredientSlot(this);
     }
 
     @Override
@@ -44,7 +44,8 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
             tooltip.addFromItem(config.getDefinition());
             tooltip.addLine((context, x, y, width, height, widgetTheme) -> {
                 final int color = Color.GREY.darker(2);
-                GuiDraw.drawRect(x, y + 3, (int) TextRenderer.SHARED.getLastWidth(), 2, color);
+                // TODO: do I need to access the text renderer like this?
+                GuiDraw.drawRect(x, y + 3, (int) TextRenderer.SHARED.getLastActualWidth(), 2, color);
             });
         }
 
@@ -62,10 +63,10 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements JeiG
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         WrappedItemStack config = (WrappedItemStack) getSyncHandler().getConfig(index);
         if (config != null) {
-            RenderUtil.renderItem(config.getDefinition(), 1, 1, 16f, 16f);
+            RenderUtil.drawItemStack(config.getDefinition(), 1, 1, false);
             if (!isStocking) {
                 RenderUtil.renderTextFixedCorner(TextFormattingUtil.formatLongToCompactString(config.getStackSize(), 4),
                         17d, 18d, 0xFFFFFF, true, 0.5f);

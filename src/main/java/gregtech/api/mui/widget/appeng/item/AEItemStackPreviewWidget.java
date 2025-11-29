@@ -1,10 +1,10 @@
 package gregtech.api.mui.widget.appeng.item;
 
 import gregtech.api.mui.widget.appeng.AEStackPreviewWidget;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import appeng.api.storage.data.IAEItemStack;
-import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +27,7 @@ class AEItemStackPreviewWidget extends AEStackPreviewWidget<IAEItemStack> {
     @Override
     public void draw(@Nullable IAEItemStack stackToDraw, int x, int y, int width, int height) {
         if (stackToDraw instanceof WrappedItemStack wrappedItemStack) {
-            GuiDraw.drawItem(wrappedItemStack.getDefinition(), x, y, width, height);
+            RenderUtil.drawItemStack(wrappedItemStack.getDefinition(), x, y, false);
         }
     }
 

@@ -25,8 +25,6 @@ import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
-import com.cleanroommc.modularui.value.sync.SyncHandler;
-import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.ints.Int2BooleanArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;

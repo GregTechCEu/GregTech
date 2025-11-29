@@ -104,7 +104,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityMEInputBase<IAEFlu
                 .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
                         index -> new AEFluidConfigSlot(isStocking(), index, this::isAutoPull)
                                 .syncHandler(SYNC_HANDLER_NAME, 0)
-                                .debugName("Index " + index)));
+                                .name("Index " + index)));
 
         for (IWidget slotUpper : grid.getChildren()) {
             ((AEFluidConfigSlot) slotUpper).onSelect(() -> {
@@ -130,7 +130,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityMEInputBase<IAEFlu
                         index -> new AEFluidDisplaySlot(index)
                                 .background(GTGuiTextures.SLOT_DARK)
                                 .syncHandler(SYNC_HANDLER_NAME, 0)
-                                .debugName("Index " + index)));
+                                .name("Index " + index)));
     }
 
     @Override

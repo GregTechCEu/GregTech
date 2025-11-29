@@ -30,7 +30,7 @@ import appeng.api.storage.data.IAEItemStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.drawable.text.RichText;
+import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +58,8 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityMEOutputBase<IAEIte
 
     @SideOnly(Side.CLIENT)
     @Override
-    protected void addStackLine(@NotNull RichText text, @NotNull IWrappedStack<IAEItemStack, ItemStack> wrappedStack) {
+    protected void addStackLine(@NotNull IRichTextBuilder<?> text,
+                                @NotNull IWrappedStack<IAEItemStack, ItemStack> wrappedStack) {
         ItemStack stack = wrappedStack.getDefinition();
         text.add(new GTObjectDrawable(stack, 0)
                 .asIcon()

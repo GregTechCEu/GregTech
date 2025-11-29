@@ -18,10 +18,10 @@ import appeng.api.storage.data.IAEFluidStack;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.BooleanSupplier;
 
 public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
-                               implements Interactable, JeiGhostIngredientSlot<FluidStack> {
+                               implements Interactable, RecipeViewerGhostIngredientSlot<FluidStack> {
 
     public AEFluidConfigSlot(boolean isStocking, int index, @NotNull BooleanSupplier isAutoPull) {
         super(isStocking, index, isAutoPull);
@@ -40,7 +40,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
     @Override
     public void onInit() {
         super.onInit();
-        getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
+        getContext().getRecipeViewerSettings().addGhostIngredientSlot(this);
     }
 
     @Override
@@ -53,7 +53,9 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
             tooltip.addLine(FluidTooltipUtil.getFluidModNameKey(stack));
             tooltip.addLine((context, x, y, width, height, widgetTheme) -> {
                 final int color = Color.GREY.darker(2);
-                codechicken.lib.gui.GuiDraw.drawRect(x, y + 3, (int) TextRenderer.SHARED.getLastWidth(), 2, color);
+                // TODO: do I need to access the text renderer like this?
+                codechicken.lib.gui.GuiDraw.drawRect(x, y + 3, (int) TextRenderer.SHARED.getLastActualWidth(), 2,
+                        color);
             });
         }
 
@@ -71,7 +73,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack>
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         WrappedFluidStack config = (WrappedFluidStack) getSyncHandler().getConfig(index);
         if (config != null) {
             GuiDraw.drawFluidTexture(config.getDefinition(), 1, 1, getArea().w() - 2, getArea().h() - 2, 0);

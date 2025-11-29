@@ -7,7 +7,6 @@ import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.sync.appeng.AEFluidSyncHandler;
 import gregtech.api.mui.sync.appeng.AESyncHandler;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.api.util.GTUtility;
@@ -33,11 +32,11 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
@@ -150,7 +149,7 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
     protected abstract @NotNull AESyncHandler<AEStackType> createAESyncHandler();
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         ModularPanel mainPanel = GTGuis.createPanel(this, 176, 18 + 18 * 4 + 94);
         final boolean isStocking = getAEHandler().isStocking();
 
@@ -159,7 +158,7 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
         return mainPanel.child(IKey.lang(getMetaFullName())
                 .asWidget()
                 .pos(5, 5))
-                .child(SlotGroupWidget.playerInventory()
+                .child(SlotGroupWidget.playerInventory(false)
                         .left(7)
                         .bottom(7))
                 .child(IKey.lang(() -> isOnline() ? "gregtech.gui.me_network.online" :
@@ -203,9 +202,8 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
     }
 
     protected @NotNull GhostCircuitSlotWidget createGhostCircuitWidget() {
-        // Grrr generics .background only returns ItemSlot
-        return (GhostCircuitSlotWidget) new GhostCircuitSlotWidget()
-                .slot(SyncHandlers.itemSlot(circuitInventory, 0))
+        return new GhostCircuitSlotWidget()
+                .slot(circuitInventory, 0)
                 .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY);
     }
 
@@ -276,8 +274,8 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
     }
 
     protected ModularPanel buildMultiplierPopup(PanelSyncManager syncManager, IPanelHandler syncHandler) {
-        AEFluidSyncHandler aeSyncHandler = (AEFluidSyncHandler) ((PanelSyncHandler) syncHandler).getSyncManager()
-                .getSyncHandler(PanelSyncManager.makeSyncKey(SYNC_HANDLER_NAME, 0));
+        AESyncHandler<?> aeSyncHandler = ((PanelSyncHandler) syncHandler).getSyncManager()
+                .findSyncHandler(SYNC_HANDLER_NAME, 0, AESyncHandler.class);
         IntValue multiplier = new IntValue(2);
 
         return GTGuis.createPopupPanel("multiplier", 100, 35)

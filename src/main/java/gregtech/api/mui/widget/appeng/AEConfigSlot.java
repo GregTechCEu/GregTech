@@ -6,14 +6,14 @@ import gregtech.api.mui.sync.appeng.AESyncHandler;
 
 import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.api.IPanelHandler;
+import com.cleanroommc.modularui.api.UpOrDown;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
-import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerIngredientProvider;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.value.LongValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.BooleanSupplier;
 
 public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfigSlot<T>>
-                                  implements JeiIngredientProvider, Interactable {
+                                  implements RecipeViewerIngredientProvider, Interactable {
 
     protected final boolean isStocking;
     protected final int index;
@@ -75,7 +75,7 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
     }
 
     @Override
-    public void drawOverlay(ModularGuiContext context, WidgetTheme widgetTheme) {
+    public void drawOverlay(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         super.drawOverlay(context, widgetTheme);
 
         if (selected) {
@@ -104,7 +104,7 @@ public abstract class AEConfigSlot<T extends IAEStack<T>> extends Widget<AEConfi
     }
 
     @Override
-    public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int scrollAmount) {
+    public boolean onMouseScroll(UpOrDown scrollDirection, int scrollAmount) {
         if (!getSyncHandler().hasConfig(index) || isStocking) return false;
 
         long newStackSize = getSyncHandler().getConfigAmount(index);

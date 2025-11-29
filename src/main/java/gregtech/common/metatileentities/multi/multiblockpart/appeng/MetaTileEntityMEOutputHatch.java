@@ -33,7 +33,7 @@ import appeng.api.storage.data.IAEFluidStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.drawable.text.RichText;
+import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +61,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEF
 
     @SideOnly(Side.CLIENT)
     @Override
-    protected void addStackLine(@NotNull RichText text,
+    protected void addStackLine(@NotNull IRichTextBuilder<?> text,
                                 @NotNull IWrappedStack<IAEFluidStack, FluidStack> wrappedStack) {
         FluidStack stack = wrappedStack.getDefinition();
         text.add(new GTObjectDrawable(stack, 0)

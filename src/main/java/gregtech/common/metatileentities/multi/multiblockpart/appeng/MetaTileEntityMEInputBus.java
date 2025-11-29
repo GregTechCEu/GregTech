@@ -44,8 +44,8 @@ import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -148,7 +148,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
                 .matrix(Grid.mapToMatrix((int) Math.sqrt(CONFIG_SIZE), CONFIG_SIZE,
                         index -> new AEItemConfigSlot(isStocking(), index, this::isAutoPull)
                                 .syncHandler(SYNC_HANDLER_NAME, 0)
-                                .debugName("Index " + index)));
+                                .name("Index " + index)));
 
         for (IWidget slotUpper : grid.getChildren()) {
             ((AEItemConfigSlot) slotUpper).onSelect(() -> {
@@ -174,7 +174,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
                         index -> new AEItemDisplaySlot(index)
                                 .background(GTGuiTextures.SLOT_DARK)
                                 .syncHandler(SYNC_HANDLER_NAME, 0)
-                                .debugName("Index " + index)));
+                                .name("Index " + index)));
     }
 
     @Override

@@ -24,9 +24,10 @@ import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.IStorageChannel;
 import appeng.api.storage.data.IAEStack;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.drawable.text.RichText;
+import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
@@ -93,7 +94,7 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
     protected abstract @NotNull IByteBufDeserializer<IWrappedStack<AEStackType, RealStackType>> getDeserializer();
 
     @SideOnly(Side.CLIENT)
-    protected abstract void addStackLine(@NotNull RichText text,
+    protected abstract void addStackLine(@NotNull IRichTextBuilder<?> text,
                                          @NotNull IWrappedStack<AEStackType, RealStackType> wrappedStack);
 
     @Override
@@ -102,7 +103,7 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         BooleanSyncValue onlineSync = new BooleanSyncValue(this::isOnline);
         panelSyncManager.syncValue("online", 0, onlineSync);
 
@@ -129,7 +130,9 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
                         .alignment(Alignment.TopLeft)
                         .background(GTGuiTextures.DISPLAY.asIcon()
                                 .margin(-2, -2)))
-                .child(SlotGroupWidget.playerInventory());
+                .child(SlotGroupWidget.playerInventory(false)
+                        .left(7)
+                        .bottom(7));
     }
 
     @Override

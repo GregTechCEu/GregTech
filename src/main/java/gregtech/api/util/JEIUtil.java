@@ -1,18 +1,16 @@
 package gregtech.api.util;
 
+import gregtech.integration.jei.JustEnoughItemsModule;
 import gregtech.mixins.jei.GuiIngredientGroupAccessor;
 
-import gregtech.integration.jei.JustEnoughItemsModule;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import net.minecraft.item.ItemStack;
-
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IGuiIngredientGroup;
 import mezz.jei.api.gui.IGuiItemStackGroup;

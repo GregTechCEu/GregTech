@@ -727,7 +727,7 @@ public class GTGuiTextures {
     public static final UITexture ARROW_DOUBLE = fullImage("textures/gui/widget/arrow_double.png");
     public static final UITexture ARROW_OPPOSITE = fullImage("textures/gui/widget/opposite_arrows.png");
     public static final UITexture[] AUTO_PULL = slice("textures/gui/widget/button_me_auto_pull.png",
-            16, 32, 16, 16, true);
+            16, 32, 16, 16, ColorType.DEFAULT);
 
     public static void init() {/**/}
 

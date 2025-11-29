@@ -6,7 +6,7 @@ import gregtech.integration.jei.JustEnoughItemsModule;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.cleanroommc.modularui.integration.jei.JeiRecipeTransferHandler;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerRecipeTransferHandler;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
@@ -16,7 +16,7 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 
 @SuppressWarnings("UnstableApiUsage")
 @SideOnly(Side.CLIENT)
-public class GregTechGuiScreen extends ModularScreen implements JeiRecipeTransferHandler {
+public class GregTechGuiScreen extends ModularScreen implements RecipeViewerRecipeTransferHandler {
 
     private static final Object2ObjectMap<String, IJEIRecipeReceiver> knownRecipeReceivers = new Object2ObjectOpenHashMap<>();
 

@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import appeng.api.storage.data.IAEItemStack;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,11 +42,11 @@ public class AEItemDisplaySlot extends AEDisplaySlot<IAEItemStack> {
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         WrappedItemStack stock = (WrappedItemStack) getSyncHandler().getStock(index);
         if (stock != null) {
             ItemStack stack = stock.createItemStack();
-            RenderUtil.renderItem(stack, 1, 1, 16f, 16f);
+            RenderUtil.drawItemStack(stack, 1, 1, false);
             RenderUtil.renderTextFixedCorner(TextFormattingUtil.formatLongToCompactString(stock.getStackSize(), 4), 17d,
                     18d, 0xFFFFFF, true, 0.5f);
         }
