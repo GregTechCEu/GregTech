@@ -13,14 +13,14 @@ import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widgets.TextWidget;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class InteractableText<T extends VirtualEntry> extends TextWidget<InteractableText<T>> implements Interactable {
 
     private final T entry;
     private final EntryColorSH syncHandler;
 
-    public InteractableText(T entry, Consumer<String> setter) {
+    public InteractableText(T entry, Predicate<String> setter) {
         super(IKey.str(entry.getColorStr())
                 .alignment(Alignment.CenterLeft)
                 .color(Color.WHITE.darker(1)));
@@ -32,9 +32,10 @@ public class InteractableText<T extends VirtualEntry> extends TextWidget<Interac
     @NotNull
     @Override
     public Result onMousePressed(int mouseButton) {
-        Interactable.playButtonClickSound();
-        this.syncHandler.setColor(this.entry.getColorStr());
-        this.syncHandler.syncToServer(1, buf -> NetworkUtils.writeStringSafe(buf, this.entry.getColorStr()));
+        if (this.syncHandler.setColor(this.entry.getColorStr())) {
+            Interactable.playButtonClickSound();
+            this.syncHandler.syncToServer(1, buf -> NetworkUtils.writeStringSafe(buf, this.entry.getColorStr()));
+        }
         return Result.SUCCESS;
     }
 
@@ -45,14 +46,14 @@ public class InteractableText<T extends VirtualEntry> extends TextWidget<Interac
 
     private static class EntryColorSH extends SyncHandler {
 
-        private final Consumer<String> setter;
+        private final Predicate<String> setter;
 
-        private EntryColorSH(Consumer<String> setter) {
+        private EntryColorSH(Predicate<String> setter) {
             this.setter = setter;
         }
 
-        public void setColor(String c) {
-            this.setter.accept(c);
+        public boolean setColor(String c) {
+            return this.setter.test(c);
         }
 
         @Override
