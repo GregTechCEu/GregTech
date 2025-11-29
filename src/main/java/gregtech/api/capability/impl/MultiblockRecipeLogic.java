@@ -37,12 +37,26 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     protected IItemHandlerModifiable currentDistinctInputBus;
     protected List<IItemHandlerModifiable> invalidatedInputList = new ArrayList<>();
 
+    protected int tierskipLimit;
+
     public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity, tileEntity.recipeMap);
+        this.tierskipLimit = 0;
+    }
+
+    public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity, int tierskipLimit_) {
+        super(tileEntity, tileEntity.recipeMap);
+        this.tierskipLimit = tierskipLimit_;
     }
 
     public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity, boolean hasPerfectOC) {
         super(tileEntity, tileEntity.recipeMap, hasPerfectOC);
+        this.tierskipLimit = 0;
+    }
+
+    public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity, int tierskipLimit_, boolean hasPerfectOC) {
+        super(tileEntity, tileEntity.recipeMap, hasPerfectOC);
+        this.tierskipLimit = tierskipLimit_;
     }
 
     @Override
@@ -103,7 +117,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     /**
      * Overload of {@link #getInputTank()} to gather extra fluid tanks
      * that could exist in a distinct item handler (such as a {@link DualHandler})
-     * 
+     *
      * @param items Handler to gather fluid tanks from
      * @return a new FluidTankList with extra fluid tanks on top of the existing fluid tanks
      */
@@ -400,13 +414,14 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             // Machine Multiblocks
             if (energyContainer instanceof EnergyContainerList energyList) {
                 long highestVoltage = energyList.getHighestInputVoltage();
-                if (energyList.getNumHighestInputContainers() > 1) {
-                    // allow tier + 1 if there are multiple hatches present at the highest tier
-                    int tier = GTUtility.getTierByVoltage(highestVoltage);
-                    return GTValues.V[Math.min(tier + 1, GTValues.MAX)];
-                } else {
-                    return highestVoltage;
-                }
+                int tier = GTUtility.getTierByVoltage(highestVoltage);
+
+                // todo fix (always returns 1)
+                long amps = energyList.getInputAmperage();
+
+                // todo log call can be replaced with something less intensive
+                int tierskip = (int) Math.min((Math.log(amps) / GTValues.LOG_4), tierskipLimit);
+                return GTValues.V[Math.min(tier + tierskip, GTValues.MAX)];
             } else {
                 return energyContainer.getInputVoltage();
             }
