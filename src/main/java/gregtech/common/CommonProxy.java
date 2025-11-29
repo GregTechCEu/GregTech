@@ -3,6 +3,8 @@ package gregtech.common;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
+import gregtech.api.block.coil.CoilRegistry;
+import gregtech.api.block.coil.CustomCoilBlock;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
@@ -94,6 +96,12 @@ public class CommonProxy {
             }
         }
 
+        for (CoilRegistry r : GregTechAPI.coilManager.getRegistries()) {
+            for (CustomCoilBlock block : r) {
+                registry.register(block);
+            }
+        }
+
         StoneType.init();
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
@@ -104,21 +112,21 @@ public class CommonProxy {
 
                 if (material.hasProperty(PropertyKey.WIRE)) {
                     for (BlockCable cable : CABLES.get(materialRegistry.getModid())) {
-                        if (!cable.getItemPipeType(null).isCable() ||
-                                !material.getProperty(PropertyKey.WIRE).isSuperconductor())
-                            cable.addCableMaterial(material, material.getProperty(PropertyKey.WIRE));
+                        if (cable.isValidPipeMaterial(material)) {
+                            cable.addPipeMaterial(material, material.getProperty(PropertyKey.WIRE));
+                        }
                     }
                 }
                 if (material.hasProperty(PropertyKey.FLUID_PIPE)) {
                     for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid())) {
-                        if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                        if (pipe.isValidPipeMaterial(material)) {
                             pipe.addPipeMaterial(material, material.getProperty(PropertyKey.FLUID_PIPE));
                         }
                     }
                 }
                 if (material.hasProperty(PropertyKey.ITEM_PIPE)) {
                     for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid())) {
-                        if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                        if (pipe.isValidPipeMaterial(material)) {
                             pipe.addPipeMaterial(material, material.getProperty(PropertyKey.ITEM_PIPE));
                         }
                     }
@@ -289,6 +297,13 @@ public class CommonProxy {
         registry.register(createItemBlock(STEAM_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(MULTIBLOCK_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(TRANSPARENT_CASING, VariantItemBlock::new));
+
+        for (CoilRegistry coilRegistry : GregTechAPI.coilManager.getRegistries()) {
+            for (CustomCoilBlock block : coilRegistry) {
+                registry.register(createItemBlock(block, VariantItemBlock::new));
+            }
+        }
+
         registry.register(createItemBlock(WIRE_COIL, VariantItemBlock::new));
         registry.register(createItemBlock(FUSION_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN, VariantItemBlock::new));

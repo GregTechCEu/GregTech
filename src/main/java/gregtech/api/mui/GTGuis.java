@@ -121,7 +121,7 @@ public class GTGuis {
                     .top(5).right(5)
                     .onMousePressed(mouseButton -> {
                         if (mouseButton == 0 || mouseButton == 1) {
-                            closeIfOpen(true);
+                            closeIfOpen();
                             return true;
                         }
 

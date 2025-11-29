@@ -34,10 +34,11 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,13 +68,13 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
         guiSyncManager.registerSlotGroup("item_inv", 2);
 
         // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, 176, 166)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(SlotGroupWidget.playerInventory(false).left(7).bottom(7))
                 .child(GTGuiTextures.PROGRESS_BAR_RESEARCH_STATION_BASE.asWidget()
                         .left(46).top(18)
                         .size(84, 60))
