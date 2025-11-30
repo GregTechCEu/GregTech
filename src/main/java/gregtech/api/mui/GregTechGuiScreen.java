@@ -1,6 +1,7 @@
 package gregtech.api.mui;
 
 import gregtech.api.GTValues;
+import gregtech.client.ClientProxy;
 import gregtech.integration.jei.JustEnoughItemsModule;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -48,7 +49,11 @@ public class GregTechGuiScreen extends ModularScreen implements RecipeViewerReci
 
     @Override
     public void onClose() {
-        registeredRecipeTransferReceivers.clear();
+        // Only clear all registered recipe receivers when the UI is truly closing, ie not just opening JEI over it.
+        if (ClientProxy.isGUIClosingPermanently) {
+            // Clear all registered recipe receivers on UI close, just in case.
+            registeredRecipeTransferReceivers.clear();
+        }
     }
 
     @Override
