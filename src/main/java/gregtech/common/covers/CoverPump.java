@@ -200,14 +200,10 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
         var throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
 
-        var throughputString = new StringSyncValue(
-                throughput::getStringValue, throughput::setStringValue);
-
         var pumpMode = new EnumSyncValue<>(PumpMode.class, this::getPumpMode, this::setPumpMode);
 
         syncManager.syncValue("manual_io", manualIOmode);
         syncManager.syncValue("pump_mode", pumpMode);
-        syncManager.syncValue("throughput", throughput);
 
         var column = Flow.column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight();
@@ -228,7 +224,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             .setPostFix(" L/s")
                             .setTextColor(Color.WHITE.darker(1))
                             .setNumbers(1, maxFluidTransferRate)
-                            .value(throughputString)
+                            .value(throughput)
                             .background(GTGuiTextures.DISPLAY))
                     .child(new ButtonWidget<>()
                             .right(0).width(18)

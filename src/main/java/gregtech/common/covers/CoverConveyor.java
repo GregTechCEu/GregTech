@@ -520,16 +520,12 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
         IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
 
-        StringSyncValue formattedThroughput = new StringSyncValue(throughput::getStringValue,
-                throughput::setStringValue);
-
         EnumSyncValue<DistributionMode> distributionMode = new EnumSyncValue<>(DistributionMode.class,
                 this::getDistributionMode, this::setDistributionMode);
 
         guiSyncManager.syncValue("manual_io", manualIOmode);
         guiSyncManager.syncValue("conveyor_mode", conveyorMode);
         guiSyncManager.syncValue("distribution_mode", distributionMode);
-        guiSyncManager.syncValue("throughput", throughput);
 
         if (createThroughputRow())
             column.child(Flow.row().coverChildrenHeight()
@@ -547,7 +543,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .setPostFix(" items/s")
                             .setTextColor(Color.WHITE.darker(1))
                             .setNumbers(1, maxItemTransferRate)
-                            .value(formattedThroughput)
+                            .value(throughput)
                             .background(GTGuiTextures.DISPLAY))
                     .child(new ButtonWidget<>()
                             .right(0).width(18)
