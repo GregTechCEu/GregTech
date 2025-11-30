@@ -1,12 +1,15 @@
 package gregtech.common.metatileentities.storage;
 
 import gregtech.api.items.toolitem.ItemGTToolbelt;
+import gregtech.api.mui.sync.PagedWidgetSyncHandler;
+import gregtech.api.mui.sync.RecipeTransferSyncHandler;
 import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.crafting.ShapedOreEnergyTransferRecipe;
 import gregtech.common.mui.widget.workbench.CraftingInputSlot;
+import gregtech.integration.jei.JustEnoughItemsModule;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -23,7 +26,6 @@ import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
-import com.cleanroommc.modularui.value.sync.SyncHandler;
 import it.unimi.dsi.fastutil.ints.Int2BooleanArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
@@ -38,11 +40,18 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import mezz.jei.api.gui.IGuiIngredient;
+import mezz.jei.api.gui.IGuiItemStackGroup;
+import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
+import mezz.jei.api.recipe.transfer.IRecipeTransferError;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
 
-public class CraftingRecipeLogic extends SyncHandler {
+public class CraftingRecipeLogic extends RecipeTransferSyncHandler {
 
     // client only
     public static final int UPDATE_INGREDIENTS = 1;
@@ -118,6 +127,37 @@ public class CraftingRecipeLogic extends SyncHandler {
         }
         syncMatrix();
         updateCurrentRecipe();
+    }
+
+    @Override
+    public @Nullable IRecipeTransferError receiveRecipe(@NotNull IRecipeLayout recipeLayout, boolean maxTransfer,
+                                                        boolean simulate) {
+        if (!recipeLayout.getRecipeCategory().getUid().equals(VanillaRecipeCategoryUid.CRAFTING)) {
+            JustEnoughItemsModule.transferHelper.createInternalError();
+        } else if (simulate) {
+            // TODO: highlight missing items in recipe viewer
+            return null;
+        }
+
+        Int2ObjectMap<ItemStack> matrix = extractMatrix(recipeLayout.getItemStacks());
+        fillCraftingGrid(matrix);
+        getSyncManager().findSyncHandler("page_controller", 0, PagedWidgetSyncHandler.class).setPage(0);
+
+        return null;
+    }
+
+    private Int2ObjectMap<ItemStack> extractMatrix(IGuiItemStackGroup stackGroup) {
+        Map<Integer, ? extends IGuiIngredient<ItemStack>> ingredients = stackGroup.getGuiIngredients();
+        Int2ObjectMap<ItemStack> matrix = new Int2ObjectArrayMap<>(9);
+        for (int slot : ingredients.keySet()) {
+            if (slot != 0) {
+                ItemStack ingredient = ingredients.get(slot).getDisplayedIngredient();
+                if (ingredient == null) continue;
+                matrix.put(slot - 1, ingredient);
+            }
+        }
+
+        return matrix;
     }
 
     public void setInputSlot(CraftingInputSlot slot, int index) {
