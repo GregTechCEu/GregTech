@@ -74,6 +74,7 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
+import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.config.Constants;
 import mezz.jei.input.IShowsRecipeFocuses;
 import mezz.jei.input.InputHandler;
@@ -105,6 +106,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
     public static IIngredientRegistry ingredientRegistry;
     public static IJeiRuntime jeiRuntime;
     public static IGuiHelper guiHelper;
+    public static IRecipeTransferHandlerHelper transferHelper;
 
     @Override
     public void loadComplete(FMLLoadCompleteEvent event) {
@@ -331,6 +333,8 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         // Refresh Ore Ingredients Cache
         GTRecipeOreInput.refreshStackCache();
+
+        transferHelper = jeiHelpers.recipeTransferHandlerHelper();
     }
 
     private void setupInputHandler() {
