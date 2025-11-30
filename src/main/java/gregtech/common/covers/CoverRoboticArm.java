@@ -27,7 +27,6 @@ import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
@@ -198,7 +197,7 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
+    protected Flow createUI(GuiData data, PanelSyncManager guiSyncManager) {
         EnumSyncValue<TransferMode> transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode,
                 this::setTransferMode);
         guiSyncManager.syncValue("transfer_mode", transferMode);

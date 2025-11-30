@@ -55,7 +55,6 @@ import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -509,7 +508,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 .bindPlayerInventory();
     }
 
-    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
+    protected Flow createUI(GuiData data, PanelSyncManager guiSyncManager) {
         var column = Flow.column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight();
 

@@ -53,7 +53,6 @@ import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
@@ -195,7 +194,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                 .bindPlayerInventory();
     }
 
-    protected ParentWidget<?> createUI(GuiData data, PanelSyncManager syncManager) {
+    protected Flow createUI(GuiData data, PanelSyncManager syncManager) {
         var manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
 
