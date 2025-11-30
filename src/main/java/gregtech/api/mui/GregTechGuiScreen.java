@@ -50,7 +50,7 @@ public class GregTechGuiScreen extends ModularScreen implements RecipeViewerReci
         for (Map<String, IRecipeTransferReceiver> subMap : registeredRecipeTransferReceivers.values()) {
             for (IRecipeTransferReceiver receiver : subMap.values()) {
                 IRecipeTransferError result = receiver.receiveRecipe(recipeLayout, maxTransfer, simulate);
-                if (result == IRecipeTransferReceiver.SKIP) continue;
+                if (result != null && result.getType() == IRecipeTransferError.Type.INTERNAL) continue;
                 return result;
             }
         }
