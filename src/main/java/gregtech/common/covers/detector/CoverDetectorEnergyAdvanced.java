@@ -24,7 +24,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
@@ -114,10 +113,11 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
                                         .size(72, 18)
                                         .addTooltipLine(IKey.lang("cover.advanced_energy_detector.modes_tooltip"))
                                         .value(new BooleanSyncValue(this::isUsePercent, this::setUsePercent))
-                                        .overlay(new DynamicDrawable(() -> IKey
-                                                .lang("cover.advanced_energy_detector.mode_" +
-                                                        (isUsePercent() ? "percent" : "eu"))
-                                                .style(TextFormatting.WHITE)))))
+                                        .overlay(IKey.lang(() -> {
+                                            String lang = "cover.advanced_energy_detector.mode_";
+                                            lang += isUsePercent() ? "percent" : "eu";
+                                            return lang;
+                                        }).style(TextFormatting.WHITE))))
                         .child(Flow.row()
                                 .name("inverted row")
                                 .coverChildrenHeight()
@@ -129,10 +129,11 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
                                         .size(72, 18)
                                         .addTooltipLine(IKey.lang("cover.advanced_energy_detector.invert_tooltip"))
                                         .value(new BooleanSyncValue(this::isInverted, this::setInverted))
-                                        .overlay(new DynamicDrawable(() -> IKey
-                                                .lang("cover.advanced_energy_detector." +
-                                                        (isInverted() ? "inverted" : "normal"))
-                                                .style(TextFormatting.WHITE))))))
+                                        .overlay(IKey.lang(() -> {
+                                            String lang = "cover.advanced_energy_detector.";
+                                            lang += (isInverted() ? "inverted" : "normal");
+                                            return lang;
+                                        }).style(TextFormatting.WHITE)))))
                 .bindPlayerInventory();
     }
 

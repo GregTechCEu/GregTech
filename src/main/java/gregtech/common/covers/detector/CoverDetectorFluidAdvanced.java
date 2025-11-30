@@ -28,7 +28,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
@@ -96,20 +95,20 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                                         .size(72, 18)
                                         .value(new BooleanSyncValue(this::isInverted, this::setInverted))
                                         .addTooltipLine(IKey.lang("cover.generic.advanced_detector.invert_tooltip"))
-                                        .overlay(new DynamicDrawable(() -> {
+                                        .overlay(IKey.lang(() -> {
                                             String lang = "cover.advanced_energy_detector.";
                                             lang += isInverted() ? "inverted" : "normal";
-                                            return IKey.lang(lang).style(TextFormatting.WHITE);
-                                        })))
+                                            return lang;
+                                        }).style(TextFormatting.WHITE)))
                                 .child(new ToggleButton()
                                         .name("latch button")
                                         .size(72, 18)
                                         .right(0)
-                                        .overlay(new DynamicDrawable(() -> {
+                                        .overlay(IKey.lang(() -> {
                                             String lang = "cover.generic.advanced_detector.";
                                             lang += isLatched() ? "latched" : "continuous";
-                                            return IKey.lang(lang).style(TextFormatting.WHITE);
-                                        }))
+                                            return lang;
+                                        }).style(TextFormatting.WHITE))
                                         .addTooltipLine(IKey.lang("cover.generic.advanced_detector.latch_tooltip"))
                                         .value(new BooleanSyncValue(this::isLatched, this::setLatched))))
                         .child(this.fluidFilter.initUI(guiData, guiSyncManager)))

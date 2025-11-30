@@ -70,7 +70,6 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -493,7 +492,6 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
         IntSyncValue slotValue = new IntSyncValue(() -> this.slot, this::setMode);
         EnumSyncValue<MODE> modeValue = new EnumSyncValue<>(MODE.class, this::getMode, this::setMode);
         EnumSyncValue<EnumFacing> spinValue = new EnumSyncValue<>(EnumFacing.class, () -> this.spin, this::setMode);
-        guiSyncManager.syncValue("slot", slotValue);
         guiSyncManager.syncValue("mode", modeValue);
         guiSyncManager.syncValue("spin", spinValue);
 
@@ -531,9 +529,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
                                 }))
                         .child(new GTTextFieldWidget()
                                 .setNumbers(0, Integer.MAX_VALUE)
-                                .value(new StringValue.Dynamic(
-                                        () -> String.valueOf(slotValue.getIntValue()),
-                                        s -> slotValue.setIntValue(Integer.parseInt(s))))
+                                .value(slotValue)
                                 .size(80, 20)
                                 .setTextColor(Color.WHITE.main)
                                 .background(GTGuiTextures.DISPLAY))
