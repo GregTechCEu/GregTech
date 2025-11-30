@@ -9,10 +9,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerRecipeTransferHandler;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
+import com.cleanroommc.modularui.widget.Widget;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntComparators;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +26,7 @@ import java.util.Map;
 public class GregTechGuiScreen extends ModularScreen implements RecipeViewerRecipeTransferHandler {
 
     // Stores lists of higher priority recipe receivers to the left of the tree
-    private final Int2ObjectMap<Map<String, IRecipeTransferReceiver>> registeredRecipeTransferReceivers = new Int2ObjectAVLTreeMap<>(
+    private static final Int2ObjectMap<Map<String, IRecipeTransferReceiver>> registeredRecipeTransferReceivers = new Int2ObjectAVLTreeMap<>(
             IntComparators.OPPOSITE_COMPARATOR);
 
     public GregTechGuiScreen(ModularPanel mainPanel) {
@@ -45,6 +47,11 @@ public class GregTechGuiScreen extends ModularScreen implements RecipeViewerReci
     }
 
     @Override
+    public void onClose() {
+        registeredRecipeTransferReceivers.clear();
+    }
+
+    @Override
     public IRecipeTransferError transferRecipe(IRecipeLayout recipeLayout, boolean maxTransfer, boolean simulate) {
         // Receivers are sorted high to low on registration
         for (Map<String, IRecipeTransferReceiver> subMap : registeredRecipeTransferReceivers.values()) {
@@ -62,25 +69,31 @@ public class GregTechGuiScreen extends ModularScreen implements RecipeViewerReci
     /**
      * Register an {@link IRecipeTransferReceiver} to this screen. <br/>
      * Recipe transfer handlers registered through this method will have a priority of {@code 0}. <br/>
-     * <b>Important:</b> if you have dynamic widgets or sync handlers, ensure that you remove this handler with
-     * {@link #removeRecipeTransferHandler(String)} when it's disposed of!
+     * <b>Important:</b> ensure that you remove this handler with {@link #removeRecipeTransferHandler(String)} when it's
+     * disposed of! <br/>
+     * Remove it by calling {@link #removeRecipeTransferHandler(String)} from {@link Widget#dispose()} for widgets and
+     * {@link SyncHandler#dispose()} for sync handlers.
      * 
      * @throws IllegalArgumentException if a receiver with the given key already exists.
      */
-    public void registerRecipeTransferHandler(@NotNull IRecipeTransferReceiver transferReceiver, @NotNull String key) {
-        registerRecipeTransferHandler(transferReceiver, key, 0);
+    public static void registerRecipeTransferHandler(@NotNull String key,
+                                                     @NotNull IRecipeTransferReceiver transferReceiver) {
+        registerRecipeTransferHandler(key, transferReceiver, 0);
     }
 
     /**
      * Register an {@link IRecipeTransferReceiver} to this screen with a certain priority. Higher numbers will be tried
      * first. <br/>
-     * <b>Important:</b> if you have dynamic widgets or sync handlers, ensure that you remove this handler with
-     * {@link #removeRecipeTransferHandler(String)} when it's disposed of!
+     * <b>Important:</b> ensure that you remove this handler with {@link #removeRecipeTransferHandler(String)} when it's
+     * disposed of! <br/>
+     * Remove it by calling {@link #removeRecipeTransferHandler(String)} from {@link Widget#dispose()} for widgets and
+     * {@link SyncHandler#dispose()} for sync handlers.
      * 
      * @throws IllegalArgumentException if a receiver with the given key already exists.
      */
-    public void registerRecipeTransferHandler(@NotNull IRecipeTransferReceiver transferReceiver, @NotNull String key,
-                                              int priority) {
+    public static void registerRecipeTransferHandler(@NotNull String key,
+                                                     @NotNull IRecipeTransferReceiver transferReceiver,
+                                                     int priority) {
         for (Map<String, IRecipeTransferReceiver> subMap : registeredRecipeTransferReceivers.values()) {
             if (subMap.containsKey(key)) {
                 throw new IllegalArgumentException(
@@ -88,7 +101,9 @@ public class GregTechGuiScreen extends ModularScreen implements RecipeViewerReci
             }
         }
 
-        registeredRecipeTransferReceivers.computeIfAbsent(priority, $ -> new Object2ObjectOpenHashMap<>())
+        // Reference map so the receiver might:tm: not stick around for too long if someone forgets to unregister their
+        // receiver.
+        registeredRecipeTransferReceivers.computeIfAbsent(priority, $ -> new Object2ReferenceOpenHashMap<>())
                 .put(key, transferReceiver);
     }
 
@@ -97,7 +112,7 @@ public class GregTechGuiScreen extends ModularScreen implements RecipeViewerReci
      * 
      * @throws IllegalArgumentException if no receiver exists with the given key.
      */
-    public void removeRecipeTransferHandler(@NotNull String key) {
+    public static void removeRecipeTransferHandler(@NotNull String key) {
         for (Map<String, IRecipeTransferReceiver> subMap : registeredRecipeTransferReceivers.values()) {
             if (subMap.containsKey(key)) {
                 subMap.remove(key);

@@ -1,5 +1,6 @@
 package gregtech.api.mui;
 
+import gregtech.api.mui.sync.RecipeTransferSyncHandler;
 import gregtech.integration.jei.JustEnoughItemsModule;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,9 +19,11 @@ import java.util.Collection;
 /**
  * An interface for receiving a recipe from a recipe viewer to anything on the panel, such as a {@link Widget} or
  * {@link SyncHandler}. <br/>
- * Register it via {@link GregTechGuiScreen#registerRecipeTransferHandler(IRecipeTransferReceiver, String)} or
- * {@link GregTechGuiScreen#registerRecipeTransferHandler(IRecipeTransferReceiver, String, int)} if you want to
- * prioritize checking a certain handler first.
+ * Register it via {@link GregTechGuiScreen#registerRecipeTransferHandler(String, IRecipeTransferReceiver)} or
+ * {@link GregTechGuiScreen#registerRecipeTransferHandler(String, IRecipeTransferReceiver, int)} if you want to
+ * prioritize checking a certain handler first. <br/>
+ * If you're implementing this on a {@link SyncHandler}, it's recommended to extend {@link RecipeTransferSyncHandler} so
+ * registering and unregistering from {@link GregTechGuiScreen} is done for you.
  */
 public interface IRecipeTransferReceiver {
 
