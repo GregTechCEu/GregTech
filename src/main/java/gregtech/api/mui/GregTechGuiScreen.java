@@ -14,7 +14,7 @@ import com.cleanroommc.modularui.widget.Widget;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntComparators;
-import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import org.jetbrains.annotations.NotNull;
@@ -101,9 +101,7 @@ public class GregTechGuiScreen extends ModularScreen implements RecipeViewerReci
             }
         }
 
-        // Reference map so the receiver might:tm: not stick around for too long if someone forgets to unregister their
-        // receiver.
-        registeredRecipeTransferReceivers.computeIfAbsent(priority, $ -> new Object2ReferenceOpenHashMap<>())
+        registeredRecipeTransferReceivers.computeIfAbsent(priority, $ -> new Object2ObjectOpenHashMap<>())
                 .put(key, transferReceiver);
     }
 
