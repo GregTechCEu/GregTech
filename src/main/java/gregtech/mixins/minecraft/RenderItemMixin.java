@@ -43,10 +43,10 @@ public class RenderItemMixin {
 
     @Unique
     private static void gregTechCEu$renderElectricBar(@NotNull ItemStack stack, int xPosition, int yPosition) {
-        if (stack.getItem() instanceof IGTTool) {
-            ToolChargeBarRenderer.renderBarsTool((IGTTool) stack.getItem(), stack, xPosition, yPosition);
-        } else if (stack.getItem() instanceof MetaItem) {
-            ToolChargeBarRenderer.renderBarsItem((MetaItem<?>) stack.getItem(), stack, xPosition, yPosition);
+        if (stack.getItem() instanceof IGTTool iGTTool) {
+            ToolChargeBarRenderer.renderBarsTool(iGTTool, stack, xPosition, yPosition);
+        } else if (stack.getItem() instanceof MetaItem<?>metaItem) {
+            ToolChargeBarRenderer.renderBarsItem(metaItem, stack, xPosition, yPosition);
         }
     }
 
