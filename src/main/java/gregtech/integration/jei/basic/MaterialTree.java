@@ -4,6 +4,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.MaterialStack;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -84,9 +85,19 @@ public class MaterialTree implements IRecipeWrapper {
 
         name = material.getLocalizedName();
         formula = material.getChemicalFormula();
-        avgM = material.getMass();
-        avgP = material.getProtons();
-        avgN = material.getNeutrons();
+        int componentAmounts = 0;
+        if (material.isElement()) {
+            componentAmounts = 1;
+        }
+        if (material.getMaterialComponents().isEmpty()) {
+            componentAmounts = 1;
+        }
+        for (MaterialStack ms : material.getMaterialComponents()) {
+            componentAmounts += ms.amount;
+        }
+        avgM = material.getMass() * componentAmounts;
+        avgP = material.getProtons() * componentAmounts;
+        avgN = material.getNeutrons() * componentAmounts;
         if (material.hasProperty(PropertyKey.BLAST)) {
             blastTemp = material.getBlastTemperature();
         } else {
