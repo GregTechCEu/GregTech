@@ -6,6 +6,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
+import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.util.BlockUtility;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GregFakePlayer;
@@ -42,7 +44,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -60,7 +61,7 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
 
-public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
+public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity implements IMetaTileEntityGuiHolder {
 
     private EnumFacing outputFacing;
     private int breakProgressTicksLeft;
@@ -317,12 +318,8 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         int rowSize = (int) Math.sqrt(getInventorySize());
         guiSyncManager.registerSlotGroup("item_inv", rowSize);
 

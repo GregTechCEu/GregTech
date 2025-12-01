@@ -7,6 +7,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
+import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.mui.sync.PagedWidgetSyncHandler;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
@@ -72,7 +74,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityWorkbench extends MetaTileEntity {
+public class MetaTileEntityWorkbench extends MetaTileEntity implements IMetaTileEntityGuiHolder {
 
     private static final IDrawable CHEST = new ItemDrawable(new ItemStack(Blocks.CHEST))
             .asIcon().size(16);
@@ -213,12 +215,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager syncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager syncManager,
+                                         UISettings settings) {
         getCraftingRecipeLogic().updateCurrentRecipe();
         this.recipeLogic.clearSlotMap();
 
