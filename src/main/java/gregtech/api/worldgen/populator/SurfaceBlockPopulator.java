@@ -57,10 +57,14 @@ public class SurfaceBlockPopulator implements VeinChunkPopulator {
                               GridEntryInfo gridEntryInfo) {
         int stonesCount = minIndicatorAmount + (minIndicatorAmount >= maxIndicatorAmount ? 0 :
                 random.nextInt(maxIndicatorAmount - minIndicatorAmount));
+
+        int baseX = chunkX * 16 + 8;
+        int baseZ = chunkZ * 16 + 8;
+
         if (stonesCount > 0 && world.getWorldType() != WorldType.FLAT) {
             for (int i = 0; i < stonesCount; i++) {
-                int randomX = chunkX * 16 + random.nextInt(8);
-                int randomZ = chunkZ * 16 + random.nextInt(8);
+                int randomX = baseX + random.nextInt(16);
+                int randomZ = baseZ + random.nextInt(16);
 
                 boolean successful = generateSurfaceBlock(world, new BlockPos(randomX, 0, randomZ));
 
