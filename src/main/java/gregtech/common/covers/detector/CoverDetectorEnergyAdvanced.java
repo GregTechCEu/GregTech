@@ -176,7 +176,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         }
 
         // todo should precision be increased for percent?
-        //  for large eu values switching modes starts to break down
+        // for large eu values switching modes starts to break down
         long minValue, maxValue;
         if (this.usePercent) {
             // using percent

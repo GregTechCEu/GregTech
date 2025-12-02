@@ -32,6 +32,8 @@ import static gregtech.api.capability.GregtechDataCodes.UPDATE_INVERTED;
 
 public abstract class CoverDetectorBase extends CoverBase {
 
+    protected static final String MIN_KEY = "min";
+    protected static final String MAX_KEY = "max";
     protected static final String NBT_KEY_IS_INVERTED = "isInverted";
 
     private boolean isInverted = false;

@@ -17,6 +17,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -174,8 +175,8 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     @Override
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setLong("min", this.min);
-        tagCompound.setLong("max", this.max);
+        tagCompound.setLong(MIN_KEY, this.min);
+        tagCompound.setLong(MAX_KEY, this.max);
         tagCompound.setBoolean("isLatched", this.isLatched);
         tagCompound.setTag("filter", this.fluidFilter.serializeNBT());
     }
@@ -183,8 +184,14 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.min = tagCompound.getLong("min");
-        this.max = tagCompound.getLong("max");
+        if (tagCompound.hasKey(MIN_KEY, Constants.NBT.TAG_INT)) {
+            // if one of them is int, so is the other
+            this.min = tagCompound.getInteger(MIN_KEY);
+            this.max = tagCompound.getInteger(MAX_KEY);
+        } else {
+            this.min = tagCompound.getLong(MIN_KEY);
+            this.max = tagCompound.getLong(MAX_KEY);
+        }
         this.isLatched = tagCompound.getBoolean("isLatched");
         this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("filter"));
     }
