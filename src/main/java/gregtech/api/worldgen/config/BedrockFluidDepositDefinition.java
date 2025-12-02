@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.Objects;
 
 public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
 
@@ -160,29 +161,17 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
             return false;
         if (!this.storedFluid.equals(objDeposit.getStoredFluid()))
             return false;
-        if ((this.assignedName == null && objDeposit.getAssignedName() != null) ||
-                (this.assignedName != null && objDeposit.getAssignedName() == null) ||
-                (this.assignedName != null && objDeposit.getAssignedName() != null &&
-                        !this.assignedName.equals(objDeposit.getAssignedName())))
+        if (!Objects.equals(this.assignedName, objDeposit.getAssignedName()))
             return false;
-        if ((this.description == null && objDeposit.getDescription() != null) ||
-                (this.description != null && objDeposit.getDescription() == null) ||
-                (this.description != null && objDeposit.getDescription() != null &&
-                        !this.description.equals(objDeposit.getDescription())))
+        if (!Objects.equals(this.description, objDeposit.getDescription())
             return false;
         if (this.depletedYield != objDeposit.getDepletedYield())
             return false;
-        if ((this.biomeWeightModifier == null && objDeposit.getBiomeWeightModifier() != null) ||
-                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() == null) ||
-                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() != null &&
-                        !this.biomeWeightModifier.equals(objDeposit.getBiomeWeightModifier())))
+        if (!Objects.equals(this.biomeWeightModifier, objDeposit.getBiomeWeightModifier())
             return false;
-        if ((this.dimensionFilter == null && objDeposit.getDimensionFilter() != null) ||
-                (this.dimensionFilter != null && objDeposit.getDimensionFilter() == null) ||
-                (this.dimensionFilter != null && objDeposit.getDimensionFilter() != null &&
-                        !this.dimensionFilter.equals(objDeposit.getDimensionFilter())))
+        if (!Objects.equals(this.dimensionFilter, objDeposit.getDimensionFilter())
             return false;
-
+        
         return true;
     }
 }
