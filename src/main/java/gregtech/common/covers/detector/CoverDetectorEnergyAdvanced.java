@@ -165,13 +165,25 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     private void setUsePercent(boolean b) {
+        if (isUsePercent() == b) return;
         this.usePercent = b;
 
+        if (getCoverHolderCapacity() == 0) {
+            // can't use capacity, use default values
+            this.minValue = DEFAULT_MIN_EU;
+            this.maxValue = isUsePercent() ? 100 : DEFAULT_MAX_EU;
+            return;
+        }
+
+        // todo should precision be increased for percent?
+        //  for large eu values switching modes starts to break down
         long minValue, maxValue;
-        if (this.usePercent) { // using percent
+        if (this.usePercent) {
+            // using percent
             minValue = (long) Math.ceil(((double) this.minValue / getCoverHolderCapacity()) * 100d);
             maxValue = (long) Math.ceil(((double) this.maxValue / getCoverHolderCapacity()) * 100d);
-        } else { // using discrete EU
+        } else {
+            // using discrete EU
             minValue = (long) Math.floor((this.minValue / 100d) * getCoverHolderCapacity());
             maxValue = (long) Math.floor((this.maxValue / 100d) * getCoverHolderCapacity());
         }
