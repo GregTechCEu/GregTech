@@ -183,6 +183,6 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
                         !this.dimensionFilter.equals(objDeposit.getDimensionFilter())))
             return false;
 
-        return super.equals(obj);
+        return true;
     }
 }
