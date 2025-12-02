@@ -16,7 +16,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.text.TextFormatting;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -113,27 +112,25 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
                                         .size(72, 18)
                                         .addTooltipLine(IKey.lang("cover.advanced_energy_detector.modes_tooltip"))
                                         .value(new BooleanSyncValue(this::isUsePercent, this::setUsePercent))
-                                        .overlay(IKey.lang(() -> {
-                                            String lang = "cover.advanced_energy_detector.mode_";
-                                            lang += isUsePercent() ? "percent" : "eu";
-                                            return lang;
-                                        }).style(TextFormatting.WHITE))))
-                        .child(Flow.row()
-                                .name("inverted row")
-                                .coverChildrenHeight()
-                                .child(IKey.lang("cover.generic.advanced_detector.invert_label").asWidget()
-                                        .size(72, 18))
-                                .child(new ToggleButton()
-                                        .name("inverted button")
-                                        .right(0)
-                                        .size(72, 18)
-                                        .addTooltipLine(IKey.lang("cover.advanced_energy_detector.invert_tooltip"))
-                                        .value(new BooleanSyncValue(this::isInverted, this::setInverted))
-                                        .overlay(IKey.lang(() -> {
-                                            String lang = "cover.advanced_energy_detector.";
-                                            lang += (isInverted() ? "inverted" : "normal");
-                                            return lang;
-                                        }).style(TextFormatting.WHITE)))))
+                                        .overlay(true, IKey.lang("cover.advanced_energy_detector.mode_percent")
+                                                .style(IKey.WHITE))
+                                        .overlay(false, IKey.lang("cover.advanced_energy_detector.mode_eu")
+                                                .style(IKey.WHITE)))))
+                .child(Flow.row()
+                        .name("inverted row")
+                        .coverChildrenHeight()
+                        .child(IKey.lang("cover.generic.advanced_detector.invert_label").asWidget()
+                                .size(72, 18))
+                        .child(new ToggleButton()
+                                .name("inverted button")
+                                .right(0)
+                                .size(72, 18)
+                                .addTooltipLine(IKey.lang("cover.advanced_energy_detector.invert_tooltip"))
+                                .value(new BooleanSyncValue(this::isInverted, this::setInverted))
+                                .overlay(true, IKey.lang("cover.advanced_energy_detector.inverted")
+                                        .style(IKey.WHITE))
+                                .overlay(false, IKey.lang("cover.advanced_energy_detector.normal")
+                                        .style(IKey.WHITE))))
                 .bindPlayerInventory();
     }
 

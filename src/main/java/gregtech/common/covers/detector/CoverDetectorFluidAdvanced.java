@@ -16,7 +16,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -96,20 +95,18 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                                         .size(72, 18)
                                         .value(new BooleanSyncValue(this::isInverted, this::setInverted))
                                         .addTooltipLine(IKey.lang("cover.generic.advanced_detector.invert_tooltip"))
-                                        .overlay(IKey.lang(() -> {
-                                            String lang = "cover.advanced_energy_detector.";
-                                            lang += isInverted() ? "inverted" : "normal";
-                                            return lang;
-                                        }).style(TextFormatting.WHITE)))
+                                        .overlay(true, IKey.lang("cover.advanced_energy_detector.inverted")
+                                                .style(IKey.WHITE))
+                                        .overlay(false, IKey.lang("cover.advanced_energy_detector.normal")
+                                                .style(IKey.WHITE)))
                                 .child(new ToggleButton()
                                         .name("latch button")
                                         .size(72, 18)
                                         .right(0)
-                                        .overlay(IKey.lang(() -> {
-                                            String lang = "cover.generic.advanced_detector.";
-                                            lang += isLatched() ? "latched" : "continuous";
-                                            return lang;
-                                        }).style(TextFormatting.WHITE))
+                                        .overlay(true, IKey.lang("cover.generic.advanced_detector.latched")
+                                                .style(IKey.WHITE))
+                                        .overlay(false, IKey.lang("cover.generic.advanced_detector.continuous")
+                                                .style(IKey.WHITE))
                                         .addTooltipLine(IKey.lang("cover.generic.advanced_detector.latch_tooltip"))
                                         .value(new BooleanSyncValue(this::isLatched, this::setLatched))))
                         .child(this.fluidFilter.initUI(guiData, guiSyncManager)))
