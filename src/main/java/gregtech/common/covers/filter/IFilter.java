@@ -6,22 +6,19 @@ import gregtech.api.util.IDirtyNotifiable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
-
 public interface IFilter {
-
-    @Deprecated
-    default void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {}
 
     /** Uses Cleanroom MUI */
     @NotNull
-    ModularPanel createPopupPanel(PanelSyncManager syncManager);
+    ModularPanel createPopupPanel(PanelSyncManager syncManager, String panelName);
 
     /** Uses Cleanroom MUI */
     @NotNull
@@ -31,6 +28,14 @@ public interface IFilter {
 
     @NotNull
     Widget<?> createWidgets(PanelSyncManager syncManager);
+
+    default IPanelHandler createPanelHandler(PanelSyncManager syncManager, int id) {
+        String translationKey = getContainerStack().getTranslationKey();
+        return syncManager.getOrCreateSyncHandler(translationKey, id, PanelSyncHandler.class, () -> {
+            String key = PanelSyncManager.makeSyncKey(translationKey, id);
+            return (PanelSyncHandler) syncManager.panel(key, (psm, $) -> createPopupPanel(psm, key), true);
+        });
+    }
 
     ItemStack getContainerStack();
 

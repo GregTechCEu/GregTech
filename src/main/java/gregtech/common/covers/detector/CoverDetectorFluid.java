@@ -4,6 +4,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.metatileentities.storage.MetaTileEntityCreativeTank;
 
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -28,7 +29,8 @@ public class CoverDetectorFluid extends CoverDetectorBase implements ITickable {
 
     @Override
     public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
-        return coverable.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null) != null;
+        if (coverable instanceof MetaTileEntityCreativeTank) return false;
+        return coverable.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
     }
 
     @Override

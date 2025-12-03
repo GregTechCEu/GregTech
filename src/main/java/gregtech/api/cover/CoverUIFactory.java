@@ -13,7 +13,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
+import org.jetbrains.annotations.ApiStatus;
+
 @Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.10")
 public final class CoverUIFactory extends UIFactory<CoverWithUI> {
 
     public static final CoverUIFactory INSTANCE = new CoverUIFactory();

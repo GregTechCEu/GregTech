@@ -304,6 +304,8 @@ public class GTFluidSyncHandler extends SyncHandler {
     public void readOnServer(int id, PacketBuffer buf) {
         if (id == TRY_CLICK_CONTAINER) {
             var data = MouseData.readPacket(buf);
+            if (canLockFluid())
+                toggleLockFluid();
             if (isPhantom()) {
                 tryClickPhantom(data);
             } else {
@@ -316,14 +318,6 @@ public class GTFluidSyncHandler extends SyncHandler {
             setFluid(fluid);
         } else if (id == PHANTOM_SCROLL) {
             tryScrollPhantom(MouseData.readPacket(buf));
-        } else if (id == LOCK_FLUID) {
-            boolean locked = buf.readBoolean();
-            var fluidStack = NetworkUtils.readFluidStack(buf);
-            if (fluidStack == null) {
-                this.lockHandler.accept(locked);
-            } else {
-                this.jeiHandler.accept(fluidStack);
-            }
         }
     }
 
@@ -341,18 +335,25 @@ public class GTFluidSyncHandler extends SyncHandler {
                     }
                 } else {
                     FluidStack cellFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
-                    if ((this.showAmountOnSlot.getAsBoolean() || currentFluid == null) && cellFluid != null) {
-                        if (this.canFillSlot()) {
-                            if (!this.showAmountOnSlot.getAsBoolean()) {
-                                cellFluid.amount = 1;
-                            }
-                            if (this.tank.fill(cellFluid, true) > 0) {
-                                this.phantomFluid = cellFluid.copy();
-                            }
-                        }
-                    } else {
+                    if (!GTUtility.areFluidStacksEqual(cellFluid, currentFluid)) {
+
+                        // drain existing
                         if (this.canDrainSlot()) {
-                            this.tank.drain(data.shift ? Integer.MAX_VALUE : 1000, true);
+                            int amt = data.shift ? Integer.MAX_VALUE : 1000;
+                            this.tank.drain(amt, true);
+                        }
+
+                        // then fill
+                        if (this.canFillSlot()) {
+                            FluidStack fill;
+                            if (this.showAmountOnSlot.getAsBoolean() && !GTUtility.isEmpty(cellFluid)) {
+                                fill = GTUtility.copy(cellFluid);
+                            } else {
+                                fill = GTUtility.copy(1, cellFluid);
+                            }
+                            if (fill == null || this.tank.fill(fill, true) > 0) {
+                                this.phantomFluid = fill;
+                            }
                         }
                     }
                 }

@@ -1,7 +1,5 @@
 package gregtech.api.cover;
 
-import gregtech.api.gui.IUIHolder;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
@@ -17,6 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -30,30 +29,36 @@ import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
-public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiData> {
+public interface CoverWithUI extends Cover, IGuiHolder<SidedPosGuiData>, gregtech.api.gui.IUIHolder {
 
     @ApiStatus.Experimental
     default boolean usesMui2() {
-        return false;
+        // this is gonna cause problems if implementing classes expect this to be false
+        // all of our covers use mui2 though
+        return true;
     }
 
     default void openUI(EntityPlayerMP player) {
         if (usesMui2()) {
             CoverGuiFactory.open(player, this);
         } else {
+            // todo remove in 2.10
             CoverUIFactory.INSTANCE.openUI(this, player);
         }
     }
 
     @Deprecated
-    default ModularUI createUI(EntityPlayer player) {
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
+    default gregtech.api.gui.ModularUI createUI(EntityPlayer player) {
         return null;
     }
 
@@ -104,11 +109,22 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
      * Create the Title bar widget for a Cover.
      */
     static Flow createTitleRow(ItemStack stack) {
+        return createTitleRow(() -> stack);
+    }
+
+    /**
+     * Create the Title bar widget for a Cover.
+     */
+    static Flow createTitleRow(Supplier<ItemStack> stack) {
+        ItemDrawable itemDrawable = new ItemDrawable();
         return Flow.row()
                 .pos(4, 4)
                 .height(16).coverChildrenWidth()
-                .child(new ItemDrawable(stack).asWidget().size(16).marginRight(4))
-                .child(IKey.str(stack.getDisplayName())
+                .child(new Widget<>()
+                        .overlay(new DynamicDrawable(() -> itemDrawable.setItem(stack.get())))
+                        .size(16)
+                        .marginRight(4))
+                .child(IKey.dynamic(() -> stack.get().getDisplayName())
                         .color(UI_TITLE_COLOR)
                         .asWidget().heightRel(1.0f));
     }

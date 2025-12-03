@@ -1,7 +1,6 @@
 package gregtech.common.covers.filter;
 
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.Recipe;
@@ -27,7 +26,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.function.Consumer;
 
 public class SmartItemFilter extends BaseFilter {
 
@@ -90,15 +88,8 @@ public class SmartItemFilter extends BaseFilter {
     }
 
     @Override
-    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        widgetGroup.accept(new CycleButtonWidget(10, 0, 75, 20,
-                SmartFilteringMode.class, filterReader::getFilteringMode, filterReader::setFilteringMode)
-                        .setTooltipHoverString("cover.smart_item_filter.filtering_mode.description"));
-    }
-
-    @Override
-    public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
-        return GTGuis.createPopupPanel("smart_item_filter", 98 + 27, 81, false)
+    public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager, String panelName) {
+        return GTGuis.createPopupPanel(panelName, 98 + 27, 81, false)
                 .child(CoverWithUI.createTitleRow(getContainerStack()))
                 .child(createWidgets(syncManager).top(22).left(4));
     }
