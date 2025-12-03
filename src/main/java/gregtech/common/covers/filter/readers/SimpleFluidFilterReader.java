@@ -155,7 +155,7 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
         @SuppressWarnings("DataFlowIssue")
         @Override
         public int fill(FluidStack resource, boolean doFill) {
-            // todo this class amd filter readers really should not be handling show amount
+            // todo this class and filter readers really should not be handling show amount
             // in a future pr
             if (isEmpty() || !getFluid().isFluidEqual(resource)) {
                 setFluid(resource);
