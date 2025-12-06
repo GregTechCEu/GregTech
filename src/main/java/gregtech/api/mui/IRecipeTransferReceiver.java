@@ -32,8 +32,7 @@ public interface IRecipeTransferReceiver {
      * A factory for default {@link IRecipeTransferError}s is available at {@link JustEnoughItemsModule#transferHelper}.
      * There are three default options for errors: <br/>
      * - {@link IRecipeTransferHandlerHelper#createInternalError()}: mark the recipe as invalid for transferring by
-     * graying out the + button. If there are multiple registered recipe transfer receivers on the same panel, returning
-     * an internal error will skip this receiver and try the others. <br/>
+     * graying out the + button. <br/>
      * - {@link IRecipeTransferHandlerHelper#createUserErrorWithTooltip(String)}: the same as above, but also display a
      * message when hovering over the + button. <br/>
      * - {@link IRecipeTransferHandlerHelper#createUserErrorForSlots(String, Collection)}: the same as above, but
@@ -44,7 +43,9 @@ public interface IRecipeTransferReceiver {
      * @param maxTransfer  if the receiver should try to move as many ingredients as possible to the crafting slots, ie
      *                     a crafting table.
      * @param simulate     if this recipe should only simulate being transferred
-     * @return {@code null} if the transfer should succeed or a {@link IRecipeTransferError} if not.
+     * @return {@code null} if the transfer should succeed or an {@link IRecipeTransferError} if not. If there are
+     *         multiple registered recipe transfer receivers on the same panel, returning an error with type
+     *         {@link IRecipeTransferError.Type#INTERNAL} will skip this and attempt the next one.
      */
     @Nullable
     @SideOnly(Side.CLIENT)
