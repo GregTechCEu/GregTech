@@ -27,6 +27,7 @@ import java.util.Map;
 public class GregTechGuiScreen extends ModularScreen implements RecipeViewerRecipeTransferHandler {
 
     // Stores lists of higher priority recipe receivers to the left of the tree
+    @SideOnly(Side.CLIENT)
     private static final Int2ObjectMap<Map<String, IRecipeTransferReceiver>> registeredRecipeTransferReceivers = new Int2ObjectAVLTreeMap<>(
             IntComparators.OPPOSITE_COMPARATOR);
 
@@ -81,6 +82,7 @@ public class GregTechGuiScreen extends ModularScreen implements RecipeViewerReci
      * 
      * @throws IllegalArgumentException if a receiver with the given key already exists.
      */
+    @SideOnly(Side.CLIENT)
     public static void registerRecipeTransferHandler(@NotNull String key,
                                                      @NotNull IRecipeTransferReceiver transferReceiver) {
         registerRecipeTransferHandler(key, transferReceiver, 0);
@@ -96,6 +98,7 @@ public class GregTechGuiScreen extends ModularScreen implements RecipeViewerReci
      * 
      * @throws IllegalArgumentException if a receiver with the given key already exists.
      */
+    @SideOnly(Side.CLIENT)
     public static void registerRecipeTransferHandler(@NotNull String key,
                                                      @NotNull IRecipeTransferReceiver transferReceiver,
                                                      int priority) {
@@ -115,6 +118,7 @@ public class GregTechGuiScreen extends ModularScreen implements RecipeViewerReci
      * 
      * @throws IllegalArgumentException if no receiver exists with the given key.
      */
+    @SideOnly(Side.CLIENT)
     public static void removeRecipeTransferHandler(@NotNull String key) {
         for (Map<String, IRecipeTransferReceiver> subMap : registeredRecipeTransferReceivers.values()) {
             if (subMap.containsKey(key)) {

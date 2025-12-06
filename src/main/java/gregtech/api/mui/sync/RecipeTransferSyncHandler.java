@@ -28,7 +28,6 @@ public abstract class RecipeTransferSyncHandler extends SyncHandler implements I
         return 0;
     }
 
-    // TODO: this method is never actually called. Either fix on our side or wait for it to get fixed in MUI.
     @ApiStatus.OverrideOnly
     @MustBeInvokedByOverriders
     @Override
