@@ -41,7 +41,7 @@ public interface IRecipeTransferReceiver {
      * 
      * @param recipeLayout the recipe layout that contains the recipe category, and the item and fluid stacks.
      * @param maxTransfer  if the receiver should try to move as many ingredients as possible to the crafting slots, ie
-     *                     a crafting table.
+     *                     shift clicking a recipe into a crafting table.
      * @param simulate     if this recipe should only simulate being transferred
      * @return {@code null} if the transfer should succeed or an {@link IRecipeTransferError} if not. If there are
      *         multiple registered recipe transfer receivers on the same panel, returning an error with type
