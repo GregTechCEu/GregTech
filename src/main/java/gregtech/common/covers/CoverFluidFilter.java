@@ -166,10 +166,9 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                                 .coverChildrenHeight()
                                 .setEnabledIf(b -> getFilterMode() != FluidFilterMode.FILTER_BOTH)
                                 .child(new ToggleButton()
-                                        .overlay(IKey.dynamic(() -> IKey.lang(allowFlow ?
-                                                "cover.generic.enabled" :
-                                                "cover.generic.disabled").get())
-                                                .color(Color.WHITE.main).shadow(false))
+                                        .overlay(createEnabledKey("cover.generic", () -> this.allowFlow)
+                                                .color(Color.WHITE.main)
+                                                .shadow(false))
                                         .tooltip(tooltip -> tooltip
                                                 .addLine(IKey.lang("cover.filter.allow_flow.tooltip")))
                                         .size(72, 18)

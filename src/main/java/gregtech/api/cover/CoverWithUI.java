@@ -33,6 +33,9 @@ import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.BooleanSupplier;
 
 public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiData> {
 
@@ -115,6 +118,18 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
      */
     default ParentWidget<?> createSettingsRow() {
         return new ParentWidget<>().height(16).widthRel(1.0f).marginBottom(2);
+    }
+
+    /**
+     * Create a dynamic lang key that switches between {@code cover.generic.enabled} and {@code cover.generic.disabled}
+     * depending on the result of the given boolean supplier. <br/>
+     * 
+     * @param keyBase the base of the lang key to use. {@code .enabled} and {@code .disabled} will be appended.
+     */
+    default IKey createEnabledKey(@NotNull String keyBase, @NotNull BooleanSupplier enabledState) {
+        String enabled = keyBase + ".enabled";
+        String disabled = keyBase + ".disabled";
+        return IKey.lang(() -> enabledState.getAsBoolean() ? enabled : disabled);
     }
 
     default int getIncrementValue(MouseData data) {
