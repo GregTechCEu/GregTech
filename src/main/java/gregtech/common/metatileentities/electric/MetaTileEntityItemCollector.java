@@ -323,7 +323,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity implements
                                             }
                                             return true;
                                         })
-                                        .overlay(IKey.str("-1"))))
+                                        .overlay(IKey.str("+1"))))
                         .child(itemFilter.initUI(guiData, panelSyncManager))
                         .child(Flow.row()
                                 .widthRel(1.0f)
