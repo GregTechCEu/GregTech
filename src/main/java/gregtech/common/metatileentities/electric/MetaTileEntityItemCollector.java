@@ -280,6 +280,8 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity implements
         IntSyncValue rangeSync = SyncHandlers.intNumber(this::getItemSuckingRange, this::setItemSuckingRange);
         BooleanSyncValue autoOutputSync = SyncHandlers.bool(this::autoOutputs, this::setAutoOutput);
 
+        panelSyncManager.syncValue("range", 0, rangeSync);
+
         return GTGuis.createPanel(this, 176, 45 + rowSize * 18 + 35 + 82)
                 .child(Flow.column()
                         .margin(5)
