@@ -28,15 +28,20 @@ public class BatteryIndicatorDrawable implements IDrawable {
     @Override
     public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
         float charge = chargeLevelProvider.getAsFloat();
-        if (charge >= 0.0f && charge <= 1.0f) {
-            float newHeight = height * charge;
-            int color;
-            if (charge < lowCharge) {
-                color = GTUtility.argbLerp(red, yellow, charge / lowCharge);
-            } else {
-                color = GTUtility.argbLerp(yellow, green, (charge - lowCharge) / (1.0f - lowCharge));
-            }
-            RenderUtil.renderRect(1, (height - newHeight) + 1, width - 2, newHeight - 2, 1.0f, color);
+        if (charge > 1.0f) {
+            charge = 1.0f;
+        } else if (charge < 0.0f) {
+            charge = 0.0f;
         }
+
+        float newHeight = height * charge;
+        int color;
+        if (charge < lowCharge) {
+            color = GTUtility.argbLerp(red, yellow, charge / lowCharge);
+        } else {
+            color = GTUtility.argbLerp(yellow, green, (charge - lowCharge) / (1.0f - lowCharge));
+        }
+
+        RenderUtil.renderRect(1, (height - newHeight) + 1, width - 2, newHeight - 2, 1.0f, color);
     }
 }
