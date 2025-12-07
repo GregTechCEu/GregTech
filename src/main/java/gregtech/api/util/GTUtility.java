@@ -23,6 +23,8 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.function.impl.TimedProgressSupplier;
 
+import gregtech.common.ConfigHolder;
+
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
@@ -1035,39 +1037,26 @@ public class GTUtility {
         return map.get(key.toWildcard());
     }
 
-    /**
-     * Check if an {@link ItemStack} is chargeable.
-     *
-     * @param stack       the stack to check
-     * @param tier        if the item is a GT energy item, the minimum tier it has to be
-     * @param checkCharge whether to check if it is fully charged or not
-     * @return if the stack is electric and meets the supplied conditions
-     */
-    public static boolean isItemChargeable(@NotNull ItemStack stack, int tier, boolean checkCharge) {
+    public static boolean isItemChargableWithEU(@NotNull ItemStack stack, int tier) {
         IElectricItem euItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (euItem != null) {
             return euItem.chargeable() && euItem.getCharge() < euItem.getMaxCharge() && euItem.getTier() <= tier;
         }
 
-        IEnergyStorage rfItem = stack.getCapability(CapabilityEnergy.ENERGY, null);
-        if (rfItem != null) {
-            return rfItem.canReceive() && rfItem.getEnergyStored() < rfItem.getMaxEnergyStored();
+        if (ConfigHolder.compat.energy.nativeEUToFE) {
+            IEnergyStorage rfItem = stack.getCapability(CapabilityEnergy.ENERGY, null);
+            if (rfItem != null) {
+                return rfItem.canReceive() && rfItem.getEnergyStored() < rfItem.getMaxEnergyStored();
+            }
         }
 
         return false;
     }
 
     /**
-     * See {@link #isItemChargeable(ItemStack, int, boolean)}
-     */
-    public static boolean isItemChargeable(@NotNull ItemStack stack) {
-        return isItemChargeable(stack, GTValues.MAX_TRUE, true);
-    }
-
-    /**
-     * Get the level of charge from 0 to 1 of an item
+     * Get the level of charge from 0 to 1 of an item.
      *
-     * @return 0 if the supplied item is not electric
+     * @return -1 if the supplied item is not electric
      */
     public static float itemChargeLevel(@NotNull ItemStack stack) {
         if (stack.isEmpty()) return 0.0f;
@@ -1082,7 +1071,7 @@ public class GTUtility {
             return (float) rfItem.getEnergyStored() / rfItem.getMaxEnergyStored();
         }
 
-        return 0.0f;
+        return -1.0f;
     }
 
     /**

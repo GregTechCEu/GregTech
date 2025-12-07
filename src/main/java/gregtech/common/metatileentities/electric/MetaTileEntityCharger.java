@@ -65,8 +65,11 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity implements IMeta
             @NotNull
             @Override
             public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-                return GTUtility.isItemChargeable(stack, getTier(), true) ? super.insertItem(slot, stack, simulate) :
-                        stack;
+                if (GTUtility.isItemChargableWithEU(stack, getTier())) {
+                    return super.insertItem(slot, stack, simulate);
+                }
+
+                return stack;
             }
 
             @Override
