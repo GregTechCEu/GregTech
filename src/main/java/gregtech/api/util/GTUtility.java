@@ -22,7 +22,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.function.impl.TimedProgressSupplier;
-
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.block.BlockRedstoneWire;
@@ -1037,6 +1036,13 @@ public class GTUtility {
         return map.get(key.toWildcard());
     }
 
+    /**
+     * Check if the given item is chargeable from an EU source. <br/>
+     * Unless the {@code nativeEUToFE} option under Energy Compatibility is enabled, this will return false for RF
+     * items.
+     *
+     * @param tier if the item stores EU and is tiered, check if the given tier is greater than or equal to it.
+     */
     public static boolean isItemChargableWithEU(@NotNull ItemStack stack, int tier) {
         IElectricItem euItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (euItem != null) {
