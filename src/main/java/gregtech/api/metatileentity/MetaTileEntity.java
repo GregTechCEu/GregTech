@@ -111,6 +111,13 @@ import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
+/**
+ * For addon developers: <br/>
+ * Legacy GregTech MUI UIs are being deprecated. GUIs are now done through
+ * <a href="https://github.com/CleanroomMC/ModularUI/">Modular UI</a>. To use the new MUI UIs, implement
+ * {@link IMetaTileEntityGuiHolder} on your MetaTileEntity class. Opening the UI on right clicks is handled
+ * automatically.
+ */
 public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
@@ -450,6 +457,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return new FluidTankList(false);
     }
 
+    /**
+     * @return if this MetaTileEntity should open a legacy MUI UI when right-clicked. <br/>
+     *         Do not override if you're implementing {@link IMetaTileEntityGuiHolder}!
+     */
     @Deprecated
     protected boolean openGUIOnRightClick() {
         return true;
@@ -496,57 +507,58 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         }
 
         if (!playerIn.isSneaking()) {
-            if (!world.isRemote) {
-                EntityPlayerMP playerMP = (EntityPlayerMP) playerIn;
-                boolean uiOpened = false;
-
-                if (this instanceof IMetaTileEntityGuiHolder guiHolder &&
-                        guiHolder.shouldOpenUI(playerMP, hand, facing, hitResult)) {
-                    MetaTileEntityGuiFactory.open(playerMP, (MetaTileEntity & IMetaTileEntityGuiHolder) this);
-                    uiOpened = true;
-                } else if (openGUIOnRightClick()) {
-                    MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), playerMP);
-                    uiOpened = true;
-                }
-
-                if (uiOpened) {
-                    if (getOwner() == null) {
-                        this.owner = playerIn.getUniqueID();
+            if (this instanceof IMetaTileEntityGuiHolder guiHolder) {
+                if (guiHolder.shouldOpenUI()) {
+                    if (!world.isRemote) {
+                        MetaTileEntityGuiFactory.open((EntityPlayerMP) playerIn,
+                                (MetaTileEntity & IMetaTileEntityGuiHolder) this);
+                        if (!hasOwner()) {
+                            setOwner(playerIn);
+                        }
                     }
 
                     return true;
                 }
-            }
-        } else {
-            // Attempt to rename the MTE first
-            if (heldStack.getItem() == Items.NAME_TAG) {
-                if (playerIn.isSneaking() && heldStack.getTagCompound() != null &&
-                        heldStack.getTagCompound().hasKey("display")) {
-                    MetaTileEntityHolder mteHolder = (MetaTileEntityHolder) getHolder();
-
-                    mteHolder.setCustomName(heldStack.getTagCompound().getCompoundTag("display").getString("Name"));
-                    if (!playerIn.isCreative()) {
-                        heldStack.shrink(1);
+            } else if (openGUIOnRightClick()) {
+                if (!world.isRemote) {
+                    MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                    if (!hasOwner()) {
+                        setOwner(playerIn);
                     }
-                    return true;
                 }
-            }
 
-            // Try to do cover right-click behavior on this specific side first
-            EnumFacing hitFacing = hitResult.sideHit;
-            Cover cover = hitFacing == null ? null : getCoverAtSide(hitFacing);
-            if (cover != null) {
-                if (cover.onRightClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
-                    return true;
+                return true;
+            }
+        }
+
+        // Attempt to rename the MTE first
+        if (heldStack.getItem() == Items.NAME_TAG) {
+            if (playerIn.isSneaking() && heldStack.getTagCompound() != null &&
+                    heldStack.getTagCompound().hasKey("display")) {
+                MetaTileEntityHolder mteHolder = (MetaTileEntityHolder) getHolder();
+
+                mteHolder.setCustomName(heldStack.getTagCompound().getCompoundTag("display").getString("Name"));
+                if (!playerIn.isCreative()) {
+                    heldStack.shrink(1);
                 }
+                return true;
             }
+        }
 
-            // Then try to do cover screwdriver-click behavior on the cover grid side next
-            EnumFacing gridSideHit = CoverRayTracer.determineGridSideHit(hitResult);
-            cover = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
-            if (cover != null && playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
-                return cover.onScrewdriverClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS;
+        // Try to do cover right-click behavior on this specific side first
+        EnumFacing hitFacing = hitResult.sideHit;
+        Cover cover = hitFacing == null ? null : getCoverAtSide(hitFacing);
+        if (cover != null) {
+            if (cover.onRightClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+                return true;
             }
+        }
+
+        // Then try to do cover screwdriver-click behavior on the cover grid side next
+        EnumFacing gridSideHit = CoverRayTracer.determineGridSideHit(hitResult);
+        cover = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
+        if (cover != null && playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
+            return cover.onScrewdriverClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS;
         }
 
         return false;
@@ -1509,9 +1521,21 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return false;
     }
 
+    public boolean hasOwner() {
+        return this.owner != null;
+    }
+
     @Nullable
     public UUID getOwner() {
         return owner;
+    }
+
+    protected void setOwner(@NotNull EntityPlayer player) {
+        this.owner = player.getUniqueID();
+    }
+
+    protected void setOwner(@Nullable UUID uuid) {
+        this.owner = uuid;
     }
 
     public final void toggleMuffled() {

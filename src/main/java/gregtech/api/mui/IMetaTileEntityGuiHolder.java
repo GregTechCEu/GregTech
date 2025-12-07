@@ -2,12 +2,8 @@ package gregtech.api.mui;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.api.value.IStringValue;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -20,7 +16,6 @@ import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnknownNullability;
 
 public interface IMetaTileEntityGuiHolder extends IGuiHolder<MetaTileEntityGuiData> {
 
@@ -38,8 +33,7 @@ public interface IMetaTileEntityGuiHolder extends IGuiHolder<MetaTileEntityGuiDa
     /**
      * @return whether this {@link MetaTileEntity} should open its UI.
      */
-    default boolean shouldOpenUI(@NotNull EntityPlayerMP player, @NotNull EnumHand hand, @NotNull EnumFacing side,
-                                 @UnknownNullability CuboidRayTraceResult hitResult) {
+    default boolean shouldOpenUI() {
         return true;
     }
 
