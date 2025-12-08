@@ -15,9 +15,9 @@ import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
-import gregtech.api.util.TooltipUtil;
 import gregtech.api.util.function.ByteSupplier;
 import gregtech.api.util.function.FloatSupplier;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
@@ -468,7 +468,7 @@ public class MultiblockUIBuilder {
         if (warning && maintenanceProblems < 0b111111 && maintenanceProblems > 0b000000 ||
                 !warning && maintenanceProblems == 0b000000) {
             final byte finalProblems = maintenanceProblems;
-            addOperation(richText -> TooltipUtil.addMaintenanceProblems(richText, finalProblems));
+            addOperation(richText -> TooltipHelper.addMaintenanceProblems(richText, finalProblems));
         }
 
         return this;
