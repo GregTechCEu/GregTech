@@ -1009,11 +1009,13 @@ public class GTUtility {
         return Math.min(voltage, GTValues.VA[workingTier]);
     }
 
+    // TODO: remove once ColorUtil from pr 2858 is merged
     public static int combineRGB(@Range(from = 0, to = 255) int r, @Range(from = 0, to = 255) int g,
                                  @Range(from = 0, to = 255) int b) {
         return (r << 16) | (g << 8) | b;
     }
 
+    // TODO: remove once ColorUtil from pr 2858 is merged
     public static int combineRGB(@Range(from = 0, to = 255) int a, @Range(from = 0, to = 255) int r,
                                  @Range(from = 0, to = 255) int g, @Range(from = 0, to = 255) int b) {
         return (a << 24) | (r << 16) | (g << 8) | b;
