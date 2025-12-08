@@ -69,7 +69,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity implements
     private AxisAlignedBB areaBoundingBox;
     private BlockPos areaCenterPos;
     private boolean isWorking;
-    private boolean autoOutput = true;
+    private boolean autoOutput = false;
     private final ItemFilterContainer itemFilter;
 
     public MetaTileEntityItemCollector(ResourceLocation metaTileEntityId, int tier, int maxItemSuckingRange) {
