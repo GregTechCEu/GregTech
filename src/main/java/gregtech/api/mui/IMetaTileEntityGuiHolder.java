@@ -1,6 +1,19 @@
 package gregtech.api.mui;
 
+// mte imports are for the javadoc, will be removed as stuff is ported
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
+import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
+import gregtech.common.metatileentities.MetaTileEntityClipboard;
+import gregtech.common.metatileentities.electric.MetaTileEntityPump;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputBus;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputBus;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumExtender;
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumProxy;
 
 import net.minecraft.network.PacketBuffer;
 
@@ -17,6 +30,22 @@ import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * TODO: these classes still use legacy MUI. Implement this on them and port to MUI(2): <br/>
+ * - {@link SimpleGeneratorMetaTileEntity} - PR 2808 <br/>
+ * - {@link SimpleMachineMetaTileEntity} - PR 2808 <br/>
+ * - {@link MetaTileEntityClipboard} <br/>
+ * - {@link MetaTileEntityPump} <br/>
+ * - {@link MetaTileEntityCentralMonitor} <br/>
+ * - {@link MetaTileEntityMonitorScreen} <br/>
+ * - {@link MetaTileEntityMEInputBus} - PR 2824 <br/>
+ * - {@link MetaTileEntityMEInputHatch} - PR 2824 <br/>
+ * - {@link MetaTileEntityMEOutputBus} - PR 2824 <br/>
+ * - {@link MetaTileEntityMEOutputHatch} - PR 2824 <br/>
+ * - All steam machines - PR 2808 <br/>
+ * - {@link MetaTileEntityQuantumExtender} <br/>
+ * - {@link MetaTileEntityQuantumProxy}
+ */
 public interface IMetaTileEntityGuiHolder extends IGuiHolder<MetaTileEntityGuiData> {
 
     @ApiStatus.NonExtendable
