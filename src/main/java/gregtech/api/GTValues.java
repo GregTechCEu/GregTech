@@ -170,7 +170,8 @@ public class GTValues {
     public static final String MOD_NAME = "GregTech";
 
     public static final MonthDay APRIL_FOOLS = MonthDay.of(4, 1);
-    public static final MonthDay XMAS = MonthDay.of(12, 30);
+    public static final MonthDay XMAS_EVE = MonthDay.of(12, 24);
+    public static final MonthDay XMAS = MonthDay.of(12, 25);
 
     private static Boolean isClient;
 

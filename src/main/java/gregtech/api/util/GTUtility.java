@@ -1151,9 +1151,9 @@ public class GTUtility {
     }
 
     /**
-     * Check if today is December 30th.
+     * Check if today is the day of, or eve of Xmas.
      */
     public static boolean isXMAS() {
-        return isToday(GTValues.XMAS);
+        return isToday(GTValues.XMAS_EVE) || isToday(GTValues.XMAS);
     }
 }
