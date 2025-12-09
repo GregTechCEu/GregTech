@@ -62,7 +62,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
 
     public MetaTileEntityElectricBlastFurnace(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.BLAST_RECIPES);
-        this.recipeMapWorkable = new HeatingCoilRecipeLogic(this);
+        this.recipeMapWorkable = new HeatingCoilRecipeLogic(this, 1);
     }
 
     @Override
