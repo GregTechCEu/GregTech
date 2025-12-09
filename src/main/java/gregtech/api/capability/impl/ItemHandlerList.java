@@ -236,11 +236,7 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
 
     private void updateHandlerArray() {
         if (handlers.length != size()) {
-            handlers = new IItemHandler[size()];
-            int i = 0;
-            for (IItemHandler h : baseIndexOffset.keySet()) {
-                handlers[i++] = h;
-            }
+            handlers = baseIndexOffset.keySet().toArray(new IItemHandler[size()]);
         }
     }
 
