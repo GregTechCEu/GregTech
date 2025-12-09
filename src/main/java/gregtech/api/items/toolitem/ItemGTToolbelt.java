@@ -141,8 +141,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                                                 (newItem, onlyAmountChanged, client, init) -> handler
                                                         .onContentsChanged(index)))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
-                                .debugName("slot_" + index))
-                        .debugName("toolbelt_inventory"))
+                                .name("slot_" + index))
+                        .name("toolbelt_inventory"))
                 .bindPlayerInventory();
     }
 
@@ -265,7 +265,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     @Override
-    public int getMetadata(ItemStack stack) {
+    public int getMetadata(@NotNull ItemStack stack) {
         ItemStack selected = getHandler(stack).getSelectedStack();
         if (!selected.isEmpty()) {
             return selected.getItem().getMetadata(selected);
@@ -420,7 +420,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     private ToolStackHandler getHandler(ItemStack stack) {
-        IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        // use the very rarely used sidedness of item capabilities to signal that we want to ignore passthrough
+        IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
         if (handler instanceof ToolStackHandler h) return h;
         else return FALLBACK;
     }
@@ -441,8 +442,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @SideOnly(Side.CLIENT)
     public void changeSelectedToolHotkey(int slot, ItemStack stack) {
         ToolStackHandler handler = getHandler(stack);
-        if (slot < 0 || slot >= handler.getSlots()) handler.selectedSlot = -1;
-        else handler.selectedSlot = slot;
+        handler.setSelectedSlot(slot);
         PacketToolbeltSelectionChange.toServer(handler.selectedSlot);
     }
 
@@ -569,12 +569,18 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         @Override
         public boolean hasCapability(@NotNull Capability<?> capability, EnumFacing facing) {
-            return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+            ItemStack selected = getHandler().getSelectedStack();
+            if (!selected.isEmpty() && facing != EnumFacing.UP) {
+                return selected.hasCapability(capability, facing);
+            } else return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
         }
 
         @Override
         public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing facing) {
-            if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            ItemStack selected = getHandler().getSelectedStack();
+            if (!selected.isEmpty() && facing != EnumFacing.UP) {
+                return selected.getCapability(capability, facing);
+            } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.getHandler());
             else return null;
         }
@@ -646,7 +652,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         }
 
         public void setSelectedSlot(int selectedSlot) {
-            this.selectedSlot = Math.min(getSlots() - 1, Math.max(selectedSlot, -1));
+            if (selectedSlot >= getSlots() || selectedSlot < 0) this.selectedSlot = -1;
+            else this.selectedSlot = selectedSlot;
         }
 
         public void enablePassthrough() {
