@@ -3,12 +3,10 @@ package gregtech.common.covers.detector;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.mui.widget.GTTextFieldWidget;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -24,20 +22,25 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 
 public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements CoverWithUI {
 
-    private static final int PADDING = 5, SIZE = 18;
-
-    private static final long DEFAULT_MIN_EU = 0, DEFAULT_MAX_EU = 2048;
-    private static final int DEFAULT_MIN_PERCENT = 33, DEFAULT_MAX_PERCENT = 66;
+    private static final long DEFAULT_MIN_EU = 0;
+    private static final long DEFAULT_MAX_EU = 2048;
 
     public long minValue = DEFAULT_MIN_EU;
     public long maxValue = DEFAULT_MAX_EU;
     private int outputAmount = 0;
     private boolean usePercent = false;
-    private WidgetGroup widgetsToUpdate;
 
     public CoverDetectorEnergyAdvanced(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                        @NotNull EnumFacing attachedSide) {
@@ -82,78 +85,76 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup group = new WidgetGroup();
-        group.addWidget(new LabelWidget(10, 8, "cover.advanced_energy_detector.label"));
-
-        // get/set min EU
-        group.addWidget(new LabelWidget(10, 5 + (SIZE + PADDING), "cover.advanced_energy_detector.min"));
-        group.addWidget(new ImageWidget(72, (SIZE + PADDING), 8 * SIZE, SIZE, GuiTextures.DISPLAY));
-
-        // get/set max EU
-        group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_energy_detector.max"));
-        group.addWidget(new ImageWidget(72, 2 * (SIZE + PADDING), 8 * SIZE, SIZE, GuiTextures.DISPLAY));
-
-        // surely this is a good idea :clueless:
-        // construct widgets that need to be updated
-        this.widgetsToUpdate = constructWidgetsToUpdate();
-
-        // change modes between percent and discrete EU
-        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.modes_label"));
-        group.addWidget(
-                new CycleButtonWidget(72, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isUsePercent, this::setUsePercent,
-                        "cover.advanced_energy_detector.mode_eu", "cover.advanced_energy_detector.mode_percent")
-                                .setTooltipHoverString("cover.advanced_energy_detector.modes_tooltip"));
-
-        // invert logic button
-        group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING), "cover.generic.advanced_detector.invert_label"));
-        group.addWidget(
-                new CycleButtonWidget(72, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
-                        "cover.machine_controller.normal", "cover.machine_controller.inverted")
-                                .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip"));
-
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176 + (3 * SIZE), 108 + (SIZE))
-                .widget(group)
-                .widget(widgetsToUpdate) // add synced widgets
-                .build(this, player);
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager syncManager, UISettings settings) {
+        return GTGuis.defaultPanel(this)
+                .height(202)
+                .child(CoverWithUI.createTitleRow(getPickItem()))
+                .child(Flow.column()
+                        .name("min/max parent column")
+                        .top(28)
+                        .margin(10, 0)
+                        .coverChildrenHeight()
+                        .child(createMinMaxRow("cover.advanced_energy_detector.min",
+                                this::getMinValue, this::setMinValue,
+                                this::getPostFix, this::updateWidget))
+                        .child(createMinMaxRow("cover.advanced_energy_detector.max",
+                                this::getMaxValue, this::setMaxValue,
+                                this::getPostFix, this::updateWidget))
+                        .child(Flow.row()
+                                .name("mode row")
+                                .coverChildrenHeight()
+                                .marginBottom(5)
+                                .child(IKey.lang("cover.advanced_energy_detector.modes_label").asWidget()
+                                        .size(72, 18))
+                                .child(new ToggleButton()
+                                        .name("mode button")
+                                        .right(0)
+                                        .size(72, 18)
+                                        .addTooltipLine(IKey.lang("cover.advanced_energy_detector.modes_tooltip"))
+                                        .value(new BooleanSyncValue(this::isUsePercent, this::setUsePercent))
+                                        .overlay(true, IKey.lang("cover.advanced_energy_detector.mode_percent")
+                                                .style(IKey.WHITE))
+                                        .overlay(false, IKey.lang("cover.advanced_energy_detector.mode_eu")
+                                                .style(IKey.WHITE))))
+                        .child(Flow.row()
+                                .name("inverted row")
+                                .coverChildrenHeight()
+                                .child(IKey.lang("cover.generic.advanced_detector.invert_label").asWidget()
+                                        .size(72, 18))
+                                .child(new ToggleButton()
+                                        .name("inverted button")
+                                        .right(0)
+                                        .size(72, 18)
+                                        .addTooltipLine(IKey.lang("cover.advanced_energy_detector.invert_tooltip"))
+                                        .value(new BooleanSyncValue(this::isInverted, this::setInverted))
+                                        .overlay(true, IKey.lang("cover.advanced_energy_detector.inverted")
+                                                .style(IKey.WHITE))
+                                        .overlay(false, IKey.lang("cover.advanced_energy_detector.normal")
+                                                .style(IKey.WHITE)))))
+                .bindPlayerInventory();
     }
 
-    private WidgetGroup constructWidgetsToUpdate() {
-        WidgetGroup sync = new WidgetGroup();
-
-        sync.addWidget(
-                new TextFieldWidget2(76, 5 + (SIZE + PADDING), 8 * SIZE, SIZE, this::getMinValue, this::setMinValue)
-                        .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                        .setMaxLength(this.getLength())
-                        .setPostFix(this.getPostFix()));
-        sync.addWidget(
-                new TextFieldWidget2(76, 5 + 2 * (SIZE + PADDING), 8 * SIZE, SIZE, this::getMaxValue, this::setMaxValue)
-                        .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                        .setMaxLength(this.getLength())
-                        .setPostFix(this.getPostFix()));
-        return sync;
+    private void updateWidget(GTTextFieldWidget w) {
+        w.setMaxLength(getLength());
+        w.setNumbersLong(0, isUsePercent() ? 100 : Long.MAX_VALUE);
     }
 
-    private String getMinValue() {
-        return String.valueOf(minValue);
+    private long getMinValue() {
+        return minValue;
     }
 
-    private String getMaxValue() {
-        return String.valueOf(maxValue);
+    private long getMaxValue() {
+        return maxValue;
     }
 
-    private void setMinValue(String val) {
-        this.minValue = CoverDetectorBase.parseCapped(val,
-                0,
-                this.maxValue - 1,
-                usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU);
+    private void setMinValue(long val) {
+        this.minValue = clamp(val,
+                0, this.maxValue - 1);
     }
 
-    private void setMaxValue(String val) {
-        this.maxValue = CoverDetectorBase.parseCapped(val,
-                this.minValue + 1,
-                usePercent ? 100 : Long.MAX_VALUE,
-                usePercent ? DEFAULT_MAX_PERCENT : DEFAULT_MAX_EU);
+    private void setMaxValue(long val) {
+        this.maxValue = clamp(val,
+                this.minValue + 1, usePercent ? 100 : Long.MAX_VALUE);
     }
 
     private boolean isUsePercent() {
@@ -161,25 +162,30 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     private void setUsePercent(boolean b) {
+        if (isUsePercent() == b) return;
         this.usePercent = b;
 
-        if (this.usePercent) { // using percent
-            this.minValue = DEFAULT_MIN_PERCENT;
-            this.maxValue = DEFAULT_MAX_PERCENT;
-        } else { // using discrete EU
+        if (getCoverHolderCapacity() == 0) {
+            // can't use capacity, use default values
             this.minValue = DEFAULT_MIN_EU;
-            this.maxValue = DEFAULT_MAX_EU;
+            this.maxValue = isUsePercent() ? 100 : DEFAULT_MAX_EU;
+            return;
         }
 
-        // update widgets
-        updateSyncedWidgets();
-    }
-
-    private void updateSyncedWidgets() {
-        for (Widget widget : widgetsToUpdate.widgets) {
-            ((TextFieldWidget2) widget).setPostFix(getPostFix());
-            ((TextFieldWidget2) widget).setMaxLength(getLength());
+        // todo should precision be increased for percent?
+        // for large eu values switching modes starts to break down
+        long minValue, maxValue;
+        if (this.usePercent) {
+            // using percent
+            minValue = (long) Math.ceil(((double) this.minValue / getCoverHolderCapacity()) * 100d);
+            maxValue = (long) Math.ceil(((double) this.maxValue / getCoverHolderCapacity()) * 100d);
+        } else {
+            // using discrete EU
+            minValue = (long) Math.floor((this.minValue / 100d) * getCoverHolderCapacity());
+            maxValue = (long) Math.floor((this.maxValue / 100d) * getCoverHolderCapacity());
         }
+        this.minValue = clamp(minValue, 0, maxValue - 1);
+        this.maxValue = clamp(maxValue, minValue + 1, isUsePercent() ? 100 : Integer.MAX_VALUE);
     }
 
     private String getPostFix() {

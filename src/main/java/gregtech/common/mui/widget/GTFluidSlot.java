@@ -117,9 +117,6 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
                 this.syncHandler.canFillSlot() || this.syncHandler.canDrainSlot()) {
             this.syncHandler.handleClick(data);
 
-            if (this.syncHandler.canLockFluid())
-                this.syncHandler.toggleLockFluid();
-
             return Result.SUCCESS;
         }
         return Result.IGNORE;
