@@ -91,7 +91,6 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         super.initializeInventory();
         if (this.hasGhostCircuitInventory()) {
             this.circuitInventory = new GhostCircuitItemStackHandler(this);
-            this.circuitInventory.addNotifiableMetaTileEntity(this);
         }
     }
 
