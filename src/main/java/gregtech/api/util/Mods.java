@@ -41,6 +41,7 @@ public enum Mods {
     CraftTweaker(Names.CRAFT_TWEAKER),
     EnderCore(Names.ENDER_CORE),
     EnderIO(Names.ENDER_IO),
+    ExNihiloCreatio(Names.EX_NIHILO_CREATIO),
     ExtraBees(Names.EXTRA_BEES),
     ExtraTrees(Names.EXTRA_TREES),
     ExtraUtilities2(Names.EXTRA_UTILITIES2),
@@ -156,6 +157,7 @@ public enum Mods {
         public static final String XAEROS_MINIMAP = "xaerominimap";
         public static final String VINTAGIUM = "vintagium";
         public static final String ALFHEIM = "alfheim";
+        public static final String EX_NIHILO_CREATIO = "exnihilocreatio";
     }
 
     private final String ID;
