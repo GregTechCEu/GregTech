@@ -8,6 +8,7 @@ import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.GradientUtil;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
@@ -90,7 +91,8 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         if (fluidHandlerItem == null) return 0;
         IFluidTankProperties fluidTankProperties = fluidHandlerItem.getTankProperties()[0];
         FluidStack fluidStack = fluidTankProperties.getContents();
-        return fluidStack == null ? 0 : (double) fluidStack.amount / (double) fluidTankProperties.getCapacity();
+        return fluidStack == null ? 0 :
+                GTUtility.calculateDurabilityFromRemaining(fluidStack.amount, fluidTankProperties.getCapacity());
     }
 
     @Nullable

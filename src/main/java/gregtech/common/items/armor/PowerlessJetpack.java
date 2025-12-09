@@ -283,10 +283,11 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         public double getDurabilityForDisplay(@NotNull ItemStack itemStack) {
             IFluidHandlerItem fluidHandlerItem = itemStack
                     .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-            if (fluidHandlerItem == null) return 0;
+            if (fluidHandlerItem == null) return 1.0d;
             IFluidTankProperties fluidTankProperties = fluidHandlerItem.getTankProperties()[0];
             FluidStack fluidStack = fluidTankProperties.getContents();
-            return fluidStack == null ? 0 : (double) fluidStack.amount / (double) fluidTankProperties.getCapacity();
+            return fluidStack == null ? 1.0d :
+                    GTUtility.calculateDurabilityFromRemaining(fluidStack.amount, fluidTankProperties.getCapacity());
         }
 
         @Nullable
