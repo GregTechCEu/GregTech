@@ -137,10 +137,11 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
 
     @Override
     public boolean add(IItemHandler handler) {
+        if (this == handler) {
+            throw new IllegalArgumentException("Cannot add a handler list to itself!");
+        }
         int s = size();
         if (handler instanceof ItemHandlerList list) {
-            // possible infinite recursion
-            // throw instead?
             addAll(s, list);
         } else {
             add(s, handler);
