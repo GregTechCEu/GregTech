@@ -4,6 +4,8 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.FloatSupplier;
 import gregtech.client.utils.RenderUtil;
 
+import net.minecraft.util.math.MathHelper;
+
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -27,13 +29,7 @@ public class BatteryIndicatorDrawable implements IDrawable {
 
     @Override
     public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
-        float charge = chargeLevelProvider.getAsFloat();
-        if (charge > 1.0f) {
-            charge = 1.0f;
-        } else if (charge < 0.0f) {
-            charge = 0.0f;
-        }
-
+        float charge = MathHelper.clamp(chargeLevelProvider.getAsFloat(), 0.0f, 1.0f);
         float newHeight = height * charge;
         int color;
         if (charge < lowCharge) {
