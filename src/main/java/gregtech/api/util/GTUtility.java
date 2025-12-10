@@ -3,6 +3,8 @@ package gregtech.api.util;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.GTFluid;
@@ -20,6 +22,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.function.impl.TimedProgressSupplier;
+import gregtech.common.ConfigHolder;
 
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -45,6 +48,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -65,6 +70,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
+import java.time.MonthDay;
+import java.time.ZoneId;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
@@ -756,10 +763,10 @@ public class GTUtility {
         return result.toString();
     }
 
-    public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
+    public static @Nullable MetaTileEntity getMetaTileEntity(@Nullable IBlockAccess world, @Nullable BlockPos pos) {
         if (world == null || pos == null) return null;
         TileEntity te = world.getTileEntity(pos);
-        return te instanceof IGregTechTileEntity ? ((IGregTechTileEntity) te).getMetaTileEntity() : null;
+        return te instanceof IGregTechTileEntity igtte ? igtte.getMetaTileEntity() : null;
     }
 
     public static MetaTileEntity getMetaTileEntity(ItemStack stack) {
@@ -1002,9 +1009,16 @@ public class GTUtility {
         return Math.min(voltage, GTValues.VA[workingTier]);
     }
 
+    // TODO: remove once ColorUtil from pr 2858 is merged
     public static int combineRGB(@Range(from = 0, to = 255) int r, @Range(from = 0, to = 255) int g,
                                  @Range(from = 0, to = 255) int b) {
         return (r << 16) | (g << 8) | b;
+    }
+
+    // TODO: remove once ColorUtil from pr 2858 is merged
+    public static int combineRGB(@Range(from = 0, to = 255) int a, @Range(from = 0, to = 255) int r,
+                                 @Range(from = 0, to = 255) int g, @Range(from = 0, to = 255) int b) {
+        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
     /**
@@ -1024,9 +1038,111 @@ public class GTUtility {
         return map.get(key.toWildcard());
     }
 
+    /**
+     * Check if the given item is chargeable from an EU source. <br/>
+     * Unless the {@code nativeEUToFE} option under Energy Compatibility is enabled, this will return false for RF
+     * items.
+     *
+     * @param tier if the item stores EU and is tiered, check if the given tier is greater than or equal to it.
+     */
+    public static boolean isItemChargableWithEU(@NotNull ItemStack stack, int tier) {
+        IElectricItem euItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (euItem != null) {
+            return euItem.chargeable() && euItem.getCharge() < euItem.getMaxCharge() && euItem.getTier() <= tier;
+        }
+
+        if (ConfigHolder.compat.energy.nativeEUToFE) {
+            IEnergyStorage rfItem = stack.getCapability(CapabilityEnergy.ENERGY, null);
+            if (rfItem != null) {
+                return rfItem.canReceive() && rfItem.getEnergyStored() < rfItem.getMaxEnergyStored();
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the level of charge from 0 to 1 of an item.
+     *
+     * @return -1 if the supplied item is not electric
+     */
+    public static float itemChargeLevel(@NotNull ItemStack stack) {
+        if (stack.isEmpty()) return 0.0f;
+
+        IElectricItem euItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (euItem != null) {
+            return (float) euItem.getCharge() / euItem.getMaxCharge();
+        }
+
+        IEnergyStorage rfItem = stack.getCapability(CapabilityEnergy.ENERGY, null);
+        if (rfItem != null) {
+            return (float) rfItem.getEnergyStored() / rfItem.getMaxEnergyStored();
+        }
+
+        return -1.0f;
+    }
+
+    /**
+     * Lerp between two ARGB colors
+     *
+     * @param start    the start point of the lerp
+     * @param end      the end point of the lerp
+     * @param position the position of the lerp. Must be between 0 and 1.
+     * @return the lerped color value
+     */
+    public static int argbLerp(int start, int end, float position) {
+        int aStart = (start >> 24 & 0xFF);
+        int rStart = (start >> 16 & 0xFF);
+        int gStart = (start >> 8 & 0xFF);
+        int bStart = (start & 0xFF);
+
+        int aEnd = (end >> 24 & 0xFF);
+        int rEnd = (end >> 16 & 0xFF);
+        int gEnd = (end >> 8 & 0xFF);
+        int bEnd = (end & 0xFF);
+
+        int aFinal = (int) (aStart + (aEnd - aStart) * position);
+        int rFinal = (int) (rStart + (rEnd - rStart) * position);
+        int gFinal = (int) (gStart + (gEnd - gStart) * position);
+        int bFinal = (int) (bStart + (bEnd - bStart) * position);
+
+        return (aFinal << 24) | (rFinal << 16) | (gFinal << 8) | bFinal;
+    }
+
     public static boolean areFluidStacksEqual(@Nullable FluidStack a, @Nullable FluidStack b) {
         if (a == b) return true;
         if (a == null) return false;
         return a.isFluidEqual(b);
+    }
+
+    /**
+     * Check if the provided month and day is today with a given time zone.
+     */
+    public static boolean isToday(@NotNull MonthDay monthDay, @Nullable ZoneId tz) {
+        MonthDay now = tz == null ? MonthDay.now() : MonthDay.now(tz);
+        return now.equals(monthDay);
+    }
+
+    /**
+     * Check if the provided month and day is today.
+     */
+    public static boolean isToday(@NotNull MonthDay monthDay) {
+        return isToday(monthDay, null);
+    }
+
+    /**
+     * Check if today is April 1st.
+     */
+    public static boolean isAprilFools() {
+        if (!ConfigHolder.misc.specialEvents) return false;
+        return isToday(GTValues.APRIL_FOOLS);
+    }
+
+    /**
+     * Check if today is the day of, or eve of Xmas.
+     */
+    public static boolean isXMAS() {
+        if (!ConfigHolder.misc.specialEvents) return false;
+        return isToday(GTValues.XMAS_EVE) || isToday(GTValues.XMAS);
     }
 }

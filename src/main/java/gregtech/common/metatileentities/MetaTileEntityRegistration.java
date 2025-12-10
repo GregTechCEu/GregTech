@@ -682,7 +682,7 @@ final class MetaTileEntityRegistration {
 
         // creative machines 5650-5659
         MetaTileEntities.CREATIVE_ENERGY = MetaTileEntities.registerMetaTileEntity(5650,
-                new MetaTileEntityCreativeEnergy());
+                new MetaTileEntityCreativeEnergy(gregtechId("infinite_energy")));
         MetaTileEntities.CREATIVE_CHEST = MetaTileEntities.registerMetaTileEntity(5651,
                 new MetaTileEntityCreativeChest(gregtechId("creative_chest")));
         MetaTileEntities.CREATIVE_TANK = MetaTileEntities.registerMetaTileEntity(5652,
