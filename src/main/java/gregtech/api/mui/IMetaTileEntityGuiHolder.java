@@ -12,8 +12,6 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEnti
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
-import gregtech.common.metatileentities.storage.MetaTileEntityQuantumExtender;
-import gregtech.common.metatileentities.storage.MetaTileEntityQuantumProxy;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -45,8 +43,6 @@ import org.jetbrains.annotations.NotNull;
  * - {@link MetaTileEntityMEOutputBus} - PR 2824 <br/>
  * - {@link MetaTileEntityMEOutputHatch} - PR 2824 <br/>
  * - All steam machines - PR 2808 <br/>
- * - {@link MetaTileEntityQuantumExtender} <br/>
- * - {@link MetaTileEntityQuantumProxy}
  */
 public interface IMetaTileEntityGuiHolder extends IGuiHolder<MetaTileEntityGuiData> {
 
