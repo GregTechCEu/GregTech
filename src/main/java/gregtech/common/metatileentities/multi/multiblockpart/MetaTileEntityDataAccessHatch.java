@@ -41,6 +41,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
@@ -131,9 +132,11 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         int rowSize = (int) Math.sqrt(getInventorySize());
         panelSyncManager.registerSlotGroup("slots", rowSize);
 
-        Widget<?> recipeLogo = GTGuiTextures.getLogo(getUITheme())
-                .asWidget()
+        Widget<?> recipeLogo = new Widget<>()
                 .align(Alignment.BottomRight)
+                .size(17)
+                .overlay(new DynamicDrawable(() -> recipes.isEmpty() ? GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW :
+                        GTGuiTextures.GREGTECH_LOGO))
                 .tooltipBuilder(tooltip -> {
                     if (recipes.isEmpty()) {
                         tooltip.addLine(IKey.lang("gregtech.machine.data_access_hatch.no_recipes"));
