@@ -1134,6 +1134,7 @@ public class GTUtility {
      * Check if today is April 1st.
      */
     public static boolean isAprilFools() {
+        if (!ConfigHolder.misc.specialEvents) return false;
         return isToday(GTValues.APRIL_FOOLS);
     }
 
@@ -1141,6 +1142,7 @@ public class GTUtility {
      * Check if today is the day of, or eve of Xmas.
      */
     public static boolean isXMAS() {
+        if (!ConfigHolder.misc.specialEvents) return false;
         return isToday(GTValues.XMAS_EVE) || isToday(GTValues.XMAS);
     }
 }
