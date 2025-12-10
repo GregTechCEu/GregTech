@@ -235,7 +235,12 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         }
 
         ItemStack cursorStack = player.inventory.getItemStack();
-        if (!cursorStack.isEmpty()) playerItems.add(cursorStack);
+        if (!cursorStack.isEmpty()) {
+            // If player clicked "slot" with item, only attempt fixing with that
+            playerItems.clear();
+            playerItems.add(cursorStack);
+        }
+
         fixMaintenanceProblemsWithTools(player, playerItems);
     }
 
