@@ -100,6 +100,11 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
                 }
                 return stack;
             }
+
+            @Override
+            public int getSlotLimit(int slot) {
+                return 1;
+            }
         };
     }
 
