@@ -190,14 +190,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     public void update() {
         super.update();
         if (!getWorld().isRemote && getOffsetTimer() % 20 == 0) {
-            MultiblockControllerBase controller = getController();
-            if (controller instanceof IMaintenance iMaintenance) {
-                if (iMaintenance.hasMaintenanceProblems()) {
-                    if (tapeHandler.tryConsumeTape()) {
-                        iMaintenance.fixAllMaintenance();
-                        setTaped(true);
-                    }
-                }
+            if (getController() instanceof IMaintenance iMaintenance &&
+                    iMaintenance.hasMaintenanceProblems() && tapeHandler.tryConsumeTape()) {
+                iMaintenance.fixAllMaintenance();
+                setTaped(true);
             }
         }
     }
