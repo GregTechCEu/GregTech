@@ -332,8 +332,6 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity implements
                                 .child(new Grid()
                                         .alignX(0.5f)
                                         .height(rowSize * 18)
-                                        .minElementMargin(0, 0)
-                                        .minColWidth(18).minRowHeight(18)
                                         .mapTo(rowSize, rowSize * rowSize, index -> new ItemSlot()
                                                 .slot(SyncHandlers.itemSlot(exportItems, index)
                                                         .accessibility(false, true))))

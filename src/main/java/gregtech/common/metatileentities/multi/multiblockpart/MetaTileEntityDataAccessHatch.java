@@ -166,8 +166,6 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
                         .coverChildrenHeight()
                         .child(new Grid()
                                 .height(rowSize * 18)
-                                .minElementMargin(0, 0)
-                                .minColWidth(18).minRowHeight(18)
                                 .alignX(0.5f)
                                 .mapTo(rowSize, rowSize * rowSize, index -> new ItemSlot()
                                         .slot(SyncHandlers.itemSlot(importItems, index)
