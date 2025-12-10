@@ -74,6 +74,7 @@ import java.time.MonthDay;
 import java.time.ZoneId;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1157,5 +1158,21 @@ public class GTUtility {
      */
     public static boolean isXMAS() {
         return isToday(GTValues.XMAS_EVE) || isToday(GTValues.XMAS);
+    }
+
+    /**
+     * Check if collection A contains any objects from collection B.
+     * 
+     * @return the first object that was in both collections or null if neither collection shared an object.
+     */
+    @Nullable
+    public static <T> T intersect(@NotNull Collection<T> a, @NotNull Collection<T> b) {
+        for (T obj : b) {
+            if (a.contains(obj)) {
+                return obj;
+            }
+        }
+
+        return null;
     }
 }

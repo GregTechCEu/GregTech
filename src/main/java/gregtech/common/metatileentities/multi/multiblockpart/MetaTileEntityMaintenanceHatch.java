@@ -265,42 +265,26 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 continue;
             }
 
-            Set<String> toolClasses = item.getToolClasses(stack);
-            if (toolClasses.isEmpty()) {
+            if (item.getToolClasses(stack).isEmpty()) {
                 stacks.remove(index);
                 continue;
-            } else {
-                boolean matched = false;
-                for (String toolClass : toolClasses) {
-                    if (IMaintenance.maintenance2tool.containsValue(toolClass)) {
-                        matched = true;
-                        break;
-                    }
-                }
-
-                if (!matched) {
-                    stacks.remove(index);
-                    continue;
-                }
             }
 
             index++;
         }
 
-        controller.getToolsForMaintenance(targetToolClass -> {
-            for (ItemStack toolStack : stacks) {
-                Item item = toolStack.getItem();
-                for (String stackToolClass : item.getToolClasses(toolStack)) {
-                    if (stackToolClass.equals(targetToolClass)) {
-                        MetaTileEntityMaintenanceHatch.this.setTaped(false);
-                        ToolHelper.damageItemWhenCrafting(toolStack, player);
-                        return true;
-                    }
-                }
-            }
+        Set<String> classesToMatch = controller.getToolsForMaintenance();
+        for (ItemStack toolStack : stacks) {
+            if (classesToMatch.isEmpty()) return;
 
-            return false;
-        });
+            Item toolItem = toolStack.getItem();
+            String matchedClass = GTUtility.intersect(toolItem.getToolClasses(toolStack), classesToMatch);
+            if (matchedClass != null) {
+                setTaped(false);
+                ToolHelper.damageItemWhenCrafting(toolStack, player);
+                classesToMatch.remove(matchedClass);
+            }
+        }
     }
 
     private static boolean consumeDuctTape(@NotNull ItemStack itemStack, boolean consumeTape) {

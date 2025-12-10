@@ -10,10 +10,11 @@ import net.minecraft.util.SoundEvent;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-import java.util.function.Predicate;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public interface IMaintenance {
 
@@ -32,7 +33,7 @@ public interface IMaintenance {
 
     /**
      * How many unique problems are possible. <br/>
-     * When calculating maintenance values, bit indices higher than {@code possibleProblems - 1} are ignored.
+     * When calculating maintenance values, bit indices higher than {@code POSSIBLE_PROBLEMS - 1} are ignored.
      */
     int POSSIBLE_PROBLEMS = maintenance2tool.size();
 
@@ -41,23 +42,18 @@ public interface IMaintenance {
      */
     byte NO_PROBLEMS = (byte) ((1 << POSSIBLE_PROBLEMS) - 1);
 
-    /**
-     * Iterate over each problem in the maintenance byte.
-     *
-     * @param toolClassPredicate gets called for every problem that needs fixing with its tool class.
-     *                           Return true from the predicate to fix the issue, false if it should be ignored.
-     */
-    default void getToolsForMaintenance(@NotNull Predicate<String> toolClassPredicate) {
+    default Set<String> getToolsForMaintenance() {
         byte problems = getMaintenanceProblems();
-        if (problems == NO_PROBLEMS) return;
-        for (Int2ObjectMap.Entry<String> entry : maintenance2tool.int2ObjectEntrySet()) {
-            int problemIndex = entry.getIntKey();
+        if (problems == NO_PROBLEMS) return Collections.emptySet();
+
+        Set<String> classes = new HashSet<>(POSSIBLE_PROBLEMS);
+        for (int problemIndex = 0; problemIndex < POSSIBLE_PROBLEMS; problemIndex++) {
             if (((problems >> problemIndex) & 1) == 0) {
-                if (toolClassPredicate.test(entry.getValue())) {
-                    setMaintenanceFixed(problemIndex);
-                }
+                classes.add(maintenance2tool.get(problemIndex));
             }
         }
+
+        return classes;
     }
 
     /**
