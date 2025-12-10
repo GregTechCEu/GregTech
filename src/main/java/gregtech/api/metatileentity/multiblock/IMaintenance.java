@@ -1,6 +1,8 @@
 package gregtech.api.metatileentity.multiblock;
 
+import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.common.ConfigHolder;
 
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.SoundEvent;
@@ -9,17 +11,16 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
-/**
- * Maintenance is stored as a byte with the 2 most significant bits ignored. 1 = no issue, 0 = need maintenance. <br>
- * Example: 0b000111 = needs a hard hammer, wire cutter, and a crowbar for maintenance.
- */
+import java.util.function.Predicate;
+
 public interface IMaintenance {
 
     /**
-     * Immutable mapping between maintenance byte indexes and the tool used to fix said issue.
+     * Mapping between maintenance byte indexes and the tool class used to fix the issue.
      */
+    @UnmodifiableView
     Int2ObjectMap<String> maintenance2tool = Int2ObjectMaps.unmodifiable(new Int2ObjectArrayMap<>(
             new int[] { 0, 1, 2, 3, 4, 5 },
             new String[] { ToolClasses.WRENCH,
@@ -30,42 +31,110 @@ public interface IMaintenance {
                     ToolClasses.CROWBAR }));
 
     /**
-     * Fill an array with the required tools to maintain a machine
-     * 
-     * @param problems    the maintenance byte to be checked
-     * @param toolClasses a string array to be filled
-     * @return if any tools for the maintenance problems were added to the array
+     * How many unique problems are possible. <br/>
+     * When calculating maintenance values, bit indices higher than {@code possibleProblems - 1} are ignored.
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    static boolean getToolsForMaintenance(byte problems, @Nullable String @NotNull [] toolClasses) {
-        if (problems == 0b111111) return false;
+    int POSSIBLE_PROBLEMS = maintenance2tool.size();
 
-        boolean added = false;
-        for (int index = 0; index < 6; index++) {
-            if (((problems >> index) & 1) == 0) {
-                toolClasses[index] = maintenance2tool.get(index);
-                added = true;
+    /**
+     * Represents a maintenance byte where there are no problems, ie {@code 0b111111}.
+     */
+    byte NO_PROBLEMS = (byte) ((1 << POSSIBLE_PROBLEMS) - 1);
+
+    /**
+     * Iterate over each problem in the maintenance byte.
+     *
+     * @param toolClassPredicate gets called for every problem that needs fixing with its tool class.
+     *                           Return true from the predicate to fix the issue, false if it should be ignored.
+     */
+    default void getToolsForMaintenance(@NotNull Predicate<String> toolClassPredicate) {
+        byte problems = getMaintenanceProblems();
+        if (problems == NO_PROBLEMS) return;
+        for (Int2ObjectMap.Entry<String> entry : maintenance2tool.int2ObjectEntrySet()) {
+            int problemIndex = entry.getIntKey();
+            if (((problems >> problemIndex) & 1) == 0) {
+                if (toolClassPredicate.test(entry.getValue())) {
+                    setMaintenanceFixed(problemIndex);
+                }
             }
         }
-
-        return added;
     }
 
+    /**
+     * Get the current maintenance problems. <br/>
+     * Each problem type is a single bit in the returned byte: <br/>
+     * - {@code 0}: maintenance needed <br/>
+     * - {@code 1}: no maintenance needed <br/>
+     * See {@link #maintenance2tool} for the mapping between bit index and tool class.
+     */
     byte getMaintenanceProblems();
 
-    int getNumMaintenanceProblems();
+    /**
+     * Set the maintenance problems of this to the given byte.
+     */
+    void setMaintenance(byte maintenance);
 
-    boolean hasMaintenanceProblems();
+    /**
+     * @return how many unique maintenance problems this has.
+     */
+    default int getNumMaintenanceProblems() {
+        if (!hasMaintenanceMechanics()) return 0;
+        return POSSIBLE_PROBLEMS - Integer.bitCount(getMaintenanceProblems());
+    }
 
-    void setMaintenanceFixed(int index);
+    /**
+     * @return if this has any maintenance problems.
+     */
+    default boolean hasMaintenanceProblems() {
+        if (!hasMaintenanceMechanics()) return false;
+        return getMaintenanceProblems() < NO_PROBLEMS;
+    }
 
-    void fixAllMaintenance();
+    /**
+     * Set a certain problem as fixed or unfixed.
+     */
+    default void setMaintenanceAt(int index, boolean fixed) {
+        if (index >= POSSIBLE_PROBLEMS) return;
 
-    void causeMaintenanceProblems();
+        byte maintenance = getMaintenanceProblems();
+        if (fixed) {
+            maintenance |= (byte) (1 << index);
+        } else {
+            maintenance &= (byte) ~(1 << index);
+        }
+
+        setMaintenance(maintenance);
+    }
+
+    /**
+     * Set a certain problem as fixed.
+     */
+    default void setMaintenanceFixed(int index) {
+        setMaintenanceAt(index, true);
+    }
+
+    /**
+     * Fix every maintenance problem this has.
+     */
+    default void fixAllMaintenance() {
+        setMaintenance(NO_PROBLEMS);
+    }
+
+    /**
+     * Cause a random maintenance problem to need fixing.
+     */
+    default void causeMaintenanceProblems() {
+        setMaintenanceAt(GTValues.RNG.nextInt(POSSIBLE_PROBLEMS), false);
+    }
 
     void storeTaped(boolean isTaped);
 
-    boolean hasMaintenanceMechanics();
+    /**
+     * If overridden, it is recommended that you only ever return false as to not conflict with the maintenance config.
+     */
+    default boolean hasMaintenanceMechanics() {
+        return ConfigHolder.machines.enableMaintenance;
+    }
 
     default SoundEvent getBreakdownSound() {
         return SoundEvents.ENTITY_ITEM_BREAK;

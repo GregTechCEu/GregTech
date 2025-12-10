@@ -1,5 +1,6 @@
 package gregtech.client.utils;
 
+import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.KeyUtil;
@@ -82,6 +83,8 @@ public class TooltipHelper {
     }
 
     public static void addMaintenanceProblems(@NotNull IRichTextBuilder<?> richText, byte maintenanceProblems) {
+        if (maintenanceProblems >= IMaintenance.NO_PROBLEMS || maintenanceProblems < 0) return;
+
         richText.addLine(KeyUtil.lang(YELLOW, "gregtech.multiblock.universal.has_problems"))
                 .spaceLine(2);
 

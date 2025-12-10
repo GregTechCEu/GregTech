@@ -22,6 +22,7 @@ import gregtech.common.items.MetaItems;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -54,13 +55,14 @@ import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import it.unimi.dsi.fastutil.doubles.DoubleLists;
-import org.jetbrains.annotations.ApiStatus;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.DoubleUnaryOperator;
-import java.util.function.Predicate;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
@@ -212,90 +214,93 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * @param player the player performing the fixing
      */
     private void fixMaintenanceProblems(@NotNull EntityPlayer player) {
-        if (!(this.getController() instanceof IMaintenance iMaintenance)) {
+        if (!(this.getController() instanceof IMaintenance controller)) {
+            return;
+        } else if (!controller.hasMaintenanceProblems()) {
+            return;
+        } else if (player.capabilities.isCreativeMode) {
+            controller.fixAllMaintenance();
             return;
         }
 
-        if (!iMaintenance.hasMaintenanceProblems()) {
-            return;
-        }
+        List<ItemStack> playerItems = new ObjectArrayList<>(player.inventory.mainInventory);
+        playerItems.removeIf(ItemStack::isEmpty);
 
-        // Fix automatically on slot click by player in Creative Mode
-        if (player.capabilities.isCreativeMode) {
-            iMaintenance.fixAllMaintenance();
-            return;
-        }
-
-        // Then for every slot in the player's main inventory, try to duct tape fix
-        for (int i = 0; i < player.inventory.mainInventory.size(); i++) {
-            if (consumeDuctTape(player.inventory.mainInventory.get(i), true)) {
-                iMaintenance.fixAllMaintenance();
+        // Try to tape this hatch from the player's inventory first
+        Iterator<ItemStack> tapeIterator = playerItems.iterator();
+        while (tapeIterator.hasNext()) {
+            ItemStack stack = tapeIterator.next();
+            if (consumeDuctTape(stack, true)) {
+                tapeIterator.remove();
+                controller.fixAllMaintenance();
                 setTaped(true);
                 return;
             }
         }
 
-        // Lastly for each problem the multi has, try to fix with tools
-        String[] toolsToMatch = new String[6];
-        if (!IMaintenance.getToolsForMaintenance(iMaintenance.getMaintenanceProblems(), toolsToMatch)) {
-            return;
-        }
-
-        ItemStack heldStack = player.inventory.getItemStack();
-        if (!heldStack.isEmpty()) {
-            handleItemFix(heldStack, toolsToMatch, player, iMaintenance);
-        }
-
-        for (ItemStack itemStack : player.inventory.mainInventory) {
-            if (itemStack.isEmpty()) continue;
-            handleItemFix(heldStack, toolsToMatch, player, iMaintenance);
-        }
+        ItemStack cursorStack = player.inventory.getItemStack();
+        if (!cursorStack.isEmpty()) playerItems.add(cursorStack);
+        fixMaintenanceProblemsWithTools(player, playerItems);
     }
 
-    private void handleItemFix(@NotNull ItemStack itemStack,
-                               @Nullable String @NotNull [] toolsToMatch, @NotNull EntityPlayer player,
-                               @NotNull IMaintenance iMaintenance) {
-        if (itemStack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            for (int index = 0; index < toolsToMatch.length; index++) {
-                String toolToMatch = toolsToMatch[index];
-                if (toolToMatch == null) continue;
-                if (toolbelt.damageAgainstMaintenanceProblem(itemStack, player, toolToMatch)) {
-                    iMaintenance.setMaintenanceFixed(index);
-                    toolsToMatch[index] = null;
-                    setTaped(false);
+    /**
+     * Fix maintenance issues on the multiblock this maintenance hatch is attached to.
+     *
+     * @param player the player doing the fixing
+     * @param stacks a list of item stacks to attempt fixing the problems with. <b>The list will be mutated when this
+     *               filters out non-tools!</b>
+     */
+    public void fixMaintenanceProblemsWithTools(@NotNull EntityPlayer player, @NotNull List<ItemStack> stacks) {
+        if (!(getController() instanceof IMaintenance controller) || !controller.hasMaintenanceProblems()) return;
+
+        // Reduce items and unwrap toolbelts into usable tools
+        int index = 0;
+        while (index < stacks.size()) {
+            ItemStack stack = stacks.get(index);
+            Item item = stack.getItem();
+
+            if (item instanceof ItemGTToolbelt toolbelt) {
+                stacks.remove(index);
+                toolbelt.iterateSlots(stack, stacks::add);
+                continue;
+            }
+
+            Set<String> toolClasses = item.getToolClasses(stack);
+            if (toolClasses.isEmpty()) {
+                stacks.remove(index);
+                continue;
+            } else {
+                boolean matched = false;
+                for (String toolClass : toolClasses) {
+                    if (IMaintenance.maintenance2tool.containsValue(toolClass)) {
+                        matched = true;
+                        break;
+                    }
+                }
+
+                if (!matched) {
+                    stacks.remove(index);
+                    continue;
                 }
             }
-        } else {
-            for (int index = 0; index < toolsToMatch.length; index++) {
-                String toolToMatch = toolsToMatch[index];
-                if (toolToMatch == null) continue;
-                if (ToolHelper.isTool(itemStack, toolToMatch)) {
-                    iMaintenance.setMaintenanceFixed(index);
-                    ToolHelper.damageItemWhenCrafting(itemStack, player);
-                    toolsToMatch[index] = null;
-                    setTaped(false);
+
+            index++;
+        }
+
+        controller.getToolsForMaintenance(targetToolClass -> {
+            for (ItemStack toolStack : stacks) {
+                Item item = toolStack.getItem();
+                for (String stackToolClass : item.getToolClasses(toolStack)) {
+                    if (stackToolClass.equals(targetToolClass)) {
+                        MetaTileEntityMaintenanceHatch.this.setTaped(false);
+                        ToolHelper.damageItemWhenCrafting(toolStack, player);
+                        return true;
+                    }
                 }
             }
-        }
-    }
 
-    @ApiStatus.Internal
-    public void fixMaintenanceProblemsWithToolbelt(@NotNull Predicate<String> toolCheck) {
-        String[] toolsToMatch = new String[6];
-        IMaintenance iMaintenance = (IMaintenance) getController();
-        if (!IMaintenance.getToolsForMaintenance(iMaintenance.getMaintenanceProblems(), toolsToMatch)) {
-            return;
-        }
-
-        for (int index = 0; index < toolsToMatch.length; index++) {
-            String toolToMatch = toolsToMatch[index];
-            if (toolToMatch == null) continue;
-            if (toolCheck.test(toolToMatch)) {
-                iMaintenance.setMaintenanceFixed(index);
-                toolsToMatch[index] = null;
-                setTaped(false);
-            }
-        }
+            return false;
+        });
     }
 
     private static boolean consumeDuctTape(@NotNull ItemStack itemStack, boolean consumeTape) {

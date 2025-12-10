@@ -5,6 +5,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.ComputationRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.mui.GTByteBufAdapters;
 import gregtech.api.mui.drawable.GTObjectDrawable;
 import gregtech.api.recipes.Recipe;
@@ -18,7 +19,6 @@ import gregtech.api.util.TextFormattingUtil;
 import gregtech.api.util.function.ByteSupplier;
 import gregtech.api.util.function.FloatSupplier;
 import gregtech.client.utils.TooltipHelper;
-import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -455,22 +455,22 @@ public class MultiblockUIBuilder {
     }
 
     /**
-     * Adds warning line(s) when the machine has maintenance problems.
-     * <br>
-     * Added if there are any maintenance problems, one line per problem as well as a header. <br>
-     * Will check the config
-     * setting for if maintenance is enabled automatically.
+     * Adds warning line(s) when the machine has maintenance problems. <br>
+     * Added if there are any maintenance problems, one line per problem as well as a header.
+     *
+     * @param maintenanceProblems the maintenance problems to show
+     * @param warning             if {@code true}, will only add lines if there are between {@code 1} and one less than
+     *                            {@link IMaintenance#POSSIBLE_PROBLEMS} problems. If {@code false}, lines will only be
+     *                            added when there are exactly {@link IMaintenance#POSSIBLE_PROBLEMS} problems.
      */
     public MultiblockUIBuilder addMaintenanceProblemLines(byte maintenanceProblems, boolean warning) {
-        if (!isStructureFormed || !ConfigHolder.machines.enableMaintenance) return this;
-        maintenanceProblems = getSyncer().syncByte(maintenanceProblems);
+        if (!isStructureFormed) return this;
+        final byte finalProblems = getSyncer().syncByte(maintenanceProblems);
 
-        if (warning && maintenanceProblems < 0b111111 && maintenanceProblems > 0b000000 ||
-                !warning && maintenanceProblems == 0b000000) {
-            final byte finalProblems = maintenanceProblems;
-            addOperation(richText -> TooltipHelper.addMaintenanceProblems(richText, finalProblems));
-        }
+        if (!warning && finalProblems > 0) return this;
+        if (warning && finalProblems == 0) return this;
 
+        addOperation(richText -> TooltipHelper.addMaintenanceProblems(richText, finalProblems));
         return this;
     }
 

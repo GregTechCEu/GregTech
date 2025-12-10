@@ -59,6 +59,7 @@ import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -70,6 +71,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
@@ -104,6 +106,19 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         ToolStackHandler handler = getHandler(toolbelt);
         if (slot < 0 || slot >= handler.getSlots()) return ItemStack.EMPTY;
         return handler.getStackInSlot(slot);
+    }
+
+    /**
+     * Iterate over non-empty slots of the given toolbelt.
+     */
+    public void iterateSlots(@NotNull ItemStack toolBelt, @NotNull Consumer<@NotNull ItemStack> stackConsumer) {
+        ToolStackHandler handler = getHandler(toolBelt);
+        if (handler == FALLBACK) return;
+        for (int index = 0; index < handler.getSlots(); index++) {
+            ItemStack stack = handler.getStackInSlot(index);
+            if (stack.isEmpty()) continue;
+            stackConsumer.accept(stack);
+        }
     }
 
     @Override
@@ -398,11 +413,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         }
     }
 
-    public boolean damageAgainstMaintenanceProblem(ItemStack stack, @Nullable EntityPlayer entityPlayer,
-                                                   @NotNull String toolClass) {
-        return getHandler(stack).checkMaintenanceAgainstTools(entityPlayer, true, toolClass);
-    }
-
     public boolean supportsIngredient(ItemStack stack, Ingredient ingredient) {
         return getHandler(stack).checkIngredientAgainstTools(ingredient) != -1;
     }
@@ -470,12 +480,13 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                                                     float hitY, float hitZ, @NotNull EnumHand hand) {
         EnumActionResult result = IDyeableItem.super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
         if (result == EnumActionResult.PASS) {
-            ItemStack stack = player.getHeldItem(hand);
-            ToolStackHandler handler = getHandler(stack);
+            ItemStack toolbeltStack = player.getHeldItem(hand);
+            ToolStackHandler handler = getHandler(toolbeltStack);
             if (handler.getSelectedStack().isEmpty() && GTUtility.getMetaTileEntity(world,
                     pos) instanceof MetaTileEntityMaintenanceHatch maintenanceHatch) {
-                maintenanceHatch.fixMaintenanceProblemsWithToolbelt(
-                        toolClass -> damageAgainstMaintenanceProblem(stack, player, toolClass));
+                List<ItemStack> tools = new ObjectArrayList<>();
+                iterateSlots(toolbeltStack, tools::add);
+                maintenanceHatch.fixMaintenanceProblemsWithTools(player, tools);
             }
             return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
         } else return result;
@@ -728,18 +739,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             for (int i = 0; i < getSlots(); i++) {
                 if (tools[i] != null) this.toolClasses.addAll(tools[i].getToolClasses(stacks.get(i)));
             }
-        }
-
-        public boolean checkMaintenanceAgainstTools(@Nullable EntityPlayer entityPlayer, boolean doCraftingDamage,
-                                                    @NotNull String toolClass) {
-            for (int i = 0; i < this.getSlots(); i++) {
-                ItemStack stack = this.getStackInSlot(i);
-                if (ToolHelper.isTool(stack, toolClass)) {
-                    if (doCraftingDamage) ToolHelper.damageItemWhenCrafting(stack, entityPlayer);
-                    return true;
-                }
-            }
-            return false;
         }
 
         public int checkIngredientAgainstTools(Ingredient ingredient) {
