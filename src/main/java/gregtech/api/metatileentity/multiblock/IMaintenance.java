@@ -10,10 +10,10 @@ import net.minecraft.util.SoundEvent;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 public interface IMaintenance {
@@ -42,18 +42,14 @@ public interface IMaintenance {
      */
     byte NO_PROBLEMS = (byte) ((1 << POSSIBLE_PROBLEMS) - 1);
 
-    default Set<String> getToolsForMaintenance() {
+    default Set<Int2ObjectMap.Entry<String>> getToolsForMaintenance() {
         byte problems = getMaintenanceProblems();
         if (problems == NO_PROBLEMS) return Collections.emptySet();
 
-        Set<String> classes = new HashSet<>(POSSIBLE_PROBLEMS);
-        for (int problemIndex = 0; problemIndex < POSSIBLE_PROBLEMS; problemIndex++) {
-            if (((problems >> problemIndex) & 1) == 0) {
-                classes.add(maintenance2tool.get(problemIndex));
-            }
-        }
+        Set<Int2ObjectMap.Entry<String>> entries = new ObjectArraySet<>(maintenance2tool.int2ObjectEntrySet());
+        entries.removeIf(stringEntry -> ((problems >> stringEntry.getIntKey()) & 1) == 1);
 
-        return classes;
+        return entries;
     }
 
     /**

@@ -55,6 +55,7 @@ import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import it.unimi.dsi.fastutil.doubles.DoubleLists;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -269,18 +270,31 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             index++;
         }
 
-        Set<String> classesToMatch = controller.getToolsForMaintenance();
+        Set<Int2ObjectMap.Entry<String>> toolEntries = controller.getToolsForMaintenance();
         for (ItemStack toolStack : stacks) {
-            if (classesToMatch.isEmpty()) return;
+            if (toolEntries.isEmpty()) return;
 
-            Item toolItem = toolStack.getItem();
-            String matchedClass = GTUtility.intersect(toolItem.getToolClasses(toolStack), classesToMatch);
-            if (matchedClass != null) {
-                setTaped(false);
+            Int2ObjectMap.Entry<String> entry = findMatchingClass(toolEntries,
+                    toolStack.getItem().getToolClasses(toolStack));
+            if (entry != null) {
                 ToolHelper.damageItemWhenCrafting(toolStack, player);
-                classesToMatch.remove(matchedClass);
+                controller.setMaintenanceFixed(entry.getIntKey());
+                toolEntries.remove(entry);
+                setTaped(false);
             }
         }
+    }
+
+    @Nullable
+    private static Int2ObjectMap.Entry<String> findMatchingClass(@NotNull Set<Int2ObjectMap.Entry<String>> toolEntries,
+                                                                 @NotNull Set<String> findIn) {
+        for (Int2ObjectMap.Entry<String> entry : toolEntries) {
+            if (findIn.contains(entry.getValue())) {
+                return entry;
+            }
+        }
+
+        return null;
     }
 
     private static boolean consumeDuctTape(@NotNull ItemStack itemStack, boolean consumeTape) {
