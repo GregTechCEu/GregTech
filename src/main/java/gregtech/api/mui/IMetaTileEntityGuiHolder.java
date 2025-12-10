@@ -16,6 +16,8 @@ import gregtech.common.metatileentities.storage.MetaTileEntityQuantumExtender;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumProxy;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.api.value.IStringValue;
@@ -49,6 +51,7 @@ import org.jetbrains.annotations.NotNull;
 public interface IMetaTileEntityGuiHolder extends IGuiHolder<MetaTileEntityGuiData> {
 
     @ApiStatus.NonExtendable
+    @SideOnly(Side.CLIENT)
     @NotNull
     @Override
     default ModularScreen createScreen(MetaTileEntityGuiData data, ModularPanel mainPanel) {
