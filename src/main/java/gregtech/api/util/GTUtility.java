@@ -1109,21 +1109,6 @@ public class GTUtility {
         return (aFinal << 24) | (rFinal << 16) | (gFinal << 8) | bFinal;
     }
 
-    /**
-     * Swaps int[a] with int[b].
-     */
-    public static void swap(int[] swappingArray, int a, int b) {
-        int tmp = swappingArray[a];
-        swappingArray[a] = swappingArray[b];
-        swappingArray[b] = tmp;
-    }
-
-    public static void shuffle(int[] shufflingArray) {
-        for (int index = shufflingArray.length; index > 1; index--) {
-            swap(shufflingArray, index - 1, GTValues.RNG.nextInt(index));
-        }
-    }
-
     public static boolean areFluidStacksEqual(@Nullable FluidStack a, @Nullable FluidStack b) {
         if (a == b) return true;
         if (a == null) return false;
