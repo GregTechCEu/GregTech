@@ -467,6 +467,7 @@ public class MultiblockUIBuilder {
         if (!isStructureFormed) return this;
         final byte finalProblems = getSyncer().syncByte(maintenanceProblems);
 
+        if (finalProblems >= IMaintenance.NO_PROBLEMS) return this;
         if (!warning && finalProblems > 0) return this;
         if (warning && finalProblems == 0) return this;
 
