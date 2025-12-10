@@ -11,7 +11,6 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
-import gregtech.api.mui.sync.SingleActionSyncHandler;
 import gregtech.api.mui.widget.FlappyGreg;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -359,9 +358,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     @Override
     public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
                                          UISettings settings) {
-        SingleActionSyncHandler minigameSync = new SingleActionSyncHandler()
-                .serverAction(this::fixAllProblems);
-        panelSyncManager.syncValue("minigame", 0, minigameSync);
+        panelSyncManager.registerServerSyncedAction("game_finish",
+                packet -> fixMaintenanceProblems(guiData.getPlayer()));
         InteractionSyncHandler maintenanceClickSync = new InteractionSyncHandler()
                 .setOnMousePressed(mouse -> {
                     if (panelSyncManager.isClient()) return;
@@ -381,7 +379,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                         .alignX(0.5f)
                         .top(5 + 9 + 7)
                         .size(150, 45 + 25 + 25)
-                        .onFinish(minigameSync, false))
+                        // TODO: MUI 3.0.6 remove empty packet consumer
+                        .onFinish(() -> panelSyncManager.callSyncedAction("game_finish", buf -> {})))
                 .childIf(!aprilFools, () -> Flow.column()
                         .top(17)
                         .widthRel(1.0f)

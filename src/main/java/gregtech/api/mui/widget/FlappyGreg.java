@@ -2,7 +2,6 @@ package gregtech.api.mui.widget;
 
 import gregtech.api.GTValues;
 import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.mui.sync.SingleActionSyncHandler;
 import gregtech.api.util.Rectangle;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,7 +17,6 @@ import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.sizer.Area;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -47,7 +45,7 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
     protected float gregYSpeed = TERMINAL_VELOCITY;
 
     @Nullable
-    protected SingleActionSyncHandler syncHandler;
+    protected Runnable action;
     @NotNull
     protected GameState gameState = GameState.INIT;
 
@@ -80,24 +78,15 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
         }
     }
 
-    @Override
-    public boolean isValidSyncHandler(SyncHandler syncHandler) {
-        return syncHandler instanceof SingleActionSyncHandler;
-    }
-
-    public FlappyGreg onFinish(@NotNull SingleActionSyncHandler syncHandler, boolean registerSyncHandler) {
-        this.syncHandler = syncHandler;
-        if (registerSyncHandler) {
-            setSyncHandler(syncHandler);
-        }
-
+    public FlappyGreg onFinish(@NotNull Runnable action) {
+        this.action = action;
         return this;
     }
 
     @SideOnly(Side.CLIENT)
     protected void onFinish() {
-        if (syncHandler != null) {
-            syncHandler.notifyServer();
+        if (action != null) {
+            action.run();
         }
     }
 
