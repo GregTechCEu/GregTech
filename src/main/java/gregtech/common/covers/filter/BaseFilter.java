@@ -4,7 +4,6 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.filter.readers.BaseFilterReader;
-
 import gregtech.common.items.behaviors.filter.BaseFilterUIManager;
 
 import net.minecraft.item.ItemStack;

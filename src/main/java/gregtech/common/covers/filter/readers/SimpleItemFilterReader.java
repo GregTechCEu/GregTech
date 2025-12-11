@@ -1,7 +1,6 @@
 package gregtech.common.covers.filter.readers;
 
 import gregtech.api.util.GTUtility;
-
 import gregtech.common.covers.CoverItemVoidingAdvanced;
 import gregtech.common.covers.CoverRoboticArm;
 import gregtech.common.covers.TransferMode;
@@ -153,7 +152,7 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
         return dirtyNotifiable instanceof CoverRoboticArm coverArm &&
                 coverArm.getTransferMode() != TransferMode.TRANSFER_ANY ||
                 dirtyNotifiable instanceof CoverItemVoidingAdvanced coverItem &&
-                coverItem.getVoidingMode() != VoidingMode.VOID_ANY;
+                        coverItem.getVoidingMode() != VoidingMode.VOID_ANY;
     }
 
     public int getStackCountInSlot(int slot) {

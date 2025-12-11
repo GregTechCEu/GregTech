@@ -1,24 +1,12 @@
 package gregtech.common.items.behaviors.filter;
 
-import com.cleanroommc.modularui.api.IPanelHandler;
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
-import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widget.Widget;
-
-import com.cleanroommc.modularui.widgets.CycleButtonWidget;
-
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.items.gui.ItemUIFactory;
-import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
-
 import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.readers.BaseFilterReader;
 
@@ -30,14 +18,21 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
+import com.cleanroommc.modularui.api.IPanelHandler;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Optional;
 
 public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFactory {
 
@@ -58,7 +53,8 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
         return buildUI(guiData.getUsedItemStack(), guiData, guiSyncManager, settings);
     }
 
-    public ModularPanel buildUI(ItemStack stack, HandGuiData guiData, PanelSyncManager syncManager, UISettings settings) {
+    public ModularPanel buildUI(ItemStack stack, HandGuiData guiData, PanelSyncManager syncManager,
+                                UISettings settings) {
         return createBasePanel(stack)
                 .child(CoverWithUI.createTitleRow(stack))
                 .child(createWidgets(stack, syncManager)
@@ -69,14 +65,15 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
 
     /**
      * Called when opening the filter panel from the hand
+     * 
      * @param stack filter stack
      * @return the sized panel
      */
     // panel when opening ui in hand
     protected ModularPanel createBasePanel(ItemStack stack) {
         return GTGuis.createPanel(stack, 176, 166)
-//                .child(CoverWithUI.createTitleRow(stack))
-                ;
+        // .child(CoverWithUI.createTitleRow(stack))
+        ;
     }
 
     @Override
@@ -96,8 +93,8 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
             return (PanelSyncHandler) syncManager.panel(key,
                     (psm, $) -> createPopupPanel(stack, psm, key)
                             .child(CoverWithUI.createTitleRow(stack))
-                            .child(createWidgets(stack, syncManager))
-                    , true);
+                            .child(createWidgets(stack, syncManager)),
+                    true);
         });
     }
 

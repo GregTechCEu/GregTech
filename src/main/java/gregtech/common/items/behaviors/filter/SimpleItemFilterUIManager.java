@@ -1,48 +1,34 @@
 package gregtech.common.items.behaviors.filter;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.CycleButtonWidget;
-import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.cleanroommc.modularui.widgets.slot.PhantomItemSlot;
-import com.cleanroommc.modularui.widgets.slot.SlotGroup;
-
-import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.filter.BaseFilter;
-
-import com.cleanroommc.modularui.factory.HandGuiData;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.UISettings;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-
 import gregtech.common.covers.filter.readers.SimpleItemFilterReader;
 
 import net.minecraft.item.ItemStack;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.slot.PhantomItemSlot;
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import org.jetbrains.annotations.NotNull;
 
 public class SimpleItemFilterUIManager extends BaseFilterUIManager {
 
-//    @Override
-//    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-//        return createPanel(guiData.getUsedItemStack(), guiSyncManager);
-//    }
-
-//    @Override
-//    public @NotNull ModularPanel createPopupPanel(ItemStack stack, PanelSyncManager syncManager, String panelName) {
-//        return super.createPopupPanel(stack, syncManager, panelName)
-//        return GTGuis.createPopupPanel(panelName, 98, 81, false)
-//                .child(CoverWithUI.createTitleRow(stack))
-//                .child(createWidgets(stack, syncManager).top(22).left(4))
-                ;
-//    }
+    @Override
+    public @NotNull ModularPanel createPopupPanel(ItemStack stack, PanelSyncManager syncManager, String panelName) {
+        return super.createPopupPanel(stack, syncManager, panelName)
+                .padding(4);
+    }
 
     @Override
     public @NotNull ModularPanel createPanel(ItemStack stack, PanelSyncManager syncManager) {
@@ -52,7 +38,8 @@ public class SimpleItemFilterUIManager extends BaseFilterUIManager {
     @SuppressWarnings("UnstableApiUsage")
     @Override
     public @NotNull Widget<?> createWidgets(ItemStack stack, PanelSyncManager syncManager) {
-        SimpleItemFilterReader filterReader = (SimpleItemFilterReader) BaseFilter.getFilterFromStack(stack).getFilterReader();
+        SimpleItemFilterReader filterReader = (SimpleItemFilterReader) BaseFilter.getFilterFromStack(stack)
+                .getFilterReader();
         SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
         var ignoreDamage = new BooleanSyncValue(filterReader::isIgnoreDamage, filterReader::setIgnoreDamage);
         var ignoreNBT = new BooleanSyncValue(filterReader::isIgnoreNBT, filterReader::setIgnoreNBT);

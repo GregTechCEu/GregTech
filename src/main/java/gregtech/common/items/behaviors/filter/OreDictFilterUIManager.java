@@ -1,28 +1,9 @@
 package gregtech.common.items.behaviors.filter;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.drawable.UITexture;
-import com.cleanroommc.modularui.screen.RichTooltip;
-import com.cleanroommc.modularui.utils.BooleanConsumer;
-import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.CycleButtonWidget;
-import com.cleanroommc.modularui.widgets.layout.Flow;
-
-import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.BaseFilter;
-
-import com.cleanroommc.modularui.factory.HandGuiData;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.UISettings;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-
 import gregtech.common.covers.filter.OreDictionaryItemFilter;
 import gregtech.common.covers.filter.readers.OreDictFilterReader;
 import gregtech.common.mui.widget.HighlightedTextField;
@@ -32,20 +13,25 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.UITexture;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.utils.BooleanConsumer;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OreDictFilterUIManager extends BaseFilterUIManager {
-
-//    @Override
-//    public ModularPanel buildUI(ItemStack stack, HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-//        var filter = BaseFilter.getFilterFromStack(stack);
-//        return createBasePanel(filter.getContainerStack()).height(160)
-//                .child(filter.createWidgets(guiSyncManager).top(22).margin(7, 0))
-//                .child(SlotGroupWidget.playerInventory(true));
-//    }
 
     @Override
     protected ModularPanel createBasePanel(ItemStack stack) {
@@ -57,11 +43,7 @@ public class OreDictFilterUIManager extends BaseFilterUIManager {
     public @NotNull ModularPanel createPopupPanel(ItemStack stack, PanelSyncManager syncManager, String panelName) {
         return super.createPopupPanel(stack, syncManager, panelName)
                 .size(188, 76)
-//        return GTGuis.createPopupPanel(panelName, 188, 76, false)
-                .padding(7)
-//                .child(CoverWithUI.createTitleRow(stack))
-//                .child(createWidgets(stack, syncManager).top(22))
-                ;
+                .padding(7);
     }
 
     @Override
@@ -118,7 +100,8 @@ public class OreDictFilterUIManager extends BaseFilterUIManager {
                                 .child(new Widget<>()
                                         .size(8).bottom(0)
                                         .onUpdateListener(widget -> getStatusIcon(filterReader.getResult(), widget))
-                                        .tooltipBuilder(richTooltip -> createStatusTooltip(filterReader.getResult(), richTooltip))
+                                        .tooltipBuilder(richTooltip -> createStatusTooltip(filterReader.getResult(),
+                                                richTooltip))
                                         .tooltip(tooltip -> tooltip.setAutoUpdate(true))))
                         .child(SlotGroupWidget.builder()
                                 .row("XXXXX")
