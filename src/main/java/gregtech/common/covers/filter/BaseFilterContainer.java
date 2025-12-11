@@ -230,11 +230,11 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         AtomicReference<IPanelHandler> filterPanel = new AtomicReference<>();
         AtomicReference<ItemStack> oldStack = new AtomicReference<>(getFilterStack());
         AtomicInteger counter = new AtomicInteger();
-        if (hasFilter()) filterPanel.set(getFilter().createPanelHandler(manager, counter.getAndIncrement()));
+        if (hasFilter()) filterPanel.set(getFilter().getUI().createPanelHandler(getFilterStack(), manager, counter.getAndIncrement()));
         manager.registerSyncedAction("update_filter_panel", packet -> {
             if (hasFilter()) {
                 // make new panel handler only when we have a filter
-                filterPanel.set(getFilter().createPanelHandler(manager, counter.getAndIncrement()));
+                filterPanel.set(getFilter().getUI().createPanelHandler(getFilterStack(), manager, counter.getAndIncrement()));
             }
         });
         ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingItemDamageCount();

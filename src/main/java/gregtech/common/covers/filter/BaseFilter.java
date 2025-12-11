@@ -71,12 +71,13 @@ public abstract class BaseFilter implements IItemComponent {
 
     public abstract void updateFilterReader(ItemStack stack);
 
-    public Optional<BaseFilterUIManager> getUI() {
+    public BaseFilterUIManager getUI() {
         if (getContainerStack().getItem() instanceof MetaItem<?>metaItem) {
             return Optional.ofNullable(metaItem.getItem(getContainerStack()))
-                    .map(o -> (BaseFilterUIManager) o.getUIManager());
+                    .map(o -> (BaseFilterUIManager) o.getUIManager())
+                    .orElseThrow(IllegalStateException::new);
         }
-        return Optional.empty();
+        throw new IllegalStateException();
     }
 
     public final ItemStack getContainerStack() {

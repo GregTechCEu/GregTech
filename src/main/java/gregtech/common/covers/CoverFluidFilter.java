@@ -113,10 +113,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     }
 
     public @NotNull BaseFilter getFilter() {
-        var filter = getFilterContainer().getFilter();
-        if (filter == null) return BaseFilter.ERROR_FILTER;
-
-        return filter;
+        return getFilterContainer().getFilter();
     }
 
     public @NotNull BaseFilterContainer getFilterContainer() {
@@ -148,9 +145,9 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         guiSyncManager.syncValue("filtering_mode", filteringMode);
         this.fluidFilterContainer.setMaxTransferSize(1);
 
-        return getFilter().createPanel(guiSyncManager)
+        return getFilter().getUI().createPanel(getPickItem(), guiSyncManager)
                 .size(176, 212).padding(7)
-                .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()))
+                .child(CoverWithUI.createTitleRow(getPickItem()))
                 .child(Flow.column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new EnumRowBuilder<>(FluidFilterMode.class)
                                 .value(filteringMode)

@@ -1,8 +1,10 @@
 package gregtech.common.items.behaviors.filter;
 
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 
@@ -58,6 +60,7 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
 
     public ModularPanel buildUI(ItemStack stack, HandGuiData guiData, PanelSyncManager syncManager, UISettings settings) {
         return createBasePanel(stack)
+                .child(CoverWithUI.createTitleRow(stack))
                 .child(createWidgets(stack, syncManager)
                         .marginTop(22)
                         .marginLeft(7))
@@ -84,6 +87,18 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
         lines.add(I18n.format("behaviour.filter_ui_manager"));
+    }
+
+    public IPanelHandler createPanelHandler(ItemStack stack, PanelSyncManager syncManager, int id) {
+        String translationKey = stack.getTranslationKey();
+        return syncManager.getOrCreateSyncHandler(translationKey, id, PanelSyncHandler.class, () -> {
+            String key = PanelSyncManager.makeSyncKey(translationKey, id);
+            return (PanelSyncHandler) syncManager.panel(key,
+                    (psm, $) -> createPopupPanel(stack, psm, key)
+                            .child(CoverWithUI.createTitleRow(stack))
+                            .child(createWidgets(stack, syncManager))
+                    , true);
+        });
     }
 
     // panel when opening ui in another ui
