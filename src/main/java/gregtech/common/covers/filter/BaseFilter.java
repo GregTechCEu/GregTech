@@ -1,6 +1,10 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.api.IPanelHandler;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
+
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.IDirtyNotifiable;
@@ -22,7 +26,7 @@ import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BaseFilter implements IFilter {
+public abstract class BaseFilter implements IItemComponent {
 
     public static final BaseFilter ERROR_FILTER = new BaseFilter() {
 
@@ -39,24 +43,23 @@ public abstract class BaseFilter implements IFilter {
                     .child(createWidgets(syncManager));
         }
 
-        @Override
         public @NotNull ModularPanel createPanel(PanelSyncManager syncManager) {
             return GTGuis.createPanel("error", 100, 100)
                     .child(createWidgets(syncManager));
         }
 
-        @Override
         public @NotNull Widget<?> createWidgets(PanelSyncManager syncManager) {
             return IKey.lang("INVALID FILTER").alignment(Alignment.Center).asWidget();
         }
 
         @Override
         public FilterType getType() {
-            return FilterType.ITEM;
+            return FilterType.ERROR;
         }
     };
     protected IDirtyNotifiable dirtyNotifiable;
 
+    // we need the original stack
     public abstract BaseFilterReader getFilterReader();
 
     public final ItemStack getContainerStack() {
@@ -66,9 +69,9 @@ public abstract class BaseFilter implements IFilter {
     public static @NotNull BaseFilter getFilterFromStack(ItemStack stack) {
         if (stack.getItem() instanceof MetaItem<?>metaItem) {
             var metaValueItem = metaItem.getItem(stack);
-            var factory = metaValueItem == null ? null : metaValueItem.getFilterFactory();
+            var factory = metaValueItem == null ? null : metaValueItem.getFilterBehavior();
             if (factory != null)
-                return factory.create(stack);
+                return factory;
         }
         return ERROR_FILTER;
     }
@@ -78,7 +81,6 @@ public abstract class BaseFilter implements IFilter {
         markDirty();
     }
 
-    @Override
     public final MatchResult match(Object toMatch) {
         if (toMatch instanceof ItemStack stack) {
             return matchItem(stack);
@@ -96,7 +98,6 @@ public abstract class BaseFilter implements IFilter {
         return MatchResult.NONE;
     }
 
-    @Override
     public final boolean test(Object toTest) {
         boolean b = false;
         if (toTest instanceof ItemStack stack) {
@@ -115,7 +116,6 @@ public abstract class BaseFilter implements IFilter {
         return false;
     }
 
-    @Override
     public final int getTransferLimit(Object o, int transferSize) {
         if (o instanceof ItemStack stack) {
             return getTransferLimit(stack, transferSize);
@@ -180,4 +180,34 @@ public abstract class BaseFilter implements IFilter {
     public void writeInitialSyncData(PacketBuffer packetBuffer) {}
 
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {}
+
+    public abstract @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager, String panelName);
+
+    public IPanelHandler createPanelHandler(PanelSyncManager syncManager, int id) {
+        String translationKey = getContainerStack().getTranslationKey();
+        return syncManager.getOrCreateSyncHandler(translationKey, id, PanelSyncHandler.class, () -> {
+            String key = PanelSyncManager.makeSyncKey(translationKey, id);
+            return (PanelSyncHandler) syncManager.panel(key, (psm, $) -> createPopupPanel(psm, key), true);
+        });
+    }
+
+    public abstract FilterType getType();
+
+    public boolean isItem() {
+        return getType() == FilterType.ITEM;
+    }
+
+    public boolean isFluid() {
+        return getType() == FilterType.FLUID;
+    }
+
+    public boolean isError() {
+        return getType() == FilterType.ERROR;
+    }
+
+    public enum FilterType {
+        ITEM,
+        FLUID,
+        ERROR
+    }
 }
