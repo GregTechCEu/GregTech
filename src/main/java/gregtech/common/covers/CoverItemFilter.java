@@ -111,10 +111,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     }
 
     public @NotNull BaseFilter getFilter() {
-        var filter = getFilterContainer().getFilter();
-        if (filter == null) return BaseFilter.ERROR_FILTER;
-
-        return filter;
+        return getFilterContainer().getFilter();
     }
 
     public @NotNull BaseFilterContainer getFilterContainer() {
@@ -150,9 +147,10 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
         guiSyncManager.syncValue("filtering_mode", filteringMode);
 
-        return getFilter().createPanel(guiSyncManager)
+        return getFilter().getUI()
+                .createPanel(getPickItem(), guiSyncManager)
                 .size(176, 212).padding(7)
-                .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()).left(4))
+                .child(CoverWithUI.createTitleRow(getPickItem()).left(4))
                 .child(Flow.column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new EnumRowBuilder<>(ItemFilterMode.class)
                                 .value(filteringMode)
@@ -178,7 +176,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                                         .alignX(1f)))
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
-                        .child(getFilter().createWidgets(guiSyncManager).left(0)))
+                        .child(getFilter().getUI().createWidgets(getPickItem(), guiSyncManager).left(0)))
                 .child(SlotGroupWidget.playerInventory(false).bottom(7).left(7));
     }
 

@@ -2,6 +2,7 @@ package gregtech.common.covers.filter.readers;
 
 import gregtech.api.util.IDirtyNotifiable;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -11,27 +12,24 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.NotNull;
 
-public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCompound> {
+public class BaseFilterReader implements INBTSerializable<NBTTagCompound> {
 
-    protected ItemStack container;
-    private IDirtyNotifiable dirtyNotifiable;
+    protected @NotNull ItemStack container = new ItemStack((Item) null); // do not touch EMPTY directly
+    protected IDirtyNotifiable dirtyNotifiable;
     private final int size;
     private int maxTransferRate = 1;
     protected static final String BLACKLIST = "IsBlacklist";
     protected static final String FILTER_CONTENTS = "FilterSlots";
     protected static final String KEY_LEGACY_FILTER = "Filter";
 
-    public BaseFilterReader(ItemStack container, int slots) {
-        this.container = container;
-        this.size = slots;
+    public BaseFilterReader(int size) {
+        this.size = size;
     }
 
-    @Override
-    public ItemStack getContainer() {
+    public @NotNull ItemStack getContainer() {
         return this.container;
     }
 
-    @Override
     public void readStack(@NotNull ItemStack stack) {
         this.container = stack;
     }
@@ -57,7 +55,6 @@ public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCo
         return nbt;
     }
 
-    @Override
     public int getSize() {
         return this.size;
     }
@@ -101,7 +98,6 @@ public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCo
         return isBlacklistFilter() ? 1 : this.maxTransferRate;
     }
 
-    @Override
     public boolean validateSlotIndex(int slot) {
         return slot >= 0 && slot < getSize();
     }
@@ -115,10 +111,19 @@ public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCo
     public void deserializeNBT(NBTTagCompound nbt) {
         if (nbt.hasKey(BLACKLIST))
             setBlacklistFilter(nbt.getBoolean(BLACKLIST));
+        markDirty();
     }
 
     public void handleLegacyNBT(NBTTagCompound tag) {
         if (tag.hasKey(BLACKLIST))
             setBlacklistFilter(tag.getBoolean(BLACKLIST));
+    }
+
+    @NotNull
+    public NBTTagCompound getTagAt(int i) {
+        if (validateSlotIndex(i)) {
+            return getInventoryNbt().getCompoundTagAt(i);
+        }
+        return new NBTTagCompound();
     }
 }

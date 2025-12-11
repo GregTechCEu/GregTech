@@ -33,7 +33,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
     private int maxTransferSize = 1;
     private int transferSize;
-    private @Nullable BaseFilter currentFilter;
+    private @NotNull BaseFilter currentFilter = BaseFilter.ERROR_FILTER;
     private @Nullable Runnable onFilterInstanceChange;
     private final IDirtyNotifiable dirtyNotifiable;
 
@@ -85,7 +85,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         if (ItemStack.areItemStacksEqual(stack, getFilterStack()))
             return;
 
-        setFilter(BaseFilter.getFilterFromStack(stack));
+        setFilter(stack);
 
         super.setStackInSlot(slot, stack);
     }
@@ -103,7 +103,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (!isItemValid(stack)) return stack;
         var remainder = super.insertItem(slot, stack, simulate);
-        if (!simulate) setFilter(BaseFilter.getFilterFromStack(stack));
+        if (!simulate) setFilter(stack);
         return remainder;
     }
 
@@ -111,7 +111,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
         var extracted = super.extractItem(slot, amount, simulate);
         if (!extracted.isEmpty()) {
-            setFilter(null);
+            clearFilter();
         }
         return extracted;
     }
@@ -132,15 +132,26 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     public final boolean hasFilter() {
-        return currentFilter != null;
+        return !currentFilter.isError();
     }
 
-    public final @Nullable BaseFilter getFilter() {
+    public final @NotNull BaseFilter getFilter() {
         return currentFilter;
     }
 
-    public final void setFilter(@Nullable BaseFilter newFilter) {
-        this.currentFilter = BaseFilter.ERROR_FILTER == newFilter ? null : newFilter;
+    public final void clearFilter() {
+        setFilter(BaseFilter.ERROR_FILTER);
+    }
+
+    public final void setFilter(ItemStack stack) {
+        setFilter(BaseFilter.getFilterFromStack(stack));
+        if (hasFilter()) {
+            getFilter().updateFilterReader(stack);
+        }
+    }
+
+    public final void setFilter(@NotNull BaseFilter newFilter) {
+        this.currentFilter = newFilter;
         if (hasFilter()) {
             this.currentFilter.setDirtyNotifiable(this.dirtyNotifiable);
             this.currentFilter.setMaxTransferSize(this.maxTransferSize);
@@ -219,11 +230,15 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         AtomicReference<IPanelHandler> filterPanel = new AtomicReference<>();
         AtomicReference<ItemStack> oldStack = new AtomicReference<>(getFilterStack());
         AtomicInteger counter = new AtomicInteger();
-        if (hasFilter()) filterPanel.set(getFilter().createPanelHandler(manager, counter.getAndIncrement()));
+        if (hasFilter()) {
+            filterPanel.set(getFilter().getUI()
+                    .createPanelHandler(getFilterStack(), manager, counter.getAndIncrement()));
+        }
         manager.registerSyncedAction("update_filter_panel", packet -> {
             if (hasFilter()) {
                 // make new panel handler only when we have a filter
-                filterPanel.set(getFilter().createPanelHandler(manager, counter.getAndIncrement()));
+                filterPanel.set(getFilter().getUI()
+                        .createPanelHandler(getFilterStack(), manager, counter.getAndIncrement()));
             }
         });
         ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingItemDamageCount();
