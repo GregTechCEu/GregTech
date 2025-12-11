@@ -22,8 +22,8 @@ import java.util.Collection;
  * Register it via {@link GregTechGuiScreen#registerRecipeTransferHandler(String, IRecipeTransferReceiver)} or
  * {@link GregTechGuiScreen#registerRecipeTransferHandler(String, IRecipeTransferReceiver, int)} if you want to
  * prioritize checking a certain handler first. <br/>
- * If you're implementing this on a {@link SyncHandler}, it's recommended to extend {@link RecipeTransferSyncHandler} so
- * registering and unregistering from {@link GregTechGuiScreen} is done for you.
+ * If you're implementing this on a {@link SyncHandler}, it's recommended to extend {@link RecipeTransferSyncHandler}
+ * instead as registering and unregistering from {@link GregTechGuiScreen} is done for you.
  */
 public interface IRecipeTransferReceiver {
 
@@ -36,8 +36,8 @@ public interface IRecipeTransferReceiver {
      * - {@link IRecipeTransferHandlerHelper#createUserErrorWithTooltip(String)}: the same as above, but also display a
      * message when hovering over the + button. <br/>
      * - {@link IRecipeTransferHandlerHelper#createUserErrorForSlots(String, Collection)}: the same as above, but
-     * additionally highlight certain slots in the recipe to, for example, mark missing ingredients. Important: will
-     * throw {@link IllegalArgumentException} if the supplied {@link Collection} is empty!
+     * additionally highlight certain slots in the recipe to, for example, mark missing ingredients. <b>Important: will
+     * throw {@link IllegalArgumentException} if the supplied {@link Collection} is empty!</b>
      * 
      * @param recipeLayout the recipe layout that contains the recipe category, and the item and fluid stacks.
      * @param maxTransfer  if the receiver should try to move as many ingredients as possible to the crafting slots, ie
