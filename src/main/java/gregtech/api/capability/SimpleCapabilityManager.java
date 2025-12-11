@@ -2,6 +2,7 @@ package gregtech.api.capability;
 
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.cover.CoverHolder;
+import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.worldgen.generator.GTWorldGenCapability;
 import gregtech.common.metatileentities.converter.ConverterTrait;
@@ -37,6 +38,7 @@ public class SimpleCapabilityManager {
     public static void init() {
         registerCapabilityWithNoDefault(IEnergyContainer.class);
         registerCapabilityWithNoDefault(IElectricItem.class);
+        registerCapabilityWithNoDefault(ItemGTToolbelt.ToolStackHandler.class);
         registerCapabilityWithNoDefault(IWorkable.class);
         registerCapabilityWithNoDefault(CoverHolder.class);
         registerCapabilityWithNoDefault(IControllable.class);

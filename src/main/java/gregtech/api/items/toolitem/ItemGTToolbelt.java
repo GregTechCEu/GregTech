@@ -1,6 +1,7 @@
 package gregtech.api.items.toolitem;
 
 import gregtech.api.GregTechAPI;
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.items.IDyeableItem;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
@@ -141,8 +142,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                                                 (newItem, onlyAmountChanged, client, init) -> handler
                                                         .onContentsChanged(index)))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
-                                .debugName("slot_" + index))
-                        .debugName("toolbelt_inventory"))
+                                .name("slot_" + index))
+                        .name("toolbelt_inventory"))
                 .bindPlayerInventory();
     }
 
@@ -265,7 +266,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     @Override
-    public int getMetadata(ItemStack stack) {
+    public int getMetadata(@NotNull ItemStack stack) {
         ItemStack selected = getHandler(stack).getSelectedStack();
         if (!selected.isEmpty()) {
             return selected.getItem().getMetadata(selected);
@@ -420,7 +421,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     private ToolStackHandler getHandler(ItemStack stack) {
-        IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        IItemHandler handler = stack.getCapability(GregtechCapabilities.CAPABILITY_TOOLBELT_HANDLER, null);
         if (handler instanceof ToolStackHandler h) return h;
         else return FALLBACK;
     }
@@ -441,8 +442,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @SideOnly(Side.CLIENT)
     public void changeSelectedToolHotkey(int slot, ItemStack stack) {
         ToolStackHandler handler = getHandler(stack);
-        if (slot < 0 || slot >= handler.getSlots()) handler.selectedSlot = -1;
-        else handler.selectedSlot = slot;
+        handler.setSelectedSlot(slot);
         PacketToolbeltSelectionChange.toServer(handler.selectedSlot);
     }
 
@@ -569,14 +569,25 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         @Override
         public boolean hasCapability(@NotNull Capability<?> capability, EnumFacing facing) {
-            return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+            if (capability == GregtechCapabilities.CAPABILITY_TOOLBELT_HANDLER)
+                return true;
+            ItemStack selected = getHandler().getSelectedStack();
+            if (!selected.isEmpty()) {
+                return selected.hasCapability(capability, facing);
+            } else return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
         }
 
         @Override
         public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing facing) {
-            if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            if (capability == GregtechCapabilities.CAPABILITY_TOOLBELT_HANDLER)
+                return GregtechCapabilities.CAPABILITY_TOOLBELT_HANDLER.cast(this.getHandler());
+            ItemStack selected = getHandler().getSelectedStack();
+            if (!selected.isEmpty()) {
+                return selected.getCapability(capability, facing);
+            } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+                // if nothing is selected, expose the handler under the item handler capability
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.getHandler());
-            else return null;
+            } else return null;
         }
 
         @Override
@@ -616,7 +627,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     protected static final ToolStackHandler FALLBACK = new ToolStackHandler(0);
 
-    protected static class ToolStackHandler extends ItemStackHandler {
+    public static class ToolStackHandler extends ItemStackHandler {
 
         private static final Set<String> EMPTY = ImmutableSet.of();
 
@@ -646,7 +657,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         }
 
         public void setSelectedSlot(int selectedSlot) {
-            this.selectedSlot = Math.min(getSlots() - 1, Math.max(selectedSlot, -1));
+            if (selectedSlot >= getSlots() || selectedSlot < 0) this.selectedSlot = -1;
+            else this.selectedSlot = selectedSlot;
         }
 
         public void enablePassthrough() {
