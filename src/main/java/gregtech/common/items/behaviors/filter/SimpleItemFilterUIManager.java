@@ -13,12 +13,7 @@ import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.TextFormattingUtil;
-import gregtech.common.covers.CoverItemVoidingAdvanced;
-import gregtech.common.covers.CoverRoboticArm;
-import gregtech.common.covers.TransferMode;
-import gregtech.common.covers.VoidingMode;
 import gregtech.common.covers.filter.BaseFilter;
 
 import com.cleanroommc.modularui.factory.HandGuiData;
@@ -33,7 +28,7 @@ import net.minecraft.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
 
-public class SimpleFilterUIManager extends BaseFilterUIManager {
+public class SimpleItemFilterUIManager extends BaseFilterUIManager {
 
     @Override
     public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
