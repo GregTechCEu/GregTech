@@ -1,8 +1,10 @@
 package gregtech.api.block.machines;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
@@ -10,6 +12,8 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.creativetab.GTCreativeTabs;
+
+import gregtech.core.CoreModule;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -39,6 +43,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class MachineItemBlock extends ItemBlock {
@@ -88,10 +93,17 @@ public class MachineItemBlock extends ItemBlock {
                                 @NotNull BlockPos pos, @NotNull EnumFacing side, float hitX, float hitY, float hitZ,
                                 IBlockState newState) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
+        if (!CoreModule.gtTileMap.containsKey(pos.toLong())) {
+            CoreModule.gtTileMap.put(pos.toLong(), metaTileEntity.getHolder());
+            getBlock().testMessage.set(metaTileEntity.metaTileEntityId.toString());
+        }
         // prevent rendering glitch before meta tile entity sync to client, but after block placement
         // set opaque property on the placing on block, instead during set of meta tile entity
+        CoreModule.placingPos.set(pos);
         boolean superVal = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ,
                 newState.withProperty(BlockMachine.OPAQUE, metaTileEntity == null || metaTileEntity.isOpaqueCube()));
+        CoreModule.placingPos.remove();
+        getBlock().testMessage.remove();
         if (superVal && !world.isRemote) {
             BlockPos possiblePipe = pos.offset(side.getOpposite());
             Block block = world.getBlockState(possiblePipe).getBlock();

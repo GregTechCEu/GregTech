@@ -15,11 +15,13 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.pipenet.IBlockAppearance;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
+import gregtech.core.CoreModule;
 import gregtech.integration.ctm.IFacadeWrapper;
 
 import net.minecraft.block.Block;
@@ -92,6 +94,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     // provides enough information to get and read the MetaTileEntity data.
     private static final IUnlistedProperty<String> HARVEST_TOOL = new UnlistedStringProperty("harvest_tool");
     private static final IUnlistedProperty<Integer> HARVEST_LEVEL = new UnlistedIntegerProperty("harvest_level");
+    public final ThreadLocal<String> testMessage = new ThreadLocal<>();
 
     public BlockMachine() {
         super(Material.IRON);
@@ -475,7 +478,11 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Nullable
     @Override
     public TileEntity createNewTileEntity(@Nullable World worldIn, int meta) {
+        if (testMessage.get() != null) {
+            GTLog.logger.warn("mte to make {} at pos {}", testMessage.get(), CoreModule.placingPos.get());
+        }
         return new MetaTileEntityHolder();
+        // this also gets called in chunk data load? specifically getLightOpacity
     }
 
     @NotNull
@@ -518,6 +525,13 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public int getLightOpacity(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos) {
         // since it is called on neighbor blocks
+        if (CoreModule.gtTileMap.containsKey(pos.toLong())) {
+            IGregTechTileEntity tile = CoreModule.gtTileMap.get(pos.toLong());
+            if (tile != null && tile.getMetaTileEntity() != null) {
+                GTLog.logger.warn("getting light opacity at {} for {}!", pos, tile.getMetaTileEntity().metaTileEntityId);
+                return tile.getMetaTileEntity().getLightOpacity();
+            }
+        }
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         return metaTileEntity == null ? 255 : metaTileEntity.getLightOpacity();
     }

@@ -11,6 +11,7 @@ import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.registry.MTEManager;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
@@ -78,10 +79,18 @@ import gregtech.integration.bq.BQuDataFixer;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -92,12 +101,15 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static gregtech.api.GregTechAPI.*;
@@ -124,6 +136,11 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.materialManager = MaterialRegistryManager.getInstance();
 
         OreGlob.setCompiler((expr, ignoreCase) -> new OreGlobParser(expr, ignoreCase).compile());
+    }
+
+    @Override
+    public @NotNull List<Class<?>> getEventBusSubscribers() {
+        return Collections.singletonList(CoreModule.class);
     }
 
     @NotNull
@@ -355,5 +372,32 @@ public class CoreModule implements IGregTechModule {
     public void serverStopped(FMLServerStoppedEvent event) {
         VirtualEnderRegistry.clearMaps();
         CapesRegistry.clearMaps();
+    }
+
+    public static Long2ObjectMap<IGregTechTileEntity> gtTileMap = new Long2ObjectOpenHashMap<>();
+    public static ThreadLocal<BlockPos> placingPos = new ThreadLocal<>();
+
+    @SubscribeEvent
+    public static void chunkLoad(ChunkEvent.Load event) {
+        Map<BlockPos, TileEntity> map = event.getChunk().getTileEntityMap();
+        for (BlockPos pos : map.keySet()) {
+            if (map.get(pos) instanceof IGregTechTileEntity igtte) {
+                gtTileMap.put(pos.toLong(), igtte);
+                if (igtte.getMetaTileEntity() != null) {
+                    logger.warn("stored mte {} at {}", igtte.getMetaTileEntity().metaTileEntityId, pos);
+                    // need to initialize mte now ? idk
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void chunkUnload(ChunkEvent.Unload event) {
+        Map<BlockPos, TileEntity> map = event.getChunk().getTileEntityMap();
+        for (BlockPos pos : map.keySet()) {
+            IGregTechTileEntity removed = gtTileMap.remove(pos.toLong());
+            if (removed != null && removed.getMetaTileEntity() != null)
+                logger.warn("removed mte {} at {}", removed.getMetaTileEntity().metaTileEntityId, pos);
+        }
     }
 }
