@@ -111,6 +111,7 @@ public class BaseFilterReader implements INBTSerializable<NBTTagCompound> {
     public void deserializeNBT(NBTTagCompound nbt) {
         if (nbt.hasKey(BLACKLIST))
             setBlacklistFilter(nbt.getBoolean(BLACKLIST));
+        markDirty();
     }
 
     public void handleLegacyNBT(NBTTagCompound tag) {

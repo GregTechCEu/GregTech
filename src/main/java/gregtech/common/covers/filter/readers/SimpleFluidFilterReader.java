@@ -52,6 +52,7 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
         for (int i = 0; i < getSize(); i++) {
             getFluidTank(i).setFluidAmount(amount);
         }
+        markDirty();
     }
 
     @Override

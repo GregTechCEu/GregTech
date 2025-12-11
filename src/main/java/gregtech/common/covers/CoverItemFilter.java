@@ -176,7 +176,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                                         .alignX(1f)))
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
-                        .child(getFilter().createWidgets(guiSyncManager).left(0)))
+                        .child(getFilter().getUI().createWidgets(getPickItem(), guiSyncManager).left(0)))
                 .child(SlotGroupWidget.playerInventory(false).bottom(7).left(7));
     }
 

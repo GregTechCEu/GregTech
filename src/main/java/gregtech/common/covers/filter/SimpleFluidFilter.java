@@ -1,19 +1,9 @@
 package gregtech.common.covers.filter;
 
-import gregtech.api.cover.CoverWithUI;
-import gregtech.api.mui.GTGuis;
 import gregtech.common.covers.filter.readers.SimpleFluidFilterReader;
-import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.layout.Flow;
-import org.jetbrains.annotations.NotNull;
 
 public class SimpleFluidFilter extends BaseFilter {
 
@@ -37,36 +27,6 @@ public class SimpleFluidFilter extends BaseFilter {
 
     public void configureFilterTanks(int amount) {
         this.filterReader.setFluidAmounts(amount);
-        this.markDirty();
-    }
-
-    @Override
-    public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager, String panelName) {
-        return GTGuis.createPopupPanel(panelName, 98, 81, false)
-                .padding(4)
-                .child(CoverWithUI.createTitleRow(getContainerStack()))
-                .child(createWidgets(syncManager).top(22));
-    }
-
-    @Override
-    public @NotNull ModularPanel createPanel(PanelSyncManager syncManager) {
-        return GTGuis.createPanel(getContainerStack(), 176, 168);
-    }
-
-    @Override
-    public @NotNull Widget<?> createWidgets(PanelSyncManager syncManager) {
-        return Flow.row().coverChildrenHeight().widthRel(1f)
-                .child(SlotGroupWidget.builder()
-                        .matrix("FFF",
-                                "FFF",
-                                "FFF")
-                        .key('F', i -> new GTFluidSlot()
-                                .syncHandler(GTFluidSlot.sync(filterReader.getFluidTank(i))
-                                        .phantom(true)
-                                        .showAmountOnSlot(getFilterReader()::shouldShowAmount)
-                                        .showAmountInTooltip(getFilterReader()::shouldShowAmount)))
-                        .build().marginRight(4))
-                .child(createBlacklistUI());
     }
 
     @Override
