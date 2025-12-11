@@ -29,19 +29,22 @@ import org.jetbrains.annotations.NotNull;
 
 public class SmartFilterUIManager extends BaseFilterUIManager {
 
-    @Override
-    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        var filter = BaseFilter.getFilterFromStack(guiData.getUsedItemStack());
-        return createBasePanel(filter.getContainerStack()).height(166)
-                .child(filter.createWidgets(guiSyncManager).left(7).top(22))
-                .child(SlotGroupWidget.playerInventory(true));
-    }
+//    @Override
+//    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+//        var filter = BaseFilter.getFilterFromStack(guiData.getUsedItemStack());
+//        return createBasePanel(filter.getContainerStack()).height(166)
+//                .child(filter.createWidgets(guiSyncManager).left(7).top(22))
+//                .child(SlotGroupWidget.playerInventory(true));
+//    }
 
     @Override
     public @NotNull ModularPanel createPopupPanel(ItemStack stack, PanelSyncManager syncManager, String panelName) {
-        return GTGuis.createPopupPanel(panelName, 98 + 27, 81, false)
-                .child(CoverWithUI.createTitleRow(stack))
-                .child(createWidgets(stack, syncManager).top(22).left(4));
+        return super.createPopupPanel(stack, syncManager, panelName)
+                .width(98 + 27)
+//        return GTGuis.createPopupPanel(panelName, 98 + 27, 81, false)
+//                .child(CoverWithUI.createTitleRow(stack))
+//                .child(createWidgets(stack, syncManager).top(22).left(4))
+                ;
     }
 
     @Override

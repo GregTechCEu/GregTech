@@ -10,6 +10,7 @@ import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.items.gui.ItemUIFactory;
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
@@ -34,6 +35,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
 public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFactory {
 
@@ -50,11 +52,28 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
     }
 
     @Override
-    public abstract ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings);
+    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+        return buildUI(guiData.getUsedItemStack(), guiData, guiSyncManager, settings);
+    }
 
-    protected final ModularPanel createBasePanel(ItemStack stack) {
-        return GTGuis.createPanel(stack, 176, 188)
-                .child(CoverWithUI.createTitleRow(stack));
+    public ModularPanel buildUI(ItemStack stack, HandGuiData guiData, PanelSyncManager syncManager, UISettings settings) {
+        return createBasePanel(stack)
+                .child(createWidgets(stack, syncManager)
+                        .marginTop(22)
+                        .marginLeft(7))
+                .bindPlayerInventory();
+    }
+
+    /**
+     * Called when opening the filter panel from the hand
+     * @param stack filter stack
+     * @return the sized panel
+     */
+    // panel when opening ui in hand
+    protected ModularPanel createBasePanel(ItemStack stack) {
+        return GTGuis.createPanel(stack, 176, 166)
+//                .child(CoverWithUI.createTitleRow(stack))
+                ;
     }
 
     @Override
@@ -67,8 +86,12 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
         lines.add(I18n.format("behaviour.filter_ui_manager"));
     }
 
-    public abstract @NotNull ModularPanel createPopupPanel(ItemStack stack, PanelSyncManager syncManager, String panelName);
+    // panel when opening ui in another ui
+    public @NotNull ModularPanel createPopupPanel(ItemStack stack, PanelSyncManager syncManager, String panelName) {
+        return GTGuis.createPopupPanel(panelName, 98, 81);
+    }
 
+    // panel when opening as a cover
     @NotNull
     public abstract ModularPanel createPanel(ItemStack stack, PanelSyncManager syncManager);
 

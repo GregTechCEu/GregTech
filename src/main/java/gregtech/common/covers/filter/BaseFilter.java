@@ -10,6 +10,8 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.filter.readers.BaseFilterReader;
 
+import gregtech.common.items.behaviors.filter.BaseFilterUIManager;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -24,7 +26,10 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public abstract class BaseFilter implements IItemComponent {
 
@@ -65,6 +70,14 @@ public abstract class BaseFilter implements IItemComponent {
     public abstract BaseFilterReader getFilterReader();
 
     public abstract void updateFilterReader(ItemStack stack);
+
+    public Optional<BaseFilterUIManager> getUI() {
+        if (getContainerStack().getItem() instanceof MetaItem<?>metaItem) {
+            return Optional.ofNullable(metaItem.getItem(getContainerStack()))
+                    .map(o -> (BaseFilterUIManager) o.getUIManager());
+        }
+        return Optional.empty();
+    }
 
     public final ItemStack getContainerStack() {
         return this.getFilterReader().getContainer();

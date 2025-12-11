@@ -39,20 +39,29 @@ import java.util.List;
 
 public class OreDictFilterUIManager extends BaseFilterUIManager {
 
+//    @Override
+//    public ModularPanel buildUI(ItemStack stack, HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+//        var filter = BaseFilter.getFilterFromStack(stack);
+//        return createBasePanel(filter.getContainerStack()).height(160)
+//                .child(filter.createWidgets(guiSyncManager).top(22).margin(7, 0))
+//                .child(SlotGroupWidget.playerInventory(true));
+//    }
+
     @Override
-    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        var filter = BaseFilter.getFilterFromStack(guiData.getUsedItemStack());
-        return createBasePanel(filter.getContainerStack()).height(160)
-                .child(filter.createWidgets(guiSyncManager).top(22).margin(7, 0))
-                .child(SlotGroupWidget.playerInventory(true));
+    protected ModularPanel createBasePanel(ItemStack stack) {
+        return super.createBasePanel(stack)
+                .height(160);
     }
 
     @Override
     public @NotNull ModularPanel createPopupPanel(ItemStack stack, PanelSyncManager syncManager, String panelName) {
-        return GTGuis.createPopupPanel(panelName, 188, 76, false)
+        return super.createPopupPanel(stack, syncManager, panelName)
+                .size(188, 76)
+//        return GTGuis.createPopupPanel(panelName, 188, 76, false)
                 .padding(7)
-                .child(CoverWithUI.createTitleRow(stack))
-                .child(createWidgets(stack, syncManager).top(22));
+//                .child(CoverWithUI.createTitleRow(stack))
+//                .child(createWidgets(stack, syncManager).top(22))
+                ;
     }
 
     @Override

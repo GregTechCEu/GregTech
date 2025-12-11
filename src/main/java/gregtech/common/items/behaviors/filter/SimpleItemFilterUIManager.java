@@ -30,17 +30,19 @@ import org.jetbrains.annotations.NotNull;
 
 public class SimpleItemFilterUIManager extends BaseFilterUIManager {
 
-    @Override
-    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        return createPanel(guiData.getUsedItemStack(), guiSyncManager);
-    }
+//    @Override
+//    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+//        return createPanel(guiData.getUsedItemStack(), guiSyncManager);
+//    }
 
-    @Override
-    public @NotNull ModularPanel createPopupPanel(ItemStack stack, PanelSyncManager syncManager, String panelName) {
-        return GTGuis.createPopupPanel(panelName, 98, 81, false)
-                .child(CoverWithUI.createTitleRow(stack))
-                .child(createWidgets(stack, syncManager).top(22).left(4));
-    }
+//    @Override
+//    public @NotNull ModularPanel createPopupPanel(ItemStack stack, PanelSyncManager syncManager, String panelName) {
+//        return super.createPopupPanel(stack, syncManager, panelName)
+//        return GTGuis.createPopupPanel(panelName, 98, 81, false)
+//                .child(CoverWithUI.createTitleRow(stack))
+//                .child(createWidgets(stack, syncManager).top(22).left(4))
+                ;
+//    }
 
     @Override
     public @NotNull ModularPanel createPanel(ItemStack stack, PanelSyncManager syncManager) {
