@@ -52,10 +52,9 @@ public abstract class BaseFilter implements IItemComponent {
 
     public static @NotNull BaseFilter getFilterFromStack(ItemStack stack) {
         if (stack.getItem() instanceof MetaItem<?>metaItem) {
-            var metaValueItem = metaItem.getItem(stack);
-            var filter = metaValueItem == null ? null : metaValueItem.getFilterBehavior();
-            if (filter != null)
-                return filter;
+            return Optional.ofNullable(metaItem.getItem(stack))
+                    .map(MetaItem.MetaValueItem::getFilterBehavior)
+                    .orElse(ERROR_FILTER);
         }
         return ERROR_FILTER;
     }
