@@ -21,13 +21,18 @@ public class SimpleFluidFilter extends BaseFilter {
 
     private final SimpleFluidFilterReader filterReader;
 
-    public SimpleFluidFilter(ItemStack stack) {
-        filterReader = new SimpleFluidFilterReader(stack, MAX_FLUID_SLOTS);
+    public SimpleFluidFilter() {
+        filterReader = new SimpleFluidFilterReader(MAX_FLUID_SLOTS);
     }
 
     @Override
     public SimpleFluidFilterReader getFilterReader() {
         return filterReader;
+    }
+
+    @Override
+    public void updateFilterReader(ItemStack stack) {
+        this.filterReader.readStack(stack);
     }
 
     public void configureFilterTanks(int amount) {

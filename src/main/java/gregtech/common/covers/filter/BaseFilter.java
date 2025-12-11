@@ -30,12 +30,13 @@ public abstract class BaseFilter implements IItemComponent {
 
     public static final BaseFilter ERROR_FILTER = new BaseFilter() {
 
-        private final BaseFilterReader filterReader = new BaseFilterReader(0);
-
         @Override
         public BaseFilterReader getFilterReader() {
-            return this.filterReader;
+            return null;
         }
+
+        @Override
+        public void updateFilterReader(ItemStack stack) {}
 
         @Override
         public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager, String panelName) {
@@ -61,8 +62,9 @@ public abstract class BaseFilter implements IItemComponent {
     };
     protected IDirtyNotifiable dirtyNotifiable;
 
-    // we need the original stack
     public abstract BaseFilterReader getFilterReader();
+
+    public abstract void updateFilterReader(ItemStack stack);
 
     public final ItemStack getContainerStack() {
         return this.getFilterReader().getContainer();

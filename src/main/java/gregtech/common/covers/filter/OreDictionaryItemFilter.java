@@ -42,16 +42,20 @@ public class OreDictionaryItemFilter extends BaseFilter {
 
     private final Map<Item, ItemVariantMap.Mutable<Boolean>> matchCache = new Object2ObjectOpenHashMap<>();
     private final SingleItemVariantMap<Boolean> noOreDictMatch = new SingleItemVariantMap<>();
-    private final OreDictFilterReader filterReader;
+    private final OreDictFilterReader filterReader = new OreDictFilterReader();
 
     public OreDictionaryItemFilter() {
-        this.filterReader = new OreDictFilterReader();
         recompile();
     }
 
     @Override
     public OreDictFilterReader getFilterReader() {
         return filterReader;
+    }
+
+    @Override
+    public void updateFilterReader(ItemStack stack) {
+        this.filterReader.readStack(stack);
     }
 
     @NotNull

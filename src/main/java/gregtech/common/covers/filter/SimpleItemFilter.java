@@ -30,15 +30,16 @@ import org.jetbrains.annotations.NotNull;
 public class SimpleItemFilter extends BaseFilter {
 
     private static final int MAX_MATCH_SLOTS = 9;
-    private final SimpleItemFilterReader filterReader;
-
-    public SimpleItemFilter(ItemStack stack) {
-        filterReader = new SimpleItemFilterReader(MAX_MATCH_SLOTS);
-    }
+    private final SimpleItemFilterReader filterReader = new SimpleItemFilterReader(MAX_MATCH_SLOTS);
 
     @Override
     public SimpleItemFilterReader getFilterReader() {
         return filterReader;
+    }
+
+    @Override
+    public void updateFilterReader(ItemStack stack) {
+        this.filterReader.readStack(stack);
     }
 
     @Override
