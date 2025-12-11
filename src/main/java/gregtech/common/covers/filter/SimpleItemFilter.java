@@ -16,11 +16,6 @@ public class SimpleItemFilter extends BaseFilter {
     }
 
     @Override
-    public void updateFilterReader(ItemStack stack) {
-        this.filterReader.readStack(stack);
-    }
-
-    @Override
     public MatchResult matchItem(ItemStack itemStack) {
         int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(),
                 itemStack);

@@ -30,11 +30,6 @@ public class OreDictionaryItemFilter extends BaseFilter {
         return filterReader;
     }
 
-    @Override
-    public void updateFilterReader(ItemStack stack) {
-        this.filterReader.readStack(stack);
-    }
-
     @NotNull
     public String getExpression() {
         return this.filterReader.getExpression();

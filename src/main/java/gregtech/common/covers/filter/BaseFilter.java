@@ -19,13 +19,12 @@ public abstract class BaseFilter implements IItemComponent {
 
     public static final BaseFilter ERROR_FILTER = new BaseFilter() {
 
-        @Override
-        public BaseFilterReader getFilterReader() {
-            return null;
-        }
+        private final BaseFilterReader reader = new BaseFilterReader(0);
 
         @Override
-        public void updateFilterReader(ItemStack stack) {}
+        public BaseFilterReader getFilterReader() {
+            return reader;
+        }
 
         @Override
         public FilterType getType() {
@@ -35,7 +34,9 @@ public abstract class BaseFilter implements IItemComponent {
 
     public abstract BaseFilterReader getFilterReader();
 
-    public abstract void updateFilterReader(ItemStack stack);
+    public final void updateFilterReader(ItemStack stack) {
+        getFilterReader().readStack(stack);
+    }
 
     public BaseFilterUIManager getUI() {
         if (getContainerStack().getItem() instanceof MetaItem<?>metaItem) {

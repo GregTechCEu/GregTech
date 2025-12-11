@@ -2,7 +2,6 @@ package gregtech.common.covers.filter;
 
 import gregtech.common.covers.filter.readers.SimpleFluidFilterReader;
 
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 public class SimpleFluidFilter extends BaseFilter {
@@ -14,11 +13,6 @@ public class SimpleFluidFilter extends BaseFilter {
     @Override
     public SimpleFluidFilterReader getFilterReader() {
         return filterReader;
-    }
-
-    @Override
-    public void updateFilterReader(ItemStack stack) {
-        this.filterReader.readStack(stack);
     }
 
     public void configureFilterTanks(int amount) {

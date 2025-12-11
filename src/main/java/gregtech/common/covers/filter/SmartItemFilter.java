@@ -24,11 +24,6 @@ public class SmartItemFilter extends BaseFilter {
         return filterReader;
     }
 
-    @Override
-    public void updateFilterReader(ItemStack stack) {
-        this.filterReader.readStack(stack);
-    }
-
     public SmartFilteringMode getFilteringMode() {
         return this.filterReader.getFilteringMode();
     }
