@@ -572,7 +572,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             if (capability == GregtechCapabilities.CAPABILITY_TOOLBELT_HANDLER)
                 return true;
             ItemStack selected = getHandler().getSelectedStack();
-            if (!selected.isEmpty() && facing != EnumFacing.UP) {
+            if (!selected.isEmpty()) {
                 return selected.hasCapability(capability, facing);
             } else return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
         }
