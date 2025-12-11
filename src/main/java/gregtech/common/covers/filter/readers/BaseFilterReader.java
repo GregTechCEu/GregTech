@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class BaseFilterReader implements INBTSerializable<NBTTagCompound> {
 
     protected ItemStack container;
-    private IDirtyNotifiable dirtyNotifiable;
+    protected IDirtyNotifiable dirtyNotifiable;
     private final int size;
     private int maxTransferRate = 1;
     protected static final String BLACKLIST = "IsBlacklist";

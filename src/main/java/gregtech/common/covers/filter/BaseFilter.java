@@ -82,7 +82,6 @@ public abstract class BaseFilter implements IItemComponent {
 
     public final void setBlacklistFilter(boolean blacklistFilter) {
         this.getFilterReader().setBlacklistFilter(blacklistFilter);
-        markDirty();
     }
 
     public final MatchResult match(Object toMatch) {

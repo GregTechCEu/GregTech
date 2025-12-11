@@ -68,7 +68,7 @@ public class OreDictionaryItemFilter extends BaseFilter {
         this.filterReader.recompile();
     }
 
-    protected void clearCache() {
+    public void clearCache() {
         this.matchCache.clear();
         this.noOreDictMatch.clear();
     }
