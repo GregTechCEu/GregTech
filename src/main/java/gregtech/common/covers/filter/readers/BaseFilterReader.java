@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.NotNull;
 
-public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCompound> {
+public class BaseFilterReader implements INBTSerializable<NBTTagCompound> {
 
     protected ItemStack container;
     private IDirtyNotifiable dirtyNotifiable;
@@ -26,12 +26,10 @@ public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCo
         this.size = slots;
     }
 
-    @Override
     public ItemStack getContainer() {
         return this.container;
     }
 
-    @Override
     public void readStack(@NotNull ItemStack stack) {
         this.container = stack;
     }
@@ -57,7 +55,6 @@ public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCo
         return nbt;
     }
 
-    @Override
     public int getSize() {
         return this.size;
     }
@@ -101,7 +98,6 @@ public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCo
         return isBlacklistFilter() ? 1 : this.maxTransferRate;
     }
 
-    @Override
     public boolean validateSlotIndex(int slot) {
         return slot >= 0 && slot < getSize();
     }
@@ -120,5 +116,13 @@ public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCo
     public void handleLegacyNBT(NBTTagCompound tag) {
         if (tag.hasKey(BLACKLIST))
             setBlacklistFilter(tag.getBoolean(BLACKLIST));
+    }
+
+    @NotNull
+    public NBTTagCompound getTagAt(int i) {
+        if (validateSlotIndex(i)) {
+            return getInventoryNbt().getCompoundTagAt(i);
+        }
+        return new NBTTagCompound();
     }
 }
