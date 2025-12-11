@@ -2,6 +2,7 @@ package gregtech.common.covers.filter.readers;
 
 import gregtech.api.util.IDirtyNotifiable;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class BaseFilterReader implements INBTSerializable<NBTTagCompound> {
 
-    protected ItemStack container;
+    protected @NotNull ItemStack container = new ItemStack((Item) null); // do not touch EMPTY directly
     protected IDirtyNotifiable dirtyNotifiable;
     private final int size;
     private int maxTransferRate = 1;
@@ -25,7 +26,7 @@ public class BaseFilterReader implements INBTSerializable<NBTTagCompound> {
         this.size = size;
     }
 
-    public ItemStack getContainer() {
+    public @NotNull ItemStack getContainer() {
         return this.container;
     }
 
