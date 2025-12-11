@@ -9,11 +9,7 @@ public class SimpleFluidFilter extends BaseFilter {
 
     private static final int MAX_FLUID_SLOTS = 9;
 
-    private final SimpleFluidFilterReader filterReader;
-
-    public SimpleFluidFilter() {
-        filterReader = new SimpleFluidFilterReader(MAX_FLUID_SLOTS);
-    }
+    private final SimpleFluidFilterReader filterReader = new SimpleFluidFilterReader(MAX_FLUID_SLOTS);
 
     @Override
     public SimpleFluidFilterReader getFilterReader() {
