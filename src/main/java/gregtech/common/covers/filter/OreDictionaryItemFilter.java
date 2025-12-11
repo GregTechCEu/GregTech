@@ -44,8 +44,8 @@ public class OreDictionaryItemFilter extends BaseFilter {
     private final SingleItemVariantMap<Boolean> noOreDictMatch = new SingleItemVariantMap<>();
     private final OreDictFilterReader filterReader;
 
-    public OreDictionaryItemFilter(ItemStack stack) {
-        this.filterReader = new OreDictFilterReader(stack);
+    public OreDictionaryItemFilter() {
+        this.filterReader = new OreDictFilterReader();
         recompile();
     }
 

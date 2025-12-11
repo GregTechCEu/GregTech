@@ -33,7 +33,7 @@ public class SimpleItemFilter extends BaseFilter {
     private final SimpleItemFilterReader filterReader;
 
     public SimpleItemFilter(ItemStack stack) {
-        filterReader = new SimpleItemFilterReader(stack, MAX_MATCH_SLOTS);
+        filterReader = new SimpleItemFilterReader(MAX_MATCH_SLOTS);
     }
 
     @Override

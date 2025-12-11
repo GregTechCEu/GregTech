@@ -32,7 +32,7 @@ public class SmartItemFilter extends BaseFilter {
     private final SmartItemFilterReader filterReader;
 
     public SmartItemFilter(ItemStack stack) {
-        filterReader = new SmartItemFilterReader(stack);
+        filterReader = new SmartItemFilterReader();
     }
 
     @Override

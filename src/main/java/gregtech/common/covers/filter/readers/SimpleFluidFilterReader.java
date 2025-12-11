@@ -18,7 +18,7 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
     protected static final String LEGACY_FLUIDFILTER_KEY = "FluidFilter";
 
     public SimpleFluidFilterReader(ItemStack container, int slots) {
-        super(container, slots);
+        super(slots);
         fluidTanks = new WritableFluidTank[slots];
     }
 

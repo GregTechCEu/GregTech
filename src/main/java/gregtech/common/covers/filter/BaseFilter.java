@@ -30,7 +30,7 @@ public abstract class BaseFilter implements IItemComponent {
 
     public static final BaseFilter ERROR_FILTER = new BaseFilter() {
 
-        private final BaseFilterReader filterReader = new BaseFilterReader(ItemStack.EMPTY, 0);
+        private final BaseFilterReader filterReader = new BaseFilterReader(0);
 
         @Override
         public BaseFilterReader getFilterReader() {
@@ -43,11 +43,13 @@ public abstract class BaseFilter implements IItemComponent {
                     .child(createWidgets(syncManager));
         }
 
+        @Override
         public @NotNull ModularPanel createPanel(PanelSyncManager syncManager) {
             return GTGuis.createPanel("error", 100, 100)
                     .child(createWidgets(syncManager));
         }
 
+        @Override
         public @NotNull Widget<?> createWidgets(PanelSyncManager syncManager) {
             return IKey.lang("INVALID FILTER").alignment(Alignment.Center).asWidget();
         }
@@ -69,9 +71,9 @@ public abstract class BaseFilter implements IItemComponent {
     public static @NotNull BaseFilter getFilterFromStack(ItemStack stack) {
         if (stack.getItem() instanceof MetaItem<?>metaItem) {
             var metaValueItem = metaItem.getItem(stack);
-            var factory = metaValueItem == null ? null : metaValueItem.getFilterBehavior();
-            if (factory != null)
-                return factory;
+            var filter = metaValueItem == null ? null : metaValueItem.getFilterBehavior();
+            if (filter != null)
+                return filter;
         }
         return ERROR_FILTER;
     }
@@ -123,6 +125,10 @@ public abstract class BaseFilter implements IItemComponent {
             return getTransferLimit(stack, transferSize);
         }
         return 0;
+    }
+
+    public int getTransferLimit(int slot, int transferSize) {
+        return transferSize;
     }
 
     public int getTransferLimit(FluidStack stack, int transferSize) {
@@ -182,6 +188,14 @@ public abstract class BaseFilter implements IItemComponent {
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {}
 
     public abstract @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager, String panelName);
+
+    @NotNull
+    public abstract ModularPanel createPanel(PanelSyncManager syncManager);
+
+    /** Creates the widgets standalone so that they can be put into their own panel */
+
+    @NotNull
+    public abstract Widget<?> createWidgets(PanelSyncManager syncManager);
 
     public IPanelHandler createPanelHandler(PanelSyncManager syncManager, int id) {
         String translationKey = getContainerStack().getTranslationKey();

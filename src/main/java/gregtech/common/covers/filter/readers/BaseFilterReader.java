@@ -21,9 +21,8 @@ public class BaseFilterReader implements INBTSerializable<NBTTagCompound> {
     protected static final String FILTER_CONTENTS = "FilterSlots";
     protected static final String KEY_LEGACY_FILTER = "Filter";
 
-    public BaseFilterReader(ItemStack container, int slots) {
-        this.container = container;
-        this.size = slots;
+    public BaseFilterReader(int size) {
+        this.size = size;
     }
 
     public ItemStack getContainer() {

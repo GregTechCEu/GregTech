@@ -2,15 +2,14 @@ package gregtech.common.covers.filter.readers;
 
 import gregtech.common.covers.filter.SmartItemFilter;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class SmartItemFilterReader extends SimpleItemFilterReader {
+public class SmartItemFilterReader extends BaseFilterReader {
 
     private static final String FILTER_MODE = "FilterMode";
 
-    public SmartItemFilterReader(ItemStack container) {
-        super(container, 0);
+    public SmartItemFilterReader() {
+        super(0);
     }
 
     public SmartItemFilter.SmartFilteringMode getFilteringMode() {

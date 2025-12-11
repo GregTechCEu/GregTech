@@ -19,8 +19,8 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
     public static final String RESPECT_NBT = "IgnoreNBT";
     public static final String RESPECT_DAMAGE = "IgnoreDamage";
 
-    public SimpleItemFilterReader(ItemStack container, int slots) {
-        super(container, slots);
+    public SimpleItemFilterReader(int slots) {
+        super(slots);
     }
 
     public void setIgnoreDamage(boolean ignoreDamage) {
