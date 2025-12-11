@@ -1,6 +1,7 @@
 package gregtech.api.items.toolitem;
 
 import gregtech.api.GregTechAPI;
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.items.IDyeableItem;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
@@ -420,8 +421,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     private ToolStackHandler getHandler(ItemStack stack) {
-        // use the very rarely used sidedness of item capabilities to signal that we want to ignore passthrough
-        IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+        IItemHandler handler = stack.getCapability(GregtechCapabilities.CAPABILITY_TOOLBELT_HANDLER, null);
         if (handler instanceof ToolStackHandler h) return h;
         else return FALLBACK;
     }
@@ -569,6 +569,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         @Override
         public boolean hasCapability(@NotNull Capability<?> capability, EnumFacing facing) {
+            if (capability == GregtechCapabilities.CAPABILITY_TOOLBELT_HANDLER)
+                return true;
             ItemStack selected = getHandler().getSelectedStack();
             if (!selected.isEmpty() && facing != EnumFacing.UP) {
                 return selected.hasCapability(capability, facing);
@@ -577,12 +579,15 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         @Override
         public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing facing) {
+            if (capability == GregtechCapabilities.CAPABILITY_TOOLBELT_HANDLER)
+                return GregtechCapabilities.CAPABILITY_TOOLBELT_HANDLER.cast(this.getHandler());
             ItemStack selected = getHandler().getSelectedStack();
-            if (!selected.isEmpty() && facing != EnumFacing.UP) {
+            if (!selected.isEmpty()) {
                 return selected.getCapability(capability, facing);
-            } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+                // if nothing is selected, expose the handler under the item handler capability
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.getHandler());
-            else return null;
+            } else return null;
         }
 
         @Override
@@ -622,7 +627,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     protected static final ToolStackHandler FALLBACK = new ToolStackHandler(0);
 
-    protected static class ToolStackHandler extends ItemStackHandler {
+    public static class ToolStackHandler extends ItemStackHandler {
 
         private static final Set<String> EMPTY = ImmutableSet.of();
 
