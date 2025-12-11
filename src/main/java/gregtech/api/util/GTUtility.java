@@ -21,6 +21,8 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.function.impl.TimedProgressSupplier;
 
+import gregtech.core.CoreModule;
+
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
@@ -758,6 +760,12 @@ public class GTUtility {
 
     public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
         if (world == null || pos == null) return null;
+        if (CoreModule.gtTileMap.containsKey(pos.toLong())) {
+            IGregTechTileEntity tile = CoreModule.gtTileMap.get(pos.toLong());
+            if (tile != null && tile.getMetaTileEntity() != null) {
+                return tile.getMetaTileEntity();
+            }
+        }
         TileEntity te = world.getTileEntity(pos);
         return te instanceof IGregTechTileEntity ? ((IGregTechTileEntity) te).getMetaTileEntity() : null;
     }

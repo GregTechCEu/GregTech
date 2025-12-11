@@ -525,14 +525,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public int getLightOpacity(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos) {
         // since it is called on neighbor blocks
-        if (CoreModule.gtTileMap.containsKey(pos.toLong())) {
-            IGregTechTileEntity tile = CoreModule.gtTileMap.get(pos.toLong());
-            if (tile != null && tile.getMetaTileEntity() != null) {
-                GTLog.logger.warn("getting light opacity at {} for {}!", pos,
-                        tile.getMetaTileEntity().metaTileEntityId);
-                return tile.getMetaTileEntity().getLightOpacity();
-            }
-        }
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         return metaTileEntity == null ? 255 : metaTileEntity.getLightOpacity();
     }

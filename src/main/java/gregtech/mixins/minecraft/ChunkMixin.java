@@ -14,6 +14,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -28,19 +29,23 @@ public abstract class ChunkMixin {
     @Inject(method = "createNewTileEntity",
             at = @At(value = "INVOKE",
                      target = "Lnet/minecraft/block/Block;createTileEntity(Lnet/minecraft/world/World;Lnet/minecraft/block/state/IBlockState;)Lnet/minecraft/tileentity/TileEntity;"))
-    public void setBlock(BlockPos pos, CallbackInfoReturnable<TileEntity> cir) {
+    public void setData(BlockPos pos, CallbackInfoReturnable<TileEntity> cir) {
         if (this.world instanceof TrackedDummyWorld) return;
         CoreModule.placingPos.set(pos);
         if (CoreModule.gtTileMap.containsKey(pos.toLong())) {
-            GregTechAPI.mteManager.getRegistry(GTValues.MODID)
-                    .getBlock().testMessage.set(
-                            CoreModule.gtTileMap.get(pos.toLong())
-                                    .getMetaTileEntity().metaTileEntityId.toString());
+            gregTech$setMessage(CoreModule.gtTileMap.get(pos.toLong())
+                    .getMetaTileEntity().metaTileEntityId.toString());
         }
     }
 
+    @Unique
+    private static void gregTech$setMessage(String s) {
+        GregTechAPI.mteManager.getRegistry(GTValues.MODID)
+                .getBlock().testMessage.set(s);
+    }
+
     @ModifyReturnValue(method = "createNewTileEntity", at = @At("RETURN"))
-    public TileEntity modret(TileEntity original) {
+    public TileEntity clearData(TileEntity original) {
         CoreModule.placingPos.remove();
         GregTechAPI.mteManager.getRegistry(GTValues.MODID)
                 .getBlock().testMessage.remove();

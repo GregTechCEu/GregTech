@@ -82,6 +82,7 @@ import gregtech.modules.GregTechModules;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.MinecraftForge;
@@ -378,11 +379,12 @@ public class CoreModule implements IGregTechModule {
     public static void chunkLoad(ChunkEvent.Load event) {
         Map<BlockPos, TileEntity> map = event.getChunk().getTileEntityMap();
         for (BlockPos pos : map.keySet()) {
+            // pos here is within chunk origin
+            ChunkPos cPos = event.getChunk().getPos();
             if (map.get(pos) instanceof IGregTechTileEntity igtte) {
-                gtTileMap.put(pos.toLong(), igtte);
+                gtTileMap.put(pos.add(cPos.x << 4, 0, cPos.z << 4).toLong(), igtte);
                 if (igtte.getMetaTileEntity() != null) {
                     logger.warn("stored mte {} at {}", igtte.getMetaTileEntity().metaTileEntityId, pos);
-                    // need to initialize mte now ? idk
                 }
             }
         }
@@ -392,7 +394,9 @@ public class CoreModule implements IGregTechModule {
     public static void chunkUnload(ChunkEvent.Unload event) {
         Map<BlockPos, TileEntity> map = event.getChunk().getTileEntityMap();
         for (BlockPos pos : map.keySet()) {
-            IGregTechTileEntity removed = gtTileMap.remove(pos.toLong());
+            // pos here is within chunk origin
+            ChunkPos cPos = event.getChunk().getPos();
+            IGregTechTileEntity removed = gtTileMap.remove(pos.add(cPos.x << 4, 0, cPos.z << 4).toLong());
             if (removed != null && removed.getMetaTileEntity() != null)
                 logger.warn("removed mte {} at {}", removed.getMetaTileEntity().metaTileEntityId, pos);
         }
