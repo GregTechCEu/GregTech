@@ -15,7 +15,8 @@
     "DamageSourceMixin",
     "EnchantmentCanApplyMixin",
     "MinecraftMixin",
-    "RecipeRepairItemMixin"
+    "RecipeRepairItemMixin",
+    "TileEntityMixin"
   ],
   "client": [
     "BlockMixin",

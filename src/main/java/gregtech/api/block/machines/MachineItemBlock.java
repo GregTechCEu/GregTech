@@ -1,10 +1,8 @@
 package gregtech.api.block.machines;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
@@ -12,7 +10,6 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.creativetab.GTCreativeTabs;
-
 import gregtech.core.CoreModule;
 
 import net.minecraft.block.Block;
@@ -43,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class MachineItemBlock extends ItemBlock {
