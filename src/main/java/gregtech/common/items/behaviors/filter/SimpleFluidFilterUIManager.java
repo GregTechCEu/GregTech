@@ -29,7 +29,8 @@ public class SimpleFluidFilterUIManager extends BaseFilterUIManager {
     @Override
     public @NotNull Widget<?> createWidgets(ItemStack stack, PanelSyncManager syncManager) {
         SimpleFluidFilterReader filterReader = (SimpleFluidFilterReader) getFilterReader(stack);
-        return Flow.row().coverChildrenHeight().widthRel(1f)
+        return Flow.row().coverChildren()
+                .alignX(0f)
                 .child(SlotGroupWidget.builder()
                         .matrix("FFF",
                                 "FFF",

@@ -58,8 +58,7 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
         return createBasePanel(stack)
                 .child(CoverWithUI.createTitleRow(stack))
                 .child(createWidgets(stack, syncManager)
-                        .marginTop(22)
-                        .marginLeft(7))
+                        .marginTop(18))
                 .bindPlayerInventory();
     }
 
@@ -72,8 +71,7 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
     // panel when opening ui in hand
     protected ModularPanel createBasePanel(ItemStack stack) {
         return GTGuis.createPanel(stack, 176, 166)
-        // .child(CoverWithUI.createTitleRow(stack))
-        ;
+                .padding(7);
     }
 
     @Override
@@ -93,7 +91,8 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
             return (PanelSyncHandler) syncManager.panel(key,
                     (psm, $) -> createPopupPanel(stack, psm, key)
                             .child(CoverWithUI.createTitleRow(stack))
-                            .child(createWidgets(stack, syncManager)),
+                            .child(createWidgets(stack, syncManager)
+                                    .marginTop(18)),
                     true);
         });
     }
@@ -113,7 +112,9 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
     public abstract Widget<?> createWidgets(ItemStack stack, PanelSyncManager syncManager);
 
     public BaseFilterReader getFilterReader(ItemStack stack) {
-        return BaseFilter.getFilterFromStack(stack).getFilterReader();
+        BaseFilterReader filterReader = BaseFilter.getFilterFromStack(stack).getFilterReader();
+        filterReader.readStack(stack);
+        return filterReader;
     }
 
     public IWidget createBlacklistUI(ItemStack filterStack) {

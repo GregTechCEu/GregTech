@@ -28,7 +28,8 @@ public class SmartFilterUIManager extends BaseFilterUIManager {
 
     @Override
     public @NotNull ModularPanel createPanel(ItemStack stack, PanelSyncManager syncManager) {
-        return GTGuis.createPanel("smart_item_filter", 100, 100).padding(7);
+        return GTGuis.createPanel("smart_item_filter", 100, 100)
+                .padding(7);
     }
 
     @Override
@@ -39,6 +40,7 @@ public class SmartFilterUIManager extends BaseFilterUIManager {
         syncManager.syncValue("filter_mode", filterMode);
 
         return Flow.row().coverChildren()
+                .alignX(0f)
                 .child(Flow.column().coverChildren().marginRight(4)
                         .child(createFilterModeButton(filterMode, SmartItemFilter.SmartFilteringMode.ELECTROLYZER))
                         .child(createFilterModeButton(filterMode, SmartItemFilter.SmartFilteringMode.CENTRIFUGE))

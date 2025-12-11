@@ -3,7 +3,6 @@ package gregtech.common.items.behaviors.filter;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.TextFormattingUtil;
-import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.readers.SimpleItemFilterReader;
 
 import net.minecraft.item.ItemStack;
@@ -38,8 +37,7 @@ public class SimpleItemFilterUIManager extends BaseFilterUIManager {
     @SuppressWarnings("UnstableApiUsage")
     @Override
     public @NotNull Widget<?> createWidgets(ItemStack stack, PanelSyncManager syncManager) {
-        SimpleItemFilterReader filterReader = (SimpleItemFilterReader) BaseFilter.getFilterFromStack(stack)
-                .getFilterReader();
+        SimpleItemFilterReader filterReader = (SimpleItemFilterReader) getFilterReader(stack);
         SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
         var ignoreDamage = new BooleanSyncValue(filterReader::isIgnoreDamage, filterReader::setIgnoreDamage);
         var ignoreNBT = new BooleanSyncValue(filterReader::isIgnoreNBT, filterReader::setIgnoreNBT);
@@ -47,6 +45,7 @@ public class SimpleItemFilterUIManager extends BaseFilterUIManager {
         syncManager.registerSlotGroup(filterInventory);
 
         return Flow.row().coverChildren()
+                .alignX(0f)
                 .child(SlotGroupWidget.builder()
                         .matrix("XXX",
                                 "XXX",

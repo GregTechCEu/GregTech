@@ -55,6 +55,7 @@ public class OreDictFilterUIManager extends BaseFilterUIManager {
     public @NotNull Widget<?> createWidgets(ItemStack stack, PanelSyncManager syncManager) {
         OreDictionaryItemFilter filter = (OreDictionaryItemFilter) BaseFilter.getFilterFromStack(stack);
         OreDictFilterReader filterReader = filter.getFilterReader();
+        filterReader.readStack(stack);
 
         List<OreFilterTestSlot> oreSlots = new ArrayList<>();
         var expression = new StringSyncValue(filterReader::getExpression, filterReader::setExpression);
@@ -79,7 +80,8 @@ public class OreDictFilterUIManager extends BaseFilterUIManager {
         var caseSensitive = new BooleanSyncValue(filterReader::isCaseSensitive, setCaseSensitive);
         var matchAll = new BooleanSyncValue(filterReader::shouldMatchAll, setMatchAll);
 
-        return Flow.column().widthRel(1f).coverChildrenHeight()
+        return Flow.column().coverChildren()
+                .name("root.widget.col")
                 .child(new HighlightedTextField()
                         .setHighlightRule(this::highlightRule)
                         .onUnfocus(() -> {
@@ -87,17 +89,22 @@ public class OreDictFilterUIManager extends BaseFilterUIManager {
                                 slot.updatePreview();
                             }
                         })
+                        .name("oredict.text_field")
                         .setTextColor(Color.WHITE.darker(1))
                         .value(expression).marginBottom(4)
                         .height(18).widthRel(1f))
                 .child(Flow.row().coverChildrenHeight()
+                        .name("oredict.info.row")
                         .widthRel(1f)
                         .child(Flow.column().height(18)
+                                .name("oredict.info.status.col")
                                 .coverChildrenWidth().marginRight(2)
                                 .child(GTGuiTextures.OREDICT_INFO.asWidget()
+                                        .name("oredict.info.icon")
                                         .size(8).top(0)
                                         .addTooltipLine(IKey.lang("cover.ore_dictionary_filter.info")))
                                 .child(new Widget<>()
+                                        .name("oredict.status.icon")
                                         .size(8).bottom(0)
                                         .onUpdateListener(widget -> getStatusIcon(filterReader.getResult(), widget))
                                         .tooltipBuilder(richTooltip -> createStatusTooltip(filterReader.getResult(),
@@ -110,10 +117,11 @@ public class OreDictFilterUIManager extends BaseFilterUIManager {
                                             .setGlobSupplier(filterReader::getGlob);
                                     slot.setMatchAll(filterReader.shouldMatchAll());
                                     oreSlots.add(slot);
-                                    return slot;
+                                    return slot.name("oredict.test_slot." + i);
                                 })
-                                .build().marginRight(2))
+                                .build().name("oredict.test.slot_group").marginRight(2))
                         .child(new CycleButtonWidget()
+                                .name("oredict.button.case_sensitive")
                                 .size(18).value(caseSensitive)
                                 .marginRight(2)
                                 .stateBackground(0, GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
@@ -123,6 +131,7 @@ public class OreDictFilterUIManager extends BaseFilterUIManager {
                                 .addTooltip(1,
                                         IKey.lang("cover.ore_dictionary_filter.button.case_sensitive.enabled")))
                         .child(new CycleButtonWidget()
+                                .name("oredict.button.match_all")
                                 .size(18).value(matchAll)
                                 .marginRight(2)
                                 .stateBackground(0, GTGuiTextures.BUTTON_MATCH_ALL[0])
