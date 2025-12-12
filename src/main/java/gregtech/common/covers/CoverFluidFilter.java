@@ -6,6 +6,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.widget.EnumButtonRow;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ITranslatable;
@@ -154,8 +155,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                 .size(176, 212).padding(7)
                 .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()))
                 .child(Flow.column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
-                        .child(new EnumRowBuilder<>(FluidFilterMode.class)
-                                .value(filteringMode)
+                        .child(EnumButtonRow.builder(filteringMode)
                                 .rowDescription(IKey.lang("cover.filter.mode.title"))
                                 .overlay(16, GTGuiTextures.FILTER_MODE_OVERLAY)
                                 .widgetExtras(ITranslatable::handleTooltip)

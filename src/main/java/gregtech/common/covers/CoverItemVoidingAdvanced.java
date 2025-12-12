@@ -3,6 +3,7 @@ package gregtech.common.covers;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.widget.EnumButtonRow;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.item.ItemStack;
@@ -108,8 +109,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                 this.voidingMode == VoidingMode.VOID_OVERFLOW);
 
         return super.createUI(data, guiSyncManager)
-                .child(new EnumRowBuilder<>(VoidingMode.class)
-                        .value(voidingMode)
+                .child(EnumButtonRow.builder(voidingMode)
                         .rowDescription(IKey.lang("cover.voiding.voiding_mode"))
                         .overlay(16, GTGuiTextures.VOIDING_MODE_OVERLAY)
                         .build())

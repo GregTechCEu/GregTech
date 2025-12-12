@@ -10,6 +10,7 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.EnumButtonRow;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ITranslatable;
 import gregtech.client.renderer.texture.Textures;
@@ -41,7 +42,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.GuiData;
@@ -238,16 +238,17 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
             syncManager.syncValue("manual_io", manualIOModeSync);
 
             // noinspection DuplicatedCode
-            column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
-                    .value(manualIOModeSync)
+            column.child(EnumButtonRow.builder(manualIOModeSync)
                     .rowDescription(IKey.lang("cover.generic.manual_io"))
-                    .overlay(new IDrawable[] {
-                            new DynamicDrawable(() -> pumpModeSync.getValue().isImport() ?
-                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[0] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[0]),
-                            new DynamicDrawable(() -> pumpModeSync.getValue().isImport() ?
-                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[1] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[1]),
-                            new DynamicDrawable(() -> pumpModeSync.getValue().isImport() ?
-                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[2] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[2])
+                    .overlay(val -> {
+                        int textureIndex = val.ordinal();
+                        return new DynamicDrawable(() -> {
+                            if (pumpModeSync.getValue().isImport()) {
+                                return GTGuiTextures.MANUAL_IO_OVERLAY_OUT[textureIndex];
+                            } else {
+                                return GTGuiTextures.MANUAL_IO_OVERLAY_IN[textureIndex];
+                            }
+                        });
                     })
                     .widgetExtras((manualImportExportMode, toggleButton) -> manualImportExportMode
                             .handleTooltip(toggleButton, "pump"))
@@ -255,8 +256,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         }
 
         if (createPumpModeRow()) {
-            column.child(new EnumRowBuilder<>(IOMode.class)
-                    .value(pumpModeSync)
+            column.child(EnumButtonRow.builder(pumpModeSync)
                     .rowDescription(IKey.lang("cover.pump.mode"))
                     .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY) // todo pump mode overlays
                     .widgetExtras((ioMode, toggleButton) -> ioMode.handleTooltip(toggleButton, "pump"))

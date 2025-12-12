@@ -1,6 +1,5 @@
 package gregtech.api.cover;
 
-import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.mui.factory.CoverGuiFactory;
@@ -12,7 +11,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.IGuiHolder;
-import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
@@ -20,22 +18,15 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
-import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
-import com.cleanroommc.modularui.value.BoolValue;
-import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -173,158 +164,5 @@ public interface CoverWithUI extends Cover, IGuiHolder<SidedPosGuiData>, gregtec
         return IKey.str(builder.toString())
                 .color(Color.WHITE.main)
                 .scale(scale);
-    }
-
-    /**
-     * Get a BoolValue for use with toggle buttons which are "linked together,"
-     * meaning only one of them can be pressed at a time.
-     */
-    default <T extends Enum<T>> BoolValue.Dynamic boolValueOf(EnumSyncValue<T> syncValue, T value) {
-        return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
-    }
-
-    /**
-     * Get a BoolValue for use with toggle buttons which are "linked together,"
-     * meaning only one of them can be pressed at a time.
-     */
-    default BoolValue.Dynamic boolValueOf(IntSyncValue syncValue, int value) {
-        return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
-    }
-
-    class EnumRowBuilder<T extends Enum<T>> {
-
-        private EnumSyncValue<T> syncValue;
-        private final Class<T> enumValue;
-        @Nullable
-        private IKey rowDescription;
-        @Nullable
-        private IDrawable[] background;
-        @Nullable
-        private IDrawable selectedBackground;
-        @Nullable
-        private IDrawable[] overlay;
-        @Nullable
-        private BiConsumer<T, ToggleButton> widgetExtras;
-
-        public EnumRowBuilder(Class<T> enumValue) {
-            this.enumValue = enumValue;
-        }
-
-        public EnumRowBuilder<T> value(EnumSyncValue<T> syncValue) {
-            this.syncValue = syncValue;
-            return this;
-        }
-
-        /**
-         * Add an {@link IKey} to the row that will be right aligned at the end.
-         */
-        public EnumRowBuilder<T> rowDescription(IKey lang) {
-            this.rowDescription = lang;
-            return this;
-        }
-
-        /**
-         * Add a background to each {@link ToggleButton} when the button is not selected.
-         *
-         * @param background an array of {@link IDrawable}s in the same order as the {@link Enum} used to make this
-         *                   {@link EnumRowBuilder}
-         */
-        public EnumRowBuilder<T> background(IDrawable... background) {
-            this.background = background;
-            return this;
-        }
-
-        /**
-         * Add a background to each {@link ToggleButton} when the button is selected.
-         *
-         * @param selectedBackground an array of {@link IDrawable}s in the same order as the {@link Enum} used to make
-         *                           this {@link EnumRowBuilder}
-         */
-        public EnumRowBuilder<T> selectedBackground(IDrawable selectedBackground) {
-            this.selectedBackground = selectedBackground;
-            return this;
-        }
-
-        /**
-         * Add an overlay to each {@link ToggleButton}.
-         *
-         * @param overlay an array of {@link IDrawable}s in the same order as the {@link Enum} used to make this
-         *                {@link EnumRowBuilder}
-         */
-        public EnumRowBuilder<T> overlay(IDrawable... overlay) {
-            this.overlay = overlay;
-            return this;
-        }
-
-        /**
-         * Add an overlay to each {@link ToggleButton} with a specific size.
-         *
-         * @param size    the size to set the {@link IDrawable} to.
-         * @param overlay an array of {@link IDrawable}s in the same order as the {@link Enum} used to make this
-         *                {@link EnumRowBuilder}
-         */
-        public EnumRowBuilder<T> overlay(int size, IDrawable... overlay) {
-            this.overlay = new IDrawable[overlay.length];
-            for (int i = 0; i < overlay.length; i++) {
-                this.overlay[i] = overlay[i].asIcon()
-                        .size(size);
-            }
-            return this;
-        }
-
-        public EnumRowBuilder<T> widgetExtras(BiConsumer<T, ToggleButton> widgetExtras) {
-            this.widgetExtras = widgetExtras;
-            return this;
-        }
-
-        private BoolValue.Dynamic boolValueOf(EnumSyncValue<T> syncValue, T value) {
-            return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
-        }
-
-        public Flow build() {
-            Flow row = Flow.row()
-                    .marginBottom(2)
-                    .widthRel(1f)
-                    .coverChildrenHeight();
-
-            if (this.enumValue != null && this.syncValue != null) {
-                for (T enumVal : enumValue.getEnumConstants()) {
-                    ToggleButton button = new ToggleButton()
-                            .marginRight(2)
-                            .size(18)
-                            .value(boolValueOf(this.syncValue, enumVal));
-
-                    if (this.background != null && this.background.length > 0) {
-                        button.background(this.background);
-                    } else {
-                        button.background(GTGuiTextures.MC_BUTTON);
-                    }
-
-                    if (this.selectedBackground != null) {
-                        button.selectedBackground(this.selectedBackground);
-                    } else {
-                        button.selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED);
-                    }
-
-                    if (this.overlay != null) {
-                        button.overlay(this.overlay[enumVal.ordinal()]);
-                    }
-
-                    if (this.widgetExtras != null) {
-                        this.widgetExtras.accept(enumVal, button);
-                    }
-
-                    row.child(button);
-                }
-            }
-
-            if (this.rowDescription != null && !this.rowDescription.get().isEmpty()) {
-                row.child(this.rowDescription.asWidget()
-                        .align(Alignment.CenterRight)
-                        .height(18));
-            }
-
-            return row;
-        }
     }
 }

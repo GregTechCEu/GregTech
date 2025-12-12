@@ -3,6 +3,7 @@ package gregtech.common.covers;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.widget.EnumButtonRow;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 
@@ -121,13 +122,11 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                 this.voidingMode == VoidingMode.VOID_OVERFLOW);
 
         return super.createUI(data, syncManager)
-                .child(new EnumRowBuilder<>(VoidingMode.class)
-                        .value(voidingMode)
+                .child(EnumButtonRow.builder(voidingMode)
                         .rowDescription(IKey.lang("cover.voiding.voiding_mode"))
                         .overlay(16, GTGuiTextures.VOIDING_MODE_OVERLAY)
                         .build())
-                .child(new EnumRowBuilder<>(BucketMode.class)
-                        .value(bucketMode)
+                .child(EnumButtonRow.builder(bucketMode)
                         .overlay(IKey.str("kL"), IKey.str("L"))
                         .build()
                         .child(transferTextField

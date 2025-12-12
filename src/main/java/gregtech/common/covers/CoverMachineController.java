@@ -5,6 +5,7 @@ import gregtech.api.capability.IControllable;
 import gregtech.api.cover.*;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.util.ValueHelper;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -203,7 +204,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         }
 
         return new ToggleButton().size(18)
-                .value(boolValueOf(syncValue, mode))
+                .value(ValueHelper.boolValueOf(syncValue, mode))
                 .overlay(new ItemDrawable(stack).asIcon().size(16))
                 .tooltip(t -> t.addLine(IKey.lang(mode.localeName))
                         .addLine(IKey.str(TextFormatting.GRAY + stack.getDisplayName())));

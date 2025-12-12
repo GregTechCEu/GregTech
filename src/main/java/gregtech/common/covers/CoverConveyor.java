@@ -10,6 +10,7 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.EnumButtonRow;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ITranslatable;
 import gregtech.api.util.ItemStackHashStrategy;
@@ -43,7 +44,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.GuiData;
@@ -552,16 +552,17 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             guiSyncManager.syncValue("manual_io", manualIOModeSync);
 
             // noinspection DuplicatedCode
-            column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
-                    .value(manualIOModeSync)
+            column.child(EnumButtonRow.builder(manualIOModeSync)
                     .rowDescription(IKey.lang("cover.generic.manual_io"))
-                    .overlay(new IDrawable[] {
-                            new DynamicDrawable(() -> conveyorModeSync.getValue().isImport() ?
-                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[0] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[0]),
-                            new DynamicDrawable(() -> conveyorModeSync.getValue().isImport() ?
-                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[1] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[1]),
-                            new DynamicDrawable(() -> conveyorModeSync.getValue().isImport() ?
-                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[2] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[2])
+                    .overlay(val -> {
+                        int textureIndex = val.ordinal();
+                        return new DynamicDrawable(() -> {
+                            if (conveyorModeSync.getValue().isImport()) {
+                                return GTGuiTextures.MANUAL_IO_OVERLAY_OUT[textureIndex];
+                            } else {
+                                return GTGuiTextures.MANUAL_IO_OVERLAY_IN[textureIndex];
+                            }
+                        });
                     })
                     .widgetExtras((manualImportExportMode, toggleButton) -> manualImportExportMode
                             .handleTooltip(toggleButton, "conveyor"))
@@ -569,8 +570,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         }
 
         if (createConveyorModeRow()) {
-            column.child(new EnumRowBuilder<>(IOMode.class)
-                    .value(conveyorModeSync)
+            column.child(EnumButtonRow.builder(conveyorModeSync)
                     .rowDescription(IKey.lang("cover.generic.io"))
                     .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
                     .widgetExtras((ioMode, toggleButton) -> ioMode.handleTooltip(toggleButton, "conveyor"))
@@ -582,8 +582,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     this::getDistributionMode, this::setDistributionMode);
             guiSyncManager.syncValue("distribution_mode", distributionModeSync);
 
-            column.child(new EnumRowBuilder<>(DistributionMode.class)
-                    .value(distributionModeSync)
+            column.child(EnumButtonRow.builder(distributionModeSync)
                     .rowDescription(IKey.lang("cover.conveyor.distribution.name"))
                     .overlay(16, GTGuiTextures.DISTRIBUTION_MODE_OVERLAY)
                     .widgetExtras(ITranslatable::handleTooltip)

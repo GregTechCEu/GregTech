@@ -3,6 +3,7 @@ package gregtech.common.covers;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.widget.EnumButtonRow;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ITranslatable;
 import gregtech.client.renderer.texture.Textures;
@@ -260,16 +261,14 @@ public class CoverFluidRegulator extends CoverPump {
         syncManager.syncValue("bucket_mode", bucketModeSync);
 
         return super.createUI(data, syncManager)
-                .child(new EnumRowBuilder<>(TransferMode.class)
-                        .value(transferModeSync)
+                .child(EnumButtonRow.builder(transferModeSync)
                         .rowDescription(IKey.lang("cover.generic.transfer_mode"))
                         .overlay(GTGuiTextures.FLUID_TRANSFER_MODE_OVERLAY)
                         .widgetExtras(
                                 (transferMode, toggleButton) -> transferMode.handleTooltip(toggleButton,
                                         "fluid_regulator"))
                         .build())
-                .child(new EnumRowBuilder<>(BucketMode.class)
-                        .value(bucketModeSync)
+                .child(EnumButtonRow.builder(bucketModeSync)
                         .overlay(IKey.str("kL"), IKey.str("L"))
                         .widgetExtras(ITranslatable::handleTooltip)
                         .build()

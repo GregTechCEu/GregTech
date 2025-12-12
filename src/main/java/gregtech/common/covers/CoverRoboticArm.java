@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.widget.EnumButtonRow;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.SmartItemFilter;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
@@ -209,8 +210,7 @@ public class CoverRoboticArm extends CoverConveyor {
         guiSyncManager.syncValue("transfer_mode", transferModeSync);
 
         return super.createUI(data, guiSyncManager)
-                .child(new EnumRowBuilder<>(TransferMode.class)
-                        .value(transferModeSync)
+                .child(EnumButtonRow.builder(transferModeSync)
                         .rowDescription(IKey.lang("cover.generic.transfer_mode"))
                         .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY)
                         .widgetExtras(

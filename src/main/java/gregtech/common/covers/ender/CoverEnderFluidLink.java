@@ -6,6 +6,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.widget.EnumButtonRow;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.virtualregistry.EntryTypes;
@@ -152,8 +153,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
 
         return super.createWidgets(data, syncManager)
                 .child(getFluidFilterContainer().initUI(data, syncManager))
-                .child(new EnumRowBuilder<>(IOMode.class)
-                        .value(pumpMode)
+                .child(EnumButtonRow.builder(pumpMode)
                         .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
                         .rowDescription(IKey.lang("cover.pump.mode"))
                         .build());
