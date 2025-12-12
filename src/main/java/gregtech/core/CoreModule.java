@@ -382,7 +382,7 @@ public class CoreModule implements IGregTechModule {
             // pos here is within chunk origin
             ChunkPos cPos = event.getChunk().getPos();
             if (map.get(pos) instanceof IGregTechTileEntity igtte) {
-                gtTileMap.put(pos.add(cPos.x << 4, 0, cPos.z << 4).toLong(), igtte);
+                gtTileMap.put(pos.add((cPos.x << 4) + 1, 0, (cPos.z << 4)).toLong(), igtte);
                 if (igtte.getMetaTileEntity() != null) {
                     logger.warn("stored mte {} at {}", igtte.getMetaTileEntity().metaTileEntityId, pos);
                 }
