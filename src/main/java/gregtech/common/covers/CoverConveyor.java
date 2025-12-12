@@ -554,7 +554,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             // noinspection DuplicatedCode
             column.child(EnumButtonRow.builder(manualIOModeSync)
                     .rowDescription(IKey.lang("cover.generic.manual_io"))
-                    .overlay(val -> {
+                    .overlays(val -> {
                         int textureIndex = val.ordinal();
                         return new DynamicDrawable(() -> {
                             if (conveyorModeSync.getValue().isImport()) {
@@ -572,7 +572,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         if (createConveyorModeRow()) {
             column.child(EnumButtonRow.builder(conveyorModeSync)
                     .rowDescription(IKey.lang("cover.generic.io"))
-                    .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
+                    .overlays(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
                     .widgetExtras((ioMode, toggleButton) -> ioMode.handleTooltip(toggleButton, "conveyor"))
                     .build());
         }
@@ -584,7 +584,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
             column.child(EnumButtonRow.builder(distributionModeSync)
                     .rowDescription(IKey.lang("cover.conveyor.distribution.name"))
-                    .overlay(16, GTGuiTextures.DISTRIBUTION_MODE_OVERLAY)
+                    .overlays(16, GTGuiTextures.DISTRIBUTION_MODE_OVERLAY)
                     .widgetExtras(ITranslatable::handleTooltip)
                     .build());
         }

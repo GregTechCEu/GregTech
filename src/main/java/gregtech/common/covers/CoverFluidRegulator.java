@@ -263,13 +263,13 @@ public class CoverFluidRegulator extends CoverPump {
         return super.createUI(data, syncManager)
                 .child(EnumButtonRow.builder(transferModeSync)
                         .rowDescription(IKey.lang("cover.generic.transfer_mode"))
-                        .overlay(GTGuiTextures.FLUID_TRANSFER_MODE_OVERLAY)
+                        .overlays(GTGuiTextures.FLUID_TRANSFER_MODE_OVERLAY)
                         .widgetExtras(
                                 (transferMode, toggleButton) -> transferMode.handleTooltip(toggleButton,
                                         "fluid_regulator"))
                         .build())
                 .child(EnumButtonRow.builder(bucketModeSync)
-                        .overlay(IKey.str("kL"), IKey.str("L"))
+                        .overlays(IKey.str("kL"), IKey.str("L"))
                         .widgetExtras(ITranslatable::handleTooltip)
                         .build()
                         .child(new TextFieldWidget().widthRel(0.5f).right(0)

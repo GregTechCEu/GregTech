@@ -212,7 +212,7 @@ public class CoverRoboticArm extends CoverConveyor {
         return super.createUI(data, guiSyncManager)
                 .child(EnumButtonRow.builder(transferModeSync)
                         .rowDescription(IKey.lang("cover.generic.transfer_mode"))
-                        .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY)
+                        .overlays(GTGuiTextures.TRANSFER_MODE_OVERLAY)
                         .widgetExtras(
                                 (transferMode, toggleButton) -> transferMode.handleTooltip(toggleButton, "robotic_arm"))
                         .build())

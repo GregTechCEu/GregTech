@@ -240,7 +240,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
             // noinspection DuplicatedCode
             column.child(EnumButtonRow.builder(manualIOModeSync)
                     .rowDescription(IKey.lang("cover.generic.manual_io"))
-                    .overlay(val -> {
+                    .overlays(val -> {
                         int textureIndex = val.ordinal();
                         return new DynamicDrawable(() -> {
                             if (pumpModeSync.getValue().isImport()) {
@@ -258,7 +258,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         if (createPumpModeRow()) {
             column.child(EnumButtonRow.builder(pumpModeSync)
                     .rowDescription(IKey.lang("cover.pump.mode"))
-                    .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY) // todo pump mode overlays
+                    .overlays(GTGuiTextures.CONVEYOR_MODE_OVERLAY) // todo pump mode overlays
                     .widgetExtras((ioMode, toggleButton) -> ioMode.handleTooltip(toggleButton, "pump"))
                     .build());
         }

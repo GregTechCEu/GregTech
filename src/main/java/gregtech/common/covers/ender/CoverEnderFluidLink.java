@@ -154,7 +154,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
         return super.createWidgets(data, syncManager)
                 .child(getFluidFilterContainer().initUI(data, syncManager))
                 .child(EnumButtonRow.builder(pumpMode)
-                        .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
+                        .overlays(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
                         .rowDescription(IKey.lang("cover.pump.mode"))
                         .build());
     }

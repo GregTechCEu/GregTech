@@ -111,7 +111,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         return super.createUI(data, guiSyncManager)
                 .child(EnumButtonRow.builder(voidingMode)
                         .rowDescription(IKey.lang("cover.voiding.voiding_mode"))
-                        .overlay(16, GTGuiTextures.VOIDING_MODE_OVERLAY)
+                        .overlays(16, GTGuiTextures.VOIDING_MODE_OVERLAY)
                         .build())
                 .child(Flow.row()
                         .right(0)

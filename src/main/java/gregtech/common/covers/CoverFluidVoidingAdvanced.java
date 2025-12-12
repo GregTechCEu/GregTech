@@ -124,10 +124,10 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         return super.createUI(data, syncManager)
                 .child(EnumButtonRow.builder(voidingMode)
                         .rowDescription(IKey.lang("cover.voiding.voiding_mode"))
-                        .overlay(16, GTGuiTextures.VOIDING_MODE_OVERLAY)
+                        .overlays(16, GTGuiTextures.VOIDING_MODE_OVERLAY)
                         .build())
                 .child(EnumButtonRow.builder(bucketMode)
-                        .overlay(IKey.str("kL"), IKey.str("L"))
+                        .overlays(IKey.str("kL"), IKey.str("L"))
                         .build()
                         .child(transferTextField
                                 .setEnabledIf(w -> this.fluidFilterContainer.showGlobalTransferLimitSlider() &&

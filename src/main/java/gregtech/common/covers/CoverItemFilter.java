@@ -158,7 +158,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                 .child(Flow.column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(EnumButtonRow.builder(filteringMode)
                                 .rowDescription(IKey.lang("cover.filter.mode.title"))
-                                .overlay(16, GTGuiTextures.FILTER_MODE_OVERLAY)
+                                .overlays(16, GTGuiTextures.FILTER_MODE_OVERLAY)
                                 .widgetExtras(ITranslatable::handleTooltip)
                                 .build())
                         .child(Flow.row()
