@@ -78,6 +78,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static gregtech.api.util.GTUtility.getMetaTileEntity;
 
@@ -94,7 +95,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     // provides enough information to get and read the MetaTileEntity data.
     private static final IUnlistedProperty<String> HARVEST_TOOL = new UnlistedStringProperty("harvest_tool");
     private static final IUnlistedProperty<Integer> HARVEST_LEVEL = new UnlistedIntegerProperty("harvest_level");
-    public final ThreadLocal<String> testMessage = new ThreadLocal<>();
+    public final ThreadLocal<Supplier<MetaTileEntity>> testMessage = new ThreadLocal<>();
 
     public BlockMachine() {
         super(Material.IRON);
@@ -478,11 +479,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Nullable
     @Override
     public TileEntity createNewTileEntity(@Nullable World worldIn, int meta) {
-        if (testMessage.get() != null) {
-            GTLog.logger.warn("mte to make {} at pos {}", testMessage.get(), CoreModule.placingPos.get());
+        Supplier<MetaTileEntity> mteFactory = testMessage.get();
+        if (mteFactory != null) {
+            MetaTileEntity newMTE = mteFactory.get();
+            GTLog.logger.warn("mte to make {} at pos {}", newMTE.metaTileEntityId, CoreModule.placingPos.get());
         }
         return new MetaTileEntityHolder();
-        // this also gets called in chunk data load? specifically getLightOpacity
     }
 
     @NotNull

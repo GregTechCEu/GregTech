@@ -91,7 +91,7 @@ public class MachineItemBlock extends ItemBlock {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         if (!CoreModule.gtTileMap.containsKey(pos.toLong())) {
             CoreModule.gtTileMap.put(pos.toLong(), metaTileEntity.getHolder());
-            getBlock().testMessage.set(metaTileEntity.metaTileEntityId.toString());
+            getBlock().testMessage.set(() -> metaTileEntity.createMetaTileEntity(null));
         }
         // prevent rendering glitch before meta tile entity sync to client, but after block placement
         // set opaque property on the placing on block, instead during set of meta tile entity

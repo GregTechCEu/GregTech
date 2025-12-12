@@ -2,6 +2,7 @@ package gregtech.mixins.minecraft;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.client.utils.TrackedDummyWorld;
 import gregtech.core.CoreModule;
 
@@ -34,14 +35,14 @@ public abstract class ChunkMixin {
         CoreModule.placingPos.set(pos);
         if (CoreModule.gtTileMap.containsKey(pos.toLong())) {
             gregTech$setMessage(CoreModule.gtTileMap.get(pos.toLong())
-                    .getMetaTileEntity().metaTileEntityId.toString());
+                    .getMetaTileEntity());
         }
     }
 
     @Unique
-    private static void gregTech$setMessage(String s) {
+    private static void gregTech$setMessage(MetaTileEntity mte) {
         GregTechAPI.mteManager.getRegistry(GTValues.MODID)
-                .getBlock().testMessage.set(s);
+                .getBlock().testMessage.set(() -> mte.createMetaTileEntity(null));
     }
 
     @ModifyReturnValue(method = "createNewTileEntity", at = @At("RETURN"))
