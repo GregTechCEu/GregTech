@@ -42,8 +42,8 @@ public final class CoverRegistry extends GTControlledRegistry<ResourceLocation, 
             IFilter.FilterType filterType = filter.getType();
             if (filterType.isError()) return;
 
-            List<ItemStack> filterList = filterCovers.computeIfAbsent(filterType, $ -> new ObjectArrayList<>());
-            filterList.add(coverStack);
+            filterCovers.computeIfAbsent(filterType, $ -> new ObjectArrayList<>())
+                    .add(coverStack);
         }
     }
 
