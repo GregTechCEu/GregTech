@@ -64,8 +64,24 @@ public interface IFilter {
     FilterType getType();
 
     enum FilterType {
+
         ITEM,
-        FLUID
+        FLUID,
+        ERROR;
+
+        public static final FilterType[] VALUES = values();
+
+        public boolean isItemFilter() {
+            return this == ITEM;
+        }
+
+        public boolean isFluidFilter() {
+            return this == FLUID;
+        }
+
+        public boolean isError() {
+            return this == ERROR;
+        }
     }
 
     // this only exists so i can pass in the constructor reference as a metaitem componant

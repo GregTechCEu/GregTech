@@ -7,16 +7,10 @@ import net.minecraft.item.ItemStack;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemFilterContainer extends BaseFilterContainer {
+public class ItemFilterContainer extends BaseFilterContainer<ItemStack> {
 
     public ItemFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super(dirtyNotifiable);
-    }
-
-    @Override
-    protected boolean isItemValid(ItemStack stack) {
-        var filter = BaseFilter.getFilterFromStack(stack);
-        return filter != BaseFilter.ERROR_FILTER && filter.getType() == IFilter.FilterType.ITEM;
     }
 
     @Override
@@ -24,5 +18,10 @@ public class ItemFilterContainer extends BaseFilterContainer {
         return IKey.lang(() -> hasFilter() ?
                 getFilterStack().getTranslationKey() + ".name" :
                 "metaitem.item_filter.name");
+    }
+
+    @Override
+    protected IFilter.@NotNull FilterType getFilterType() {
+        return IFilter.FilterType.ITEM;
     }
 }
