@@ -20,7 +20,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.function.impl.TimedProgressSupplier;
-
 import gregtech.core.CoreModule;
 
 import net.minecraft.block.BlockRedstoneWire;
