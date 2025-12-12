@@ -54,8 +54,8 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0L && isAttachedToMultiBlock()) {
             TileEntity tileEntity = getNeighbor(getFrontFacing());
             IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity

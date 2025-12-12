@@ -123,8 +123,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (getWorld().isRemote) return;
 
         if (getOffsetTimer() % 20 == 0) {
@@ -321,8 +321,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setTag("inventory", inventory.serializeNBT());
         data.setInteger("currentSpeed", currentSpeed);
         data.setBoolean("Spinning", isRotorSpinning);
@@ -331,8 +331,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.inventory.deserializeNBT(data.getCompoundTag("inventory"));
         this.currentSpeed = data.getInteger("currentSpeed");
         this.isRotorSpinning = data.getBoolean("Spinning");
@@ -351,16 +351,16 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(isRotorSpinning);
         buf.writeInt(rotorColor);
         buf.writeBoolean(frontFaceFree);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.isRotorSpinning = buf.readBoolean();
         this.rotorColor = buf.readInt();
         this.frontFaceFree = buf.readBoolean();

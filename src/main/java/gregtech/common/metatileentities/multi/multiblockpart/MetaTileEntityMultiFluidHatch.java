@@ -82,8 +82,8 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote) {
             if (workingEnabled) {
                 if (isExportHatch) {
@@ -118,8 +118,8 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(workingEnabled);
         for (var tank : fluidTankList.getFluidTanks()) {
             NetworkUtils.writeFluidStack(buf, tank.getFluid());
@@ -127,8 +127,8 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.workingEnabled = buf.readBoolean();
         for (var tank : fluidTankList.getFluidTanks()) {
             var fluid = NetworkUtils.readFluidStack(buf);
@@ -145,15 +145,15 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean("workingEnabled", workingEnabled);
         return data;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.hasKey("workingEnabled")) {
             this.workingEnabled = data.getBoolean("workingEnabled");
         }

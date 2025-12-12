@@ -140,8 +140,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         // we need to know what components we have on the client
         if (getWorld().isRemote) {
             if (isStructureFormed()) {
@@ -481,8 +481,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean("isActive", this.isActive);
         data.setBoolean("isWorkingEnabled", this.isWorkingEnabled);
         data.setDouble("temperature", this.temperature);
@@ -490,23 +490,23 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.isActive = data.getBoolean("isActive");
         this.isWorkingEnabled = data.getBoolean("isWorkingEnabled");
         this.temperature = data.getDouble("temperature");
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.isWorkingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.isActive = buf.readBoolean();
         this.isWorkingEnabled = buf.readBoolean();
     }

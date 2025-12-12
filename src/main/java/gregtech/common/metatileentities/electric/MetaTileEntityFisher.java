@@ -104,8 +104,8 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         ItemStack baitStack = importItems.getStackInSlot(0);
         if (!getWorld().isRemote && energyContainer.getEnergyStored() >= energyAmountPerFish &&
                 getOffsetTimer() % fishingTicks == 0L && !baitStack.isEmpty()) {

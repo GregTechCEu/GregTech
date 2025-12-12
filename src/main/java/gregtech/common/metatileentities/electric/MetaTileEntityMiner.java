@@ -220,8 +220,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         this.minerLogic.performMining();
         if (!getWorld().isRemote) {
             ((EnergyContainerHandler) this.energyContainer).dischargeOrRechargeEnergyContainers(chargerInventory, 0);
@@ -262,28 +262,28 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setTag("ChargerInventory", chargerInventory.serializeNBT());
         return this.minerLogic.writeToNBT(data);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.chargerInventory.deserializeNBT(data.getCompoundTag("ChargerInventory"));
         this.minerLogic.readFromNBT(data);
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         this.minerLogic.writeInitialSyncData(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.minerLogic.receiveInitialSyncData(buf);
     }
 

@@ -356,26 +356,26 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
         data.setInteger("ThrottlePercentage", throttlePercentage);
-        return super.writeToNBT(data);
+        return super.writeMTETag(data);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
+    public void readMTETag(NBTTagCompound data) {
         throttlePercentage = data.getInteger("ThrottlePercentage");
-        super.readFromNBT(data);
+        super.readMTETag(data);
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeVarInt(throttlePercentage);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         throttlePercentage = buf.readVarInt();
     }
 

@@ -28,7 +28,10 @@ public class TileEntityMixin {
             var resloc = new ResourceLocation(tagCompound.getString("MetaId"));
             MetaTileEntity mte = GregTechAPI.mteManager.getRegistry(resloc.getNamespace())
                     .getObject(resloc);
+            if (mte == null) return original.call(instance);
             GTLog.logger.warn("creating {} from TileEntity#create", mte.metaTileEntityId, tagCompound);
+            // noinspection unchecked
+            return (T) mte.createMetaTileEntity(null);
         }
         return original.call(instance);
     }

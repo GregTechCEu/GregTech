@@ -83,8 +83,8 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote) {
             fillContainerFromInternalTank(fluidTank);
             if (getOffsetTimer() % 20 == 0) {
@@ -230,26 +230,26 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
         this.circuitInventory.write(data);
-        return super.writeToNBT(data);
+        return super.writeMTETag(data);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
+    public void readMTETag(NBTTagCompound data) {
         this.circuitInventory.read(data);
-        super.readFromNBT(data);
+        super.readMTETag(data);
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeVarInt(this.circuitInventory.getCircuitValue());
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         setGhostCircuitConfig(buf.readVarInt());
     }
 

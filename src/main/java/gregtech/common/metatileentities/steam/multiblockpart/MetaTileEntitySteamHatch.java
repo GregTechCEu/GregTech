@@ -68,8 +68,8 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.hasKey("ContainerInventory")) {
             MetaTileEntityQuantumTank.legacyTankItemHandlerNBTReading(this, data.getCompoundTag("ContainerInventory"),
                     0, 1);
@@ -77,8 +77,8 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote) {
             fillContainerFromInternalTank(importFluids);
             fillInternalTankFromFluidContainer();

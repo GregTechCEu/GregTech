@@ -120,15 +120,15 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
         buf.writeBoolean(converterTrait.isFeToEu());
-        super.writeInitialSyncData(buf);
+        super.writeInitialSyncDataMTE(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
         converterTrait.setFeToEu(buf.readBoolean());
-        super.receiveInitialSyncData(buf);
+        super.receiveInitialSyncDataMTE(buf);
     }
 
     @Override

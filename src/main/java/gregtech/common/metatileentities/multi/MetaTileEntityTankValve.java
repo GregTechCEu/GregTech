@@ -68,8 +68,8 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0L && isAttachedToMultiBlock() &&
                 getFrontFacing() == EnumFacing.DOWN) {
             TileEntity tileEntity = getNeighbor(getFrontFacing());

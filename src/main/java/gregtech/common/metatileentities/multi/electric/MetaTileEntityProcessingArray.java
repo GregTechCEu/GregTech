@@ -7,7 +7,6 @@ import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.IMachineHatchMultiblock;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.DummyCleanroom;
 import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
@@ -345,9 +344,10 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             } else {
                 this.activeRecipeMap = mte.getRecipeMap();
                 // Set the world for MTEs, as some need it for checking their recipes
-                MetaTileEntityHolder holder = new MetaTileEntityHolder();
-                mte = holder.setMetaTileEntity(mte);
-                holder.setWorld(this.metaTileEntity.getWorld());
+                // MetaTileEntityHolder holder = new MetaTileEntityHolder();
+                // mte = holder.setMetaTileEntity(mte);
+                // holder.setWorld(this.metaTileEntity.getWorld());
+                mte.setWorld(this.metaTileEntity.getWorld());
 
                 updateCleanroom();
             }

@@ -97,15 +97,15 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeVarInt(pumpHeadY);
         buf.writeBoolean(locked);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.pumpHeadY = buf.readVarInt();
         this.locked = buf.readBoolean();
     }
@@ -354,8 +354,8 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (getWorld().isRemote) {
             return;
         }
@@ -377,8 +377,8 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setInteger("PumpHeadDepth", pumpHeadY);
         data.setBoolean("IsLocked", locked);
         if (locked && lockedFluid != null) {
@@ -388,8 +388,8 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.pumpHeadY = data.getInteger("PumpHeadDepth");
         this.locked = data.getBoolean("IsLocked");
         this.lockedFluid = this.locked ? FluidStack.loadFluidStackFromNBT(data.getCompoundTag("LockedFluid")) : null;

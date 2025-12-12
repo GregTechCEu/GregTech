@@ -139,16 +139,16 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public NBTTagCompound writeMTETag(NBTTagCompound tag) {
+        super.writeMTETag(tag);
         tag.setTag("Inventory", itemStackHandler.serializeNBT());
         tag.setTag("FluidInventory", fluidTankList.serializeNBT());
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void readMTETag(NBTTagCompound tag) {
+        super.readMTETag(tag);
         this.itemStackHandler.deserializeNBT(tag.getCompoundTag("Inventory"));
         this.fluidTankList.deserializeNBT(tag.getCompoundTag("FluidInventory"));
     }

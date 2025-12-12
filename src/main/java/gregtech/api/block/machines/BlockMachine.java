@@ -9,8 +9,8 @@ import gregtech.api.cover.Cover;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
+import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.registry.MTERegistry;
@@ -279,8 +279,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             return;
 
         // TODO Fix this
-        if (stack.hasDisplayName() && holder instanceof MetaTileEntityHolder) {
-            ((MetaTileEntityHolder) holder).setCustomName(stack.getDisplayName());
+        if (stack.hasDisplayName() && holder instanceof GTBaseTileEntity) {
+            ((GTBaseTileEntity) holder).setCustomName(stack.getDisplayName());
         }
         var stackTag = stack.getTagCompound();
         NBTTagCompound mteTag = null;
@@ -289,7 +289,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 var blockTag = stackTag.getCompoundTag(GregtechDataCodes.BLOCK_ENTITY_TAG);
                 String customName = blockTag.getString(GregtechDataCodes.CUSTOM_NAME);
                 if (!customName.isEmpty())
-                    ((MetaTileEntityHolder) holder).setCustomName(customName);
+                    ((GTBaseTileEntity) holder).setCustomName(customName);
 
                 mteTag = blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE);
                 List<String> removed = new ArrayList<>();
@@ -376,8 +376,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (!tagCompound.isEmpty())
             itemStack.setTagCompound(tagCompound);
         // TODO Clean this up
-        if (metaTileEntity.getHolder() instanceof MetaTileEntityHolder) {
-            MetaTileEntityHolder holder = (MetaTileEntityHolder) metaTileEntity.getHolder();
+        if (metaTileEntity.getHolder() instanceof GTBaseTileEntity holder) {
             if (holder.hasCustomName()) {
                 itemStack.setStackDisplayName(holder.getName());
             }
@@ -483,8 +482,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (mteFactory != null) {
             MetaTileEntity newMTE = mteFactory.get();
             GTLog.logger.warn("mte to make {} at pos {}", newMTE.metaTileEntityId, CoreModule.placingPos.get());
+            return newMTE;
         }
-        return new MetaTileEntityHolder();
+        throw new IllegalStateException(String.format("couldn't create a new mte at %s!", CoreModule.placingPos.get()));
+        // return new MetaTileEntityHolder();
     }
 
     @NotNull

@@ -57,8 +57,8 @@ public class SteamMacerator extends SteamMetaTileEntity {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (isActive() && getWorld().isRemote) {
             VanillaParticleEffects.TOP_SMOKE_SMALL.runEffect(this);
         }

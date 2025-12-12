@@ -101,15 +101,15 @@ public class SteamRockBreaker extends SteamMetaTileEntity {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean("hasValidFluids", hasValidFluids);
         return data;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.hasKey("hasValidFluids")) {
             this.hasValidFluids = data.getBoolean("hasValidFluids");
         }

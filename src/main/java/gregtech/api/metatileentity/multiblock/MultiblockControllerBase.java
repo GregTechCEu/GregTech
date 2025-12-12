@@ -6,7 +6,6 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.BlockWorldState;
@@ -102,8 +101,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote) {
             if (getOffsetTimer() % 20 == 0 || isFirstTick()) {
                 checkStructurePattern();
@@ -218,11 +217,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
         return () -> Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
             // TODO
-            MetaTileEntityHolder holder = new MetaTileEntityHolder();
-            holder.setMetaTileEntity(tile);
-            holder.getMetaTileEntity().onPlacement();
-            holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
-            return new BlockInfo(tile.getBlock().getDefaultState(), holder);
+            // MetaTileEntityHolder holder = new MetaTileEntityHolder();
+            // holder.setMetaTileEntity(tile);
+            tile = tile.createMetaTileEntity(null);
+            tile.onPlacement();
+            tile.setFrontFacing(EnumFacing.SOUTH);
+            return new BlockInfo(tile.getBlock().getDefaultState(), tile);
         }).toArray(BlockInfo[]::new);
     }
 
@@ -423,8 +423,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.hasKey("UpwardsFacing")) {
             this.upwardsFacing = EnumFacing.VALUES[data.getByte("UpwardsFacing")];
         }
@@ -435,24 +435,24 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setByte("UpwardsFacing", (byte) upwardsFacing.getIndex());
         data.setBoolean("IsFlipped", isFlipped);
         return data;
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(structureFormed);
         buf.writeByte(upwardsFacing.getIndex());
         buf.writeBoolean(isFlipped);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.structureFormed = buf.readBoolean();
         this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
         this.isFlipped = buf.readBoolean();

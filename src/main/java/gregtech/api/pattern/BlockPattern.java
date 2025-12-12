@@ -2,7 +2,6 @@ package gregtech.api.pattern;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.registry.MTERegistry;
@@ -171,10 +170,11 @@ public class BlockPattern {
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
                         TileEntity tileEntity = worldState.getTileEntity();
                         if (predicate != TraceabilityPredicate.ANY) {
-                            if (tileEntity instanceof IGregTechTileEntity) {
-                                if (((IGregTechTileEntity) tileEntity).isValid()) {
+                            if (tileEntity instanceof IGregTechTileEntity tile) {
+                                if (tile.isValid()) {
                                     cache.put(pos.toLong(),
-                                            new BlockInfo(worldState.getBlockState(), tileEntity, predicate));
+                                            new BlockInfo(worldState.getBlockState(), tile.getMetaTileEntity()
+                                                    .createMetaTileEntity(null), predicate));
                                 } else {
                                     cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), null, predicate));
                                 }
@@ -576,11 +576,12 @@ public class BlockPattern {
                         BlockPos pos = RelativeDirection.setActualRelativeOffset(z, y, x, EnumFacing.NORTH,
                                 EnumFacing.UP, false, structureDir);
                         // TODO
-                        if (info.getTileEntity() instanceof MetaTileEntityHolder) {
-                            MetaTileEntityHolder holder = new MetaTileEntityHolder();
-                            holder.setMetaTileEntity(((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity());
-                            holder.getMetaTileEntity().onPlacement();
-                            info = new BlockInfo(holder.getMetaTileEntity().getBlock().getDefaultState(), holder);
+                        if (info.getTileEntity() instanceof IGregTechTileEntity gregTechTile) {
+                            // MetaTileEntityHolder holder = new MetaTileEntityHolder();
+                            // holder.setMetaTileEntity(gregTechTile.getMetaTileEntity());
+                            gregTechTile.getMetaTileEntity().onPlacement();
+                            info = new BlockInfo(gregTechTile.getMetaTileEntity().getBlock().getDefaultState(),
+                                    gregTechTile.getMetaTileEntity());
                         }
                         blocks.put(pos, info);
                         minX = Math.min(pos.getX(), minX);
@@ -600,8 +601,8 @@ public class BlockPattern {
         int finalMinY = minY;
         int finalMinZ = minZ;
         blocks.forEach((pos, info) -> {
-            if (info.getTileEntity() instanceof MetaTileEntityHolder) {
-                MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity();
+            if (info.getTileEntity() instanceof IGregTechTileEntity gregTechTile) {
+                MetaTileEntity metaTileEntity = gregTechTile.getMetaTileEntity();
                 boolean find = false;
                 for (EnumFacing enumFacing : FACINGS) {
                     if (metaTileEntity.isValidFrontFacing(enumFacing)) {

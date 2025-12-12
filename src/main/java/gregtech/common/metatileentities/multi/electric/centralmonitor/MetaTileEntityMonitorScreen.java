@@ -306,8 +306,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (plugin != null && this.getController() != null && this.isActive()) {
             plugin.update();
         }
@@ -369,8 +369,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         writeSync(buf);
         buf.writeItemStack(this.inventory.getStackInSlot(0));
         if (plugin != null) {
@@ -379,8 +379,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         readSync(buf);
         try {
             ItemStack itemStack = buf.readItemStack();
@@ -423,7 +423,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
         if (this.coverPos != null) {
             data.setTag("coverPos", NBTUtil.createPosTag(this.coverPos.getPos()));
             data.setByte("coverSide", (byte) this.coverPos.getFacing().getIndex());
@@ -433,12 +433,12 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         data.setInteger("color", this.frameColor);
         data.setInteger("slot", this.slot);
         data.setTag("Inventory", this.inventory.serializeNBT());
-        return super.writeToNBT(data);
+        return super.writeMTETag(data);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.frameColor = data.hasKey("color") ? data.getInteger("color") : 0XFF00Ff00;
         this.scale = data.hasKey("scale") ? data.getFloat("scale") : 1;
         this.slot = data.hasKey("slot") ? data.getInteger("slot") : 0;

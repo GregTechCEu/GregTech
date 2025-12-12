@@ -112,8 +112,8 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
 
         World world = getWorld();
         if (!world.isRemote) {
@@ -218,8 +218,8 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setInteger("OutputFacing", getOutputFacing().getIndex());
         data.setInteger("BlockBreakProgress", breakProgressTicksLeft);
         data.setFloat("BlockHardness", currentBlockHardness);
@@ -227,22 +227,22 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.outputFacing = EnumFacing.VALUES[data.getInteger("OutputFacing")];
         this.breakProgressTicksLeft = data.getInteger("BlockBreakProgress");
         this.currentBlockHardness = data.getFloat("BlockHardness");
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeByte(getOutputFacing().getIndex());
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
     }
 

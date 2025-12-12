@@ -179,8 +179,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (ConfigHolder.client.shader.assemblyLineParticles) {
             if (getRecipeMapWorkable().isWorking()) {
                 int maxBeams = getAbilities(MultiblockAbility.IMPORT_ITEMS).size() + 1;
@@ -212,14 +212,14 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         writeParticles(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         readParticles(buf);
     }
 

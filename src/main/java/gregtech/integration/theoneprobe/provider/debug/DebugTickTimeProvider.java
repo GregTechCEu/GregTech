@@ -1,5 +1,6 @@
 package gregtech.integration.theoneprobe.provider.debug;
 
+import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
@@ -26,7 +27,7 @@ public class DebugTickTimeProvider implements IProbeInfoProvider {
                              IBlockState blockState, IProbeHitData data) {
         if (ConfigHolder.misc.debug) {
             TileEntity tile = world.getTileEntity(data.getPos());
-            if (tile instanceof MetaTileEntityHolder holder) {
+            if (tile instanceof GTBaseTileEntity holder) {
                 double[] timeStatistics = holder.getTimeStatistics();
                 if (timeStatistics != null) {
                     double averageTickTime = timeStatistics[0];

@@ -171,8 +171,8 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
 
         if (this.isActive()) {
             if (getWorld().isRemote) {

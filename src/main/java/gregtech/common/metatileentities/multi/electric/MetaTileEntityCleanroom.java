@@ -682,8 +682,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     @Override
-    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(@NotNull NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setInteger("lDist", this.lDist);
         data.setInteger("rDist", this.rDist);
         data.setInteger("bDist", this.fDist);
@@ -694,8 +694,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.lDist = data.hasKey("lDist") ? data.getInteger("lDist") : this.lDist;
         this.rDist = data.hasKey("rDist") ? data.getInteger("rDist") : this.rDist;
         this.hDist = data.hasKey("hDist") ? data.getInteger("hDist") : this.hDist;
@@ -707,8 +707,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeInt(this.lDist);
         buf.writeInt(this.rDist);
         buf.writeInt(this.bDist);
@@ -719,8 +719,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.lDist = buf.readInt();
         this.rDist = buf.readInt();
         this.bDist = buf.readInt();

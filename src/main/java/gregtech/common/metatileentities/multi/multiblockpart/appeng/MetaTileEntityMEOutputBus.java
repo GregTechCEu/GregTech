@@ -59,8 +59,8 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEI
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME() && this.updateMEStatus()) {
             if (this.internalBuffer.isEmpty()) return;
 
@@ -134,28 +134,28 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEI
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(workingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.workingEnabled = buf.readBoolean();
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean(WORKING_TAG, this.workingEnabled);
         data.setTag(ITEM_BUFFER_TAG, this.internalBuffer.serializeNBT());
         return data;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.hasKey(WORKING_TAG)) {
             this.workingEnabled = data.getBoolean(WORKING_TAG);
         }

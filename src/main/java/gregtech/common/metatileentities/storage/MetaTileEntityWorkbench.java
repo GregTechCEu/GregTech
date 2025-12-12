@@ -119,8 +119,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeInt(this.itemsCrafted);
         for (int i = 0; i < craftingGrid.getSlots(); i++) {
             NetworkUtils.writeItemStack(buf, craftingGrid.getStackInSlot(i));
@@ -130,8 +130,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.itemsCrafted = buf.readInt();
         for (int i = 0; i < craftingGrid.getSlots(); i++) {
             craftingGrid.setStackInSlot(i, NetworkUtils.readItemStack(buf));
@@ -142,8 +142,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setTag("CraftingGridInventory", craftingGrid.serializeNBT());
         data.setTag("ToolInventory", toolInventory.serializeNBT());
         data.setTag("InternalInventory", internalInventory.serializeNBT());
@@ -153,8 +153,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.craftingGrid.deserializeNBT(data.getCompoundTag("CraftingGridInventory"));
         this.toolInventory.deserializeNBT(data.getCompoundTag("ToolInventory"));
         this.internalInventory.deserializeNBT(data.getCompoundTag("InternalInventory"));

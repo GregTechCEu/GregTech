@@ -231,30 +231,30 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean("isActive", this.isActive);
         data.setBoolean("isWorkingEnabled", this.isWorkingEnabled);
         return data;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.isActive = data.getBoolean("isActive");
         this.isWorkingEnabled = data.getBoolean("isWorkingEnabled");
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.isWorkingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.isActive = buf.readBoolean();
         this.isWorkingEnabled = buf.readBoolean();
     }

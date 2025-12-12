@@ -128,8 +128,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setInteger("FuelBurnTimeLeft", fuelBurnTimeLeft);
         data.setInteger("FuelMaxBurnTime", fuelMaxBurnTime);
         data.setInteger("CurrentTemperature", currentTemperature);
@@ -139,8 +139,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.fuelBurnTimeLeft = data.getInteger("FuelBurnTimeLeft");
         this.fuelMaxBurnTime = data.getInteger("FuelMaxBurnTime");
         this.currentTemperature = data.getInteger("CurrentTemperature");
@@ -150,14 +150,14 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(isBurning);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.isBurning = buf.readBoolean();
     }
 
@@ -179,8 +179,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote) {
             updateCurrentTemperature();
             if (getOffsetTimer() % 10 == 0) {

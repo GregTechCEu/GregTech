@@ -78,8 +78,8 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         checkWeatherOrTerrainExplosion(getTier(), getTier() * 10, energyContainer);
     }
 
@@ -255,8 +255,8 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(controllerPos != null);
         if (controllerPos != null) {
             buf.writeBlockPos(controllerPos);
@@ -264,8 +264,8 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         if (buf.readBoolean()) {
             controllerPos = buf.readBlockPos();
             scheduleRenderUpdate();
@@ -301,8 +301,8 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        NBTTagCompound tagCompound = super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        NBTTagCompound tagCompound = super.writeMTETag(data);
         tagCompound.setBoolean("HasController", controllerPos != null);
         if (controllerPos != null) {
             tagCompound.setLong("ControllerPos", controllerPos.toLong());
@@ -311,8 +311,8 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.getBoolean("HasController")) {
             this.controllerPos = BlockPos.fromLong(data.getLong("ControllerPos"));
         }

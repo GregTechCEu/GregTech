@@ -104,10 +104,10 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    public void update() {
+    public void updateMTE() {
         ItemStack stack = creativeHandler.getStackInSlot(0).copy();
         this.virtualItemStack = stack; // For rendering purposes
-        super.update();
+        super.updateMTE();
         if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0) return;
         if (getWorld().isRemote || !active || stack.isEmpty() || isConnected()) return;
 
@@ -138,8 +138,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setInteger("ItemsPerCycle", itemsPerCycle);
         data.setInteger("TicksPerCycle", ticksPerCycle);
         data.setBoolean("Active", active);
@@ -147,8 +147,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (virtualItemStack.isEmpty())
             creativeHandler.deserializeNBT(data.getCompoundTag("ItemStackHandler"));
         itemsPerCycle = data.getInteger("ItemsPerCycle");
@@ -185,8 +185,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.creativeHandler.setStackInSlot(0, this.virtualItemStack);
     }
 

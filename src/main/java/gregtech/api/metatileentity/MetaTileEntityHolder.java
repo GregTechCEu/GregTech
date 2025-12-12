@@ -11,7 +11,6 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.Mods;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.particle.GTNameTagParticle;
-import gregtech.client.particle.GTParticleManager;
 import gregtech.common.ConfigHolder;
 import gregtech.core.network.packets.PacketRecoverMTE;
 
@@ -94,14 +93,14 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
         setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
         if (tagCompound != null && !tagCompound.isEmpty())
-            getMetaTileEntity().readFromNBT(tagCompound);
+            getMetaTileEntity().readMTETag(tagCompound);
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
             writeCustomData(INITIALIZE_MTE, buffer -> {
                 buffer.writeVarInt(sampleMetaTileEntity.getRegistry().getNetworkId());
                 buffer.writeVarInt(
                         sampleMetaTileEntity.getRegistry().getIdByObjectName(getMetaTileEntity().metaTileEntityId));
-                getMetaTileEntity().writeInitialSyncData(buffer);
+                getMetaTileEntity().writeInitialSyncDataMTE(buffer);
             });
             // just to update neighbours so cables and other things will work properly
             this.needToUpdateLightning = true;
@@ -145,7 +144,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                  * Note: NBTs need to be read before onAttached is run, since NBTs may contain important information
                  * about the composition of the BlockPattern that onAttached may generate.
                  */
-                this.metaTileEntity.readFromNBT(metaTileEntityData);
+                this.metaTileEntity.readMTETag(metaTileEntityData);
             } else {
                 GTLog.logger.error("Failed to load MetaTileEntity with invalid ID {}", metaTileEntityIdRaw);
             }
@@ -163,7 +162,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         if (metaTileEntity != null) {
             compound.setString("MetaId", metaTileEntity.metaTileEntityId.toString());
             NBTTagCompound metaTileEntityData = new NBTTagCompound();
-            metaTileEntity.writeToNBT(metaTileEntityData);
+            metaTileEntity.writeMTETag(metaTileEntityData);
             compound.setTag("MetaTileEntity", metaTileEntityData);
             if (Mods.AppliedEnergistics2.isModLoaded()) {
                 writeToNBT_AENetwork(compound);
@@ -201,7 +200,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public void update() {
         long tickTime = System.nanoTime();
         if (metaTileEntity != null) {
-            metaTileEntity.update();
+            metaTileEntity.updateMTE();
         } else if (world.isRemote) { // recover the mte
             GregTechAPI.networkHandler.sendToServer(new PacketRecoverMTE(world.provider.getDimension(), getPos()));
         } else { // remove the block
@@ -310,7 +309,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             buf.writeBoolean(true);
             buf.writeVarInt(metaTileEntity.getRegistry().getNetworkId());
             buf.writeVarInt(metaTileEntity.getRegistry().getIdByObjectName(metaTileEntity.metaTileEntityId));
-            metaTileEntity.writeInitialSyncData(buf);
+            metaTileEntity.writeInitialSyncDataMTE(buf);
         } else buf.writeBoolean(false);
     }
 
@@ -342,7 +341,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         MTERegistry registry = GregTechAPI.mteManager.getRegistry(networkId);
         setMetaTileEntity(registry.getObjectById(metaTileEntityId));
         this.metaTileEntity.onPlacement();
-        this.metaTileEntity.receiveInitialSyncData(buf);
+        this.metaTileEntity.receiveInitialSyncDataMTE(buf);
         scheduleRenderUpdate();
         this.needToUpdateLightning = true;
     }
@@ -487,8 +486,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     private void updateNameTagParticle() {
         if (hasCustomName()) {
             if (nameTagParticle == null) {
-                nameTagParticle = new GTNameTagParticle(this, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
-                GTParticleManager.INSTANCE.addEffect(nameTagParticle);
+                // nameTagParticle = new GTNameTagParticle(this, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
+                // GTParticleManager.INSTANCE.addEffect(nameTagParticle);
             }
         } else {
             if (nameTagParticle != null) {

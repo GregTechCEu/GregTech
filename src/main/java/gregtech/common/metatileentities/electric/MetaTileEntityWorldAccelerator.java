@@ -126,8 +126,8 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote) {
             if (isPaused && isActive) {
                 setActive(false);
@@ -261,8 +261,8 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean("TileMode", tileMode);
         data.setBoolean("isPaused", isPaused);
         data.setBoolean("IsActive", isActive);
@@ -270,24 +270,24 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         tileMode = data.getBoolean("TileMode");
         isPaused = data.getBoolean("isPaused");
         isActive = data.getBoolean("IsActive");
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(tileMode);
         buf.writeBoolean(isPaused);
         buf.writeBoolean(isActive);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.tileMode = buf.readBoolean();
         this.isPaused = buf.readBoolean();
         this.isActive = buf.readBoolean();

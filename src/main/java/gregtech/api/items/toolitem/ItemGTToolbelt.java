@@ -4,7 +4,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.items.IDyeableItem;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.material.Material;
@@ -481,7 +481,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             ItemStack stack = player.getHeldItem(hand);
             ToolStackHandler handler = getHandler(stack);
             if (handler.getSelectedStack().isEmpty() &&
-                    world.getTileEntity(pos) instanceof MetaTileEntityHolder holder &&
+                    world.getTileEntity(pos) instanceof IGregTechTileEntity holder &&
                     holder.getMetaTileEntity() instanceof MetaTileEntityMaintenanceHatch maintenance) {
                 maintenance.fixMaintenanceProblemsWithToolbelt(player, this, stack);
                 return EnumActionResult.SUCCESS;

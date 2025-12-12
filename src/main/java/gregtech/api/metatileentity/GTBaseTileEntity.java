@@ -8,6 +8,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.Mods;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.particle.GTNameTagParticle;
+import gregtech.client.particle.GTParticleManager;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.block.state.IBlockState;
@@ -44,8 +45,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-
-import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
 @Optional.InterfaceList(value = {
         @Optional.Interface(iface = "appeng.api.networking.security.IActionHost",
@@ -112,6 +111,8 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     @Override
     public void update() {
         long tickTime = System.nanoTime();
+
+        updateMTE();
 
         if (this.needToUpdateLightning) {
             getWorld().checkLight(getPos());
@@ -207,21 +208,21 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
         buf.writeBoolean(true);
         buf.writeVarInt(getRegistry().getNetworkId());
         buf.writeVarInt(getRegistry().getIdByObjectName(getMetaID()));
+        writeInitialSyncDataMTE(buf);
     }
 
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         setCustomName(buf.readString(Short.MAX_VALUE));
-        if (buf.readBoolean()) {
-            receiveMTEInitializationData(buf);
-        }
+        buf.readBoolean();
+        receiveMTEInitializationData(buf);
     }
 
     @Override
     public void receiveCustomData(int discriminator, @NotNull PacketBuffer buffer) {
-        if (discriminator == INITIALIZE_MTE) {
-            receiveMTEInitializationData(buffer);
-        }
+        // if (discriminator == INITIALIZE_MTE) {
+        // receiveMTEInitializationData(buffer);
+        // }
     }
 
     /**
@@ -230,16 +231,13 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
      * @param buf the buffer to read data from
      */
     private void receiveMTEInitializationData(@NotNull PacketBuffer buf) {
-        buf.readBoolean();
         int networkId = buf.readVarInt();
         int metaTileEntityId = buf.readVarInt();
         this.onPlacement();
-        this.initializeMTE(buf);
+        this.receiveInitialSyncDataMTE(buf);
         scheduleRenderUpdate();
         this.needToUpdateLightning = true;
     }
-
-    protected abstract void onPlacement();
 
     @Override
     public boolean isValid() {
@@ -369,9 +367,8 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     private void updateNameTagParticle() {
         if (hasCustomName()) {
             if (nameTagParticle == null) {
-                GTLog.logger.warn("name particle not implemented");
-                // nameTagParticle = new GTNameTagParticle(this, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
-                // GTParticleManager.INSTANCE.addEffect(nameTagParticle);
+                nameTagParticle = new GTNameTagParticle(this, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
+                GTParticleManager.INSTANCE.addEffect(nameTagParticle);
             }
         } else {
             if (nameTagParticle != null) {
@@ -407,14 +404,21 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     }
 
     // this should return itself
+
     @Override
     public abstract MetaTileEntity getMetaTileEntity();
 
     // MetaTileEntity Methods
 
-    public abstract void initializeMTE(PacketBuffer buffer);
+    protected abstract void writeInitialSyncDataMTE(@NotNull PacketBuffer buf);
 
-    public abstract void writeMTETag(NBTTagCompound tagCompound);
+    public abstract void receiveInitialSyncDataMTE(@NotNull PacketBuffer buf);
+
+    protected abstract void onPlacement();
+
+    protected abstract void updateMTE();
+
+    public abstract NBTTagCompound writeMTETag(NBTTagCompound tagCompound);
 
     public abstract void readMTETag(NBTTagCompound tagCompound);
 
