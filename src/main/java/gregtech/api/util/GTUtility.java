@@ -10,6 +10,7 @@ import gregtech.api.items.behavior.CoverItemBehavior;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
@@ -20,7 +21,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.function.impl.TimedProgressSupplier;
-import gregtech.core.CoreModule;
 
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -759,8 +759,8 @@ public class GTUtility {
 
     public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
         if (world == null || pos == null) return null;
-        if (CoreModule.gtTileMap.containsKey(pos.toLong())) {
-            IGregTechTileEntity tile = CoreModule.gtTileMap.get(pos.toLong());
+        if (GTBaseTileEntity.hasTE(pos)) {
+            IGregTechTileEntity tile = GTBaseTileEntity.getTEByPos(pos);
             if (tile != null && tile.getMetaTileEntity() != null) {
                 return tile.getMetaTileEntity();
             }

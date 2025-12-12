@@ -1,5 +1,8 @@
 package gregtech.api.util;
 
+import gregtech.api.metatileentity.GTBaseTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -55,9 +58,12 @@ public class BlockInfo {
     }
 
     public void apply(World world, BlockPos pos) {
-        world.setBlockState(pos, blockState);
         if (tileEntity != null) {
+            if (tileEntity instanceof IGregTechTileEntity gregTechTile) {
+                GTBaseTileEntity.setPlacingTE(gregTechTile);
+            }
             world.setTileEntity(pos, tileEntity);
         }
+        world.setBlockState(pos, blockState);
     }
 }

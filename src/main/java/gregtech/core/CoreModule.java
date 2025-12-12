@@ -10,6 +10,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
+import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.registry.MTEManager;
@@ -100,8 +101,6 @@ import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -372,33 +371,19 @@ public class CoreModule implements IGregTechModule {
         CapesRegistry.clearMaps();
     }
 
-    public static Long2ObjectMap<IGregTechTileEntity> gtTileMap = new Long2ObjectOpenHashMap<>();
-    public static ThreadLocal<BlockPos> placingPos = new ThreadLocal<>();
-
     @SubscribeEvent
     public static void chunkLoad(ChunkEvent.Load event) {
+        if (!event.getWorld().isRemote) return;
         Map<BlockPos, TileEntity> map = event.getChunk().getTileEntityMap();
         for (BlockPos pos : map.keySet()) {
             // pos here is within chunk origin
             ChunkPos cPos = event.getChunk().getPos();
             if (map.get(pos) instanceof IGregTechTileEntity igtte) {
-                gtTileMap.put(pos.add((cPos.x << 4) + 1, 0, (cPos.z << 4)).toLong(), igtte);
+                GTBaseTileEntity.storeTE(pos.add(cPos.x + 16, 0, cPos.z + 16), igtte);
                 if (igtte.getMetaTileEntity() != null) {
                     logger.warn("stored mte {} at {}", igtte.getMetaTileEntity().metaTileEntityId, pos);
                 }
             }
-        }
-    }
-
-    @SubscribeEvent
-    public static void chunkUnload(ChunkEvent.Unload event) {
-        Map<BlockPos, TileEntity> map = event.getChunk().getTileEntityMap();
-        for (BlockPos pos : map.keySet()) {
-            // pos here is within chunk origin
-            ChunkPos cPos = event.getChunk().getPos();
-            IGregTechTileEntity removed = gtTileMap.remove(pos.add(cPos.x << 4, 0, cPos.z << 4).toLong());
-            if (removed != null && removed.getMetaTileEntity() != null)
-                logger.warn("removed mte {} at {}", removed.getMetaTileEntity().metaTileEntityId, pos);
         }
     }
 }

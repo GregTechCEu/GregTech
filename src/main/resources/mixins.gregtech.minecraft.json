@@ -10,13 +10,14 @@
   "mixins": [
     "BlockConcretePowderMixin",
     "BlockRenderLayerMixin",
-    "ChunkMixin",
+    "ClientHandlerMixin",
     "ContainerMixin",
     "DamageSourceMixin",
     "EnchantmentCanApplyMixin",
     "MinecraftMixin",
     "RecipeRepairItemMixin",
-    "TileEntityMixin"
+    "TileEntityMixin",
+    "ChunkMixin"
   ],
   "client": [
     "BlockMixin",

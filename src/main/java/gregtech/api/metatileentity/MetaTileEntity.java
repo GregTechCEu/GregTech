@@ -1380,10 +1380,10 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
         }
     }
 
-    @Override
-    public boolean isValid() {
-        return getHolder() != null && getHolder().isValid();
-    }
+    // @Override
+    // public boolean isValid() {
+    // return getHolder() != null && getHolder().isValid();
+    // }
 
     public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         clearInventory(itemBuffer, importItems);

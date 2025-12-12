@@ -21,7 +21,6 @@ import gregtech.api.util.Mods;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
-import gregtech.core.CoreModule;
 import gregtech.integration.ctm.IFacadeWrapper;
 
 import net.minecraft.block.Block;
@@ -357,6 +356,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             }
             metaTileEntity.dropAllCovers();
             metaTileEntity.onRemoval();
+            GTBaseTileEntity.removeTE(metaTileEntity);
 
             tileEntities.set(metaTileEntity);
         }
@@ -478,13 +478,13 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Nullable
     @Override
     public TileEntity createNewTileEntity(@Nullable World worldIn, int meta) {
-        Supplier<MetaTileEntity> mteFactory = testMessage.get();
-        if (mteFactory != null) {
-            MetaTileEntity newMTE = mteFactory.get();
-            GTLog.logger.warn("mte to make {} at pos {}", newMTE.metaTileEntityId, CoreModule.placingPos.get());
-            return newMTE;
+        MetaTileEntity mteCopy = GTBaseTileEntity.copyPlacingMTE();
+        if (mteCopy != null) {
+            // GTLog.logger.warn("mte to make {} at pos {}", mteCopy.getMetaID(), mteCopy.getPos());
+            return mteCopy;
         }
-        throw new IllegalStateException(String.format("couldn't create a new mte at %s!", CoreModule.placingPos.get()));
+        GTLog.logger.error("couldn't create a new mte!", new IllegalStateException());
+        return null;
         // return new MetaTileEntityHolder();
     }
 

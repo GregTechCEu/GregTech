@@ -40,11 +40,13 @@ import appeng.api.util.AEPartLocation;
 import appeng.api.util.DimensionalCoord;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.me.helpers.IGridProxyable;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Map;
 
 @Optional.InterfaceList(value = {
         @Optional.Interface(iface = "appeng.api.networking.security.IActionHost",
@@ -68,14 +70,57 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     private int lagWarningCount = 0;
     protected static final DecimalFormat tricorderFormat = new DecimalFormat("#.#########");
 
+    private static final ThreadLocal<Map<BlockPos, IGregTechTileEntity>> tileMap = ThreadLocal.withInitial(
+            Object2ObjectArrayMap::new);
+    private static final ThreadLocal<IGregTechTileEntity> placingTE = new ThreadLocal<>();
+
+    public static void setPlacingTE(IGregTechTileEntity mte) {
+        if (mte == null) {
+            placingTE.remove();
+        } else {
+            placingTE.set(mte);
+        }
+    }
+
+    public static IGregTechTileEntity getPlacingTE() {
+        return placingTE.get();
+    }
+
+    public static MetaTileEntity copyPlacingMTE() {
+        if (placingTE.get() == null) return null;
+        return getPlacingTE().getMetaTileEntity().createMetaTileEntity(null);
+    }
+
+    public static void storeTE(IGregTechTileEntity mte) {
+        storeTE(mte.pos(), mte);
+    }
+
+    public static void storeTE(BlockPos pos, IGregTechTileEntity mte) {
+        tileMap.get().put(pos, mte);
+        GTLog.logger.warn("stored mte {} at pos {}", mte.getMetaTileEntity().getMetaID(), pos);
+    }
+
+    public static void removeTE(IGregTechTileEntity mte) {
+        tileMap.get().remove(mte.pos());
+    }
+
+    public static MetaTileEntity getTEByPos(BlockPos pos) {
+        return tileMap.get().get(pos).getMetaTileEntity();
+    }
+
+    public static boolean hasTE(BlockPos pos) {
+        return tileMap.get().containsKey(pos);
+    }
+
     @Override
     public void notifyBlockUpdate() {
         getWorld().notifyNeighborsOfStateChange(pos, getBlockType(), false);
     }
 
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound) {
+    public final void readFromNBT(@NotNull NBTTagCompound compound) {
         super.readFromNBT(compound);
+        storeTE(this);
         customName = compound.getString(GregtechDataCodes.CUSTOM_NAME);
         if (compound.hasKey("MetaId", Constants.NBT.TAG_STRING)) {
             readMTETag(compound.getCompoundTag("MetaTileEntity"));
@@ -87,7 +132,7 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
 
     @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
+    public final NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setString(GregtechDataCodes.CUSTOM_NAME, getName());
         compound.setString("MetaId", getMetaID().toString());
@@ -106,6 +151,7 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             invalidateAE();
         }
+        removeTE(this);
     }
 
     @Override
@@ -273,8 +319,9 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     }
 
     @Override
-    public void onChunkUnload() {
+    public final void onChunkUnload() {
         super.onChunkUnload();
+        removeTE(this);
         onUnload();
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             onChunkUnloadAE();
