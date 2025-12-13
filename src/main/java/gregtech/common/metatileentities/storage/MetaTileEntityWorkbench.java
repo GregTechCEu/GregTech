@@ -226,7 +226,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         syncManager.syncValue("recipe_memory", this.recipeMemory);
 
         var controller = new PagedWidget.Controller();
-        syncManager.syncValue("page_controller", new PagedWidgetSyncHandler(controller));
+        syncManager.syncValue("page_controller", 0, new PagedWidgetSyncHandler(controller));
 
         return GTGuis.createPanel(this, 176, 224)
                 .child(Flow.row()
