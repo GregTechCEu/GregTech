@@ -1,5 +1,8 @@
 package gregtech.api.metatileentity;
 
+import com.google.common.base.Preconditions;
+
+import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.Cover;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -47,6 +50,8 @@ import org.jetbrains.annotations.Nullable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
+
+import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
 @Optional.InterfaceList(value = {
         @Optional.Interface(iface = "appeng.api.networking.security.IActionHost",
@@ -270,9 +275,9 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
 
     @Override
     public void receiveCustomData(int discriminator, @NotNull PacketBuffer buffer) {
-        // if (discriminator == INITIALIZE_MTE) {
-        // receiveMTEInitializationData(buffer);
-        // }
+         if (discriminator == GregtechDataCodes.INITIALIZE_MTE) {
+            receiveMTEInitializationData(buffer);
+         }
     }
 
     /**
@@ -449,9 +454,36 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     }
 
     @Override
-    public MetaTileEntity setMetaTileEntity(@NotNull MetaTileEntity metaTileEntity,
-                                            @Nullable NBTTagCompound tagCompound) {
+    public MetaTileEntity setMetaTileEntity(@NotNull MetaTileEntity mte, @Nullable NBTTagCompound tag) {
+        Preconditions.checkNotNull(mte, "metaTileEntity");
+        if (!getMetaID().equals(mte.getMetaID())) {
+            GTLog.logger.warn("attempting to change the MTE from {} to {}", getClass().getSimpleName(), mte.getClass().getSimpleName());
+            return getMetaTileEntity();
+        }
+        if (tag != null && !tag.isEmpty()) {
+            getMetaTileEntity().readMTETag(tag);
+        }
+        if (hasWorld() && !getWorld().isRemote) {
+            updateBlockOpacity();
+            writeCustomData(INITIALIZE_MTE, buffer -> {
+                MTERegistry registry = mte.getRegistry();
+                buffer.writeVarInt(registry.getNetworkId());
+                buffer.writeVarInt(registry.getIdByObjectName(getMetaID()));
+                getMetaTileEntity().writeInitialSyncDataMTE(buffer);
+            });
+            this.needToUpdateLightning = true;
+            getWorld().neighborChanged(getPos(), getBlockType(), getPos());
+            markDirty();
+        }
         return getMetaTileEntity();
+    }
+
+    private void updateBlockOpacity() {
+        IBlockState currentState = world.getBlockState(getPos());
+        boolean isMetaTileEntityOpaque = getMetaTileEntity().isOpaqueCube();
+        if (currentState.getValue(BlockMachine.OPAQUE) != isMetaTileEntityOpaque) {
+            world.setBlockState(getPos(), currentState.withProperty(BlockMachine.OPAQUE, isMetaTileEntityOpaque));
+        }
     }
 
     // this should return itself

@@ -588,8 +588,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         TrackedDummyWorld world = new TrackedDummyWorld();
         ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
         worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
-        GTBaseTileEntity.clearTileMap();
         world.addBlocks(blockMap);
+        GTBaseTileEntity.clearTileMap();
 
         Vector3f size = world.getSize();
         Vector3f minPos = world.getMinPos();

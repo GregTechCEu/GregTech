@@ -579,9 +579,9 @@ public class BlockPattern {
                         if (info.getTileEntity() instanceof IGregTechTileEntity gregTechTile) {
                             // MetaTileEntityHolder holder = new MetaTileEntityHolder();
                             // holder.setMetaTileEntity(gregTechTile.getMetaTileEntity());
-                            gregTechTile.getMetaTileEntity().onPlacement();
-                            info = new BlockInfo(gregTechTile.getMetaTileEntity().getBlock().getDefaultState(),
-                                    gregTechTile.getMetaTileEntity());
+                            MetaTileEntity mte = gregTechTile.getMetaTileEntity().createMetaTileEntity(null);
+                            mte.onPlacement();
+                            info = new BlockInfo(mte.getBlock().getDefaultState(), mte);
                         }
                         blocks.put(pos, info);
                         minX = Math.min(pos.getX(), minX);

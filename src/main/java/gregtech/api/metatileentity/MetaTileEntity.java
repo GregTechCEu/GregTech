@@ -1068,6 +1068,7 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
 
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_FRONT_FACING) {
             this.frontFacing = EnumFacing.VALUES[buf.readByte()];
             scheduleRenderUpdate();
@@ -1730,16 +1731,5 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
 
     public Set<CreativeTabs> getCreativeTabs() {
         return Collections.unmodifiableSet(creativeTabs);
-    }
-
-    @Override
-    public String toString() {
-        return "MetaTileEntity{" +
-                "metaTileEntityId=" + metaTileEntityId +
-                ", frontFacing=" + frontFacing +
-                ", pos=" + pos +
-                ", tileEntityInvalid=" + tileEntityInvalid +
-                ", world=" + (world == null ? "null" : world.getClass().getSimpleName()) +
-                '}';
     }
 }
