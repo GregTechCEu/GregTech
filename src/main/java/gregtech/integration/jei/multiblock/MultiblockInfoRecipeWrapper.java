@@ -1,6 +1,7 @@
 package gregtech.integration.jei.multiblock;
 
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -587,6 +588,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         TrackedDummyWorld world = new TrackedDummyWorld();
         ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
         worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
+        GTBaseTileEntity.clearTileMap();
         world.addBlocks(blockMap);
 
         Vector3f size = world.getSize();

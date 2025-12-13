@@ -61,9 +61,19 @@ public class BlockInfo {
         if (tileEntity != null) {
             if (tileEntity instanceof IGregTechTileEntity gregTechTile) {
                 GTBaseTileEntity.setPlacingTE(gregTechTile);
+                GTBaseTileEntity.storeTE(pos, gregTechTile);
             }
             world.setTileEntity(pos, tileEntity);
         }
         world.setBlockState(pos, blockState);
+        GTBaseTileEntity.setPlacingTE(null);
+    }
+
+    @Override
+    public String toString() {
+        return "BlockInfo{" +
+                "tileEntity=" + (tileEntity == null ? "null" : tileEntity) +
+                ", blockState=" + blockState +
+                '}';
     }
 }

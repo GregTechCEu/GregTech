@@ -765,6 +765,7 @@ public class GTUtility {
                 return tile.getMetaTileEntity();
             }
         }
+        // todo this gets called a lot
         TileEntity te = world.getTileEntity(pos);
         return te instanceof IGregTechTileEntity ? ((IGregTechTileEntity) te).getMetaTileEntity() : null;
     }

@@ -483,7 +483,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             // GTLog.logger.warn("mte to make {} at pos {}", mteCopy.getMetaID(), mteCopy.getPos());
             return mteCopy;
         }
-        GTLog.logger.error("couldn't create a new mte!", new IllegalStateException());
+        // we have a problem if this gets called
+        GTLog.logger.error("couldn't create a new mte!");
         return null;
         // return new MetaTileEntityHolder();
     }

@@ -1731,4 +1731,15 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
     public Set<CreativeTabs> getCreativeTabs() {
         return Collections.unmodifiableSet(creativeTabs);
     }
+
+    @Override
+    public String toString() {
+        return "MetaTileEntity{" +
+                "metaTileEntityId=" + metaTileEntityId +
+                ", frontFacing=" + frontFacing +
+                ", pos=" + pos +
+                ", tileEntityInvalid=" + tileEntityInvalid +
+                ", world=" + (world == null ? "null" : world.getClass().getSimpleName()) +
+                '}';
+    }
 }

@@ -112,6 +112,10 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
         return tileMap.get().containsKey(pos);
     }
 
+    public static void clearTileMap() {
+        tileMap.get().clear();
+    }
+
     @Override
     public void notifyBlockUpdate() {
         getWorld().notifyNeighborsOfStateChange(pos, getBlockType(), false);
