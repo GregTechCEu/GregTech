@@ -759,13 +759,6 @@ public class GTUtility {
 
     public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
         if (world == null || pos == null) return null;
-        if (GTBaseTileEntity.hasTE(pos)) {
-            IGregTechTileEntity tile = GTBaseTileEntity.getTEByPos(pos);
-            if (tile != null && tile.getMetaTileEntity() != null) {
-                return tile.getMetaTileEntity();
-            }
-        }
-        // todo this gets called a lot
         TileEntity te = world.getTileEntity(pos);
         return te instanceof IGregTechTileEntity ? ((IGregTechTileEntity) te).getMetaTileEntity() : null;
     }

@@ -59,14 +59,9 @@ public class BlockInfo {
 
     public void apply(World world, BlockPos pos) {
         if (tileEntity != null) {
-            if (tileEntity instanceof IGregTechTileEntity gregTechTile) {
-                GTBaseTileEntity.setPlacingTE(gregTechTile);
-                GTBaseTileEntity.storeTE(pos, gregTechTile);
-            }
             world.setTileEntity(pos, tileEntity);
         }
         world.setBlockState(pos, blockState);
-        GTBaseTileEntity.setPlacingTE(null);
     }
 
     @Override
