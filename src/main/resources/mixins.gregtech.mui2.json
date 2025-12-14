@@ -13,7 +13,6 @@
   ],
   "client": [
     "LangKeyMixin",
-    "ModularSyncManagerMixin",
     "MCHelperMixin"
   ],
   "server": []

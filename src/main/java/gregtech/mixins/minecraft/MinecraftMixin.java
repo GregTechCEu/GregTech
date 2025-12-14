@@ -1,23 +1,19 @@
 package gregtech.mixins.minecraft;
 
 import gregtech.api.items.toolitem.ItemGTToolbelt;
-import gregtech.client.IsGuiActuallyClosing;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
 
-import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Minecraft.class)
@@ -45,10 +41,5 @@ public class MinecraftMixin {
             }
         }
         inventoryPlayer.currentItem = i;
-    }
-
-    @Inject(method = "displayGuiScreen", at = @At(value = "HEAD"))
-    public void captureNewGUI(@Nullable GuiScreen guiScreenIn, CallbackInfo ci) {
-        IsGuiActuallyClosing.isGuiActuallyClosing = guiScreenIn == null;
     }
 }
