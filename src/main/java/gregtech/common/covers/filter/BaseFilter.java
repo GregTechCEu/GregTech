@@ -27,12 +27,19 @@ public abstract class BaseFilter implements IItemComponent {
         }
 
         @Override
+        public BaseFilter copy() {
+            return this;
+        }
+
+        @Override
         public FilterType getType() {
             return FilterType.ERROR;
         }
     };
 
     public abstract BaseFilterReader getFilterReader();
+
+    public abstract BaseFilter copy();
 
     public final void updateFilterReader(ItemStack stack) {
         getFilterReader().readStack(stack);
@@ -55,6 +62,7 @@ public abstract class BaseFilter implements IItemComponent {
         if (stack.getItem() instanceof MetaItem<?>metaItem) {
             return Optional.ofNullable(metaItem.getItem(stack))
                     .map(MetaItem.MetaValueItem::getFilterBehavior)
+                    .map(BaseFilter::copy)
                     .orElse(ERROR_FILTER);
         }
         return ERROR_FILTER;

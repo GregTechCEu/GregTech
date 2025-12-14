@@ -48,6 +48,11 @@ public class SimpleItemFilter extends BaseFilter {
         return getTransferLimit(matchedSlot, transferSize);
     }
 
+    @Override
+    public BaseFilter copy() {
+        return new SimpleItemFilter();
+    }
+
     public static int itemFilterMatch(IItemHandler filterSlots, boolean ignoreDamage,
                                       boolean ignoreNBTData, ItemStack itemStack) {
         for (int i = 0; i < filterSlots.getSlots(); i++) {

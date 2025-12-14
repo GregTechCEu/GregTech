@@ -113,4 +113,9 @@ public class OreDictionaryItemFilter extends BaseFilter {
     public boolean showGlobalTransferLimitSlider() {
         return true;
     }
+
+    @Override
+    public BaseFilter copy() {
+        return new OreDictionaryItemFilter();
+    }
 }

@@ -76,6 +76,11 @@ public class SmartItemFilter extends BaseFilter {
         return true;
     }
 
+    @Override
+    public BaseFilter copy() {
+        return new SmartItemFilter();
+    }
+
     private static class ItemAndMetadataAndStackSize {
 
         public final ItemAndMetadata itemAndMetadata;

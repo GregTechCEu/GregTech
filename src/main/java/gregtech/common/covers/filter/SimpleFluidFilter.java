@@ -62,4 +62,9 @@ public class SimpleFluidFilter extends BaseFilter {
     public FilterType getType() {
         return FilterType.FLUID;
     }
+
+    @Override
+    public BaseFilter copy() {
+        return new SimpleFluidFilter();
+    }
 }
