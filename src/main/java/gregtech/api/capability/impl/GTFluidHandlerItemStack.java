@@ -69,22 +69,11 @@ public class GTFluidHandlerItemStack extends FluidHandlerItemStack implements IF
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain) {
-        FluidStack drained = super.drain(resource, doDrain);
-        this.removeTagWhenEmpty(doDrain);
-        return drained;
-    }
-
-    @Override
-    public FluidStack drain(int maxDrain, boolean doDrain) {
-        FluidStack drained = super.drain(maxDrain, doDrain);
-        this.removeTagWhenEmpty(doDrain);
-        return drained;
-    }
-
-    private void removeTagWhenEmpty(boolean doDrain) {
-        if (doDrain && this.getFluid() == null) {
-            this.container.setTagCompound(null);
+    protected void setContainerToEmpty() {
+        super.setContainerToEmpty();
+        var tag = container.getTagCompound();
+        if (tag != null && tag.isEmpty()) {
+            container.setTagCompound(null);
         }
     }
 

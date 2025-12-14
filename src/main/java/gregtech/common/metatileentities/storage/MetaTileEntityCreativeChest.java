@@ -19,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -60,7 +61,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     protected void initializeInventory() {
         super.initializeInventory();
         this.modifiableHandler = new ModifiableHandler();
-        this.itemInventory = this.creativeHandler = new CreativeItemStackHandler(1);
+        this.creativeHandler = new CreativeItemStackHandler(1);
     }
 
     @Override
@@ -192,6 +193,14 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public IItemHandler getTypeValue() {
         return this.creativeHandler;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.creativeHandler);
+        }
+        return super.getCapability(capability, side);
     }
 
     // todo try to refactor this with mui2 rc6

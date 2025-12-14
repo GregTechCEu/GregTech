@@ -89,6 +89,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         packetBuffer.writeByte(this.filterMode.ordinal());
+        packetBuffer.writeBoolean(this.allowFlow);
         packetBuffer.writeBoolean(this.fluidFilterContainer.hasFilter());
         if (this.fluidFilterContainer.hasFilter()) {
             packetBuffer.writeItemStack(this.fluidFilterContainer.getFilterStack());
@@ -98,6 +99,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         this.filterMode = FluidFilterMode.VALUES[packetBuffer.readByte()];
+        this.allowFlow = packetBuffer.readBoolean();
         if (!packetBuffer.readBoolean()) return;
         try {
             this.fluidFilterContainer.setFilterStack(packetBuffer.readItemStack());
@@ -137,11 +139,6 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
             this.openUI((EntityPlayerMP) playerIn);
         }
         return EnumActionResult.SUCCESS;
-    }
-
-    @Override
-    public boolean usesMui2() {
-        return true;
     }
 
     @Override
@@ -208,6 +205,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("FilterMode", this.filterMode.ordinal());
         tagCompound.setTag("Filter", this.fluidFilterContainer.serializeNBT());
+        tagCompound.setBoolean("allowFlow", this.allowFlow);
     }
 
     @Override
@@ -221,6 +219,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         } else {
             this.fluidFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         }
+        this.allowFlow = tagCompound.getBoolean("allowFlow");
     }
 
     private class FluidHandlerFiltered extends FluidHandlerDelegate {

@@ -34,8 +34,8 @@ public abstract class BaseFilter implements IFilter {
         }
 
         @Override
-        public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
-            return GTGuis.createPopupPanel("error", 100, 100)
+        public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager, String panelName) {
+            return GTGuis.createPopupPanel(panelName, 100, 100)
                     .child(createWidgets(syncManager));
         }
 
