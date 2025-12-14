@@ -383,19 +383,17 @@ public class BlockPattern {
                                     .getStateFromMeta(itemBlock.getMetadata(found.getMetadata()));
                             blocks.put(pos, state);
                             world.setBlockState(pos, state);
-                            TileEntity holder = world.getTileEntity(pos);
-                            if (holder instanceof IGregTechTileEntity igtte) {
-                                MTERegistry registry = GregTechAPI.mteManager
-                                        .getRegistry(found.getItem().getRegistryName().getNamespace());
-                                MetaTileEntity sampleMetaTileEntity = registry.getObjectById(found.getItemDamage());
-                                if (sampleMetaTileEntity != null) {
-                                    MetaTileEntity metaTileEntity = igtte.setMetaTileEntity(sampleMetaTileEntity);
-                                    metaTileEntity.onPlacement(player);
-                                    blocks.put(pos, metaTileEntity);
-                                    if (found.getTagCompound() != null) {
-                                        metaTileEntity.initFromItemStackData(found.getTagCompound());
-                                    }
+                            MTERegistry registry = GregTechAPI.mteManager
+                                    .getRegistry(found.getItem().getRegistryName().getNamespace());
+                            MetaTileEntity sampleMetaTileEntity = registry.getObjectById(found.getItemDamage());
+                            if (sampleMetaTileEntity != null) {
+                                MetaTileEntity metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(null);
+                                metaTileEntity.onPlacement(player);
+                                blocks.put(pos, metaTileEntity);
+                                if (found.getTagCompound() != null) {
+                                    metaTileEntity.initFromItemStackData(found.getTagCompound());
                                 }
+                                world.setTileEntity(pos, metaTileEntity);
                             }
                         }
                     }

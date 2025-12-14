@@ -9,38 +9,32 @@ import gregtech.api.util.GTLog;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.RegistryNamespaced;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(TileEntity.class)
 public abstract class TileEntityMixin {
 
-    @Shadow
-    @Final
-    private static RegistryNamespaced<ResourceLocation, Class<? extends TileEntity>> REGISTRY;
-
     @WrapOperation(method = "create",
                    at = @At(value = "INVOKE",
                             target = "Ljava/lang/Class;newInstance()Ljava/lang/Object;"))
     private static Object wrap(Class<? extends TileEntity> instance, Operation<? extends TileEntity> original,
-                              @Local(argsOnly = true) NBTTagCompound tagCompound) {
+                               @Local(argsOnly = true) NBTTagCompound tagCompound) {
         if (IGregTechTileEntity.class.isAssignableFrom(instance)) {
             // this is necessary to avoid the no args constructor call
             var location = new ResourceLocation(tagCompound.getString("MetaId"));
             MetaTileEntity mte = GregTechAPI.mteManager
                     .getRegistry(location.getNamespace())
                     .getObject(location);
-            if (mte == null) return original.call(instance);
-            GTLog.logger.warn("creating {} from TileEntity#create", mte.metaTileEntityId, tagCompound);
-            return mte.createMetaTileEntity(null);
+            if (mte != null) {
+                GTLog.logger.warn("creating {} from TileEntity#create", mte.metaTileEntityId, tagCompound);
+                return mte.createMetaTileEntity(null);
+            }
         }
         return original.call(instance);
     }
@@ -50,7 +44,7 @@ public abstract class TileEntityMixin {
                         target = "Lnet/minecraft/util/registry/RegistryNamespaced;getNameForObject(Ljava/lang/Object;)Ljava/lang/Object;"))
     public Object fixClass(Object value) {
         if (GTBaseTileEntity.class.isAssignableFrom((Class<?>) value)) {
-            return REGISTRY.getNameForObject(GTBaseTileEntity.class);
+            return GTBaseTileEntity.class;
         }
         return value;
     }

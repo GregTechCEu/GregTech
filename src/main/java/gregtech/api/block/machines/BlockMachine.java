@@ -15,7 +15,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.pipenet.IBlockAppearance;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
@@ -356,7 +355,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             }
             metaTileEntity.dropAllCovers();
             metaTileEntity.onRemoval();
-            GTBaseTileEntity.removeTE(metaTileEntity);
 
             tileEntities.set(metaTileEntity);
         }
@@ -478,15 +476,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Nullable
     @Override
     public TileEntity createNewTileEntity(@Nullable World worldIn, int meta) {
-        MetaTileEntity mteCopy = GTBaseTileEntity.copyPlacingMTE();
-        if (mteCopy != null) {
-            // GTLog.logger.warn("mte to make {} at pos {}", mteCopy.getMetaID(), mteCopy.getPos());
-            return mteCopy;
-        }
-        // we have a problem if this gets called
-        GTLog.logger.error("couldn't create a new mte!");
-        return null;
-        // return new MetaTileEntityHolder();
+        // i wonder if it would be a good idea to give a "proto" TE
+        // though that's really just mte holder but in a different way
+        return GTBaseTileEntity.copyPlacingMTE();
     }
 
     @NotNull

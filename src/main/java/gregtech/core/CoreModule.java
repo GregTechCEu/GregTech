@@ -10,9 +10,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
-import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.registry.MTEManager;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
@@ -81,13 +79,9 @@ import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -98,7 +92,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.LogManager;
@@ -369,21 +362,5 @@ public class CoreModule implements IGregTechModule {
     public void serverStopped(FMLServerStoppedEvent event) {
         VirtualEnderRegistry.clearMaps();
         CapesRegistry.clearMaps();
-    }
-
-    @SubscribeEvent
-    public static void chunkLoad(ChunkEvent.Load event) {
-        if (!event.getWorld().isRemote) return;
-        Map<BlockPos, TileEntity> map = event.getChunk().getTileEntityMap();
-        for (BlockPos pos : map.keySet()) {
-            // pos here is within chunk origin
-            ChunkPos cPos = event.getChunk().getPos();
-            if (map.get(pos) instanceof IGregTechTileEntity igtte) {
-                GTBaseTileEntity.storeTE(pos.add(cPos.x + 16, 0, cPos.z + 16), igtte);
-                if (igtte.getMetaTileEntity() != null) {
-                    logger.warn("stored mte {} at {}", igtte.getMetaTileEntity().metaTileEntityId, pos);
-                }
-            }
-        }
     }
 }

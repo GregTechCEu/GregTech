@@ -89,6 +89,12 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         }
         NBTTagCompound updateTag = new NBTTagCompound();
         updateTag.setTag("d", this.updates.dumpToNbt());
+        if (this instanceof IGregTechTileEntity gregTechTile) {
+            updateTag.setString("MetaId", gregTechTile.getMetaTileEntity().getMetaID().toString());
+            updateTag.setInteger("x", getPos().getX());
+            updateTag.setInteger("y", getPos().getY());
+            updateTag.setInteger("z", getPos().getZ());
+        }
         return new SPacketUpdateTileEntity(getPos(), 0, updateTag);
     }
 

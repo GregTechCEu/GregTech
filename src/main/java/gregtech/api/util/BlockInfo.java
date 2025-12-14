@@ -1,14 +1,12 @@
 package gregtech.api.util;
 
-import gregtech.api.metatileentity.GTBaseTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.world.DummyWorld;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import com.google.common.base.Preconditions;
 
@@ -57,11 +55,8 @@ public class BlockInfo {
         return info;
     }
 
-    public void apply(World world, BlockPos pos) {
-        if (tileEntity != null) {
-            world.setTileEntity(pos, tileEntity);
-        }
-        world.setBlockState(pos, blockState);
+    public void apply(DummyWorld world, BlockPos pos) {
+        world.forcePlace(pos, tileEntity, blockState);
     }
 
     @Override
