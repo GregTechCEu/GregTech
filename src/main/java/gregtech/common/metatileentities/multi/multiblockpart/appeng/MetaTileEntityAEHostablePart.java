@@ -28,13 +28,16 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.EnumSet;
 
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_IO_SPEED;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_ONLINE_STATUS;
 
 public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultiblockNotifiablePart implements
                                                    IAEStatusProvider {
 
+    public static final String REFRESH_RATE_TAG = "RefreshRate";
+
     private AENetworkProxy aeProxy;
-    private int meUpdateTick = 0;
+    protected int refreshRate = ConfigHolder.compat.ae2.updateIntervals;
     protected boolean isOnline;
     protected boolean allowsExtraConnections = false;
     protected boolean meStatusChanged = false;
@@ -46,22 +49,7 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     @Override
     public void update() {
         super.update();
-        if (!this.getWorld().isRemote) {
-            this.meUpdateTick++;
-        }
-    }
-
-    public boolean isOnline() {
-        return isOnline;
-    }
-
-    public int getMEUpdateTick() {
-        return meUpdateTick;
-    }
-
-    @Override
-    public boolean allowsExtraConnections() {
-        return allowsExtraConnections;
+        updateMEStatus();
     }
 
     @Override
@@ -77,7 +65,7 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
             buf.writeBoolean(false);
         }
 
-        buf.writeInt(meUpdateTick);
+        buf.writeVarInt(refreshRate);
         buf.writeBoolean(isOnline);
         buf.writeBoolean(allowsExtraConnections);
     }
@@ -99,7 +87,7 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
             }
         }
 
-        meUpdateTick = buf.readInt();
+        refreshRate = buf.readVarInt();
         isOnline = buf.readBoolean();
         allowsExtraConnections = buf.readBoolean();
     }
@@ -113,6 +101,31 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
                 this.isOnline = isOnline;
                 scheduleRenderUpdate();
             }
+        } else if (dataId == UPDATE_IO_SPEED) {
+            refreshRate = buf.readVarInt();
+        }
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    @Override
+    public boolean allowsExtraConnections() {
+        return allowsExtraConnections;
+    }
+
+    public int getRefreshRate() {
+        return this.refreshRate;
+    }
+
+    protected void setRefreshRate(int newRefreshRate) {
+        if (this.refreshRate == newRefreshRate) return;
+
+        this.refreshRate = newRefreshRate;
+        if (!getWorld().isRemote) {
+            markDirty();
+            writeCustomData(UPDATE_IO_SPEED, buf -> buf.writeVarInt(refreshRate));
         }
     }
 
@@ -190,15 +203,10 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         return new BaseActionSource();
     }
 
-    @Override
-    public void gridChanged() {}
-
     /**
-     * Get the me network connection status, updating it if on serverside.
-     *
-     * @return the updated status.
+     * Update the connection status to the ME system.
      */
-    public boolean updateMEStatus() {
+    public void updateMEStatus() {
         if (!getWorld().isRemote) {
             boolean isOnline = this.aeProxy != null && this.aeProxy.isActive() && this.aeProxy.isPowered();
             if (this.isOnline != isOnline) {
@@ -209,14 +217,13 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
                 meStatusChanged = false;
             }
         }
-
-        return isOnline;
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean("AllowExtraConnections", allowsExtraConnections);
+        data.setInteger(REFRESH_RATE_TAG, this.refreshRate);
         return data;
     }
 
@@ -224,5 +231,8 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         allowsExtraConnections = data.getBoolean("AllowExtraConnections");
+        if (data.hasKey(REFRESH_RATE_TAG)) {
+            this.refreshRate = data.getInteger(REFRESH_RATE_TAG);
+        }
     }
 }

@@ -5,12 +5,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.mui.drawable.GTObjectDrawable;
-import gregtech.api.util.GTLog;
-import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.IWrappedStack;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -27,6 +23,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.util.item.AEItemStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -37,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MetaTileEntityMEOutputBus extends MetaTileEntityMEOutputBase<IAEItemStack, ItemStack>
+public class MetaTileEntityMEOutputBus extends MetaTileEntityMEOutputBase<IAEItemStack>
                                        implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
     public final static String ITEM_BUFFER_TAG = "ItemBuffer";
@@ -52,14 +49,14 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityMEOutputBase<IAEIte
     }
 
     @Override
-    protected @NotNull IByteBufDeserializer<IWrappedStack<IAEItemStack, ItemStack>> getDeserializer() {
-        return WrappedItemStack::fromPacket;
+    protected @NotNull IByteBufDeserializer<IAEItemStack> getDeserializer() {
+        return AEItemStack::fromPacket;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     protected void addStackLine(@NotNull IRichTextBuilder<?> text,
-                                @NotNull IWrappedStack<IAEItemStack, ItemStack> wrappedStack) {
+                                @NotNull IAEItemStack wrappedStack) {
         ItemStack stack = wrappedStack.getDefinition();
         text.add(new GTObjectDrawable(stack, 0)
                 .asIcon()
@@ -76,7 +73,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityMEOutputBase<IAEIte
         super.writeToNBT(data);
 
         NBTTagList nbtList = new NBTTagList();
-        for (IWrappedStack<IAEItemStack, ItemStack> stack : internalBuffer) {
+        for (IAEItemStack stack : internalBuffer) {
             NBTTagCompound stackTag = new NBTTagCompound();
             stack.writeToNBT(stackTag);
             nbtList.appendTag(stackTag);
@@ -91,20 +88,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityMEOutputBase<IAEIte
         super.readFromNBT(data);
         for (NBTBase tag : data.getTagList(ITEM_BUFFER_TAG, Constants.NBT.TAG_COMPOUND)) {
             NBTTagCompound tagCompound = (NBTTagCompound) tag;
-
-            WrappedItemStack stack;
-            // Migrate from AEItemStacks to WrappedItemStacks
-            if (tagCompound.getBoolean("wrapped")) {
-                stack = WrappedItemStack.fromNBT(tagCompound);
-            } else {
-                stack = WrappedItemStack.fromItemStack(new ItemStack(tagCompound), tagCompound.getLong("Cnt"));
-            }
-
-            if (stack == null) {
-                GTLog.logger.error("Error reading ME Output Hatch buffer tag list");
-            } else {
-                internalBuffer.add(stack);
-            }
+            internalBuffer.add(AEItemStack.fromNBT(tagCompound));
         }
     }
 
@@ -138,7 +122,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityMEOutputBase<IAEIte
 
     @Override
     public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
-        abilityInstances.add(new InaccessibleInfiniteSlot(this, this.internalBuffer, this.getController()));
+        abilityInstances.add(new InaccessibleInfiniteSlot(this, this.getController()));
     }
 
     @Override
@@ -149,13 +133,11 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityMEOutputBase<IAEIte
         }
     }
 
-    private static class InaccessibleInfiniteSlot extends InaccessibleInfiniteHandler<IAEItemStack, ItemStack>
-                                                  implements IItemHandlerModifiable {
+    private class InaccessibleInfiniteSlot extends InaccessibleInfiniteHandler implements IItemHandlerModifiable {
 
         public InaccessibleInfiniteSlot(@NotNull MetaTileEntity holder,
-                                        @NotNull List<IWrappedStack<IAEItemStack, ItemStack>> internalBuffer,
                                         @NotNull MetaTileEntity mte) {
-            super(holder, internalBuffer, mte, ItemStackHashStrategy.comparingAllButCount());
+            super(holder, mte);
         }
 
         @Override
@@ -178,15 +160,29 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityMEOutputBase<IAEIte
         @NotNull
         @Override
         public ItemStack insertItem(int slot, @NotNull ItemStack stackToInsert, boolean simulate) {
-            if (stackToInsert.isEmpty()) {
+            if (stackToInsert.isEmpty() || simulate) {
                 return ItemStack.EMPTY;
             }
 
-            if (!simulate) {
-                add(stackToInsert, stackToInsert.getCount());
-                this.trigger();
+            int amount = stackToInsert.getCount();
+            for (IAEItemStack bufferedStack : internalBuffer) {
+                long bufferedStackSize = bufferedStack.getStackSize();
+                if (bufferedStack.equals(stackToInsert) && bufferedStackSize < Long.MAX_VALUE) {
+                    int amountToAdd = (int) Math.min(amount, Long.MAX_VALUE - bufferedStackSize);
+                    bufferedStack.incStackSize(amountToAdd);
+                    amount -= amountToAdd;
+                    if (amount < 1) break;
+                }
             }
 
+            if (amount > 0) {
+                IAEItemStack newStack = AEItemStack.fromItemStack(stackToInsert);
+                // noinspection DataFlowIssue
+                newStack.setStackSize(amount);
+                internalBuffer.add(newStack);
+            }
+
+            trigger();
             return ItemStack.EMPTY;
         }
 
@@ -199,11 +195,6 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityMEOutputBase<IAEIte
         @Override
         public int getSlotLimit(int slot) {
             return Integer.MAX_VALUE - 1;
-        }
-
-        @Override
-        protected @NotNull WrappedItemStack wrapStack(@NotNull ItemStack stack, long amount) {
-            return WrappedItemStack.fromItemStack(stack, amount);
         }
     }
 }

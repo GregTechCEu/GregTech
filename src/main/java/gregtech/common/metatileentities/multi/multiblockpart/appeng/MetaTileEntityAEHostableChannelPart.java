@@ -1,9 +1,6 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import gregtech.common.ConfigHolder;
-
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
 import appeng.api.AEApi;
@@ -19,8 +16,6 @@ import java.util.List;
 
 public abstract class MetaTileEntityAEHostableChannelPart<T extends IAEStack<T>> extends MetaTileEntityAEHostablePart {
 
-    public static final String REFRESH_RATE_TAG = "RefreshRate";
-
     private final Class<? extends IStorageChannel<T>> storageChannel;
     protected int refreshRate;
 
@@ -28,7 +23,6 @@ public abstract class MetaTileEntityAEHostableChannelPart<T extends IAEStack<T>>
                                                Class<? extends IStorageChannel<T>> storageChannel) {
         super(metaTileEntityId, tier, isExportHatch);
         this.storageChannel = storageChannel;
-        this.refreshRate = ConfigHolder.compat.ae2.updateIntervals;
     }
 
     /**
@@ -37,10 +31,6 @@ public abstract class MetaTileEntityAEHostableChannelPart<T extends IAEStack<T>>
      */
     @Override
     public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {}
-
-    protected boolean shouldOperateOnME() {
-        return getMEUpdateTick() % refreshRate == 0;
-    }
 
     @NotNull
     protected IStorageChannel<T> getStorageChannel() {
@@ -58,35 +48,6 @@ public abstract class MetaTileEntityAEHostableChannelPart<T extends IAEStack<T>>
             return proxy.getStorage().getInventory(channel);
         } catch (GridAccessException ignored) {
             return null;
-        }
-    }
-
-    public int getRefreshRate() {
-        return this.refreshRate;
-    }
-
-    protected void setRefreshRate(int newRefreshRate) {
-        this.refreshRate = newRefreshRate;
-        if (!getWorld().isRemote) {
-            markDirty();
-        }
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
-
-        data.setInteger(REFRESH_RATE_TAG, this.refreshRate);
-
-        return data;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
-
-        if (data.hasKey(REFRESH_RATE_TAG)) {
-            this.refreshRate = data.getInteger(REFRESH_RATE_TAG);
         }
     }
 }

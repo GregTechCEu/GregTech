@@ -5,13 +5,9 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.mui.drawable.GTObjectDrawable;
-import gregtech.api.util.FluidStackHashStrategy;
 import gregtech.api.util.FluidTooltipUtil;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.IWrappedStack;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -30,6 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
+import appeng.fluids.util.AEFluidStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -40,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEFluidStack, FluidStack>
+public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEFluidStack>
                                          implements IMultiblockAbilityPart<IFluidTank> {
 
     public final static String FLUID_BUFFER_TAG = "FluidBuffer";
@@ -55,15 +52,15 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEF
     }
 
     @Override
-    protected @NotNull IByteBufDeserializer<IWrappedStack<IAEFluidStack, FluidStack>> getDeserializer() {
-        return WrappedFluidStack::fromPacket;
+    protected @NotNull IByteBufDeserializer<IAEFluidStack> getDeserializer() {
+        return AEFluidStack::fromPacket;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     protected void addStackLine(@NotNull IRichTextBuilder<?> text,
-                                @NotNull IWrappedStack<IAEFluidStack, FluidStack> wrappedStack) {
-        FluidStack stack = wrappedStack.getDefinition();
+                                @NotNull IAEFluidStack wrappedStack) {
+        FluidStack stack = wrappedStack.getFluidStack();
         text.add(new GTObjectDrawable(stack, 0)
                 .asIcon()
                 .asHoverable()
@@ -80,7 +77,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEF
         super.writeToNBT(data);
 
         NBTTagList nbtList = new NBTTagList();
-        for (IWrappedStack<IAEFluidStack, FluidStack> stack : internalBuffer) {
+        for (IAEFluidStack stack : internalBuffer) {
             NBTTagCompound stackTag = new NBTTagCompound();
             stack.writeToNBT(stackTag);
             nbtList.appendTag(stackTag);
@@ -95,21 +92,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEF
         super.readFromNBT(data);
         for (NBTBase tag : data.getTagList(FLUID_BUFFER_TAG, Constants.NBT.TAG_COMPOUND)) {
             NBTTagCompound tagCompound = (NBTTagCompound) tag;
-
-            WrappedFluidStack stack;
-            // Migrate from AEFluidStacks to WrappedFluidStacks
-            if (tagCompound.getBoolean("wrapped")) {
-                stack = WrappedFluidStack.fromNBT(tagCompound);
-            } else {
-                stack = WrappedFluidStack.fromFluidStack(FluidStack.loadFluidStackFromNBT(tagCompound),
-                        data.getLong("Cnt"));
-            }
-
-            if (stack == null) {
-                GTLog.logger.error("Error reading ME Output Hatch buffer tag list");
-            } else {
-                internalBuffer.add(stack);
-            }
+            internalBuffer.add(AEFluidStack.fromNBT(tagCompound));
         }
     }
 
@@ -143,7 +126,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEF
 
     @Override
     public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
-        abilityInstances.add(new InaccessibleInfiniteTank(this, this.internalBuffer, this.getController()));
+        abilityInstances.add(new InaccessibleInfiniteTank(this, this.getController()));
     }
 
     @Override
@@ -154,13 +137,11 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEF
         }
     }
 
-    private static class InaccessibleInfiniteTank extends InaccessibleInfiniteHandler<IAEFluidStack, FluidStack>
-                                                  implements IFluidTank {
+    protected class InaccessibleInfiniteTank extends InaccessibleInfiniteHandler implements IFluidTank {
 
         public InaccessibleInfiniteTank(@NotNull MetaTileEntity holder,
-                                        @NotNull List<IWrappedStack<IAEFluidStack, FluidStack>> internalBuffer,
                                         @NotNull MetaTileEntity mte) {
-            super(holder, internalBuffer, mte, FluidStackHashStrategy.comparingAllButAmount());
+            super(holder, mte);
         }
 
         @Nullable
@@ -191,7 +172,23 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEF
             }
 
             if (doFill) {
-                add(stackToInsert, stackToInsert.amount);
+                int amount = stackToInsert.amount;
+                for (IAEFluidStack bufferedStack : internalBuffer) {
+                    long bufferedStackSize = bufferedStack.getStackSize();
+                    if (bufferedStack.equals(stackToInsert) && bufferedStackSize < Long.MAX_VALUE) {
+                        int amountToAdd = (int) Math.min(amount, Long.MAX_VALUE - bufferedStackSize);
+                        bufferedStack.incStackSize(amountToAdd);
+                        amount -= amountToAdd;
+                        if (amount < 1) break;
+                    }
+                }
+
+                if (amount > 0) {
+                    IAEFluidStack newStack = AEFluidStack.fromFluidStack(stackToInsert);
+                    newStack.setStackSize(amount);
+                    internalBuffer.add(newStack);
+                }
+
                 this.trigger();
             }
 
@@ -202,11 +199,6 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityMEOutputBase<IAEF
         @Override
         public FluidStack drain(int maxDrain, boolean doDrain) {
             return null;
-        }
-
-        @Override
-        protected @NotNull IWrappedStack<IAEFluidStack, FluidStack> wrapStack(@NotNull FluidStack stack, long amount) {
-            return WrappedFluidStack.fromFluidStack(stack, amount);
         }
     }
 }

@@ -3,14 +3,10 @@ package gregtech.api.mui;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.util.NetworkUtil;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.Fluid;
 
-import appeng.api.storage.data.IAEFluidStack;
-import appeng.api.storage.data.IAEItemStack;
 import com.cleanroommc.modularui.utils.serialization.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,12 +22,6 @@ public class GTByteBufAdapters {
             ChancedFluidOutput::fromBuffer, ChancedFluidOutput::toBuffer);
 
     public static final IByteBufAdapter<Fluid> FLUID = makeAdapter(NetworkUtil::readFluid, NetworkUtil::writeFluid);
-
-    public static final IByteBufAdapter<IAEItemStack> WRAPPED_ITEM_STACK = makeAdapter(WrappedItemStack::fromPacket,
-            (buffer, value) -> value.writeToPacket(buffer));
-
-    public static final IByteBufAdapter<IAEFluidStack> WRAPPED_FLUID_STACK = makeAdapter(
-            WrappedFluidStack::fromPacket, (buffer, value) -> value.writeToPacket(buffer));
 
     public static <T> IByteBufAdapter<T> makeAdapter(@NotNull IByteBufDeserializer<T> deserializer,
                                                      @NotNull IByteBufSerializer<T> serializer) {

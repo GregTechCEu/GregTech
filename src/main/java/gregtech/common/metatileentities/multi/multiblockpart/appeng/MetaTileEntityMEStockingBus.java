@@ -225,7 +225,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         if (!getWorld().isRemote) {
             if (!this.autoPull) {
                 this.getAEHandler().clearConfig();
-            } else if (updateMEStatus()) {
+            } else if (isOnline) {
                 refreshList();
                 syncME();
             }

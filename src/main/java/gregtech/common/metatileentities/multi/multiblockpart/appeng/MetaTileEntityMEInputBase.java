@@ -13,7 +13,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAESlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IExportOnlyAEStackList;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.IWrappedStack;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -77,7 +76,7 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && this.workingEnabled && updateMEStatus() && shouldOperateOnME()) {
+        if (!getWorld().isRemote && workingEnabled && isOnline && (getOffsetTimer() % refreshRate == 0)) {
             operateOnME();
         }
     }
@@ -131,10 +130,6 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
 
         for (ExportOnlyAESlot<AEStackType> slot : getAEHandler().getInventory()) {
             AEStackType stock = slot.getStock();
-            if (stock instanceof IWrappedStack<?, ?>wrappedStack) {
-                // noinspection unchecked
-                stock = (AEStackType) wrappedStack.copyAsAEStack();
-            }
 
             if (stock == null) continue;
             monitor.injectItems(stock, Actionable.MODULATE, getActionSource());

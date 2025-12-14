@@ -183,7 +183,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         if (!getWorld().isRemote) {
             if (!this.autoPull) {
                 this.getAEHandler().clearConfig();
-            } else if (updateMEStatus()) {
+            } else if (isOnline) {
                 refreshList();
                 syncME();
             }

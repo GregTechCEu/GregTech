@@ -7,7 +7,6 @@ import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.IWrappedStack;
 import gregtech.common.mui.widget.ScrollableTextWidget;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,7 +33,6 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -47,14 +45,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AEStackType>, RealStackType>
+public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AEStackType>>
                                                 extends MetaTileEntityAEHostableChannelPart<AEStackType>
                                                 implements IControllable {
 
     public final static String WORKING_TAG = "WorkingEnabled";
 
     protected boolean workingEnabled = true;
-    protected List<@NotNull IWrappedStack<AEStackType, RealStackType>> internalBuffer;
+    protected List<AEStackType> internalBuffer;
 
     public MetaTileEntityMEOutputBase(ResourceLocation metaTileEntityId, int tier,
                                       Class<? extends IStorageChannel<AEStackType>> storageChannel) {
@@ -70,17 +68,17 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && this.workingEnabled && this.shouldOperateOnME() && updateMEStatus()) {
+        if (!getWorld().isRemote && workingEnabled && isOnline && (getOffsetTimer() % refreshRate == 0)) {
             if (this.internalBuffer.isEmpty()) return;
 
             IMEMonitor<AEStackType> monitor = getMonitor();
             if (monitor == null) return;
 
-            Iterator<IWrappedStack<AEStackType, RealStackType>> internalBufferIterator = internalBuffer.iterator();
+            Iterator<AEStackType> internalBufferIterator = internalBuffer.iterator();
             while (internalBufferIterator.hasNext()) {
-                IWrappedStack<AEStackType, RealStackType> stackInBuffer = internalBufferIterator.next();
+                AEStackType stackInBuffer = internalBufferIterator.next();
                 // We have to create an AEItem/FluidStack here, or it'll cause a CCE in ItemVariantList#L35
-                AEStackType notPushedToNetwork = monitor.injectItems(stackInBuffer.copyAsAEStack(), Actionable.MODULATE,
+                AEStackType notPushedToNetwork = monitor.injectItems(stackInBuffer.copy(), Actionable.MODULATE,
                         getActionSource());
                 if (notPushedToNetwork != null && notPushedToNetwork.getStackSize() > 0L) {
                     stackInBuffer.setStackSize(notPushedToNetwork.getStackSize());
@@ -91,11 +89,11 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
         }
     }
 
-    protected abstract @NotNull IByteBufDeserializer<IWrappedStack<AEStackType, RealStackType>> getDeserializer();
+    protected abstract @NotNull IByteBufDeserializer<AEStackType> getDeserializer();
 
     @SideOnly(Side.CLIENT)
     protected abstract void addStackLine(@NotNull IRichTextBuilder<?> text,
-                                         @NotNull IWrappedStack<AEStackType, RealStackType> wrappedStack);
+                                         @NotNull AEStackType stack);
 
     @Override
     public boolean usesMui2() {
@@ -107,8 +105,7 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
         BooleanSyncValue onlineSync = new BooleanSyncValue(this::isOnline);
         panelSyncManager.syncValue("online", 0, onlineSync);
 
-        WrappedStackSyncHandler<AEStackType, RealStackType> bufferSync = new WrappedStackSyncHandler<>(internalBuffer,
-                getDeserializer());
+        AEStackListSyncHandler bufferSync = new AEStackListSyncHandler();
         panelSyncManager.syncValue("buffer", 0, bufferSync);
 
         ScrollableTextWidget textList = new ScrollableTextWidget();
@@ -139,7 +136,7 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
     public void onRemoval() {
         IMEMonitor<AEStackType> monitor = getMonitor();
         if (monitor != null) {
-            for (IWrappedStack<AEStackType, RealStackType> stack : this.internalBuffer) {
+            for (AEStackType stack : this.internalBuffer) {
                 monitor.injectItems(stack.copy(), Actionable.MODULATE, this.getActionSource());
             }
         }
@@ -203,44 +200,16 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
         }
     }
 
-    protected static abstract class InaccessibleInfiniteHandler<AEStackType extends IAEStack<AEStackType>,
-            RealStackType> implements INotifiableHandler {
+    protected abstract static class InaccessibleInfiniteHandler implements INotifiableHandler {
 
-        protected final List<IWrappedStack<AEStackType, RealStackType>> internalBuffer;
         protected final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
         protected final MetaTileEntity holder;
-        protected final Hash.Strategy<RealStackType> strategy;
 
         public InaccessibleInfiniteHandler(@NotNull MetaTileEntity holder,
-                                           @NotNull List<IWrappedStack<AEStackType, RealStackType>> internalBuffer,
-                                           @NotNull MetaTileEntity mte,
-                                           @NotNull Hash.Strategy<RealStackType> strategy) {
+                                           @NotNull MetaTileEntity mte) {
             this.holder = holder;
-            this.internalBuffer = internalBuffer;
             this.notifiableEntities.add(mte);
-            this.strategy = strategy;
         }
-
-        protected void add(@NotNull RealStackType stackToAdd, long amount) {
-            for (IWrappedStack<AEStackType, RealStackType> bufferedAEStack : internalBuffer) {
-                long bufferedAEStackSize = bufferedAEStack.getStackSize();
-                RealStackType bufferStack = bufferedAEStack.getDefinition();
-                if (strategy.equals(bufferStack, stackToAdd) && bufferedAEStackSize < Long.MAX_VALUE) {
-                    int amountToMerge = (int) Math.min(amount, Long.MAX_VALUE - bufferedAEStackSize);
-                    bufferedAEStack.incStackSize(amountToMerge);
-                    amount -= amountToMerge;
-
-                    if (amount == 0) break;
-                }
-            }
-
-            if (amount > 0) {
-                internalBuffer.add(wrapStack(stackToAdd, amount));
-            }
-        }
-
-        protected abstract @NotNull IWrappedStack<AEStackType, RealStackType> wrapStack(@NotNull RealStackType stack,
-                                                                                        long amount);
 
         @Override
         public void addNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
@@ -262,36 +231,27 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
         }
     }
 
-    private static class WrappedStackSyncHandler<AEStackType extends IAEStack<AEStackType>,
-            RealStackType> extends SyncHandler {
+    protected class AEStackListSyncHandler extends SyncHandler {
 
-        private final List<@NotNull IWrappedStack<AEStackType, RealStackType>> source;
-        private final ObjectArrayList<@NotNull IWrappedStack<AEStackType, RealStackType>> cache = new ObjectArrayList<>();
-        private final IByteBufDeserializer<@NotNull IWrappedStack<AEStackType, RealStackType>> deserializer;
+        private final ObjectArrayList<AEStackType> cache = new ObjectArrayList<>();
         private final IntSet changedIndexes = new IntOpenHashSet();
         @Nullable
         private Runnable changeListener;
 
-        public WrappedStackSyncHandler(@NotNull List<IWrappedStack<AEStackType, RealStackType>> source,
-                                       @NotNull IByteBufDeserializer<IWrappedStack<AEStackType, RealStackType>> deserializer) {
-            this.source = source;
-            this.deserializer = deserializer;
-        }
-
         @Override
         public void detectAndSendChanges(boolean init) {
-            int sourceSize = source.size();
+            int sourceSize = internalBuffer.size();
             boolean cacheSizeChange = cache.size() != sourceSize;
             if (cacheSizeChange) {
                 cache.size(sourceSize);
             }
 
-            for (int index = 0; index < source.size(); index++) {
-                IWrappedStack<AEStackType, RealStackType> newStack = source.get(index);
-                IWrappedStack<AEStackType, RealStackType> cachedStack = cache.get(index);
+            for (int index = 0; index < internalBuffer.size(); index++) {
+                AEStackType newStack = internalBuffer.get(index);
+                AEStackType cachedStack = cache.get(index);
 
-                if (init || !newStack.delegateAndSizeEqual(cachedStack)) {
-                    IWrappedStack<AEStackType, RealStackType> copy = newStack.copyWrapped();
+                if (init || !newStack.equals(cachedStack)) {
+                    AEStackType copy = newStack.copy();
                     changedIndexes.add(index);
                     cache.set(index, copy);
                 }
@@ -304,7 +264,7 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
 
                     for (int index : changedIndexes) {
                         buf.writeVarInt(index);
-                        cache.get(index).writeToPacketBuffer(buf);
+                        cache.get(index).writeToPacket(buf);
                     }
                 });
 
@@ -321,7 +281,7 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
             int changed = buf.readVarInt();
             for (int ignore = 0; ignore < changed; ignore++) {
                 int index = buf.readVarInt();
-                IWrappedStack<AEStackType, RealStackType> newStack = deserializer.deserialize(buf);
+                AEStackType newStack = getDeserializer().deserialize(buf);
                 cache.set(index, newStack);
             }
 
@@ -343,8 +303,8 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
             }
         }
 
-        public void cacheForEach(@NotNull Consumer<@NotNull IWrappedStack<AEStackType, RealStackType>> consumer) {
-            for (IWrappedStack<AEStackType, RealStackType> stack : cache) {
+        public void cacheForEach(@NotNull Consumer<AEStackType> consumer) {
+            for (AEStackType stack : cache) {
                 consumer.accept(stack);
             }
         }
