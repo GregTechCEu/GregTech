@@ -45,7 +45,7 @@ import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.LongSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -122,17 +122,17 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     @Override
     public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
                                          UISettings settings) {
-        DoubleSyncValue tierSync = SyncHandlers.doubleNumber(() -> setTier, val -> {
-            setTier = (int) val;
+        IntSyncValue tierSync = new IntSyncValue(() -> setTier, val -> {
+            setTier = val;
             voltage = GTValues.V[setTier];
         });
         LongSyncValue voltageSync = SyncHandlers.longNumber(() -> voltage, val -> {
             voltage = val;
             setTier = GTUtility.getTierByVoltage(voltage);
         });
-        LongSyncValue ampSync = SyncHandlers.longNumber(() -> amps, val -> amps = val);
-        BooleanSyncValue activeSync = SyncHandlers.bool(() -> active, this::setActive);
-        BooleanSyncValue sourceSync = SyncHandlers.bool(() -> source, val -> {
+        LongSyncValue ampSync = new LongSyncValue(() -> amps, val -> amps = val);
+        BooleanSyncValue activeSync = new BooleanSyncValue(() -> active, this::setActive);
+        BooleanSyncValue sourceSync = new BooleanSyncValue(() -> source, val -> {
             source = val;
             if (source) {
                 voltage = GTValues.V[GTValues.ULV];
@@ -156,15 +156,10 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
                                 .bounds(0, GTValues.V.length - 1)
                                 .stopper(1)
                                 .value(tierSync)
-                                .background(new Rectangle()
-                                        .setColor(Color.GREY.darker(1))
-                                        .asIcon()
-                                        .margin(8, 0)
-                                        .height(4))
-                                .stopperTexture(GuiTextures.BUTTON_CLEAN.asIcon()
-                                        .size(2, 8))
+                                .background(GTGuiTextures.FLUID_SLOT.asIcon()
+                                        .margin(7, 0))
                                 .sliderTexture(IDrawable.of(GuiTextures.BUTTON_CLEAN,
-                                        IKey.dynamic(() -> GTValues.VNF[(int) tierSync.getDoubleValue()]))))
+                                        IKey.dynamic(() -> GTValues.VNF[tierSync.getIntValue()]))))
                         .child(IKey.lang("gregtech.creative.energy.voltage")
                                 .asWidget())
                         .child(new TextFieldWidget()
