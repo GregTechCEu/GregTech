@@ -567,9 +567,6 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     private static class TapeStackHandler extends FilteredItemHandler {
 
-        @Nullable
-        private static ItemStack tapeReference;
-
         public TapeStackHandler(MetaTileEntity metaTileEntity) {
             super(metaTileEntity, 1, TapeStackHandler::isStackTape);
         }
@@ -582,16 +579,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             return true;
         }
 
-        public static @NotNull ItemStack getTapeReference() {
-            if (tapeReference == null) {
-                tapeReference = MetaItems.DUCT_TAPE.getStackForm();
-            }
-
-            return tapeReference;
-        }
-
         public static boolean isStackTape(@NotNull ItemStack itemStack) {
-            return getTapeReference().isItemEqual(itemStack);
+            return MetaItems.DUCT_TAPE.isItemEqual(itemStack);
         }
     }
 }
