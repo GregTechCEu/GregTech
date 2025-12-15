@@ -59,9 +59,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityMEInputBase<IAEFlu
     }
 
     @Override
-    protected void initializeInventory() {
-        super.initializeInventory();
-        this.importFluids = new FluidTankList(false, getAEHandler().getInventory());
+    protected FluidTankList createImportFluidHandler() {
+        return new FluidTankList(false, getAEHandler().getInventory());
     }
 
     @Override

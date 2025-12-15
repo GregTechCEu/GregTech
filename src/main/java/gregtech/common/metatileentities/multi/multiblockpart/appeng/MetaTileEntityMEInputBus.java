@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -8,7 +7,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
 import gregtech.api.mui.sync.appeng.AESyncHandler;
@@ -27,7 +25,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import appeng.api.storage.channels.IItemStorageChannel;
@@ -48,7 +45,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemStack>
@@ -69,11 +65,14 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
 
     @Override
     protected void initializeInventory() {
-        super.initializeInventory();
         this.extraSlotInventory = new NotifiableItemStackHandler(this, 1, this, false);
         this.extraSlotInventory.addNotifiableMetaTileEntity(this);
-        this.importItems = new ItemHandlerList(
-                Arrays.asList(getAEHandler(), this.circuitInventory, this.extraSlotInventory));
+        super.initializeInventory();
+    }
+
+    @Override
+    protected IItemHandlerModifiable createImportItemHandler() {
+        return new ItemHandlerList(getAEHandler(), circuitInventory, extraSlotInventory);
     }
 
     @Override
@@ -91,27 +90,6 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityMEInputBase<IAEItemS
         ItemStack extraSlotStack = extraSlotInventory.getStackInSlot(0);
         if (!extraSlotStack.isEmpty()) {
             itemBuffer.add(extraSlotStack);
-        }
-    }
-
-    @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
-        super.addToMultiBlock(controllerBase);
-        for (IItemHandler handler : ((ItemHandlerList) this.importItems).getBackingHandlers()) {
-            if (handler instanceof INotifiableHandler notifiable) {
-                notifiable.addNotifiableMetaTileEntity(controllerBase);
-                notifiable.addToNotifiedList(this, handler, false);
-            }
-        }
-    }
-
-    @Override
-    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
-        super.removeFromMultiBlock(controllerBase);
-        for (IItemHandler handler : ((ItemHandlerList) this.importItems).getBackingHandlers()) {
-            if (handler instanceof INotifiableHandler notifiable) {
-                notifiable.removeNotifiableMetaTileEntity(controllerBase);
-            }
         }
     }
 

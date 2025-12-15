@@ -8,6 +8,8 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,13 +28,14 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
 
     private @NotNull List<INotifiableHandler> getItemHandlers() {
         List<INotifiableHandler> notifiables = new ArrayList<>();
-        var mteHandler = isExportHatch ? getExportItems() : getImportItems();
+        IItemHandlerModifiable mteHandler = isExportHatch ? getExportItems() : getImportItems();
         if (mteHandler instanceof INotifiableHandler notifiable) {
             notifiables.add(notifiable);
         } else if (mteHandler instanceof ItemHandlerList list) {
-            for (var handler : list.getBackingHandlers()) {
-                if (handler instanceof INotifiableHandler notifiable)
+            for (IItemHandler handler : list.getBackingHandlers()) {
+                if (handler instanceof INotifiableHandler notifiable) {
                     notifiables.add(notifiable);
+                }
             }
         }
         if (getItemInventory() instanceof INotifiableHandler notifiable) {
@@ -54,7 +57,7 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
     private List<INotifiableHandler> getPartHandlers() {
         List<INotifiableHandler> handlerList = new ArrayList<>();
 
-        for (var notif : getItemHandlers()) {
+        for (INotifiableHandler notif : getItemHandlers()) {
             if (notif.size() > 0) {
                 handlerList.add(notif);
             }

@@ -37,7 +37,7 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     public static final String REFRESH_RATE_TAG = "RefreshRate";
 
     private AENetworkProxy aeProxy;
-    protected int refreshRate = ConfigHolder.compat.ae2.updateIntervals;
+    private int refreshRate = ConfigHolder.compat.ae2.updateIntervals;
     protected boolean isOnline;
     protected boolean allowsExtraConnections = false;
     protected boolean meStatusChanged = false;
@@ -120,7 +120,8 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     }
 
     protected void setRefreshRate(int newRefreshRate) {
-        if (this.refreshRate == newRefreshRate) return;
+        if (newRefreshRate == this.refreshRate) return;
+        if (newRefreshRate < 1) throw new IllegalArgumentException("Refresh rate of AE part cannot be below 1!");
 
         this.refreshRate = newRefreshRate;
         if (!getWorld().isRemote) {

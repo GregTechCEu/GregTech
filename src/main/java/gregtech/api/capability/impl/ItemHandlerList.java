@@ -20,6 +20,10 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     private final Int2ObjectMap<IItemHandler> handlerBySlotIndex = new Int2ObjectOpenHashMap<>();
     private final Object2IntMap<IItemHandler> baseIndexOffset = new Object2IntArrayMap<>();
 
+    public ItemHandlerList(@NotNull IItemHandler @NotNull... handlers) {
+        this(Arrays.asList(handlers));
+    }
+
     public ItemHandlerList(@NotNull List<? extends @NotNull IItemHandler> itemHandlerList) {
         int currentSlotIndex = 0;
         for (IItemHandler itemHandler : itemHandlerList) {

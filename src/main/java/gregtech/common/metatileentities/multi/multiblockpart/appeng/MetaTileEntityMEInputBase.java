@@ -25,6 +25,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
@@ -68,10 +69,14 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
 
     @Override
     protected void initializeInventory() {
-        super.initializeInventory();
         this.aeHandler = initializeAEHandler();
         this.circuitInventory = new GhostCircuitItemStackHandler(this);
-        this.importItems = circuitInventory;
+        super.initializeInventory();
+    }
+
+    @Override
+    protected IItemHandlerModifiable createImportItemHandler() {
+        return circuitInventory;
     }
 
     protected abstract @NotNull IExportOnlyAEStackList<AEStackType> initializeAEHandler();
@@ -81,7 +86,7 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && workingEnabled && isOnline && (getOffsetTimer() % refreshRate == 0)) {
+        if (!getWorld().isRemote && workingEnabled && isOnline && (getOffsetTimer() % getRefreshRate() == 0)) {
             operateOnME();
         }
     }
@@ -401,7 +406,7 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
         }
 
         tag.setByte("GhostCircuit", (byte) this.circuitInventory.getCircuitValue());
-        tag.setInteger(REFRESH_RATE_TAG, this.refreshRate);
+        tag.setInteger(REFRESH_RATE_TAG, getRefreshRate());
         return tag;
     }
 
@@ -438,7 +443,7 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
         }
 
         if (tag.hasKey(REFRESH_RATE_TAG)) {
-            this.refreshRate = tag.getInteger(REFRESH_RATE_TAG);
+            setRefreshRate(tag.getInteger(REFRESH_RATE_TAG));
         }
     }
 

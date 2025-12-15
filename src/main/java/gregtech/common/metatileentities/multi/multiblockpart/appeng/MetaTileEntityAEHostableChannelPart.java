@@ -17,7 +17,6 @@ import java.util.List;
 public abstract class MetaTileEntityAEHostableChannelPart<T extends IAEStack<T>> extends MetaTileEntityAEHostablePart {
 
     private final Class<? extends IStorageChannel<T>> storageChannel;
-    protected int refreshRate;
 
     public MetaTileEntityAEHostableChannelPart(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch,
                                                Class<? extends IStorageChannel<T>> storageChannel) {

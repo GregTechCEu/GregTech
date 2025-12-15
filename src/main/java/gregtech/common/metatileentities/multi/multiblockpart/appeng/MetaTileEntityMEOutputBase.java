@@ -68,7 +68,7 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && workingEnabled && isOnline && (getOffsetTimer() % refreshRate == 0)) {
+        if (!getWorld().isRemote && workingEnabled && isOnline && (getOffsetTimer() % getRefreshRate() == 0)) {
             if (this.internalBuffer.isEmpty()) return;
 
             IMEMonitor<AEStackType> monitor = getMonitor();
@@ -250,7 +250,7 @@ public abstract class MetaTileEntityMEOutputBase<AEStackType extends IAEStack<AE
                 AEStackType newStack = internalBuffer.get(index);
                 AEStackType cachedStack = cache.get(index);
 
-                if (init || !newStack.equals(cachedStack)) {
+                if (init || !newStack.equals(cachedStack) || newStack.getStackSize() != cachedStack.getStackSize()) {
                     AEStackType copy = newStack.copy();
                     changedIndexes.add(index);
                     cache.set(index, copy);
