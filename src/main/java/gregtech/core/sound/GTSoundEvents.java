@@ -44,9 +44,6 @@ public class GTSoundEvents {
     public static SoundEvent MORTAR_TOOL;
     public static SoundEvent SOFT_MALLET_TOOL;
 
-    // Record Sounds
-    public static SoundEvent SUS_RECORD;
-
     // Entity Sounds
     public static SoundEvent PORTAL_OPENING;
     public static SoundEvent PORTAL_CLOSING;
