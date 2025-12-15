@@ -1223,9 +1223,6 @@ metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
 metaarmor.energy_share.tooltip=Supply mode: %s
 metaarmor.energy_share.tooltip.guide=To change mode shift-right click when holding item
 
-metaitem.record.sus.name=Music Disc
-metaitem.record.sus.tooltip=§7Leonz - Among Us Drip
-
 metaitem.nan.certificate.name=Certificate of Not Being a Noob Anymore
 metaitem.nan.certificate.tooltip=Challenge Accepted!
 
@@ -6342,7 +6339,6 @@ gregtech.subtitle.use.wirecutter=Wires snip
 gregtech.subtitle.use.spray_can=Paint sprays
 gregtech.subtitle.use.tricorder=Beep beep
 gregtech.subtitle.use.mortar=Grinding
-gregtech.subtitle.record.sus=Sus
 gregtech.subtitle.entity.portal_opening=Portal opens
 gregtech.subtitle.entity.portal_closing=Portal closes
 gregtech.subtitle.maintenance.electrical=Electrical breakdown
@@ -6553,6 +6549,4 @@ gregtech.scanner.forestry.caterpillar=§oScanned Caterpillar
 gregtech.scanner.forestry.pollen=§oScanned Pollen
 
 # Mutation
-gregtech.mutation.block_of=Block of %s
-
-record.sus=Leonz - Among Us Drip
+gregtech.mutation.block_of=Block of %

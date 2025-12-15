@@ -1164,8 +1164,6 @@ public class MetaItem1 extends StandardMetaItem {
         PLUGIN_TEXT = addItem(783, "plugin.text").addComponents(new TextPluginBehavior());
 
         // Records: 800-819
-        SUS_RECORD = addItem(800, "record.sus").addComponents(new MusicDiscStats(GTSoundEvents.SUS_RECORD))
-                .setRarity(EnumRarity.RARE).setMaxStackSize(1).setInvisible();
 
         // Dyed Glass Lenses: 820-840
         for (int i = 0; i < MarkerMaterials.Color.VALUES.length; i++) {
