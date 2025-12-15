@@ -6,7 +6,6 @@ import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraftforge.fluids.FluidStack;
 
@@ -28,9 +27,9 @@ public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
 
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        WrappedFluidStack stock = (WrappedFluidStack) getSyncHandler().getStock(index);
+        IAEFluidStack stock = getSyncHandler().getStock(index);
         if (stock != null) {
-            FluidStack stack = stock.getDefinition();
+            FluidStack stack = stock.getFluidStack();
             tooltip.addLine(KeyUtil.fluid(stack));
             FluidTooltipUtil.fluidInfo(stack, tooltip, false, true, true);
             tooltip.addLine(FluidTooltipUtil.getFluidModNameKey(stack));
@@ -49,9 +48,9 @@ public class AEFluidDisplaySlot extends AEDisplaySlot<IAEFluidStack> {
 
     @Override
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
-        WrappedFluidStack stock = (WrappedFluidStack) getSyncHandler().getStock(index);
+        IAEFluidStack stock = getSyncHandler().getStock(index);
         if (stock != null) {
-            GuiDraw.drawFluidTexture(stock.getDefinition(), 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
+            GuiDraw.drawFluidTexture(stock.getFluidStack(), 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
             RenderUtil.renderTextFixedCorner(TextFormattingUtil.formatLongToCompactString(stock.getStackSize(), 4), 17d,
                     18d, 0xFFFFFF, true, 0.5f);
         }

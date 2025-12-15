@@ -6,7 +6,6 @@ import gregtech.api.mui.widget.appeng.AEConfigSlot;
 import gregtech.api.mui.widget.appeng.AEStackPreviewWidget;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.item.ItemStack;
 
@@ -39,7 +38,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Reci
 
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        WrappedItemStack config = (WrappedItemStack) getSyncHandler().getConfig(index);
+        IAEItemStack config = getSyncHandler().getConfig(index);
         if (config != null) {
             tooltip.addFromItem(config.getDefinition());
             tooltip.addLine((context, x, y, width, height, widgetTheme) -> {
@@ -64,7 +63,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> implements Reci
 
     @Override
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
-        WrappedItemStack config = (WrappedItemStack) getSyncHandler().getConfig(index);
+        IAEItemStack config = getSyncHandler().getConfig(index);
         if (config != null) {
             RenderUtil.drawItemStack(config.getDefinition(), 1, 1, false);
             if (!isStocking) {

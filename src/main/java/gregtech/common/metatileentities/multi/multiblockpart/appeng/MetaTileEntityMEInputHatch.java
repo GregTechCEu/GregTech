@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -15,21 +14,21 @@ import gregtech.api.mui.widget.appeng.fluid.AEFluidDisplaySlot;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
 import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
+import appeng.fluids.util.AEFluidStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -46,7 +45,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MetaTileEntityMEInputHatch extends MetaTileEntityMEInputBase<IAEFluidStack>
-                                        implements IMultiblockAbilityPart<IFluidTank>, IDataStickIntractable {
+                                        implements IMultiblockAbilityPart<IFluidTank> {
 
     public static final String FLUID_BUFFER_TAG = "FluidTanks";
 
@@ -203,62 +202,12 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityMEInputBase<IAEFlu
     }
 
     @Override
-    public final void onDataStickLeftClick(EntityPlayer player, ItemStack dataStick) {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setTag("MEInputHatch", writeConfigToTag());
-        dataStick.setTagCompound(tag);
-        dataStick.setTranslatableName("gregtech.machine.me.fluid_import.data_stick.name");
-        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_copy_settings"), true);
-    }
-
-    protected NBTTagCompound writeConfigToTag() {
-        NBTTagCompound tag = new NBTTagCompound();
-        NBTTagCompound configStacks = new NBTTagCompound();
-        tag.setTag("ConfigStacks", configStacks);
-        for (int i = 0; i < CONFIG_SIZE; i++) {
-            var slot = this.aeHandler.getInventory()[i];
-            IAEFluidStack config = slot.getConfig();
-            if (config == null) {
-                continue;
-            }
-            NBTTagCompound stackNbt = new NBTTagCompound();
-            config.writeToNBT(stackNbt);
-            configStacks.setTag(Integer.toString(i), stackNbt);
-        }
-
-        tag.setInteger(REFRESH_RATE_TAG, this.refreshRate);
-
-        return tag;
-    }
-
-    @Override
-    public final boolean onDataStickRightClick(EntityPlayer player, ItemStack dataStick) {
-        NBTTagCompound tag = dataStick.getTagCompound();
-        if (tag == null || !tag.hasKey("MEInputHatch")) {
-            return false;
-        }
-        readConfigFromTag(tag.getCompoundTag("MEInputHatch"));
-        syncME();
-        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_paste_settings"), true);
-        return true;
-    }
-
-    protected void readConfigFromTag(NBTTagCompound tag) {
-        if (tag.hasKey("ConfigStacks")) {
-            NBTTagCompound configStacks = tag.getCompoundTag("ConfigStacks");
-            for (int i = 0; i < CONFIG_SIZE; i++) {
-                String key = Integer.toString(i);
-                if (configStacks.hasKey(key)) {
-                    NBTTagCompound configTag = configStacks.getCompoundTag(key);
-                    this.aeHandler.getInventory()[i].setConfig(WrappedFluidStack.fromNBT(configTag));
-                } else {
-                    this.aeHandler.getInventory()[i].setConfig(null);
-                }
-            }
-        }
-
-        if (tag.hasKey(REFRESH_RATE_TAG)) {
-            this.refreshRate = tag.getInteger(REFRESH_RATE_TAG);
+    protected @Nullable IAEFluidStack readStackFromNBT(@NotNull NBTTagCompound tagCompound) {
+        // Check if the Cnt tag is present. If it isn't, the config was written with the old wrapped stacks.
+        if (tagCompound.hasKey("Cnt", Constants.NBT.TAG_LONG)) {
+            return AEFluidStack.fromNBT(tagCompound);
+        } else {
+            return AEFluidStack.fromFluidStack(FluidStack.loadFluidStackFromNBT(tagCompound));
         }
     }
 }

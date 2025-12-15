@@ -3,7 +3,6 @@ package gregtech.api.mui.widget.appeng.fluid;
 import gregtech.api.mui.widget.appeng.AEStackPreviewWidget;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.KeyUtil;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraftforge.fluids.FluidStack;
 
@@ -23,19 +22,19 @@ class AEFluidStackPreviewWidget extends AEStackPreviewWidget<IAEFluidStack> {
 
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        if (stackToDraw.get() instanceof WrappedFluidStack wrappedFluidStack) {
-            FluidStack stack = wrappedFluidStack.getDefinition();
-            tooltip.addLine(KeyUtil.fluid(stack));
-            FluidTooltipUtil.fluidInfo(stack, tooltip, false, true, false);
-            tooltip.addLine(FluidTooltipUtil.getFluidModNameKey(stack));
-        }
+        IAEFluidStack stack = stackToDraw.get();
+        if (stack == null) return;
+
+        FluidStack fluidStack = stack.getFluidStack();
+        tooltip.addLine(KeyUtil.fluid(fluidStack));
+        FluidTooltipUtil.fluidInfo(fluidStack, tooltip, false, true, false);
+        tooltip.addLine(FluidTooltipUtil.getFluidModNameKey(fluidStack));
     }
 
     @Override
     public void draw(@Nullable IAEFluidStack stackToDraw, int x, int y, int width, int height) {
-        if (stackToDraw instanceof WrappedFluidStack wrappedFluidStack) {
-            GuiDraw.drawFluidTexture(wrappedFluidStack.getDefinition(), x, y, width, height, 0.0f);
-        }
+        if (stackToDraw == null) return;
+        GuiDraw.drawFluidTexture(stackToDraw.getFluidStack(), x, y, width, height, 0.0f);
     }
 
     @Override

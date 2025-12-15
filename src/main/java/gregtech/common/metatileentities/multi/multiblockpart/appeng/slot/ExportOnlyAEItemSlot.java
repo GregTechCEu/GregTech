@@ -1,12 +1,12 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng.slot;
 
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import appeng.api.storage.data.IAEItemStack;
+import appeng.util.item.AEItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -30,10 +30,23 @@ public class ExportOnlyAEItemSlot extends ExportOnlyAESlot<IAEItemStack> impleme
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         if (nbt.hasKey(CONFIG_TAG)) {
-            this.config = WrappedItemStack.fromNBT(nbt.getCompoundTag(CONFIG_TAG));
+            NBTTagCompound tag = nbt.getCompoundTag(CONFIG_TAG);
+            // Check if the Cnt tag is present. If it isn't, the config was written with the old wrapped stacks.
+            if (tag.hasKey("Cnt", Constants.NBT.TAG_LONG)) {
+                this.config = AEItemStack.fromNBT(tag);
+            } else {
+                this.config = AEItemStack.fromItemStack(new ItemStack(tag));
+            }
         }
+
         if (nbt.hasKey(STOCK_TAG)) {
-            this.stock = WrappedItemStack.fromNBT(nbt.getCompoundTag(STOCK_TAG));
+            NBTTagCompound tag = nbt.getCompoundTag(STOCK_TAG);
+            // Check if the Cnt tag is present. If it isn't, the config was written with the old wrapped stacks.
+            if (tag.hasKey("Cnt", Constants.NBT.TAG_LONG)) {
+                this.stock = AEItemStack.fromNBT(tag);
+            } else {
+                this.stock = AEItemStack.fromItemStack(new ItemStack(tag));
+            }
         }
     }
 
@@ -95,29 +108,9 @@ public class ExportOnlyAEItemSlot extends ExportOnlyAESlot<IAEItemStack> impleme
     }
 
     @Override
-    public IAEItemStack requestStack() {
-        IAEItemStack result = super.requestStack();
-        if (result instanceof WrappedItemStack wrappedItemStack) {
-            return wrappedItemStack.getAEStack();
-        } else {
-            return result;
-        }
-    }
-
-    @Override
-    public IAEItemStack exceedStack() {
-        IAEItemStack result = super.exceedStack();
-        if (result instanceof WrappedItemStack wrappedItemStack) {
-            return wrappedItemStack.getAEStack();
-        } else {
-            return result;
-        }
-    }
-
-    @Override
     public void addStack(IAEItemStack stack) {
         if (this.stock == null) {
-            this.stock = WrappedItemStack.fromItemStack(stack.createItemStack());
+            this.stock = stack.copy();
         } else {
             this.stock.add(stack);
         }
@@ -132,7 +125,7 @@ public class ExportOnlyAEItemSlot extends ExportOnlyAESlot<IAEItemStack> impleme
             this.stock = null;
         } else {
             // todo this could maybe be improved with better comparison check
-            this.stock = WrappedItemStack.fromItemStack(stack.createItemStack());
+            this.stock = stack.copy();
         }
         this.trigger.accept(0);
     }

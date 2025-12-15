@@ -8,13 +8,13 @@ import gregtech.api.util.JEIUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import appeng.api.storage.data.IAEItemStack;
+import appeng.util.item.AEItemStack;
 import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -49,7 +49,7 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
 
     @Override
     protected @NotNull IByteBufAdapter<IAEItemStack> initializeByteBufAdapter() {
-        return GTByteBufAdapters.WRAPPED_ITEM_STACK;
+        return GTByteBufAdapters.AE_ITEM_STACK;
     }
 
     @Override
@@ -94,6 +94,6 @@ public class AEItemSyncHandler extends AESyncHandler<IAEItemStack> {
 
     @SideOnly(Side.CLIENT)
     public void setConfig(int index, @Nullable ItemStack stack) {
-        setConfig(index, WrappedItemStack.fromItemStack(stack));
+        setConfig(index, stack == null ? null : AEItemStack.fromItemStack(stack));
     }
 }

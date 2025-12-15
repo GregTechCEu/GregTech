@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.mui.GTGuiTextures;
@@ -14,10 +15,13 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAESlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IExportOnlyAEStackList;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -42,11 +46,12 @@ import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AEStackType>>
                                                extends MetaTileEntityAEHostableChannelPart<AEStackType>
-                                               implements IControllable, IGhostSlotConfigurable {
+                                               implements IControllable, IGhostSlotConfigurable, IDataStickIntractable {
 
     public final static int CONFIG_SIZE = 16;
     public static final String WORKING_TAG = "WorkingEnabled";
@@ -369,4 +374,74 @@ public abstract class MetaTileEntityMEInputBase<AEStackType extends IAEStack<AES
         }
         this.circuitInventory.read(data);
     }
+
+    @Override
+    public final void onDataStickLeftClick(EntityPlayer player, ItemStack dataStick) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setTag("MEInputBus", writeConfigToTag());
+        dataStick.setTagCompound(tag);
+        dataStick.setTranslatableName("gregtech.machine.me.item_import.data_stick.name");
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_copy_settings"), true);
+    }
+
+    protected NBTTagCompound writeConfigToTag() {
+        NBTTagCompound tag = new NBTTagCompound();
+        NBTTagCompound configStacks = new NBTTagCompound();
+
+        ExportOnlyAESlot<AEStackType>[] inventory = getAEHandler().getInventory();
+        tag.setTag("ConfigStacks", configStacks);
+        for (int index = 0; index < CONFIG_SIZE; index++) {
+            ExportOnlyAESlot<AEStackType> slot = inventory[index];
+            AEStackType config = slot.getConfig();
+            if (config == null) continue;
+
+            NBTTagCompound stackNBT = new NBTTagCompound();
+            config.writeToNBT(stackNBT);
+            configStacks.setTag(Integer.toString(index), stackNBT);
+        }
+
+        tag.setByte("GhostCircuit", (byte) this.circuitInventory.getCircuitValue());
+        tag.setInteger(REFRESH_RATE_TAG, this.refreshRate);
+        return tag;
+    }
+
+    @Override
+    public final boolean onDataStickRightClick(EntityPlayer player, ItemStack dataStick) {
+        NBTTagCompound tag = dataStick.getTagCompound();
+        if (tag == null || !tag.hasKey("MEInputBus")) {
+            return false;
+        }
+        readConfigFromTag(tag.getCompoundTag("MEInputBus"));
+        syncME();
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_paste_settings"), true);
+        return true;
+    }
+
+    protected void readConfigFromTag(NBTTagCompound tag) {
+        if (tag.hasKey("ConfigStacks")) {
+            ExportOnlyAESlot<AEStackType>[] inventory = getAEHandler().getInventory();
+            NBTTagCompound configStacks = tag.getCompoundTag("ConfigStacks");
+            for (int index = 0; index < CONFIG_SIZE; index++) {
+                AEStackType stack = null;
+                String key = Integer.toString(index);
+                if (configStacks.hasKey(key)) {
+                    NBTTagCompound configTag = configStacks.getCompoundTag(key);
+                    stack = readStackFromNBT(configTag);
+                }
+
+                inventory[index].setConfig(stack);
+            }
+        }
+
+        if (tag.hasKey("GhostCircuit")) {
+            this.setGhostCircuitConfig(tag.getByte("GhostCircuit"));
+        }
+
+        if (tag.hasKey(REFRESH_RATE_TAG)) {
+            this.refreshRate = tag.getInteger(REFRESH_RATE_TAG);
+        }
+    }
+
+    @Nullable
+    protected abstract AEStackType readStackFromNBT(@NotNull NBTTagCompound tagCompound);
 }

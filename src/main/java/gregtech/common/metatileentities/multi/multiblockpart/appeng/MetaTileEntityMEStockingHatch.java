@@ -8,7 +8,6 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -112,12 +111,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
                 slot.setStack(null);
             } else {
                 // Try to fill the slot
-                IAEFluidStack request;
-                if (slot.getConfig() instanceof WrappedFluidStack wfs) {
-                    request = wfs.getAEStack();
-                } else {
-                    request = slot.getConfig().copy();
-                }
+                IAEFluidStack request = slot.getConfig().copy();
                 request.setStackSize(Long.MAX_VALUE);
                 IAEFluidStack result = monitor.extractItems(request, Actionable.SIMULATE, getActionSource());
                 slot.setStack(result);
@@ -205,18 +199,20 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         }
 
         int index = 0;
+        ExportOnlyAEStockingFluidSlot[] inventory = getAEHandler().getInventory();
         for (IAEFluidStack stack : storageList) {
             if (index >= CONFIG_SIZE) break;
-            if (stack.getStackSize() == 0 || stack.getStackSize() < minimumStackSize) continue;
+            if (stack.getStackSize() < minimumStackSize) continue;
+
             stack = monitor.extractItems(stack, Actionable.SIMULATE, getActionSource());
-            if (stack == null || stack.getStackSize() == 0) continue;
+            if (stack == null || stack.getStackSize() < minimumStackSize) continue;
 
             FluidStack fluidStack = stack.getFluidStack();
             if (fluidStack == null) continue;
             if (autoPullTest != null && !autoPullTest.test(fluidStack)) continue;
-            IAEFluidStack selectedStack = WrappedFluidStack.fromFluidStack(fluidStack);
+            IAEFluidStack selectedStack = stack.copy();
             IAEFluidStack configStack = selectedStack.copy().setStackSize(1);
-            var slot = this.getAEHandler().getInventory()[index];
+            var slot = inventory[index];
             slot.setConfig(configStack);
             slot.setStack(selectedStack);
             index++;
@@ -424,12 +420,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
                 if (monitor == null) return null;
 
                 Actionable action = doDrain ? Actionable.MODULATE : Actionable.SIMULATE;
-                IAEFluidStack request;
-                if (this.config instanceof WrappedFluidStack wfs) {
-                    request = wfs.getAEStack();
-                } else {
-                    request = this.config.copy();
-                }
+                IAEFluidStack request = config.copy();
                 request.setStackSize(maxDrain);
 
                 IAEFluidStack result = monitor.extractItems(request, action, getHolder().getActionSource());

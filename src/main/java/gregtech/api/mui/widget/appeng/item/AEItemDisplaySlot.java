@@ -4,7 +4,6 @@ import gregtech.api.mui.sync.appeng.AEItemSyncHandler;
 import gregtech.api.mui.widget.appeng.AEDisplaySlot;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.item.ItemStack;
 
@@ -25,7 +24,7 @@ public class AEItemDisplaySlot extends AEDisplaySlot<IAEItemStack> {
 
     @Override
     protected void buildTooltip(@NotNull RichTooltip tooltip) {
-        WrappedItemStack stock = (WrappedItemStack) getSyncHandler().getStock(index);
+        IAEItemStack stock = getSyncHandler().getStock(index);
         if (stock != null) {
             tooltip.addFromItem(stock.getDefinition());
         }
@@ -43,9 +42,9 @@ public class AEItemDisplaySlot extends AEDisplaySlot<IAEItemStack> {
 
     @Override
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
-        WrappedItemStack stock = (WrappedItemStack) getSyncHandler().getStock(index);
+        IAEItemStack stock = getSyncHandler().getStock(index);
         if (stock != null) {
-            ItemStack stack = stock.createItemStack();
+            ItemStack stack = stock.getDefinition();
             RenderUtil.drawItemStack(stack, 1, 1, false);
             RenderUtil.renderTextFixedCorner(TextFormattingUtil.formatLongToCompactString(stock.getStackSize(), 4), 17d,
                     18d, 0xFFFFFF, true, 0.5f);

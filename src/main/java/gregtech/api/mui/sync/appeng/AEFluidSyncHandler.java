@@ -8,7 +8,6 @@ import gregtech.api.util.JEIUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -16,6 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import appeng.api.storage.data.IAEFluidStack;
+import appeng.fluids.util.AEFluidStack;
 import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -49,14 +49,14 @@ public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
 
     @Override
     protected @NotNull IByteBufAdapter<IAEFluidStack> initializeByteBufAdapter() {
-        return GTByteBufAdapters.WRAPPED_FLUID_STACK;
+        return GTByteBufAdapters.AE_FLUID_STACK;
     }
 
     @Override
     public boolean isStackValidForSlot(int index, @Nullable IAEFluidStack stack) {
         if (stack == null) return true;
         if (!isStocking) return true;
-        return !fluidList.hasStackInConfig(((WrappedFluidStack) stack).getDefinition(), true);
+        return !fluidList.hasStackInConfig(stack.getFluidStack(), true);
     }
 
     @Override
@@ -92,6 +92,6 @@ public class AEFluidSyncHandler extends AESyncHandler<IAEFluidStack> {
 
     @SideOnly(Side.CLIENT)
     public void setConfig(int index, @Nullable FluidStack stack) {
-        setConfig(index, WrappedFluidStack.fromFluidStack(stack));
+        setConfig(index, stack == null ? null : AEFluidStack.fromFluidStack(stack));
     }
 }

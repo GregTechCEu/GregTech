@@ -10,7 +10,6 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -116,12 +115,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
                 slot.setStack(null);
             } else {
                 // Try to fill the slot
-                IAEItemStack request;
-                if (slot.getConfig() instanceof WrappedItemStack wis) {
-                    request = wis.getAEStack();
-                } else {
-                    request = slot.getConfig().copy();
-                }
+                IAEItemStack request = slot.getConfig().copy();
                 request.setStackSize(Long.MAX_VALUE);
                 IAEItemStack result = monitor.extractItems(request, Actionable.SIMULATE, getActionSource());
                 slot.setStack(result);
@@ -251,20 +245,21 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         }
 
         int index = 0;
+        ExportOnlyAEStockingItemSlot[] inventory = getAEHandler().getInventory();
         for (IAEItemStack stack : storageList) {
             if (index >= CONFIG_SIZE) break;
-            if (stack.getStackSize() == 0 || stack.getStackSize() < minimumStackSize) continue;
-            stack = monitor.extractItems(stack, Actionable.SIMULATE, getActionSource());
-            if (stack == null || stack.getStackSize() == 0) continue;
+            if (stack.getStackSize() < minimumStackSize) continue;
 
-            ItemStack itemStack = stack.createItemStack();
+            stack = monitor.extractItems(stack, Actionable.SIMULATE, getActionSource());
+            if (stack == null || stack.getStackSize() < minimumStackSize) continue;
+
+            ItemStack itemStack = stack.getDefinition();
             if (itemStack == null || itemStack.isEmpty()) continue;
             // Ensure that it is valid to configure with this stack
             if (autoPullTest != null && !autoPullTest.test(itemStack)) continue;
-            IAEItemStack selectedStack = WrappedItemStack.fromItemStack(itemStack);
-            if (selectedStack == null) continue;
+            IAEItemStack selectedStack = stack.copy();
             IAEItemStack configStack = selectedStack.copy().setStackSize(1);
-            var slot = this.getAEHandler().getInventory()[index];
+            ExportOnlyAEStockingItemSlot slot = inventory[index];
             slot.setConfig(configStack);
             slot.setStack(selectedStack);
             index++;
@@ -421,12 +416,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
                 if (monitor == null) return ItemStack.EMPTY;
 
                 Actionable action = simulate ? Actionable.SIMULATE : Actionable.MODULATE;
-                IAEItemStack request;
-                if (this.config instanceof WrappedItemStack wis) {
-                    request = wis.getAEStack();
-                } else {
-                    request = this.config.copy();
-                }
+                IAEItemStack request = config.copy();
                 request.setStackSize(amount);
 
                 IAEItemStack result = monitor.extractItems(request, action, holder.getActionSource());
