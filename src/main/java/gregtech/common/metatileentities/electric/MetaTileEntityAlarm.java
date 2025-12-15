@@ -30,7 +30,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
-import com.cleanroommc.modularui.value.IntValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
@@ -85,13 +85,13 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTi
     @Override
     public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
                                          UISettings settings) {
-        AlarmSyncHandler alarmSyncHandler = new AlarmSyncHandler();
-        panelSyncManager.syncValue("alarm_data", 0, alarmSyncHandler);
-        IPanelHandler soundSelector = panelSyncManager.panel("sound_selector_popup",
-                createSoundsPopup(alarmSyncHandler), true);
+        IntSyncValue radiusSync = new IntSyncValue(this::getRadius, this::setRadius);
+        SoundEventSyncHandler soundEventSyncHandler = new SoundEventSyncHandler();
+        panelSyncManager.syncValue("alarm_data", 0, soundEventSyncHandler);
+        IPanelHandler soundSelector = panelSyncManager.syncedPanel("sound_selector_popup", true,
+                createSoundsPopup(soundEventSyncHandler));
 
         // TODO: Change the position of the name when it's standardized.
-        // noinspection Convert2MethodRef
         return GTGuis.createPanel(this, 200, 56)
                 .child(Flow.column()
                         .marginLeft(5)
@@ -107,8 +107,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTi
                                 .height(16)
                                 .setMaxLength(10)
                                 .setNumbers(0, 128)
-                                .value(new IntValue.Dynamic(() -> radius,
-                                        newRadius -> alarmSyncHandler.setRadius(newRadius)))
+                                .value(radiusSync)
                                 .background(GTGuiTextures.DISPLAY))
                         .child(Flow.row()
                                 .widthRel(1.0f)
@@ -136,7 +135,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTi
                                         .addTooltipLine(IKey.lang("gregtech.gui.alarm.selected_sound")))));
     }
 
-    protected PanelSyncHandler.IPanelBuilder createSoundsPopup(@NotNull AlarmSyncHandler alarmSyncHandler) {
+    protected PanelSyncHandler.IPanelBuilder createSoundsPopup(@NotNull MetaTileEntityAlarm.SoundEventSyncHandler soundEventSyncHandler) {
         return (syncManager, syncHandler) -> {
             List<IWidget> soundList = new ArrayList<>(sounds.size());
 
@@ -149,7 +148,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTi
                         .child(new ButtonWidget<>()
                                 .widthRel(1.0f)
                                 .onMousePressed(mouse -> {
-                                    alarmSyncHandler.setSound(name);
+                                    soundEventSyncHandler.setSound(name);
                                     syncHandler.closePanel();
                                     return true;
                                 })
@@ -219,6 +218,15 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTi
         return radius / 16f;
     }
 
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+        GregTechAPI.soundManager.stopTileSound(getPos());
+    }
+
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
@@ -272,12 +280,9 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTi
         return sound == null ? GTSoundEvents.DEFAULT_ALARM : sound;
     }
 
-    /**
-     * Exists so that when in multiplayer, changed values get synced to other clients
-     */
-    protected class AlarmSyncHandler extends SyncHandler {
+    public class SoundEventSyncHandler extends SyncHandler {
 
-        public AlarmSyncHandler() {}
+        public SoundEventSyncHandler() {}
 
         @Override
         public void readOnClient(int id, PacketBuffer buf) {}
@@ -285,10 +290,6 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTi
         @Override
         public void readOnServer(int id, PacketBuffer buf) {
             if (id == 0) {
-                radius = buf.readVarInt();
-                writeCustomData(GregtechDataCodes.UPDATE_RADIUS, toClients -> toClients.writeVarInt(radius));
-                markDirty();
-            } else if (id == 1) {
                 selectedSound = getSound(buf.readResourceLocation());
                 writeCustomData(GregtechDataCodes.UPDATE_SOUND,
                         toClients -> toClients.writeResourceLocation(getSoundResourceLocation(selectedSound)));
@@ -297,17 +298,10 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTi
         }
 
         @SideOnly(Side.CLIENT)
-        public void setRadius(int newRadius) {
-            if (newRadius == radius) return;
-            radius = newRadius;
-            syncToServer(0, buf -> buf.writeVarInt(radius));
-        }
-
-        @SideOnly(Side.CLIENT)
         public void setSound(@NotNull ResourceLocation name) {
             if (getSoundResourceLocation(selectedSound).equals(name)) return;
             selectedSound = getSound(name);
-            syncToServer(1, buf -> buf.writeResourceLocation(name));
+            syncToServer(0, buf -> buf.writeResourceLocation(name));
         }
     }
 }
