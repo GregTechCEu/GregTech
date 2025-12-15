@@ -30,6 +30,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -92,18 +93,16 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTi
                 createSoundsPopup(soundEventSyncHandler));
 
         // TODO: Change the position of the name when it's standardized.
-        return GTGuis.createPanel(this, 200, 56)
+        return GTGuis.createPanel(this, 200, 58)
                 .child(Flow.column()
-                        .marginLeft(5)
-                        .marginRight(5)
-                        .top(5)
+                        .margin(5)
                         .coverChildrenHeight()
+                        .crossAxisAlignment(Alignment.CrossAxis.START)
                         .child(IKey.lang("gregtech.gui.alarm.radius")
-                                .asWidget()
-                                .alignX(0.0f))
+                                .asWidget())
                         .child(new TextFieldWidget()
                                 .widthRel(1.0f)
-                                .marginTop(1)
+                                .margin(0, 2)
                                 .height(16)
                                 .setMaxLength(10)
                                 .setNumbers(0, 128)
@@ -111,11 +110,21 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTi
                                 .background(GTGuiTextures.DISPLAY))
                         .child(Flow.row()
                                 .widthRel(1.0f)
-                                .marginTop(1)
                                 .coverChildrenHeight()
+                                .mainAxisAlignment(Alignment.MainAxis.START)
+                                .childPadding(2)
                                 .child(new ButtonWidget<>()
-                                        .marginRight(4)
-                                        .size(16)
+                                        .size(18)
+                                        .onMousePressed(mouse -> {
+                                            guiData.getPlayer().playSound(selectedSound, 1.0f, 1.0f);
+                                            // returns false so the default click sound isn't played
+                                            return false;
+                                        })
+                                        .overlay(GTGuiTextures.SPEAKER_ICON.asIcon()
+                                                .size(18))
+                                        .addTooltipLine(IKey.lang("gregtech.gui.alarm.sounds_preview_button")))
+                                .child(new ButtonWidget<>()
+                                        .size(18)
                                         .onMousePressed(mouse -> {
                                             if (soundSelector.isPanelOpen()) {
                                                 soundSelector.closePanel();
@@ -125,8 +134,8 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTi
 
                                             return true;
                                         })
-                                        .overlay(GTGuiTextures.SPEAKER_ICON.asIcon()
-                                                .size(18))
+                                        .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon()
+                                                .size(16))
                                         .addTooltipLine(IKey.lang("gregtech.gui.alarm.sounds_popup_button")))
                                 .child(IKey.dynamic(() -> getSoundName(selectedSound))
                                         .asWidget()
@@ -152,7 +161,6 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTi
                                     syncHandler.closePanel();
                                     return true;
                                 })
-                                .addTooltipLine(IKey.lang("gregtech.gui.alarm.set_sound"))
                                 .overlay(IKey.str(name.toString()))));
             }
 
