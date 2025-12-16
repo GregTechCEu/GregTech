@@ -2,7 +2,6 @@ package gregtech.api;
 
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.random.XoShiRo256PlusPlusRandom;
-
 import gregtech.common.ConfigHolder;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
