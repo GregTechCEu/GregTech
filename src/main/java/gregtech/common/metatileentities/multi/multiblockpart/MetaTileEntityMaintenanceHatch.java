@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.items.toolitem.ItemGTToolbelt;
@@ -357,7 +358,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public void writeExtraGuiData(@NotNull PacketBuffer buffer) {
-        buffer.writeBoolean(GTUtility.isAprilFools());
+        buffer.writeBoolean(GTValues.isAprilFools());
     }
 
     @Override

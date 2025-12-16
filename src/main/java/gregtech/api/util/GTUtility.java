@@ -1129,20 +1129,4 @@ public class GTUtility {
     public static boolean isToday(@NotNull MonthDay monthDay) {
         return isToday(monthDay, null);
     }
-
-    /**
-     * Check if today is April 1st.
-     */
-    public static boolean isAprilFools() {
-        if (!ConfigHolder.misc.specialEvents) return false;
-        return isToday(GTValues.APRIL_FOOLS);
-    }
-
-    /**
-     * Check if today is the day of, or eve of Xmas.
-     */
-    public static boolean isXMAS() {
-        if (!ConfigHolder.misc.specialEvents) return false;
-        return isToday(GTValues.XMAS_EVE) || isToday(GTValues.XMAS);
-    }
 }

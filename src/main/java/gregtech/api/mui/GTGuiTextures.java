@@ -1,7 +1,6 @@
 package gregtech.api.mui;
 
 import gregtech.api.GTValues;
-import gregtech.api.util.GTUtility;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -811,7 +810,7 @@ public class GTGuiTextures {
             UITexture logo = theme.getLogo();
             if (logo != null) return logo;
         }
-        return GTUtility.isXMAS() ? GREGTECH_LOGO_XMAS : GREGTECH_LOGO;
+        return GTValues.isXMAS() ? GREGTECH_LOGO_XMAS : GREGTECH_LOGO;
     }
 
     public static IDrawable dynamic(UITexture[] textures, int rate) {
