@@ -95,7 +95,7 @@ public class MachineItemBlock extends ItemBlock {
         GTBaseTileEntity.setPlacingTE(metaTileEntity);
         boolean superVal = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ,
                 newState.withProperty(BlockMachine.OPAQUE, metaTileEntity == null || metaTileEntity.isOpaqueCube()));
-        GTBaseTileEntity.setPlacingTE(null);
+        GTBaseTileEntity.clearPlacingTE();
         if (superVal && !world.isRemote) {
             BlockPos possiblePipe = pos.offset(side.getOpposite());
             Block block = world.getBlockState(possiblePipe).getBlock();

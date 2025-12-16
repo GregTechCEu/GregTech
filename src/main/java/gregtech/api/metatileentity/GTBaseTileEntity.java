@@ -76,10 +76,14 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
 
     public static void setPlacingTE(IGregTechTileEntity mte) {
         if (mte == null) {
-            placingTE.remove();
+            clearPlacingTE();
         } else {
             placingTE.set(mte);
         }
+    }
+
+    public static void clearPlacingTE() {
+        placingTE.remove();
     }
 
     public static IGregTechTileEntity getPlacingTE() {

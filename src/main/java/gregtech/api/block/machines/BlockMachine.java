@@ -76,7 +76,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import static gregtech.api.util.GTUtility.getMetaTileEntity;
 
@@ -93,7 +92,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     // provides enough information to get and read the MetaTileEntity data.
     private static final IUnlistedProperty<String> HARVEST_TOOL = new UnlistedStringProperty("harvest_tool");
     private static final IUnlistedProperty<Integer> HARVEST_LEVEL = new UnlistedIntegerProperty("harvest_level");
-    public final ThreadLocal<Supplier<MetaTileEntity>> testMessage = new ThreadLocal<>();
 
     public BlockMachine() {
         super(Material.IRON);

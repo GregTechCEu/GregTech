@@ -67,7 +67,7 @@ public class DummyWorld extends World {
             tileEntities.put(pos.toImmutable(), entity);
         }
         if (entity instanceof IGregTechTileEntity) {
-            GTBaseTileEntity.setPlacingTE(null);
+            GTBaseTileEntity.clearPlacingTE();
         }
     }
 
