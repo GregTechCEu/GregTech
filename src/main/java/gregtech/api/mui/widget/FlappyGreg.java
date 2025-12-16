@@ -158,12 +158,8 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
 
     @SideOnly(Side.CLIENT)
     protected void checkObstacleCollisions() {
-        Rectangle2D.Float gregTest = new Rectangle2D.Float();
-        gregTest.setRect(gregArea);
-        gregTest.x += OBSTACLE_MOVEMENT_SPEED;
-
         for (Rectangle2D.Float obstacle : obstacles) {
-            if (GTUtility.rectanglesCollide(obstacle, gregTest)) {
+            if (GTUtility.rectanglesCollide(obstacle, gregArea)) {
                 gameState = GameState.COLLIDED;
                 break;
             }
