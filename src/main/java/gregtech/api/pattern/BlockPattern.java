@@ -164,6 +164,7 @@ public class BlockPattern {
                 for (int b = 0, y = -centerOffset[1]; b < this.thumbLength; b++, y++) {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
+                        // this is expecting the te pos to not be set?
                         BlockPos pos = RelativeDirection.setActualRelativeOffset(x, y, z, frontFacing, upwardsFacing,
                                 isFlipped, structureDir)
                                 .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
@@ -173,8 +174,7 @@ public class BlockPattern {
                             if (tileEntity instanceof IGregTechTileEntity tile) {
                                 if (tile.isValid()) {
                                     cache.put(pos.toLong(),
-                                            new BlockInfo(worldState.getBlockState(), tile.getMetaTileEntity()
-                                                    .createMetaTileEntity(null), predicate));
+                                            new BlockInfo(worldState.getBlockState(), tileEntity, predicate));
                                 } else {
                                     cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), null, predicate));
                                 }
