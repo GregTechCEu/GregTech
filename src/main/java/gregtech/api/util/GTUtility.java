@@ -70,6 +70,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
+import java.awt.geom.Rectangle2D;
 import java.time.MonthDay;
 import java.time.ZoneId;
 import java.util.AbstractList;
@@ -1128,5 +1129,15 @@ public class GTUtility {
      */
     public static boolean isToday(@NotNull MonthDay monthDay) {
         return isToday(monthDay, null);
+    }
+
+    /**
+     * Check if two rectangles would touch or intersect.
+     */
+    public static boolean rectanglesCollide(@NotNull Rectangle2D a, @NotNull Rectangle2D b) {
+        return (a.getX() <= b.getX() + b.getWidth()) &&
+                (a.getX() + a.getWidth() >= b.getX()) &&
+                (a.getY() <= b.getY() + b.getHeight()) &&
+                (a.getY() + a.getHeight() >= b.getY());
     }
 }

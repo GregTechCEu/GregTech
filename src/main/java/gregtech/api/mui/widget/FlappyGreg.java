@@ -2,7 +2,7 @@ package gregtech.api.mui.widget;
 
 import gregtech.api.GTValues;
 import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.util.Rectangle;
+import gregtech.api.util.GTUtility;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.text.TextFormatting;
@@ -23,6 +23,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
@@ -37,11 +38,11 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
     protected static final int MAX_OBSTACLES = 5;
     protected static final float OBSTACLE_MOVEMENT_SPEED = 2.0f;
     protected static final int OBSTACLE_COLOR = Color.GREEN.main;
-    protected final List<Rectangle> obstacles = new ObjectArrayList<>(MAX_OBSTACLES * 2);
+    protected final List<Rectangle2D.Float> obstacles = new ObjectArrayList<>(MAX_OBSTACLES * 2);
     protected float obstacleWidth;
 
     protected static final float GREG_SIZE = 18.0f;
-    protected Rectangle gregArea = new Rectangle();
+    protected Rectangle2D.Float gregArea = new Rectangle2D.Float();
     protected float gregYSpeed = TERMINAL_VELOCITY;
 
     @Nullable
@@ -101,28 +102,29 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
         int width = area.width;
         int height = area.height;
 
-        gregArea = new Rectangle((width / 3.0f) - (GREG_SIZE / 2.0f), (height / 2.0f) - (GREG_SIZE / 2.0f), GREG_SIZE);
+        gregArea.setRect((width / 3.0f) - (GREG_SIZE / 2.0f), (height / 2.0f) - (GREG_SIZE / 2.0f), GREG_SIZE,
+                GREG_SIZE);
 
         float lastXPos = width * 0.95f;
         this.obstacleWidth = width / 20.0f;
         for (int i = 0; i < MAX_OBSTACLES; i++) {
-            Rectangle top = new Rectangle();
+            Rectangle2D.Float top = new Rectangle2D.Float();
             obstacles.add(top);
 
-            Rectangle bottom = new Rectangle();
+            Rectangle2D.Float bottom = new Rectangle2D.Float();
             obstacles.add(bottom);
 
-            top.setX(lastXPos);
-            bottom.setX(lastXPos);
-            top.setWidth(obstacleWidth);
-            bottom.setWidth(obstacleWidth);
+            top.x = lastXPos;
+            bottom.x = lastXPos;
+            top.width = obstacleWidth;
+            bottom.width = obstacleWidth;
 
             final float topYEnd = (height * 0.55f) - (height * 0.20f * GTValues.RNG.nextFloat());
-            top.setHeight(topYEnd);
+            top.height = topYEnd;
 
-            final float bottomYStart = topYEnd + (gregArea.getHeight() * 1.75f);
-            bottom.setHeight(height - bottomYStart);
-            bottom.setY(bottomYStart);
+            final float bottomYStart = topYEnd + (gregArea.height * 1.75f);
+            bottom.height = height - bottomYStart;
+            bottom.y = bottomYStart;
 
             lastXPos += (width / 2.5f) + ((width / 15.0f) * GTValues.RNG.nextFloat());
         }
@@ -146,7 +148,7 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
     @SideOnly(Side.CLIENT)
     protected void updateGregPosition() {
         if (gregArea.getY() < (getArea().height - gregArea.getHeight())) {
-            gregArea.setY(gregArea.getY() + gregYSpeed);
+            gregArea.y = gregArea.y + gregYSpeed;
         }
 
         if (gregYSpeed < TERMINAL_VELOCITY) {
@@ -156,8 +158,12 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
 
     @SideOnly(Side.CLIENT)
     protected void checkObstacleCollisions() {
-        for (Rectangle obstacle : obstacles) {
-            if (obstacle.collides(gregArea, OBSTACLE_MOVEMENT_SPEED)) {
+        Rectangle2D.Float gregTest = new Rectangle2D.Float();
+        gregTest.setRect(gregArea);
+        gregTest.x += OBSTACLE_MOVEMENT_SPEED;
+
+        for (Rectangle2D.Float obstacle : obstacles) {
+            if (GTUtility.rectanglesCollide(obstacle, gregTest)) {
                 gameState = GameState.COLLIDED;
                 break;
             }
@@ -166,8 +172,8 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
 
     @SideOnly(Side.CLIENT)
     protected void updateObstaclePositions() {
-        for (Rectangle obstacle : obstacles) {
-            obstacle.decrementX(OBSTACLE_MOVEMENT_SPEED);
+        for (Rectangle2D.Float obstacle : obstacles) {
+            obstacle.x -= OBSTACLE_MOVEMENT_SPEED;
         }
     }
 
@@ -175,8 +181,8 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
     protected void checkWinState() {
         if (obstacles.isEmpty()) return;
 
-        Rectangle obstacle = obstacles.get(obstacles.size() - 1);
-        if ((obstacle.getX() + obstacleWidth + WIN_DISTANCE) <= gregArea.getX()) {
+        Rectangle2D.Float obstacle = obstacles.get(obstacles.size() - 1);
+        if ((obstacle.x + obstacleWidth + WIN_DISTANCE) <= gregArea.getX()) {
             gameState = GameState.FINISHED;
             onFinish();
         }
@@ -193,14 +199,13 @@ public class FlappyGreg extends Widget<FlappyGreg> implements Interactable {
 
         // Obstacles
         Stencil.applyAtZero(area, context);
-        for (Rectangle obstacle : obstacles) {
-            GuiDraw.drawRect(obstacle.getX(), obstacle.getY(), obstacle.getWidth(), obstacle.getHeight(),
-                    OBSTACLE_COLOR);
+        for (Rectangle2D.Float obstacle : obstacles) {
+            GuiDraw.drawRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height, OBSTACLE_COLOR);
         }
         Stencil.remove();
 
         // "Character"
-        GTGuiTextures.GREGTECH_LOGO.draw(gregArea.getX(), gregArea.getY(), gregArea.getWidth(), gregArea.getHeight());
+        GTGuiTextures.GREGTECH_LOGO.draw(gregArea.x, gregArea.y, gregArea.width, gregArea.height);
 
         WidgetTheme theme = widgetTheme.getTheme();
         switch (gameState) {
