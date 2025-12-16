@@ -211,6 +211,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         ResourceLocation[] ids = Arrays.stream(metaTileEntities).filter(Objects::nonNull)
                 .map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
         return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId),
+                // we don't want to copy this mte again ?
                 getCandidates(metaTileEntities));
     }
 
@@ -343,6 +344,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void checkStructurePattern() {
         if (structurePattern == null) return;
         PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(),
+                // why does this call getOpposite()?
+                // front facing is not being set correctly sometimes
                 getFrontFacing().getOpposite(), getUpwardsFacing(), allowsFlip());
         if (context != null && !structureFormed) {
             Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);

@@ -140,11 +140,12 @@ public class MultiblockShapeInfo {
                         BlockInfo info = symbolMap.getOrDefault(columnEntry.charAt(x), BlockInfo.EMPTY);
                         TileEntity tileEntity = info.getTileEntity();
                         if (tileEntity instanceof IGregTechTileEntity holder) {
+                            // do not copy here?
                             final MetaTileEntity mte = holder.getMetaTileEntity().createMetaTileEntity(null);
                             // holder = new MetaTileEntityHolder();
                             // holder.setMetaTileEntity(mte);
                             mte.onPlacement();
-                            mte.setFrontFacing(mte.getFrontFacing());
+                            mte.setFrontFacing(holder.getMetaTileEntity().getFrontFacing());
                             info = new BlockInfo(info.getBlockState(), mte);
                         } else if (tileEntity != null) {
                             info = new BlockInfo(info.getBlockState(), tileEntity);

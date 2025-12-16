@@ -165,6 +165,8 @@ public class BlockPattern {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
                         // this is expecting the te pos to not be set?
+                        // this should be 0, 0, 0
+                        // EBF front facing was SOUTH instead of NORTH
                         BlockPos pos = RelativeDirection.setActualRelativeOffset(x, y, z, frontFacing, upwardsFacing,
                                 isFlipped, structureDir)
                                 .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
