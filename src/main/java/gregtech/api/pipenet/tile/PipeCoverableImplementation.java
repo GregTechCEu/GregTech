@@ -5,6 +5,7 @@ import gregtech.api.cover.CoverHolder;
 import gregtech.api.cover.CoverSaveHandler;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
@@ -16,6 +17,8 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -296,5 +299,15 @@ public class PipeCoverableImplementation implements CoverHolder {
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         return holder.getCapabilityInternal(capability, side);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public CoverRendererPackage createPackage() {
+        if (covers.isEmpty()) return CoverRendererPackage.EMPTY;
+        CoverRendererPackage rendererPackage = new CoverRendererPackage(shouldRenderCoverBackSides());
+        for (var cover : covers.entrySet()) {
+            rendererPackage.addRenderer(cover.getValue().getRenderer(), cover.getKey());
+        }
+        return rendererPackage;
     }
 }

@@ -4,6 +4,8 @@ import gregtech.api.cover.CoverUtil;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.client.model.pipeline.VertexLighterFlatSpecial;
 import gregtech.client.model.pipeline.VertexLighterSmoothAoSpecial;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererValues;
 import gregtech.client.utils.AdvCCRSConsumer;
 import gregtech.client.utils.FacadeBlockAccess;
 import gregtech.client.utils.ItemRenderCompat;
@@ -52,6 +54,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Mostly based on and (copied from) ThermalDynamics with minor tweaks
@@ -145,6 +148,37 @@ public class FacadeRenderer implements IItemRenderer {
             return renderBlockQuads(lighter, coverAccess, state, quads, pos);
         }
         return false;
+    }
+
+    public static CoverRenderer createRenderer(IBlockAccess world, BlockPos pos, IBlockState state) {
+        BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        try {
+            state = state.getActualState(world, pos);
+        } catch (Exception ignored) {}
+
+        IBakedModel model = dispatcher.getModelForState(state);
+
+        try {
+            state = state.getBlock().getExtendedState(state, world, pos);
+        } catch (Exception ignored) {}
+        IBlockState finalState = state;
+        return (quads, facing, renderPlate, renderBackside, renderLayer, data) -> {
+            if (renderLayer != BlockRenderLayer.CUTOUT_MIPPED) return;
+            // since the block model may be sensitive to the current render layer, we have to recalculate
+            // every call.
+            long posRand = MathHelper.getPositionRandom(pos);
+            List<BakedQuad> modelQuads = new ArrayList<>(model.getQuads(finalState, null, posRand));
+            for (EnumFacing face : EnumFacing.VALUES) {
+                modelQuads.addAll(model.getQuads(finalState, face, posRand));
+            }
+            // is there anything that can be done to make this cheaper?
+            quads.addAll(remap(sliceQuads(fromArray(modelQuads), facing.getIndex(),
+                    new Cuboid6(CoverRendererValues.PLATE_AABBS.get(facing)))));
+        };
+    }
+
+    private static List<BakedQuad> remap(List<CCQuad> quads) {
+        return quads.stream().map(CCQuad::bake).collect(Collectors.toList());
     }
 
     public static void renderItemCover(CCRenderState ccrs, int side, ItemStack renderStack, Cuboid6 bounds) {

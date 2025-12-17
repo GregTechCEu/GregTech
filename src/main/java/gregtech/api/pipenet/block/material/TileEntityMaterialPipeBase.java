@@ -6,9 +6,14 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.registry.MaterialRegistry;
+import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.PipeRenderProperties;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +45,7 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
 
     @Override
     public int getDefaultPaintingColor() {
-        return pipeMaterial == null ? super.getDefaultPaintingColor() : pipeMaterial.getMaterialRGB();
+        return GTUtility.convertRGBtoARGB(getPipeMaterial().getMaterialRGB());
     }
 
     @Override
@@ -99,5 +104,12 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
             readPipeMaterial(buf);
             scheduleChunkForRenderUpdate();
         }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
+        return super.getRenderInformation(state).withProperty(PipeRenderProperties.MATERIAL_PROPERTY,
+                getPipeMaterial());
     }
 }

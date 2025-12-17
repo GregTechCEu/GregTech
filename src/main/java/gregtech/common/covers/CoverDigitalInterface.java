@@ -16,6 +16,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.gui.widget.prospector.widget.WidgetOreList;
@@ -1016,6 +1017,16 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
                         ArrayUtils.addAll(ops, rotation), translation);
             }
         }
+    }
+
+    @Override
+    public @NotNull CoverRenderer getRenderer() {
+        return (quads, facing, renderPlate, renderBackside, renderLayer, data) -> {};
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return null;
     }
 
     @SideOnly(Side.CLIENT)

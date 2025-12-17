@@ -3,6 +3,8 @@ package gregtech.common.covers;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -110,6 +112,17 @@ public class CoverItemVoiding extends CoverConveyor {
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
                             Cuboid6 plateBox, BlockRenderLayer layer) {
         Textures.ITEM_VOIDING.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
+    }
+
+    @Override
+    public @NotNull CoverRenderer getRenderer() {
+        if (renderer == null) renderer = buildRenderer();
+        return renderer;
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.ITEM_VOIDING).build();
     }
 
     @Override

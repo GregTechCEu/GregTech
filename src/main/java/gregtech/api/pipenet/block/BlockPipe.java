@@ -14,6 +14,8 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.PipeRenderProperties;
+import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
@@ -23,9 +25,12 @@ import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -46,6 +51,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -53,11 +59,13 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Random;
 
@@ -67,6 +75,28 @@ import static gregtech.api.metatileentity.MetaTileEntity.FULL_CUBE_COLLISION;
 public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType,
         WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BuiltInRenderBlock
                                implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
+
+    public static final PropertyBool NORTH = PropertyBool.create("north");
+    public static final PropertyBool EAST = PropertyBool.create("east");
+    public static final PropertyBool SOUTH = PropertyBool.create("south");
+    public static final PropertyBool WEST = PropertyBool.create("west");
+    public static final PropertyBool UP = PropertyBool.create("up");
+    public static final PropertyBool DOWN = PropertyBool.create("down");
+
+    public static final EnumMap<EnumFacing, PropertyBool> FACINGS = buildFacings();
+
+    private static @NotNull EnumMap<EnumFacing, PropertyBool> buildFacings() {
+        EnumMap<EnumFacing, PropertyBool> map = new EnumMap<>(EnumFacing.class);
+        map.put(EnumFacing.NORTH, NORTH);
+        map.put(EnumFacing.EAST, EAST);
+        map.put(EnumFacing.SOUTH, SOUTH);
+        map.put(EnumFacing.WEST, WEST);
+        map.put(EnumFacing.UP, UP);
+        map.put(EnumFacing.DOWN, DOWN);
+        return map;
+    }
+
+    public static final PropertyBool FRAMED = PropertyBool.create("framed");
 
     protected final ThreadLocal<IPipeTile<PipeType, NodeDataType>> tileEntities = new ThreadLocal<>();
 
@@ -146,7 +176,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     protected abstract NodeDataType getFallbackType();
 
     // TODO this has no reason to need an ItemStack parameter
-    public abstract PipeType getItemPipeType(ItemStack itemStack);
+    public abstract PipeType getPipeType();
 
     public abstract void setTileEntityData(TileEntityPipeBase<PipeType, NodeDataType> pipeTile, ItemStack itemStack);
 
@@ -352,7 +382,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             IBlockState blockStateAtSide = world.getBlockState(pos.offset(side));
             if (blockStateAtSide.getBlock() instanceof BlockFrame) {
                 ItemBlockPipe<?, ?> itemBlockPipe = (ItemBlockPipe<?, ?>) itemStack.getItem();
-                if (itemBlockPipe.blockPipe.getItemPipeType(itemStack) == getItemPipeType(itemStack)) {
+                if (itemBlockPipe.blockPipe.getPipeType() == getPipeType()) {
                     BlockFrame frameBlock = (BlockFrame) blockStateAtSide.getBlock();
                     boolean wasPlaced = frameBlock.replaceWithFramedPipe(world, pos.offset(side), blockStateAtSide,
                             entityPlayer, itemStack, side);
@@ -733,5 +763,69 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         public PipeConnectionData(EnumFacing side) {
             this.side = side;
         }
+    }
+
+    @Override
+    public int getMetaFromState(@NotNull IBlockState state) {
+        return 0;
+    }
+
+    @Override
+    protected @NotNull BlockStateContainer createBlockState() {
+        return constructState(new BlockStateContainer.Builder(this))
+                .add(NORTH, SOUTH, EAST, WEST, UP, DOWN, FRAMED)
+                .build();
+    }
+
+    protected @NotNull BlockStateContainer.Builder constructState(BlockStateContainer.@NotNull Builder builder) {
+        return builder.add(PipeRenderProperties.THICKNESS_PROPERTY).add(PipeRenderProperties.CLOSED_MASK_PROPERTY)
+                .add(PipeRenderProperties.BLOCKED_MASK_PROPERTY).add(PipeRenderProperties.COLOR_PROPERTY)
+                .add(PipeRenderProperties.FRAME_MATERIAL_PROPERTY).add(PipeRenderProperties.FRAME_MASK_PROPERTY)
+                .add(CoverRendererPackage.CRP_PROPERTY);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public @NotNull IBlockState getActualState(@NotNull IBlockState state, @NotNull IBlockAccess worldIn,
+                                               @NotNull BlockPos pos) {
+        var tile = getPipeTileEntity(worldIn, pos);
+        if (tile == null) return state;
+        state = writeConnectionMask(state, tile.getCoverAdjustedConnectionMask());
+        return state.withProperty(FRAMED, tile.getFrameMaterial() != null);
+    }
+
+    public static IBlockState writeConnectionMask(@NotNull IBlockState state, byte connectionMask) {
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            state = state.withProperty(FACINGS.get(facing), GTUtility.evalMask(facing, connectionMask));
+        }
+        return state;
+    }
+
+    public static byte readConnectionMask(@NotNull IBlockState state) {
+        byte mask = 0;
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            if (state.getValue(FACINGS.get(facing))) {
+                mask |= (byte) (1 << facing.ordinal());
+            }
+        }
+        return mask;
+    }
+
+    @Override
+    public @NotNull IBlockState getExtendedState(@NotNull IBlockState state, @NotNull IBlockAccess world,
+                                                 @NotNull BlockPos pos) {
+        var tile = getPipeTileEntity(world, pos);
+        if (tile == null) return state;
+        else return tile.getRenderInformation((IExtendedBlockState) state.getActualState(world, pos));
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
+        var tile = getPipeTileEntity(world, blockPos);
+        if (tile != null) {
+            return getPipeType().getModel().getParticleTexture(tile.getPaintingColor(), null);
+        }
+        return null;
     }
 }

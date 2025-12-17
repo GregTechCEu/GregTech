@@ -5,6 +5,8 @@ import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,6 +38,11 @@ public class CoverShutter extends CoverBase implements IControllable {
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                             IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.SHUTTER.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.SHUTTER).build();
     }
 
     @Override
@@ -76,7 +83,7 @@ public class CoverShutter extends CoverBase implements IControllable {
     @Override
     public @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
                                                        @NotNull CuboidRayTraceResult hitResult) {
-        this.isWorkingAllowed = !this.isWorkingAllowed;
+        setWorkingEnabled(!this.isWorkingAllowed);
         if (!playerIn.world.isRemote) {
             playerIn.sendMessage(new TextComponentTranslation(isWorkingEnabled() ?
                     "cover.shutter.message.enabled" : "cover.shutter.message.disabled"));
@@ -91,7 +98,10 @@ public class CoverShutter extends CoverBase implements IControllable {
 
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
-        isWorkingAllowed = isActivationAllowed;
+        if (isActivationAllowed != isWorkingAllowed) {
+            isWorkingAllowed = isActivationAllowed;
+            markDirty();
+        }
     }
 
     @Override

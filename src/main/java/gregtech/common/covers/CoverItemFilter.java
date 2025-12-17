@@ -8,6 +8,8 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.BaseFilterContainer;
@@ -186,6 +188,11 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
                             Cuboid6 plateBox, BlockRenderLayer layer) {
         this.texture.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(this.texture).build();
     }
 
     @Override

@@ -174,7 +174,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         TileEntityCable newCable = (TileEntityCable) world.getTileEntity(pos);
         if (newCable != null) { // should never be null
             // TODO: use transfer data method
-            newCable.setPipeData(newBlock, newBlock.getItemPipeType(null), getPipeMaterial());
+            newCable.setPipeData(newBlock, newBlock.getPipeType(), getPipeMaterial());
             for (EnumFacing facing : EnumFacing.VALUES) {
                 if (isConnected(facing)) {
                     newCable.setConnection(facing, true, true);
