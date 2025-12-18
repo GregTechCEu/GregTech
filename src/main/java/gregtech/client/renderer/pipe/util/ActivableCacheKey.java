@@ -25,5 +25,6 @@ public class ActivableCacheKey extends CacheKey {
         return active;
     }
 
-    // activeness is merely a way to pass information onwards, it does not result in separate mappings.
+    // activeness is merely a way to pass information onwards, it does not require a separate cache to be built.
+    // thus we do not override equals() and hashCode() to account for the active field.
 }

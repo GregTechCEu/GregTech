@@ -175,7 +175,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     protected abstract NodeDataType getFallbackType();
 
-    // TODO this has no reason to need an ItemStack parameter
     public abstract PipeType getPipeType();
 
     public abstract void setTileEntityData(TileEntityPipeBase<PipeType, NodeDataType> pipeTile, ItemStack itemStack);

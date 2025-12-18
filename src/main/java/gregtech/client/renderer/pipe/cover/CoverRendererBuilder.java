@@ -37,7 +37,7 @@ public class CoverRendererBuilder {
     private static final ColorQuadCache[] PLATE_QUADS;
     private static final EnumMap<EnumFacing, SubListAddress> PLATE_COORDS = new EnumMap<>(EnumFacing.class);
 
-    private static final UVMapper defaultMapper = UVMapper.standard(0);
+    private static final UVMapper DEFAULT_MAPPER = UVMapper.standard(0);
 
     static {
         PLATE_QUADS = new ColorQuadCache[Textures.VOLTAGE_CASINGS.length];
@@ -64,7 +64,7 @@ public class CoverRendererBuilder {
         int start = quads.size();
         Pair<Vector3f, Vector3f> box = CoverRendererValues.PLATE_BOXES.get(facing);
         for (EnumFacing dir : EnumFacing.values()) {
-            quads.add(QuadHelper.buildQuad(dir, box, CoverRendererBuilder.defaultMapper, sprite));
+            quads.add(QuadHelper.buildQuad(dir, box, CoverRendererBuilder.DEFAULT_MAPPER, sprite));
         }
         return new SubListAddress(start, quads.size());
     }
@@ -78,8 +78,8 @@ public class CoverRendererBuilder {
     protected final TextureAtlasSprite sprite;
     protected final TextureAtlasSprite spriteEmissive;
 
-    protected UVMapper mapper = defaultMapper;
-    protected UVMapper mapperEmissive = defaultMapper;
+    protected UVMapper mapper = DEFAULT_MAPPER;
+    protected UVMapper mapperEmissive = DEFAULT_MAPPER;
 
     protected ColorQuadCache plateQuads = PLATE_QUADS[1];
 
