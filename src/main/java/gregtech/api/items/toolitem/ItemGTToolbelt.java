@@ -495,6 +495,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                 List<ItemStack> tools = new ObjectArrayList<>();
                 iterateSlots(toolbeltStack, tools::add);
                 maintenanceHatch.fixMaintenanceProblemsWithTools(player, tools);
+                return EnumActionResult.SUCCESS;
             }
             return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
         } else return result;
