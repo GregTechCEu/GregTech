@@ -12,7 +12,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -180,8 +179,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
-                I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
+        tooltip.add(TooltipHelper.CREATIVE_TOOLTIP.get());
         // do not append the normal tooltips
     }
 

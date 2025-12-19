@@ -230,8 +230,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.1"));
         if (isCreative) {
-            tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
-                    I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
+            tooltip.add(TooltipHelper.CREATIVE_TOOLTIP.get());
         } else {
             tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.2", getInventorySize()));
         }

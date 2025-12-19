@@ -7,6 +7,7 @@ import gregtech.api.util.KeyUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.ToolItems;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -19,11 +20,16 @@ import org.lwjgl.input.Keyboard;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static gregtech.api.GTValues.CLIENT_TIME;
 import static net.minecraft.util.text.TextFormatting.*;
 
 public class TooltipHelper {
+
+    public static final Supplier<String> CREATIVE_TOOLTIP = () -> I18n.format("gregtech.creative_tooltip.1") +
+            TooltipHelper.RAINBOW + I18n.format("gregtech.creative_tooltip.2") +
+            I18n.format("gregtech.creative_tooltip.3");
 
     private static final List<GTFormatCode> CODES = new ArrayList<>();
 
