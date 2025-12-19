@@ -77,6 +77,7 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityObjec
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityOpticalDataHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchFluid;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchItem;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchLaser;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityReservoirHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityRotorHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntitySubstationEnergyHatch;
@@ -233,6 +234,7 @@ public final class MetaTileEntities {
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_256 = new MetaTileEntityLaserHatch[GTValues.V.length - 1];
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_1024 = new MetaTileEntityLaserHatch[GTValues.V.length - 1];
     public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_4096 = new MetaTileEntityLaserHatch[GTValues.V.length - 1];
+    public static MetaTileEntityPassthroughHatchLaser PASSTHROUGH_HATCH_LASER;
     public static MetaTileEntityComputationHatch COMPUTATION_HATCH_RECEIVER;
     public static MetaTileEntityComputationHatch COMPUTATION_HATCH_TRANSMITTER;
     public static MetaTileEntityObjectHolder OBJECT_HOLDER;

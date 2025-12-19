@@ -78,46 +78,46 @@ public final class V2PostMTEReallocFixer {
         }
         dataMigrator.migrateMTEMeta(MODID, 1401, 11483);
         // PA hatch
-        dataMigrator.migrateMTEMeta(MODID, 1398, 11495);
+        dataMigrator.migrateMTEMeta(MODID, 1398, 11513);
         // Passthrough hatches
         dataMigrator.migrateMTEMeta(MODID, 1402, 11496);
         dataMigrator.migrateMTEMeta(MODID, 1403, 11497);
         // data hatches
-        dataMigrator.migrateMTEMeta(MODID, 1404, 11498);
-        dataMigrator.migrateMTEMeta(MODID, 1405, 11499);
-        dataMigrator.migrateMTEMeta(MODID, 1406, 11500);
+        dataMigrator.migrateMTEMeta(MODID, 1404, 11514);
+        dataMigrator.migrateMTEMeta(MODID, 1405, 11515);
+        dataMigrator.migrateMTEMeta(MODID, 1406, 11516);
         // computation hatches
-        dataMigrator.migrateMTEMeta(MODID, 1407, 11501);
-        dataMigrator.migrateMTEMeta(MODID, 1408, 11502);
-        dataMigrator.migrateMTEMeta(MODID, 1409, 11503);
-        dataMigrator.migrateMTEMeta(MODID, 1410, 11504);
+        dataMigrator.migrateMTEMeta(MODID, 1407, 11517);
+        dataMigrator.migrateMTEMeta(MODID, 1408, 11518);
+        dataMigrator.migrateMTEMeta(MODID, 1409, 11519);
+        dataMigrator.migrateMTEMeta(MODID, 1410, 11520);
         // reservoir hatch
-        dataMigrator.migrateMTEMeta(MODID, 1418, 11505);
+        dataMigrator.migrateMTEMeta(MODID, 1418, 11521);
         // primitive pump hatch
-        dataMigrator.migrateMTEMeta(MODID, 1649, 11506);
+        dataMigrator.migrateMTEMeta(MODID, 1649, 11522);
         // steam hatches
-        dataMigrator.migrateMTEMeta(MODID, 1651, 11507);
-        dataMigrator.migrateMTEMeta(MODID, 1652, 11508);
-        dataMigrator.migrateMTEMeta(MODID, 1653, 11509);
+        dataMigrator.migrateMTEMeta(MODID, 1651, 11523);
+        dataMigrator.migrateMTEMeta(MODID, 1652, 11524);
+        dataMigrator.migrateMTEMeta(MODID, 1653, 11525);
         // object holder
-        dataMigrator.migrateMTEMeta(MODID, 1411, 11510);
+        dataMigrator.migrateMTEMeta(MODID, 1411, 11526);
         // hpca components
-        dataMigrator.migrateMTEMeta(MODID, 1412, 11511);
-        dataMigrator.migrateMTEMeta(MODID, 1413, 11512);
-        dataMigrator.migrateMTEMeta(MODID, 1414, 11513);
-        dataMigrator.migrateMTEMeta(MODID, 1415, 11514);
-        dataMigrator.migrateMTEMeta(MODID, 1416, 11515);
-        dataMigrator.migrateMTEMeta(MODID, 1417, 11516);
+        dataMigrator.migrateMTEMeta(MODID, 1412, 11527);
+        dataMigrator.migrateMTEMeta(MODID, 1413, 11528);
+        dataMigrator.migrateMTEMeta(MODID, 1414, 11529);
+        dataMigrator.migrateMTEMeta(MODID, 1415, 11530);
+        dataMigrator.migrateMTEMeta(MODID, 1416, 11531);
+        dataMigrator.migrateMTEMeta(MODID, 1417, 11532);
         // tank valves
-        dataMigrator.migrateMTEMeta(MODID, 1596, 11523);
-        dataMigrator.migrateMTEMeta(MODID, 1598, 11524);
+        dataMigrator.migrateMTEMeta(MODID, 1596, 11539);
+        dataMigrator.migrateMTEMeta(MODID, 1598, 11540);
         // AE2 hatches
-        dataMigrator.migrateMTEMeta(MODID, 1745, 11533);
-        dataMigrator.migrateMTEMeta(MODID, 1746, 11532);
-        dataMigrator.migrateMTEMeta(MODID, 1747, 11526);
-        dataMigrator.migrateMTEMeta(MODID, 1748, 11525);
-        dataMigrator.migrateMTEMeta(MODID, 1752, 11527);
-        dataMigrator.migrateMTEMeta(MODID, 1753, 11528);
+        dataMigrator.migrateMTEMeta(MODID, 1745, 11549);
+        dataMigrator.migrateMTEMeta(MODID, 1746, 11548);
+        dataMigrator.migrateMTEMeta(MODID, 1747, 11542);
+        dataMigrator.migrateMTEMeta(MODID, 1748, 11542);
+        dataMigrator.migrateMTEMeta(MODID, 1752, 11543);
+        dataMigrator.migrateMTEMeta(MODID, 1753, 11544);
         // transformers
         for (int i = 0; i < TRANSFORMER.length; i++) {
             dataMigrator.migrateMTEMeta(MODID, 1270 + i, 5000 + i);
