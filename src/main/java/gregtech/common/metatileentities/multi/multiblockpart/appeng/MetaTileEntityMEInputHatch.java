@@ -168,7 +168,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
 
         // GT Logo, cause there's some free real estate
         builder.widget(new ImageWidget(7 + 18 * 4, 25 + 18 * 3, 17, 17,
-                GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
+                GTValues.isXMAS() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
                         .setIgnoreColor(true));
 
         builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);

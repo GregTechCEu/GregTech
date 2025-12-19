@@ -44,9 +44,6 @@ public class GTSoundEvents {
     public static SoundEvent MORTAR_TOOL;
     public static SoundEvent SOFT_MALLET_TOOL;
 
-    // Record Sounds
-    public static SoundEvent SUS_RECORD;
-
     // Entity Sounds
     public static SoundEvent PORTAL_OPENING;
     public static SoundEvent PORTAL_CLOSING;
@@ -95,7 +92,6 @@ public class GTSoundEvents {
         SPRAY_CAN_TOOL = soundManager.registerSound("use.spray_can");
         TRICORDER_TOOL = soundManager.registerSound("use.tricorder");
         MORTAR_TOOL = soundManager.registerSound("use.mortar");
-        SUS_RECORD = soundManager.registerSound("record.sus");
         PORTAL_OPENING = soundManager.registerSound("entity.portal_opening");
         PORTAL_CLOSING = soundManager.registerSound("entity.portal_closing");
 

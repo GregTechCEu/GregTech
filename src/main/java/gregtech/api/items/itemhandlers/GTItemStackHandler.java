@@ -6,6 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemStackHandler;
 
+import org.jetbrains.annotations.NotNull;
+
 public class GTItemStackHandler extends ItemStackHandler {
 
     final private MetaTileEntity metaTileEntity;
@@ -26,7 +28,7 @@ public class GTItemStackHandler extends ItemStackHandler {
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack) {
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         if (ItemStack.areItemStacksEqual(stack, getStackInSlot(slot)))
             return;
 

@@ -22,8 +22,6 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -146,32 +144,6 @@ public interface CoverWithUI extends Cover, IGuiHolder<SidedPosGuiData>, gregtec
         String enabled = keyBase + ".enabled";
         String disabled = keyBase + ".disabled";
         return IKey.lang(() -> enabledState.getAsBoolean() ? enabled : disabled);
-    }
-
-    default int getIncrementValue(MouseData data) {
-        int adjust = 1;
-        if (data.shift) adjust *= 4;
-        if (data.ctrl) adjust *= 16;
-        if (data.alt) adjust *= 64;
-        return adjust;
-    }
-
-    default IKey createAdjustOverlay(boolean increment) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(increment ? '+' : '-');
-        builder.append(getIncrementValue(MouseData.create(-1)));
-
-        float scale = 1f;
-        if (builder.length() == 3) {
-            scale = 0.8f;
-        } else if (builder.length() == 4) {
-            scale = 0.6f;
-        } else if (builder.length() > 4) {
-            scale = 0.5f;
-        }
-        return IKey.str(builder.toString())
-                .color(Color.WHITE.main)
-                .scale(scale);
     }
 
     /**

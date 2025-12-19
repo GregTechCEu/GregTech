@@ -516,7 +516,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
             ImageWidget logo = new ImageWidget(152, 63 + yOffset, 17, 17,
-                    GTValues.XMAS.get() ? getXmasLogo() : getLogo()).setIgnoreColor(true);
+                    GTValues.isXMAS() ? getXmasLogo() : getLogo()).setIgnoreColor(true);
 
             if (this.circuitInventory != null) {
                 SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62 + yOffset)

@@ -136,7 +136,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     }
 
     @Override
-    public SoundEvent getSound() {
+    public @Nullable SoundEvent getSound() {
         return Objects.requireNonNull(workableHandler.getRecipeMap()).getSound();
     }
 

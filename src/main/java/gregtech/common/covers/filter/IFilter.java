@@ -33,7 +33,7 @@ public interface IFilter {
         String translationKey = getContainerStack().getTranslationKey();
         return syncManager.getOrCreateSyncHandler(translationKey, id, PanelSyncHandler.class, () -> {
             String key = PanelSyncManager.makeSyncKey(translationKey, id);
-            return (PanelSyncHandler) syncManager.panel(key, (psm, $) -> createPopupPanel(psm, key), true);
+            return (PanelSyncHandler) syncManager.syncedPanel(key, true, (psm, $) -> createPopupPanel(psm, key));
         });
     }
 

@@ -158,7 +158,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
     }
 
     @Override
-    public SoundEvent getSound() {
+    public @Nullable SoundEvent getSound() {
         return workable.getRecipeMap().getSound();
     }
 

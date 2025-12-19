@@ -160,7 +160,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
             name = new StringSyncValue(this::getColorStr);
         }
 
-        IPanelHandler entrySelectorSH = syncManager.panel("entry_selector", entrySelector(getType(), uuid), true);
+        IPanelHandler entrySelectorSH = syncManager.syncedPanel("entry_selector", true, entrySelector(getType(), uuid));
 
         return Flow.column().coverChildrenHeight().top(24)
                 .margin(7, 0).widthRel(1f)
@@ -359,8 +359,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         T entry = VirtualEnderRegistry.getEntry(getOwner(), type, name);
         String key = String.format("entry#%s_description", entry.getColorStr());
         String syncKey = PanelSyncManager.makeSyncKey(key, isPrivate ? 1 : 0);
-        IPanelHandler panelHandler = syncManager.panel(syncKey,
-                entryDescription(key, entry), true);
+        IPanelHandler panelHandler = syncManager.syncedPanel(syncKey, true, entryDescription(key, entry));
 
         EnderCoverSyncHandler syncHandler = new EnderCoverSyncHandler();
         syncManager.syncValue(key + "_handler", syncHandler);

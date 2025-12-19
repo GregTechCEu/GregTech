@@ -231,7 +231,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     @SideOnly(Side.CLIENT)
     @Override
-    public SoundEvent getSound() {
+    public @Nullable SoundEvent getSound() {
         return GTSoundEvents.COMPUTATION;
     }
 

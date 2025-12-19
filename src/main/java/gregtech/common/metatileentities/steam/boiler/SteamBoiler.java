@@ -370,7 +370,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     }
 
     @Override
-    public SoundEvent getSound() {
+    public @Nullable SoundEvent getSound() {
         return GTSoundEvents.BOILER;
     }
 

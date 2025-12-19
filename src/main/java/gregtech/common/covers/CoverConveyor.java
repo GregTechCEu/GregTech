@@ -11,7 +11,9 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
@@ -50,7 +52,6 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -531,12 +532,12 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     .marginBottom(2).widthRel(1f)
                     .child(new ButtonWidget<>()
                             .left(0).width(18)
+                            .overlay(KeyUtil.createMultiplierKey(false))
                             .onMousePressed(mouseButton -> {
-                                int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
+                                int val = throughput.getValue() - GTUtility.getButtonIncrementValue();
                                 throughput.setValue(val, true, true);
                                 return true;
-                            })
-                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
+                            }))
                     .child(new GTTextFieldWidget()
                             .left(18).right(18)
                             .setPostFix(" items/s")
@@ -546,12 +547,12 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .background(GTGuiTextures.DISPLAY))
                     .child(new ButtonWidget<>()
                             .right(0).width(18)
+                            .overlay(KeyUtil.createMultiplierKey(true))
                             .onMousePressed(mouseButton -> {
-                                int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
+                                int val = throughput.getValue() + GTUtility.getButtonIncrementValue();
                                 throughput.setValue(val, true, true);
                                 return true;
-                            })
-                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
+                            })));
 
         if (createFilterRow())
             column.child(getItemFilterContainer().initUI(data, guiSyncManager));

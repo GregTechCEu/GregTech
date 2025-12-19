@@ -5,13 +5,13 @@ import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -29,7 +29,6 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.BoolValue;
@@ -89,7 +88,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         guiSyncManager.syncValue("handler", this.modifiableHandler);
         return appendCreativeUI(GTGuis.createPanel(this, 176, 166), false,
                 new BoolValue.Dynamic(() -> active, b -> active = b),
@@ -179,8 +179,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
-                I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
+        tooltip.add(TooltipHelper.CREATIVE_TOOLTIP.get());
         // do not append the normal tooltips
     }
 
@@ -255,7 +254,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         }
 
         @Override
-        public void setStackInSlot(int slot, ItemStack stack) {
+        public void setStackInSlot(int slot, @NotNull ItemStack stack) {
             modifiableHandler.setStackInSlot(slot, stack);
         }
 

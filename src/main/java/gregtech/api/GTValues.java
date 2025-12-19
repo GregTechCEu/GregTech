@@ -1,5 +1,6 @@
 package gregtech.api;
 
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.random.XoShiRo256PlusPlusRandom;
 import gregtech.common.ConfigHolder;
 
@@ -7,7 +8,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.time.LocalDate;
+import java.time.MonthDay;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -191,14 +192,29 @@ public class GTValues {
      */
     public static final int FALLBACK = -1;
 
-    public static Supplier<Boolean> FOOLS = () -> {
-        String[] yearMonthDay = LocalDate.now().toString().split("-");
-        return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("04") && yearMonthDay[2].equals("01");
-    };
+    public static final MonthDay DAY_APRIL_FOOLS = MonthDay.of(4, 1);
+    public static final MonthDay DAY_XMAS_EVE = MonthDay.of(12, 24);
+    public static final MonthDay DAY_XMAS = MonthDay.of(12, 25);
 
-    public static Supplier<Boolean> XMAS = () -> {
-        String[] yearMonthDay = LocalDate.now().toString().split("-");
-        return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("12") &&
-                (yearMonthDay[2].equals("24") || yearMonthDay[2].equals("25"));
-    };
+    /**
+     * Check if today is April 1st.
+     */
+    public static boolean isAprilFools() {
+        if (!ConfigHolder.misc.specialEvents) return false;
+        return GTUtility.isToday(DAY_APRIL_FOOLS);
+    }
+
+    /**
+     * Check if today is the day of, or eve of Xmas.
+     */
+    public static boolean isXMAS() {
+        if (!ConfigHolder.misc.specialEvents) return false;
+        return GTUtility.isToday(DAY_XMAS_EVE) || GTUtility.isToday(DAY_XMAS);
+    }
+
+    @Deprecated
+    public static final Supplier<Boolean> FOOLS = GTValues::isAprilFools;
+
+    @Deprecated
+    public static final Supplier<Boolean> XMAS = GTValues::isXMAS;
 }

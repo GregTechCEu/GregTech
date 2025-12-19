@@ -3,9 +3,7 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -13,6 +11,10 @@ import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
+import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
@@ -26,7 +28,6 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityDataBank;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -39,6 +40,19 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +62,7 @@ import java.util.*;
 
 public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart
                                            implements IMultiblockAbilityPart<IDataAccessHatch>, IDataAccessHatch,
-                                           IDataInfoProvider {
+                                           IDataInfoProvider, IMetaTileEntityGuiHolder {
 
     private final Set<Recipe> recipes;
     private final boolean isCreative;
@@ -56,7 +70,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     public MetaTileEntityDataAccessHatch(ResourceLocation metaTileEntityId, int tier, boolean isCreative) {
         super(metaTileEntityId, tier, false);
         this.isCreative = isCreative;
-        this.recipes = isCreative ? Collections.emptySet() : new ObjectOpenHashSet<>();
+        this.recipes = isCreative ? Collections.emptySet() : new ObjectOpenHashSet<>(importItems.getSlots());
         rebuildData(getController() instanceof MetaTileEntityDataBank);
     }
 
@@ -87,6 +101,11 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
                 }
                 return stack;
             }
+
+            @Override
+            public int getSlotLimit(int slot) {
+                return 1;
+            }
         };
     }
 
@@ -103,27 +122,67 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        if (isCreative) return null;
-        int rowSize = (int) Math.sqrt(getInventorySize());
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 + 18 * rowSize + 94)
-                .label(6, 6, getMetaFullName());
-
-        for (int y = 0; y < rowSize; y++) {
-            for (int x = 0; x < rowSize; x++) {
-                int index = y * rowSize + x;
-                builder.widget(new SlotWidget(isExportHatch ? exportItems : importItems, index,
-                        88 - rowSize * 9 + x * 18, 18 + y * 18, true, !isExportHatch)
-                                .setBackgroundTexture(GuiTextures.SLOT));
-            }
-        }
-        return builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12)
-                .build(getHolder(), entityPlayer);
+    public boolean shouldOpenUI() {
+        return !isCreative;
     }
 
     @Override
-    protected boolean openGUIOnRightClick() {
-        return !this.isCreative;
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
+        int rowSize = (int) Math.sqrt(getInventorySize());
+        panelSyncManager.registerSlotGroup("slots", rowSize);
+
+        Widget<?> recipeLogo = new Widget<>()
+                .align(Alignment.BottomRight)
+                .size(17)
+                .overlay(new DynamicDrawable(() -> recipes.isEmpty() ? GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW :
+                        GTGuiTextures.GREGTECH_LOGO))
+                .tooltipBuilder(tooltip -> {
+                    if (recipes.isEmpty()) {
+                        tooltip.addLine(IKey.lang("gregtech.machine.data_access_hatch.no_recipes"));
+                    } else {
+                        tooltip.addLine(IKey.lang("gregtech.machine.data_access_hatch.recipes"));
+                        tooltip.spaceLine(2);
+                    }
+
+                    Set<ItemStack> itemsAdded = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAll());
+                    for (Recipe recipe : recipes) {
+                        ItemStack output = recipe.getOutputs().get(0);
+                        if (itemsAdded.add(output)) {
+                            tooltip.add(new ItemDrawable(output));
+                            tooltip.space();
+                            tooltip.addLine(IKey.str(output.getDisplayName()));
+                        }
+                    }
+                });
+
+        return GTGuis.createPanel(this, 176, 18 + 18 * rowSize + 94)
+                .child(IKey.lang(getMetaFullName())
+                        .asWidget()
+                        .pos(5, 5))
+                .child(Flow.row()
+                        .top(18)
+                        .margin(7, 0)
+                        .coverChildrenHeight()
+                        .child(new Grid()
+                                .height(rowSize * 18)
+                                .alignX(0.5f)
+                                .minColWidth(18)
+                                .minRowHeight(18)
+                                .mapTo(rowSize, rowSize * rowSize, index -> new ItemSlot()
+                                        .slot(SyncHandlers.itemSlot(importItems, index)
+                                                .slotGroup("slots")
+                                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                                    recipeLogo.markTooltipDirty();
+                                                    if (onlyAmountChanged &&
+                                                            importItems instanceof GTItemStackHandler gtHandler) {
+                                                        gtHandler.onContentsChanged(index);
+                                                    }
+                                                }))))
+                        .child(recipeLogo))
+                .child(SlotGroupWidget.playerInventory(false)
+                        .bottom(7)
+                        .left(7));
     }
 
     protected int getInventorySize() {
@@ -131,7 +190,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     private void rebuildData(boolean isDataBank) {
-        if (isCreative || getWorld() == null || getWorld().isRemote) return;
+        if (isCreative || getWorld() == null) return;
         recipes.clear();
         for (int i = 0; i < this.importItems.getSlots(); i++) {
             ItemStack stack = this.importItems.getStackInSlot(i);
@@ -171,8 +230,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.1"));
         if (isCreative) {
-            tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
-                    I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
+            tooltip.add(TooltipHelper.CREATIVE_TOOLTIP.get());
         } else {
             tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.2", getInventorySize()));
         }

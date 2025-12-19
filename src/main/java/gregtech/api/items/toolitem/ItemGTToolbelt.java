@@ -5,12 +5,12 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.items.IDyeableItem;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.TooltipHelper;
@@ -60,6 +60,7 @@ import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +72,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
@@ -105,6 +107,19 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         ToolStackHandler handler = getHandler(toolbelt);
         if (slot < 0 || slot >= handler.getSlots()) return ItemStack.EMPTY;
         return handler.getStackInSlot(slot);
+    }
+
+    /**
+     * Iterate over non-empty slots of the given toolbelt.
+     */
+    public void iterateSlots(@NotNull ItemStack toolBelt, @NotNull Consumer<@NotNull ItemStack> stackConsumer) {
+        ToolStackHandler handler = getHandler(toolBelt);
+        if (handler == FALLBACK) return;
+        for (int index = 0; index < handler.getSlots(); index++) {
+            ItemStack stack = handler.getStackInSlot(index);
+            if (stack.isEmpty()) continue;
+            stackConsumer.accept(stack);
+        }
     }
 
     @Override
@@ -407,11 +422,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         }
     }
 
-    public boolean damageAgainstMaintenanceProblem(ItemStack stack, String toolClass,
-                                                   @Nullable EntityPlayer entityPlayer) {
-        return getHandler(stack).checkMaintenanceAgainstTools(toolClass, true, entityPlayer);
-    }
-
     public boolean supportsIngredient(ItemStack stack, Ingredient ingredient) {
         return getHandler(stack).checkIngredientAgainstTools(ingredient) != -1;
     }
@@ -478,12 +488,13 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                                                     float hitY, float hitZ, @NotNull EnumHand hand) {
         EnumActionResult result = IDyeableItem.super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
         if (result == EnumActionResult.PASS) {
-            ItemStack stack = player.getHeldItem(hand);
-            ToolStackHandler handler = getHandler(stack);
-            if (handler.getSelectedStack().isEmpty() &&
-                    world.getTileEntity(pos) instanceof MetaTileEntityHolder holder &&
-                    holder.getMetaTileEntity() instanceof MetaTileEntityMaintenanceHatch maintenance) {
-                maintenance.fixMaintenanceProblemsWithToolbelt(player, this, stack);
+            ItemStack toolbeltStack = player.getHeldItem(hand);
+            ToolStackHandler handler = getHandler(toolbeltStack);
+            if (handler.getSelectedStack().isEmpty() && GTUtility.getMetaTileEntity(world,
+                    pos) instanceof MetaTileEntityMaintenanceHatch maintenanceHatch) {
+                List<ItemStack> tools = new ObjectArrayList<>();
+                iterateSlots(toolbeltStack, tools::add);
+                maintenanceHatch.fixMaintenanceProblemsWithTools(player, tools);
                 return EnumActionResult.SUCCESS;
             }
             return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
@@ -749,18 +760,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             for (int i = 0; i < getSlots(); i++) {
                 if (tools[i] != null) this.toolClasses.addAll(tools[i].getToolClasses(stacks.get(i)));
             }
-        }
-
-        public boolean checkMaintenanceAgainstTools(String toolClass, boolean doCraftingDamage,
-                                                    @Nullable EntityPlayer entityPlayer) {
-            for (int i = 0; i < this.getSlots(); i++) {
-                ItemStack stack = this.getStackInSlot(i);
-                if (ToolHelper.isTool(stack, toolClass)) {
-                    if (doCraftingDamage) ToolHelper.damageItemWhenCrafting(stack, entityPlayer);
-                    return true;
-                }
-            }
-            return false;
         }
 
         public int checkIngredientAgainstTools(Ingredient ingredient) {

@@ -7,7 +7,6 @@ import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.FilteredFluidStats;
 import gregtech.api.items.metaitem.FoodStats;
 import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.MusicDiscStats;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
@@ -59,7 +58,6 @@ import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavi
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.OnlinePicPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.TextPluginBehavior;
-import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -1164,8 +1162,6 @@ public class MetaItem1 extends StandardMetaItem {
         PLUGIN_TEXT = addItem(783, "plugin.text").addComponents(new TextPluginBehavior());
 
         // Records: 800-819
-        SUS_RECORD = addItem(800, "record.sus").addComponents(new MusicDiscStats(GTSoundEvents.SUS_RECORD))
-                .setRarity(EnumRarity.RARE).setMaxStackSize(1).setInvisible();
 
         // Dyed Glass Lenses: 820-840
         for (int i = 0; i < MarkerMaterials.Color.VALUES.length; i++) {
@@ -1181,7 +1177,8 @@ public class MetaItem1 extends StandardMetaItem {
         BLACKLIGHT = addItem(1002, "blacklight");
 
         LOGO = addItem(1003, "logo").setInvisible();
-        LOGO.getMetaItem().addPropertyOverride(new ResourceLocation("xmas"), (s, w, e) -> GTValues.XMAS.get() ? 1 : 0);
+        LOGO.getMetaItem().addPropertyOverride(new ResourceLocation("xmas"),
+                (s, w, e) -> GTValues.isXMAS() ? 1 : 0);
 
         MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior())
                 .setMaxStackSize(1);

@@ -563,7 +563,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem POWER_THRUSTER_ADVANCED;
     public static MetaItem<?>.MetaValueItem GRAVITATION_ENGINE;
 
-    public static MetaItem<?>.MetaValueItem SUS_RECORD;
     public static MetaItem<?>.MetaValueItem NAN_CERTIFICATE;
 
     public static MetaItem<?>.MetaValueItem FERTILIZER;

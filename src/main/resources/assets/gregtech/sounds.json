@@ -338,16 +338,6 @@
       }
     ]
   },
-  "record.sus": {
-    "subtitle" : "gregtech.subtitle.record.sus",
-    "category": "block",
-    "sounds": [
-      {
-        "name": "gregtech:sus",
-        "stream": true
-      }
-    ]
-  },
   "entity.portal_opening": {
     "subtitle" : "gregtech.subtitle.entity.portal_opening",
     "category": "block",

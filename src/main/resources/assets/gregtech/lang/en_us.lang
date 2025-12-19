@@ -1223,9 +1223,6 @@ metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
 metaarmor.energy_share.tooltip=Supply mode: %s
 metaarmor.energy_share.tooltip.guide=To change mode shift-right click when holding item
 
-metaitem.record.sus.name=Music Disc
-metaitem.record.sus.tooltip=§7Leonz - Among Us Drip
-
 metaitem.nan.certificate.name=Certificate of Not Being a Noob Anymore
 metaitem.nan.certificate.tooltip=Challenge Accepted!
 
@@ -5362,14 +5359,18 @@ gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=For automatically ma
 gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=Cleans as:
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=Click slot with empty hand when required tools are in inventory to solve problems
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=Insert Tape to prevent problems
+gregtech.machine.maintenance_hatch.fools.start=Click to start!
+gregtech.machine.maintenance_hatch.fools.dead=You died!
+gregtech.machine.maintenance_hatch.fools.respawn=Click to restart
+gregtech.machine.maintenance_hatch.fools.won=You won!
 
-gregtech.maintenance.configurable_duration=Duration: %fx
+gregtech.maintenance.configurable_duration=Duration: %sx
 gregtech.maintenance.configurable_duration.unchanged_description=Recipes will run at normal speed. Change configuration to update.
-gregtech.maintenance.configurable_duration.changed_description=Recipes will run with %fx duration, applied before overclocking.
+gregtech.maintenance.configurable_duration.changed_description=Recipes will run with %sx duration, applied before overclocking.
 
-gregtech.maintenance.configurable_time=Time: %fx
+gregtech.maintenance.configurable_time=Time: %sx
 gregtech.maintenance.configurable_time.unchanged_description=Maintenance problems will occur at normal rate. Change configuration to update.
-gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur at %fx the normal rate.
+gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur at %sx the normal rate.
 
 gregtech.maintenance.configurable.tooltip_basic=Speeds up machine processing time at the cost of more frequent maintenance problems
 gregtech.maintenance.configurable.tooltip_more_info=Hold SHIFT for special interactions
@@ -5421,6 +5422,8 @@ gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
 gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Items
 gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
 gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
+gregtech.machine.data_access_hatch.recipes=Providing recipes:
+gregtech.machine.data_access_hatch.no_recipes=Providing no recipes
 
 gregtech.machine.data_access_hatch.optical.receiver.name=Optical Data Reception Hatch
 gregtech.machine.data_access_hatch.optical.receiver.tooltip=Research Data Input for Multiblocks
@@ -5689,7 +5692,11 @@ gregtech.gui.config_slot.remove=§7Right click to §4clear§7 config slot.§r
 gregtech.gui.config_slot.auto_pull_managed=§4Disabled:§7 Managed by Auto-Pull
 gregtech.gui.me_bus.extra_slot=Extra Slot/n§7Put extra items for recipes here, like Molds or Lenses
 gregtech.gui.me_bus.auto_pull_button=Click to toggle automatic item pulling from ME
-gregtech.gui.alarm.radius=Radius:
+gregtech.gui.alarm.radius=Alarm Radius:
+gregtech.gui.alarm.sounds_popup_button=Select sound to play
+gregtech.gui.alarm.sounds_preview_button=Click to preview selected sound
+gregtech.gui.alarm.sounds=Sounds
+gregtech.gui.alarm.selected_sound=Selected sound
 gregtech.gui.item_passthrough.enabled=Item Passthough Enabled
 gregtech.gui.item_passthrough.disabled=Item Passthough Disabled
 gregtech.gui.fluid_passthrough.enabled=Fluid Passthough Enabled
@@ -6046,6 +6053,7 @@ gregtech.creative.energy.amperage=Amperage
 gregtech.creative.energy.voltage=Voltage
 gregtech.creative.energy.sink=Sink
 gregtech.creative.energy.source=Source
+gregtech.creative.energy.io=Energy I/O per sec: %s
 
 gregtech.creative.activity.on=Active
 gregtech.creative.activity.off=Not active
@@ -6329,7 +6337,6 @@ gregtech.subtitle.use.wirecutter=Wires snip
 gregtech.subtitle.use.spray_can=Paint sprays
 gregtech.subtitle.use.tricorder=Beep beep
 gregtech.subtitle.use.mortar=Grinding
-gregtech.subtitle.record.sus=Sus
 gregtech.subtitle.entity.portal_opening=Portal opens
 gregtech.subtitle.entity.portal_closing=Portal closes
 gregtech.subtitle.maintenance.electrical=Electrical breakdown
@@ -6540,6 +6547,4 @@ gregtech.scanner.forestry.caterpillar=§oScanned Caterpillar
 gregtech.scanner.forestry.pollen=§oScanned Pollen
 
 # Mutation
-gregtech.mutation.block_of=Block of %s
-
-record.sus=Leonz - Among Us Drip
+gregtech.mutation.block_of=Block of %

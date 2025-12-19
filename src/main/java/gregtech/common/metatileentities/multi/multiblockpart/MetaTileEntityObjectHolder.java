@@ -15,6 +15,8 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
+import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
@@ -32,7 +34,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.GuiDraw;
-import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -45,7 +46,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiablePart
-                                        implements IMultiblockAbilityPart<IObjectHolder>, IObjectHolder {
+                                        implements IMultiblockAbilityPart<IObjectHolder>, IObjectHolder,
+                                        IMetaTileEntityGuiHolder {
 
     // purposefully not exposed to automation or capabilities
     private final ObjectHolderHandler heldItems;
@@ -63,12 +65,8 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         guiSyncManager.registerSlotGroup("item_inv", 2);
 
         // TODO: Change the position of the name when it's standardized.

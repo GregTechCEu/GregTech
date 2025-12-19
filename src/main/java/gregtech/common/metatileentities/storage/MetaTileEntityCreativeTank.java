@@ -4,13 +4,13 @@ import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.mui.widget.GTFluidSlot;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -30,13 +30,13 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -89,7 +89,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager guiSyncManager,
+                                         UISettings settings) {
         return appendCreativeUI(GTGuis.createPanel(this, 176, 166), true,
                 new BoolValue.Dynamic(() -> active, b -> active = b),
                 new IntSyncValue(() -> mBPerCycle, v -> mBPerCycle = v),
@@ -153,8 +154,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
-                I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
+        tooltip.add(TooltipHelper.CREATIVE_TOOLTIP.get());
         // do not append the normal tooltips
     }
 

@@ -1,47 +1,59 @@
 package gregtech.common.metatileentities.electric;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
+import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.ConfigHolder;
-import gregtech.common.gui.widget.terminal.gui.widgets.SelectorWidget;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.IPanelHandler;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.ListWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class MetaTileEntityAlarm extends TieredMetaTileEntity {
+public class MetaTileEntityAlarm extends TieredMetaTileEntity implements IMetaTileEntityGuiHolder {
 
-    private SoundEvent selectedSound;
+    public static final int BASE_EU_CONSUMPTION = 4;
     private boolean isActive;
     private int radius = 64;
-    public static final int BASE_EU_CONSUMPTION = 4;
+
+    @NotNull
+    private SoundEvent selectedSound;
+    private static final List<SoundEvent> sounds = new ArrayList<>(5);
 
     public MetaTileEntityAlarm(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 1);
@@ -72,49 +84,105 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return ModularUI.builder(GuiTextures.BACKGROUND, 240, 86)
-                .widget(new LabelWidget(10, 5, getMetaFullName()))
-                .widget(new SelectorWidget(10, 20, 220, 20,
-                        getSounds().stream().map(this::getNameOfSound)
-                                .collect(Collectors.toList()),
-                        0x555555, () -> getNameOfSound(this.selectedSound), true).setOnChanged((v) -> {
-                            if (this.getWorld().isRemote)
-                                GregTechAPI.soundManager.stopTileSound(getPos());
-                            SoundEvent newSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(v));
-                            if (this.selectedSound != newSound) {
-                                this.selectedSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(v));
-                                this.writeCustomData(GregtechDataCodes.UPDATE_SOUND,
-                                        (writer) -> writer
-                                                .writeResourceLocation(getResourceLocationOfSound(this.selectedSound)));
-                            }
-                        }))
-                .widget(new ImageWidget(10, 54, 220, 20, GuiTextures.DISPLAY))
-                .label(10, 44, "gregtech.gui.alarm.radius")
-                .widget(new TextFieldWidget2(12, 60, 216, 16, () -> String.valueOf(radius), value -> {
-                    if (!value.isEmpty()) {
-                        int newRadius = Integer.parseInt(value);
-                        if (newRadius != radius) {
-                            this.writeCustomData(GregtechDataCodes.UPDATE_RADIUS,
-                                    (writer) -> writer.writeInt(newRadius));
-                            radius = newRadius;
-                        }
-                    }
-                }).setMaxLength(10).setNumbersOnly(0, 128))
-                .build(this.getHolder(), entityPlayer);
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
+        IntSyncValue radiusSync = new IntSyncValue(this::getRadius, this::setRadius);
+        SoundEventSyncHandler soundEventSyncHandler = new SoundEventSyncHandler();
+        panelSyncManager.syncValue("alarm_data", 0, soundEventSyncHandler);
+        IPanelHandler soundSelector = panelSyncManager.syncedPanel("sound_selector_popup", true,
+                createSoundsPopup(soundEventSyncHandler));
+
+        // TODO: Change the position of the name when it's standardized.
+        return GTGuis.createPanel(this, 200, 58)
+                .child(Flow.column()
+                        .margin(5)
+                        .coverChildrenHeight()
+                        .crossAxisAlignment(Alignment.CrossAxis.START)
+                        .child(IKey.lang("gregtech.gui.alarm.radius")
+                                .asWidget())
+                        .child(new TextFieldWidget()
+                                .widthRel(1.0f)
+                                .margin(0, 2)
+                                .height(16)
+                                .setMaxLength(10)
+                                .setNumbers(0, 128)
+                                .value(radiusSync)
+                                .background(GTGuiTextures.DISPLAY))
+                        .child(Flow.row()
+                                .widthRel(1.0f)
+                                .coverChildrenHeight()
+                                .mainAxisAlignment(Alignment.MainAxis.START)
+                                .childPadding(2)
+                                .child(new ButtonWidget<>()
+                                        .size(18)
+                                        .onMousePressed(mouse -> {
+                                            guiData.getPlayer().playSound(selectedSound, 1.0f, 1.0f);
+                                            // returns false so the default click sound isn't played
+                                            return false;
+                                        })
+                                        .overlay(GTGuiTextures.SPEAKER_ICON.asIcon()
+                                                .size(18))
+                                        .addTooltipLine(IKey.lang("gregtech.gui.alarm.sounds_preview_button")))
+                                .child(new ButtonWidget<>()
+                                        .size(18)
+                                        .onMousePressed(mouse -> {
+                                            if (soundSelector.isPanelOpen()) {
+                                                soundSelector.closePanel();
+                                            } else {
+                                                soundSelector.openPanel();
+                                            }
+
+                                            return true;
+                                        })
+                                        .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon()
+                                                .size(16))
+                                        .addTooltipLine(IKey.lang("gregtech.gui.alarm.sounds_popup_button")))
+                                .child(IKey.dynamic(() -> getSoundName(selectedSound))
+                                        .asWidget()
+                                        .alignY(0.5f)
+                                        .expanded()
+                                        .addTooltipLine(IKey.lang("gregtech.gui.alarm.selected_sound")))));
     }
 
-    protected List<SoundEvent> getSounds() {
-        if (GTValues.FOOLS.get() && ConfigHolder.misc.specialEvents) {
-            return Arrays.asList(GTSoundEvents.DEFAULT_ALARM, GTSoundEvents.ARC, SoundEvents.ENTITY_WOLF_HOWL,
-                    SoundEvents.ENTITY_ENDERMEN_DEATH, GTSoundEvents.SUS_RECORD);
-        }
-        return Arrays.asList(GTSoundEvents.DEFAULT_ALARM, GTSoundEvents.ARC, SoundEvents.ENTITY_WOLF_HOWL,
-                SoundEvents.ENTITY_ENDERMEN_DEATH);
+    protected PanelSyncHandler.IPanelBuilder createSoundsPopup(@NotNull MetaTileEntityAlarm.SoundEventSyncHandler soundEventSyncHandler) {
+        return (syncManager, syncHandler) -> {
+            List<IWidget> soundList = new ArrayList<>(sounds.size());
+
+            for (SoundEvent sound : sounds) {
+                ResourceLocation name = getSoundResourceLocation(sound);
+                soundList.add(Flow.row()
+                        .widthRel(1.0f)
+                        .coverChildrenHeight()
+                        .margin(4, 1)
+                        .child(new ButtonWidget<>()
+                                .widthRel(1.0f)
+                                .onMousePressed(mouse -> {
+                                    soundEventSyncHandler.setSound(name);
+                                    syncHandler.closePanel();
+                                    return true;
+                                })
+                                .overlay(IKey.str(name.toString()))));
+            }
+
+            return GTGuis.createPopupPanel("sound_selector", 200, 100)
+                    .child(Flow.column()
+                            .margin(5)
+                            .child(IKey.lang("gregtech.gui.alarm.sounds")
+                                    .asWidget())
+                            .child(new ListWidget<>()
+                                    .left(2)
+                                    .right(2)
+                                    .marginTop(6)
+                                    .marginBottom(4)
+                                    .expanded()
+                                    .children(soundList)
+                                    .background(GTGuiTextures.DISPLAY.asIcon()
+                                            .margin(0, -2))));
+        };
     }
 
     @Override
-    public SoundEvent getSound() {
+    public @Nullable SoundEvent getSound() {
         return selectedSound;
     }
 
@@ -139,16 +207,16 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_ACTIVE) {
-            this.isActive = buf.readBoolean();
-            this.scheduleRenderUpdate();
-        } else if (dataId == GregtechDataCodes.UPDATE_SOUND) {
-            this.selectedSound = SoundEvent.REGISTRY.getObject(buf.readResourceLocation());
-            GregTechAPI.soundManager.stopTileSound(getPos());
+            isActive = buf.readBoolean();
+            scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.UPDATE_RADIUS) {
-            this.radius = buf.readInt();
+            radius = buf.readVarInt();
+            GregTechAPI.soundManager.stopTileSound(getPos());
+        } else if (dataId == GregtechDataCodes.UPDATE_SOUND) {
+            selectedSound = getSound(buf.readResourceLocation());
             GregTechAPI.soundManager.stopTileSound(getPos());
         }
     }
@@ -158,26 +226,35 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
         return radius / 16f;
     }
 
-    @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
-        this.isActive = buf.readBoolean();
-        this.selectedSound = SoundEvent.REGISTRY.getObject(buf.readResourceLocation());
-        this.radius = buf.readInt();
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+        GregTechAPI.soundManager.stopTileSound(getPos());
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeBoolean(this.isActive);
-        buf.writeResourceLocation(getResourceLocationOfSound(this.selectedSound));
-        buf.writeInt(this.radius);
+        buf.writeBoolean(isActive);
+        buf.writeResourceLocation(getSoundResourceLocation(selectedSound));
+        buf.writeVarInt(radius);
+    }
+
+    @Override
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        isActive = buf.readBoolean();
+        selectedSound = getSound(buf.readResourceLocation());
+        radius = buf.readVarInt();
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         data.setBoolean("isActive", this.isActive);
-        data.setString("selectedSound", getNameOfSound(this.selectedSound));
+        data.setString("selectedSound", getSoundName(selectedSound));
         data.setInteger("radius", this.radius);
         return super.writeToNBT(data);
     }
@@ -185,16 +262,54 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound data) {
         this.isActive = data.getBoolean("isActive");
-        this.selectedSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(data.getString("selectedSound")));
+        this.selectedSound = getSound(data.getString("selectedSound"));
         this.radius = data.getInteger("radius");
         super.readFromNBT(data);
     }
 
-    public String getNameOfSound(SoundEvent sound) {
-        return getResourceLocationOfSound(sound).toString();
+    public static void addSound(@NotNull SoundEvent soundEvent) {
+        sounds.add(soundEvent);
     }
 
-    public ResourceLocation getResourceLocationOfSound(SoundEvent sound) {
+    public static String getSoundName(@NotNull SoundEvent sound) {
+        return getSoundResourceLocation(sound).toString();
+    }
+
+    public static ResourceLocation getSoundResourceLocation(@NotNull SoundEvent sound) {
         return SoundEvent.REGISTRY.getNameForObject(sound);
+    }
+
+    public static @NotNull SoundEvent getSound(@NotNull String name) {
+        return getSound(new ResourceLocation(name));
+    }
+
+    public static @NotNull SoundEvent getSound(@NotNull ResourceLocation name) {
+        SoundEvent sound = SoundEvent.REGISTRY.getObject(name);
+        return sound == null ? GTSoundEvents.DEFAULT_ALARM : sound;
+    }
+
+    public class SoundEventSyncHandler extends SyncHandler {
+
+        public SoundEventSyncHandler() {}
+
+        @Override
+        public void readOnClient(int id, PacketBuffer buf) {}
+
+        @Override
+        public void readOnServer(int id, PacketBuffer buf) {
+            if (id == 0) {
+                selectedSound = getSound(buf.readResourceLocation());
+                writeCustomData(GregtechDataCodes.UPDATE_SOUND,
+                        toClients -> toClients.writeResourceLocation(getSoundResourceLocation(selectedSound)));
+                markDirty();
+            }
+        }
+
+        @SideOnly(Side.CLIENT)
+        public void setSound(@NotNull ResourceLocation name) {
+            if (getSoundResourceLocation(selectedSound).equals(name)) return;
+            selectedSound = getSound(name);
+            syncToServer(0, buf -> buf.writeResourceLocation(name));
+        }
     }
 }
