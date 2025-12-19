@@ -19,7 +19,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
-import gregtech.loaders.recipe.CraftingComponent;
+import gregtech.loaders.recipe.CraftingComponents;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -206,7 +206,7 @@ public class MaterialRecipeHandler {
                 .EUt(EUt);
 
         if (gasTier != null) {
-            FluidStack gas = CraftingComponent.EBF_GASES.get(gasTier).copy();
+            FluidStack gas = CraftingComponents.EBF_GASES.get(gasTier).copy();
 
             blastBuilder.copy()
                     .circuitMeta(1)
