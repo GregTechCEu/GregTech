@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import appeng.api.storage.data.IAEItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class ExportOnlyAEItemList extends NotifiableItemStackHandler {
+public class ExportOnlyAEItemList extends NotifiableItemStackHandler implements IExportOnlyAEStackList<IAEItemStack> {
 
     protected final int size;
     protected ExportOnlyAEItemSlot[] inventory;
@@ -30,7 +30,7 @@ public class ExportOnlyAEItemList extends NotifiableItemStackHandler {
         }
     }
 
-    public ExportOnlyAEItemSlot[] getInventory() {
+    public @NotNull ExportOnlyAEItemSlot @NotNull [] getInventory() {
         return inventory;
     }
 

@@ -7,6 +7,10 @@ import gregtech.api.util.NetworkUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.Fluid;
 
+import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IAEItemStack;
+import appeng.fluids.util.AEFluidStack;
+import appeng.util.item.AEItemStack;
 import com.cleanroommc.modularui.utils.serialization.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +26,12 @@ public class GTByteBufAdapters {
             ChancedFluidOutput::fromBuffer, ChancedFluidOutput::toBuffer);
 
     public static final IByteBufAdapter<Fluid> FLUID = makeAdapter(NetworkUtil::readFluid, NetworkUtil::writeFluid);
+
+    public static final IByteBufAdapter<IAEItemStack> AE_ITEM_STACK = makeAdapter(AEItemStack::fromPacket,
+            (buf, stack) -> stack.writeToPacket(buf));
+
+    public static final IByteBufAdapter<IAEFluidStack> AE_FLUID_STACK = makeAdapter(AEFluidStack::fromPacket,
+            (buf, stack) -> stack.writeToPacket(buf));
 
     public static <T> IByteBufAdapter<T> makeAdapter(@NotNull IByteBufDeserializer<T> deserializer,
                                                      @NotNull IByteBufSerializer<T> serializer) {

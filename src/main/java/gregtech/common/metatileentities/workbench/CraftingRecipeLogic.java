@@ -1,6 +1,8 @@
-package gregtech.common.metatileentities.storage;
+package gregtech.common.metatileentities.workbench;
 
 import gregtech.api.items.toolitem.ItemGTToolbelt;
+import gregtech.api.mui.sync.PagedWidgetSyncHandler;
+import gregtech.api.mui.sync.RecipeSyncHandler;
 import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -23,7 +25,6 @@ import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
-import com.cleanroommc.modularui.value.sync.SyncHandler;
 import it.unimi.dsi.fastutil.ints.Int2BooleanArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
@@ -38,11 +39,16 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import mezz.jei.api.gui.IGuiItemStackGroup;
+import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.recipe.transfer.IRecipeTransferError;
+import mezz.jei.transfer.RecipeTransferErrorInternal;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Map;
 
-public class CraftingRecipeLogic extends SyncHandler {
+public class CraftingRecipeLogic extends RecipeSyncHandler {
 
     // client only
     public static final int UPDATE_INGREDIENTS = 1;
@@ -450,6 +456,38 @@ public class CraftingRecipeLogic extends SyncHandler {
     public void syncMatrix() {
         if (getSyncManager().isClient())
             syncToServer(UPDATE_MATRIX, this::writeMatrix);
+    }
+
+    // TODO: extract my recipe transfer into a dedicated branch and improve it.
+    @Override
+    public IRecipeTransferError receiveRecipe(@NotNull IRecipeLayout recipeLayout, boolean maxTransfer,
+                                              boolean simulate) {
+        if (!recipeLayout.getRecipeCategory().getUid().equals("minecraft.crafting")) {
+            return RecipeTransferErrorInternal.INSTANCE;
+        }
+
+        if (simulate) {
+            // todo highlighting in JEI?
+            return null;
+        }
+
+        var matrix = extractMatrix(recipeLayout.getItemStacks());
+        fillCraftingGrid(matrix);
+        ((PagedWidgetSyncHandler) getSyncManager().getSyncHandler("page_controller:0")).setPage(0);
+        return null;
+    }
+
+    private Int2ObjectMap<ItemStack> extractMatrix(IGuiItemStackGroup stackGroup) {
+        var ingredients = stackGroup.getGuiIngredients();
+        Int2ObjectMap<ItemStack> matrix = new Int2ObjectArrayMap<>(9);
+        for (var slot : ingredients.keySet()) {
+            if (slot != 0) {
+                var ing = ingredients.get(slot).getDisplayedIngredient();
+                if (ing == null) continue;
+                matrix.put(slot - 1, ingredients.get(slot).getDisplayedIngredient());
+            }
+        }
+        return matrix;
     }
 
     public static InventoryCrafting wrapHandler(IItemHandlerModifiable handler) {

@@ -120,7 +120,7 @@ import gregtech.common.metatileentities.storage.MetaTileEntityQuantumExtender;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumProxy;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumStorageController;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
-import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
+import gregtech.common.metatileentities.workbench.MetaTileEntityWorkbench;
 import gregtech.common.pipelike.fluidpipe.longdistance.MetaTileEntityLDFluidEndpoint;
 import gregtech.common.pipelike.itempipe.longdistance.MetaTileEntityLDItemEndpoint;
 
@@ -1056,13 +1056,13 @@ final class MetaTileEntityRegistration {
         // ME Hatches, IDs 11525-11539
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             MetaTileEntities.ITEM_IMPORT_BUS_ME = MetaTileEntities.registerMetaTileEntity(11525,
-                    new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus")));
+                    new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus"), GTValues.EV));
             MetaTileEntities.FLUID_IMPORT_HATCH_ME = MetaTileEntities.registerMetaTileEntity(11526,
-                    new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch")));
+                    new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch"), GTValues.EV));
             MetaTileEntities.STOCKING_BUS_ME = MetaTileEntities.registerMetaTileEntity(11527,
-                    new MetaTileEntityMEStockingBus(gregtechId("me_stocking_item_bus")));
+                    new MetaTileEntityMEStockingBus(gregtechId("me_stocking_item_bus"), GTValues.IV));
             MetaTileEntities.STOCKING_HATCH_ME = MetaTileEntities.registerMetaTileEntity(11528,
-                    new MetaTileEntityMEStockingHatch(gregtechId("me_stocking_fluid_hatch")));
+                    new MetaTileEntityMEStockingHatch(gregtechId("me_stocking_fluid_hatch"), GTValues.IV));
             // slots left for CRIB and CRIBuffer in the future for nicer sorting order
             MetaTileEntities.ITEM_EXPORT_BUS_ME = MetaTileEntities.registerMetaTileEntity(11532,
                     new MetaTileEntityMEOutputBus(gregtechId("me_export_item_bus")));
