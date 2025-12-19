@@ -12,6 +12,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -212,12 +213,12 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                     .marginBottom(2).widthRel(1f)
                     .child(new ButtonWidget<>()
                             .left(0).width(18)
+                            .overlay(KeyUtil.createMultiplierKey(false))
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() - GTUtility.getButtonIncrementValue();
                                 throughput.setValue(val);
                                 return true;
-                            })
-                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
+                            }))
                     .child(new GTTextFieldWidget()
                             .left(18).right(18)
                             .setPostFix(" L/s")
@@ -227,12 +228,12 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             .background(GTGuiTextures.DISPLAY))
                     .child(new ButtonWidget<>()
                             .right(0).width(18)
+                            .overlay(KeyUtil.createMultiplierKey(true))
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() + GTUtility.getButtonIncrementValue();
                                 throughput.setValue(val);
                                 return true;
-                            })
-                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
+                            })));
 
         if (createFilterRow())
             column.child(getFluidFilterContainer().initUI(data, syncManager));
