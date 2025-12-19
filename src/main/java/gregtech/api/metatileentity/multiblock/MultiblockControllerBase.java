@@ -1,5 +1,6 @@
 package gregtech.api.metatileentity.multiblock;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
@@ -24,6 +25,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.block.Block;
@@ -187,6 +189,44 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getFrontDefaultTexture() {
         return getFrontOverlay().getParticleSprite();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced, String energyType, boolean hasPerfectOC, int tierskipLimit,
+                               String... extraInfo) {
+        super.addInformation(stack, world, tooltip, advanced);
+        tooltip.add("");
+        Collections.addAll(tooltip, extraInfo);
+        tooltip.add("");
+        tooltip.add(energyType);
+        if (hasPerfectOC) tooltip.add(TooltipHelper.RAINBOW_SLOW + I18n.format("gregtech.machine.perfect_oc"));
+        if (tierskipLimit == 0) {
+            tooltip.add(I18n.format("gregtech.machine.tierskip.none"));
+        } else if (tierskipLimit >= GTValues.MAX) {
+            tooltip.add(I18n.format("gregtech.machine.tierskip.unlimited"));
+        } else if (tierskipLimit != -1) {
+            tooltip.add(I18n.format("gregtech.machine.tierskip", tierskipLimit));
+        }
+        tooltip.add("");
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced, String energyType, int tierskipLimit, String... extraInfo) {
+        addInformation(stack, world, tooltip, advanced, energyType, false, tierskipLimit, extraInfo);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced, String energyType, boolean hasPerfectOC, String... extraInfo) {
+        addInformation(stack, world, tooltip, advanced, energyType, hasPerfectOC, 0, extraInfo);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced, String energyType, String... extraInfo) {
+        addInformation(stack, world, tooltip, advanced, energyType, false, 0, extraInfo);
     }
 
     public static TraceabilityPredicate tilePredicate(@NotNull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate,
