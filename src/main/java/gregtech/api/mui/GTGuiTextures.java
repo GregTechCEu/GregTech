@@ -674,13 +674,13 @@ public class GTGuiTextures {
      * 1 = allow
      */
     public static final UITexture[] INPUT_FROM_OUTPUT_ITEM = slice("gui/widget/input_from_output_item.png", 18, 36, 18,
-            18, true);
+            18, ColorType.DEFAULT);
     /**
      * 0 = don't allow<br>
      * 1 = allow
      */
     public static final UITexture[] INPUT_FROM_OUTPUT_FLUID = slice("gui/widget/input_from_output_fluid.png", 18, 36,
-            18, 18, true);
+            18, 18, ColorType.DEFAULT);
 
     // more custom progress bars
     // MULTIBLOCK BARS

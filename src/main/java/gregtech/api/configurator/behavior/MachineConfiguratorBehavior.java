@@ -37,6 +37,7 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -52,11 +53,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import static com.cleanroommc.modularui.value.sync.PanelSyncManager.makeSyncKey;
 
 public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactory {
 
@@ -150,7 +148,8 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
     }
 
     @Override
-    public ModularPanel buildUI(@NotNull HandGuiData guiData, @NotNull PanelSyncManager syncManager) {
+    public ModularPanel buildUI(@NotNull HandGuiData guiData, @NotNull PanelSyncManager syncManager,
+                                UISettings settings) {
         PlayerConfiguratorData playerData = ConfiguratorDataRegistry.getPlayerData(guiData.getPlayer().getUniqueID());
         ItemStack configuratorStack = guiData.getUsedItemStack();
 
@@ -315,14 +314,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
         return (syncManager, syncHandler) -> {
             var slotList = new ListWidget<>();
             Runnable createRows = () -> {
-                Iterator<IWidget> slotListIterator = slotList.getChildren().iterator();
-                while (slotListIterator.hasNext()) {
-                    IWidget child = slotListIterator.next();
-                    slotListIterator.remove();
-                    child.dispose();
-                    slotList.onChildRemove(child);
-                }
-
+                slotList.removeAll();
                 configuratorSyncHandler.getSlots()
                         .forEach(name -> slotList.child(
                                 createSlotRow(name, playerData, selectedSlot, syncHandler, configuratorSyncHandler)));
@@ -564,7 +556,7 @@ public class MachineConfiguratorBehavior implements IItemBehaviour, ItemUIFactor
         }
 
         public @NotNull String getSelectedSlot() {
-            return ((StringSyncValue) getSyncManager().getSyncHandler(makeSyncKey("selected_slot", 0))).getValue();
+            return getSyncManager().findSyncHandler("selected_slot", 0, StringSyncValue.class).getStringValue();
         }
 
         public Set<String> getSlots() {
