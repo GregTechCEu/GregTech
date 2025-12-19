@@ -250,7 +250,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
     @Override
     public void registerBars(List<UnaryOperator<TemplateBarBuilder>> bars, PanelSyncManager syncManager) {
-        FixedIntArraySyncValue fuelValue = new FixedIntArraySyncValue(this::getFuelAmount, null);
+        FixedIntArraySyncValue fuelValue = new FixedIntArraySyncValue(this::getFuelAmount);
         syncManager.syncValue("fuel_amount", fuelValue);
         StringSyncValue fuelNameValue = new StringSyncValue(() -> {
             FluidStack stack = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getInputFluidStack();
@@ -264,9 +264,9 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             return fluid.getName();
         });
         syncManager.syncValue("fuel_name", fuelNameValue);
-        FixedIntArraySyncValue lubricantValue = new FixedIntArraySyncValue(this::getLubricantAmount, null);
+        FixedIntArraySyncValue lubricantValue = new FixedIntArraySyncValue(this::getLubricantAmount);
         syncManager.syncValue("lubricant_amount", lubricantValue);
-        FixedIntArraySyncValue oxygenValue = new FixedIntArraySyncValue(this::getOxygenAmount, null);
+        FixedIntArraySyncValue oxygenValue = new FixedIntArraySyncValue(this::getOxygenAmount);
         syncManager.syncValue("oxygen_amount", oxygenValue);
         BooleanSyncValue boostValue = new BooleanSyncValue(this::isBoostAllowed);
         syncManager.syncValue("boost_allowed", boostValue);
