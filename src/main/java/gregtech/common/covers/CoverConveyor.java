@@ -11,6 +11,7 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
@@ -50,7 +51,6 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -532,7 +532,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     .child(new ButtonWidget<>()
                             .left(0).width(18)
                             .onMousePressed(mouseButton -> {
-                                int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
+                                int val = throughput.getValue() - GTUtility.getButtonIncrementValue();
                                 throughput.setValue(val, true, true);
                                 return true;
                             })
@@ -547,7 +547,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     .child(new ButtonWidget<>()
                             .right(0).width(18)
                             .onMousePressed(mouseButton -> {
-                                int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
+                                int val = throughput.getValue() + GTUtility.getButtonIncrementValue();
                                 throughput.setValue(val, true, true);
                                 return true;
                             })

@@ -4,6 +4,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.mui.factory.CoverGuiFactory;
+import gregtech.api.util.GTUtility;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -23,7 +24,6 @@ import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -148,18 +148,10 @@ public interface CoverWithUI extends Cover, IGuiHolder<SidedPosGuiData>, gregtec
         return IKey.lang(() -> enabledState.getAsBoolean() ? enabled : disabled);
     }
 
-    default int getIncrementValue(MouseData data) {
-        int adjust = 1;
-        if (data.shift) adjust *= 4;
-        if (data.ctrl) adjust *= 16;
-        if (data.alt) adjust *= 64;
-        return adjust;
-    }
-
     default IKey createAdjustOverlay(boolean increment) {
         final StringBuilder builder = new StringBuilder();
         builder.append(increment ? '+' : '-');
-        builder.append(getIncrementValue(MouseData.create(-1)));
+        builder.append(GTUtility.getButtonIncrementValue());
 
         float scale = 1f;
         if (builder.length() == 3) {

@@ -57,9 +57,12 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.google.common.util.concurrent.AtomicDouble;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
@@ -1139,5 +1142,23 @@ public class GTUtility {
                 (a.getX() + a.getWidth() >= b.getX()) &&
                 (a.getY() <= b.getY() + b.getHeight()) &&
                 (a.getY() + a.getHeight() >= b.getY());
+    }
+
+    /**
+     * Get a value multiplier based on what modifier keys the player is holding down. <br/>
+     * Returns {@code 1} if no modifiers are pressed, otherwise: <br/>
+     * - {@code shift}: x4 <br/>
+     * - {@code ctrl}: x16 <br/>
+     * - {@code alt}: x64 <br/>
+     * Holding down multiple modifiers multiplies their effects, so if the player is holding down {@code shift},
+     * {@code ctrl}, and {@code alt} all at the same time, this method will return {@code 4096}.
+     */
+    @SideOnly(Side.CLIENT)
+    public static int getButtonIncrementValue() {
+        int adjust = 1;
+        if (Interactable.hasShiftDown()) adjust *= 4;
+        if (Interactable.hasControlDown()) adjust *= 16;
+        if (Interactable.hasAltDown()) adjust *= 64;
+        return adjust;
     }
 }
