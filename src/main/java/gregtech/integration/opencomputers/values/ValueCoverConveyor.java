@@ -2,7 +2,7 @@ package gregtech.integration.opencomputers.values;
 
 import gregtech.api.cover.Cover;
 import gregtech.common.covers.CoverConveyor;
-import gregtech.common.covers.CoverConveyor.ConveyorMode;
+import gregtech.common.covers.IOMode;
 import gregtech.integration.opencomputers.InputValidator;
 
 import net.minecraft.util.EnumFacing;
@@ -66,8 +66,8 @@ public class ValueCoverConveyor extends ValueCoverBehavior {
             return NULL_COVER;
         }
 
-        ConveyorMode mode = InputValidator.getEnumArrayIndex(args, 0, ConveyorMode.values());
-        cover.setConveyorMode(mode);
+        IOMode mode = InputValidator.getEnumArrayIndex(args, 0, IOMode.VALUES);
+        cover.setIOMode(mode);
         return new Object[] {};
     }
 
@@ -78,6 +78,6 @@ public class ValueCoverConveyor extends ValueCoverBehavior {
             return NULL_COVER;
         }
 
-        return new Object[] { cover.getConveyorMode().ordinal() };
+        return new Object[] { cover.getIOMode().ordinal() };
     }
 }

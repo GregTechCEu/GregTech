@@ -3,7 +3,9 @@ package gregtech.common.covers;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.widget.EnumButtonRow;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.ITranslatable;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -26,8 +28,8 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -52,26 +54,22 @@ public class CoverFluidRegulator extends CoverPump {
     @Override
     protected int doTransferFluidsInternal(IFluidHandler myFluidHandler, IFluidHandler fluidHandler,
                                            int transferLimit) {
-        IFluidHandler sourceHandler;
-        IFluidHandler destHandler;
+        return switch (ioMode) {
+            case IMPORT -> doTransferFluidsAny(fluidHandler, myFluidHandler, transferLimit);
+            case EXPORT -> doTransferFluidsAny(myFluidHandler, fluidHandler, transferLimit);
+        };
+    }
 
-        if (pumpMode == PumpMode.IMPORT) {
-            sourceHandler = fluidHandler;
-            destHandler = myFluidHandler;
-        } else if (pumpMode == PumpMode.EXPORT) {
-            sourceHandler = myFluidHandler;
-            destHandler = fluidHandler;
-        } else {
-            return 0;
-        }
+    protected int doTransferFluidsAny(IFluidHandler sourceHandler, IFluidHandler destHandler, int transferLimit) {
         return switch (transferMode) {
             case TRANSFER_ANY -> GTTransferUtils.transferFluids(sourceHandler, destHandler, transferLimit,
-                    fluidFilterContainer::test);
-            case KEEP_EXACT -> doKeepExact(transferLimit, sourceHandler, destHandler,
-                    fluidFilterContainer::test,
+                    fluidFilterContainer);
+            case TRANSFER_EXACT -> doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilterContainer,
                     this.fluidFilterContainer.getTransferSize());
-            case TRANSFER_EXACT -> doTransferExact(transferLimit, sourceHandler, destHandler,
-                    fluidFilterContainer::test, this.fluidFilterContainer.getTransferSize());
+            case KEEP_EXACT -> doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilterContainer,
+                    this.fluidFilterContainer.getTransferSize(), true);
+            case RETAIN_EXACT -> doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilterContainer,
+                    this.fluidFilterContainer.getTransferSize(), false);
         };
     }
 
@@ -81,6 +79,7 @@ public class CoverFluidRegulator extends CoverPump {
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
             FluidStack sourceFluid = tankProperties.getContents();
             if (this.fluidFilterContainer.hasFilter()) {
+                // noinspection DataFlowIssue
                 supplyAmount = this.fluidFilterContainer.getFilter().getTransferLimit(sourceFluid, supplyAmount);
             }
             if (fluidLeftToTransfer < supplyAmount)
@@ -109,7 +108,7 @@ public class CoverFluidRegulator extends CoverPump {
                               final IFluidHandler sourceHandler,
                               final IFluidHandler destHandler,
                               final Predicate<FluidStack> fluidFilter,
-                              int keepAmount) {
+                              int keepAmount, boolean direction) {
         if (sourceHandler == null || destHandler == null || fluidFilter == null)
             return 0;
 
@@ -124,16 +123,18 @@ public class CoverFluidRegulator extends CoverPump {
                 break;
 
             if (this.fluidFilterContainer.hasFilter()) {
+                // noinspection DataFlowIssue
                 keepAmount = this.fluidFilterContainer.getFilter().getTransferLimit(fluidStack, keepAmount);
             }
 
             // if fluid needs to be moved to meet the Keep Exact value
             int amountInDest;
-            if ((amountInDest = destFluids.getOrDefault(fluidStack, 0)) < keepAmount) {
+            if (direction ? (amountInDest = destFluids.getOrDefault(fluidStack, 0)) < keepAmount :
+                    (amountInDest = sourceFluids.getOrDefault(fluidStack, 0)) > keepAmount) {
 
                 // move the lesser of the remaining transfer limit and the difference in actual vs keep exact amount
                 int amountToMove = Math.min(transferLimit - transferred,
-                        keepAmount - amountInDest);
+                        direction ? (keepAmount - amountInDest) : (amountInDest - keepAmount));
 
                 // Nothing to do here, try the next fluid.
                 if (amountToMove <= 0)
@@ -250,26 +251,26 @@ public class CoverFluidRegulator extends CoverPump {
 
     @Override
     protected Flow createUI(GuiData data, PanelSyncManager syncManager) {
-        var transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode, this::setTransferMode);
-        transferMode.updateCacheFromSource(true);
-        syncManager.syncValue("transfer_mode", transferMode);
+        EnumSyncValue<TransferMode> transferModeSync = new EnumSyncValue<>(TransferMode.class, this::getTransferMode,
+                this::setTransferMode);
+        EnumSyncValue<BucketMode> bucketModeSync = new EnumSyncValue<>(BucketMode.class, this::getBucketMode,
+                this::setBucketMode);
+        IntSyncValue filterTransferSize = new IntSyncValue(this::getTransferRate, this::setTransferRate);
 
-        var bucketMode = new EnumSyncValue<>(BucketMode.class, this::getBucketMode, this::setBucketMode);
-        bucketMode.updateCacheFromSource(true);
-        syncManager.syncValue("bucket_mode", bucketMode);
-
-        var filterTransferSize = new StringSyncValue(this::getStringTransferRate, this::setStringTransferRate);
-        filterTransferSize.updateCacheFromSource(true);
+        syncManager.syncValue("transfer_mode", transferModeSync);
+        syncManager.syncValue("bucket_mode", bucketModeSync);
 
         return super.createUI(data, syncManager)
-                .child(new EnumRowBuilder<>(TransferMode.class)
-                        .value(transferMode)
-                        .lang("cover.generic.transfer_mode")
-                        .overlay(GTGuiTextures.FLUID_TRANSFER_MODE_OVERLAY)
+                .child(EnumButtonRow.builder(transferModeSync)
+                        .rowDescription(IKey.lang("cover.generic.transfer_mode"))
+                        .overlays(GTGuiTextures.FLUID_TRANSFER_MODE_OVERLAY)
+                        .widgetExtras(
+                                (transferMode, toggleButton) -> transferMode.handleTooltip(toggleButton,
+                                        "fluid_regulator"))
                         .build())
-                .child(new EnumRowBuilder<>(BucketMode.class)
-                        .value(bucketMode)
-                        .overlay(IKey.str("kL"), IKey.str("L"))
+                .child(EnumButtonRow.builder(bucketModeSync)
+                        .overlays(IKey.str("kL"), IKey.str("L"))
+                        .widgetExtras(ITranslatable::handleTooltip)
                         .build()
                         .child(new TextFieldWidget().widthRel(0.5f).right(0)
                                 .setEnabledIf(w -> shouldDisplayAmountSlider())
@@ -283,7 +284,7 @@ public class CoverFluidRegulator extends CoverPump {
         return switch (this.transferMode) {
             case TRANSFER_ANY -> 1;
             case TRANSFER_EXACT -> maxFluidTransferRate;
-            case KEEP_EXACT -> Integer.MAX_VALUE;
+            case KEEP_EXACT, RETAIN_EXACT -> Integer.MAX_VALUE;
         };
     }
 
@@ -309,7 +310,7 @@ public class CoverFluidRegulator extends CoverPump {
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         this.transferMode = TransferMode.VALUES[tagCompound.getInteger("TransferMode")];
-        this.fluidFilterContainer.setMaxTransferSize(this.transferMode.maxStackSize);
+        this.fluidFilterContainer.setMaxTransferSize(getMaxTransferRate());
         super.readFromNBT(tagCompound);
         // legacy NBT tag
         if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {

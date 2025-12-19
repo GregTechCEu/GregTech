@@ -1,6 +1,5 @@
 package gregtech.api.cover;
 
-import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.mui.factory.CoverGuiFactory;
@@ -8,12 +7,10 @@ import gregtech.api.mui.factory.CoverGuiFactory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.IGuiHolder;
-import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
@@ -21,16 +18,11 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
-import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
-import com.cleanroommc.modularui.value.BoolValue;
-import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -139,7 +131,7 @@ public interface CoverWithUI extends Cover, IGuiHolder<SidedPosGuiData>, gregtec
     /**
      * Create a dynamic lang key that switches between {@code cover.generic.enabled} and {@code cover.generic.disabled}
      * depending on the result of the given boolean supplier. <br/>
-     * 
+     *
      * @param keyBase the base of the lang key to use. {@code .enabled} and {@code .disabled} will be appended.
      */
     default IKey createEnabledKey(@NotNull String keyBase, @NotNull BooleanSupplier enabledState) {
@@ -172,105 +164,5 @@ public interface CoverWithUI extends Cover, IGuiHolder<SidedPosGuiData>, gregtec
         return IKey.str(builder.toString())
                 .color(Color.WHITE.main)
                 .scale(scale);
-    }
-
-    /**
-     * Get a BoolValue for use with toggle buttons which are "linked together,"
-     * meaning only one of them can be pressed at a time.
-     */
-    default <T extends Enum<T>> BoolValue.Dynamic boolValueOf(EnumSyncValue<T> syncValue, T value) {
-        return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
-    }
-
-    /**
-     * Get a BoolValue for use with toggle buttons which are "linked together,"
-     * meaning only one of them can be pressed at a time.
-     */
-    default BoolValue.Dynamic boolValueOf(IntSyncValue syncValue, int value) {
-        return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
-    }
-
-    class EnumRowBuilder<T extends Enum<T>> {
-
-        private EnumSyncValue<T> syncValue;
-        private final Class<T> enumValue;
-        private String lang;
-        private IDrawable[] background;
-        private IDrawable selectedBackground;
-        private IDrawable[] overlay;
-
-        public EnumRowBuilder(Class<T> enumValue) {
-            this.enumValue = enumValue;
-        }
-
-        public EnumRowBuilder<T> value(EnumSyncValue<T> syncValue) {
-            this.syncValue = syncValue;
-            return this;
-        }
-
-        public EnumRowBuilder<T> lang(String lang) {
-            this.lang = lang;
-            return this;
-        }
-
-        public EnumRowBuilder<T> background(IDrawable... background) {
-            this.background = background;
-            return this;
-        }
-
-        public EnumRowBuilder<T> selectedBackground(IDrawable selectedBackground) {
-            this.selectedBackground = selectedBackground;
-            return this;
-        }
-
-        public EnumRowBuilder<T> overlay(IDrawable... overlay) {
-            this.overlay = overlay;
-            return this;
-        }
-
-        public EnumRowBuilder<T> overlay(int size, IDrawable... overlay) {
-            this.overlay = new IDrawable[overlay.length];
-            for (int i = 0; i < overlay.length; i++) {
-                this.overlay[i] = overlay[i].asIcon().size(size);
-            }
-            return this;
-        }
-
-        private BoolValue.Dynamic boolValueOf(EnumSyncValue<T> syncValue, T value) {
-            return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
-        }
-
-        public Flow build() {
-            var row = Flow.row().marginBottom(2).coverChildrenHeight().widthRel(1f);
-            if (this.enumValue != null && this.syncValue != null) {
-                for (var enumVal : enumValue.getEnumConstants()) {
-                    var button = new ToggleButton().size(18).marginRight(2)
-                            .value(boolValueOf(this.syncValue, enumVal));
-
-                    if (this.background != null && this.background.length > 0)
-                        button.background(this.background);
-                    else
-                        button.background(GTGuiTextures.MC_BUTTON);
-
-                    if (this.selectedBackground != null)
-                        button.selectedBackground(this.selectedBackground);
-                    else
-                        button.selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED);
-
-                    if (this.overlay != null)
-                        button.overlay(this.overlay[enumVal.ordinal()]);
-
-                    if (enumVal instanceof IStringSerializable serializable) {
-                        button.addTooltipLine(IKey.lang(serializable.getName()));
-                    }
-                    row.child(button);
-                }
-            }
-
-            if (this.lang != null && !this.lang.isEmpty())
-                row.child(IKey.lang(this.lang).asWidget().align(Alignment.CenterRight).height(18));
-
-            return row;
-        }
     }
 }
