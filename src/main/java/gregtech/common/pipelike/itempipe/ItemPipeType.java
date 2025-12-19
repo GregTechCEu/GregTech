@@ -3,6 +3,11 @@ package gregtech.common.pipelike.itempipe;
 import gregtech.api.pipenet.block.material.IMaterialPipeType;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.client.renderer.pipe.PipeModelRedirector;
+import gregtech.client.renderer.pipe.PipeModelRegistry;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -75,5 +80,20 @@ public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
     @Override
     public OrePrefix getOrePrefix() {
         return orePrefix;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public PipeModelRedirector getModel() {
+        return switch (this) {
+            case SMALL -> PipeModelRegistry.getPipeModel(1);
+            case NORMAL -> PipeModelRegistry.getPipeModel(2);
+            case LARGE -> PipeModelRegistry.getPipeModel(3);
+            case HUGE -> PipeModelRegistry.getPipeModel(4);
+            case RESTRICTIVE_SMALL -> PipeModelRegistry.getPipeRestrictiveModel(1);
+            case RESTRICTIVE_NORMAL -> PipeModelRegistry.getPipeRestrictiveModel(2);
+            case RESTRICTIVE_LARGE -> PipeModelRegistry.getPipeRestrictiveModel(3);
+            case RESTRICTIVE_HUGE -> PipeModelRegistry.getPipeRestrictiveModel(4);
+        };
     }
 }

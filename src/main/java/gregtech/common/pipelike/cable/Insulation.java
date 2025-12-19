@@ -3,6 +3,11 @@ package gregtech.common.pipelike.cable;
 import gregtech.api.pipenet.block.material.IMaterialPipeType;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.client.renderer.pipe.PipeModelRedirector;
+import gregtech.client.renderer.pipe.PipeModelRegistry;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -72,5 +77,11 @@ public enum Insulation implements IMaterialPipeType<WireProperties> {
     @Override
     public boolean isPaintable() {
         return true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public PipeModelRedirector getModel() {
+        return PipeModelRegistry.getCableModel(insulationLevel + 1);
     }
 }

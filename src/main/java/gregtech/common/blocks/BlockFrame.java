@@ -124,7 +124,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
     public boolean replaceWithFramedPipe(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
                                          ItemStack stackInHand, EnumFacing facing) {
         BlockPipe<?, ?, ?> blockPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stackInHand.getItem()).getBlock();
-        if (blockPipe.getItemPipeType(stackInHand).getThickness() < 1) {
+        if (blockPipe.getPipeType().getThickness() < 1) {
             ItemBlock itemBlock = (ItemBlock) stackInHand.getItem();
             IBlockState pipeState = blockPipe.getDefaultState();
             // these 0 values are not actually used by forge

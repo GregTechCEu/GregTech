@@ -12,6 +12,8 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
@@ -62,6 +64,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
@@ -79,6 +82,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     protected int itemsLeftToTransferLastSecond;
     private CoverableItemHandlerWrapper itemHandlerWrapper;
     protected boolean isWorkingAllowed = true;
+
+    protected @Nullable CoverRenderer rendererInverted;
 
     public CoverConveyor(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                          @NotNull EnumFacing attachedSide, int tier, int itemsPerSecond) {
@@ -675,6 +680,26 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         } else {
             this.itemFilterContainer.deserializeNBT(filterTag);
         }
+    }
+
+    @Override
+    public @NotNull CoverRenderer getRenderer() {
+        if (conveyorMode == ConveyorMode.EXPORT) {
+            if (renderer == null) renderer = buildRenderer();
+            return renderer;
+        } else {
+            if (rendererInverted == null) rendererInverted = buildRendererInverted();
+            return rendererInverted;
+        }
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.CONVEYOR_OVERLAY).setPlateQuads(tier).build();
+    }
+
+    protected CoverRenderer buildRendererInverted() {
+        return new CoverRendererBuilder(Textures.CONVEYOR_OVERLAY_INVERTED).setPlateQuads(tier).build();
     }
 
     @Override

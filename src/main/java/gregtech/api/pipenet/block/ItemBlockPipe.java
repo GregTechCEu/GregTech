@@ -25,6 +25,11 @@ public class ItemBlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     }
 
     @Override
+    public @NotNull BlockPipe<PipeType, NodeDataType, ?> getBlock() {
+        return (BlockPipe<PipeType, NodeDataType, ?>) super.getBlock();
+    }
+
+    @Override
     public int getMetadata(int damage) {
         return damage;
     }

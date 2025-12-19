@@ -5,6 +5,8 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.RedstoneUtil;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.mui.widget.GTTextFieldWidget;
 
@@ -51,6 +53,11 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                             IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.DETECTOR_ENERGY_ADVANCED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.DETECTOR_ENERGY_ADVANCED).build();
     }
 
     @Override

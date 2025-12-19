@@ -1,6 +1,11 @@
 package gregtech.common.pipelike.laser;
 
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.client.renderer.pipe.PipeModelRedirector;
+import gregtech.client.renderer.pipe.PipeModelRegistry;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public enum LaserPipeType implements IPipeType<LaserPipeProperties> {
 
@@ -24,5 +29,11 @@ public enum LaserPipeType implements IPipeType<LaserPipeProperties> {
     @Override
     public boolean isPaintable() {
         return true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public PipeModelRedirector getModel() {
+        return PipeModelRegistry.getLaserModel();
     }
 }

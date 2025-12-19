@@ -5,6 +5,8 @@ import gregtech.api.capability.IControllable;
 import gregtech.api.cover.*;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -228,6 +230,11 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
                             IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.MACHINE_CONTROLLER_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline,
                 translation);
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.MACHINE_CONTROLLER_OVERLAY).build();
     }
 
     @Override

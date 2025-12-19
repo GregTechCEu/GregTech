@@ -6,6 +6,7 @@ import gregtech.api.block.coil.CustomCoilBlock;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.registry.MTERegistry;
+import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.longdist.BlockLongDistancePipe;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -21,11 +22,6 @@ import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.model.modelfactories.BakedModelHandler;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityTESR;
-import gregtech.client.renderer.pipe.CableRenderer;
-import gregtech.client.renderer.pipe.FluidPipeRenderer;
-import gregtech.client.renderer.pipe.ItemPipeRenderer;
-import gregtech.client.renderer.pipe.LaserPipeRenderer;
-import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.explosive.BlockITNT;
 import gregtech.common.blocks.explosive.BlockPowderbarrel;
@@ -74,15 +70,19 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.IBlockColor;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -447,17 +447,36 @@ public class MetaBlocks {
                     stack -> MetaTileEntityRenderer.MODEL_LOCATION);
         }
 
+        // prevent the loader from trying to locate the model files as only the IBakedModels exist, and
+        // they are created during runtime.
+        ResourceLocation decoy = new ResourceLocation("minecraft:builtin/generated");
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
-            for (BlockCable cable : CABLES.get(registry.getModid())) cable.onModelRegister();
-            for (BlockFluidPipe pipe : FLUID_PIPES.get(registry.getModid())) pipe.onModelRegister();
-            for (BlockItemPipe pipe : ITEM_PIPES.get(registry.getModid())) pipe.onModelRegister();
+            for (BlockCable cable : CABLES.get(registry.getModid())) {
+                Item item = Item.getItemFromBlock(cable);
+                ModelLoader.setCustomMeshDefinition(item, stack -> cable.getPipeType().getModel().getLoc());
+                ModelBakery.registerItemVariants(item, decoy);
+            }
+            for (BlockFluidPipe pipe : FLUID_PIPES.get(registry.getModid())) {
+                Item item = Item.getItemFromBlock(pipe);
+                ModelLoader.setCustomMeshDefinition(item, stack -> pipe.getPipeType().getModel().getLoc());
+                ModelBakery.registerItemVariants(item, decoy);
+            }
+            for (BlockItemPipe pipe : ITEM_PIPES.get(registry.getModid())) {
+                Item item = Item.getItemFromBlock(pipe);
+                ModelLoader.setCustomMeshDefinition(item, stack -> pipe.getPipeType().getModel().getLoc());
+                ModelBakery.registerItemVariants(item, decoy);
+            }
         }
-        for (BlockOpticalPipe pipe : OPTICAL_PIPES)
-            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe),
-                    stack -> OpticalPipeRenderer.INSTANCE.getModelLocation());
-        for (BlockLaserPipe pipe : LASER_PIPES)
-            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe),
-                    stack -> LaserPipeRenderer.INSTANCE.getModelLocation());
+        for (BlockOpticalPipe pipe : OPTICAL_PIPES) {
+            Item item = Item.getItemFromBlock(pipe);
+            ModelLoader.setCustomMeshDefinition(item, stack -> pipe.getPipeType().getModel().getLoc());
+            ModelBakery.registerItemVariants(item, decoy);
+        }
+        for (BlockLaserPipe pipe : LASER_PIPES) {
+            Item item = Item.getItemFromBlock(pipe);
+            ModelLoader.setCustomMeshDefinition(item, stack -> pipe.getPipeType().getModel().getLoc());
+            ModelBakery.registerItemVariants(item, decoy);
+        }
 
         registerItemModel(BOILER_CASING);
         registerItemModel(METAL_CASING);
@@ -555,30 +574,26 @@ public class MetaBlocks {
                     new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
         }
 
-        IStateMapper normalStateMapper;
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
-            normalStateMapper = new SimpleStateMapper(CableRenderer.INSTANCE.getModelLocation());
             for (BlockCable cable : CABLES.get(registry.getModid())) {
-                ModelLoader.setCustomStateMapper(cable, normalStateMapper);
+                ModelLoader.setCustomStateMapper(cable,
+                        new SimpleStateMapper(cable.getPipeType().getModel().getLoc()));
             }
-            normalStateMapper = new SimpleStateMapper(FluidPipeRenderer.INSTANCE.getModelLocation());
             for (BlockFluidPipe pipe : FLUID_PIPES.get(registry.getModid())) {
-                ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
+                ModelLoader.setCustomStateMapper(pipe, new SimpleStateMapper(pipe.getPipeType().getModel().getLoc()));
             }
-            normalStateMapper = new SimpleStateMapper(ItemPipeRenderer.INSTANCE.getModelLocation());
             for (BlockItemPipe pipe : ITEM_PIPES.get(registry.getModid())) {
-                ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
+                ModelLoader.setCustomStateMapper(pipe, new SimpleStateMapper(pipe.getPipeType().getModel().getLoc()));
             }
         }
-        normalStateMapper = new SimpleStateMapper(OpticalPipeRenderer.INSTANCE.getModelLocation());
         for (BlockOpticalPipe pipe : OPTICAL_PIPES) {
-            ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
+            ModelLoader.setCustomStateMapper(pipe, new SimpleStateMapper(pipe.getPipeType().getModel().getLoc()));
         }
-        normalStateMapper = new SimpleStateMapper(LaserPipeRenderer.INSTANCE.getModelLocation());
         for (BlockLaserPipe pipe : LASER_PIPES) {
-            ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
+            ModelLoader.setCustomStateMapper(pipe, new SimpleStateMapper(pipe.getPipeType().getModel().getLoc()));
         }
 
+        IStateMapper normalStateMapper;
         normalStateMapper = new SimpleStateMapper(BlockSurfaceRock.MODEL_LOCATION);
         for (BlockSurfaceRock surfaceRock : SURFACE_ROCK_BLOCKS) {
             ModelLoader.setCustomStateMapper(surfaceRock, normalStateMapper);
@@ -623,6 +638,25 @@ public class MetaBlocks {
             blockColors.registerBlockColorHandler((s, w, p, i) -> block.getGtMaterial(s).getMaterialRGB(), block);
             itemColors.registerItemColorHandler((s, i) -> block.getGtMaterial(s).getMaterialRGB(), block);
         }
+
+        IBlockColor pipeBlockColor = (s, w, p, i) -> i;
+        IItemColor pipeItemColor = (s, i) -> i;
+        for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
+            BlockMaterialPipe[] itemPipes = ITEM_PIPES.get(registry.getModid());
+            BlockMaterialPipe[] fluidPipes = FLUID_PIPES.get(registry.getModid());
+            blockColors.registerBlockColorHandler(pipeBlockColor, itemPipes);
+            blockColors.registerBlockColorHandler(pipeBlockColor, fluidPipes);
+            itemColors.registerItemColorHandler(pipeItemColor, itemPipes);
+            itemColors.registerItemColorHandler(pipeItemColor, fluidPipes);
+
+            BlockCable[] cables = CABLES.get(registry.getModid());
+            blockColors.registerBlockColorHandler(pipeBlockColor, cables);
+            itemColors.registerItemColorHandler(pipeItemColor, cables);
+        }
+        blockColors.registerBlockColorHandler(pipeBlockColor, OPTICAL_PIPES);
+        itemColors.registerItemColorHandler(pipeItemColor, OPTICAL_PIPES);
+        blockColors.registerBlockColorHandler(pipeBlockColor, LASER_PIPES);
+        itemColors.registerItemColorHandler(pipeItemColor, LASER_PIPES);
 
         for (BlockFrame block : FRAME_BLOCKS) {
             blockColors.registerBlockColorHandler((s, w, p, i) -> block.getGtMaterial(s).getMaterialRGB(), block);
