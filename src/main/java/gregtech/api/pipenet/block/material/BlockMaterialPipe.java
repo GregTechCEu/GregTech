@@ -15,16 +15,19 @@ import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+import java.util.*;
 
 public abstract class BlockMaterialPipe<
         PipeType extends Enum<PipeType> & IPipeType<NodeDataType> & IMaterialPipeType<NodeDataType>, NodeDataType,
@@ -32,11 +35,30 @@ public abstract class BlockMaterialPipe<
                                        extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
 
     protected final PipeType pipeType;
+    protected final Map<Material, NodeDataType> enabledMaterials;
     private final MaterialRegistry registry;
 
     public BlockMaterialPipe(@NotNull PipeType pipeType, @NotNull MaterialRegistry registry) {
         this.pipeType = pipeType;
+        this.enabledMaterials = new TreeMap<>();
         this.registry = registry;
+    }
+
+    public boolean isValidPipeMaterial(Material material) {
+        return !getItemPipeType(getItem(material)).getOrePrefix().isIgnored(material);
+    }
+
+    public void addPipeMaterial(Material material, NodeDataType pipeProperties) {
+        Preconditions.checkNotNull(material, "material was null");
+        Preconditions.checkNotNull(pipeProperties, "the %s of material %s was null", getPipeTypeClass().getSimpleName(),
+                material);
+        Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null,
+                "material %s is not registered", material);
+        this.enabledMaterials.put(material, pipeProperties);
+    }
+
+    public Collection<Material> getEnabledMaterials() {
+        return Collections.unmodifiableSet(enabledMaterials.keySet());
     }
 
     @Override
@@ -80,7 +102,21 @@ public abstract class BlockMaterialPipe<
         return getItem(material);
     }
 
-    protected abstract NodeDataType createProperties(PipeType pipeType, Material material);
+    protected NodeDataType createProperties(PipeType pipeType, Material material) {
+        return pipeType.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
+    }
+
+    @Override
+    protected NodeDataType getFallbackType() {
+        return enabledMaterials.values().iterator().next();
+    }
+
+    @Override
+    public void getSubBlocks(@NotNull CreativeTabs itemIn, @NotNull NonNullList<ItemStack> items) {
+        for (Material material : enabledMaterials.keySet()) {
+            items.add(getItem(material));
+        }
+    }
 
     public OrePrefix getPrefix() {
         return pipeType.getOrePrefix();

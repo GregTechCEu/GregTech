@@ -134,7 +134,7 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
             updateColor(normal[v], color[v], x, y, z, tint, multiplier);
 
             // When enabled this causes the rendering to be black with Optifine
-            if (!Mods.Optifine.isModLoaded() && diffuse) {
+            if (!Mods.ShadersMod.isModLoaded() && diffuse) {
                 float d = LightUtil.diffuseLight(normal[v][0], normal[v][1], normal[v][2]);
                 for (int i = 0; i < 3; i++) {
                     color[v][i] *= d;
@@ -168,16 +168,6 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
             }
         }
         tint = -1;
-    }
-
-    // This was copied over from VertexLighterFlat because the tint parameter shouldn't be a float
-    protected static void updateColor(float[] normal, float[] color, float x, float y, float z, int tint,
-                                      int multiplier) {
-        if (tint != -1) {
-            color[0] *= (float) (multiplier >> 0x10 & 0xFF) / 0xFF;
-            color[1] *= (float) (multiplier >> 0x8 & 0xFF) / 0xFF;
-            color[2] *= (float) (multiplier & 0xFF) / 0xFF;
-        }
     }
 
     @Override

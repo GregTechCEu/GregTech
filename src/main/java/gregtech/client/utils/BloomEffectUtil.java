@@ -83,7 +83,7 @@ public class BloomEffectUtil {
      */
     @Contract("null -> _; !null -> !null")
     public static BlockRenderLayer getEffectiveBloomLayer(BlockRenderLayer fallback) {
-        return Mods.Optifine.isModLoaded() ? fallback : bloom;
+        return Mods.ShadersMod.isModLoaded() ? fallback : bloom;
     }
 
     /**
@@ -115,7 +115,7 @@ public class BloomEffectUtil {
      */
     @Contract("_, null -> _; _, !null -> !null")
     public static BlockRenderLayer getEffectiveBloomLayer(boolean isBloomActive, BlockRenderLayer fallback) {
-        return Mods.Optifine.isModLoaded() || !isBloomActive ? fallback : bloom;
+        return Mods.ShadersMod.isModLoaded() || !isBloomActive ? fallback : bloom;
     }
 
     /**
@@ -253,7 +253,7 @@ public class BloomEffectUtil {
                                                         @NotNull IBloomEffect render,
                                                         @Nullable Predicate<BloomRenderTicket> validityChecker,
                                                         @Nullable Supplier<World> worldContext) {
-        if (Mods.Optifine.isModLoaded()) return BloomRenderTicket.INVALID;
+        if (Mods.ShadersMod.isModLoaded()) return BloomRenderTicket.INVALID;
         BloomRenderTicket ticket = new BloomRenderTicket(setup, bloomType, render, validityChecker, worldContext);
         BLOOM_RENDER_LOCK.lock();
         try {
@@ -302,7 +302,7 @@ public class BloomEffectUtil {
                                             @NotNull Entity entity) {
         Minecraft.getMinecraft().profiler.endStartSection("BTLayer");
 
-        if (Mods.Optifine.isModLoaded()) {
+        if (Mods.ShadersMod.isModLoaded()) {
             return renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
         }
 

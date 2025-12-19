@@ -46,6 +46,7 @@ import net.minecraftforge.fluids.FluidStack;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -518,6 +519,18 @@ public class Material implements Comparable<Material> {
     @NotNull
     public MaterialRegistry getRegistry() {
         return GregTechAPI.materialManager.getRegistry(getModid());
+    }
+
+    /**
+     * Create a new {@link Material.Builder}.
+     *
+     * @param id               The MetaItemSubID for this Material. Must be unique to your mods material registry.
+     * @param resourceLocation The ModId and Name of this Material. Will be formatted as "<modid>.material.<name>" for
+     *                         the Translation Key.
+     */
+    @Contract("_, _ -> new")
+    public static @NotNull Builder builder(int id, @NotNull ResourceLocation resourceLocation) {
+        return new Builder(id, resourceLocation);
     }
 
     /**

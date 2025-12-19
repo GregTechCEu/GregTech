@@ -1024,6 +1024,12 @@ public class GTUtility {
         return map.get(key.toWildcard());
     }
 
+    public static boolean areFluidStacksEqual(@Nullable FluidStack a, @Nullable FluidStack b) {
+        if (a == b) return true;
+        if (a == null) return false;
+        return a.isFluidEqual(b);
+    }
+
     public static EnumFacing getFaceRelativeToFace(EnumFacing frontFace, EnumFacing otherSide) {
         switch (frontFace) {
             case DOWN -> {

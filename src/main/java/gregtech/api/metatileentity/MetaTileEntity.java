@@ -41,6 +41,7 @@ import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -93,6 +94,7 @@ import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -492,7 +494,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         return null;
     }
 
@@ -906,6 +908,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             GregTechAPI.soundManager.stopTileSound(getPos());
             playSoundCooldown = 0;
         }
+    }
+
+    /**
+     * @return The sound type used when this block is broken, placed, stepped on, hit, or fallen on.
+     */
+    @NotNull
+    public SoundType getSoundType() {
+        return SoundType.METAL;
     }
 
     public final @NotNull ItemStack getStackForm(int amount) {
