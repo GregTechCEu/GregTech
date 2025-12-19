@@ -16,7 +16,6 @@ import gregtech.api.recipes.map.Branch;
 import gregtech.api.recipes.map.Either;
 import gregtech.api.recipes.map.MapFluidIngredient;
 import gregtech.api.recipes.map.MapItemStackIngredient;
-import gregtech.api.recipes.map.MapItemStackNBTIngredient;
 import gregtech.api.recipes.map.MapOreDictIngredient;
 import gregtech.api.recipes.map.MapOreDictNBTIngredient;
 import gregtech.api.recipes.ui.RecipeMapUI;
@@ -1155,11 +1154,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             } else {
                 // input must be represented as a list of possible stacks
                 List<AbstractMapIngredient> ingredients;
+                ingredients = MapItemStackIngredient.from(r);
                 if (r.hasNBTMatchingCondition()) {
-                    ingredients = MapItemStackNBTIngredient.from(r);
                     hasNBTMatcherInputs = true;
-                } else {
-                    ingredients = MapItemStackIngredient.from(r);
                 }
 
                 for (int i = 0; i < ingredients.size(); i++) {
@@ -1185,7 +1182,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      */
     protected void buildFromItemStacks(@NotNull List<List<AbstractMapIngredient>> list,
                                        @NotNull ItemStack[] ingredients) {
-        AbstractMapIngredient ingredient;
         for (ItemStack stack : ingredients) {
             int meta = stack.getMetadata();
             NBTTagCompound nbt = stack.getTagCompound();
@@ -1193,25 +1189,23 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             List<AbstractMapIngredient> ls = new ObjectArrayList<>(1);
 
             // add the regular input
-            ls.add(new MapItemStackIngredient(stack, meta, nbt));
+            // tag should be null, right?
+            ls.add(new MapItemStackIngredient(stack, meta, null));
 
             if (hasOreDictedInputs) {
 
                 // add the ore dict inputs
                 for (int i : OreDictionary.getOreIDs(stack)) {
-                    ingredient = new MapOreDictIngredient(i);
-                    ls.add(ingredient);
+                    ls.add(new MapOreDictIngredient(i));
 
                     if (hasNBTMatcherInputs) {
                         // add the nbt inputs for the oredict inputs
-                        ingredient = new MapOreDictNBTIngredient(i, nbt);
-                        ls.add(ingredient);
+                        ls.add(new MapOreDictNBTIngredient(i, nbt));
                     }
                 }
             }
             if (hasNBTMatcherInputs) {
-                // add the nbt input for the regular input
-                ls.add(new MapItemStackNBTIngredient(stack, meta, nbt));
+                ls.add(new MapItemStackIngredient(stack, meta, nbt));
             }
             if (!ls.isEmpty()) list.add(ls);
         }
