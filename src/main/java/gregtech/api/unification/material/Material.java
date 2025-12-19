@@ -32,6 +32,7 @@ import gregtech.api.unification.material.properties.WoodProperty;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.ColorUtil;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
@@ -917,7 +918,7 @@ public class Material implements Comparable<Material> {
          */
         public Builder color(@Range(from = 0, to = 255) int r, @Range(from = 0, to = 255) int g,
                              @Range(from = 0, to = 255) int b) {
-            return color(GTUtility.combineRGB(r, g, b));
+            return color(ColorUtil.combineRGB(r, g, b));
         }
 
         public Builder colorAverage() {

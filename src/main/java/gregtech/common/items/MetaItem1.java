@@ -34,7 +34,6 @@ import gregtech.common.covers.filter.SmartItemFilter;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.entities.GTBoatEntity.GTBoatType;
 import gregtech.common.items.behaviors.ClipboardBehavior;
-import gregtech.common.items.behaviors.ColorSprayBehaviour;
 import gregtech.common.items.behaviors.DataItemBehavior;
 import gregtech.common.items.behaviors.DoorBehavior;
 import gregtech.common.items.behaviors.DynamiteBehaviour;
@@ -59,6 +58,8 @@ import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavi
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.OnlinePicPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.TextPluginBehavior;
+import gregtech.common.items.behaviors.spray.CreativeSprayBehavior;
+import gregtech.common.items.behaviors.spray.DurabilitySprayBehavior;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.client.resources.I18n;
@@ -89,16 +90,26 @@ public class MetaItem1 extends StandardMetaItem {
         for (MetaItem<?>.MetaValueItem item : metaItems.values()) {
             if (!item.isInCreativeTab(tab)) continue;
 
-            int itemMetaData = item.getMetaValue();
-            if (itemMetaData >= 1006 && itemMetaData <= 1010) continue;
+            int itemMeta = item.getMetaValue();
+            // Skip extra molds, see below
+            if (itemMeta >= 1006 && itemMeta <= 1010) continue;
+            // Skip creative spray can, see below
+            if (itemMeta == 30) continue;
 
             item.getSubItemHandler().getSubItems(item.getStackForm(), tab, subItems);
 
-            if (itemMetaData == 29) {
+            // Add the extra molds after the last 'original'
+            if (itemMeta == 29) {
                 for (MetaItem<?>.MetaValueItem moldItem : SHAPE_MOLDS) {
+                    // Skip the 'original' molds
                     if (moldItem.getMetaValue() < 1006) continue;
                     moldItem.getSubItemHandler().getSubItems(moldItem.getStackForm(), tab, subItems);
                 }
+            }
+
+            // Add the creative spray can after the last normal spray can
+            if (itemMeta == 77) {
+                subItems.add(SPRAY_CREATIVE.getStackForm());
             }
         }
     }
@@ -167,7 +178,8 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_MOLDS[17] = SHAPE_MOLD_ROUND = addItem(29, "shape.mold.round")
                 .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Steel, M * 4)));
 
-        // Free ID: 30
+        SPRAY_CREATIVE = addItem(30, "spray.creative")
+                .addComponents(new CreativeSprayBehavior());
 
         // Extruder Shapes: ID 31-59
         SHAPE_EXTRUDERS[0] = SHAPE_EXTRUDER_PLATE = addItem(31, "shape.extruder.plate")
@@ -215,14 +227,14 @@ public class MetaItem1 extends StandardMetaItem {
 
         // out of registry order so it can reference the Empty Spray Can
         SPRAY_SOLVENT = addItem(60, "spray.solvent").setMaxStackSize(1)
-                .addComponents(new ColorSprayBehaviour(SPRAY_EMPTY.getStackForm(), 1024, -1))
+                .addComponents(new DurabilitySprayBehavior(SPRAY_EMPTY.getStackForm(), 1024, null))
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
-        for (int i = 0; i < EnumDyeColor.values().length; i++) {
-            SPRAY_CAN_DYES[i] = addItem(62 + i, "spray.can.dyes." + EnumDyeColor.values()[i].getName())
+        for (EnumDyeColor color : EnumDyeColor.values()) {
+            SPRAY_CAN_DYES.put(color, addItem(62 + color.ordinal(), "spray.can.dyes." + color.getName())
                     .setMaxStackSize(1)
-                    .addComponents(new ColorSprayBehaviour(SPRAY_EMPTY.getStackForm(), 512, i))
-                    .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
+                    .addComponents(new DurabilitySprayBehavior(SPRAY_EMPTY.getStackForm(), 512, color))
+                    .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS));
         }
 
         // Fluid Cells: ID 78-88

@@ -19,6 +19,7 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
+import gregtech.common.items.behaviors.spray.AbstractSprayBehavior;
 import gregtech.common.items.tool.rotation.CustomBlockRotations;
 import gregtech.common.items.tool.rotation.ICustomRotationBehavior;
 
@@ -303,10 +304,12 @@ public class ToolEventHandlers {
 
     @SideOnly(Side.CLIENT)
     private static boolean shouldRenderGridOverlays(@NotNull IBlockState state, @Nullable TileEntity tile,
-                                                    ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
+                                                    @NotNull ItemStack mainHand, @NotNull ItemStack offHand,
+                                                    boolean isSneaking) {
         if (state.getBlock() instanceof BlockPipe<?, ?, ?>pipe) {
             if (isSneaking &&
-                    (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass())) {
+                    (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass() ||
+                            AbstractSprayBehavior.isSprayCan(mainHand) || AbstractSprayBehavior.isSprayCan(offHand))) {
                 return true;
             } else {
                 Set<String> mainToolClasses = mainHand.getItem().getToolClasses(mainHand);

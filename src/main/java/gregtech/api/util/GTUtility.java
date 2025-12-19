@@ -63,7 +63,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -460,7 +459,7 @@ public class GTUtility {
         };
     }
 
-    public static NBTTagCompound getOrCreateNbtCompound(ItemStack stack) {
+    public static @NotNull NBTTagCompound getOrCreateNbtCompound(@NotNull ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
         if (compound == null) {
             compound = new NBTTagCompound();
@@ -756,10 +755,17 @@ public class GTUtility {
         return result.toString();
     }
 
-    public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
+    /**
+     * Get the {@link MetaTileEntity} at the position in the given world.
+     *
+     * @param world the world to check
+     * @param pos   the position of the mte
+     * @return the mte if there is one at the position, otherwise null
+     */
+    public static @Nullable MetaTileEntity getMetaTileEntity(@Nullable IBlockAccess world, @Nullable BlockPos pos) {
         if (world == null || pos == null) return null;
         TileEntity te = world.getTileEntity(pos);
-        return te instanceof IGregTechTileEntity ? ((IGregTechTileEntity) te).getMetaTileEntity() : null;
+        return te instanceof IGregTechTileEntity gtte ? gtte.getMetaTileEntity() : null;
     }
 
     public static MetaTileEntity getMetaTileEntity(ItemStack stack) {
@@ -790,7 +796,7 @@ public class GTUtility {
         return world.isDaytime();
     }
 
-    public static MapColor getMapColor(int rgb) {
+    public static @NotNull MapColor getMapColor(int rgb) {
         MapColor color = MapColor.BLACK;
         int originalR = (rgb >> 16) & 0xFF;
         int originalG = (rgb >> 8) & 0xFF;
@@ -1002,11 +1008,6 @@ public class GTUtility {
         return Math.min(voltage, GTValues.VA[workingTier]);
     }
 
-    public static int combineRGB(@Range(from = 0, to = 255) int r, @Range(from = 0, to = 255) int g,
-                                 @Range(from = 0, to = 255) int b) {
-        return (r << 16) | (g << 8) | b;
-    }
-
     /**
      * @param map the map to get from
      * @param key the key to retrieve with
@@ -1022,6 +1023,28 @@ public class GTUtility {
             return null;
         }
         return map.get(key.toWildcard());
+    }
+
+    /**
+     * Calculate the durability percentage based on how much damage something has taken
+     *
+     * @param damageTaken   how many points of durability damage the item has
+     * @param maxDurability the maximum durability the item can have
+     * @return 0 = full durability, 1 = zero durability
+     */
+    public static double calculateDurabilityFromDamageTaken(int damageTaken, int maxDurability) {
+        return (double) damageTaken / maxDurability;
+    }
+
+    /**
+     * Calculate the durability percentage based on how much durability out of the maximum is remaining
+     *
+     * @param remainingDurability how much durability out of the maximum the item has left
+     * @param maxDurability       the maximum durability the item can have
+     * @return 0 = full durability, 1 = zero durability
+     */
+    public static double calculateDurabilityFromRemaining(int remainingDurability, int maxDurability) {
+        return (double) (maxDurability - remainingDurability) / maxDurability;
     }
 
     public static boolean areFluidStacksEqual(@Nullable FluidStack a, @Nullable FluidStack b) {
