@@ -14,6 +14,7 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.IMetaTileEntityGuiHolder;
 import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -176,32 +177,30 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
                                         .size(20)
                                         .onMousePressed(mouse -> {
                                             long amps = ampSync.getLongValue();
-                                            if (amps > 0) {
-                                                ampSync.setLongValue(amps - 1);
-                                            }
+                                            if (amps == 0) return false;
+                                            amps = Math.max(0, amps - GTUtility.getButtonIncrementValue());
+                                            ampSync.setLongValue(amps);
                                             return true;
                                         })
-                                        .overlay(IKey.str("-"))
-                                        .addTooltipLine(IKey.lang("gregtech.creative.energy.amps_minus")))
+                                        .overlay(KeyUtil.createMultiplierKey(false)))
                                 .child(new TextFieldWidget()
                                         .height(20)
                                         .expanded()
                                         .margin(4, 0)
                                         .value(ampSync)
                                         .setNumbersLong(() -> 0L, () -> Long.MAX_VALUE)
-                                        .setMaxLength(10)
+                                        .setMaxLength(19)
                                         .background(GTGuiTextures.DISPLAY))
                                 .child(new ButtonWidget<>()
                                         .size(20)
                                         .onMousePressed(mouse -> {
                                             long amps = ampSync.getLongValue();
-                                            if (amps < Long.MAX_VALUE) {
-                                                ampSync.setLongValue(amps + 1);
-                                            }
+                                            if (amps == Long.MAX_VALUE) return false;
+                                            long canAdd = Long.MAX_VALUE - amps;
+                                            ampSync.setLongValue(Math.min(GTUtility.getButtonIncrementValue(), canAdd));
                                             return true;
                                         })
-                                        .overlay(IKey.str("+"))
-                                        .addTooltipLine(IKey.lang("gregtech.creative.energy.amps_plus"))))
+                                        .overlay(KeyUtil.createMultiplierKey(true))))
                         .child(IKey.lang("gregtech.creative.energy.io",
                                 () -> new Object[] { TextFormattingUtil.formatNumbers(lastEnergyIOPerSec) })
                                 .asWidget())

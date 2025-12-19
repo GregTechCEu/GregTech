@@ -6054,8 +6054,6 @@ gregtech.creative.energy.voltage=Voltage
 gregtech.creative.energy.sink=Sink
 gregtech.creative.energy.source=Source
 gregtech.creative.energy.io=Energy I/O per sec: %s
-gregtech.creative.energy.amps_plus=Increment amperage by one
-gregtech.creative.energy.amps_minus=Decrement amperage by one
 
 gregtech.creative.activity.on=Active
 gregtech.creative.activity.off=Not active
