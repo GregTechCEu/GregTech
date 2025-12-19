@@ -917,9 +917,9 @@ final class MetaTileEntityRegistration {
         for (int i = 0; i < endPos; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             MetaTileEntities.ENERGY_INPUT_HATCH[i] = MetaTileEntities.registerMetaTileEntity(11120 + i,
-                    new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input." + voltageName), i, 2, false));
+                    new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input." + voltageName), i, 1, false));
             MetaTileEntities.ENERGY_OUTPUT_HATCH[i] = MetaTileEntities.registerMetaTileEntity(11135 + i,
-                    new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output." + voltageName), i, 2, true));
+                    new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output." + voltageName), i, 1, true));
 
             MetaTileEntities.ENERGY_INPUT_HATCH_4A[i] = MetaTileEntities.registerMetaTileEntity(11150 + i,
                     new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a." + voltageName), i, 4, false));
