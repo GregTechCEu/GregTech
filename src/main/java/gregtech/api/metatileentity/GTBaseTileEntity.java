@@ -207,6 +207,14 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     }
 
     @Override
+    protected void addAdditionalData(NBTTagCompound updateTag) {
+        updateTag.setString("MetaId", getMetaID().toString());
+        updateTag.setInteger("x", getPos().getX());
+        updateTag.setInteger("y", getPos().getY());
+        updateTag.setInteger("z", getPos().getZ());
+    }
+
+    @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         buf.writeString(getName());
         // below this might not be necessary anymore ?

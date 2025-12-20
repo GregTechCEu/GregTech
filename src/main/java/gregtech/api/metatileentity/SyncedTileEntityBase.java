@@ -1,7 +1,6 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.block.BlockStateTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.network.PacketDataList;
 
@@ -89,14 +88,11 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         }
         NBTTagCompound updateTag = new NBTTagCompound();
         updateTag.setTag("d", this.updates.dumpToNbt());
-        if (this instanceof IGregTechTileEntity gregTechTile) {
-            updateTag.setString("MetaId", gregTechTile.getMetaTileEntity().getMetaID().toString());
-            updateTag.setInteger("x", getPos().getX());
-            updateTag.setInteger("y", getPos().getY());
-            updateTag.setInteger("z", getPos().getZ());
-        }
+        addAdditionalData(updateTag);
         return new SPacketUpdateTileEntity(getPos(), 0, updateTag);
     }
+
+    protected void addAdditionalData(NBTTagCompound updateTag) {}
 
     @Override
     public final void onDataPacket(@NotNull NetworkManager net, @NotNull SPacketUpdateTileEntity pkt) {
@@ -121,12 +117,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         writeInitialSyncData(new PacketBuffer(backedBuffer));
         byte[] updateData = Arrays.copyOfRange(backedBuffer.array(), 0, backedBuffer.writerIndex());
         updateTag.setByteArray("d", updateData);
-        if (this instanceof IGregTechTileEntity gregTechTile) {
-            updateTag.setString("MetaId", gregTechTile.getMetaTileEntity().getMetaID().toString());
-            updateTag.setInteger("x", getPos().getX());
-            updateTag.setInteger("y", getPos().getY());
-            updateTag.setInteger("z", getPos().getZ());
-        }
+        addAdditionalData(updateTag);
         return updateTag;
     }
 
