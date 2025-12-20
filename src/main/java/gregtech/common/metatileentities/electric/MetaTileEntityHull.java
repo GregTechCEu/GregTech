@@ -98,7 +98,7 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart
     @Optional.Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public AENetworkProxy getProxy() {
         if (gridProxy == null) {
-            gridProxy = new AENetworkProxy(getHolder().getMetaTileEntity(), "proxy", getStackForm(), true);
+            gridProxy = new AENetworkProxy(this, "proxy", getStackForm(), true);
         }
         return gridProxy;
     }

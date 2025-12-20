@@ -343,9 +343,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             } else {
                 this.activeRecipeMap = mte.getRecipeMap();
                 // Set the world for MTEs, as some need it for checking their recipes
-                // MetaTileEntityHolder holder = new MetaTileEntityHolder();
-                // mte = holder.setMetaTileEntity(mte);
-                // holder.setWorld(this.metaTileEntity.getWorld());
+                mte = mte.copy();
                 mte.setWorld(this.metaTileEntity.getWorld());
 
                 updateCleanroom();
