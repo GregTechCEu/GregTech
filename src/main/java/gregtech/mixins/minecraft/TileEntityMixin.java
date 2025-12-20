@@ -20,10 +20,18 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(TileEntity.class)
 public abstract class TileEntityMixin {
 
+    /**
+     * Fixes the {@link Class#newInstance()} TE call by using nbt tag data to create the correct {@link MetaTileEntity}.
+     *
+     * @param instance TileEntity class
+     * @param original {@link Class#newInstance()}
+     * @param tagCompound additional data, used for {@link TileEntity#readFromNBT(NBTTagCompound)}
+     * @return the correct MetaTileEntity, or the result of the original operation
+     */
     @WrapOperation(method = "create",
                    at = @At(value = "INVOKE",
                             target = "Ljava/lang/Class;newInstance()Ljava/lang/Object;"))
-    private static Object wrap(Class<? extends TileEntity> instance, Operation<? extends TileEntity> original,
+    private static Object wrapNewInstance(Class<? extends TileEntity> instance, Operation<? extends TileEntity> original,
                                @Local(argsOnly = true) NBTTagCompound tagCompound) {
         if (IGregTechTileEntity.class.isAssignableFrom(instance)) {
             // this is necessary to avoid the no args constructor call
@@ -32,6 +40,7 @@ public abstract class TileEntityMixin {
                     .getRegistry(location.getNamespace())
                     .getObject(location);
             if (mte != null) {
+                // todo remove this logging call
                 GTLog.logger.warn("creating {} from TileEntity#create", mte.metaTileEntityId, tagCompound);
                 return mte.createMetaTileEntity(null);
             }
@@ -39,6 +48,12 @@ public abstract class TileEntityMixin {
         return original.call(instance);
     }
 
+    /**
+     * Fixes an issue in {@link TileEntity#writeInternal(NBTTagCompound)} that expects the TE class to be registered.
+     * However, MetaTileEntities are stored under the {@link GTBaseTileEntity} class.
+     * @param value the TileEntity class
+     * @return GTBaseTileEntity's class if the class extends from it, otherwise the original class
+     */
     @ModifyArg(method = "writeInternal",
                at = @At(value = "INVOKE",
                         target = "Lnet/minecraft/util/registry/RegistryNamespaced;getNameForObject(Ljava/lang/Object;)Ljava/lang/Object;"))
