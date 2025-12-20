@@ -296,6 +296,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             }
         }
 
+        if (mteTag != null) {
+            metaTileEntity.readMTETag(mteTag);
+        }
+
         if (worldIn.getChunk(pos).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) == null) {
             worldIn.setTileEntity(pos, metaTileEntity);
         }
