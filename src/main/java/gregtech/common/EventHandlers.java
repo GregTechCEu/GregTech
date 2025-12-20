@@ -121,10 +121,8 @@ public class EventHandlers {
     public static void onPlayerInteractionLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getEntityPlayer().isCreative()) {
             TileEntity holder = event.getWorld().getTileEntity(event.getPos());
-            if (holder instanceof IGregTechTileEntity gregTechTile &&
-                    gregTechTile.getMetaTileEntity() instanceof MetaTileEntityCentralMonitor monitor) {
-                monitor
-                        .invalidateStructure();
+            if (holder instanceof MetaTileEntityCentralMonitor monitor) {
+                monitor.invalidateStructure();
             }
         }
     }
