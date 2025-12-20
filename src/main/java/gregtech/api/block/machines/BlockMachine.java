@@ -268,11 +268,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public void onBlockPlacedBy(World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
                                 @NotNull EntityLivingBase placer, ItemStack stack) {
-        GTBaseTileEntity holder = Optional.of(stack)
+        MetaTileEntity metaTileEntity = Optional.of(stack)
                 .map(GTUtility::getMetaTileEntity)
-                .map(GTBaseTileEntity::copy)
+                .map(MetaTileEntity::copy)
                 .orElse(null);
-        if (holder == null)
+
+        if (metaTileEntity == null)
             return;
 
         var stackTag = stack.getTagCompound();
@@ -282,12 +283,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 var blockTag = stackTag.getCompoundTag(GregtechDataCodes.BLOCK_ENTITY_TAG);
                 String customName = blockTag.getString(GregtechDataCodes.CUSTOM_NAME);
                 if (!customName.isEmpty())
-                    holder.setCustomName(customName);
+                    metaTileEntity.setCustomName(customName);
 
                 mteTag = blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE);
                 List<String> removed = new ArrayList<>();
                 for (var key : mteTag.getKeySet()) {
-                    var trait = holder.getMetaTileEntity().getMTETrait(key);
+                    var trait = metaTileEntity.getMTETrait(key);
                     if (trait == null) continue;
 
                     removed.add(key);
@@ -296,7 +297,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             }
         }
 
-        MetaTileEntity metaTileEntity = holder.getMetaTileEntity();
         if (worldIn.getChunk(pos).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) == null) {
             worldIn.setTileEntity(pos, metaTileEntity);
         }
