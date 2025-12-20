@@ -268,16 +268,12 @@ public class QuantumChestTest {
 
         public QuantumChestWrapper(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
             super(metaTileEntityId, tier, maxStoredItems);
+            setWorld(DummyWorld.INSTANCE);
         }
 
         @Override
         protected void setVoiding(boolean isVoiding) {
             this.voiding = isVoiding;
-        }
-
-        @Override
-        public World getWorld() {
-            return DummyWorld.INSTANCE;
         }
     }
 }
