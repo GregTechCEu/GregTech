@@ -44,6 +44,7 @@ import appeng.me.helpers.IGridProxyable;
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -259,8 +260,18 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     }
 
     @Override
+    public @UnknownNullability World getWorld() {
+        return super.getWorld();
+    }
+
+    @Override
     public BlockPos pos() {
         return getPos();
+    }
+
+    @Override
+    public @UnknownNullability BlockPos getPos() {
+        return super.getPos();
     }
 
     @SuppressWarnings("ConstantConditions") // yes this CAN actually be null
@@ -336,7 +347,7 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     }
 
     public boolean hasTESR() {
-        if (this instanceof IFastRenderMetaTileEntity) {
+        if (getMetaTileEntity() instanceof IFastRenderMetaTileEntity) {
             return true;
         }
         for (EnumFacing side : EnumFacing.VALUES) {

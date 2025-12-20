@@ -199,49 +199,6 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
 
     public abstract MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity);
 
-    // @Override
-    // public World getWorld() {
-    // return holder == null ? null : holder.world();
-    // }
-
-    // @Override
-    // public BlockPos getPos() {
-    // return holder == null ? null : holder.pos();
-    // }
-
-    // @Override
-    // public void markDirty() {
-    // if (holder != null) {
-    // holder.markAsDirty();
-    // }
-    // }
-
-    // public boolean isFirstTick() {
-    // return holder != null && holder.isFirstTick();
-    // }
-
-    // /**
-    // * Replacement for former getTimer() call.
-    // *
-    // * @return Timer value, starting at zero, with a random offset [0, 20).
-    // */
-    // @Override
-    // public long getOffsetTimer() {
-    // return holder == null ? 0L : holder.getOffsetTimer();
-    // }
-
-    // @Override
-    // public @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
-    // return holder != null ? holder.getNeighbor(facing) : null;
-    // }
-    //
-    // @Override
-    // public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter) {
-    // if (holder != null) {
-    // holder.writeCustomData(discriminator, dataWriter);
-    // }
-    // }
-
     public void addDebugInfo(List<String> list) {}
 
     @SideOnly(Side.CLIENT)
@@ -327,7 +284,6 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
                         !getWorld().getBlockState(getPos()).getValue(BlockMachine.OPAQUE));
     }
 
-    @SuppressWarnings("ConstantValue")
     @Override
     @SideOnly(Side.CLIENT)
     public int getPaintingColorForRendering() {
