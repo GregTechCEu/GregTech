@@ -192,11 +192,14 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
         this.fluidInventory = new FluidHandlerProxy(importFluids, exportFluids);
     }
 
+    // todo remove this
+    @Deprecated
     public IGregTechTileEntity getHolder() {
         return this;
     }
 
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return copy();
     }
@@ -500,7 +503,6 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
             if (heldStack.getItem() == Items.NAME_TAG) {
                 if (playerIn.isSneaking() && heldStack.getTagCompound() != null &&
                         heldStack.getTagCompound().hasKey("display")) {
-                    // MetaTileEntityHolder mteHolder = (MetaTileEntityHolder) getHolder();
 
                     setCustomName(heldStack.getTagCompound().getCompoundTag("display").getString("Name"));
                     if (!playerIn.isCreative()) {
@@ -1234,7 +1236,7 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
 
     @Override
     public void scheduleRenderUpdate() {
-        super.scheduleRenderUpdate();
+        super.scheduleRenderUpdate(); // this call is required
     }
 
     public void setFrontFacing(EnumFacing frontFacing) {
@@ -1339,11 +1341,6 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
             this.owner = data.getCompoundTag("Owner").getUniqueId("UUID");
         }
     }
-
-    // @Override
-    // public boolean isValid() {
-    // return getHolder() != null && getHolder().isValid();
-    // }
 
     public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         clearInventory(itemBuffer, importItems);

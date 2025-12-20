@@ -9,7 +9,6 @@ import gregtech.api.cover.Cover;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
-import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -379,10 +378,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (!tagCompound.isEmpty())
             itemStack.setTagCompound(tagCompound);
         // TODO Clean this up
-        if (metaTileEntity.getHolder() instanceof GTBaseTileEntity holder) {
-            if (holder.hasCustomName()) {
-                itemStack.setStackDisplayName(holder.getName());
-            }
+        // clean up how exactly?
+        if (metaTileEntity.hasCustomName()) {
+            itemStack.setStackDisplayName(metaTileEntity.getName());
         }
         drops.add(itemStack);
         metaTileEntity.getDrops(drops, harvesters.get());

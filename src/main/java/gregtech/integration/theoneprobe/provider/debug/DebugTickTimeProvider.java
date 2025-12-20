@@ -1,7 +1,6 @@
 package gregtech.integration.theoneprobe.provider.debug;
 
 import gregtech.api.metatileentity.GTBaseTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
@@ -35,7 +34,7 @@ public class DebugTickTimeProvider implements IProbeInfoProvider {
 
                     // this is for dev environment debug, so don't worry about translating
                     probeInfo.text("Average: " +
-                            TextFormattingUtil.formatNumbers(averageTickTime / MetaTileEntityHolder.TRACKED_TICKS) +
+                            TextFormattingUtil.formatNumbers(averageTickTime / GTBaseTileEntity.TRACKED_TICKS) +
                             "ns");
                     probeInfo.text("Worst: " + TextFormattingUtil.formatNumbers(worstTickTime) + "ns");
                 }

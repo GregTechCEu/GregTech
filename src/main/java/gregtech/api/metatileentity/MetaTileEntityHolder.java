@@ -55,6 +55,7 @@ import java.util.ArrayList;
 
 import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
+@Deprecated
 @InterfaceList(value = {
         @Interface(iface = "appeng.api.networking.security.IActionHost",
                    modid = Mods.Names.APPLIED_ENERGISTICS2,
