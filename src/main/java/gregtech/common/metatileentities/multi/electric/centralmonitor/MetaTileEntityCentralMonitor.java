@@ -390,7 +390,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity metaTileEntityHolder) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityCentralMonitor(metaTileEntityId);
     }
 

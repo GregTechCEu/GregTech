@@ -522,7 +522,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity metaTileEntityHolder) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityMonitorScreen(this.metaTileEntityId);
     }
 

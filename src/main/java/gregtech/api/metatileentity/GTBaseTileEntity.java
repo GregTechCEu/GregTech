@@ -452,10 +452,6 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     @Override
     public abstract MetaTileEntity getMetaTileEntity();
 
-    public MetaTileEntity copy() {
-        return getMetaTileEntity().createMetaTileEntity(null);
-    }
-
     // MetaTileEntity Methods
 
     protected abstract void writeInitialSyncDataMTE(@NotNull PacketBuffer buf);

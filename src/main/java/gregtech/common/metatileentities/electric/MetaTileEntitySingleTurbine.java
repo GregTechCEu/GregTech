@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.electric;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
 
@@ -24,7 +23,7 @@ public class MetaTileEntitySingleTurbine extends SimpleGeneratorMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntitySingleTurbine(metaTileEntityId, recipeMap, renderer, getTier(),
                 getTankScalingFunction());
     }

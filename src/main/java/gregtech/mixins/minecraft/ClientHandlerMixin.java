@@ -29,8 +29,10 @@ public abstract class ClientHandlerMixin {
     private WorldClient world;
 
     /**
-     * Initializes any MetaTileEntities right before {@link Chunk#read(PacketBuffer, int, boolean) Chunk.read()} is called in
+     * Initializes any MetaTileEntities right before {@link Chunk#read(PacketBuffer, int, boolean) Chunk.read()} is
+     * called in
      * {@link NetHandlerPlayClient#handleChunkData(SPacketChunkData) handleChunkData()}.
+     * 
      * @param packetIn Chunk Data Packet
      */
     @Inject(method = "handleChunkData",
@@ -45,6 +47,7 @@ public abstract class ClientHandlerMixin {
 
     /**
      * Initializes the MetaTileEntity before it handles
+     * 
      * @param packetIn Tile Entity Update Packet
      */
     @Inject(method = "handleUpdateTileEntity",
@@ -58,6 +61,7 @@ public abstract class ClientHandlerMixin {
     /**
      * Creates the correct MetaTileEntity from the given tag and sets the tile entity to the world
      * IF a TileEntity doesn't already exist at the position
+     * 
      * @param tag TileEntity tag data
      */
     @Unique
@@ -76,7 +80,7 @@ public abstract class ClientHandlerMixin {
         if (world.getChunk(pos).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) == null) {
             if (world.getBlockState(pos).getBlock() != registry.getBlock())
                 world.setBlockState(pos, registry.getBlock().getDefaultState());
-            world.setTileEntity(pos, mte.createMetaTileEntity(null));
+            world.setTileEntity(pos, mte.copy());
         }
     }
 }

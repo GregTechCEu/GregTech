@@ -1,7 +1,6 @@
 package gregtech.api.block.machines;
 
 import gregtech.api.GTValues;
-import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;

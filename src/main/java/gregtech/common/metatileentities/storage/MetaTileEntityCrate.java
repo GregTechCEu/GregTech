@@ -67,7 +67,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityCrate(metaTileEntityId, material, inventorySize, rowSize);
     }
 

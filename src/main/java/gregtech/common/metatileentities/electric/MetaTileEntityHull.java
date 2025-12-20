@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.electric;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
@@ -43,7 +42,7 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public gregtech.api.metatileentity.MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public gregtech.api.metatileentity.MetaTileEntity copy() {
         return new MetaTileEntityHull(metaTileEntityId, getTier());
     }
 

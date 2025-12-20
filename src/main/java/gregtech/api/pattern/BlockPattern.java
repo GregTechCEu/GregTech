@@ -389,7 +389,7 @@ public class BlockPattern {
                                     .getRegistry(found.getItem().getRegistryName().getNamespace());
                             MetaTileEntity sampleMetaTileEntity = registry.getObjectById(found.getItemDamage());
                             if (sampleMetaTileEntity != null) {
-                                MetaTileEntity metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(null);
+                                MetaTileEntity metaTileEntity = sampleMetaTileEntity.copy();
                                 metaTileEntity.onPlacement(player);
                                 blocks.put(pos, metaTileEntity);
                                 if (found.getTagCompound() != null) {
@@ -577,9 +577,7 @@ public class BlockPattern {
                                 EnumFacing.UP, false, structureDir);
                         // TODO
                         if (info.getTileEntity() instanceof IGregTechTileEntity gregTechTile) {
-                            // MetaTileEntityHolder holder = new MetaTileEntityHolder();
-                            // holder.setMetaTileEntity(gregTechTile.getMetaTileEntity());
-                            MetaTileEntity mte = gregTechTile.getMetaTileEntity().createMetaTileEntity(null);
+                            MetaTileEntity mte = gregTechTile.copy();
                             mte.onPlacement();
                             info = new BlockInfo(mte.getBlock().getDefaultState(), mte);
                         }

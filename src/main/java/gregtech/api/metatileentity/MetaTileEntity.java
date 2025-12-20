@@ -22,7 +22,6 @@ import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.interfaces.IHasWorldObjectAndCoords;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.mui.GTGuiTheme;
@@ -197,7 +196,10 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
         return this;
     }
 
-    public abstract MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity);
+    @Deprecated
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+        return copy();
+    }
 
     public void addDebugInfo(List<String> list) {}
 

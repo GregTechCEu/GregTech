@@ -23,16 +23,17 @@ public abstract class TileEntityMixin {
     /**
      * Fixes the {@link Class#newInstance()} TE call by using nbt tag data to create the correct {@link MetaTileEntity}.
      *
-     * @param instance TileEntity class
-     * @param original {@link Class#newInstance()}
+     * @param instance    TileEntity class
+     * @param original    {@link Class#newInstance()}
      * @param tagCompound additional data, used for {@link TileEntity#readFromNBT(NBTTagCompound)}
      * @return the correct MetaTileEntity, or the result of the original operation
      */
     @WrapOperation(method = "create",
                    at = @At(value = "INVOKE",
                             target = "Ljava/lang/Class;newInstance()Ljava/lang/Object;"))
-    private static Object wrapNewInstance(Class<? extends TileEntity> instance, Operation<? extends TileEntity> original,
-                               @Local(argsOnly = true) NBTTagCompound tagCompound) {
+    private static Object wrapNewInstance(Class<? extends TileEntity> instance,
+                                          Operation<? extends TileEntity> original,
+                                          @Local(argsOnly = true) NBTTagCompound tagCompound) {
         if (IGregTechTileEntity.class.isAssignableFrom(instance)) {
             // this is necessary to avoid the no args constructor call
             var location = new ResourceLocation(tagCompound.getString("MetaId"));
@@ -42,7 +43,7 @@ public abstract class TileEntityMixin {
             if (mte != null) {
                 // todo remove this logging call
                 GTLog.logger.warn("creating {} from TileEntity#create", mte.metaTileEntityId, tagCompound);
-                return mte.createMetaTileEntity(null);
+                return mte.copy();
             }
         }
         return original.call(instance);
@@ -51,6 +52,7 @@ public abstract class TileEntityMixin {
     /**
      * Fixes an issue in {@link TileEntity#writeInternal(NBTTagCompound)} that expects the TE class to be registered.
      * However, MetaTileEntities are stored under the {@link GTBaseTileEntity} class.
+     * 
      * @param value the TileEntity class
      * @return GTBaseTileEntity's class if the class extends from it, otherwise the original class
      */

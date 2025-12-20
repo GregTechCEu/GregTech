@@ -7,7 +7,6 @@ import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.EnergyContainerBatteryBuffer;
 import gregtech.api.metatileentity.*;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.TextFormattingUtil;
@@ -63,7 +62,7 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityBatteryBuffer(metaTileEntityId, getTier(), inventorySize);
     }
 

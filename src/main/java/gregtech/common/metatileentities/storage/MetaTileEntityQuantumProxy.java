@@ -4,7 +4,6 @@ import gregtech.api.capability.DualHandler;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 
@@ -31,7 +30,7 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<Dua
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityQuantumProxy(metaTileEntityId);
     }
 

@@ -117,7 +117,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityCleanroom(metaTileEntityId);
     }
 

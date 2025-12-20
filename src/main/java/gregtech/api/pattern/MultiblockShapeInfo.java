@@ -99,9 +99,7 @@ public class MultiblockShapeInfo {
         }
 
         public Builder where(char symbol, MetaTileEntity tileEntity, EnumFacing frontSide) {
-            // MetaTileEntityHolder holder = new MetaTileEntityHolder();
-            // holder.setMetaTileEntity(tileEntity);
-            tileEntity = tileEntity.createMetaTileEntity(null);
+            tileEntity = tileEntity.copy();
             tileEntity.onPlacement();
             tileEntity.setFrontFacing(frontSide);
             return where(symbol, new BlockInfo(tileEntity.getBlock().getDefaultState(), tileEntity));
@@ -140,10 +138,7 @@ public class MultiblockShapeInfo {
                         BlockInfo info = symbolMap.getOrDefault(columnEntry.charAt(x), BlockInfo.EMPTY);
                         TileEntity tileEntity = info.getTileEntity();
                         if (tileEntity instanceof IGregTechTileEntity holder) {
-                            // do not copy here?
-                            final MetaTileEntity mte = holder.getMetaTileEntity().createMetaTileEntity(null);
-                            // holder = new MetaTileEntityHolder();
-                            // holder.setMetaTileEntity(mte);
+                            final MetaTileEntity mte = holder.copy();
                             mte.onPlacement();
                             mte.setFrontFacing(holder.getMetaTileEntity().getFrontFacing());
                             info = new BlockInfo(info.getBlockState(), mte);

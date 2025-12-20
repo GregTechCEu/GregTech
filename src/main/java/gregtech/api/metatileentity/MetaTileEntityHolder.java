@@ -77,6 +77,11 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     private int lagWarningCount = 0;
     protected static final DecimalFormat tricorderFormat = new DecimalFormat("#.#########");
 
+    @Override
+    public MetaTileEntity copy() {
+        return metaTileEntity.copy();
+    }
+
     public MetaTileEntity getMetaTileEntity() {
         return metaTileEntity;
     }
@@ -91,7 +96,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public MetaTileEntity setMetaTileEntity(@NotNull MetaTileEntity sampleMetaTileEntity,
                                             @Nullable NBTTagCompound tagCompound) {
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
-        setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
+        setRawMetaTileEntity(sampleMetaTileEntity.copy());
         if (tagCompound != null && !tagCompound.isEmpty())
             getMetaTileEntity().readMTETag(tagCompound);
         if (hasWorld() && !getWorld().isRemote) {
@@ -139,7 +144,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             MetaTileEntity sampleMetaTileEntity = registry.getObject(metaTileEntityId);
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
-                setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
+                setRawMetaTileEntity(sampleMetaTileEntity.copy());
                 /*
                  * Note: NBTs need to be read before onAttached is run, since NBTs may contain important information
                  * about the composition of the BlockPattern that onAttached may generate.

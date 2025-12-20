@@ -1,7 +1,5 @@
 package gregtech.api.util.world;
 
-import gregtech.api.metatileentity.GTBaseTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.Mods;
 
 import net.minecraft.block.Block;

@@ -1,7 +1,6 @@
 package gregtech.integration.jei.multiblock;
 
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
