@@ -98,8 +98,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import static gregtech.api.GregTechAPI.*;
@@ -126,11 +124,6 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.materialManager = MaterialRegistryManager.getInstance();
 
         OreGlob.setCompiler((expr, ignoreCase) -> new OreGlobParser(expr, ignoreCase).compile());
-    }
-
-    @Override
-    public @NotNull List<Class<?>> getEventBusSubscribers() {
-        return Collections.singletonList(CoreModule.class);
     }
 
     @NotNull

@@ -173,16 +173,11 @@ public class BlockPattern {
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
                         TileEntity tileEntity = worldState.getTileEntity();
                         if (predicate != TraceabilityPredicate.ANY) {
-                            if (tileEntity instanceof IGregTechTileEntity tile) {
-                                if (tile.isValid()) {
-                                    cache.put(pos.toLong(),
-                                            new BlockInfo(worldState.getBlockState(), tileEntity, predicate));
-                                } else {
-                                    cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), null, predicate));
-                                }
-                            } else {
+                            if (tileEntity != null && !tileEntity.isInvalid()) {
                                 cache.put(pos.toLong(),
                                         new BlockInfo(worldState.getBlockState(), tileEntity, predicate));
+                            } else {
+                                cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), null, predicate));
                             }
                         }
                         if (!predicate.test(worldState)) {

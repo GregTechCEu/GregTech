@@ -2,8 +2,6 @@ package gregtech.api.capability.impl;
 
 import gregtech.Bootstrap;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
