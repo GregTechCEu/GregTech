@@ -72,29 +72,6 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     private int lagWarningCount = 0;
     protected static final DecimalFormat tricorderFormat = new DecimalFormat("#.#########");
 
-    private static final ThreadLocal<IGregTechTileEntity> placingTE = new ThreadLocal<>();
-
-    public static void setPlacingTE(IGregTechTileEntity mte) {
-        if (mte == null) {
-            clearPlacingTE();
-        } else {
-            placingTE.set(mte);
-        }
-    }
-
-    public static void clearPlacingTE() {
-        placingTE.remove();
-    }
-
-    public static IGregTechTileEntity getPlacingTE() {
-        return placingTE.get();
-    }
-
-    public static MetaTileEntity copyPlacingMTE() {
-        if (placingTE.get() == null) return null;
-        return getPlacingTE().getMetaTileEntity().createMetaTileEntity(null);
-    }
-
     @Override
     public void notifyBlockUpdate() {
         getWorld().notifyNeighborsOfStateChange(pos, getBlockType(), false);
@@ -428,7 +405,8 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     public MetaTileEntity setMetaTileEntity(@NotNull MetaTileEntity mte, @Nullable NBTTagCompound tag) {
         Preconditions.checkNotNull(mte, "metaTileEntity");
         if (!getMetaID().equals(mte.getMetaID())) {
-            GTLog.logger.warn("attempting to change the MTE from {} to {}", getClass().getSimpleName(),
+            GTLog.logger.warn("attempting to change the MTE from {} to {}",
+                    getClass().getSimpleName(),
                     mte.getClass().getSimpleName());
             return getMetaTileEntity();
         }
@@ -462,6 +440,10 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
 
     @Override
     public abstract MetaTileEntity getMetaTileEntity();
+
+    public MetaTileEntity copy() {
+        return getMetaTileEntity().createMetaTileEntity(null);
+    }
 
     // MetaTileEntity Methods
 

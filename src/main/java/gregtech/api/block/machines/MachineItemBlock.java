@@ -91,11 +91,8 @@ public class MachineItemBlock extends ItemBlock {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         // prevent rendering glitch before meta tile entity sync to client, but after block placement
         // set opaque property on the placing on block, instead during set of meta tile entity
-        // gotta set this for some reason
-        GTBaseTileEntity.setPlacingTE(metaTileEntity);
         boolean superVal = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ,
                 newState.withProperty(BlockMachine.OPAQUE, metaTileEntity == null || metaTileEntity.isOpaqueCube()));
-        GTBaseTileEntity.clearPlacingTE();
         if (superVal && !world.isRemote) {
             BlockPos possiblePipe = pos.offset(side.getOpposite());
             Block block = world.getBlockState(possiblePipe).getBlock();

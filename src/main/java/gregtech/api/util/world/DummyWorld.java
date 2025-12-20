@@ -60,14 +60,8 @@ public class DummyWorld extends World {
         if (isOutsideBuildHeight(pos)) return;
         setBlockState(pos, state);
         if (entity != null) {
-            if (entity instanceof IGregTechTileEntity gregTechTile) {
-                GTBaseTileEntity.setPlacingTE(gregTechTile);
-            }
             setTileEntity(pos, entity);
             tileEntities.put(pos.toImmutable(), entity);
-        }
-        if (entity instanceof IGregTechTileEntity) {
-            GTBaseTileEntity.clearPlacingTE();
         }
     }
 

@@ -55,6 +55,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -74,6 +75,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -266,18 +268,13 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public void onBlockPlacedBy(World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
                                 @NotNull EntityLivingBase placer, ItemStack stack) {
-        IGregTechTileEntity holder = (IGregTechTileEntity) worldIn.getTileEntity(pos);
-        MTERegistry registry = GregTechAPI.mteManager.getRegistry(
-                Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace());
-
-        MetaTileEntity sampleMetaTileEntity = registry.getObjectById(stack.getItemDamage());
-        if (holder == null || sampleMetaTileEntity == null)
+        GTBaseTileEntity holder = Optional.of(stack)
+                .map(GTUtility::getMetaTileEntity)
+                .map(GTBaseTileEntity::copy)
+                .orElse(null);
+        if (holder == null)
             return;
 
-        // TODO Fix this
-        if (stack.hasDisplayName() && holder instanceof GTBaseTileEntity) {
-            ((GTBaseTileEntity) holder).setCustomName(stack.getDisplayName());
-        }
         var stackTag = stack.getTagCompound();
         NBTTagCompound mteTag = null;
         if (stackTag != null && !stackTag.isEmpty()) {
@@ -285,12 +282,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 var blockTag = stackTag.getCompoundTag(GregtechDataCodes.BLOCK_ENTITY_TAG);
                 String customName = blockTag.getString(GregtechDataCodes.CUSTOM_NAME);
                 if (!customName.isEmpty())
-                    ((GTBaseTileEntity) holder).setCustomName(customName);
+                    holder.setCustomName(customName);
 
                 mteTag = blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE);
                 List<String> removed = new ArrayList<>();
                 for (var key : mteTag.getKeySet()) {
-                    var trait = sampleMetaTileEntity.getMTETrait(key);
+                    var trait = holder.getMetaTileEntity().getMTETrait(key);
                     if (trait == null) continue;
 
                     removed.add(key);
@@ -298,7 +295,17 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 removed.forEach(mteTag::removeTag);
             }
         }
-        MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity, mteTag);
+
+        MetaTileEntity metaTileEntity = holder.getMetaTileEntity();
+        if (worldIn.getChunk(pos).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) == null) {
+            worldIn.setTileEntity(pos, metaTileEntity);
+        }
+
+        // TODO Fix this
+        if (stack.hasDisplayName()) {
+            metaTileEntity.setCustomName(stack.getDisplayName());
+        }
+
         if (mteTag == null) {
             if (stackTag != null && !stackTag.isEmpty())
                 metaTileEntity.initFromItemStackData(stackTag);
@@ -476,7 +483,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public TileEntity createNewTileEntity(@Nullable World worldIn, int meta) {
         // i wonder if it would be a good idea to give a "proto" TE
         // though that's really just mte holder but in a different way
-        return GTBaseTileEntity.copyPlacingMTE();
+        // actually just return null, TE is handled elsewhere
+        return null;
     }
 
     @NotNull
