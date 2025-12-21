@@ -37,7 +37,8 @@ public abstract class ClientHandlerMixin {
     }
 
     /**
-     * Initializes the MetaTileEntity before it handles
+     * Initializes the MetaTileEntity before {@link gregtech.api.metatileentity.SyncedTileEntityBase#handleUpdateTag
+     * handleUpdateTag()} is called
      * 
      * @param packetIn Tile Entity Update Packet
      */
