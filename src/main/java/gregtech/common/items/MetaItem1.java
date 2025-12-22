@@ -26,7 +26,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.RandomPotionEffect;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.covers.filter.IFilter;
 import gregtech.common.covers.filter.OreDictionaryItemFilter;
 import gregtech.common.covers.filter.SimpleFluidFilter;
 import gregtech.common.covers.filter.SimpleItemFilter;
@@ -52,8 +51,8 @@ import gregtech.common.items.behaviors.TooltipBehavior;
 import gregtech.common.items.behaviors.TricorderBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.items.behaviors.filter.OreDictFilterUIManager;
-import gregtech.common.items.behaviors.filter.SimpleFilterUIManager;
 import gregtech.common.items.behaviors.filter.SimpleFluidFilterUIManager;
+import gregtech.common.items.behaviors.filter.SimpleItemFilterUIManager;
 import gregtech.common.items.behaviors.filter.SmartFilterUIManager;
 import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
@@ -629,17 +628,17 @@ public class MetaItem1 extends StandardMetaItem {
         // Filters: ID 290-300
         FLUID_FILTER = addItem(290, "fluid_filter")
                 .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Zinc, M * 2)))
-                .addComponents(new SimpleFluidFilterUIManager(), IFilter.factory(SimpleFluidFilter::new));
+                .addComponents(new SimpleFluidFilterUIManager(), new SimpleFluidFilter());
         ITEM_FILTER = addItem(291, "item_filter")
                 .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Zinc, M * 2),
                         new MaterialStack(Materials.Steel, M)))
-                .addComponents(new SimpleFilterUIManager(), IFilter.factory(SimpleItemFilter::new));
+                .addComponents(new SimpleItemFilterUIManager(), new SimpleItemFilter());
         ORE_DICTIONARY_FILTER = addItem(292, "ore_dictionary_filter")
                 .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Zinc, M * 2)))
-                .addComponents(new OreDictFilterUIManager(), IFilter.factory(OreDictionaryItemFilter::new));
+                .addComponents(new OreDictFilterUIManager(), new OreDictionaryItemFilter());
         SMART_FILTER = addItem(293, "smart_item_filter")
                 .setRecyclingData(new RecyclingData(new MaterialStack(Materials.Zinc, M * 3 / 2)))
-                .addComponents(new SmartFilterUIManager(), IFilter.factory(SmartItemFilter::new));
+                .addComponents(new SmartFilterUIManager(), new SmartItemFilter());
 
         // Functional Covers: ID 301-330
         COVER_MACHINE_CONTROLLER = addItem(301, "cover.controller");
