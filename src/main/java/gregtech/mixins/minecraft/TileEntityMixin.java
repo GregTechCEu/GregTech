@@ -40,11 +40,8 @@ public abstract class TileEntityMixin {
             MetaTileEntity mte = GregTechAPI.mteManager
                     .getRegistry(location.getNamespace())
                     .getObject(location);
-            if (mte != null) {
-                // todo remove this logging call
-                GTLog.logger.warn("creating {} from TileEntity#create", mte.metaTileEntityId, tagCompound);
-                return mte.copy();
-            }
+
+            if (mte != null) return mte.copy();
         }
         return original.call(instance);
     }
