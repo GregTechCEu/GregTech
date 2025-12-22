@@ -81,30 +81,6 @@ public class SmartItemFilter extends BaseFilter {
         return new SmartItemFilter();
     }
 
-    private static class ItemAndMetadataAndStackSize {
-
-        public final ItemAndMetadata itemAndMetadata;
-        public final int transferStackSize;
-
-        public ItemAndMetadataAndStackSize(ItemAndMetadata itemAndMetadata, int transferStackSize) {
-            this.itemAndMetadata = itemAndMetadata;
-            this.transferStackSize = transferStackSize;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ItemAndMetadataAndStackSize)) return false;
-            ItemAndMetadataAndStackSize that = (ItemAndMetadataAndStackSize) o;
-            return itemAndMetadata.equals(that.itemAndMetadata);
-        }
-
-        @Override
-        public int hashCode() {
-            return itemAndMetadata.hashCode();
-        }
-    }
-
     public enum SmartFilteringMode implements IStringSerializable {
 
         ELECTROLYZER("cover.smart_item_filter.filtering_mode.electrolyzer", RecipeMaps.ELECTROLYZER_RECIPES),
