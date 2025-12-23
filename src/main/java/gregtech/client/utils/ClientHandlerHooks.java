@@ -1,16 +1,11 @@
 package gregtech.client.utils;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import org.spongepowered.asm.mixin.Unique;
 
 import java.util.List;
 
@@ -43,21 +38,6 @@ public class ClientHandlerHooks {
                     tagCompound.getInteger("z"));
             placeTile(world, mte, pos);
         }
-    }
-
-    /**
-     * Creates the correct MetaTileEntity from the given tag
-     *
-     * @param tag TileEntity tag data
-     */
-    @Unique
-    private static MetaTileEntity fromTag(NBTTagCompound tag) {
-        if (tag.hasKey("MetaId")) {
-            ResourceLocation metaId = new ResourceLocation(tag.getString("MetaId"));
-            MTERegistry registry = GregTechAPI.mteManager.getRegistry(metaId.getNamespace());
-            return registry.getObject(metaId);
-        }
-        return null;
     }
 
     /**
