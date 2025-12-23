@@ -1,14 +1,12 @@
 package gregtech.mixins.minecraft;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -36,11 +34,7 @@ public abstract class TileEntityMixin {
                                           @Local(argsOnly = true) NBTTagCompound tagCompound) {
         if (IGregTechTileEntity.class.isAssignableFrom(instance)) {
             // this is necessary to avoid the no args constructor call
-            var location = new ResourceLocation(tagCompound.getString("MetaId"));
-            MetaTileEntity mte = GregTechAPI.mteManager
-                    .getRegistry(location.getNamespace())
-                    .getObject(location);
-
+            MetaTileEntity mte = GTUtility.getMetaTileEntity(tagCompound.getString("MetaId"));
             if (mte != null) return mte.copy();
         }
         return original.call(instance);

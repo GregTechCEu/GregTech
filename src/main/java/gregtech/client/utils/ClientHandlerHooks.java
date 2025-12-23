@@ -3,12 +3,12 @@ package gregtech.client.utils;
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.registry.MTERegistry;
+import gregtech.api.util.GTUtility;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 
 import org.spongepowered.asm.mixin.Unique;
 
@@ -35,9 +35,11 @@ public class ClientHandlerHooks {
      * @param tagCompound TileEntity tag data
      */
     public static void handleTag(World world, NBTTagCompound tagCompound) {
-        MetaTileEntity mte = fromTag(tagCompound);
+        MetaTileEntity mte = GTUtility.getMetaTileEntity(tagCompound);
         if (mte != null) {
-            BlockPos pos = new BlockPos(tagCompound.getInteger("x"), tagCompound.getInteger("y"),
+            BlockPos pos = new BlockPos(
+                    tagCompound.getInteger("x"),
+                    tagCompound.getInteger("y"),
                     tagCompound.getInteger("z"));
             placeTile(world, mte, pos);
         }
@@ -69,9 +71,8 @@ public class ClientHandlerHooks {
         // set te in world directly
         // check if world contains a TE at this pos?
         // is null checking good enough?
-        if (world.getChunk(pos).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) == null) {
-            if (world.getBlockState(pos).getBlock() != mte.getBlock())
-                world.setBlockState(pos, mte.getBlock().getDefaultState());
+        if (!GTUtility.hasTileEntity(world, pos)) {
+            world.setBlockState(pos, mte.getBlock().getDefaultState());
             world.setTileEntity(pos, mte.copy());
         }
     }

@@ -54,7 +54,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -74,7 +73,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -267,13 +265,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public void onBlockPlacedBy(World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
                                 @NotNull EntityLivingBase placer, ItemStack stack) {
-        MetaTileEntity metaTileEntity = Optional.of(stack)
-                .map(GTUtility::getMetaTileEntity)
-                .map(MetaTileEntity::copy)
-                .orElse(null);
+        MetaTileEntity sampleMetaTileEntity = GTUtility.getMetaTileEntity(stack);
 
-        if (metaTileEntity == null)
+        if (sampleMetaTileEntity == null)
             return;
+
+        MetaTileEntity metaTileEntity = sampleMetaTileEntity.copy();
 
         var stackTag = stack.getTagCompound();
         NBTTagCompound mteTag = null;
@@ -300,7 +297,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             metaTileEntity.readMTETag(mteTag);
         }
 
-        if (worldIn.getChunk(pos).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) == null) {
+        if (!GTUtility.hasTileEntity(worldIn, pos)) {
             worldIn.setTileEntity(pos, metaTileEntity);
         }
 
