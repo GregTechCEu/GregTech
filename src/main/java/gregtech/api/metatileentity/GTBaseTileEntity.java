@@ -81,7 +81,9 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     @Override
     public final void readFromNBT(@NotNull NBTTagCompound compound) {
         super.readFromNBT(compound);
-        customName = compound.getString(GregtechDataCodes.CUSTOM_NAME);
+        if (compound.hasKey(GregtechDataCodes.CUSTOM_NAME, Constants.NBT.TAG_STRING)) {
+            customName = compound.getString(GregtechDataCodes.CUSTOM_NAME);
+        }
         if (compound.hasKey("MetaId", Constants.NBT.TAG_STRING)) {
             readMTETag(compound.getCompoundTag("MetaTileEntity"));
             if (Mods.AppliedEnergistics2.isModLoaded()) {
@@ -94,7 +96,9 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     @Override
     public final NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setString(GregtechDataCodes.CUSTOM_NAME, getName());
+        if (hasCustomName()) {
+            compound.setString(GregtechDataCodes.CUSTOM_NAME, getName());
+        }
         compound.setString("MetaId", getMetaID().toString());
         NBTTagCompound metaTileEntityData = new NBTTagCompound();
         writeMTETag(metaTileEntityData);
