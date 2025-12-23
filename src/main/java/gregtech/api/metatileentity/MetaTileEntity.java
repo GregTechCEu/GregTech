@@ -178,6 +178,7 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
 
     protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
+        this.holder = this;
         this.registry = GregTechAPI.mteManager.getRegistry(metaTileEntityId.getNamespace());
         initializeInventory();
     }
@@ -194,8 +195,9 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
 
     // todo remove this
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public IGregTechTileEntity getHolder() {
-        return this;
+        return this.holder;
     }
 
     @Deprecated
@@ -1227,11 +1229,6 @@ public abstract class MetaTileEntity extends GTBaseTileEntity
         if (getWorld() != null && !getWorld().isRemote && getCoverAtSide(side) == null) {
             notifyBlockUpdate();
         }
-    }
-
-    @Override
-    public void notifyBlockUpdate() {
-        if (holder != null) holder.notifyBlockUpdate();
     }
 
     @Override

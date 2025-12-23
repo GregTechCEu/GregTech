@@ -217,17 +217,12 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         buf.writeString(getName());
-        // below this might not be necessary anymore ?
-        buf.writeBoolean(true);
-        buf.writeVarInt(getRegistry().getNetworkId());
-        buf.writeVarInt(getRegistry().getIdByObjectName(getMetaID()));
         writeInitialSyncDataMTE(buf);
     }
 
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         setCustomName(buf.readString(Short.MAX_VALUE));
-        buf.readBoolean();
         receiveMTEInitializationData(buf);
     }
 
@@ -244,10 +239,8 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
      * @param buf the buffer to read data from
      */
     private void receiveMTEInitializationData(@NotNull PacketBuffer buf) {
-        int networkId = buf.readVarInt();
-        int metaTileEntityId = buf.readVarInt();
-        this.onPlacement();
         this.receiveInitialSyncDataMTE(buf);
+        this.onPlacement();
         scheduleRenderUpdate();
         this.needToUpdateLightning = true;
     }
@@ -338,7 +331,7 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
     @NotNull
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        if (this instanceof IFastRenderMetaTileEntity fastRender) {
+        if (getMetaTileEntity() instanceof IFastRenderMetaTileEntity fastRender) {
             return fastRender.getRenderBoundingBox();
         }
         return new AxisAlignedBB(getPos());
@@ -541,11 +534,7 @@ public abstract class GTBaseTileEntity extends TickableTileEntityBase implements
 
     @Override
     @Optional.Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
-    public void gridChanged() {
-        // if (metaTileEntity != null) {
-        // metaTileEntity.gridChanged();
-        // }
-    }
+    public void gridChanged() {}
 
     @Optional.Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public void readFromNBT_AENetwork(NBTTagCompound data) {
