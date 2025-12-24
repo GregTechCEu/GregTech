@@ -8,6 +8,7 @@ import gregtech.api.capability.impl.RecipeLogicSteam;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.client.particle.VanillaParticleEffects;
@@ -22,7 +23,12 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
@@ -34,6 +40,11 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +54,8 @@ import java.util.Objects;
 
 public abstract class SteamMetaTileEntity extends MetaTileEntity {
 
+    // todo quick and dirty fix to not show input tank in ui, find better solution
+    protected static final FluidTankList EMPTY = new FluidTankList(false);
     protected static final int STEAM_CAPACITY = 16000;
 
     protected final boolean isHighPressure;
@@ -125,6 +138,34 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     public FluidTankList createImportFluidHandler() {
         this.steamFluidTank = new FilteredFluidHandler(STEAM_CAPACITY).setFilter(CommonFluidFilters.STEAM);
         return new FluidTankList(false, steamFluidTank);
+    }
+
+    @Override
+    public boolean usesMui2() {
+        RecipeMap<?> map = getRecipeMap();
+        return map != null && map.getRecipeMapUI().usesMui2();
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+        RecipeMap<?> map = Objects.requireNonNull(getRecipeMap());
+
+        return map.getRecipeMapUI()
+                .constructPanel(this, workableHandler::getProgressPercent,
+                        importItems, exportItems,
+                        EMPTY, exportFluids,
+                        0, panelSyncManager)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(getUITheme().getLogo().asWidget()
+                        .size(16)
+                        .right(7)
+                        .top(46))
+                .bindPlayerInventory();
+    }
+
+    @Override
+    public GTGuiTheme getUITheme() {
+        return isHighPressure ? GTGuiTheme.STEEL : GTGuiTheme.BRONZE;
     }
 
     public ModularUI.Builder createUITemplate(EntityPlayer player) {

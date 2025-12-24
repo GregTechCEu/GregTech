@@ -1,20 +1,24 @@
 package gregtech.api.recipes;
 
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.recipes.ui.RecipeMapUI;
+import gregtech.api.recipes.ui.RecipeMapUIBuilder;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 
+import com.cleanroommc.modularui.drawable.UITexture;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 import static gregtech.api.recipes.ui.RecipeMapUI.computeOverlayKey;
 
@@ -22,8 +26,6 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
 
     private final String unlocalizedName;
     private final B defaultRecipeBuilder;
-
-    private final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectArrayMap<>();
 
     private int itemInputs;
     private boolean modifyItemInputs = true;
@@ -36,12 +38,6 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
 
     private boolean isGenerator;
 
-    private @Nullable TextureArea progressBar;
-    private @Nullable ProgressWidget.MoveType moveType;
-
-    private @Nullable TextureArea specialTexture;
-    private int @Nullable [] specialTextureLocation;
-
     private RecipeMapUIFunction recipeMapUIFunction = this::buildUI;
 
     private SoundEvent sound;
@@ -50,6 +46,26 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private @Nullable Map<ResourceLocation, RecipeBuildAction<B>> buildActions;
 
     private boolean sortToBack;
+
+    /* *********************** MUI 1 *********************** */
+
+    @Deprecated
+    private final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectArrayMap<>();
+    @Deprecated
+    private @Nullable TextureArea progressBar;
+    @Deprecated
+    private @Nullable gregtech.api.gui.widgets.ProgressWidget.MoveType moveType;
+    @Deprecated
+    private @Nullable TextureArea specialTexture;
+    @Deprecated
+    private int @Nullable [] specialTextureLocation;
+
+    /* *********************** MUI 2 *********************** */
+
+    @ApiStatus.Experimental
+    private boolean usesMui2 = false;
+
+    private @Nullable Consumer<RecipeMapUIBuilder> mapUIBuilder;
 
     /**
      * @param unlocalizedName      the name of the recipemap
@@ -143,31 +159,40 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
+     * @deprecated in favor of the MUI2 method.
      * @param progressBar the progress bar texture to use
      * @return this
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> progressBar(@Nullable TextureArea progressBar) {
         this.progressBar = progressBar;
         return this;
     }
 
     /**
+     * @deprecated in favor of the MUI2 method.
      * @param progressBar the progress bar texture to use
      * @param moveType    the progress bar move type to use
      * @return this
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> progressBar(@Nullable TextureArea progressBar,
-                                                    @Nullable ProgressWidget.MoveType moveType) {
+                                                    @Nullable gregtech.api.gui.widgets.ProgressWidget.MoveType moveType) {
         this.progressBar = progressBar;
         this.moveType = moveType;
         return this;
     }
 
     /**
+     * @deprecated in favor of the MUI2 method.
      * @param texture  the texture to use
      * @param isOutput if the slot is an output slot
      * @return this
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> itemSlotOverlay(@NotNull TextureArea texture, boolean isOutput) {
         this.slotOverlays.put(computeOverlayKey(isOutput, false, false), texture);
         this.slotOverlays.put(computeOverlayKey(isOutput, false, true), texture);
@@ -175,11 +200,14 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
+     * @deprecated in favor of the MUI2 method.
      * @param texture    the texture to use
      * @param isOutput   if the slot is an output slot
      * @param isLastSlot if the slot is the last slot
      * @return this
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> itemSlotOverlay(@NotNull TextureArea texture, boolean isOutput,
                                                         boolean isLastSlot) {
         this.slotOverlays.put(computeOverlayKey(isOutput, false, isLastSlot), texture);
@@ -187,10 +215,13 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
+     * @deprecated in favor of the MUI2 method.
      * @param texture  the texture to use
      * @param isOutput if the slot is an output slot
      * @return this
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> fluidSlotOverlay(@NotNull TextureArea texture, boolean isOutput) {
         this.slotOverlays.put(computeOverlayKey(isOutput, true, false), texture);
         this.slotOverlays.put(computeOverlayKey(isOutput, true, true), texture);
@@ -198,21 +229,40 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
+     * @deprecated in favor of the MUI2 method.
      * @param texture    the texture to use
      * @param isOutput   if the slot is an output slot
      * @param isLastSlot if the slot is the last slot
      * @return this
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> fluidSlotOverlay(@NotNull TextureArea texture, boolean isOutput,
                                                          boolean isLastSlot) {
         this.slotOverlays.put(computeOverlayKey(isOutput, true, isLastSlot), texture);
         return this;
     }
 
+    /**
+     * @deprecated in favor of the MUI2 method.
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> specialTexture(@NotNull TextureArea texture, int x, int y, int width,
                                                        int height) {
         this.specialTexture = texture;
         this.specialTextureLocation = new int[] { x, y, width, height };
+        return this;
+    }
+
+    /**
+     * @apiNote Only needed if you do not set textures using MUI2 methods, i.e. the ones that accept{@link UITexture}.
+     *          <br>
+     *          Marked experimental since this method will disappear once MUI2 is fully supported by all GTCEu UIs.
+     */
+    @ApiStatus.Experimental
+    public @NotNull RecipeMapBuilder<B> usesMui2() {
+        this.usesMui2 = true;
         return this;
     }
 
@@ -225,6 +275,12 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
         return this;
     }
 
+    public @NotNull RecipeMapBuilder<B> uiBuilder(@NotNull Consumer<RecipeMapUIBuilder> mapUIBuilder) {
+        this.usesMui2 = true;
+        this.mapUIBuilder = Objects.requireNonNull(mapUIBuilder, "ui builder is null");
+        return this;
+    }
+
     /**
      * @param recipeMap the recipemap associated with the ui
      * @return the RecipeMap's ui
@@ -232,17 +288,21 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private @NotNull RecipeMapUI<?> buildUI(@NotNull RecipeMap<?> recipeMap) {
         RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, modifyItemInputs, modifyItemOutputs, modifyFluidInputs,
                 modifyFluidOutputs, isGenerator);
-        if (progressBar != null) {
-            ui.setProgressBarTexture(progressBar);
-        }
-        if (moveType != null) {
-            ui.setProgressBarMoveType(moveType);
-        }
-        if (specialTexture != null && specialTextureLocation != null) {
-            ui.setSpecialTexture(specialTexture, specialTextureLocation);
-        }
-        for (var entry : slotOverlays.byte2ObjectEntrySet()) {
-            ui.setSlotOverlay(entry.getByteKey(), entry.getValue());
+        if (usesMui2 && this.mapUIBuilder != null) {
+            ui.buildMui2(this.mapUIBuilder);
+        } else {
+            if (progressBar != null) {
+                ui.setProgressBarTexture(progressBar);
+            }
+            if (moveType != null) {
+                ui.setProgressBarMoveType(moveType);
+            }
+            if (specialTexture != null && specialTextureLocation != null) {
+                ui.setSpecialTexture(specialTexture, specialTextureLocation);
+            }
+            for (var entry : slotOverlays.byte2ObjectEntrySet()) {
+                ui.setSlotOverlay(entry.getByteKey(), entry.getValue());
+            }
         }
 
         return ui;

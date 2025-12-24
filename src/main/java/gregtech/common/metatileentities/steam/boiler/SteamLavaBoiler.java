@@ -5,17 +5,15 @@ import gregtech.api.capability.IFilter;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.unification.material.Materials;
 import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
+import gregtech.common.mui.widget.GTFluidSlot;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -26,6 +24,10 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -121,11 +123,16 @@ public class SteamLavaBoiler extends SteamBoiler {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return createUITemplate(entityPlayer)
-                .widget(new TankWidget(fuelFluidTank, 119, 26, 10, 54)
-                        .setBackgroundTexture(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure)))
-                .build(getHolder(), entityPlayer);
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+        return super.buildUI(guiData, panelSyncManager, settings)
+                .child(new GTFluidSlot()
+                        .syncHandler(GTFluidSlot.sync(fuelFluidTank)
+                                .showAmountOnSlot(false))
+                        .pos(119, 26)
+                        .size(10, 54)
+                        .background(isHighPressure ?
+                                GTGuiTextures.PROGRESS_BAR_BOILER_EMPTY_STEEL :
+                                GTGuiTextures.PROGRESS_BAR_BOILER_EMPTY_BRONZE));
     }
 
     @SideOnly(Side.CLIENT)
