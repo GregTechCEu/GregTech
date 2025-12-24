@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -72,7 +71,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityAssemblyLine(metaTileEntityId);
     }
 
@@ -179,8 +178,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (ConfigHolder.client.shader.assemblyLineParticles) {
             if (getRecipeMapWorkable().isWorking()) {
                 int maxBeams = getAbilities(MultiblockAbility.IMPORT_ITEMS).size() + 1;
@@ -212,14 +211,14 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         writeParticles(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         readParticles(buf);
     }
 

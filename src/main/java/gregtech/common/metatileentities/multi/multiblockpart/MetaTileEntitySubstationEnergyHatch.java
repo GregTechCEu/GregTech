@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 
 import net.minecraft.client.resources.I18n;
@@ -24,7 +23,7 @@ public class MetaTileEntitySubstationEnergyHatch extends MetaTileEntityEnergyHat
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntitySubstationEnergyHatch(metaTileEntityId, getTier(), amperage, isExportHatch);
     }
 

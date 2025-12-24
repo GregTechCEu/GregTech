@@ -5,7 +5,6 @@ import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
@@ -108,7 +107,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityConverter(metaTileEntityId, getTier(), amps);
     }
 
@@ -120,15 +119,15 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
         buf.writeBoolean(converterTrait.isFeToEu());
-        super.writeInitialSyncData(buf);
+        super.writeInitialSyncDataMTE(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
         converterTrait.setFeToEu(buf.readBoolean());
-        super.receiveInitialSyncData(buf);
+        super.receiveInitialSyncDataMTE(buf);
     }
 
     @Override

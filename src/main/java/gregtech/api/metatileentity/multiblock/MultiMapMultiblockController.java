@@ -191,27 +191,27 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setInteger("RecipeMapIndex", recipeMapIndex);
         return data;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         recipeMapIndex = data.getInteger("RecipeMapIndex");
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeByte(recipeMapIndex);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         recipeMapIndex = buf.readByte();
     }
 

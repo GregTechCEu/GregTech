@@ -141,15 +141,15 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        NBTTagCompound nbt = super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        NBTTagCompound nbt = super.writeMTETag(data);
         data.setByte("Type", (byte) ioType.ordinal());
         return nbt;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.ioType = IOType.values()[data.getByte("Type")];
     }
 

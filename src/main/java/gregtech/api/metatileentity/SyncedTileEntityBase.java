@@ -88,8 +88,11 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         }
         NBTTagCompound updateTag = new NBTTagCompound();
         updateTag.setTag("d", this.updates.dumpToNbt());
+        addAdditionalData(updateTag);
         return new SPacketUpdateTileEntity(getPos(), 0, updateTag);
     }
+
+    protected void addAdditionalData(NBTTagCompound updateTag) {}
 
     @Override
     public final void onDataPacket(@NotNull NetworkManager net, @NotNull SPacketUpdateTileEntity pkt) {
@@ -114,6 +117,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         writeInitialSyncData(new PacketBuffer(backedBuffer));
         byte[] updateData = Arrays.copyOfRange(backedBuffer.array(), 0, backedBuffer.writerIndex());
         updateTag.setByteArray("d", updateData);
+        addAdditionalData(updateTag);
         return updateTag;
     }
 

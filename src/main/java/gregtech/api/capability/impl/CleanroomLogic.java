@@ -178,7 +178,8 @@ public class CleanroomLogic {
 
     /**
      * writes all needed values to NBT
-     * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#writeToNBT(NBTTagCompound)} method
+     * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#writeMTETag(NBTTagCompound)}
+     * method
      */
     public NBTTagCompound writeToNBT(@NotNull NBTTagCompound data) {
         data.setBoolean("isActive", this.isActive);
@@ -191,7 +192,7 @@ public class CleanroomLogic {
 
     /**
      * reads all needed values from NBT
-     * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#readFromNBT(NBTTagCompound)}
+     * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#readMTETag(NBTTagCompound)}
      * method
      */
     public void readFromNBT(@NotNull NBTTagCompound data) {
@@ -205,7 +206,7 @@ public class CleanroomLogic {
     /**
      * writes all needed values to InitialSyncData
      * This MUST be called and returned in the MetaTileEntity's
-     * {@link MetaTileEntity#writeInitialSyncData(PacketBuffer)} method
+     * {@link MetaTileEntity#writeInitialSyncDataMTE(PacketBuffer)} method
      */
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
@@ -218,7 +219,7 @@ public class CleanroomLogic {
     /**
      * reads all needed values from InitialSyncData
      * This MUST be called and returned in the MetaTileEntity's
-     * {@link MetaTileEntity#receiveInitialSyncData(PacketBuffer)} method
+     * {@link MetaTileEntity#receiveInitialSyncDataMTE(PacketBuffer)} method
      */
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         setActive(buf.readBoolean());

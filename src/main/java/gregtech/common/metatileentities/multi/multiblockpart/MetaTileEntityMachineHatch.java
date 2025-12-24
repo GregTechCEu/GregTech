@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.metatileentity.IMachineHatchMultiblock;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -50,7 +49,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityMachineHatch(metaTileEntityId, getTier());
     }
 

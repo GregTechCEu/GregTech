@@ -6,7 +6,6 @@ import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -63,13 +62,13 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntitySteamHatch(metaTileEntityId);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.hasKey("ContainerInventory")) {
             MetaTileEntityQuantumTank.legacyTankItemHandlerNBTReading(this, data.getCompoundTag("ContainerInventory"),
                     0, 1);
@@ -77,8 +76,8 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote) {
             fillContainerFromInternalTank(importFluids);
             fillInternalTankFromFluidContainer();

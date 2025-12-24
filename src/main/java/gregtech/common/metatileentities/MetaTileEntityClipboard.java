@@ -97,8 +97,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (guiContainerCache == null) {
             createFakeGui();
             scheduleRenderUpdate();
@@ -143,7 +143,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityClipboard(metaTileEntityId);
     }
 
@@ -398,8 +398,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         if (this.getClipboard() != null && this.getClipboard().getTagCompound() != null)
             data.setTag("clipboardNBT", this.getClipboard().getTagCompound());
         else
@@ -408,8 +408,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         NBTBase clipboardNBT = data.getTag("clipboardNBT");
         if (clipboardNBT != NO_CLIPBOARD_SIG && clipboardNBT instanceof NBTTagCompound) {
             ItemStack clipboard = this.getClipboard();
@@ -425,8 +425,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         if (this.getClipboard() != null && this.getClipboard().getTagCompound() != null)
             buf.writeCompoundTag(this.getClipboard().getTagCompound());
         else {
@@ -435,8 +435,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         try {
             NBTTagCompound clipboardNBT = buf.readCompoundTag();
             if (clipboardNBT != null && !clipboardNBT.equals(new NBTTagCompound())) {

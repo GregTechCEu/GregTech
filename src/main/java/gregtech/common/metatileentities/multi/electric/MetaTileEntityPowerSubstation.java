@@ -8,7 +8,6 @@ import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -109,7 +108,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityPowerSubstation(metaTileEntityId);
     }
 
@@ -470,8 +469,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean("isActive", isActive);
         data.setBoolean("isWorkingEnabled", isWorkingEnabled);
         if (energyBank != null) {
@@ -481,8 +480,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         isActive = data.getBoolean("isActive");
         isWorkingEnabled = data.getBoolean("isWorkingEnabled");
         if (data.hasKey(NBT_ENERGY_BANK)) {
@@ -491,15 +490,15 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(isActive);
         buf.writeBoolean(isWorkingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         isActive = buf.readBoolean();
         isWorkingEnabled = buf.readBoolean();
     }

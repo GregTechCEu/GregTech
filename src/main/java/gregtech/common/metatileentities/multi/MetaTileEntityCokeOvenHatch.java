@@ -5,7 +5,6 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.ICubeRenderer;
@@ -54,8 +53,8 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0L && isAttachedToMultiBlock()) {
             TileEntity tileEntity = getNeighbor(getFrontFacing());
             IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity
@@ -93,7 +92,7 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityCokeOvenHatch(metaTileEntityId);
     }
 

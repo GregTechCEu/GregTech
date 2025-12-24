@@ -4,7 +4,6 @@ import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.PropertyFluidFilter;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
@@ -71,7 +70,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityMultiblockTank(metaTileEntityId, isMetal, capacity);
     }
 

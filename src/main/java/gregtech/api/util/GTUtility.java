@@ -43,6 +43,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
@@ -767,6 +768,30 @@ public class GTUtility {
         MTERegistry registry = GregTechAPI.mteManager.getRegistry(
                 Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace());
         return registry.getObjectById(stack.getItemDamage());
+    }
+
+    public static MetaTileEntity getMetaTileEntity(NBTTagCompound tagCompound) {
+        if (tagCompound.hasKey("MetaId")) {
+            return getMetaTileEntity(tagCompound.getString("MetaId"));
+        }
+        return null;
+    }
+
+    public static MetaTileEntity getMetaTileEntity(String resloc) {
+        return getMetaTileEntity(new ResourceLocation(resloc));
+    }
+
+    public static MetaTileEntity getMetaTileEntity(ResourceLocation location) {
+        return getMetaTileEntity(location.getNamespace(), location);
+    }
+
+    public static MetaTileEntity getMetaTileEntity(String modid, ResourceLocation location) {
+        return GregTechAPI.mteManager.getRegistry(modid).getObject(location);
+    }
+
+    public static boolean hasTileEntity(World world, BlockPos pos) {
+        // it is technically possible for the world to have a TE, but not the chunk
+        return world.getChunk(pos).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) != null;
     }
 
     /**

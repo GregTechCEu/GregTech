@@ -5,7 +5,6 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -105,25 +104,7 @@ public class IParallelableRecipeLogicTest {
             e.printStackTrace();
         }
 
-        // isValid() check in the dirtying logic requires both a metatileentity and a holder
-        try {
-            Field field = MetaTileEntity.class.getDeclaredField("holder");
-            field.setAccessible(true);
-            field.set(mbt, new MetaTileEntityHolder());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Field field = MetaTileEntityHolder.class.getDeclaredField("metaTileEntity");
-            field.setAccessible(true);
-            field.set(mbt.getHolder(), mbt);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        ((MetaTileEntityHolder) mbt.getHolder()).setWorld(world);
-
+        mbt.setWorld(world);
         // Controller and isAttachedToMultiBlock need the world so we fake it here.
         importItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false) {
 

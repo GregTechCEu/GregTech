@@ -8,7 +8,6 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
@@ -65,21 +64,21 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityDiode(metaTileEntityId, getTier(), getMaxAmperage());
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setInteger(AMP_NBT_KEY, amps);
         data.setBoolean("IsWorkingEnabled", isWorkingEnabled);
         return data;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.amps = data.getInteger(AMP_NBT_KEY);
         if (data.hasKey("IsWorkingEnabled")) {
             this.isWorkingEnabled = data.getBoolean("IsWorkingEnabled");
@@ -88,15 +87,15 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeInt(amps);
         buf.writeBoolean(isWorkingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.amps = buf.readInt();
         this.isWorkingEnabled = buf.readBoolean();
     }

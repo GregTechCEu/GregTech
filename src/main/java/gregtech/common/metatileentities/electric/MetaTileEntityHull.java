@@ -3,8 +3,6 @@ package gregtech.common.metatileentities.electric;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
@@ -44,7 +42,7 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public gregtech.api.metatileentity.MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public gregtech.api.metatileentity.MetaTileEntity copy() {
         return new MetaTileEntityHull(metaTileEntityId, getTier());
     }
 
@@ -81,8 +79,8 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (isFirstTick() && Mods.AppliedEnergistics2.isModLoaded()) {
             if (getProxy() != null) getProxy().onReady();
         }
@@ -99,8 +97,8 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart
     @Override
     @Optional.Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public AENetworkProxy getProxy() {
-        if (gridProxy == null && getHolder() instanceof MetaTileEntityHolder) {
-            gridProxy = new AENetworkProxy((MetaTileEntityHolder) getHolder(), "proxy", getStackForm(), true);
+        if (gridProxy == null) {
+            gridProxy = new AENetworkProxy(this, "proxy", getStackForm(), true);
         }
         return gridProxy;
     }

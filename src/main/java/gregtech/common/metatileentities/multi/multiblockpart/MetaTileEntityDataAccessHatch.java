@@ -8,7 +8,6 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -61,7 +60,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityDataAccessHatch(metaTileEntityId, getTier(), isCreative());
     }
 

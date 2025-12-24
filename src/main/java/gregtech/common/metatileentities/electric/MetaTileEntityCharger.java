@@ -10,7 +10,6 @@ import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.resources.I18n;
@@ -39,7 +38,7 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityCharger(metaTileEntityId, getTier(), inventorySize);
     }
 

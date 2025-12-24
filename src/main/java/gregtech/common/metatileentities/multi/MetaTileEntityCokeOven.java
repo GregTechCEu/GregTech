@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
@@ -52,7 +51,7 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityCokeOven(metaTileEntityId);
     }
 

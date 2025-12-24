@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.electric;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -58,7 +57,7 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityMagicEnergyAbsorber(metaTileEntityId);
     }
 
@@ -82,8 +81,8 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (getWorld().isRemote)
             return;
         if (!(getWorld().provider instanceof WorldProviderEnd)) {
@@ -134,14 +133,14 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(isActive);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.isActive = buf.readBoolean();
     }
 

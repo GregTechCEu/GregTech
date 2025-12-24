@@ -8,7 +8,6 @@ import gregtech.api.util.world.DummyWorld;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -139,7 +138,7 @@ public class QuantumChestTest {
 
             for (int i = 0; i < 16; i++) {
                 importItems.insertItem(0, GRAVEL.copy(), false);
-                quantumChest.update();
+                quantumChest.updateMTE();
             }
 
             ItemStack virtualized = itemInventory.getStackInSlot(0);
@@ -158,7 +157,7 @@ public class QuantumChestTest {
             IItemHandlerModifiable importItems = quantumChest.getImportItems();
 
             importItems.insertItem(0, GRAVEL.copy(), false);
-            quantumChest.update();
+            quantumChest.updateMTE();
             ItemStack stack = importItems.getStackInSlot(0);
 
             assertThat(String.format("%s should be Empty!", itemStackToString(stack)), stack.isEmpty());
@@ -166,7 +165,7 @@ public class QuantumChestTest {
             assertThat("Export slot was not filled!", !exportItems.getStackInSlot(0).isEmpty());
 
             importItems.insertItem(0, GRAVEL.copy(), false);
-            quantumChest.update();
+            quantumChest.updateMTE();
             assertThat("Virtual stack should not be empty!", !quantumChest.virtualItemStack.isEmpty());
         }
     }
@@ -180,7 +179,7 @@ public class QuantumChestTest {
             insertItem(combinedInventory, GTUtility.copy(toInsert, SAND), false);
 
             int remainder = insertItem(quantumChest.getImportItems(), SAND.copy(), true).getCount();
-            quantumChest.update();
+            quantumChest.updateMTE();
             String reason = String.format("Remainder should be exactly %d, but was %d!", 32, remainder);
             assertThat(reason, remainder, is(32));
         }
@@ -225,7 +224,7 @@ public class QuantumChestTest {
             assertThat(reason, extractedCount, is(expected));
 
             quantumChest.getExportItems().extractItem(0, 64, false);
-            quantumChest.update();
+            quantumChest.updateMTE();
             extractedCount = quantumChest.getItemInventory().getStackInSlot(0).getCount();
 
             expected = 128;
@@ -268,16 +267,12 @@ public class QuantumChestTest {
 
         public QuantumChestWrapper(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
             super(metaTileEntityId, tier, maxStoredItems);
+            setWorld(DummyWorld.INSTANCE);
         }
 
         @Override
         protected void setVoiding(boolean isVoiding) {
             this.voiding = isVoiding;
-        }
-
-        @Override
-        public World getWorld() {
-            return DummyWorld.INSTANCE;
         }
     }
 }

@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.OreDictUnifier;
@@ -61,7 +60,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityFisher(metaTileEntityId, getTier());
     }
 
@@ -104,8 +103,8 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         ItemStack baitStack = importItems.getStackInSlot(0);
         if (!getWorld().isRemote && energyContainer.getEnergyStored() >= energyAmountPerFish &&
                 getOffsetTimer() % fishingTicks == 0L && !baitStack.isEmpty()) {

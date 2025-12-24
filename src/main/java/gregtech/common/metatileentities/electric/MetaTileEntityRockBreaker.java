@@ -4,7 +4,6 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.RecipeLogicEnergy;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
@@ -28,7 +27,7 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityRockBreaker(metaTileEntityId, RecipeMaps.ROCK_BREAKER_RECIPES,
                 Textures.ROCK_BREAKER_OVERLAY, getTier());
     }
@@ -81,15 +80,15 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean("hasValidFluids", hasValidFluids);
         return data;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.hasKey("hasValidFluids")) {
             this.hasValidFluids = data.getBoolean("hasValidFluids");
         }

@@ -335,8 +335,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeInt(width);
         buf.writeInt(height);
         buf.writeBoolean(isActive);
@@ -345,8 +345,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.width = buf.readInt();
         this.height = buf.readInt();
         this.isActive = buf.readBoolean();
@@ -377,20 +377,20 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
         data.setInteger("screenH", this.height);
-        return super.writeToNBT(data);
+        return super.writeMTETag(data);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.height = data.hasKey("screenH") ? data.getInteger("screenH") : this.height;
         reinitializeStructurePattern();
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity metaTileEntityHolder) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityCentralMonitor(metaTileEntityId);
     }
 

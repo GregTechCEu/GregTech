@@ -9,7 +9,6 @@ import gregtech.api.capability.impl.RecipeLogicEnergy;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -51,7 +50,7 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(),
                 getTankScalingFunction(), handlesRecipeOutputs);
     }

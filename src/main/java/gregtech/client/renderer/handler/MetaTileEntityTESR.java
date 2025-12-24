@@ -1,9 +1,9 @@
 package gregtech.client.renderer.handler;
 
 import gregtech.api.cover.Cover;
+import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -23,10 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntityHolder> {
+public class MetaTileEntityTESR extends TileEntitySpecialRenderer<GTBaseTileEntity> {
 
     @Override
-    public void render(@NotNull MetaTileEntityHolder te, double x, double y, double z, float partialTicks,
+    public void render(@NotNull GTBaseTileEntity te, double x, double y, double z, float partialTicks,
                        int destroyStage,
                        float alpha) {
         Tessellator tessellator = Tessellator.getInstance();
@@ -86,7 +86,7 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
     }
 
     @Override
-    public void renderTileEntityFast(MetaTileEntityHolder te, double x, double y, double z, float partialTicks,
+    public void renderTileEntityFast(GTBaseTileEntity te, double x, double y, double z, float partialTicks,
                                      int destroyStage, float alpha, @NotNull BufferBuilder buffer) {
         MetaTileEntity metaTileEntity = te.getMetaTileEntity();
         if (metaTileEntity instanceof IFastRenderMetaTileEntity) {
@@ -114,7 +114,7 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
     }
 
     @Override
-    public boolean isGlobalRenderer(@NotNull MetaTileEntityHolder te) {
+    public boolean isGlobalRenderer(@NotNull GTBaseTileEntity te) {
         if (te.getMetaTileEntity() instanceof IFastRenderMetaTileEntity) {
             return ((IFastRenderMetaTileEntity) te.getMetaTileEntity()).isGlobalRenderer();
         }

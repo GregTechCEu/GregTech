@@ -13,7 +13,6 @@ import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -88,7 +87,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity metaTileEntityHolder) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityMaintenanceHatch(metaTileEntityId, isConfigurable);
     }
 
@@ -175,8 +174,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote && getOffsetTimer() % 20 == 0) {
             MultiblockControllerBase controller = getController();
             if (controller instanceof IMaintenance) {
@@ -449,8 +448,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean("IsTaped", isTaped);
         data.setTag("tapeInventory", itemStackHandler.serializeNBT());
         if (isConfigurable) {
@@ -460,8 +459,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         isTaped = data.getBoolean("IsTaped");
         if (data.hasKey("tapeInventory", Constants.NBT.TAG_COMPOUND)) {
             this.itemStackHandler.deserializeNBT(data.getCompoundTag("tapeInventory"));
@@ -477,15 +476,15 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(isTaped);
         if (isConfigurable) buf.writeDouble(durationMultiplier.doubleValue());
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         isTaped = buf.readBoolean();
         if (isConfigurable) durationMultiplier = BigDecimal.valueOf(buf.readDouble());
     }

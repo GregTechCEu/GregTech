@@ -67,7 +67,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityCrate(metaTileEntityId, material, inventorySize, rowSize);
     }
 
@@ -206,16 +206,16 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setTag("Inventory", inventory.serializeNBT());
         data.setBoolean(TAPED_NBT, isTaped);
         return data;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.inventory.deserializeNBT(data.getCompoundTag("Inventory"));
         if (data.hasKey(TAPED_NBT)) {
             this.isTaped = data.getBoolean(TAPED_NBT);

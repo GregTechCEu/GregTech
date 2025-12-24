@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
@@ -43,7 +42,7 @@ public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMa
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityCleaningMaintenanceHatch(metaTileEntityId);
     }
 

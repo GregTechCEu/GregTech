@@ -10,7 +10,6 @@ import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.registry.MTERegistry;
@@ -266,18 +265,13 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public void onBlockPlacedBy(World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
                                 @NotNull EntityLivingBase placer, ItemStack stack) {
-        IGregTechTileEntity holder = (IGregTechTileEntity) worldIn.getTileEntity(pos);
-        MTERegistry registry = GregTechAPI.mteManager.getRegistry(
-                Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace());
+        MetaTileEntity sampleMetaTileEntity = GTUtility.getMetaTileEntity(stack);
 
-        MetaTileEntity sampleMetaTileEntity = registry.getObjectById(stack.getItemDamage());
-        if (holder == null || sampleMetaTileEntity == null)
+        if (sampleMetaTileEntity == null)
             return;
 
-        // TODO Fix this
-        if (stack.hasDisplayName() && holder instanceof MetaTileEntityHolder) {
-            ((MetaTileEntityHolder) holder).setCustomName(stack.getDisplayName());
-        }
+        MetaTileEntity metaTileEntity = sampleMetaTileEntity.copy();
+
         var stackTag = stack.getTagCompound();
         NBTTagCompound mteTag = null;
         if (stackTag != null && !stackTag.isEmpty()) {
@@ -285,12 +279,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 var blockTag = stackTag.getCompoundTag(GregtechDataCodes.BLOCK_ENTITY_TAG);
                 String customName = blockTag.getString(GregtechDataCodes.CUSTOM_NAME);
                 if (!customName.isEmpty())
-                    ((MetaTileEntityHolder) holder).setCustomName(customName);
+                    metaTileEntity.setCustomName(customName);
 
                 mteTag = blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE);
                 List<String> removed = new ArrayList<>();
                 for (var key : mteTag.getKeySet()) {
-                    var trait = sampleMetaTileEntity.getMTETrait(key);
+                    var trait = metaTileEntity.getMTETrait(key);
                     if (trait == null) continue;
 
                     removed.add(key);
@@ -298,7 +292,20 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 removed.forEach(mteTag::removeTag);
             }
         }
-        MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity, mteTag);
+
+        if (mteTag != null) {
+            metaTileEntity.readMTETag(mteTag);
+        }
+
+        if (!GTUtility.hasTileEntity(worldIn, pos)) {
+            worldIn.setTileEntity(pos, metaTileEntity);
+        }
+
+        // TODO Fix this
+        if (stack.hasDisplayName()) {
+            metaTileEntity.setCustomName(stack.getDisplayName());
+        }
+
         if (mteTag == null) {
             if (stackTag != null && !stackTag.isEmpty())
                 metaTileEntity.initFromItemStackData(stackTag);
@@ -372,11 +379,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (!tagCompound.isEmpty())
             itemStack.setTagCompound(tagCompound);
         // TODO Clean this up
-        if (metaTileEntity.getHolder() instanceof MetaTileEntityHolder) {
-            MetaTileEntityHolder holder = (MetaTileEntityHolder) metaTileEntity.getHolder();
-            if (holder.hasCustomName()) {
-                itemStack.setStackDisplayName(holder.getName());
-            }
+        // clean up how exactly?
+        if (metaTileEntity.hasCustomName()) {
+            itemStack.setStackDisplayName(metaTileEntity.getName());
         }
         drops.add(itemStack);
         metaTileEntity.getDrops(drops, harvesters.get());
@@ -475,7 +480,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Nullable
     @Override
     public TileEntity createNewTileEntity(@Nullable World worldIn, int meta) {
-        return new MetaTileEntityHolder();
+        // i wonder if it would be a good idea to give a "proto" TE
+        // though that's really just mte holder but in a different way
+        // actually just return null, TE is handled elsewhere
+        return null;
     }
 
     @NotNull

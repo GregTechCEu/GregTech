@@ -10,9 +10,9 @@ import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
@@ -390,8 +390,8 @@ public class TricorderBehavior implements IItemBehaviour {
         // }
 
         // debug TODO
-        if (tileEntity instanceof MetaTileEntityHolder) {
-            list.addAll(((MetaTileEntityHolder) tileEntity).getDebugInfo(player, debugLevel));
+        if (tileEntity instanceof GTBaseTileEntity) {
+            list.addAll(((GTBaseTileEntity) tileEntity).getDebugInfo(player, debugLevel));
         }
 
         this.energyCost = energyCost;

@@ -1,7 +1,7 @@
 package gregtech.api.pattern;
 
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
 
@@ -99,11 +99,10 @@ public class MultiblockShapeInfo {
         }
 
         public Builder where(char symbol, MetaTileEntity tileEntity, EnumFacing frontSide) {
-            MetaTileEntityHolder holder = new MetaTileEntityHolder();
-            holder.setMetaTileEntity(tileEntity);
-            holder.getMetaTileEntity().onPlacement();
-            holder.getMetaTileEntity().setFrontFacing(frontSide);
-            return where(symbol, new BlockInfo(tileEntity.getBlock().getDefaultState(), holder));
+            tileEntity = tileEntity.copy();
+            tileEntity.onPlacement();
+            tileEntity.setFrontFacing(frontSide);
+            return where(symbol, new BlockInfo(tileEntity.getBlock().getDefaultState(), tileEntity));
         }
 
         /**
@@ -138,13 +137,11 @@ public class MultiblockShapeInfo {
                     for (int x = 0; x < maxX; x++) {
                         BlockInfo info = symbolMap.getOrDefault(columnEntry.charAt(x), BlockInfo.EMPTY);
                         TileEntity tileEntity = info.getTileEntity();
-                        if (tileEntity instanceof MetaTileEntityHolder holder) {
-                            final MetaTileEntity mte = holder.getMetaTileEntity();
-                            holder = new MetaTileEntityHolder();
-                            holder.setMetaTileEntity(mte);
-                            holder.getMetaTileEntity().onPlacement();
-                            holder.getMetaTileEntity().setFrontFacing(mte.getFrontFacing());
-                            info = new BlockInfo(info.getBlockState(), holder);
+                        if (tileEntity instanceof IGregTechTileEntity holder) {
+                            final MetaTileEntity mte = holder.copy();
+                            mte.onPlacement();
+                            mte.setFrontFacing(holder.getMetaTileEntity().getFrontFacing());
+                            info = new BlockInfo(info.getBlockState(), mte);
                         } else if (tileEntity != null) {
                             info = new BlockInfo(info.getBlockState(), tileEntity);
                         }

@@ -12,7 +12,6 @@ import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -112,13 +111,13 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityFluidHatch(metaTileEntityId, getTier(), isExportHatch);
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean("workingEnabled", workingEnabled);
         if (isExportHatch) {
             data.setBoolean("IsLocked", locked);
@@ -132,8 +131,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.hasKey("workingEnabled")) {
             this.workingEnabled = data.getBoolean("workingEnabled");
         }
@@ -151,8 +150,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote) {
             if (workingEnabled) {
                 fillContainerFromInternalTank(fluidTank);
@@ -189,8 +188,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(workingEnabled);
         if (isExportHatch) {
             buf.writeBoolean(locked);
@@ -201,8 +200,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.workingEnabled = buf.readBoolean();
         if (isExportHatch) {
             this.locked = buf.readBoolean();

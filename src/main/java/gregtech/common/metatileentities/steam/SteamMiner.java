@@ -10,7 +10,6 @@ import gregtech.api.capability.impl.miner.SteamMinerLogic;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
@@ -83,7 +82,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new SteamMiner(metaTileEntityId, this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius(),
                 this.minerLogic.getFortune());
     }
@@ -249,8 +248,8 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         this.minerLogic.performMining();
         if (!getWorld().isRemote) {
             if (getOffsetTimer() % 5 == 0)
@@ -264,32 +263,32 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean("needsVenting", this.needsVenting);
         data.setBoolean("ventingStuck", this.ventingStuck);
         return this.minerLogic.writeToNBT(data);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.needsVenting = data.getBoolean("needsVenting");
         this.ventingStuck = data.getBoolean("ventingStuck");
         this.minerLogic.readFromNBT(data);
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(this.needsVenting);
         buf.writeBoolean(this.ventingStuck);
         this.minerLogic.writeInitialSyncData(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.needsVenting = buf.readBoolean();
         this.ventingStuck = buf.readBoolean();
         this.minerLogic.receiveInitialSyncData(buf);
