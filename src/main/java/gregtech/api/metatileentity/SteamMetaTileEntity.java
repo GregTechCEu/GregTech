@@ -150,13 +150,16 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         RecipeMap<?> map = Objects.requireNonNull(getRecipeMap());
 
-        // todo remove logo from background and use a widget
         return map.getRecipeMapUI()
                 .constructPanel(this, workableHandler::getProgressPercent,
                         importItems, exportItems,
                         EMPTY, exportFluids,
                         0, panelSyncManager)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(getUITheme().getLogo().asWidget()
+                        .size(16)
+                        .right(7)
+                        .top(46))
                 .bindPlayerInventory();
     }
 

@@ -79,6 +79,7 @@ public class GTGuiTheme {
             .color(Colors.BRONZE)
             .simpleToggleButton(IDs.BRONZE_BUTTON, IDs.BRONZE_BUTTON_SELECTED,
                     ConfigHolder.client.defaultUIColor)
+            .logo(() -> GTGuiTextures.GREGTECH_LOGO_BRONZE)
             .build();
 
     public static final GTGuiTheme STEEL = templateBuilder(Names.STEEL)
@@ -90,6 +91,7 @@ public class GTGuiTheme {
             .button(IDs.STEEL_BUTTON)
             .simpleToggleButton(IDs.STEEL_BUTTON, IDs.STEEL_BUTTON_SELECTED,
                     ConfigHolder.client.defaultUIColor)
+            .logo(() -> GTGuiTextures.GREGTECH_LOGO_STEEL)
             .color(Colors.STEEL)
             .build();
 
