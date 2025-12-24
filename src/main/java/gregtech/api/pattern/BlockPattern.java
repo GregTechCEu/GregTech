@@ -1,11 +1,10 @@
 package gregtech.api.pattern;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 
 import net.minecraft.block.state.IBlockState;
@@ -164,9 +163,6 @@ public class BlockPattern {
                 for (int b = 0, y = -centerOffset[1]; b < this.thumbLength; b++, y++) {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
-                        // this is expecting the te pos to not be set?
-                        // this should be 0, 0, 0
-                        // EBF front facing was SOUTH instead of NORTH
                         BlockPos pos = RelativeDirection.setActualRelativeOffset(x, y, z, frontFacing, upwardsFacing,
                                 isFlipped, structureDir)
                                 .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
@@ -380,9 +376,7 @@ public class BlockPattern {
                                     .getStateFromMeta(itemBlock.getMetadata(found.getMetadata()));
                             blocks.put(pos, state);
                             world.setBlockState(pos, state);
-                            MTERegistry registry = GregTechAPI.mteManager
-                                    .getRegistry(found.getItem().getRegistryName().getNamespace());
-                            MetaTileEntity sampleMetaTileEntity = registry.getObjectById(found.getItemDamage());
+                            MetaTileEntity sampleMetaTileEntity = GTUtility.getMetaTileEntity(found);
                             if (sampleMetaTileEntity != null) {
                                 MetaTileEntity metaTileEntity = sampleMetaTileEntity.copy();
                                 metaTileEntity.onPlacement(player);
