@@ -71,8 +71,7 @@ public class GTGuiTheme {
     public static final GTGuiTheme BRONZE = templateBuilder(Names.BRONZE)
             .parent(Names.STANDARD)
             .panel(IDs.BRONZE_BACKGROUND)
-            // .itemSlot(GTGuiTextures.IDs.BRONZE_SLOT)
-            // .fluidSlot(GTGuiTextures.IDs.BRONZE_SLOT)
+            .itemSlot(GTGuiTextures.IDs.BRONZE_SLOT)
             .displayBackground(IDs.DISPLAY_BRONZE)
             .button(IDs.BRONZE_BUTTON)
             .color(Colors.BRONZE)
@@ -84,8 +83,7 @@ public class GTGuiTheme {
             .parent(Names.STANDARD)
             .panel(IDs.STEEL_BACKGROUND)
             .textColor(Color.WHITE.darker(1))
-            // .itemSlot(GTGuiTextures.IDs.STEEL_SLOT)
-            // .fluidSlot(GTGuiTextures.IDs.STEEL_SLOT)
+            .itemSlot(GTGuiTextures.IDs.STEEL_SLOT)
             .displayBackground(IDs.DISPLAY_STEEL)
             .button(IDs.STEEL_BUTTON)
             .simpleToggleButton(IDs.STEEL_BUTTON, IDs.STEEL_BUTTON_SELECTED,
@@ -98,8 +96,7 @@ public class GTGuiTheme {
             .panel(IDs.PRIMITIVE_BACKGROUND)
             .textColor(Color.WHITE.darker(1))
             .color(Colors.PRIMITIVE)
-            // .itemSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
-            // .fluidSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
+            .itemSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
             .build();
 
     protected final String themeId;

@@ -12,12 +12,12 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import com.cleanroommc.modularui.api.widget.IGuiAction;
 import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
-import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerGhostIngredientSlot;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerIngredientProvider;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
@@ -26,8 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Interactable,
-                               JeiGhostIngredientSlot<ItemStack>,
-                               JeiIngredientProvider {
+                               RecipeViewerGhostIngredientSlot<ItemStack>,
+                               RecipeViewerIngredientProvider {
 
     private final InputSyncHandler syncHandler;
     public boolean hasIngredients = true;
@@ -75,7 +75,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
     @Override
     public void onInit() {
-        getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
+        getContext().getRecipeViewerSettings().addGhostIngredientSlot(this);
     }
 
     public CraftingInputSlot changeListener(IOnSlotChanged listener) {
@@ -101,7 +101,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         ItemStack itemstack = this.syncHandler.getStack();
         boolean jeiIngredientBeingHovered = JEIUtil.hoveringOverIngredient(this);
 
@@ -135,8 +135,8 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
     @Override
     public @Nullable ItemStack castGhostIngredientIfValid(@NotNull Object ingredient) {
-        ingredient = JEIUtil.getBookStackIfEnchantment(ingredient);
-        return areAncestorsEnabled() && ingredient instanceof ItemStack ? (ItemStack) ingredient : null;
+        ItemStack stack = JEIUtil.getActualStack(ingredient);
+        return areAncestorsEnabled() && !stack.isEmpty() ? stack : null;
     }
 
     @Override

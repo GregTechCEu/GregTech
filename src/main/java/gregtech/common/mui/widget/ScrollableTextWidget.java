@@ -1,11 +1,11 @@
 package gregtech.common.mui.widget;
 
-import gregtech.api.mui.IconAcessor;
-
 import net.minecraft.client.gui.FontRenderer;
 
 import com.cleanroommc.modularui.api.GuiAxis;
+import com.cleanroommc.modularui.api.UpOrDown;
 import com.cleanroommc.modularui.api.drawable.IHoverable;
+import com.cleanroommc.modularui.api.drawable.IIcon;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.api.layout.IViewport;
 import com.cleanroommc.modularui.api.layout.IViewportStack;
@@ -14,15 +14,19 @@ import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.Stencil;
 import com.cleanroommc.modularui.drawable.text.RichText;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
-import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
-import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerIngredientProvider;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.theme.TextFieldTheme;
+import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.HoveredWidgetList;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.ScrollArea;
 import com.cleanroommc.modularui.widget.scroll.ScrollData;
 import com.cleanroommc.modularui.widget.sizer.Area;
+import com.cleanroommc.modularui.widget.sizer.Box;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,16 +34,16 @@ import java.util.function.Consumer;
 
 public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
                                   implements IRichTextBuilder<ScrollableTextWidget>, Interactable, IViewport,
-                                  JeiIngredientProvider {
+                                  RecipeViewerIngredientProvider {
 
     private final RichText text = new RichText();
-    private Consumer<RichText> builder;
+    private Consumer<IRichTextBuilder<?>> builder;
     private boolean dirty = false;
     private boolean autoUpdate = false;
     private Object lastIngredient;
 
     private final ScrollArea scroll = new ScrollArea();
-    private final TextRenderer renderer = new TextRenderer();
+    private final TextRenderer renderer = new ScrollingTextRenderer();
 
     public ScrollableTextWidget() {
         listenGuiAction((IGuiAction.MouseReleased) mouseButton -> {
@@ -50,7 +54,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
 
     @Override
     public void onInit() {
-        this.scroll.setScrollData(ScrollData.of(GuiAxis.Y));
+        this.scroll.setScrollData(ScrollData.of(GuiAxis.Y, false, 4));
     }
 
     @Override
@@ -73,8 +77,8 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
                 tooltip.draw(context);
             }
         }
-        if (getHoveredElement() instanceof IconAcessor accessor &&
-                accessor.gregTech$getDrawable() instanceof JeiIngredientProvider provider) {
+        if (getHoveredElement() instanceof IIcon icon &&
+                icon.getRootDrawable() instanceof RecipeViewerIngredientProvider provider) {
             lastIngredient = provider.getIngredient();
         } else {
             lastIngredient = null;
@@ -94,7 +98,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     }
 
     @Override
-    public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int amount) {
+    public boolean onMouseScroll(UpOrDown scrollDirection, int amount) {
         if (this.scroll.mouseScroll(getContext())) {
             return true;
         }
@@ -138,7 +142,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     @Override
     public void getSelfAt(IViewportStack stack, HoveredWidgetList widgets, int x, int y) {
         if (isInside(stack, x, y)) {
-            widgets.add(this, stack.peek());
+            widgets.add(this, stack, getAdditionalHoverInfo(stack, x, y));
         }
     }
 
@@ -173,21 +177,36 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
             }
             this.dirty = false;
         }
-        this.text.setupRenderer(this.renderer, getArea().getPadding().left, getArea().getPadding().top - getScrollY(),
-                getArea().paddedWidth(), getArea().paddedHeight(),
-                getWidgetTheme(context.getTheme()).getTextColor(),
-                getWidgetTheme(context.getTheme()).getTextShadow());
-        this.text.compileAndDraw(this.renderer, context, false);
+
+        Alignment alignment = this.text.getAlignment();
+        Area area = getArea();
+        Box padding = area.getPadding();
+        WidgetThemeEntry<TextFieldTheme> textThemeEntry = context.getTheme().getTextFieldTheme();
+        TextFieldTheme textTheme = textThemeEntry.getTheme();
+
+        this.text.compileAndDraw(this.renderer, context, true);
+
         // this isn't perfect, but i hope it's good enough
-        int diff = (int) Math.ceil((this.renderer.getLastHeight() - getArea().h()) / 2);
-        this.scroll.getScrollY().setScrollSize(getArea().h() + Math.max(0, diff));
+        int diff = (int) Math.ceil((this.renderer.getLastTrimmedHeight() - area.h()) / 2);
+        this.scroll.getScrollY().setScrollSize(area.h() + Math.max(0, diff));
+
+        // this is responsible for centering the text if there's not enough to scroll
+        int x = padding.getLeft();
+        int y = (int) (area.h() * alignment.y);
+        y -= (int) (this.renderer.getLastTrimmedHeight() * alignment.y);
+        y = Math.min(Math.max(padding.getTop(), y), area.h() - padding.getBottom());
+        this.text.setupRenderer(this.renderer, x, y - getScrollY(), area.paddedWidth(), area.paddedHeight(),
+                textTheme.getTextColor(), textTheme.getTextShadow());
+
+        this.text.compileAndDraw(this.renderer, context, false);
     }
 
     @Override
     public void postDraw(ModularGuiContext context, boolean transformed) {
         if (!transformed) {
             Stencil.remove();
-            this.scroll.drawScrollbar();
+            WidgetThemeEntry<WidgetTheme> theme = context.getTheme().getScrollbarTheme();
+            this.scroll.drawScrollbar(context, theme.getTheme(isHovering()), theme.getTheme().getBackground());
         }
     }
 
@@ -218,7 +237,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
      * @param builder text builder
      * @return this
      */
-    public ScrollableTextWidget textBuilder(Consumer<RichText> builder) {
+    public ScrollableTextWidget textBuilder(Consumer<IRichTextBuilder<?>> builder) {
         this.builder = builder;
         markDirty();
         return this;
@@ -227,5 +246,26 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     @Override
     public @Nullable Object getIngredient() {
         return this.lastIngredient;
+    }
+
+    public static class ScrollingTextRenderer extends TextRenderer {
+
+        @Override
+        protected int getStartX(float maxWidth, float lineWidth) {
+            return super.getStartX(this.maxWidth, lineWidth);
+        }
+
+        public int getLastY() {
+            return (int) lastY;
+        }
+
+        public int getLastX() {
+            return (int) lastX;
+        }
+
+        @Override
+        protected int getStartY(float height) {
+            return this.y; // always draw at the top
+        }
     }
 }

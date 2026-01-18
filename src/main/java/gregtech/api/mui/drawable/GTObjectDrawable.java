@@ -11,25 +11,29 @@ import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.Icon;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
-import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerIngredientProvider;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetSlotTheme;
+import com.cleanroommc.modularui.theme.SlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.widget.Widget;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
-public class GTObjectDrawable implements IDrawable, JeiIngredientProvider {
+public class GTObjectDrawable implements IDrawable, RecipeViewerIngredientProvider {
 
     private static final TextRenderer renderer = new TextRenderer();
 
     private final Object object;
     private final long amount;
     private Function<BoostableChanceEntry<?>, Integer> boostFunction;
+    @NotNull
+    private Predicate<Object> drawBackground = $ -> true;
 
     public GTObjectDrawable(Object object, long amount) {
         this.object = object;
@@ -39,6 +43,10 @@ public class GTObjectDrawable implements IDrawable, JeiIngredientProvider {
     public GTObjectDrawable setBoostFunction(Function<BoostableChanceEntry<?>, Integer> boostFunction) {
         this.boostFunction = boostFunction;
         return this;
+    }
+
+    public void setDrawBackground(@NotNull Predicate<Object> drawBackground) {
+        this.drawBackground = drawBackground;
     }
 
     static {
@@ -62,16 +70,20 @@ public class GTObjectDrawable implements IDrawable, JeiIngredientProvider {
 
     private void drawObject(Object object, ModularGuiContext context, int x, int y, int width, int height) {
         if (object instanceof ItemStack stack) {
-            WidgetSlotTheme theme = context.getTheme().getItemSlotTheme();
+            SlotTheme theme = context.getTheme().getItemSlotTheme().getTheme();
             IDrawable background = theme.getBackground();
-            if (background == null) background = GTGuiTextures.SLOT;
-            background.draw(context, x, y, width, height, theme);
-            GuiDraw.drawItem(stack, x + 1, y + 1, width - 2, height - 2);
+            if (drawBackground.test(object)) {
+                if (background == null) background = GTGuiTextures.SLOT;
+                background.draw(context, x, y, width, height, theme);
+            }
+            GuiDraw.drawItem(stack, x + 1, y + 1, width - 2, height - 2, 100);
         } else if (object instanceof FluidStack stack) {
-            WidgetSlotTheme theme = context.getTheme().getFluidSlotTheme();
-            IDrawable slot = theme.getBackground();
-            if (slot == null) slot = GTGuiTextures.FLUID_SLOT;
-            slot.draw(context, x, y, width, height, theme);
+            SlotTheme theme = context.getTheme().getFluidSlotTheme().getTheme();
+            IDrawable background = theme.getBackground();
+            if (drawBackground.test(object)) {
+                if (background == null) background = GTGuiTextures.FLUID_SLOT;
+                background.draw(context, x, y, width, height, theme);
+            }
             GuiDraw.drawFluidTexture(stack, x + 1, y + 1, width - 2, height - 2, 0);
         } else if (object instanceof BoostableChanceEntry<?>entry) {
             drawObject(entry.getIngredient(), context, x, y, width, height);

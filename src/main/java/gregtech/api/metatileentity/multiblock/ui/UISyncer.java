@@ -102,7 +102,7 @@ public interface UISyncer {
     }
 
     default BigInteger syncBigInt(BigInteger initial) {
-        return syncObject(initial, GTByteBufAdapters.BIG_INT);
+        return syncObject(initial, ByteBufAdapters.BIG_INT);
     }
 
     default <T> T syncObject(T initial, IByteBufSerializer<T> serializer, IByteBufDeserializer<T> deserializer) {

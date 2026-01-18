@@ -72,11 +72,11 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.factory.ItemGuiFactory;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
@@ -947,7 +947,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     @Override
-    default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager manager) {
+    default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager manager, UISettings settings) {
         final var usedStack = guiData.getUsedItemStack();
         final var behaviorsTag = getBehaviorsTag(usedStack);
         final var defaultDefinition = getMaxAoEDefinition(usedStack);
@@ -1006,14 +1006,15 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         return Flow.column()
                 .coverChildren()
-                .child(new TextWidget(IKey.lang("item.gt.tool.aoe." + lang))
+                .child(IKey.lang("item.gt.tool.aoe." + lang)
+                        .asWidget()
                         .marginBottom(5))
                 .child(Flow.row()
                         .coverChildren()
                         .marginBottom(5)
                         .child(increaseButton)
                         .child(decreaseButton))
-                .child(new TextWidget(display)
+                .child(display.asWidget()
                         .alignment(Alignment.Center)
                         .widthRel(1f));
     }

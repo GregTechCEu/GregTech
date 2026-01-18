@@ -270,9 +270,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
                         int workingArea = syncer.syncInt(getWorkingArea(minerLogic.getCurrentRadius()));
 
                         list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.mining_at"));
-                        list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.mining_pos",
-                                syncer.syncInt(minerLogic.getMineX().get()),
-                                syncer.syncInt(minerLogic.getMineY().get()),
+                        list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.mining_pos_x",
+                                syncer.syncInt(minerLogic.getMineX().get())));
+                        list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.mining_pos_y",
+                                syncer.syncInt(minerLogic.getMineY().get())));
+                        list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.mining_pos_z",
                                 syncer.syncInt(minerLogic.getMineZ().get())));
 
                         if (syncer.syncBoolean(minerLogic.isChunkMode())) {

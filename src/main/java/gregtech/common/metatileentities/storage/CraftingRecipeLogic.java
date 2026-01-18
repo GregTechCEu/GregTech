@@ -24,20 +24,23 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
-import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.ints.Int2BooleanArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
 
 public class CraftingRecipeLogic extends SyncHandler {
 
@@ -51,7 +54,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     private final World world;
     private IItemHandlerModifiable availableHandlers;
-    private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder()
+    private final ItemStackHashStrategy strategy = ItemStackHashStrategy.builder()
             .compareItem(true)
             .compareMetadata(true)
             .build();
@@ -60,13 +63,13 @@ public class CraftingRecipeLogic extends SyncHandler {
      * Used to lookup a list of slots for a given stack
      * filled by {@link CraftingRecipeLogic#refreshStackMap()}
      **/
-    private final Map<ItemStack, Set<Integer>> stackLookupMap = new Object2ObjectOpenCustomHashMap<>(this.strategy);
+    private final Map<ItemStack, IntSet> stackLookupMap = new Object2ObjectOpenCustomHashMap<>(this.strategy);
 
     /**
      * List of items needed to complete the crafting recipe, filled by
      * {@link CraftingRecipeLogic#detectAndSendChanges(boolean)} )}
      **/
-    private final Map<ItemStack, Integer> requiredItems = new Object2IntOpenCustomHashMap<>(
+    private final Object2IntMap<ItemStack> requiredItems = new Object2IntOpenCustomHashMap<>(
             this.strategy);
 
     private final Int2IntMap compactedIndexes = new Int2IntArrayMap(9);
@@ -147,45 +150,42 @@ public class CraftingRecipeLogic extends SyncHandler {
         if (requiredItems.isEmpty()) {
             return false;
         }
-        Map<Integer, Integer> gatheredItems = new Int2IntOpenHashMap();
+        Int2IntMap gatheredItems = new Int2IntOpenHashMap();
 
         for (var entry : requiredItems.entrySet()) {
             ItemStack stack = entry.getKey();
             int requestedAmount = entry.getValue();
             var slotList = stackLookupMap.get(stack);
 
-            int extractedAmount = 0;
             for (int slot : slotList) {
                 var extracted = availableHandlers.extractItem(slot, requestedAmount, true);
                 gatheredItems.put(slot, extracted.getCount());
-                extractedAmount += extracted.getCount();
                 requestedAmount -= extracted.getCount();
-                if (requestedAmount == 0) break;
             }
-            if (extractedAmount < requestedAmount) return false;
+            // not enough to satisfy the recipe, return false
+            if (requestedAmount > 0) return false;
         }
 
-        boolean extracted = false;
         for (var gathered : gatheredItems.entrySet()) {
             int slot = gathered.getKey(), amount = gathered.getValue();
             var stack = availableHandlers.getStackInSlot(slot);
             boolean hasContainer = stack.getItem().hasContainerItem(stack);
 
-            if (hasContainer && stack.getCount() > 1) {
-                var useStack = stack.splitStack(1);
-                var newStack = ForgeHooks.getContainerItem(useStack);
-                if (newStack.isEmpty()) return false;
-
-                GTTransferUtils.insertItem(this.availableHandlers, newStack, false);
-            } else if (hasContainer) {
-                var usedStack = ForgeHooks.getContainerItem(stack);
-                availableHandlers.setStackInSlot(slot, usedStack);
-            } else {
+            if (!hasContainer) {
+                // not a transmutable item (damagable tool, etc), extract normally
                 availableHandlers.extractItem(slot, amount, false);
+            } else if (stack.getCount() > 1) {
+                // only some stacks are transmuted, try insert non-empty stacks
+                ItemStack newStack = ForgeHooks.getContainerItem(stack.splitStack(1));
+                if (!newStack.isEmpty())
+                    GTTransferUtils.insertItem(this.availableHandlers, newStack, false);
+            } else {
+                // all stacks are transmuted, just replace
+                availableHandlers.setStackInSlot(slot, ForgeHooks.getContainerItem(stack));
             }
-            extracted = true;
         }
-        return extracted;
+        // we've checked everything, return true
+        return true;
     }
 
     /**
@@ -330,13 +330,34 @@ public class CraftingRecipeLogic extends SyncHandler {
             return;
         }
 
+        Int2BooleanMap map = updateInputSlots();
+
+        // only sync when something has changed
+        if (!map.isEmpty()) {
+            syncToClient(UPDATE_INGREDIENTS, buffer -> {
+                buffer.writeByte(map.size());
+                for (var set : map.entrySet()) {
+                    buffer.writeByte(set.getKey());
+                    buffer.writeBoolean(set.getValue());
+                }
+            });
+        }
+    }
+
+    /**
+     * Updates each input slot for if a valid item exists for that slot
+     *
+     * @return a map of slots that has changed since last time, if any
+     */
+    private Int2BooleanMap updateInputSlots() {
         compactedIndexes.clear();
         requiredItems.clear();
         refreshStackMap();
-        final Map<Integer, Boolean> map = new Int2BooleanArrayMap();
+
+        Int2BooleanMap map = new Int2BooleanArrayMap();
         int next = 0;
         for (CraftingInputSlot slot : this.inputSlots) {
-            final boolean hadIngredients = slot.hasIngredients;
+            boolean hadIngredients = slot.hasIngredients;
 
             // check if existing stack works
             var slotStack = slot.getStack();
@@ -367,17 +388,7 @@ public class CraftingRecipeLogic extends SyncHandler {
             if (hadIngredients != slot.hasIngredients)
                 map.put(slot.getIndex(), slot.hasIngredients);
         }
-
-        // only sync when something has changed
-        if (!map.isEmpty()) {
-            syncToClient(UPDATE_INGREDIENTS, buffer -> {
-                buffer.writeByte(map.size());
-                for (var set : map.entrySet()) {
-                    buffer.writeByte(set.getKey());
-                    buffer.writeBoolean(set.getValue());
-                }
-            });
-        }
+        return map;
     }
 
     /**
@@ -392,7 +403,7 @@ public class CraftingRecipeLogic extends SyncHandler {
             var curStack = this.availableHandlers.getStackInSlot(i);
             if (curStack.isEmpty()) continue;
 
-            Set<Integer> slots;
+            IntSet slots;
             if (stackLookupMap.containsKey(curStack)) {
                 slots = stackLookupMap.get(curStack);
             } else {

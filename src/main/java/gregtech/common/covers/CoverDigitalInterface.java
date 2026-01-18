@@ -7,24 +7,25 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.Position;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.gui.widget.prospector.widget.WidgetOreList;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
+import gregtech.common.mui.widget.GTTextFieldWidget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -60,6 +61,20 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,10 +101,26 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
         MACHINE,
         PROXY;
 
-        public static MODE[] VALUES;
+        public static final MODE[] VALUES;
 
         static {
             VALUES = MODE.values();
+        }
+
+        public IKey getLangKey(boolean selected) {
+            return IKey.lang(
+                    "metaitem.cover.digital.mode." + name().toLowerCase() + "." + (selected ? "enabled" : "disabled"));
+        }
+
+        public IDrawable getOverlay(boolean selected) {
+            final int i = selected ? 1 : 0;
+            return switch (this) {
+                case FLUID -> GTGuiTextures.BUTTON_FLUID[i];
+                case ITEM -> GTGuiTextures.BUTTON_ITEM[i];
+                case ENERGY -> GTGuiTextures.BUTTON_ENERGY[i];
+                case MACHINE -> GTGuiTextures.BUTTON_MACHINE[i];
+                case PROXY -> GTGuiTextures.BUTTON_INTERFACE[i];
+            };
         }
     }
 
@@ -451,52 +482,87 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup(new Position(0, 10));
-        primaryGroup.addWidget(new LabelWidget(10, 5, "metaitem.cover.digital.name", 0));
-        ToggleButtonWidget[] buttons = new ToggleButtonWidget[5];
-        buttons[0] = new ToggleButtonWidget(40, 20, 20, 20, GuiTextures.BUTTON_FLUID, () -> this.mode == MODE.FLUID,
-                (pressed) -> {
-                    if (pressed) setMode(MODE.FLUID);
-                }).setTooltipText("metaitem.cover.digital.mode.fluid");
-        buttons[1] = new ToggleButtonWidget(60, 20, 20, 20, GuiTextures.BUTTON_ITEM, () -> this.mode == MODE.ITEM,
-                (pressed) -> {
-                    if (pressed) setMode(MODE.ITEM);
-                }).setTooltipText("metaitem.cover.digital.mode.item");
-        buttons[2] = new ToggleButtonWidget(80, 20, 20, 20, GuiTextures.BUTTON_ENERGY, () -> this.mode == MODE.ENERGY,
-                (pressed) -> {
-                    if (pressed) setMode(MODE.ENERGY);
-                }).setTooltipText("metaitem.cover.digital.mode.energy");
-        buttons[3] = new ToggleButtonWidget(100, 20, 20, 20, GuiTextures.BUTTON_MACHINE,
-                () -> this.mode == MODE.MACHINE, (pressed) -> {
-                    if (pressed) setMode(MODE.MACHINE);
-                }).setTooltipText("metaitem.cover.digital.mode.machine");
-        buttons[4] = new ToggleButtonWidget(140, 20, 20, 20, GuiTextures.BUTTON_INTERFACE,
-                () -> this.mode == MODE.PROXY, (pressed) -> {
-                    if (pressed) setMode(MODE.PROXY);
-                }).setTooltipText("metaitem.cover.digital.mode.proxy");
-        primaryGroup.addWidget(new LabelWidget(10, 25, "metaitem.cover.digital.title.mode", 0));
-        primaryGroup.addWidget(buttons[0]);
-        primaryGroup.addWidget(buttons[1]);
-        primaryGroup.addWidget(buttons[2]);
-        primaryGroup.addWidget(buttons[3]);
-        primaryGroup.addWidget(buttons[4]);
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+        Flow row = Flow.row()
+                .pos(10, 20)
+                .coverChildren()
+                .child(IKey.lang("metaitem.cover.digital.title.mode").asWidget()
+                        .size(30, 20));
 
-        primaryGroup.addWidget(new LabelWidget(10, 50, "monitor.gui.title.slot", 0));
-        primaryGroup.addWidget(
-                new ClickButtonWidget(40, 45, 20, 20, "-1", (data) -> setMode(slot - (data.isShiftClick ? 10 : 1))));
-        primaryGroup.addWidget(
-                new ClickButtonWidget(140, 45, 20, 20, "+1", (data) -> setMode(slot + (data.isShiftClick ? 10 : 1))));
-        primaryGroup.addWidget(new ImageWidget(60, 45, 80, 20, GuiTextures.DISPLAY));
-        primaryGroup.addWidget(new SimpleTextWidget(100, 55, "", 16777215, () -> Integer.toString(this.slot)));
+        IntSyncValue slotValue = new IntSyncValue(() -> this.slot, this::setMode);
+        EnumSyncValue<MODE> modeValue = new EnumSyncValue<>(MODE.class, this::getMode, this::setMode);
+        EnumSyncValue<EnumFacing> spinValue = new EnumSyncValue<>(EnumFacing.class, () -> this.spin, this::setMode);
+        guiSyncManager.syncValue("mode", modeValue);
+        guiSyncManager.syncValue("spin", spinValue);
 
-        primaryGroup.addWidget(new LabelWidget(10, 75, "metaitem.cover.digital.title.spin", 0));
-        primaryGroup.addWidget(new ClickButtonWidget(40, 70, 20, 20, "R", (data) -> setMode(this.spin.rotateY())));
-        primaryGroup.addWidget(new ImageWidget(60, 70, 80, 20, GuiTextures.DISPLAY));
-        primaryGroup.addWidget(new SimpleTextWidget(100, 80, "", 16777215, () -> this.spin.toString()));
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 202).widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 8, 120);
-        return builder.build(this, player);
+        for (MODE mode : MODE.VALUES) {
+            row.child(new ButtonWidget<>()
+                    .size(20)
+                    .onMousePressed(m -> {
+                        modeValue.setValue(mode);
+                        return true;
+                    })
+                    .tooltipAutoUpdate(true)
+                    .tooltipBuilder(tooltip -> tooltip.add(mode.getLangKey(getMode() == mode)))
+                    .disableHoverBackground()
+                    .background(new DynamicDrawable(() -> mode.getOverlay(getMode() == mode))));
+        }
+
+        return GTGuis.createPanel(this, 176, 202)
+                .child(CoverWithUI.createTitleRow(getPickItem())
+                        .pos(5, 5))
+                .child(row)
+                .child(Flow.row()
+                        .pos(10, 45)
+                        .coverChildren()
+                        .child(IKey.lang("monitor.gui.title.slot").asWidget()
+                                .size(30, 20))
+                        .child(new ButtonWidget<>()
+                                .size(20)
+                                .overlay(IKey.str("-")
+                                        .color(Color.WHITE.main))
+                                .onMousePressed(m -> {
+                                    int s = slotValue.getIntValue();
+                                    s -= Interactable.hasShiftDown() ? 10 : 1;
+                                    slotValue.setIntValue(s);
+                                    return true;
+                                }))
+                        .child(new GTTextFieldWidget()
+                                .setNumbers(0, Integer.MAX_VALUE)
+                                .value(slotValue)
+                                .size(80, 20)
+                                .setTextColor(Color.WHITE.main)
+                                .background(GTGuiTextures.DISPLAY))
+                        .child(new ButtonWidget<>()
+                                .size(20)
+                                .overlay(IKey.str("+")
+                                        .color(Color.WHITE.main))
+                                .onMousePressed(m -> {
+                                    int s = slotValue.getIntValue();
+                                    s += Interactable.hasShiftDown() ? 10 : 1;
+                                    slotValue.setIntValue(s);
+                                    return true;
+                                })))
+                .child(Flow.row()
+                        .pos(10, 75)
+                        .coverChildren()
+                        .child(IKey.lang("metaitem.cover.digital.title.spin").asWidget()
+                                .size(30, 20))
+                        .child(new ButtonWidget<>()
+                                .size(20)
+                                .overlay(IKey.str("R")
+                                        .color(Color.WHITE.main))
+                                .onMousePressed(m -> {
+                                    spinValue.setValue(spinValue.getValue().rotateY());
+                                    return true;
+                                }))
+                        .child(IKey.dynamic(() -> spinValue.getValue().toString()).asWidget()
+                                .alignment(Alignment.CenterLeft)
+                                .paddingLeft(4)
+                                .size(80, 20)
+                                .color(Color.WHITE.main)
+                                .background(GTGuiTextures.DISPLAY)))
+                .bindPlayerInventory();
     }
 
     private void syncAllInfo() {
@@ -914,14 +980,14 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     @Override
     public void renderCover(CCRenderState ccRenderState, Matrix4 translation, IVertexOperation[] ops, Cuboid6 cuboid6,
                             BlockRenderLayer blockRenderLayer) {
-        codechicken.lib.vec.Rotation rotation = new codechicken.lib.vec.Rotation(0, 0, 1, 0);
+        Rotation rotation = new Rotation(0, 0, 1, 0);
         if (this.getAttachedSide().getAxis().isVertical()) {
             if (this.spin == EnumFacing.WEST) {
                 translation.translate(0, 0, 1);
-                rotation = new codechicken.lib.vec.Rotation(Math.PI / 2, 0, 1, 0);
+                rotation = new Rotation(Math.PI / 2, 0, 1, 0);
             } else if (this.spin == EnumFacing.EAST) {
                 translation.translate(1, 0, 0);
-                rotation = new codechicken.lib.vec.Rotation(-Math.PI / 2, 0, 1, 0);
+                rotation = new Rotation(-Math.PI / 2, 0, 1, 0);
             } else if (this.spin == EnumFacing.SOUTH) {
                 translation.translate(1, 0, 1);
                 rotation = new Rotation(Math.PI, 0, 1, 0);
@@ -961,7 +1027,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         GlStateManager.pushMatrix();
         /* hack the lightmap */
-        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+        RenderHelper.disableStandardItemLighting();
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
@@ -976,7 +1042,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
 
         /* restore the lightmap */
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
-        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
         GlStateManager.popMatrix();
     }
 

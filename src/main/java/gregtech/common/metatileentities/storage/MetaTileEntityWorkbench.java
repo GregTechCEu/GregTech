@@ -47,17 +47,18 @@ import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.PageButton;
 import com.cleanroommc.modularui.widgets.PagedWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.base.Preconditions;
@@ -217,7 +218,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager syncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager syncManager, UISettings settings) {
         getCraftingRecipeLogic().updateCurrentRecipe();
         this.recipeLogic.clearSlotMap();
 
@@ -322,19 +323,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                             }
                         })
                         .background(GTGuiTextures.SLOT))
-                .build()
-                .child(new ButtonWidget<>()
-                        .margin(2)
-                        .size(8)
-                        .topRel(0f)
-                        .rightRel(0f, 0, 1f)
-                        .background(GTGuiTextures.BUTTON_CLEAR_GRID)
-                        .addTooltipLine(IKey.lang("gregtech.machine.workbench.clear_grid"))
-                        .disableHoverBackground()
-                        .onMousePressed(mouseButton -> {
-                            this.recipeLogic.clearCraftingGrid();
-                            return true;
-                        }));
+                .build();
     }
 
     public IWidget createCraftingOutput(PosGuiData guiData, PanelSyncManager syncManager) {
@@ -349,7 +338,18 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .marginBottom(4))
                 .child(IKey.dynamic(() -> TextFormattingUtil.formatLongToCompactString(amountCrafted.getIntValue(), 5))
                         .alignment(Alignment.Center)
-                        .asWidget().widthRel(1f));
+                        .asWidget().widthRel(1f))
+                .child(new ButtonWidget<>()
+                        .margin(2)
+                        .size(8)
+                        .align(Alignment.TopLeft)
+                        .background(GTGuiTextures.BUTTON_CLEAR_GRID)
+                        .addTooltipLine(IKey.lang("gregtech.machine.workbench.clear_grid"))
+                        .disableHoverBackground()
+                        .onMousePressed(mouseButton -> {
+                            this.recipeLogic.clearCraftingGrid();
+                            return true;
+                        }));
     }
 
     public IWidget createRecipeMemoryGrid(PanelSyncManager syncManager) {

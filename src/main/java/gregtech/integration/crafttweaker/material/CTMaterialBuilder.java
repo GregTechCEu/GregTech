@@ -38,7 +38,7 @@ public class CTMaterialBuilder {
 
     @ZenConstructor
     public CTMaterialBuilder(int id, String name) {
-        this.backingBuilder = new Material.Builder(id, GTUtility.gregtechId(name));
+        this.backingBuilder = Material.builder(id, GTUtility.gregtechId(name));
     }
 
     @ZenConstructor

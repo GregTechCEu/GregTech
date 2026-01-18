@@ -3,9 +3,7 @@ package gregtech.common.covers.detector;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -18,6 +16,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -28,17 +27,24 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 
 public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements CoverWithUI {
 
-    private static final int PADDING = 3;
-    private static final int SIZE = 18;
-
     private static final int DEFAULT_MIN = 1000; // 1 Bucket
     private static final int DEFAULT_MAX = 16000; // 16 Buckets
 
-    private int min = DEFAULT_MIN, max = DEFAULT_MAX, outputAmount;
+    private long min = DEFAULT_MIN;
+    private long max = DEFAULT_MAX;
+    private int outputAmount;
     private boolean isLatched = false;
 
     protected FluidFilterContainer fluidFilter;
@@ -65,62 +71,66 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup group = new WidgetGroup();
-        group.addWidget(new LabelWidget(10, 8, "cover.advanced_fluid_detector.label"));
-
-        // set min fluid amount
-        group.addWidget(new LabelWidget(10, 5 + (SIZE + PADDING), "cover.advanced_fluid_detector.min"));
-        group.addWidget(new ImageWidget(98 - 4, (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
-        group.addWidget(new TextFieldWidget2(98, 5 + (SIZE + PADDING), 4 * SIZE, SIZE,
-                this::getMinValue, this::setMinValue)
-                        .setMaxLength(10)
-                        .setAllowedChars(TextFieldWidget2.WHOLE_NUMS)
-                        .setPostFix("L"));
-
-        // set max fluid amount
-        group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_fluid_detector.max"));
-        group.addWidget(new ImageWidget(98 - 4, 2 * (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
-        group.addWidget(new TextFieldWidget2(98, 5 + 2 * (SIZE + PADDING), 4 * SIZE, SIZE,
-                this::getMaxValue, this::setMaxValue)
-                        .setMaxLength(10)
-                        .setAllowedChars(TextFieldWidget2.WHOLE_NUMS)
-                        .setPostFix("L"));
-
-        // invert logic button
-        // group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING),
-        // "cover.generic.advanced_detector.invert_label"));
-        group.addWidget(
-                new CycleButtonWidget(10, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
-                        "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
-                                .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip"));
-        group.addWidget(
-                new CycleButtonWidget(94, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
-                        "cover.generic.advanced_detector.continuous", "cover.generic.advanced_detector.latched")
-                                .setTooltipHoverString("cover.generic.advanced_detector.latch_tooltip"));
-
-        this.fluidFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
-
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 164 + 4 * (SIZE + PADDING))
-                .widget(group)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 164)
-                .build(this, player);
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
+        return GTGuis.defaultPanel(this)
+                .height(202)
+                .child(CoverWithUI.createTitleRow(getPickItem()))
+                .child(Flow.column()
+                        .name("min/max parent column")
+                        .top(28)
+                        .margin(5, 0)
+                        .coverChildrenHeight()
+                        .child(createMinMaxRow("cover.advanced_fluid_detector.min",
+                                this::getMinValue, this::setMinValue,
+                                this::getPostFix, w -> w.setMaxLength(10)))
+                        .child(createMinMaxRow("cover.advanced_fluid_detector.max",
+                                this::getMaxValue, this::setMaxValue,
+                                this::getPostFix, w -> w.setMaxLength(10)))
+                        .child(Flow.row()
+                                .name("config row")
+                                .coverChildrenHeight()
+                                .marginBottom(5)
+                                .child(new ToggleButton()
+                                        .name("inverted button")
+                                        .size(72, 18)
+                                        .value(new BooleanSyncValue(this::isInverted, this::setInverted))
+                                        .addTooltipLine(IKey.lang("cover.generic.advanced_detector.invert_tooltip"))
+                                        .overlay(true, IKey.lang("cover.advanced_energy_detector.inverted")
+                                                .style(IKey.WHITE))
+                                        .overlay(false, IKey.lang("cover.advanced_energy_detector.normal")
+                                                .style(IKey.WHITE)))
+                                .child(new ToggleButton()
+                                        .name("latch button")
+                                        .size(72, 18)
+                                        .right(0)
+                                        .overlay(true, IKey.lang("cover.generic.advanced_detector.latched")
+                                                .style(IKey.WHITE))
+                                        .overlay(false, IKey.lang("cover.generic.advanced_detector.continuous")
+                                                .style(IKey.WHITE))
+                                        .addTooltipLine(IKey.lang("cover.generic.advanced_detector.latch_tooltip"))
+                                        .value(new BooleanSyncValue(this::isLatched, this::setLatched))))
+                        .child(this.fluidFilter.initUI(guiData, guiSyncManager)))
+                .bindPlayerInventory();
     }
 
-    private String getMinValue() {
-        return String.valueOf(min);
+    private @NotNull String getPostFix() {
+        return " mL";
     }
 
-    private String getMaxValue() {
-        return String.valueOf(max);
+    private long getMinValue() {
+        return min;
     }
 
-    private void setMinValue(String val) {
-        this.min = CoverDetectorBase.parseCapped(val, 0, max - 1, DEFAULT_MIN);
+    private long getMaxValue() {
+        return max;
     }
 
-    private void setMaxValue(String val) {
-        this.max = CoverDetectorBase.parseCapped(val, min + 1, Integer.MAX_VALUE, DEFAULT_MAX);
+    private void setMinValue(long val) {
+        this.min = clamp(val, 0, max - 1);
+    }
+
+    private void setMaxValue(long val) {
+        this.max = clamp(val, min + 1, Long.MAX_VALUE);
     }
 
     private void setLatched(boolean isLatched) {
@@ -162,8 +172,8 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     @Override
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("min", this.min);
-        tagCompound.setInteger("max", this.max);
+        tagCompound.setLong(MIN_KEY, this.min);
+        tagCompound.setLong(MAX_KEY, this.max);
         tagCompound.setBoolean("isLatched", this.isLatched);
         tagCompound.setTag("filter", this.fluidFilter.serializeNBT());
     }
@@ -171,8 +181,14 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.min = tagCompound.getInteger("min");
-        this.max = tagCompound.getInteger("max");
+        if (tagCompound.hasKey(MIN_KEY, Constants.NBT.TAG_INT)) {
+            // if one of them is int, so is the other
+            this.min = tagCompound.getInteger(MIN_KEY);
+            this.max = tagCompound.getInteger(MAX_KEY);
+        } else {
+            this.min = tagCompound.getLong(MIN_KEY);
+            this.max = tagCompound.getLong(MAX_KEY);
+        }
         this.isLatched = tagCompound.getBoolean("isLatched");
         this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("filter"));
     }
@@ -180,16 +196,16 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
-        packetBuffer.writeInt(this.min);
-        packetBuffer.writeInt(this.max);
+        packetBuffer.writeLong(this.min);
+        packetBuffer.writeLong(this.max);
         packetBuffer.writeBoolean(this.isLatched);
     }
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        this.min = packetBuffer.readInt();
-        this.max = packetBuffer.readInt();
+        this.min = packetBuffer.readLong();
+        this.max = packetBuffer.readLong();
         this.isLatched = packetBuffer.readBoolean();
     }
 }

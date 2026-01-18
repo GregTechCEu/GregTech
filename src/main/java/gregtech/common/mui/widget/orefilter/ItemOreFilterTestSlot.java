@@ -11,7 +11,7 @@ public class ItemOreFilterTestSlot extends ModularSlot {
     OreFilterTestSlot parent;
 
     public ItemOreFilterTestSlot() {
-        super(new ItemStackHandler(1), 0, true);
+        super(new ItemStackHandler(1), 0);
     }
 
     void setParent(OreFilterTestSlot parent) {

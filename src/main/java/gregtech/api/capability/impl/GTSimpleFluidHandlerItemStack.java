@@ -69,26 +69,6 @@ public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple i
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain) {
-        FluidStack drained = super.drain(resource, doDrain);
-        this.removeTagWhenEmpty(doDrain);
-        return drained;
-    }
-
-    @Override
-    public FluidStack drain(int maxDrain, boolean doDrain) {
-        FluidStack drained = super.drain(maxDrain, doDrain);
-        this.removeTagWhenEmpty(doDrain);
-        return drained;
-    }
-
-    private void removeTagWhenEmpty(boolean doDrain) {
-        if (doDrain && this.getFluid() == null) {
-            this.container.setTagCompound(null);
-        }
-    }
-
-    @Override
     public boolean canFillFluidType(FluidStack fluid) {
         return canFill() && (this.filter == null || this.filter.test(fluid));
     }
@@ -96,6 +76,15 @@ public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple i
     @Override
     public boolean canDrainFluidType(FluidStack fluid) {
         return canDrain();
+    }
+
+    @Override
+    protected void setContainerToEmpty() {
+        super.setContainerToEmpty();
+        var tag = container.getTagCompound();
+        if (tag != null && tag.isEmpty()) {
+            container.setTagCompound(null);
+        }
     }
 
     private final class TankProperties implements IFluidTankProperties {

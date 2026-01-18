@@ -247,7 +247,7 @@ public class MultiblockUIFactory {
             this.screenFunction.addWidgets(panel, panelSyncManager);
         }
 
-        var playerInv = SlotGroupWidget.playerInventory(0);
+        var playerInv = SlotGroupWidget.playerInventory(false);
         if (disableButtons) {
             playerInv.alignX(0.5f);
         } else {
@@ -360,7 +360,7 @@ public class MultiblockUIFactory {
                     .debugName("display_text")
                     .sizeRel(1f)
                     .alignment(Alignment.TopLeft)
-                    .margin(4, 4)
+                    .margin(4)
                     .autoUpdate(true)
                     .textBuilder(display::build));
         }

@@ -271,7 +271,7 @@ public class WidgetProspectingMap extends Widget {
                                 if (ProspectingTexture.SELECTED_ALL.equals(texture.getSelected()) ||
                                         texture.getSelected().equals(dict)) {
                                     oreInfo.put(name, oreInfo.getOrDefault(name, 0) + 1);
-                                    oreHeight.put(name, oreHeight.getOrDefault(name, 0) + height.intValue());
+                                    oreHeight.put(name, oreHeight.getOrDefault(name, 0) + Byte.toUnsignedInt(height));
                                     if (oreInfo.get(name) > maxAmount[0]) {
                                         maxAmount[0] = oreInfo.get(name);
                                         MaterialStack m = OreDictUnifier.getMaterial(OreDictUnifier.get(dict));

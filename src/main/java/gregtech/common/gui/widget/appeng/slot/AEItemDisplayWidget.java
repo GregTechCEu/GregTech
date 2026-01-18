@@ -40,7 +40,7 @@ public class AEItemDisplayWidget extends Widget {
         if (item != null) {
             ItemStack realStack = item.createItemStack();
             realStack.setCount(1);
-            RenderUtil.drawItemStack(realStack, stackX, stackY, null);
+            RenderUtil.drawItemStack(realStack, stackX, stackY);
             String amountStr = String.format("x%,d", item.getStackSize());
             drawText(amountStr, stackX + 20, stackY + 5, 1, 0xFFFFFFFF);
         }

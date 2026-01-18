@@ -2,6 +2,7 @@ package gregtech.api.capability;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.EUToFEProvider;
+import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.converter.ConverterTrait;
 
@@ -21,6 +22,9 @@ public class GregtechCapabilities {
 
     @CapabilityInject(IElectricItem.class)
     public static Capability<IElectricItem> CAPABILITY_ELECTRIC_ITEM = null;
+
+    @CapabilityInject(ItemGTToolbelt.ToolStackHandler.class)
+    public static Capability<ItemGTToolbelt.ToolStackHandler> CAPABILITY_TOOLBELT_HANDLER = null;
 
     @CapabilityInject(IMultiblockController.class)
     public static Capability<IMultiblockController> CAPABILITY_MULTIBLOCK_CONTROLLER = null;

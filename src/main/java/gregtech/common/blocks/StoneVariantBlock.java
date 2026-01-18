@@ -10,8 +10,6 @@ import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.Item;
@@ -26,9 +24,6 @@ import java.util.Random;
 @SuppressWarnings("deprecation")
 public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType> {
 
-    // shared property instance
-    private static final PropertyEnum<StoneType> PROPERTY = PropertyEnum.create("variant", StoneType.class);
-
     private final StoneVariant stoneVariant;
 
     public StoneVariantBlock(@NotNull StoneVariant stoneVariant) {
@@ -42,14 +37,6 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
         setHarvestLevel(ToolClasses.PICKAXE, 0);
         setDefaultState(getState(StoneType.BLACK_GRANITE));
         setCreativeTab(GTCreativeTabs.TAB_GREGTECH_DECORATIONS);
-    }
-
-    @NotNull
-    @Override
-    protected BlockStateContainer createBlockState() {
-        this.VARIANT = PROPERTY;
-        this.VALUES = StoneType.values();
-        return new BlockStateContainer(this, VARIANT);
     }
 
     @Override

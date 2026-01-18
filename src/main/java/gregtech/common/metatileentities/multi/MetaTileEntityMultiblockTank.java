@@ -40,7 +40,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.widgets.TextWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -145,7 +144,8 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
                 .disableDisplay()
                 .disableButtons()
                 .addScreenChildren((parent, syncManager) -> {
-                    parent.child(new TextWidget(IKey.lang(getMetaFullName()))
+                    parent.child(IKey.lang(getMetaFullName())
+                            .asWidget()
                             .pos(5, 5));
                     parent.child(new GTFluidSlot()
                             .pos(52, 18)

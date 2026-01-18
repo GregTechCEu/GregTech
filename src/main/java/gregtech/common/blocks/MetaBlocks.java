@@ -1,6 +1,8 @@
 package gregtech.common.blocks;
 
 import gregtech.api.GregTechAPI;
+import gregtech.api.block.coil.CoilRegistry;
+import gregtech.api.block.coil.CustomCoilBlock;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.registry.MTERegistry;
@@ -508,6 +510,12 @@ public class MetaBlocks {
         MULTIBLOCK_CASING.onModelRegister();
         TRANSPARENT_CASING.onModelRegister();
 
+        for (CoilRegistry r : GregTechAPI.coilManager.getRegistries()) {
+            for (CustomCoilBlock block : r) {
+                block.onModelRegister();
+            }
+        }
+
         for (BlockLamp lamp : LAMPS.values()) lamp.onModelRegister();
         for (BlockLamp lamp : BORDERLESS_LAMPS.values()) lamp.onModelRegister();
 
@@ -644,6 +652,14 @@ public class MetaBlocks {
         blockColors.registerBlockColorHandler((s, w, p, i) -> ConfigHolder.client.defaultPaintingColor,
                 HERMETIC_CASING);
         itemColors.registerItemColorHandler((s, i) -> ConfigHolder.client.defaultPaintingColor, HERMETIC_CASING);
+
+        WIRE_COIL.onColorRegister(blockColors, itemColors);
+
+        for (CoilRegistry r : GregTechAPI.coilManager.getRegistries()) {
+            for (CustomCoilBlock block : r) {
+                block.onColorRegister(blockColors, itemColors);
+            }
+        }
     }
 
     public static void registerWalkingSpeedBonus() {

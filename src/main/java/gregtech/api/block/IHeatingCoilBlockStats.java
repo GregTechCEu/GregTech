@@ -2,9 +2,12 @@ package gregtech.api.block;
 
 import gregtech.api.recipes.properties.impl.TemperatureProperty;
 import gregtech.api.unification.material.Material;
+import gregtech.client.model.ActiveVariantBlockBakedModel;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.BooleanSupplier;
 
 /**
  * Implement this interface on the Block Enum for your Heating Coil block
@@ -52,4 +55,12 @@ public interface IHeatingCoilBlockStats {
      */
     @Nullable
     Material getMaterial();
+
+    default int getColor() {
+        return getMaterial() == null ? 0xFFFFFFFF : getMaterial().getMaterialRGB();
+    }
+
+    default ActiveVariantBlockBakedModel createModel(BooleanSupplier bloomConfig) {
+        return null;
+    }
 }

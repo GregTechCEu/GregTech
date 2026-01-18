@@ -9,6 +9,7 @@ import gregtech.common.items.tool.*;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.monster.EntityGolem;
@@ -374,7 +375,14 @@ public final class ToolItems {
     }
 
     public static void registerModels() {
-        TOOLS.forEach(tool -> ModelLoader.setCustomModelResourceLocation(tool.get(), 0, tool.getModelLocation()));
+        for (IGTTool tool : TOOLS) {
+            if (tool == TOOLBELT) {
+                ModelLoader.setCustomMeshDefinition(tool.get(), s -> tool.getModelLocation());
+                ModelBakery.registerItemVariants(tool.get(), tool.getModelLocation());
+            } else {
+                ModelLoader.setCustomModelResourceLocation(tool.get(), 0, tool.getModelLocation());
+            }
+        }
     }
 
     @SideOnly(Side.CLIENT)

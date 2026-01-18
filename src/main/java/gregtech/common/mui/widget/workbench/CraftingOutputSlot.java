@@ -17,11 +17,11 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+import com.cleanroommc.modularui.integration.recipeviewer.RecipeViewerIngredientProvider;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.theme.WidgetThemeEntry;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -37,7 +37,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements Interactable, JeiIngredientProvider {
+public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements Interactable,
+                                RecipeViewerIngredientProvider {
 
     private static final int MOUSE_CLICK = 2;
     private static final int SYNC_STACK = 5;
@@ -70,7 +71,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetThemeEntry<?> widgetTheme) {
         ItemStack itemstack = this.syncHandler.getOutputStack();
         RenderUtil.drawItemStack(itemstack, 1, 1, true);
         RenderUtil.handleSlotOverlay(this, widgetTheme);
@@ -138,8 +139,8 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                         if (data.shift) {
                             ItemStack finalStack = outputStack.copy();
                             while (quickTransfer(finalStack, true) &&
-                                    finalStack.getCount() < outputStack.getMaxStackSize()) {
-                                if (!recipeLogic.performRecipe()) break;
+                                    canStack(finalStack, outputStack) &&
+                                    recipeLogic.performRecipe()) {
                                 finalStack.setCount(finalStack.getCount() + outputStack.getCount());
                                 handleItemCraft(outputStack, player);
                             }
@@ -151,6 +152,11 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                 }
                 ForgeHooks.setCraftingPlayer(null);
             }
+        }
+
+        private static boolean canStack(ItemStack a, ItemStack b) {
+            return ItemHandlerHelper.canItemStacksStackRelaxed(a, b) &&
+                    a.getCount() + b.getCount() < b.getMaxStackSize();
         }
 
         private boolean insertStack(ItemStack fromStack, ModularSlot toSlot, boolean simulate) {
@@ -260,7 +266,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         public CraftingOutputMS(IntSyncValue amountCrafted, MetaTileEntityWorkbench workbench) {
             super(new InventoryWrapper(
                     workbench.getCraftingRecipeLogic().getCraftingResultInventory(),
-                    workbench.getCraftingRecipeLogic()), 0, true);
+                    workbench.getCraftingRecipeLogic()), 0);
             this.amountCrafted = amountCrafted;
             this.recipeLogic = workbench.getCraftingRecipeLogic();
             this.recipeMemory = workbench.getRecipeMemory();
