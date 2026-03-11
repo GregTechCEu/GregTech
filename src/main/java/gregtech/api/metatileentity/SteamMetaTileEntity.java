@@ -10,9 +10,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
-import gregtech.api.mui.widget.RecipeProgressWidget;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.util.GTUtility;
 import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.ICubeRenderer;
@@ -51,7 +49,6 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widget.WidgetTree;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -158,18 +155,19 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         RecipeMap<?> map = Objects.requireNonNull(getRecipeMap());
 
-        ModularPanel panel = map.getRecipeMapUI()
-                .setSize(176, 166)
-                .constructPanel(this, workableHandler::getProgressPercent,
-                        importItems, exportItems,
-                        EMPTY, exportFluids,
-                        0, panelSyncManager);
         BooleanSyncValue hasNoSteam = new BooleanSyncValue(workableHandler::isHasNotEnoughEnergy);
         panelSyncManager.syncValue("has_energy", hasNoSteam);
-        // todo add tooltip for no steam?
-        WidgetTree.findFirstWithName(panel, RecipeMapUI.RECIPE_PROGRESS, RecipeProgressWidget.class)
-                .overlay(new DynamicDrawable(() -> hasNoSteam.getBoolValue() ?
-                        getIndicator() : IDrawable.NONE).asIcon().size(18).marginTop(46));
+
+        ModularPanel panel = map.getRecipeMapUI()
+                .constructPanel(this, builder -> builder
+                        .setInputs(importItems, EMPTY)
+                        .setOutputs(exportItems, exportFluids)
+                        .inventorySlotGroups()
+                        .progressWidget(workableHandler::getProgressPercent, widget -> {
+                            // todo add tooltip for no steam?
+                            widget.overlay(new DynamicDrawable(() -> hasNoSteam.getBoolValue() ?
+                                    getIndicator() : IDrawable.NONE).asIcon().size(18).marginTop(46));
+                        }));
         return panel.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(getUITheme().getLogo().asWidget()
                         .size(16)

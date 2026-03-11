@@ -18,9 +18,7 @@ import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
-import gregtech.api.mui.widget.RecipeProgressWidget;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.particle.IMachineParticleEffect;
@@ -63,7 +61,6 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widget.WidgetTree;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
@@ -502,11 +499,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         RecipeMap<?> workableRecipeMap = Objects.requireNonNull(workable.getRecipeMap(), "recipe map is null");
-        int yOffset = 0;
-        if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
-                workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
-            yOffset = FONT_HEIGHT;
-        }
 
         Flow col = Flow.column()
                 .name("col:special.buttons")
@@ -518,18 +510,21 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         panelSyncManager.syncValue("has_energy", hasNoEnergy);
 
         ModularPanel panel = workableRecipeMap.getRecipeMapUI()
-                .setSize(176 + 20, 166 + yOffset)
-                .constructPanel(this, workable::getProgressPercent,
-                        importItems, exportItems,
-                        importFluids, exportFluids,
-                        yOffset, panelSyncManager)
+                .constructPanel(this, builder -> builder
+                        .calculateOffset()
+                        .setMaxSize(176 + 20, 166)
+                        .setInputs(importItems, importFluids)
+                        .setOutputs(exportItems, exportFluids)
+                        .inventorySlotGroups()
+                        .progressWidget(workable::getProgressPercent, widget -> widget
+                                // todo add tooltip for no energy?
+                                .overlay(new DynamicDrawable(() -> hasNoEnergy.getBoolValue() ?
+                                        GTGuiTextures.INDICATOR_NO_ENERGY : IDrawable.NONE).asIcon().size(18)
+                                                .marginTop(46))))
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(col)
                 .child(SlotGroupWidget.playerInventory(true).left(7));
-        // todo add tooltip for no energy?
-        WidgetTree.findFirstWithName(panel, RecipeMapUI.RECIPE_PROGRESS, RecipeProgressWidget.class)
-                .overlay(new DynamicDrawable(() -> hasNoEnergy.getBoolValue() ?
-                        GTGuiTextures.INDICATOR_NO_ENERGY : IDrawable.NONE).asIcon().size(18).marginTop(46));
+
         if (exportItems.getSlots() > 0) {
             col.child(new ToggleButton()
                     .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)

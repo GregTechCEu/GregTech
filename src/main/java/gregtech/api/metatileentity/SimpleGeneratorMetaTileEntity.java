@@ -145,29 +145,25 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         RecipeMap<?> workableRecipeMap = Objects.requireNonNull(workable.getRecipeMap(), "recipe map is null");
-        int yOffset = 0;
-        if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
-                workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
-            yOffset = FONT_HEIGHT;
-        }
 
-        ModularPanel panel = workableRecipeMap.getRecipeMapUI()
-                .setSize(176, 166 + yOffset)
-                .constructPanel(this, workable::getProgressPercent,
-                        importItems, exportItems,
-                        importFluids, exportFluids,
-                        yOffset, panelSyncManager)
+        return workableRecipeMap.getRecipeMapUI()
+                .constructPanel(this, builder -> builder
+                        .calculateOffset()
+                        .setInputs(importItems, importFluids)
+                        .setOutputs(exportItems, exportFluids)
+                        .inventorySlotGroups()
+                        .progressWidget(workable::getProgressPercent)
+                        .extraWidgets((panel1, yoffset) -> {
+                            if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
+                                panel1.child(new Widget<>()
+                                        .size(17)
+                                        .right(7)
+                                        .top(45 + yoffset)
+                                        .background(GTGuiTextures.getLogo(getUITheme())));
+                            }
+                        }))
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .bindPlayerInventory();
-
-        if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
-            panel.child(new Widget<>()
-                    .size(17)
-                    .right(7)
-                    .top(45 + yOffset)
-                    .background(GTGuiTextures.getLogo(getUITheme())));
-        }
-        return panel;
     }
 
     @Override
