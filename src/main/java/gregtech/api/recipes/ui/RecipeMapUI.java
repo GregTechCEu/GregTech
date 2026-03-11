@@ -45,6 +45,7 @@ import java.util.function.DoubleSupplier;
 @ApiStatus.Experimental
 public class RecipeMapUI<R extends RecipeMap<?>> {
 
+    public static final String RECIPE_PROGRESS = "recipe.progress";
     private final R recipeMap;
     private final boolean modifyItemInputs;
     private final boolean modifyItemOutputs;
@@ -544,6 +545,10 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
     /* *********************** MUI 2 *********************** */
 
+    // todo rework this
+    // this might need to be called every time 'constructPanel()' is called
+    // i needed to know the height of the panel to adjust
+    // the height of the panel based on the amount of slot rows
     public RecipeMapUI<R> setSize(int width, int height) {
         this.width = width;
         this.height = height;
@@ -593,7 +598,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         }
         row.child(progressWidget
                 .recipeMap(recipeMap)
-                .name("recipe.progress")
+                .name(RECIPE_PROGRESS)
                 .size(progressSize)
                 .margin(margin, 0)
                 .value(progressValue)
@@ -624,7 +629,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         Flow col = Flow.column()
                 .mainAxisAlignment(Alignment.MainAxis.END)
                 .coverChildren()
-                .name("col:item_grid");
+                .name(String.format("col:%s_item_grid", isOutputs ? "output" : "input"));
         int width = grid.getItemGridWidth();
         int height = grid.getItemGridHeight();
 
@@ -646,7 +651,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         Flow col = Flow.column()
                 .mainAxisAlignment(Alignment.MainAxis.START)
                 .coverChildren()
-                .name("col:fluid_grid");
+                .name(String.format("col:%s_fluid_grid", isOutputs ? "output" : "input"));
 
         int width = grid.getFluidGridWidth();
         int height = grid.getFluidGridHeight();

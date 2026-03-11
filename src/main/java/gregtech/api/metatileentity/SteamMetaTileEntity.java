@@ -8,8 +8,11 @@ import gregtech.api.capability.impl.RecipeLogicSteam;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
+import gregtech.api.mui.widget.RecipeProgressWidget;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.util.GTUtility;
 import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.ICubeRenderer;
@@ -40,11 +43,16 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.WidgetTree;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -150,17 +158,30 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
         RecipeMap<?> map = Objects.requireNonNull(getRecipeMap());
 
-        return map.getRecipeMapUI()
+        ModularPanel panel = map.getRecipeMapUI()
+                .setSize(176, 166)
                 .constructPanel(this, workableHandler::getProgressPercent,
                         importItems, exportItems,
                         EMPTY, exportFluids,
-                        0, panelSyncManager)
-                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                        0, panelSyncManager);
+        BooleanSyncValue hasNoSteam = new BooleanSyncValue(workableHandler::isHasNotEnoughEnergy);
+        panelSyncManager.syncValue("has_energy", hasNoSteam);
+        // todo add tooltip for no steam?
+        WidgetTree.findFirstWithName(panel, RecipeMapUI.RECIPE_PROGRESS, RecipeProgressWidget.class)
+                .overlay(new DynamicDrawable(() -> hasNoSteam.getBoolValue() ?
+                        getIndicator().asIcon().size(18) : IDrawable.NONE));
+        return panel.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(getUITheme().getLogo().asWidget()
                         .size(16)
                         .right(7)
                         .top(46))
-                .bindPlayerInventory();
+                .child(SlotGroupWidget.playerInventory((index, widgetSlot) -> widgetSlot
+                        .background(GTGuiTextures.SLOT))
+                        .horizontalCenter().bottom(7));
+    }
+
+    public IDrawable getIndicator() {
+        return isHighPressure ? GTGuiTextures.INDICATOR_NO_STEAM_STEEL : GTGuiTextures.INDICATOR_NO_STEAM_BRONZE;
     }
 
     @Override

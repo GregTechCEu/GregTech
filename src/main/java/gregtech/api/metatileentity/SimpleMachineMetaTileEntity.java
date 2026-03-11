@@ -18,7 +18,9 @@ import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.widget.GhostCircuitSlotWidget;
+import gregtech.api.mui.widget.RecipeProgressWidget;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.particle.IMachineParticleEffect;
@@ -51,7 +53,9 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
@@ -59,6 +63,7 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widget.WidgetTree;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
@@ -509,8 +514,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                 .height(18 * 4 + 4)
                 .width(18);
 
-        BooleanSyncValue hasEnergy = new BooleanSyncValue(workable::isHasNotEnoughEnergy);
-        panelSyncManager.syncValue("has_energy", hasEnergy);
+        BooleanSyncValue hasNoEnergy = new BooleanSyncValue(workable::isHasNotEnoughEnergy);
+        panelSyncManager.syncValue("has_energy", hasNoEnergy);
 
         ModularPanel panel = workableRecipeMap.getRecipeMapUI()
                 .setSize(176 + 20, 166 + yOffset)
@@ -519,15 +524,12 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                         importFluids, exportFluids,
                         yOffset, panelSyncManager)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .child(GTGuiTextures.INDICATOR_NO_ENERGY.asWidget()
-                        .name("energy.indicator")
-                        .size(18)
-                        .alignX(0.5f)
-                        .top(42 + yOffset + 18)
-                        .setEnabledIf($ -> hasEnergy.getBoolValue()))
                 .child(col)
                 .child(SlotGroupWidget.playerInventory(true).left(7));
-
+        // todo add tooltip for no energy?
+        WidgetTree.findFirstWithName(panel, RecipeMapUI.RECIPE_PROGRESS, RecipeProgressWidget.class)
+                .overlay(new DynamicDrawable(() -> hasNoEnergy.getBoolValue() ?
+                        GTGuiTextures.INDICATOR_NO_ENERGY.asIcon().size(18) : IDrawable.NONE));
         if (exportItems.getSlots() > 0) {
             col.child(new ToggleButton()
                     .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
