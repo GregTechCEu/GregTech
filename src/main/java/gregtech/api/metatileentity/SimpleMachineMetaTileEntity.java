@@ -512,15 +512,15 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         ModularPanel panel = workableRecipeMap.getRecipeMapUI()
                 .constructPanel(this, builder -> builder
                         .calculateOffset()
-                        .setMaxSize(176 + 20, 166)
+                        .setMaxSize(176 + 20, 170)
                         .setInputs(importItems, importFluids)
                         .setOutputs(exportItems, exportFluids)
                         .inventorySlotGroups()
                         .progressWidget(workable::getProgressPercent, widget -> widget
                                 // todo add tooltip for no energy?
                                 .overlay(new DynamicDrawable(() -> hasNoEnergy.getBoolValue() ?
-                                        GTGuiTextures.INDICATOR_NO_ENERGY : IDrawable.NONE).asIcon().size(18)
-                                                .marginTop(46))))
+                                        GTGuiTextures.INDICATOR_NO_ENERGY : IDrawable.NONE)
+                                                .asIcon().size(18).marginTop(50))))
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(col)
                 .child(SlotGroupWidget.playerInventory(true).left(7));

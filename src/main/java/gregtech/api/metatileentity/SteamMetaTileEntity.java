@@ -160,13 +160,15 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
 
         ModularPanel panel = map.getRecipeMapUI()
                 .constructPanel(this, builder -> builder
+                        .setMaxSize(176, 170)
                         .setInputs(importItems, EMPTY)
                         .setOutputs(exportItems, exportFluids)
                         .inventorySlotGroups()
                         .progressWidget(workableHandler::getProgressPercent, widget -> {
                             // todo add tooltip for no steam?
                             widget.overlay(new DynamicDrawable(() -> hasNoSteam.getBoolValue() ?
-                                    getIndicator() : IDrawable.NONE).asIcon().size(18).marginTop(46));
+                                    getIndicator() : IDrawable.NONE)
+                                            .asIcon().size(18).marginTop(50));
                         }));
         return panel.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(getUITheme().getLogo().asWidget()
