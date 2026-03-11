@@ -902,7 +902,7 @@ public final class RecipeMaps {
                     .itemOutputs(1)
                     .uiBuilder(b -> b
                             .itemSlotOverlay(GTGuiTextures.HAMMER_OVERLAY, false)
-                            .specialTexture(widget -> widget.overlay(GTGuiTextures.PROGRESS_BAR_HAMMER_BASE.asIcon()
+                            .specialTexture(widget -> widget.background(GTGuiTextures.PROGRESS_BAR_HAMMER_BASE.asIcon()
                                     .size(20, 6)
                                     .alignment(Alignment.BottomCenter)
                                     .marginBottom(-5)))

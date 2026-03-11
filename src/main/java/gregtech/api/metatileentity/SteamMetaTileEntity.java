@@ -169,7 +169,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
         // todo add tooltip for no steam?
         WidgetTree.findFirstWithName(panel, RecipeMapUI.RECIPE_PROGRESS, RecipeProgressWidget.class)
                 .overlay(new DynamicDrawable(() -> hasNoSteam.getBoolValue() ?
-                        getIndicator().asIcon().size(18) : IDrawable.NONE));
+                        getIndicator() : IDrawable.NONE).asIcon().size(18).marginTop(46));
         return panel.child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(getUITheme().getLogo().asWidget()
                         .size(16)

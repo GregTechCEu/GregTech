@@ -529,7 +529,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         // todo add tooltip for no energy?
         WidgetTree.findFirstWithName(panel, RecipeMapUI.RECIPE_PROGRESS, RecipeProgressWidget.class)
                 .overlay(new DynamicDrawable(() -> hasNoEnergy.getBoolValue() ?
-                        GTGuiTextures.INDICATOR_NO_ENERGY.asIcon().size(18) : IDrawable.NONE));
+                        GTGuiTextures.INDICATOR_NO_ENERGY : IDrawable.NONE).asIcon().size(18).marginTop(46));
         if (exportItems.getSlots() > 0) {
             col.child(new ToggleButton()
                     .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
