@@ -932,7 +932,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ENERGY_OUTPUT_HATCH_4A[ULV])
                 .input(wireGtOctal, Lead, 2)
                 .input(plate, WroughtIron, 4)
-                .output(ENERGY_OUTPUT_HATCH_16A[LuV])
+                .output(ENERGY_OUTPUT_HATCH_16A[ULV])
                 .duration(200).EUt(VH[ULV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
