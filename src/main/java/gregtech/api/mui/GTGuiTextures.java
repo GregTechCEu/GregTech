@@ -63,6 +63,8 @@ public class GTGuiTextures {
             "textures/gui/icon/gregtech_logo_blinking_yellow.png", 17, 34, 60);
     public static final IDrawable GREGTECH_LOGO_BLINKING_RED = animated(
             "textures/gui/icon/gregtech_logo_blinking_red.png", 17, 34, 36);
+    public static final UITexture GREGTECH_LOGO_BRONZE = fullImage("textures/gui/base/logo_bronze");
+    public static final UITexture GREGTECH_LOGO_STEEL = fullImage("textures/gui/base/logo_steel");
 
     public static final UITexture INDICATOR_NO_ENERGY = fullImage("textures/gui/base/indicator_no_energy.png");
     public static final UITexture INDICATOR_NO_STEAM_BRONZE = fullImage(
@@ -74,7 +76,7 @@ public class GTGuiTextures {
     // BACKGROUNDS
     public static final UITexture BACKGROUND = UITexture.builder()
             .location(GTValues.MODID, "textures/gui/base/background.png")
-            .imageSize(176, 166)
+            .imageSize(16, 16)
             .adaptable(3)
             .name(IDs.STANDARD_BACKGROUND)
             .canApplyTheme()
@@ -82,7 +84,7 @@ public class GTGuiTextures {
 
     public static final UITexture BACKGROUND_POPUP = UITexture.builder()
             .location(GTValues.MODID, "textures/gui/base/background_popup.png")
-            .imageSize(195, 136)
+            .imageSize(16, 16)
             .adaptable(4)
             .name(IDs.COVER_BACKGROUND)
             .canApplyTheme()
@@ -92,22 +94,23 @@ public class GTGuiTextures {
 
     public static final UITexture BACKGROUND_BRONZE = UITexture.builder()
             .location(GTValues.MODID, "textures/gui/base/background_bronze.png")
-            .imageSize(176, 166)
+            .imageSize(16, 16)
             .adaptable(3)
             .name(IDs.BRONZE_BACKGROUND)
             .build();
 
     public static final UITexture BACKGROUND_STEEL = UITexture.builder()
             .location(GTValues.MODID, "textures/gui/base/background_steel.png")
-            .imageSize(176, 166)
+            .imageSize(16, 16)
             .adaptable(3)
             .name(IDs.STEEL_BACKGROUND)
             .build();
 
     // todo move to textures/gui/base
     public static final UITexture BACKGROUND_PRIMITIVE = UITexture.builder()
+            // main color 826b51
             .location(GTValues.MODID, "textures/gui/primitive/primitive_background.png")
-            .imageSize(176, 166)
+            .imageSize(16, 16)
             .adaptable(3)
             .name(IDs.PRIMITIVE_BACKGROUND)
             .build();

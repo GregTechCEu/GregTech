@@ -3022,6 +3022,7 @@ gregtech.machine.steam_boiler_lava_steel.name=High Pressure Steam Liquid Boiler
 gregtech.machine.steam_boiler_lava_steel.tooltip=Faster than Small Steam Liquid Boiler
 
 gregtech.machine.steam_boiler.heat_amount=Heat Capacity: %s %%
+gregtech.machine.steam_boiler.heat_tooltip=Heat: %,d°C / %,d°C
 
 gregtech.machine.steam_extractor_bronze.name=Steam Extractor
 gregtech.machine.steam_extractor_bronze.tooltip=Extracting your first Rubber
