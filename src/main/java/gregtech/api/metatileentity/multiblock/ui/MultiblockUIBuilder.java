@@ -5,21 +5,20 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.ComputationRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.mui.GTByteBufAdapters;
 import gregtech.api.mui.drawable.GTObjectDrawable;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.api.util.function.ByteSupplier;
 import gregtech.api.util.function.FloatSupplier;
-import gregtech.common.ConfigHolder;
-import gregtech.common.items.ToolItems;
+import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -29,7 +28,6 @@ import net.minecraftforge.fluids.FluidStack;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
-import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.utils.serialization.ByteBufAdapters;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import com.cleanroommc.modularui.utils.serialization.IByteBufSerializer;
@@ -457,81 +455,23 @@ public class MultiblockUIBuilder {
     }
 
     /**
-     * Adds warning line(s) when the machine has maintenance problems.
-     * <br>
-     * Added if there are any maintenance problems, one line per problem as well as a header. <br>
-     * Will check the config
-     * setting for if maintenance is enabled automatically.
+     * Adds warning line(s) when the machine has maintenance problems. <br>
+     * Added if there are any maintenance problems, one line per problem as well as a header.
+     *
+     * @param maintenanceProblems the maintenance problems to show
+     * @param warning             if {@code true}, will only add lines if there are between {@code 1} and one less than
+     *                            {@link IMaintenance#POSSIBLE_PROBLEMS} problems. If {@code false}, lines will only be
+     *                            added when there are exactly {@link IMaintenance#POSSIBLE_PROBLEMS} problems.
      */
     public MultiblockUIBuilder addMaintenanceProblemLines(byte maintenanceProblems, boolean warning) {
-        if (!isStructureFormed || !ConfigHolder.machines.enableMaintenance) return this;
-        maintenanceProblems = getSyncer().syncByte(maintenanceProblems);
+        if (!isStructureFormed) return this;
+        final byte finalProblems = getSyncer().syncByte(maintenanceProblems);
 
-        if (warning && maintenanceProblems < 0b111111 && maintenanceProblems > 0b000000 ||
-                !warning && maintenanceProblems == 0b000000) {
-            addKey(KeyUtil.lang(TextFormatting.YELLOW,
-                    "gregtech.multiblock.universal.has_problems"));
+        if (finalProblems >= IMaintenance.NO_PROBLEMS) return this;
+        if (!warning && finalProblems > 0) return this;
+        if (warning && finalProblems == 0) return this;
 
-            // Wrench
-            if ((maintenanceProblems & 1) == 0) {
-                addOperation(richText -> richText
-                        .add(new ItemDrawable(ToolItems.WRENCH.get(Materials.Iron)))
-                        .add(IKey.SPACE)
-                        .add(KeyUtil.lang(TextFormatting.YELLOW,
-                                "gregtech.multiblock.universal.problem.wrench"))
-                        .newLine());
-            }
-
-            // Screwdriver
-            if (((maintenanceProblems >> 1) & 1) == 0) {
-                addOperation(richText -> richText
-                        .add(new ItemDrawable(ToolItems.SCREWDRIVER.get(Materials.Iron)))
-                        .add(IKey.SPACE)
-                        .add(KeyUtil.lang(TextFormatting.YELLOW,
-                                "gregtech.multiblock.universal.problem.screwdriver"))
-                        .newLine());
-            }
-
-            // Soft Mallet
-            if (((maintenanceProblems >> 2) & 1) == 0) {
-                addOperation(richText -> richText
-                        .add(new ItemDrawable(ToolItems.SOFT_MALLET.get(Materials.Wood)))
-                        .add(IKey.SPACE)
-                        .add(KeyUtil.lang(TextFormatting.YELLOW,
-                                "gregtech.multiblock.universal.problem.soft_mallet"))
-                        .newLine());
-            }
-
-            // Hammer
-            if (((maintenanceProblems >> 3) & 1) == 0) {
-                addOperation(richText -> richText
-                        .add(new ItemDrawable(ToolItems.HARD_HAMMER.get(Materials.Iron)))
-                        .add(IKey.SPACE)
-                        .add(KeyUtil.lang(TextFormatting.YELLOW,
-                                "gregtech.multiblock.universal.problem.hard_hammer"))
-                        .newLine());
-            }
-
-            // Wire Cutters
-            if (((maintenanceProblems >> 4) & 1) == 0) {
-                addOperation(richText -> richText
-                        .add(new ItemDrawable(ToolItems.WIRE_CUTTER.get(Materials.Iron)))
-                        .add(IKey.SPACE)
-                        .add(KeyUtil.lang(TextFormatting.YELLOW,
-                                "gregtech.multiblock.universal.problem.wire_cutter"))
-                        .newLine());
-            }
-
-            // Crowbar
-            if (((maintenanceProblems >> 5) & 1) == 0) {
-                addOperation(richText -> richText
-                        .add(new ItemDrawable(ToolItems.CROWBAR.get(Materials.Iron)))
-                        .add(IKey.SPACE)
-                        .add(KeyUtil.lang(TextFormatting.YELLOW,
-                                "gregtech.multiblock.universal.problem.crowbar"))
-                        .newLine());
-            }
-        }
+        addOperation(richText -> TooltipHelper.addMaintenanceProblems(richText, finalProblems));
         return this;
     }
 
@@ -927,7 +867,7 @@ public class MultiblockUIBuilder {
         @Override
         public float syncFloat(@NotNull FloatSupplier initial) {
             if (isServer()) {
-                float val = initial.getFloat();
+                float val = initial.getAsFloat();
                 internal.writeFloat(val);
                 return val;
             } else {

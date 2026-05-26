@@ -9,6 +9,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.text.StyledText;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -144,5 +145,38 @@ public class KeyUtil {
         }
         if (stack == null) return IKey.lang(fluid.getUnlocalizedName());
         else return IKey.lang(fluid.getUnlocalizedName(stack));
+    }
+
+    /**
+     * Create an {@link IKey} that dynamically shows the result of {@link GTUtility#getButtonIncrementValue()}. <br/>
+     * Example: player is holding down ctrl and {@code positive} is {@code true} = {@code +16}. <br/>
+     * 
+     * @param positive if the prefix should be {@code +} or {@code -}
+     */
+    @NotNull
+    public static IKey createMultiplierKey(boolean positive) {
+        Object[] args = new Object[] { positive ? '+' : '-', 0 };
+        StyledText key = IKey.str("%c%d", args)
+                .withStyle();
+
+        // Using the color supplier here as a callback to update the multiplier and scale before it gets rendered.
+        key.color(() -> {
+            int multiplier = GTUtility.getButtonIncrementValue();
+            args[1] = multiplier;
+
+            if (multiplier < 10) {
+                key.scale(1.0f);
+            } else if (multiplier < 100) {
+                key.scale(0.8f);
+            } else if (multiplier < 1000) {
+                key.scale(0.6f);
+            } else {
+                key.scale(0.5f);
+            }
+
+            return -1;
+        });
+
+        return key;
     }
 }

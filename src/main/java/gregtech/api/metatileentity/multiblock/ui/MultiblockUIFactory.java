@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.util.GTLambdaUtils;
 import gregtech.api.util.KeyUtil;
 import gregtech.common.mui.widget.ScrollableTextWidget;
@@ -232,9 +233,8 @@ public class MultiblockUIFactory {
      * Constructs the multiblock ui panel<br />
      * <i>It is not recommended to override this method</i>
      */
-    public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager) {
         var panel = GTGuis.createPanel(mte, width, height)
-                .debugName("root_panel")
                 .childIf(!disableDisplay, () -> createScreen(panelSyncManager));
 
         // TODO createExtras() hook for overrides?

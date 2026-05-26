@@ -7,8 +7,8 @@ public interface FloatSupplier extends Supplier<Float> {
 
     @Override
     default Float get() {
-        return getFloat();
+        return getAsFloat();
     }
 
-    float getFloat();
+    float getAsFloat();
 }

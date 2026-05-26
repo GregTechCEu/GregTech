@@ -27,6 +27,11 @@ public class FilteredItemHandler extends GTItemStackHandler {
         super(metaTileEntity, size);
     }
 
+    public FilteredItemHandler(MetaTileEntity metaTileEntity, int size, Predicate<ItemStack> fillPredicate) {
+        super(metaTileEntity, size);
+        this.fillPredicate = fillPredicate;
+    }
+
     public FilteredItemHandler(MetaTileEntity metaTileEntity, NonNullList<ItemStack> stacks) {
         super(metaTileEntity, stacks);
     }
@@ -34,6 +39,18 @@ public class FilteredItemHandler extends GTItemStackHandler {
     public FilteredItemHandler setFillPredicate(Predicate<ItemStack> fillPredicate) {
         this.fillPredicate = fillPredicate;
         return this;
+    }
+
+    @Override
+    public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+        if (!isItemValid(slot, stack)) return stack;
+        return super.insertItem(slot, stack, simulate);
+    }
+
+    @Override
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+        if (!isItemValid(slot, stack)) return;
+        super.setStackInSlot(slot, stack);
     }
 
     @Override

@@ -7,26 +7,26 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.ILaserContainer;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
+import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -37,26 +37,45 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.value.IDoubleValue;
+import com.cleanroommc.modularui.api.value.IIntValue;
+import com.cleanroommc.modularui.drawable.GuiTextures;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.LongSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.SliderWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 
-import static gregtech.api.GTValues.MAX;
-import static gregtech.api.GTValues.V;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_ACTIVE;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_IO_SPEED;
 
-public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILaserContainer, IControllable {
+public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILaserContainer, IControllable,
+                                          IMetaTileEntityGuiHolder {
 
-    private long voltage = 0;
-    private int amps = 1;
+    private long sourceVoltage = GTValues.V[GTValues.ULV];
+    private long sourceAmperage = 1;
 
-    private int setTier = 0;
-    private boolean active = false;
+    private long sinkVoltage = GTValues.V[GTValues.MAX];
+    private long sinkAmperage = Integer.MAX_VALUE;
+
+    private boolean workingEnabled = false;
     private boolean source = true;
 
     private long lastEnergyIOPerSec = 0;
@@ -65,8 +84,13 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     private long ampsReceived = 0;
     private boolean doExplosion = false;
 
-    public MetaTileEntityCreativeEnergy() {
-        super(GTUtility.gregtechId("infinite_energy"));
+    public MetaTileEntityCreativeEnergy(ResourceLocation metaTileEntityId) {
+        super(metaTileEntityId);
+    }
+
+    @Override
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+        return new MetaTileEntityCreativeEnergy(metaTileEntityId);
     }
 
     @Override
@@ -82,12 +106,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.VOLTAGE_CASINGS[this.setTier].getParticleSprite(), this.getPaintingColorForRendering());
-    }
-
-    @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityCreativeEnergy();
+        int tier = GTUtility.getTierByVoltage(source ? sourceVoltage : sinkVoltage);
+        return Pair.of(Textures.VOLTAGE_CASINGS[tier].getParticleSprite(), this.getPaintingColorForRendering());
     }
 
     @Override
@@ -104,61 +124,103 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.defaultBuilder()
-                .widget(new CycleButtonWidget(7, 7, 30, 20, GTValues.VNF, () -> setTier, tier -> {
-                    setTier = tier;
-                    voltage = GTValues.V[setTier];
-                }));
-        builder.label(7, 32, "gregtech.creative.energy.voltage");
-        builder.widget(new ImageWidget(7, 44, 156, 20, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(9, 50, 152, 16, () -> String.valueOf(voltage), value -> {
-            if (!value.isEmpty()) {
-                voltage = Long.parseLong(value);
-                setTier = GTUtility.getTierByVoltage(voltage);
-            }
-        }).setAllowedChars(TextFieldWidget2.NATURAL_NUMS).setMaxLength(19).setValidator(getTextFieldValidator()));
-
-        builder.label(7, 74, "gregtech.creative.energy.amperage");
-        builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = --amps == -1 ? 0 : amps));
-        builder.widget(new ImageWidget(29, 87, 118, 20, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(31, 93, 114, 16, () -> String.valueOf(amps), value -> {
-            if (!value.isEmpty()) {
-                amps = Integer.parseInt(value);
-            }
-        }).setMaxLength(10).setNumbersOnly(0, Integer.MAX_VALUE));
-        builder.widget(new ClickButtonWidget(149, 87, 20, 20, "+", data -> {
-            if (amps < Integer.MAX_VALUE) {
-                amps++;
-            }
-        }));
-
-        builder.dynamicLabel(7, 110, () -> "Energy I/O per sec: " + this.lastEnergyIOPerSec, 0x232323);
-
-        builder.widget(new CycleButtonWidget(7, 139, 77, 20, () -> active, this::setActive,
-                "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
-        builder.widget(new CycleButtonWidget(85, 139, 77, 20, () -> source, value -> {
-            source = value;
+    public @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                         UISettings settings) {
+        LongSyncValue voltageSync = SyncHandlers.longNumber(() -> source ? sourceVoltage : sinkVoltage, val -> {
             if (source) {
-                voltage = 0;
-                amps = 0;
-                setTier = 0;
+                sourceVoltage = val;
             } else {
-                voltage = V[MAX];
-                amps = Integer.MAX_VALUE;
-                setTier = MAX;
+                sinkVoltage = val;
             }
-        }, "gregtech.creative.energy.sink", "gregtech.creative.energy.source"));
+        });
+        LongSyncValue ampSync = new LongSyncValue(() -> source ? sourceAmperage : sinkAmperage, val -> {
+            if (source) {
+                sourceAmperage = val;
+            } else {
+                sinkAmperage = val;
+            }
+        });
+        DynamicIntValue tierValue = new DynamicIntValue(() -> GTUtility.getTierByVoltage(voltageSync.getLongValue()),
+                tier -> voltageSync.setLongValue(GTValues.V[tier]));
+        BooleanSyncValue activeSync = new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled);
+        BooleanSyncValue sourceSync = new BooleanSyncValue(this::isSource, this::setSource);
 
-        return builder.build(getHolder(), entityPlayer);
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-        if (!getWorld().isRemote) {
-            writeCustomData(GregtechDataCodes.UPDATE_ACTIVE, buf -> buf.writeBoolean(active));
-            markDirty();
-        }
+        return GTGuis.createPanel(this, 176, 143)
+                .child(Flow.column()
+                        .margin(7)
+                        // .crossAxisAlignment(Alignment.CrossAxis.START)
+                        .childPadding(4)
+                        .child(new SliderWidget()
+                                .widthRel(1.0f)
+                                .sliderWidth(30)
+                                .bounds(0, GTValues.V.length - 1)
+                                .stopper(1)
+                                .value(tierValue)
+                                .background(GTGuiTextures.FLUID_SLOT.asIcon()
+                                        .margin(7, 0))
+                                .sliderTexture(IDrawable.of(GuiTextures.BUTTON_CLEAN,
+                                        IKey.dynamic(() -> GTValues.VNF[tierValue.getIntValue()]))))
+                        .child(IKey.lang("gregtech.creative.energy.voltage")
+                                .asWidget())
+                        .child(new TextFieldWidget()
+                                .widthRel(1.0f)
+                                .height(20)
+                                .value(voltageSync)
+                                .setNumbersLong(() -> 0L, () -> Long.MAX_VALUE)
+                                .setMaxLength(19)
+                                .background(GTGuiTextures.DISPLAY))
+                        .child(IKey.lang("gregtech.creative.energy.amperage")
+                                .asWidget())
+                        .child(Flow.row()
+                                .widthRel(1.0f)
+                                .coverChildrenHeight()
+                                .child(new ButtonWidget<>()
+                                        .size(20)
+                                        .onMousePressed(mouse -> {
+                                            long amps = ampSync.getLongValue();
+                                            if (amps == 0) return false;
+                                            amps = Math.max(0, amps - GTUtility.getButtonIncrementValue());
+                                            ampSync.setLongValue(amps);
+                                            return true;
+                                        })
+                                        .overlay(KeyUtil.createMultiplierKey(false)))
+                                .child(new TextFieldWidget()
+                                        .height(20)
+                                        .expanded()
+                                        .margin(4, 0)
+                                        .value(ampSync)
+                                        .setNumbersLong(() -> 0L, () -> Long.MAX_VALUE)
+                                        .setMaxLength(19)
+                                        .background(GTGuiTextures.DISPLAY))
+                                .child(new ButtonWidget<>()
+                                        .size(20)
+                                        .onMousePressed(mouse -> {
+                                            long amps = ampSync.getLongValue();
+                                            if (amps == Long.MAX_VALUE) return false;
+                                            long canAdd = Long.MAX_VALUE - amps;
+                                            amps += Math.min(GTUtility.getButtonIncrementValue(), canAdd);
+                                            ampSync.setLongValue(amps);
+                                            return true;
+                                        })
+                                        .overlay(KeyUtil.createMultiplierKey(true))))
+                        .child(IKey.lang("gregtech.creative.energy.io",
+                                () -> new Object[] { TextFormattingUtil.formatNumbers(lastEnergyIOPerSec) })
+                                .asWidget())
+                        .child(Flow.row()
+                                .coverChildrenHeight()
+                                .child(new ToggleButton()
+                                        .size(77, 20)
+                                        .value(activeSync)
+                                        .overlay(IKey.lang(() -> activeSync.getBoolValue() ?
+                                                "gregtech.creative.activity.on" :
+                                                "gregtech.creative.activity.off")))
+                                .child(new ToggleButton()
+                                        .size(77, 20)
+                                        .align(Alignment.CenterRight)
+                                        .value(sourceSync)
+                                        .overlay(IKey.lang(() -> sourceSync.getBoolValue() ?
+                                                "gregtech.creative.energy.source" :
+                                                "gregtech.creative.energy.sink")))));
     }
 
     @Override
@@ -169,8 +231,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
-                I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
+        tooltip.add(TooltipHelper.CREATIVE_TOOLTIP.get());
     }
 
     @Override
@@ -191,8 +252,9 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
                 doExplosion = false;
             }
         }
+
         ampsReceived = 0;
-        if (!active || !source || voltage <= 0 || amps <= 0) return;
+        if (!workingEnabled || !source || sourceVoltage <= 0 || sourceAmperage <= 0) return;
         long ampsUsed = 0;
         for (EnumFacing facing : EnumFacing.values()) {
             EnumFacing opposite = facing.getOpposite();
@@ -201,25 +263,31 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
                 IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
                         opposite);
                 // Try to get laser capability
-                if (container == null)
+                if (container == null) {
                     container = tile.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, opposite);
+                }
 
-                if (container == null || !container.inputsEnergy(opposite) || container.getEnergyCanBeInserted() == 0)
+                if (container == null || !container.inputsEnergy(opposite) || container.getEnergyCanBeInserted() == 0) {
                     continue;
-                ampsUsed += container.acceptEnergyFromNetwork(opposite, voltage, amps - ampsUsed);
-                if (ampsUsed >= amps)
+                }
+
+                ampsUsed += container.acceptEnergyFromNetwork(opposite, sourceVoltage, sourceAmperage - ampsUsed);
+                if (ampsUsed >= sourceAmperage) {
                     break;
+                }
             }
         }
-        energyIOPerSec += ampsUsed * voltage;
+
+        energyIOPerSec += ampsUsed * sourceVoltage;
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        data.setLong("Voltage", voltage);
-        data.setInteger("Amps", amps);
-        data.setByte("Tier", (byte) setTier);
-        data.setBoolean("Active", active);
+        data.setLong("SourceV", sourceVoltage);
+        data.setLong("SourceA", sourceAmperage);
+        data.setLong("SinkV", sinkVoltage);
+        data.setLong("SinkA", sinkAmperage);
+        data.setBoolean("Active", workingEnabled);
         data.setBoolean("Source", source);
         data.setLong("EnergyIOPerSec", lastEnergyIOPerSec);
         return super.writeToNBT(data);
@@ -227,10 +295,18 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
-        voltage = data.getLong("Voltage");
-        amps = data.getInteger("Amps");
-        setTier = data.getByte("Tier");
-        active = data.getBoolean("Active");
+        // Old format
+        if (data.hasKey("Voltage")) {
+            sourceVoltage = data.getLong("Voltage");
+            sourceAmperage = data.getLong("Amps");
+        } else {
+            sourceVoltage = data.getLong("SourceV");
+            sourceAmperage = data.getLong("SourceA");
+            sinkVoltage = data.getLong("SinkV");
+            sinkAmperage = data.getLong("SinkA");
+        }
+
+        workingEnabled = data.getBoolean("Active");
         source = data.getBoolean("Source");
         if (data.hasKey("EnergyIOPerSec"))
             lastEnergyIOPerSec = data.getLong("EnergyIOPerSec");
@@ -239,21 +315,24 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
 
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
-        if (source || !active || ampsReceived >= amps) {
+        if (source || !workingEnabled || ampsReceived >= sinkAmperage) {
             return 0;
         }
-        if (voltage > this.voltage) {
+
+        if (voltage > this.sourceVoltage) {
             if (doExplosion)
                 return 0;
             doExplosion = true;
             return Math.min(amperage, getInputAmperage() - ampsReceived);
         }
+
         long amperesAccepted = Math.min(amperage, getInputAmperage() - ampsReceived);
         if (amperesAccepted > 0) {
             ampsReceived += amperesAccepted;
             energyIOPerSec += amperesAccepted * voltage;
             return amperesAccepted;
         }
+
         return 0;
     }
 
@@ -269,7 +348,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
 
     @Override
     public long changeEnergy(long differenceAmount) {
-        if (source || !active) {
+        if (source || !workingEnabled) {
             return 0;
         }
         energyIOPerSec += differenceAmount;
@@ -278,32 +357,32 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
 
     @Override
     public long getEnergyStored() {
-        return 69;
+        return source ? Long.MAX_VALUE : 0;
     }
 
     @Override
     public long getEnergyCapacity() {
-        return 420;
+        return Long.MAX_VALUE;
     }
 
     @Override
     public long getInputAmperage() {
-        return source ? 0 : amps;
+        return source ? 0 : sinkAmperage;
     }
 
     @Override
     public long getInputVoltage() {
-        return source ? 0 : voltage;
+        return source ? 0 : sinkVoltage;
     }
 
     @Override
     public long getOutputVoltage() {
-        return source ? voltage : 0;
+        return source ? sourceVoltage : 0;
     }
 
     @Override
     public long getOutputAmperage() {
-        return source ? amps : 0;
+        return source ? sourceAmperage : 0;
     }
 
     public void setIOSpeed(long energyIOPerSec) {
@@ -319,47 +398,88 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
         if (dataId == UPDATE_IO_SPEED) {
             this.lastEnergyIOPerSec = buf.readLong();
         } else if (dataId == UPDATE_ACTIVE) {
-            this.active = buf.readBoolean();
+            this.workingEnabled = buf.readBoolean();
         }
     }
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeBoolean(active);
+        buf.writeBoolean(workingEnabled);
     }
 
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.active = buf.readBoolean();
-    }
-
-    public static Function<String, String> getTextFieldValidator() {
-        return val -> {
-            if (val.isEmpty()) {
-                return "0";
-            }
-            long num;
-            try {
-                num = Long.parseLong(val);
-            } catch (NumberFormatException ignored) {
-                return "0";
-            }
-            if (num < 0) {
-                return "0";
-            }
-            return val;
-        };
+        this.workingEnabled = buf.readBoolean();
     }
 
     @Override
     public boolean isWorkingEnabled() {
-        return active;
+        return workingEnabled;
     }
 
     @Override
     public void setWorkingEnabled(boolean isWorkingAllowed) {
-        setActive(isWorkingAllowed);
+        this.workingEnabled = isWorkingAllowed;
+        if (!getWorld().isRemote) {
+            writeCustomData(GregtechDataCodes.UPDATE_ACTIVE, buf -> buf.writeBoolean(workingEnabled));
+            markDirty();
+        }
+    }
+
+    public boolean isSource() {
+        return source;
+    }
+
+    public void setSource(boolean source) {
+        this.source = source;
+    }
+
+    @SuppressWarnings("ClassCanBeRecord")
+    private static class DynamicIntValue implements IIntValue<Integer>, IDoubleValue<Integer> {
+
+        private final IntSupplier getter;
+        private final IntConsumer setter;
+
+        public DynamicIntValue(IntSupplier getter, IntConsumer setter) {
+            this.getter = getter;
+            this.setter = setter;
+        }
+
+        @Override
+        public int getIntValue() {
+            return this.getter.getAsInt();
+        }
+
+        @Override
+        public void setIntValue(int val) {
+            this.setter.accept(val);
+        }
+
+        @Override
+        public double getDoubleValue() {
+            return getIntValue();
+        }
+
+        @Override
+        public void setDoubleValue(double val) {
+            setIntValue((int) val);
+        }
+
+        @Override
+        public Integer getValue() {
+            return getIntValue();
+        }
+
+        @Override
+        public void setValue(Integer value) {
+            setIntValue(value);
+        }
+
+        @Override
+        public Class<Integer> getValueType() {
+            return Integer.class;
+        }
     }
 }

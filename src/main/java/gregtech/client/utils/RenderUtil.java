@@ -115,7 +115,7 @@ public class RenderUtil {
     }
 
     // applies scissor with gui-space coordinates and sizes
-    private static void applyScissor(int x, int y, int w, int h) {
+    public static void applyScissor(int x, int y, int w, int h) {
         // translate upper-left to bottom-left
         ScaledResolution r = ((GuiIngameForge) Minecraft.getMinecraft().ingameGUI).getResolution();
         int s = r == null ? 1 : r.getScaleFactor();

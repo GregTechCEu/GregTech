@@ -5,6 +5,8 @@ import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.*;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.mui.IMetaTileEntityGuiHolder;
+import gregtech.api.mui.MetaTileEntityGuiData;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
@@ -23,7 +25,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -34,7 +35,8 @@ import java.util.*;
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
 
-public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase implements IMaintenance {
+public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase implements IMaintenance,
+                                                IMetaTileEntityGuiHolder {
 
     private static final String NBT_VOIDING_MODE = "VoidingMode";
     private static final String NBT_VOIDING_ITEMS = "VoidingItems";
@@ -81,57 +83,21 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         this.voidingMode = VoidingMode.VOID_NONE;
     }
 
-    /**
-     * Sets the maintenance problem corresponding to index to fixed
-     *
-     * @param index of the maintenance problem
-     */
-    @Override
-    public void setMaintenanceFixed(int index) {
-        this.maintenance_problems |= 1 << index;
-    }
-
-    /**
-     * Used to cause a single random maintenance problem
-     */
-    @Override
-    public void causeMaintenanceProblems() {
-        this.maintenance_problems &= ~(1 << ((int) (GTValues.RNG.nextFloat() * 5)));
-        this.getWorld().playSound(null, this.getPos().getX(), this.getPos().getY(), this.getPos().getZ(),
-                this.getBreakdownSound(), SoundCategory.BLOCKS, 1.f, 1.f);
-    }
-
-    /**
-     * @return the byte value representing the maintenance problems
-     */
     @Override
     public byte getMaintenanceProblems() {
-        return ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics() ? maintenance_problems : 0b111111;
+        return hasMaintenanceMechanics() ? maintenance_problems : IMaintenance.NO_PROBLEMS;
     }
 
-    /**
-     * @return the amount of maintenance problems the multiblock has
-     */
     @Override
-    public int getNumMaintenanceProblems() {
-        return ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics() ?
-                6 - Integer.bitCount(maintenance_problems) : 0;
+    public void setMaintenance(byte maintenance) {
+        this.maintenance_problems = maintenance;
     }
 
-    /**
-     * @return whether the multiblock has any maintenance problems
-     */
     @Override
-    public boolean hasMaintenanceProblems() {
-        return ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics() && this.maintenance_problems < 63;
-    }
-
-    /**
-     * @return whether this multiblock has maintenance mechanics
-     */
-    @Override
-    public boolean hasMaintenanceMechanics() {
-        return true;
+    public void causeMaintenanceProblems() {
+        IMaintenance.super.causeMaintenanceProblems();
+        this.getWorld().playSound(null, this.getPos().getX(), this.getPos().getY(), this.getPos().getZ(),
+                this.getBreakdownSound(), SoundCategory.BLOCKS, 1.f, 1.f);
     }
 
     public boolean hasMufflerMechanics() {
@@ -367,11 +333,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return VoidingMode.VALUES[mode].getName();
     }
 
-    @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
     protected void configureDisplayText(MultiblockUIBuilder builder) {}
 
     protected void configureErrorText(MultiblockUIBuilder builder) {
@@ -395,7 +356,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public final ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager, UISettings settings) {
+    public final @NotNull ModularPanel buildUI(MetaTileEntityGuiData guiData, PanelSyncManager panelSyncManager,
+                                               UISettings settings) {
         if (uiFactory == null) uiFactory = createUIFactory();
         return this.uiFactory.buildUI(guiData, panelSyncManager);
     }

@@ -1203,9 +1203,6 @@ metaarmor.energy_share.disable=電力供給: 装備への電力供給を無効�
 metaarmor.energy_share.tooltip=供給モード: %s
 metaarmor.energy_share.tooltip.guide=手に持ちながらShift+右クリックでモードを変更
 
-metaitem.record.sus.name=音楽ディスク
-metaitem.record.sus.tooltip=§7Leonz - Among Us Drip
-
 metaitem.nan.certificate.name=もう初心者ではないという証明
 metaitem.nan.certificate.tooltip=挑戦を受けました!
 
@@ -6249,7 +6246,6 @@ gregtech.subtitle.use.wirecutter=ワイヤーが切断される
 gregtech.subtitle.use.spray_can=スプレーをする
 gregtech.subtitle.use.tricorder=スキャンする
 gregtech.subtitle.use.mortar=粉々にする
-gregtech.subtitle.record.sus=Sus
 gregtech.subtitle.entity.portal_opening=ポータルが開く
 gregtech.subtitle.entity.portal_closing=ポータルが閉じる
 gregtech.subtitle.maintenance.electrical=電気的故障
@@ -6460,5 +6456,3 @@ gregtech.scanner.forestry.pollen=§o解析済みの花粉
 
 # Mutation
 gregtech.mutation.block_of=%sブロック
-
-record.sus=Leonz - Among Us Drip
