@@ -663,7 +663,7 @@ public class MultiblockUIBuilder {
         Object2IntMap<FluidStack> fluidMap = GTHashMaps.fromFluidCollection(fluidOutputs);
 
         for (var stack : fluidMap.keySet()) {
-            addFluidOutputLine(stack, fluidMap.getInt(stack), maxProgress);
+            addFluidOutputLine(stack, (long) fluidMap.getInt(stack) * p, maxProgress);
         }
 
         for (var chancedFluidOutput : chancedFluidOutputs) {
