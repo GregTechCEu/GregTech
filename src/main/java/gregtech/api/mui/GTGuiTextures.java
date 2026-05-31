@@ -724,6 +724,7 @@ public class GTGuiTextures {
             "textures/gui/progress_bar/progress_bar_fluid_rig_depletion.png", 190, 14);
 
     // MISC
+    public static final UITexture RGB_GRADIENT = fullImage("textures/gui/widget/rgb_gradient.png");
 
     public static void init() {/**/}
 

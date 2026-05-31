@@ -12,7 +12,20 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.items.OreDictNames;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
-import gregtech.api.items.metaitem.stats.*;
+import gregtech.api.items.metaitem.stats.IEnchantabilityHelper;
+import gregtech.api.items.metaitem.stats.IFoodBehavior;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
+import gregtech.api.items.metaitem.stats.IItemColorProvider;
+import gregtech.api.items.metaitem.stats.IItemComponent;
+import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
+import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
+import gregtech.api.items.metaitem.stats.IItemMaxStackSizeProvider;
+import gregtech.api.items.metaitem.stats.IItemModelDispatcher;
+import gregtech.api.items.metaitem.stats.IItemNameProvider;
+import gregtech.api.items.metaitem.stats.IItemUseManager;
+import gregtech.api.items.metaitem.stats.IMouseEventHandler;
+import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -628,7 +641,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     fluid == null ? "" : fluid.getLocalizedName()));
 
             if (fluidHandler instanceof IFilteredFluidContainer filtered &&
-                    filtered.getFilter() instanceof IPropertyFluidFilter propertyFilter) {
+                    filtered.getFilter() instanceof IPropertyFluidFilter<?>propertyFilter) {
                 propertyFilter.appendTooltips(lines, false, true);
             }
         }
@@ -738,6 +751,15 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
     }
 
+    @Nullable
+    public IMouseEventHandler getMouseEventHandler(@NotNull ItemStack stack) {
+        T metaItemValue = getItem(stack);
+        if (metaItemValue != null) {
+            return metaItemValue.getMouseEventHandler();
+        }
+        return null;
+    }
+
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
         ItemStack itemStack = holder.getCurrentItem();
@@ -775,6 +797,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private IItemDurabilityManager durabilityManager;
         private IEnchantabilityHelper enchantabilityHelper;
         private IItemModelDispatcher itemModelDispatcher;
+        private IMouseEventHandler mouseEventHandler;
         private EnumRarity rarity;
 
         private int burnValue = 0;
@@ -878,42 +901,46 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
         protected void addItemComponentsInternal(IItemComponent... stats) {
             for (IItemComponent itemComponent : stats) {
-                if (itemComponent instanceof IItemNameProvider) {
-                    this.nameProvider = (IItemNameProvider) itemComponent;
+                if (itemComponent instanceof IItemNameProvider iItemNameProvider) {
+                    this.nameProvider = iItemNameProvider;
                 }
-                if (itemComponent instanceof IItemMaxStackSizeProvider) {
-                    this.stackSizeProvider = (IItemMaxStackSizeProvider) itemComponent;
+                if (itemComponent instanceof IItemMaxStackSizeProvider iItemMaxStackSizeProvider) {
+                    this.stackSizeProvider = iItemMaxStackSizeProvider;
                 }
-                if (itemComponent instanceof ISubItemHandler) {
-                    this.subItemHandler = (ISubItemHandler) itemComponent;
+                if (itemComponent instanceof ISubItemHandler iSubItemHandler) {
+                    this.subItemHandler = iSubItemHandler;
                 }
-                if (itemComponent instanceof IItemContainerItemProvider) {
-                    this.containerItemProvider = (IItemContainerItemProvider) itemComponent;
+                if (itemComponent instanceof IItemContainerItemProvider iItemContainerItemProvider) {
+                    this.containerItemProvider = iItemContainerItemProvider;
                 }
-                if (itemComponent instanceof IItemDurabilityManager) {
-                    this.durabilityManager = (IItemDurabilityManager) itemComponent;
+                if (itemComponent instanceof IItemDurabilityManager iItemDurabilityManager) {
+                    this.durabilityManager = iItemDurabilityManager;
                 }
-                if (itemComponent instanceof IItemUseManager) {
-                    this.useManager = (IItemUseManager) itemComponent;
+                if (itemComponent instanceof IItemUseManager iItemUseManager) {
+                    this.useManager = iItemUseManager;
                 }
-                if (itemComponent instanceof IFoodBehavior) {
-                    this.useManager = new FoodUseManager((IFoodBehavior) itemComponent);
+                if (itemComponent instanceof IFoodBehavior iFoodBehavior) {
+                    this.useManager = iFoodBehavior.createFoodUseManager();
                 }
-                if (itemComponent instanceof ItemUIFactory) {
-                    this.uiManager = (ItemUIFactory) itemComponent;
+                if (itemComponent instanceof ItemUIFactory itemUIFactory) {
+                    this.uiManager = itemUIFactory;
                 }
-                if (itemComponent instanceof IFilter.Factory) {
-                    this.filterBehavior = (IFilter.Factory) itemComponent;
+                if (itemComponent instanceof IFilter.Factory filterFactory) {
+                    this.filterBehavior = filterFactory;
                 }
-                if (itemComponent instanceof IItemColorProvider) {
-                    this.colorProvider = (IItemColorProvider) itemComponent;
+                if (itemComponent instanceof IItemColorProvider iItemColorProvider) {
+                    this.colorProvider = iItemColorProvider;
                 }
-                if (itemComponent instanceof IItemBehaviour) {
-                    this.behaviours.add((IItemBehaviour) itemComponent);
-                    ((IItemBehaviour) itemComponent).addPropertyOverride(getMetaItem());
+                if (itemComponent instanceof IItemBehaviour iItemBehaviour) {
+                    this.behaviours.add(iItemBehaviour);
+                    iItemBehaviour.addPropertyOverride(getMetaItem());
                 }
-                if (itemComponent instanceof IEnchantabilityHelper) {
-                    this.enchantabilityHelper = (IEnchantabilityHelper) itemComponent;
+                if (itemComponent instanceof IEnchantabilityHelper iEnchantabilityHelper) {
+                    this.enchantabilityHelper = iEnchantabilityHelper;
+                }
+                // noinspection PatternVariableHidesField
+                if (itemComponent instanceof IMouseEventHandler mouseEventHandler) {
+                    this.mouseEventHandler = mouseEventHandler;
                 }
                 if (itemComponent instanceof IItemModelDispatcher iItemModelDispatcher) {
                     this.itemModelDispatcher = iItemModelDispatcher;
@@ -981,6 +1008,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         @Nullable
         public IItemModelDispatcher getItemModelDispatcher() {
             return itemModelDispatcher;
+        }
+
+        @Nullable
+        public IMouseEventHandler getMouseEventHandler() {
+            return mouseEventHandler;
         }
 
         public int getBurnValue() {

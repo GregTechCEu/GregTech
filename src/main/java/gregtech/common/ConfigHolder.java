@@ -717,6 +717,10 @@ public class ConfigHolder {
         @Config.RangeInt(min = 1, max = 100)
         @Config.SlidingOption
         public int magnetDelay = 10;
+
+        @Config.Comment({ "The maximum amount of pipes a recursive spray can do at once", "Default: 128 blocks" })
+        @Config.RangeInt(min = 1, max = 1024)
+        public int maxRecursiveSprayLength = 128;
     }
 
     public static class ArmorHud {

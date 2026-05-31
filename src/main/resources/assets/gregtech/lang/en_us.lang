@@ -330,21 +330,30 @@ metaitem.shape.extruder.rotor.tooltip=Extruder Shape for making Rotors
 
 metaitem.spray.empty.name=Spray Can (Empty)
 metaitem.spray.empty.tooltip=Can be filled with sprays of various colors
-
-metaitem.plant.ball.name=Plantball
-
-# Fluid Cells
-metaitem.fluid_cell.empty=Empty
-metaitem.fluid_cell.name=%s Cell
-metaitem.fluid_cell.universal.empty=Empty
-metaitem.fluid_cell.universal.name=%s Universal Cell
-metaitem.fluid_cell.glass_vial.name=%s Glass Vial
-metaitem.large_fluid_cell.steel.name=%s Steel Cell
-metaitem.large_fluid_cell.aluminium.name=%s Aluminium Cell
-metaitem.large_fluid_cell.stainless_steel.name=%s Stainless Steel Cell
-metaitem.large_fluid_cell.titanium.name=%s Titanium Cell
-metaitem.large_fluid_cell.tungstensteel.name=%s Tungstensteel Cell
-
+metaitem.spray.creative.name=Creative Spray Can (%s)
+metaitem.spray.creative.name_base=Creative Spray Can
+metaitem.spray.creative.mode.normal=Normal Mode
+metaitem.spray.creative.mode.rgb=RGB Mode
+metaitem.spray.creative.tip.red=Red
+metaitem.spray.creative.tip.green=Green
+metaitem.spray.creative.tip.blue=Blue
+metaitem.spray.creative.solvent=Solvent
+metaitem.spray.creative.white=White
+metaitem.spray.creative.orange=Orange
+metaitem.spray.creative.magenta=Magenta
+metaitem.spray.creative.lightBlue=Light Blue
+metaitem.spray.creative.yellow=Yellow
+metaitem.spray.creative.lime=Lime
+metaitem.spray.creative.pink=Pink
+metaitem.spray.creative.gray=Gray
+metaitem.spray.creative.silver=Gray
+metaitem.spray.creative.cyan=Cyan
+metaitem.spray.creative.purple=Purple
+metaitem.spray.creative.blue=Blue
+metaitem.spray.creative.brown=Brown
+metaitem.spray.creative.green=Green
+metaitem.spray.creative.red=Red
+metaitem.spray.creative.black=Black
 metaitem.spray.solvent.name=Spray Can (Solvent)
 metaitem.spray.can.dyes.white.name=Spray Can (White)
 metaitem.spray.can.dyes.orange.name=Spray Can (Orange)
@@ -362,6 +371,27 @@ metaitem.spray.can.dyes.brown.name=Spray Can (Brown)
 metaitem.spray.can.dyes.green.name=Spray Can (Green)
 metaitem.spray.can.dyes.red.name=Spray Can (Red)
 metaitem.spray.can.dyes.black.name=Spray Can (Black)
+
+gregtech.color_mode.error.dye=Block doesn't support dye coloring!
+gregtech.color_mode.error.argb=Block doesn't support ARGB coloring!
+# This shouldn't ever show up in game, but exists for completions sake
+gregtech.color_mode.error.either=Block doesn't support coloring!
+
+
+metaitem.plant.ball.name=Plantball
+
+# Fluid Cells
+metaitem.fluid_cell.empty=Empty
+metaitem.fluid_cell.name=%s Cell
+metaitem.fluid_cell.universal.empty=Empty
+metaitem.fluid_cell.universal.name=%s Universal Cell
+metaitem.fluid_cell.glass_vial.name=%s Glass Vial
+metaitem.large_fluid_cell.steel.name=%s Steel Cell
+metaitem.large_fluid_cell.aluminium.name=%s Aluminium Cell
+metaitem.large_fluid_cell.stainless_steel.name=%s Stainless Steel Cell
+metaitem.large_fluid_cell.titanium.name=%s Titanium Cell
+metaitem.large_fluid_cell.tungstensteel.name=%s Tungstensteel Cell
+
 
 metaitem.tool.matches.name=Match
 metaitem.tool.matchbox.name=Match Box

@@ -8,6 +8,7 @@ import gregtech.api.items.metaitem.stats.IItemNameProvider;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 
 import net.minecraft.client.resources.I18n;
@@ -89,7 +90,6 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
 
     @Override
     public double getDurabilityForDisplay(ItemStack itemStack) {
-        int maxDurability = getPartMaxDurability(itemStack);
-        return (double) (maxDurability - getPartDamage(itemStack)) / (double) maxDurability;
+        return GTUtility.calculateDurabilityFromDamageTaken(getPartDamage(itemStack), getPartMaxDurability(itemStack));
     }
 }
