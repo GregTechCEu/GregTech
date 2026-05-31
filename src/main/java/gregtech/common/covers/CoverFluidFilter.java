@@ -6,8 +6,10 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.widget.EnumButtonRow;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.ITranslatable;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.BaseFilterContainer;
@@ -143,7 +145,8 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager, UISettings settings) {
-        var filteringMode = new EnumSyncValue<>(FluidFilterMode.class, this::getFilterMode, this::setFilterMode);
+        EnumSyncValue<FluidFilterMode> filteringMode = new EnumSyncValue<>(FluidFilterMode.class, this::getFilterMode,
+                this::setFilterMode);
 
         guiSyncManager.syncValue("filtering_mode", filteringMode);
         this.fluidFilterContainer.setMaxTransferSize(1);
@@ -152,10 +155,10 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                 .size(176, 212).padding(7)
                 .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()))
                 .child(Flow.column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
-                        .child(new EnumRowBuilder<>(FluidFilterMode.class)
-                                .value(filteringMode)
-                                .lang("cover.filter.mode.title")
-                                .overlay(16, GTGuiTextures.FILTER_MODE_OVERLAY)
+                        .child(EnumButtonRow.builder(filteringMode)
+                                .rowDescription(IKey.lang("cover.filter.mode.title"))
+                                .overlays(16, GTGuiTextures.FILTER_MODE_OVERLAY)
+                                .widgetExtras(ITranslatable::handleTooltip)
                                 .build())
                         .child(Flow.row()
                                 .marginBottom(2)
@@ -174,10 +177,16 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                                         .asWidget()
                                         .height(18)
                                         .alignX(1f)))
-                        .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
-                                .height(1).widthRel(0.95f).margin(0, 4))
+                        .child(new Rectangle()
+                                .setColor(UI_TEXT_COLOR)
+                                .asWidget()
+                                .widthRel(0.95f)
+                                .height(1)
+                                .margin(0, 4))
                         .child(getFilter().createWidgets(guiSyncManager)))
-                .child(SlotGroupWidget.playerInventory(false).bottom(7).left(7));
+                .child(SlotGroupWidget.playerInventory(false)
+                        .left(7)
+                        .bottom(7));
     }
 
     @Override

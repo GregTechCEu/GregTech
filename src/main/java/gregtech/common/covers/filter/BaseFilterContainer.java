@@ -1,6 +1,7 @@
 package gregtech.common.covers.filter;
 
 import gregtech.api.cover.CoverWithUI;
+import gregtech.api.cover.registry.CoverRegistry;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.ItemStackHashStrategy;
@@ -15,6 +16,7 @@ import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiTextures;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -28,8 +30,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
-public abstract class BaseFilterContainer extends ItemStackHandler {
+public abstract class BaseFilterContainer<T> extends ItemStackHandler implements Predicate<T> {
 
     private int maxTransferSize = 1;
     private int transferSize;
@@ -42,18 +45,18 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         this.dirtyNotifiable = dirtyNotifiable;
     }
 
-    public boolean test(Object toTest) {
+    public boolean test(T toTest) {
         return !hasFilter() || getFilter().test(toTest);
     }
 
-    public MatchResult match(Object toMatch) {
+    public MatchResult match(T toMatch) {
         if (!hasFilter())
             return MatchResult.create(true, toMatch, -1);
 
         return getFilter().match(toMatch);
     }
 
-    public int getTransferLimit(Object stack) {
+    public int getTransferLimit(T stack) {
         if (!hasFilter() || isBlacklistFilter()) {
             return getTransferSize();
         }
@@ -95,21 +98,26 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         return isItemValid(stack);
     }
 
-    protected abstract boolean isItemValid(ItemStack stack);
+    protected boolean isItemValid(ItemStack stack) {
+        BaseFilter filter = BaseFilter.getFilterFromStack(stack);
+        return filter.getType() == getFilterType();
+    }
 
     protected abstract @NotNull IKey getFilterKey();
+
+    protected abstract @NotNull IFilter.FilterType getFilterType();
 
     @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (!isItemValid(stack)) return stack;
-        var remainder = super.insertItem(slot, stack, simulate);
+        ItemStack remainder = super.insertItem(slot, stack, simulate);
         if (!simulate) setFilter(BaseFilter.getFilterFromStack(stack));
         return remainder;
     }
 
     @Override
     public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-        var extracted = super.extractItem(slot, amount, simulate);
+        ItemStack extracted = super.extractItem(slot, amount, simulate);
         if (!extracted.isEmpty()) {
             setFilter(null);
         }
@@ -228,9 +236,13 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         });
         ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingItemDamageCount();
 
-        return Flow.row().coverChildrenHeight()
-                .marginBottom(2).widthRel(1f)
+        return Flow.row()
+                .coverChildrenHeight()
+                .widthRel(1f)
+                .marginBottom(2)
                 .child(new ItemSlot()
+                        .marginRight(2)
+                        .size(18)
                         .slot(SyncHandlers.itemSlot(this, 0)
                                 .filter(this::isItemValid)
                                 .singletonSlotGroup(101)
@@ -246,12 +258,26 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                                         manager.callSyncedAction("update_filter_panel", packetBuffer -> {});
                                     }
                                 }))
-                        .size(18).marginRight(2)
-                        .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY.asIcon().size(16)))
+                        .tooltipBuilder(tooltip -> {
+                            ItemStack filterStack = getFilterStack();
+                            if (filterStack.isEmpty()) {
+                                tooltip.addLine(IKey.lang("cover.universal.filter_slot.tooltip_header"));
+                                for (ItemStack filterItem : CoverRegistry.getFilterItems(getFilterType())) {
+                                    tooltip.add(new ItemDrawable(filterItem));
+                                    tooltip.add(IKey.str(" - "));
+                                    tooltip.addLine(IKey.str(filterItem.getDisplayName()));
+                                }
+                            }
+                            // We don't need to .addFromItem because RichTooltip#tooltipBuilder creates compound
+                            // builders if the widget already has one.
+                        })
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY.asIcon()
+                                .size(16)))
                 .child(new ButtonWidget<>()
-                        .background(GTGuiTextures.MC_BUTTON, GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
-                        .hoverBackground(GuiTextures.MC_BUTTON_HOVERED,
-                                GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
+                        .background(GTGuiTextures.MC_BUTTON, GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon()
+                                .size(16))
+                        .hoverBackground(GuiTextures.MC_BUTTON_HOVERED, GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon()
+                                .size(16))
                         .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
                             IPanelHandler panel = filterPanel.get();
@@ -267,8 +293,11 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                 .child(getFilterKey()
                         .color(CoverWithUI.UI_TEXT_COLOR)
                         .shadow(false)
-                        .alignment(Alignment.CenterRight).asWidget()
-                        .left(36).right(0).height(18));
+                        .alignment(Alignment.CenterRight)
+                        .asWidget()
+                        .right(0)
+                        .left(36)
+                        .height(18));
     }
 
     public void writeInitialSyncData(PacketBuffer packetBuffer) {

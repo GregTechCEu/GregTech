@@ -52,7 +52,7 @@ public abstract class BaseFilter implements IFilter {
 
         @Override
         public FilterType getType() {
-            return FilterType.ITEM;
+            return FilterType.ERROR;
         }
     };
     protected IDirtyNotifiable dirtyNotifiable;
@@ -65,11 +65,13 @@ public abstract class BaseFilter implements IFilter {
 
     public static @NotNull BaseFilter getFilterFromStack(ItemStack stack) {
         if (stack.getItem() instanceof MetaItem<?>metaItem) {
-            var metaValueItem = metaItem.getItem(stack);
-            var factory = metaValueItem == null ? null : metaValueItem.getFilterFactory();
-            if (factory != null)
+            MetaItem<?>.MetaValueItem metaValueItem = metaItem.getItem(stack);
+            Factory factory = metaValueItem == null ? null : metaValueItem.getFilterFactory();
+            if (factory != null) {
                 return factory.create(stack);
+            }
         }
+
         return ERROR_FILTER;
     }
 
