@@ -533,10 +533,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        tooltip.add("");
         tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.3"));
-        tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.4"));
 
         if (TooltipHelper.isCtrlDown()) {
             tooltip.add("");
@@ -552,6 +552,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
             }
             tooltip.add("");
         } else {
+            tooltip.add("");
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.hold_ctrl"));
         }
     }
