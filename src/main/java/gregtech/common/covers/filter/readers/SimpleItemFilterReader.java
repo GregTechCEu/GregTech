@@ -1,6 +1,10 @@
 package gregtech.common.covers.filter.readers;
 
 import gregtech.api.util.GTUtility;
+import gregtech.common.covers.CoverItemVoidingAdvanced;
+import gregtech.common.covers.CoverRoboticArm;
+import gregtech.common.covers.TransferMode;
+import gregtech.common.covers.VoidingMode;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,8 +23,8 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
     public static final String RESPECT_NBT = "IgnoreNBT";
     public static final String RESPECT_DAMAGE = "IgnoreDamage";
 
-    public SimpleItemFilterReader(ItemStack container, int slots) {
-        super(container, slots);
+    public SimpleItemFilterReader(int slots) {
+        super(slots);
     }
 
     public void setIgnoreDamage(boolean ignoreDamage) {
@@ -142,6 +146,17 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
 
     protected int getStackLimit(int slot, @NotNull ItemStack stack) {
         return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
+    }
+
+    public boolean shouldShowCount() {
+        return dirtyNotifiable instanceof CoverRoboticArm coverArm &&
+                coverArm.getTransferMode() != TransferMode.TRANSFER_ANY ||
+                dirtyNotifiable instanceof CoverItemVoidingAdvanced coverItem &&
+                        coverItem.getVoidingMode() != VoidingMode.VOID_ANY;
+    }
+
+    public int getStackCountInSlot(int slot) {
+        return getTagAt(slot).getInteger(COUNT);
     }
 
     @Override

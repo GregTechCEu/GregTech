@@ -22,7 +22,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Mods;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.common.ConfigHolder;
-import gregtech.common.covers.filter.IFilter;
+import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.client.Minecraft;
@@ -770,7 +770,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private final List<IItemBehaviour> behaviours = new ArrayList<>();
         private IItemUseManager useManager;
         private ItemUIFactory uiManager;
-        private IFilter.Factory filterBehavior;
+        private BaseFilter filterBehavior;
         private IItemColorProvider colorProvider;
         private IItemDurabilityManager durabilityManager;
         private IEnchantabilityHelper enchantabilityHelper;
@@ -902,8 +902,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 if (itemComponent instanceof ItemUIFactory) {
                     this.uiManager = (ItemUIFactory) itemComponent;
                 }
-                if (itemComponent instanceof IFilter.Factory) {
-                    this.filterBehavior = (IFilter.Factory) itemComponent;
+                if (itemComponent instanceof BaseFilter) {
+                    this.filterBehavior = (BaseFilter) itemComponent;
                 }
                 if (itemComponent instanceof IItemColorProvider) {
                     this.colorProvider = (IItemColorProvider) itemComponent;
@@ -954,7 +954,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
 
         @Nullable
-        public IFilter.Factory getFilterFactory() {
+        public BaseFilter getFilterBehavior() {
             return filterBehavior;
         }
 

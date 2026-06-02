@@ -4,7 +4,6 @@ import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +17,8 @@ public class OreDictFilterReader extends SimpleItemFilterReader {
     private OreGlob glob = ImpossibleOreGlob.getInstance();
     private OreGlobCompileResult result;
 
-    public OreDictFilterReader(ItemStack container) {
-        super(container, 0);
+    public OreDictFilterReader() {
+        super(0);
     }
 
     public void setExpression(String expression) {

@@ -1,6 +1,5 @@
 package gregtech.common.covers.filter.readers;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -17,8 +16,8 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
 
     protected static final String LEGACY_FLUIDFILTER_KEY = "FluidFilter";
 
-    public SimpleFluidFilterReader(ItemStack container, int slots) {
-        super(container, slots);
+    public SimpleFluidFilterReader(int slots) {
+        super(slots);
         fluidTanks = new WritableFluidTank[slots];
     }
 
@@ -53,6 +52,7 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
         for (int i = 0; i < getSize(); i++) {
             getFluidTank(i).setFluidAmount(amount);
         }
+        markDirty();
     }
 
     @Override
