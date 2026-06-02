@@ -1,5 +1,7 @@
 package gregtech.client.renderer.scene;
 
+import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;
 import gregtech.api.util.Size;
@@ -25,6 +27,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Vector3;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -35,6 +38,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.vecmath.Vector3f;
@@ -60,10 +64,12 @@ public abstract class WorldSceneRenderer {
     protected static final FloatBuffer OBJECT_POS_BUFFER = ByteBuffer.allocateDirect(3 * 4)
             .order(ByteOrder.nativeOrder()).asFloatBuffer();
 
+    // In most cases this would be empty
+    protected static final Map<BlockPos, TileEntity> TILE_ENTITIES = new Object2ObjectArrayMap<>();
     public final World world;
     public final Collection<BlockPos> renderedBlocks = new ObjectOpenHashSet<>();
-    private Consumer<WorldSceneRenderer> beforeRender;
-    private Consumer<WorldSceneRenderer> afterRender;
+    protected Consumer<WorldSceneRenderer> beforeRender;
+    protected Consumer<WorldSceneRenderer> afterRender;
     private Consumer<RayTraceResult> onLookingAt;
     private int clearColor;
     private RayTraceResult lastTraceResult;
@@ -88,6 +94,15 @@ public abstract class WorldSceneRenderer {
     public WorldSceneRenderer addRenderedBlocks(@Nullable Collection<BlockPos> blocks) {
         if (blocks != null) {
             this.renderedBlocks.addAll(blocks);
+            TILE_ENTITIES.clear();
+            blocks.forEach(pos -> {
+                TileEntity tile = world.getTileEntity(pos);
+                if (tile != null && (!(tile instanceof IGregTechTileEntity gtte) ||
+                        // Put MTEs only when it has FastRenderer
+                        gtte.getMetaTileEntity() instanceof IFastRenderMetaTileEntity)) {
+                    TILE_ENTITIES.put(pos, tile);
+                }
+            });
         }
         return this;
     }
@@ -237,23 +252,8 @@ public abstract class WorldSceneRenderer {
 
         try { // render block in each layer
             for (BlockRenderLayer layer : BlockRenderLayer.values()) {
-                ForgeHooksClient.setRenderLayer(layer);
-                int pass = layer == BlockRenderLayer.TRANSLUCENT ? 1 : 0;
-                setDefaultPassRenderState(pass);
 
-                BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-                buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-                BlockRendererDispatcher blockrendererdispatcher = mc.getBlockRendererDispatcher();
-
-                for (BlockPos pos : renderedBlocks) {
-                    IBlockState state = world.getBlockState(pos);
-                    Block block = state.getBlock();
-                    if (block == Blocks.AIR) continue;
-                    state = state.getActualState(world, pos);
-                    if (block.canRenderInLayer(state, layer)) {
-                        blockrendererdispatcher.renderBlock(state, pos, world, buffer);
-                    }
-                }
+                renderBlockLayer(layer);
 
                 Tessellator.getInstance().draw();
                 Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
@@ -262,23 +262,8 @@ public abstract class WorldSceneRenderer {
             ForgeHooksClient.setRenderLayer(oldRenderLayer);
         }
 
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.enableLighting();
+        renderTileEntities(); // Handle TileEntities
 
-        // render TESR
-        for (int pass = 0; pass < 2; pass++) {
-            ForgeHooksClient.setRenderPass(pass);
-            setDefaultPassRenderState(pass);
-            for (BlockPos pos : renderedBlocks) {
-                TileEntity tile = world.getTileEntity(pos);
-                if (tile != null) {
-                    if (tile.shouldRenderInPass(pass)) {
-                        TileEntityRendererDispatcher.instance.render(tile, pos.getX(), pos.getY(), pos.getZ(), 0);
-                    }
-                }
-            }
-        }
-        ForgeHooksClient.setRenderPass(-1);
         GlStateManager.enableDepth();
         GlStateManager.disableBlend();
         GlStateManager.depthMask(true);
@@ -286,6 +271,44 @@ public abstract class WorldSceneRenderer {
         if (afterRender != null) {
             afterRender.accept(this);
         }
+    }
+
+    protected void renderBlockLayer(BlockRenderLayer layer) {
+        ForgeHooksClient.setRenderLayer(layer);
+        int pass = layer == BlockRenderLayer.TRANSLUCENT ? 1 : 0;
+        setDefaultPassRenderState(pass);
+
+        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+
+        for (BlockPos pos : renderedBlocks) {
+            IBlockState state = world.getBlockState(pos);
+            Block block = state.getBlock();
+            if (block == Blocks.AIR) continue;
+            state = state.getActualState(world, pos);
+            if (block.canRenderInLayer(state, layer)) {
+                blockrendererdispatcher.renderBlock(state, pos, world, buffer);
+            }
+        }
+    }
+
+    protected void renderTileEntities() {
+        RenderHelper.enableStandardItemLighting();
+        var dispatcher = TileEntityRendererDispatcher.instance;
+        for (int pass = 0; pass < 2; pass++) {
+            ForgeHooksClient.setRenderPass(pass);
+            setDefaultPassRenderState(pass);
+
+            int finalPass = pass;
+            TILE_ENTITIES.forEach((pos, tile) -> {
+                if (tile.shouldRenderInPass(finalPass)) {
+                    dispatcher.render(tile, pos.getX(), pos.getY(), pos.getZ(), 0);
+                }
+            });
+        }
+        ForgeHooksClient.setRenderPass(-1);
+        RenderHelper.disableStandardItemLighting();
     }
 
     public static void setDefaultPassRenderState(int pass) {
