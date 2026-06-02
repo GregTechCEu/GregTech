@@ -5,6 +5,7 @@ import gregtech.api.util.Mods;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.profiler.Profiler;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.*;
@@ -16,6 +17,8 @@ import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 
 import dev.redstudio.alfheim.lighting.LightingEngine;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +28,8 @@ public class DummyWorld extends World {
             1L, GameType.SURVIVAL, true, false, WorldType.DEFAULT);
 
     public static final DummyWorld INSTANCE = new DummyWorld();
+
+    private final Object2ObjectMap<BlockPos, TileEntity> tileEntities = new Object2ObjectOpenHashMap<>();
 
     public DummyWorld() {
         super(new DummySaveHandler(), new WorldInfo(DEFAULT_SETTINGS, "DummyServer"), new WorldProviderSurface(),
@@ -47,6 +52,26 @@ public class DummyWorld extends World {
             ObfuscationReflectionHelper.setPrivateValue(World.class, this, null,
                     "alfheim$lightingEngine");
         }
+    }
+
+    public void forcePlace(BlockPos pos, TileEntity entity, IBlockState state) {
+        if (isOutsideBuildHeight(pos)) return;
+        setBlockState(pos, state);
+        if (entity != null) {
+            setTileEntity(pos, entity);
+            tileEntities.put(pos.toImmutable(), entity);
+        }
+    }
+
+    @Override
+    public TileEntity getTileEntity(BlockPos pos) {
+        TileEntity result;
+        if (tileEntities.containsKey(pos)) {
+            result = tileEntities.get(pos);
+        } else {
+            result = super.getTileEntity(pos);
+        }
+        return result;
     }
 
     @Override

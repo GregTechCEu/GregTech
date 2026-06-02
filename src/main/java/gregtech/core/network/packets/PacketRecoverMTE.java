@@ -52,7 +52,7 @@ public class PacketRecoverMTE implements IPacket, IServerExecutor {
                 MTERegistry registry = metaTileEntity.getRegistry();
                 buffer.writeVarInt(registry.getNetworkId());
                 buffer.writeVarInt(registry.getIdByObjectName(metaTileEntity.metaTileEntityId));
-                metaTileEntity.writeInitialSyncData(buffer);
+                metaTileEntity.writeInitialSyncDataMTE(buffer);
             });
         } else if (!(world.getBlockState(pos).getBlock() instanceof BlockMachine)) {
             handler.player.connection.sendPacket(new SPacketBlockChange(world, pos));

@@ -198,8 +198,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote) {
             boolean state = isActive();
             if (lastActive != state) {
@@ -401,8 +401,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setByte("Maintenance", maintenance_problems);
         data.setBoolean("InitialMaintenance", initialMaintenanceDone);
         data.setInteger("ActiveTimer", timeActive);
@@ -413,8 +413,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         maintenance_problems = data.getByte("Maintenance");
         initialMaintenanceDone = data.getBoolean("InitialMaintenance");
         timeActive = data.getInteger("ActiveTimer");
@@ -432,8 +432,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeByte(maintenance_problems);
         buf.writeInt(timeActive);
         buf.writeBoolean(voidingFluids);
@@ -442,8 +442,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         maintenance_problems = buf.readByte();
         timeActive = buf.readInt();
         voidingFluids = buf.readBoolean();

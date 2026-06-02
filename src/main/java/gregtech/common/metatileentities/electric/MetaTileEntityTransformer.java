@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.PipelineUtil;
@@ -51,7 +50,7 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityTransformer(metaTileEntityId, getTier(), highAmperages);
     }
 
@@ -64,8 +63,8 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean("Inverted", isTransformUp);
         if (hasMultipleAmperages()) {
             data.setInteger("ampIndex", ampIndex);
@@ -74,8 +73,8 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.isTransformUp = data.getBoolean("Inverted");
         if (hasMultipleAmperages()) {
             this.ampIndex = data.getInteger("ampIndex");
@@ -84,8 +83,8 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(isTransformUp);
         if (hasMultipleAmperages()) {
             buf.writeInt(ampIndex);
@@ -93,8 +92,8 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.isTransformUp = buf.readBoolean();
         if (hasMultipleAmperages()) {
             this.ampIndex = buf.readInt();

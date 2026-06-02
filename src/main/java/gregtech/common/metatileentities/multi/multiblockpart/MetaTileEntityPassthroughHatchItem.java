@@ -7,7 +7,6 @@ import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
@@ -68,7 +67,7 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityPassthroughHatchItem(metaTileEntityId, getTier());
     }
 
@@ -86,8 +85,8 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
             if (workingEnabled) {
                 pushItemsIntoNearbyHandlers(getFrontFacing().getOpposite()); // outputs to back
@@ -182,16 +181,16 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public NBTTagCompound writeMTETag(NBTTagCompound tag) {
+        super.writeMTETag(tag);
         tag.setTag("Inventory", itemStackHandler.serializeNBT());
         tag.setBoolean("WorkingEnabled", workingEnabled);
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void readMTETag(NBTTagCompound tag) {
+        super.readMTETag(tag);
         this.itemStackHandler.deserializeNBT(tag.getCompoundTag("Inventory"));
         // Passthrough hatches before this change won't have WorkingEnabled at all, so we need to check if it exists
         if (tag.hasKey("WorkingEnabled")) {
@@ -248,15 +247,15 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
 
         buf.writeBoolean(workingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
 
         this.workingEnabled = buf.readBoolean();
     }

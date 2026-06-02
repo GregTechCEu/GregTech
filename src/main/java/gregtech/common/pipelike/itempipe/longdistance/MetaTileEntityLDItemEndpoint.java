@@ -3,7 +3,6 @@ package gregtech.common.pipelike.itempipe.longdistance;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.ItemHandlerDelegate;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.longdist.ILDEndpoint;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -51,7 +50,7 @@ public class MetaTileEntityLDItemEndpoint extends MetaTileEntityLongDistanceEndp
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityLDItemEndpoint(this.metaTileEntityId);
     }
 

@@ -10,7 +10,6 @@ import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.gui.widget.terminal.gui.widgets.SelectorWidget;
@@ -49,7 +48,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityAlarm(metaTileEntityId);
     }
 
@@ -128,8 +127,8 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!this.getWorld().isRemote) {
             if (this.isActive != this.isActive()) {
                 this.writeCustomData(GregtechDataCodes.UPDATE_ACTIVE, (writer) -> writer.writeBoolean(this.isActive()));
@@ -159,35 +158,35 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.isActive = buf.readBoolean();
         this.selectedSound = SoundEvent.REGISTRY.getObject(buf.readResourceLocation());
         this.radius = buf.readInt();
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(this.isActive);
         buf.writeResourceLocation(getResourceLocationOfSound(this.selectedSound));
         buf.writeInt(this.radius);
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
         data.setBoolean("isActive", this.isActive);
         data.setString("selectedSound", getNameOfSound(this.selectedSound));
         data.setInteger("radius", this.radius);
-        return super.writeToNBT(data);
+        return super.writeMTETag(data);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
+    public void readMTETag(NBTTagCompound data) {
         this.isActive = data.getBoolean("isActive");
         this.selectedSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(data.getString("selectedSound")));
         this.radius = data.getInteger("radius");
-        super.readFromNBT(data);
+        super.readMTETag(data);
     }
 
     public String getNameOfSound(SoundEvent sound) {

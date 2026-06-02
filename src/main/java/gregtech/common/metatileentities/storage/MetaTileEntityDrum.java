@@ -5,7 +5,6 @@ import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.GTFluidHandlerItemStack;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -99,7 +98,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityDrum(metaTileEntityId, fluidFilter, isWood, color, tankSize);
     }
 
@@ -152,8 +151,8 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         FluidStack fluidStack = fluidTank.getFluid();
         buf.writeBoolean(fluidStack != null);
         if (fluidStack != null) {
@@ -165,8 +164,8 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         FluidStack fluidStack = null;
         if (buf.readBoolean()) {
             try {
@@ -188,8 +187,8 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote) {
             if (isAutoOutput && getOffsetTimer() % 5 == 0) {
                 pushFluidsIntoNearbyHandlers(EnumFacing.DOWN);
@@ -298,16 +297,16 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setTag("FluidInventory", ((FluidTank) fluidInventory).writeToNBT(new NBTTagCompound()));
         data.setBoolean("AutoOutput", isAutoOutput);
         return data;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         ((FluidTank) this.fluidInventory).readFromNBT(data.getCompoundTag("FluidInventory"));
         isAutoOutput = data.getBoolean("AutoOutput");
     }

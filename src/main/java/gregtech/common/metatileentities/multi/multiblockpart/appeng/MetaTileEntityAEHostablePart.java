@@ -56,8 +56,8 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!this.getWorld().isRemote) {
             this.meUpdateTick++;
         }
@@ -71,8 +71,8 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {}
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         if (this.aeProxy != null) {
             buf.writeBoolean(true);
             NBTTagCompound proxy = new NBTTagCompound();
@@ -87,8 +87,8 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         if (buf.readBoolean()) {
             NBTTagCompound nbtTagCompound;
             try {
@@ -239,15 +239,15 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean("AllowExtraConnections", this.allowExtraConnections);
         return data;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.allowExtraConnections = data.getBoolean("AllowExtraConnections");
     }
 }

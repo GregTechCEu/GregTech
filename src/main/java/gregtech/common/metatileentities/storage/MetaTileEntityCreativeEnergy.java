@@ -14,7 +14,6 @@ import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -86,7 +85,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityCreativeEnergy();
     }
 
@@ -179,8 +178,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (getWorld().isRemote) return;
         if (getOffsetTimer() % 20 == 0) {
             this.setIOSpeed(energyIOPerSec);
@@ -215,18 +214,18 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
         data.setLong("Voltage", voltage);
         data.setInteger("Amps", amps);
         data.setByte("Tier", (byte) setTier);
         data.setBoolean("Active", active);
         data.setBoolean("Source", source);
         data.setLong("EnergyIOPerSec", lastEnergyIOPerSec);
-        return super.writeToNBT(data);
+        return super.writeMTETag(data);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
+    public void readMTETag(NBTTagCompound data) {
         voltage = data.getLong("Voltage");
         amps = data.getInteger("Amps");
         setTier = data.getByte("Tier");
@@ -234,7 +233,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
         source = data.getBoolean("Source");
         if (data.hasKey("EnergyIOPerSec"))
             lastEnergyIOPerSec = data.getLong("EnergyIOPerSec");
-        super.readFromNBT(data);
+        super.readMTETag(data);
     }
 
     @Override
@@ -324,14 +323,14 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(active);
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.active = buf.readBoolean();
     }
 

@@ -1,6 +1,6 @@
 package gregtech.mixins.minecraft;
 
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.GTBaseTileEntity;
 
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -22,7 +22,7 @@ public class RenderChunkMixin {
                                                                                  TileEntity tileentity,
                                                                                  Operation<TileEntitySpecialRenderer<T>> originalRenderer) {
         // TODO, adjust when implementing second part of IGregTileEntity
-        if (tileentity instanceof MetaTileEntityHolder && !((MetaTileEntityHolder) tileentity).hasTESR()) {
+        if (tileentity instanceof GTBaseTileEntity && !((GTBaseTileEntity) tileentity).hasTESR()) {
             return null;
         }
         return originalRenderer.call(original, tileentity);

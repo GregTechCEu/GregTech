@@ -106,8 +106,8 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         MultiblockControllerBase controller = getController();
         buf.writeBoolean(controller != null);
         if (controller != null) {
@@ -116,8 +116,8 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         if (buf.readBoolean()) {
             this.controllerPos = buf.readBlockPos();
             this.controllerTile = null;

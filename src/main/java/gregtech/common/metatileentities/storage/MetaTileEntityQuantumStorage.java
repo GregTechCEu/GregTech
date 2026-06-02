@@ -394,8 +394,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(controllerPos != null);
         if (controllerPos != null) {
             buf.writeBlockPos(controllerPos);
@@ -407,8 +407,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         if (buf.readBoolean()) {
             controllerPos = buf.readBlockPos();
             scheduleRenderUpdate();
@@ -450,8 +450,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        NBTTagCompound tagCompound = super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        NBTTagCompound tagCompound = super.writeMTETag(data);
         tagCompound.setBoolean(HAS_CONTROLLER, controllerPos != null);
         if (controllerPos != null) {
             tagCompound.setLong(CONTROLLER_POS, controllerPos.toLong());
@@ -467,8 +467,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.getBoolean(HAS_CONTROLLER)) {
             this.controllerPos = BlockPos.fromLong(data.getLong(CONTROLLER_POS));
         }

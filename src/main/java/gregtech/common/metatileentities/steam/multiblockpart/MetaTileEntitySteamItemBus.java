@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.steam.multiblockpart;
 
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -48,7 +47,7 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntitySteamItemBus(metaTileEntityId, isExportHatch);
     }
 

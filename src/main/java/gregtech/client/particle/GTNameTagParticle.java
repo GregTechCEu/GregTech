@@ -1,6 +1,6 @@
 package gregtech.client.particle;
 
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.client.utils.EffectRenderContext;
 
 import net.minecraft.client.Minecraft;
@@ -16,9 +16,9 @@ import java.util.Objects;
 
 public class GTNameTagParticle extends GTParticle {
 
-    private final MetaTileEntityHolder metaTileEntityHolder;
+    private final GTBaseTileEntity metaTileEntityHolder;
 
-    public GTNameTagParticle(@NotNull MetaTileEntityHolder metaTileEntityHolder, double posX, double posY,
+    public GTNameTagParticle(@NotNull GTBaseTileEntity metaTileEntityHolder, double posX, double posY,
                              double posZ) {
         super(posX, posY, posZ);
         this.metaTileEntityHolder = Objects.requireNonNull(metaTileEntityHolder);

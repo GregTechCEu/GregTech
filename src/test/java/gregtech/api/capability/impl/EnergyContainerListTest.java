@@ -3,7 +3,6 @@ package gregtech.api.capability.impl;
 import gregtech.Bootstrap;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -28,7 +27,7 @@ public class EnergyContainerListTest {
         dummyMTE = new MetaTileEntity(new ResourceLocation(MODID, "dummy")) {
 
             @Override
-            public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+            public MetaTileEntity copy() {
                 return dummyMTE;
             }
         };

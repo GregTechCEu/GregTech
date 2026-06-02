@@ -7,7 +7,6 @@ import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEFluidGridWidget;
@@ -61,8 +60,8 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart<IA
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME() && updateMEStatus()) {
             if (this.internalBuffer.isEmpty()) return;
 
@@ -92,7 +91,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart<IA
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityMEOutputHatch(this.metaTileEntityId);
     }
 
@@ -136,28 +135,28 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart<IA
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(workingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.workingEnabled = buf.readBoolean();
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setBoolean(WORKING_TAG, this.workingEnabled);
         data.setTag(FLUID_BUFFER_TAG, this.internalBuffer.serializeNBT());
         return data;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.hasKey(WORKING_TAG)) {
             this.workingEnabled = data.getBoolean(WORKING_TAG);
         }

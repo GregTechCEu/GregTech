@@ -9,7 +9,6 @@ import gregtech.api.capability.impl.miner.MultiblockMinerLogic;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
@@ -99,7 +98,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityLargeMiner(metaTileEntityId, this.tier, this.minerLogic.getSpeed(),
                 this.minerLogic.getMaximumRadius() * 2 / CHUNK_LENGTH, this.minerLogic.getFortune(), getMaterial(),
                 getDrillingFluidConsumePerTick());
@@ -350,30 +349,30 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setTag("chunkMode", new NBTTagInt(chunkMode ? 1 : 0));
         data.setTag("silkTouch", new NBTTagInt(silkTouch ? 1 : 0));
         return this.minerLogic.writeToNBT(data);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         chunkMode = data.getInteger("chunkMode") != 0;
         silkTouch = data.getInteger("silkTouch") != 0;
         this.minerLogic.readFromNBT(data);
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         this.minerLogic.writeInitialSyncData(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.minerLogic.receiveInitialSyncData(buf);
     }
 

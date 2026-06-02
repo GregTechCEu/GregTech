@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.multi;
 
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
@@ -62,7 +61,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityPrimitiveBlastFurnace(metaTileEntityId);
     }
 
@@ -171,8 +170,8 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
 
         if (this.isActive()) {
             if (getWorld().isRemote) {

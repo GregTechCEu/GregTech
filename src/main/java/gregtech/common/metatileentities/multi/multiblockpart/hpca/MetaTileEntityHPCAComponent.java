@@ -183,8 +183,8 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         if (canBeDamaged()) {
             data.setBoolean("Damaged", damaged);
         }
@@ -192,24 +192,24 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (canBeDamaged()) {
             this.damaged = data.getBoolean("Damaged");
         }
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         if (canBeDamaged()) {
             buf.writeBoolean(damaged);
         }
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         if (canBeDamaged()) {
             this.damaged = buf.readBoolean();
         }

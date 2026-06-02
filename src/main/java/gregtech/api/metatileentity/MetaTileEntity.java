@@ -119,7 +119,8 @@ import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable, IGuiHolder<PosGuiData> {
+public abstract class MetaTileEntity extends GTBaseTileEntity
+                                     implements ISyncedTileEntity, CoverHolder, IVoidable, IGuiHolder<PosGuiData> {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
 
@@ -177,6 +178,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
+        this.holder = this;
         this.registry = GregTechAPI.mteManager.getRegistry(metaTileEntityId.getNamespace());
         initializeInventory();
     }
@@ -191,53 +193,17 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         this.fluidInventory = new FluidHandlerProxy(importFluids, exportFluids);
     }
 
+    // todo remove this
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public IGregTechTileEntity getHolder() {
-        return holder;
+        return this.holder;
     }
 
-    public abstract MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity);
-
-    @Override
-    public World getWorld() {
-        return holder == null ? null : holder.world();
-    }
-
-    @Override
-    public BlockPos getPos() {
-        return holder == null ? null : holder.pos();
-    }
-
-    @Override
-    public void markDirty() {
-        if (holder != null) {
-            holder.markAsDirty();
-        }
-    }
-
-    public boolean isFirstTick() {
-        return holder != null && holder.isFirstTick();
-    }
-
-    /**
-     * Replacement for former getTimer() call.
-     *
-     * @return Timer value, starting at zero, with a random offset [0, 20).
-     */
-    @Override
-    public long getOffsetTimer() {
-        return holder == null ? 0L : holder.getOffsetTimer();
-    }
-
-    @Override
-    public @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
-        return holder != null ? holder.getNeighbor(facing) : null;
-    }
-
-    @Override
-    public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter) {
-        if (holder != null) {
-            holder.writeCustomData(discriminator, dataWriter);
-        }
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+        return copy();
     }
 
     public void addDebugInfo(List<String> list) {}
@@ -385,12 +351,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return null;
     }
 
-    public String getMetaName() {
-        return String.format("%s.machine.%s", metaTileEntityId.getNamespace(), metaTileEntityId.getPath());
+    @Override
+    public MetaTileEntity getMetaTileEntity() {
+        return this;
     }
 
-    public final String getMetaFullName() {
-        return getMetaName() + ".name";
+    @Override
+    public ResourceLocation getMetaID() {
+        return this.metaTileEntityId;
     }
 
     public void addNotifiedInput(Object input) {
@@ -537,9 +505,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             if (heldStack.getItem() == Items.NAME_TAG) {
                 if (playerIn.isSneaking() && heldStack.getTagCompound() != null &&
                         heldStack.getTagCompound().hasKey("display")) {
-                    MetaTileEntityHolder mteHolder = (MetaTileEntityHolder) getHolder();
 
-                    mteHolder.setCustomName(heldStack.getTagCompound().getCompoundTag("display").getString("Name"));
+                    setCustomName(heldStack.getTagCompound().getCompoundTag("display").getString("Name"));
                     if (!playerIn.isCreative()) {
                         heldStack.shrink(1);
                     }
@@ -847,7 +814,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         }
     }
 
-    public void update() {
+    public void updateMTE() {
         if (!allowTickAcceleration() && getWorld().getMinecraftServer() != null) {
             int currentTick = getWorld().getMinecraftServer().getTickCounter();
             if (currentTick == lastTick) {
@@ -1012,7 +979,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+    public void writeInitialSyncDataMTE(@NotNull PacketBuffer buf) {
         buf.writeByte(this.frontFacing.getIndex());
         buf.writeInt(this.paintingColor);
         buf.writeShort(this.mteTraitByNetworkId.size());
@@ -1028,8 +995,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return this.paintingColor != -1;
     }
 
-    @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+    public void receiveInitialSyncDataMTE(@NotNull PacketBuffer buf) {
         this.frontFacing = EnumFacing.VALUES[buf.readByte()];
         this.paintingColor = buf.readInt();
         int amountOfTraits = buf.readShort();
@@ -1065,6 +1031,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_FRONT_FACING) {
             this.frontFacing = EnumFacing.VALUES[buf.readByte()];
             scheduleRenderUpdate();
@@ -1265,13 +1232,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public void notifyBlockUpdate() {
-        if (holder != null) holder.notifyBlockUpdate();
-    }
-
-    @Override
     public void scheduleRenderUpdate() {
-        if (holder != null) holder.scheduleRenderUpdate();
+        super.scheduleRenderUpdate(); // this call is required
     }
 
     public void setFrontFacing(EnumFacing frontFacing) {
@@ -1317,7 +1279,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return true;
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
         data.setInteger("FrontFacing", frontFacing.getIndex());
         if (isPainted()) {
             data.setInteger(TAG_KEY_PAINTING_COLOR, paintingColor);
@@ -1349,7 +1311,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return data;
     }
 
-    public void readFromNBT(NBTTagCompound data) {
+    public void readMTETag(NBTTagCompound data) {
         this.frontFacing = EnumFacing.VALUES[data.getInteger("FrontFacing")];
         if (data.hasKey(TAG_KEY_PAINTING_COLOR)) {
             this.paintingColor = data.getInteger(TAG_KEY_PAINTING_COLOR);
@@ -1375,11 +1337,6 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (data.hasKey("Owner", 10)) {
             this.owner = data.getCompoundTag("Owner").getUniqueId("UUID");
         }
-    }
-
-    @Override
-    public boolean isValid() {
-        return getHolder() != null && getHolder().isValid();
     }
 
     public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {

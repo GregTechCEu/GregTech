@@ -16,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface IGregTechTileEntity extends IHasWorldObjectAndCoords, INeighborCache, ISyncedTileEntity, IUIHolder {
 
+    MetaTileEntity copy();
+
     MetaTileEntity getMetaTileEntity();
 
     default MetaTileEntity setMetaTileEntity(MetaTileEntity metaTileEntity) {

@@ -5,7 +5,6 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -70,7 +69,7 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityBuffer(metaTileEntityId, tier);
     }
 
@@ -139,16 +138,16 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public NBTTagCompound writeMTETag(NBTTagCompound tag) {
+        super.writeMTETag(tag);
         tag.setTag("Inventory", itemStackHandler.serializeNBT());
         tag.setTag("FluidInventory", fluidTankList.serializeNBT());
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void readMTETag(NBTTagCompound tag) {
+        super.readMTETag(tag);
         this.itemStackHandler.deserializeNBT(tag.getCompoundTag("Inventory"));
         this.fluidTankList.deserializeNBT(tag.getCompoundTag("FluidInventory"));
     }

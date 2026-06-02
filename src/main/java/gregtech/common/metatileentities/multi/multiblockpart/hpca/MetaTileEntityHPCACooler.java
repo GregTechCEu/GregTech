@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi.multiblockpart.hpca;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IHPCACoolantProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -22,7 +21,7 @@ public class MetaTileEntityHPCACooler extends MetaTileEntityHPCAComponent implem
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityHPCACooler(metaTileEntityId, advanced);
     }
 

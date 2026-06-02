@@ -8,7 +8,6 @@ import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
@@ -86,7 +85,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityQuantumChest(metaTileEntityId, tier, maxStoredItems);
     }
 
@@ -119,8 +118,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         EnumFacing currentOutputFacing = getOutputFacing();
         if (!getWorld().isRemote) {
             if (shouldTransferImport()) {
@@ -255,8 +254,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        NBTTagCompound tagCompound = super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        NBTTagCompound tagCompound = super.writeMTETag(data);
         if (!virtualItemStack.isEmpty() && itemsStoredInside > 0L) {
             tagCompound.setTag(NBT_ITEMSTACK, virtualItemStack.writeToNBT(new NBTTagCompound()));
             tagCompound.setLong(NBT_ITEMCOUNT, itemsStoredInside);
@@ -267,8 +266,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.hasKey("ItemStack", NBT.TAG_COMPOUND)) {
             this.virtualItemStack = new ItemStack(data.getCompoundTag("ItemStack"));
             if (!virtualItemStack.isEmpty()) {
@@ -348,8 +347,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         this.virtualItemStack.setCount(1);
         NetworkUtils.writeItemStack(buf, virtualItemStack);
         NetworkUtils.writeItemStack(buf, lockedStack);
@@ -357,8 +356,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.virtualItemStack = NetworkUtils.readItemStack(buf);
         this.lockedStack = NetworkUtils.readItemStack(buf);
         this.itemsStoredInside = buf.readLong();

@@ -13,7 +13,6 @@ import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -104,8 +103,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         EnumFacing currentOutputFacing = getOutputFacing();
         if (!getWorld().isRemote) {
             fillContainerFromInternalTank();
@@ -154,8 +153,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setTag("FluidInventory", fluidTank.writeToNBT(new NBTTagCompound()));
         if (locked && lockedFluid != null) {
             data.setTag("LockedFluid", lockedFluid.writeToNBT(new NBTTagCompound()));
@@ -164,8 +163,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         if (data.hasKey("ContainerInventory")) {
             legacyTankItemHandlerNBTReading(this, data.getCompoundTag("ContainerInventory"), 0, 1);
         }
@@ -226,7 +225,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityQuantumTank(metaTileEntityId, tier, maxFluidCapacity);
     }
 
@@ -379,15 +378,15 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         NetworkUtils.writeFluidStack(buf, fluidTank.getFluid());
         NetworkUtils.writeFluidStack(buf, this.lockedFluid);
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
 
         if (this.frontFacing == EnumFacing.UP) {
             if (this.outputFacing != EnumFacing.DOWN) {

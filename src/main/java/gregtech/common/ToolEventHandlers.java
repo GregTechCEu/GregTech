@@ -11,7 +11,6 @@ import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -389,8 +388,8 @@ public class ToolEventHandlers {
                 TileEntityPipeBase<?, ?> tepb = (TileEntityPipeBase<?, ?>) tile;
                 drawGridOverlays(facing, box, face -> tepb.isConnected(face) ||
                         tepb.getCoverableImplementation().getCoverAtSide(face) != null);
-            } else if (tile instanceof MetaTileEntityHolder) {
-                MetaTileEntity mte = ((MetaTileEntityHolder) tile).getMetaTileEntity();
+            } else if (tile instanceof IGregTechTileEntity gregTechTile) {
+                MetaTileEntity mte = gregTechTile.getMetaTileEntity();
                 drawGridOverlays(facing, box, mte::isSideUsed);
                 if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing() &&
                         ToolHelper.isTool(player.getHeldItemMainhand(), ToolClasses.WRENCH)) {

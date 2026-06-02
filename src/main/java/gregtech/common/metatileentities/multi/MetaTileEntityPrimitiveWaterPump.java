@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.multi;
 
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.IPrimitivePump;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -51,13 +50,13 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityPrimitiveWaterPump(metaTileEntityId);
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (!getWorld().isRemote && getOffsetTimer() % 20 == 0 && isStructureFormed()) {
             if (biomeModifier == 0) {
                 biomeModifier = getAmount();

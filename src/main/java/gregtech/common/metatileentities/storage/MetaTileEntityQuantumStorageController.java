@@ -87,13 +87,13 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityQuantumStorageController(metaTileEntityId);
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (getWorld().isRemote) return;
 
         if (getOffsetTimer() % 10 == 0) {
@@ -399,22 +399,22 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeBoolean(this.isPowered);
         buf.writeLong(this.energyConsumption);
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.isPowered = buf.readBoolean();
         this.energyConsumption = buf.readLong();
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        NBTTagCompound tagCompound = super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        NBTTagCompound tagCompound = super.writeMTETag(data);
         NBTTagList list = new NBTTagList();
         for (BlockPos pos : storagePositions) {
             list.appendTag(new NBTTagLong(pos.toLong()));
@@ -427,8 +427,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         NBTTagList list = data.getTagList("StorageInstances", Constants.NBT.TAG_LONG);
         for (int i = 0; i < list.tagCount(); i++) {
             storagePositions.add(BlockPos.fromLong(((NBTTagLong) list.get(i)).getLong()));

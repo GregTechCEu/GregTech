@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi.electric;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
@@ -47,7 +46,7 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityPyrolyseOven(metaTileEntityId);
     }
 

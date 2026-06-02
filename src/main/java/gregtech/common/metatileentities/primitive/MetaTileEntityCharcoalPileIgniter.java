@@ -91,7 +91,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityCharcoalPileIgniter(metaTileEntityId);
     }
 
@@ -291,8 +291,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         if (getWorld() != null) {
             if (!getWorld().isRemote && !this.isStructureFormed() && getOffsetTimer() % 20 == 0) {
                 this.reinitializeStructurePattern();
@@ -375,8 +375,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
+    public NBTTagCompound writeMTETag(NBTTagCompound data) {
+        super.writeMTETag(data);
         data.setInteger("lDist", this.lDist);
         data.setInteger("rDist", this.rDist);
         data.setInteger("hDist", this.hDist);
@@ -387,8 +387,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
+    public void readMTETag(NBTTagCompound data) {
+        super.readMTETag(data);
         this.lDist = data.hasKey("lDist") ? data.getInteger("lDist") : this.lDist;
         this.rDist = data.hasKey("rDist") ? data.getInteger("rDist") : this.rDist;
         this.hDist = data.hasKey("hDist") ? data.getInteger("hDist") : this.hDist;
@@ -398,8 +398,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
+    public void writeInitialSyncDataMTE(PacketBuffer buf) {
+        super.writeInitialSyncDataMTE(buf);
         buf.writeInt(this.lDist);
         buf.writeInt(this.rDist);
         buf.writeInt(this.hDist);
@@ -409,8 +409,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
+    public void receiveInitialSyncDataMTE(PacketBuffer buf) {
+        super.receiveInitialSyncDataMTE(buf);
         this.lDist = buf.readInt();
         this.rDist = buf.readInt();
         this.hDist = buf.readInt();

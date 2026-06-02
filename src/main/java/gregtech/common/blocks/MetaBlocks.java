@@ -4,7 +4,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.coil.CoilRegistry;
 import gregtech.api.block.coil.CustomCoilBlock;
 import gregtech.api.block.machines.BlockMachine;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.GTBaseTileEntity;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.pipenet.longdist.BlockLongDistancePipe;
 import gregtech.api.unification.OreDictUnifier;
@@ -429,7 +429,7 @@ public class MetaBlocks {
     }
 
     public static void registerTileEntity() {
-        GameRegistry.registerTileEntity(MetaTileEntityHolder.class, gregtechId("machine"));
+        GameRegistry.registerTileEntity(GTBaseTileEntity.class, gregtechId("machine"));
         GameRegistry.registerTileEntity(TileEntityCable.class, gregtechId("cable"));
         GameRegistry.registerTileEntity(TileEntityCableTickable.class, gregtechId("cable_tickable"));
         GameRegistry.registerTileEntity(TileEntityFluidPipe.class, gregtechId("fluid_pipe"));
@@ -602,7 +602,7 @@ public class MetaBlocks {
         MinecraftForge.EVENT_BUS.register(modelHandler);
         FLUID_BLOCKS.forEach(modelHandler::addFluidBlock);
 
-        ClientRegistry.bindTileEntitySpecialRenderer(MetaTileEntityHolder.class, new MetaTileEntityTESR());
+        ClientRegistry.bindTileEntitySpecialRenderer(GTBaseTileEntity.class, new MetaTileEntityTESR());
     }
 
     @SideOnly(Side.CLIENT)

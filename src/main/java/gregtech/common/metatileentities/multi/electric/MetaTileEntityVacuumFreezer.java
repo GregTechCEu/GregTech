@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
@@ -28,7 +27,7 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
+    public MetaTileEntity copy() {
         return new MetaTileEntityVacuumFreezer(metaTileEntityId);
     }
 

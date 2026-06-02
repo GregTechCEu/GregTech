@@ -63,8 +63,8 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void updateMTE() {
+        super.updateMTE();
         checkWeatherOrTerrainExplosion(tier, tier * 10, energyContainer);
     }
 
