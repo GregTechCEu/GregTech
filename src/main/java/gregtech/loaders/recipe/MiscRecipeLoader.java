@@ -259,7 +259,7 @@ public class MiscRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(VA[HV])
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
-                .inputs((ItemStack) CraftingComponent.HULL.getIngredient(1))
+                .inputs((ItemStack) CraftingComponents.HULL.getIngredient(1))
                 .input(wireFine, AnnealedCopper, 8)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(MetaTileEntities.MONITOR_SCREEN.getStackForm())
@@ -267,7 +267,7 @@ public class MiscRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[HV])
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
-                .inputs((ItemStack) CraftingComponent.HULL.getIngredient(3))
+                .inputs((ItemStack) CraftingComponents.HULL.getIngredient(3))
                 .input(circuit, MarkerMaterials.Tier.HV, 2)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(MetaTileEntities.CENTRAL_MONITOR.getStackForm())
