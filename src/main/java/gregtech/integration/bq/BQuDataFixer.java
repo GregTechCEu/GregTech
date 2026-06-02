@@ -225,7 +225,7 @@ public final class BQuDataFixer {
             meta = orig.get(ORIG_META_3).getAsShort();
         } else {
             itemBlockId = new ResourceLocation(id);
-            meta = jsonObject.get(DAMAGE_2).getAsShort();
+            meta = jsonObject.get(DAMAGE_2) == null ? 0 : jsonObject.get(DAMAGE_2).getAsShort();
         }
 
         ResourceLocation fixedName = migrator.fixItemName(itemBlockId, meta);
