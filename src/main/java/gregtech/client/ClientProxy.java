@@ -17,12 +17,8 @@ import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.client.renderer.pipe.CableRenderer;
-import gregtech.client.renderer.pipe.FluidPipeRenderer;
-import gregtech.client.renderer.pipe.ItemPipeRenderer;
-import gregtech.client.renderer.pipe.LaserPipeRenderer;
-import gregtech.client.renderer.pipe.OpticalPipeRenderer;
-import gregtech.client.renderer.pipe.PipeRenderer;
+import gregtech.client.renderer.pipe.AbstractPipeModel;
+import gregtech.client.renderer.pipe.PipeModelRegistry;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.ItemRenderCompat;
 import gregtech.client.utils.TooltipHelper;
@@ -100,11 +96,6 @@ public class ClientProxy extends CommonProxy {
         }
 
         MetaTileEntityRenderer.preInit();
-        CableRenderer.INSTANCE.preInit();
-        FluidPipeRenderer.INSTANCE.preInit();
-        ItemPipeRenderer.INSTANCE.preInit();
-        OpticalPipeRenderer.INSTANCE.preInit();
-        LaserPipeRenderer.INSTANCE.preInit();
         MetaEntities.initRenderers();
 
         MinecraftForge.EVENT_BUS.register(KeyBind.class);
@@ -134,12 +125,6 @@ public class ClientProxy extends CommonProxy {
         TextureMap map = event.getMap();
         GTFluidRegistration.INSTANCE.registerSprites(map);
         Textures.register(map);
-        PipeRenderer.initializeRestrictor(map);
-        CableRenderer.INSTANCE.registerIcons(map);
-        FluidPipeRenderer.INSTANCE.registerIcons(map);
-        ItemPipeRenderer.INSTANCE.registerIcons(map);
-        OpticalPipeRenderer.INSTANCE.registerIcons(map);
-        LaserPipeRenderer.INSTANCE.registerIcons(map);
     }
 
     @SubscribeEvent
@@ -156,6 +141,9 @@ public class ClientProxy extends CommonProxy {
         GTLog.logger.info("Registering special item models");
         MetaItems.registerBakedModels(event);
         ToolItems.registerBakedModels(event);
+        GTLog.logger.info("Registering special block models");
+        AbstractPipeModel.invalidateCaches();
+        PipeModelRegistry.registerModels(event.getModelRegistry());
     }
 
     @SubscribeEvent

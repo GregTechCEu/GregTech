@@ -8,6 +8,7 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.util.TaskScheduler;
+import gregtech.client.renderer.pipe.PipeRenderProperties;
 import gregtech.common.pipelike.optical.OpticalPipeProperties;
 import gregtech.common.pipelike.optical.OpticalPipeType;
 import gregtech.common.pipelike.optical.net.OpticalNetHandler;
@@ -18,6 +19,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -198,6 +202,12 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     public void onChunkUnload() {
         super.onChunkUnload();
         this.handlers.clear();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
+        return super.getRenderInformation(state).withProperty(PipeRenderProperties.ACTIVE_PROPERTY, isActive());
     }
 
     private static class DefaultDataHandler implements IDataAccessHatch {

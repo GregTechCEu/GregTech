@@ -6,6 +6,7 @@ import gregtech.api.capability.ILaserContainer;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.TaskScheduler;
+import gregtech.client.renderer.pipe.PipeRenderProperties;
 import gregtech.common.pipelike.laser.LaserPipeProperties;
 import gregtech.common.pipelike.laser.LaserPipeType;
 import gregtech.common.pipelike.laser.net.LaserNetHandler;
@@ -17,7 +18,10 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -228,6 +232,12 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     public void onChunkUnload() {
         super.onChunkUnload();
         this.handlers.clear();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
+        return super.getRenderInformation(state).withProperty(PipeRenderProperties.ACTIVE_PROPERTY, isActive());
     }
 
     private static class DefaultLaserContainer implements ILaserContainer {

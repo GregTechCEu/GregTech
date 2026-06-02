@@ -6,28 +6,23 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.client.renderer.pipe.LaserPipeRenderer;
+import gregtech.client.renderer.pipe.PipeRenderProperties;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,12 +36,6 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
         this.properties = LaserPipeProperties.INSTANCE;
         setCreativeTab(GTCreativeTabs.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
-        return LaserPipeRenderer.INSTANCE.getParticleTexture((TileEntityLaserPipe) world.getTileEntity(blockPos));
     }
 
     @Override
@@ -90,11 +79,8 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    public LaserPipeType getItemPipeType(ItemStack itemStack) {
-        if (itemStack.getItem() instanceof ItemBlockLaserPipe pipe) {
-            return ((BlockLaserPipe) pipe.getBlock()).pipeType;
-        }
-        return null;
+    public LaserPipeType getPipeType() {
+        return pipeType;
     }
 
     @Override
@@ -136,16 +122,13 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    @NotNull
-    @SideOnly(Side.CLIENT)
-    @SuppressWarnings("deprecation")
-    public EnumBlockRenderType getRenderType(@NotNull IBlockState state) {
-        return LaserPipeRenderer.INSTANCE.getBlockRenderType();
-    }
-
-    @Override
     public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
         if (layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.CUTOUT) return true;
         return layer == BloomEffectUtil.getEffectiveBloomLayer();
+    }
+
+    @Override
+    protected @NotNull BlockStateContainer.Builder constructState(BlockStateContainer.@NotNull Builder builder) {
+        return super.constructState(builder).add(PipeRenderProperties.ACTIVE_PROPERTY);
     }
 }

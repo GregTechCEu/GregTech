@@ -1,6 +1,5 @@
 package gregtech.api.pipenet.block.material;
 
-import gregtech.api.GTValues;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -10,21 +9,20 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.client.renderer.pipe.PipeRenderer;
-import gregtech.common.blocks.MetaBlocks;
+import gregtech.client.renderer.pipe.PipeRenderProperties;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -45,7 +43,7 @@ public abstract class BlockMaterialPipe<
     }
 
     public boolean isValidPipeMaterial(Material material) {
-        return !getItemPipeType(getItem(material)).getOrePrefix().isIgnored(material);
+        return !getPipeType().getOrePrefix().isIgnored(material);
     }
 
     public void addPipeMaterial(Material material, NodeDataType pipeProperties) {
@@ -122,7 +120,7 @@ public abstract class BlockMaterialPipe<
         return pipeType.getOrePrefix();
     }
 
-    public PipeType getItemPipeType(ItemStack is) {
+    public PipeType getPipeType() {
         return pipeType;
     }
 
@@ -131,20 +129,19 @@ public abstract class BlockMaterialPipe<
         return registry;
     }
 
-    @SideOnly(Side.CLIENT)
     @NotNull
-    public abstract PipeRenderer getPipeRenderer();
+    @Override
+    protected BlockStateContainer.Builder constructState(BlockStateContainer.@NotNull Builder builder) {
+        return super.constructState(builder).add(PipeRenderProperties.MATERIAL_PROPERTY);
+    }
 
-    public void onModelRegister() {
-        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(this), stack -> getPipeRenderer().getModelLocation());
-        for (IBlockState state : this.getBlockState().getValidStates()) {
-            ModelResourceLocation resourceLocation = new ModelResourceLocation(
-                    new ResourceLocation(GTValues.MODID, // force pipe models to always be GT's
-                            Objects.requireNonNull(this.getRegistryName()).getPath()),
-                    MetaBlocks.statePropertiesToString(state.getProperties()));
-            // noinspection ConstantConditions
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this),
-                    this.getMetaFromState(state), resourceLocation);
+    @SideOnly(Side.CLIENT)
+    @Override
+    protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
+        var tile = (TileEntityMaterialPipeBase<?, ?>) getPipeTileEntity(world, blockPos);
+        if (tile != null) {
+            return getPipeType().getModel().getParticleTexture(tile.getPaintingColor(), tile.getPipeMaterial());
         }
+        return null;
     }
 }

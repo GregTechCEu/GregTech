@@ -14,10 +14,15 @@ public class ItemBlockMaterialPipe<PipeType extends Enum<PipeType> & IMaterialPi
         super(block);
     }
 
+    @Override
+    public @NotNull BlockMaterialPipe<PipeType, NodeDataType, ?> getBlock() {
+        return (BlockMaterialPipe<PipeType, NodeDataType, ?>) super.getBlock();
+    }
+
     @NotNull
     @Override
     public String getItemStackDisplayName(@NotNull ItemStack stack) {
-        PipeType pipeType = blockPipe.getItemPipeType(stack);
+        PipeType pipeType = blockPipe.getPipeType();
         Material material = ((BlockMaterialPipe<PipeType, NodeDataType, ?>) blockPipe).getItemMaterial(stack);
         return material == null ? " " : pipeType.getOrePrefix().getLocalNameForItem(material);
     }

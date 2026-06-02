@@ -3,6 +3,11 @@ package gregtech.common.pipelike.fluidpipe;
 import gregtech.api.pipenet.block.material.IMaterialPipeType;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.client.renderer.pipe.PipeModelRedirector;
+import gregtech.client.renderer.pipe.PipeModelRegistry;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -71,5 +76,19 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
     @Override
     public boolean isPaintable() {
         return true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public PipeModelRedirector getModel() {
+        return switch (this) {
+            case TINY -> PipeModelRegistry.getPipeModel(0);
+            case SMALL -> PipeModelRegistry.getPipeModel(1);
+            case NORMAL -> PipeModelRegistry.getPipeModel(2);
+            case LARGE -> PipeModelRegistry.getPipeModel(3);
+            case HUGE -> PipeModelRegistry.getPipeModel(4);
+            case QUADRUPLE -> PipeModelRegistry.getPipeModel(5);
+            case NONUPLE -> PipeModelRegistry.getPipeModel(6);
+        };
     }
 }

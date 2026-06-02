@@ -10,6 +10,9 @@ import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.PipeRenderProperties;
+import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -24,7 +27,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
@@ -199,11 +205,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public boolean isConnected(EnumFacing side) {
-        return isConnected(connections, side);
-    }
-
-    public static boolean isConnected(int connections, EnumFacing side) {
-        return (connections & 1 << side.getIndex()) > 0;
+        return GTUtility.evalMask(side, connections);
     }
 
     @Override
@@ -567,5 +569,42 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         }
         getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
                 explosionPower, false);
+    }
+
+    @Override
+    public byte getCoverAdjustedConnectionMask() {
+        int connectionMask = this.connections;
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            Cover cover = getCoverableImplementation().getCoverAtSide(facing);
+            if (cover != null) {
+                if (cover.shouldAutoConnectToPipes()) connectionMask |= 1 << facing.ordinal();
+            }
+        }
+        return (byte) connectionMask;
+    }
+
+    /**
+     * Note - the block corresponding to this tile entity must register any new unlisted properties to the default
+     * state.
+     */
+    @SideOnly(Side.CLIENT)
+    @MustBeInvokedByOverriders
+    @Override
+    public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
+        byte frameMask = 0;
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            Cover cover = getCoverableImplementation().getCoverAtSide(facing);
+            if (cover != null) {
+                frameMask |= (byte) (1 << facing.ordinal());
+            }
+        }
+        frameMask = (byte) ~frameMask;
+        return state.withProperty(PipeRenderProperties.THICKNESS_PROPERTY, pipeType.getThickness())
+                .withProperty(PipeRenderProperties.CLOSED_MASK_PROPERTY, (byte) (getVisualConnections() >> 6))
+                .withProperty(PipeRenderProperties.BLOCKED_MASK_PROPERTY, (byte) blockedConnections)
+                .withProperty(PipeRenderProperties.COLOR_PROPERTY, getPaintingColor())
+                .withProperty(PipeRenderProperties.FRAME_MATERIAL_PROPERTY, frameMaterial)
+                .withProperty(PipeRenderProperties.FRAME_MASK_PROPERTY, frameMask)
+                .withProperty(CoverRendererPackage.CRP_PROPERTY, getCoverableImplementation().createPackage());
     }
 }
