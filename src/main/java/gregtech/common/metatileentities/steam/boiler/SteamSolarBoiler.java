@@ -26,7 +26,7 @@ public class SteamSolarBoiler extends SteamBoiler {
 
     @Override
     protected int getBaseSteamOutput() {
-        return isHighPressure ? 360 : 120;
+        return isHighPressure ? 320 : 160;
     }
 
     @Override
