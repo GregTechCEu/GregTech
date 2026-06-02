@@ -23,6 +23,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import crafttweaker.annotations.ZenRegister;
+import org.jetbrains.annotations.ApiStatus;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -37,7 +38,8 @@ public class CapesRegistry {
     private static final Map<UUID, List<ResourceLocation>> UNLOCKED_CAPES = new HashMap<>();
     private static final Map<UUID, ResourceLocation> WORN_CAPES = new HashMap<>();
     private static final Map<Advancement, ResourceLocation> CAPE_ADVANCEMENTS = new HashMap<>();
-    private static final Set<ResourceLocation> FREE_CAPES = new HashSet<>();
+    private static final Set<ResourceLocation> ADVANCEMENT_CAPES = new LinkedHashSet<>();
+    private static final Set<ResourceLocation> FREE_CAPES = new LinkedHashSet<>();
 
     public static void registerDevCapes() {
         unlockCape(UUID.fromString("a24a9108-23d2-43fc-8db7-43f809d017db"), Textures.GREGTECH_CAPE_TEXTURE); // ALongStringOfNumbers
@@ -213,6 +215,7 @@ public class CapesRegistry {
                 CAPE_ADVANCEMENTS.put(advObject, cape);
             }
         }
+        ADVANCEMENT_CAPES.add(cape);
     }
 
     /**
@@ -220,8 +223,17 @@ public class CapesRegistry {
      * 
      * @param cape A ResourceLocation pointing to the cape texture.
      */
-    public static void addFreeCape(ResourceLocation cape) {
+    public static void registerFreeCape(ResourceLocation cape) {
         FREE_CAPES.add(cape);
+    }
+
+    /**
+     * Deprecated for naming consistency, use {@link #registerFreeCape(ResourceLocation)} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
+    @Deprecated
+    public static void addFreeCape(ResourceLocation cape) {
+        registerFreeCape(cape);
     }
 
     private static final List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<>();
@@ -262,6 +274,17 @@ public class CapesRegistry {
             player.sendMessage(new TextComponentTranslation("gregtech.chat.cape"));
             save();
         }
+    }
+
+    /**
+     * @return A list of all registered capes, with advancement capes sorted before free capes.
+     *         This currently does not count capes that are manually unlocked by other mods.
+     */
+    public static List<ResourceLocation> allCapes() {
+        List<ResourceLocation> result = new ArrayList<>();
+        result.addAll(ADVANCEMENT_CAPES);
+        result.addAll(FREE_CAPES);
+        return result;
     }
 
     public static void clearMaps() {
