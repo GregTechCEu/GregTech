@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MapItemStackIngredient extends AbstractMapIngredient {
 
@@ -49,12 +50,15 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
             if (this.meta != other.meta) {
                 return false;
             }
-            if (this.gtRecipeInput != null) {
-                if (other.gtRecipeInput != null) {
-                    return gtRecipeInput.equalIgnoreAmount(other.gtRecipeInput);
-                }
-            } else if (other.gtRecipeInput != null) {
+            if (!Objects.equals(this.tag, other.tag)) {
+                return false;
+            }
+            if (this.gtRecipeInput == other.gtRecipeInput) {
+                return true;
+            } else if (this.gtRecipeInput == null) {
                 return other.gtRecipeInput.acceptsStack(this.stack);
+            } else {
+                return this.gtRecipeInput.acceptsStack(other.stack);
             }
         }
         return false;
