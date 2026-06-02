@@ -25,6 +25,10 @@ public class FixedIntArraySyncValue extends ValueSyncHandler<int[]> {
     private final Supplier<int[]> getter;
     private final @Nullable Consumer<int[]> setter;
 
+    public FixedIntArraySyncValue(@NotNull Supplier<int[]> getter) {
+        this(getter, null);
+    }
+
     public FixedIntArraySyncValue(@NotNull Supplier<int[]> getter, @Nullable Consumer<int[]> setter) {
         this.getter = Objects.requireNonNull(getter);
         this.setter = setter;
@@ -71,6 +75,11 @@ public class FixedIntArraySyncValue extends ValueSyncHandler<int[]> {
     }
 
     @Override
+    public void notifyUpdate() {
+        setValue(this.getter.get(), false, true);
+    }
+
+    @Override
     public void write(@NotNull PacketBuffer buffer) throws IOException {
         for (int i : cache) {
             buffer.writeVarInt(i);
@@ -91,5 +100,10 @@ public class FixedIntArraySyncValue extends ValueSyncHandler<int[]> {
 
     public int getValue(int index) {
         return this.cache[index];
+    }
+
+    @Override
+    public Class<int[]> getValueType() {
+        return int[].class;
     }
 }

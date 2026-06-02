@@ -57,6 +57,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.GuiIngameForge;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.MouseEvent;
@@ -85,6 +86,8 @@ import java.util.Optional;
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
+
+    public static boolean isGUIClosingPermanently = false;
 
     public void onPreLoad() {
         super.onPreLoad();
@@ -427,5 +430,10 @@ public class ClientProxy extends CommonProxy {
             GlStateManager.disableRescaleNormal();
             GlStateManager.disableBlend();
         }
+    }
+
+    @SubscribeEvent
+    public static void onGuiChange(GuiOpenEvent event) {
+        isGUIClosingPermanently = (event.getGui() == null);
     }
 }
