@@ -56,6 +56,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -954,13 +955,38 @@ public class GTUtility {
     }
 
     /**
-     * Safely cast a Long to an Int without overflow.
+     * Safely multiply two Integers without overflow or underflow, returning {@link Integer#MAX_VALUE} or
+     * {@link Integer#MIN_VALUE} if it would have.
      *
-     * @param v The Long value to cast to an Int.
-     * @return v, cast to Int, or Integer.MAX_VALUE if it would overflow.
+     * @param num The Long value to cast to an Int.
      */
-    public static int safeCastLongToInt(long v) {
-        return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
+    public static int safeCastLongToInt(long num) {
+        if (num > Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        } else if (num < Integer.MIN_VALUE) {
+            return Integer.MIN_VALUE;
+        } else {
+            return (int) num;
+        }
+    }
+
+    /**
+     * Safely multiply two Ints without overflow or underflow.
+     */
+    public static int multiplySaturated(int a, int b) {
+        return safeCastLongToInt((long) a * b);
+    }
+
+    /**
+     * Safely multiply two Longs without overflow or underflow, returning {@link Long#MAX_VALUE} or
+     * {@link Long#MIN_VALUE} if it would have.
+     */
+    public static long multiplySaturated(long a, long b) {
+        if (a > 0 && b > 0 && a > Long.MAX_VALUE / b) return Long.MAX_VALUE;
+        if (a < 0 && b < 0 && a < Long.MAX_VALUE / b) return Long.MAX_VALUE;
+        if (a > 0 && b < 0 && b < Long.MIN_VALUE / a) return Long.MIN_VALUE;
+        if (a < 0 && b > 0 && a < Long.MIN_VALUE / b) return Long.MIN_VALUE;
+        return a * b;
     }
 
     /**
@@ -1022,6 +1048,105 @@ public class GTUtility {
             return null;
         }
         return map.get(key.toWildcard());
+    }
+
+    /**
+     * Attempts to collapse a {@link List} of {@link ItemStack}s by combining similar stacks downwards (towards index
+     * 0). <br>
+     * WARNING: Mutates original item stacks and list, you might want to make a new list with copies!
+     *
+     * @param stacks       the list to collapse
+     * @param maxStackSize the max stack size of the to-be combined stack
+     * @param removeEmpty  if true, will remove entries from the list if they're empty after collapsing
+     */
+    public static void collapseItemList(@NotNull List<ItemStack> stacks,
+                                        @Range(from = 1, to = Integer.MAX_VALUE) int maxStackSize,
+                                        boolean removeEmpty) {
+        stacks.removeIf(Objects::isNull);
+        Hash.Strategy<ItemStack> stackStrategy = ItemStackHashStrategy.comparingAllButCount();
+
+        for (int checkingSlot = 0; checkingSlot < stacks.size(); checkingSlot++) {
+            ItemStack stackToCheck = stacks.get(checkingSlot);
+            if (stackToCheck.getCount() >= maxStackSize) continue;
+
+            for (int collapsingSlot = stacks.size() - 1; collapsingSlot > checkingSlot; collapsingSlot--) {
+                ItemStack collapsingStack = stacks.get(collapsingSlot);
+                if (collapsingStack.isEmpty()) continue;
+
+                if (stackStrategy.equals(stackToCheck, collapsingStack)) {
+                    final int checkingSize = stackToCheck.getCount();
+                    final int collapsingSize = collapsingStack.getCount();
+
+                    final int maxFinalSize = Math.min(maxStackSize, checkingSize + collapsingSize);
+                    final int toTransfer = maxFinalSize - checkingSize;
+
+                    stackToCheck.grow(toTransfer);
+                    collapsingStack.shrink(toTransfer);
+                }
+            }
+        }
+
+        if (removeEmpty) {
+            stacks.removeIf(ItemStack::isEmpty);
+        }
+    }
+
+    /**
+     * The same as {@link #collapseItemList(List, int, boolean)} but has a stack size limit of {@link Integer#MAX_VALUE}
+     * and removes empty stacks. <br>
+     * WARNING: Mutates original item stacks, you might want to make a new list with copies!
+     */
+    public static void collapseItemList(List<ItemStack> stacks) {
+        collapseItemList(stacks, Integer.MAX_VALUE, true);
+    }
+
+    /**
+     * Attempts to collapse a {@link List} of {@link FluidStack}s by combining similar stacks downwards (towards index
+     * 0). <br>
+     * WARNING: Mutates original fluid stacks and list, you might want to make a new list with copies!
+     *
+     * @param stacks       the list to collapse
+     * @param maxStackSize the max stack size of the to-be combined stack
+     * @param removeEmpty  if true, will remove entries from the list if they're empty after collapsing
+     */
+    public static void collapseFluidList(@NotNull List<FluidStack> stacks,
+                                         @Range(from = 1, to = Integer.MAX_VALUE) int maxStackSize,
+                                         boolean removeEmpty) {
+        stacks.removeIf(Objects::isNull);
+
+        for (int checkingSlot = 0; checkingSlot < stacks.size(); checkingSlot++) {
+            FluidStack stackToCheck = stacks.get(checkingSlot);
+            if (stackToCheck.amount >= maxStackSize) continue;
+
+            for (int collapsingSlot = stacks.size() - 1; collapsingSlot > checkingSlot; collapsingSlot--) {
+                FluidStack collapsingStack = stacks.get(collapsingSlot);
+                if (collapsingStack.amount < 1) continue;
+
+                if (FluidStackHashStrategy.comparingAllButAmount().equals(stackToCheck, collapsingStack)) {
+                    final int checkingSize = stackToCheck.amount;
+                    final int collapsingSize = collapsingStack.amount;
+
+                    final int maxFinalSize = Math.min(maxStackSize, checkingSize + collapsingSize);
+                    final int toTransfer = maxFinalSize - checkingSize;
+
+                    stackToCheck.amount += toTransfer;
+                    collapsingStack.amount -= toTransfer;
+                }
+            }
+        }
+
+        if (removeEmpty) {
+            stacks.removeIf(stack -> stack.amount < 1);
+        }
+    }
+
+    /**
+     * The same as {@link #collapseFluidList(List, int, boolean)} but has a stack size limit of
+     * {@link Integer#MAX_VALUE} and removes empty stacks. <br>
+     * WARNING: Mutates original fluid stacks, you might want to make a new list with copies!
+     */
+    public static void collapseFluidList(List<FluidStack> stacks) {
+        collapseFluidList(stacks, Integer.MAX_VALUE, true);
     }
 
     public static boolean areFluidStacksEqual(@Nullable FluidStack a, @Nullable FluidStack b) {

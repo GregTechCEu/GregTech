@@ -2,7 +2,7 @@ package gregtech.common.mui.widget.workbench;
 
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
+import gregtech.common.metatileentities.workbench.CraftingRecipeMemory;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;

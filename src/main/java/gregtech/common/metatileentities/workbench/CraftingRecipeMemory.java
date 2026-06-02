@@ -1,4 +1,4 @@
-package gregtech.common.metatileentities.storage;
+package gregtech.common.metatileentities.workbench;
 
 import gregtech.api.util.ItemStackHashStrategy;
 

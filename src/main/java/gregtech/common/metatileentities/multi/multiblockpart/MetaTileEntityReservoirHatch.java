@@ -79,7 +79,6 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     protected void initializeInventory() {
         super.initializeInventory();
         this.circuitInventory = new GhostCircuitItemStackHandler(this);
-        this.circuitInventory.addNotifiableMetaTileEntity(this);
     }
 
     @Override

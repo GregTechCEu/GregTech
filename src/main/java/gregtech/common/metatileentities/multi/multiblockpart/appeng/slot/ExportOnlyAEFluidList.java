@@ -5,8 +5,9 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraftforge.fluids.FluidStack;
 
 import appeng.api.storage.data.IAEFluidStack;
+import org.jetbrains.annotations.NotNull;
 
-public class ExportOnlyAEFluidList {
+public class ExportOnlyAEFluidList implements IExportOnlyAEStackList<IAEFluidStack> {
 
     protected final int size;
     protected ExportOnlyAEFluidSlot[] inventory;
@@ -23,7 +24,7 @@ public class ExportOnlyAEFluidList {
         }
     }
 
-    public ExportOnlyAEFluidSlot[] getInventory() {
+    public @NotNull ExportOnlyAEFluidSlot @NotNull [] getInventory() {
         return inventory;
     }
 

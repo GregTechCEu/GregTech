@@ -12,6 +12,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,15 @@ public class GhostCircuitItemStackHandler extends GTItemStackHandler
     private int circuitValue = NO_CONFIG;
     private ItemStack circuitStack = ItemStack.EMPTY;
 
-    public GhostCircuitItemStackHandler(MetaTileEntity metaTileEntity) {
+    public GhostCircuitItemStackHandler(@NotNull MetaTileEntity metaTileEntity) {
+        this(metaTileEntity, metaTileEntity);
+    }
+
+    public GhostCircuitItemStackHandler(@NotNull MetaTileEntity metaTileEntity, @Nullable MetaTileEntity mteToNotify) {
         super(metaTileEntity);
+        if (mteToNotify != null) {
+            notifiableEntities.add(mteToNotify);
+        }
     }
 
     /**

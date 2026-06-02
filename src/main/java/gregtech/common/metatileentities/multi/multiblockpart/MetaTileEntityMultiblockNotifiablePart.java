@@ -8,6 +8,11 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +26,16 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
         this.isExportHatch = isExportHatch;
     }
 
-    private List<INotifiableHandler> getItemHandlers() {
+    private @NotNull List<INotifiableHandler> getItemHandlers() {
         List<INotifiableHandler> notifiables = new ArrayList<>();
-        var mteHandler = isExportHatch ? getExportItems() : getImportItems();
+        IItemHandlerModifiable mteHandler = isExportHatch ? getExportItems() : getImportItems();
         if (mteHandler instanceof INotifiableHandler notifiable) {
             notifiables.add(notifiable);
         } else if (mteHandler instanceof ItemHandlerList list) {
-            for (var handler : list.getBackingHandlers()) {
-                if (handler instanceof INotifiableHandler notifiable)
+            for (IItemHandler handler : list.getBackingHandlers()) {
+                if (handler instanceof INotifiableHandler notifiable) {
                     notifiables.add(notifiable);
+                }
             }
         }
         if (getItemInventory() instanceof INotifiableHandler notifiable) {
@@ -38,38 +44,37 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
         return notifiables;
     }
 
-    private FluidTankList getFluidHandlers() {
-        FluidTankList handler = null;
-        if (isExportHatch && getExportFluids().getFluidTanks().size() > 0) {
-            handler = getExportFluids();
-        } else if (!isExportHatch && getImportFluids().getFluidTanks().size() > 0) {
-            handler = getImportFluids();
+    private @Nullable FluidTankList getFluidHandlers() {
+        if (isExportHatch) {
+            FluidTankList exports = getExportFluids();
+            return exports.getFluidTanks().isEmpty() ? null : exports;
+        } else {
+            FluidTankList imports = getImportFluids();
+            return imports.getFluidTanks().isEmpty() ? null : imports;
         }
-        return handler;
     }
 
     private List<INotifiableHandler> getPartHandlers() {
         List<INotifiableHandler> handlerList = new ArrayList<>();
 
-        for (var notif : getItemHandlers()) {
+        for (INotifiableHandler notif : getItemHandlers()) {
             if (notif.size() > 0) {
                 handlerList.add(notif);
             }
         }
 
-        if (this.fluidInventory.getTankProperties().length > 0) {
-            FluidTankList fluidTankList = getFluidHandlers();
-            if (fluidTankList != null) {
-                for (IFluidTank fluidTank : fluidTankList) {
-                    if (fluidTank instanceof IMultipleTankHandler.ITankEntry entry) {
-                        fluidTank = entry.getDelegate();
-                    }
-                    if (fluidTank instanceof INotifiableHandler) {
-                        handlerList.add((INotifiableHandler) fluidTank);
-                    }
+        FluidTankList fluidTankList = getFluidHandlers();
+        if (fluidTankList != null) {
+            for (IFluidTank fluidTank : fluidTankList) {
+                if (fluidTank instanceof IMultipleTankHandler.ITankEntry entry) {
+                    fluidTank = entry.getDelegate();
+                }
+                if (fluidTank instanceof INotifiableHandler iNotifiableHandler) {
+                    handlerList.add(iNotifiableHandler);
                 }
             }
         }
+
         return handlerList;
     }
 

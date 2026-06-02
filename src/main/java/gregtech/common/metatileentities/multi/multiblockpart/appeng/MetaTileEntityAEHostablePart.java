@@ -1,11 +1,10 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import gregtech.api.capability.IControllable;
+import gregtech.api.metatileentity.IAEStatusProvider;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockNotifiablePart;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -13,16 +12,11 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 
-import appeng.api.AEApi;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
-import appeng.api.storage.IMEMonitor;
-import appeng.api.storage.IStorageChannel;
-import appeng.api.storage.data.IAEStack;
 import appeng.api.util.AECableType;
 import appeng.api.util.AEPartLocation;
-import appeng.me.GridAccessException;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.me.helpers.BaseActionSource;
 import appeng.me.helpers.IGridProxyable;
@@ -33,62 +27,53 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.EnumSet;
-import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_IO_SPEED;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_ONLINE_STATUS;
 
-public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extends MetaTileEntityMultiblockNotifiablePart
-                                                  implements IControllable {
+public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultiblockNotifiablePart implements
+                                                   IAEStatusProvider {
 
-    private final Class<? extends IStorageChannel<T>> storageChannel;
+    public static final String REFRESH_RATE_TAG = "RefreshRate";
+
     private AENetworkProxy aeProxy;
-    private int meUpdateTick;
+    private int refreshRate = ConfigHolder.compat.ae2.updateIntervals;
     protected boolean isOnline;
-    private boolean allowExtraConnections;
+    protected boolean allowsExtraConnections = false;
     protected boolean meStatusChanged = false;
 
-    public MetaTileEntityAEHostablePart(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch,
-                                        Class<? extends IStorageChannel<T>> storageChannel) {
+    public MetaTileEntityAEHostablePart(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
-        this.meUpdateTick = 0;
-        this.storageChannel = storageChannel;
-        this.allowExtraConnections = false;
     }
 
     @Override
     public void update() {
         super.update();
-        if (!this.getWorld().isRemote) {
-            this.meUpdateTick++;
-        }
+        updateMEStatus();
     }
-
-    /**
-     * ME hatch will try to put its buffer back to me system when removal.
-     * So there is no need to drop them.
-     */
-    @Override
-    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {}
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        if (this.aeProxy != null) {
+
+        if (aeProxy != null) {
             buf.writeBoolean(true);
             NBTTagCompound proxy = new NBTTagCompound();
-            this.aeProxy.writeToNBT(proxy);
+            aeProxy.writeToNBT(proxy);
             buf.writeCompoundTag(proxy);
         } else {
             buf.writeBoolean(false);
         }
-        buf.writeInt(this.meUpdateTick);
-        buf.writeBoolean(this.isOnline);
-        buf.writeBoolean(this.allowExtraConnections);
+
+        buf.writeVarInt(refreshRate);
+        buf.writeBoolean(isOnline);
+        buf.writeBoolean(allowsExtraConnections);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
+
         if (buf.readBoolean()) {
             NBTTagCompound nbtTagCompound;
             try {
@@ -97,13 +82,14 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
                 nbtTagCompound = null;
             }
 
-            if (this.aeProxy != null && nbtTagCompound != null) {
-                this.aeProxy.readFromNBT(nbtTagCompound);
+            if (aeProxy != null && nbtTagCompound != null) {
+                aeProxy.readFromNBT(nbtTagCompound);
             }
         }
-        this.meUpdateTick = buf.readInt();
-        this.isOnline = buf.readBoolean();
-        this.allowExtraConnections = buf.readBoolean();
+
+        refreshRate = buf.readVarInt();
+        isOnline = buf.readBoolean();
+        allowsExtraConnections = buf.readBoolean();
     }
 
     @Override
@@ -115,28 +101,67 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
                 this.isOnline = isOnline;
                 scheduleRenderUpdate();
             }
+        } else if (dataId == UPDATE_IO_SPEED) {
+            refreshRate = buf.readVarInt();
+        }
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    @Override
+    public boolean allowsExtraConnections() {
+        return allowsExtraConnections;
+    }
+
+    public int getRefreshRate() {
+        return this.refreshRate;
+    }
+
+    protected void setRefreshRate(int newRefreshRate) {
+        if (newRefreshRate == this.refreshRate) return;
+        if (newRefreshRate < 1) throw new IllegalArgumentException("Refresh rate of AE part cannot be below 1!");
+
+        this.refreshRate = newRefreshRate;
+        if (!getWorld().isRemote) {
+            markDirty();
+            writeCustomData(UPDATE_IO_SPEED, buf -> buf.writeVarInt(refreshRate));
         }
     }
 
     @NotNull
     @Override
     public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
-        if (part.getFacing() != this.frontFacing && !this.allowExtraConnections) {
+        if (part.getFacing() != frontFacing && !allowsExtraConnections) {
             return AECableType.NONE;
         }
         return AECableType.SMART;
     }
 
-    @Nullable
+    public EnumSet<EnumFacing> getConnectableSides() {
+        return allowsExtraConnections ? EnumSet.allOf(EnumFacing.class) : EnumSet.of(getFrontFacing());
+    }
+
+    public void updateConnectableSides() {
+        if (aeProxy != null) {
+            aeProxy.setValidSides(getConnectableSides());
+        }
+    }
+
     @Override
-    public AENetworkProxy getProxy() {
-        if (this.aeProxy == null) {
-            return this.aeProxy = this.createProxy();
+    public boolean onWireCutterClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                     CuboidRayTraceResult hitResult) {
+        allowsExtraConnections = !allowsExtraConnections;
+        updateConnectableSides();
+
+        if (!getWorld().isRemote) {
+            playerIn.sendStatusMessage(new TextComponentTranslation(allowsExtraConnections ?
+                    "gregtech.machine.me.extra_connections.enabled" : "gregtech.machine.me.extra_connections.disabled"),
+                    true);
         }
-        if (!this.aeProxy.isReady() && this.getWorld() != null) {
-            this.aeProxy.onReady();
-        }
-        return this.aeProxy;
+
+        return true;
     }
 
     @Override
@@ -145,43 +170,10 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
         updateConnectableSides();
     }
 
-    @Override
-    public void gridChanged() {}
-
-    /**
-     * Get the me network connection status, updating it if on serverside.
-     * 
-     * @return the updated status.
-     */
-    public boolean updateMEStatus() {
-        if (!getWorld().isRemote) {
-            boolean isOnline = this.aeProxy != null && this.aeProxy.isActive() && this.aeProxy.isPowered();
-            if (this.isOnline != isOnline) {
-                writeCustomData(UPDATE_ONLINE_STATUS, buf -> buf.writeBoolean(isOnline));
-                this.isOnline = isOnline;
-                this.meStatusChanged = true;
-            } else {
-                this.meStatusChanged = false;
-            }
-        }
-        return this.isOnline;
-    }
-
-    protected boolean shouldSyncME() {
-        return this.meUpdateTick % ConfigHolder.compat.ae2.updateIntervals == 0;
-    }
-
-    protected IActionSource getActionSource() {
-        if (this.getHolder() instanceof IActionHost holder) {
-            return new MachineSource(holder);
-        }
-        return new BaseActionSource();
-    }
-
     @Nullable
     private AENetworkProxy createProxy() {
-        if (this.getHolder() instanceof IGridProxyable holder) {
-            AENetworkProxy proxy = new AENetworkProxy(holder, "mte_proxy", this.getStackForm(), true);
+        if (getHolder() instanceof IGridProxyable holder) {
+            AENetworkProxy proxy = new AENetworkProxy(holder, "mte_proxy", getStackForm(), true);
             proxy.setFlags(GridFlags.REQUIRE_CHANNEL);
             proxy.setIdlePowerUsage(ConfigHolder.compat.ae2.meHatchEnergyUsage);
             proxy.setValidSides(getConnectableSides());
@@ -190,64 +182,58 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
         return null;
     }
 
-    @NotNull
-    protected IStorageChannel<T> getStorageChannel() {
-        return AEApi.instance().storage().getStorageChannel(storageChannel);
-    }
-
     @Nullable
-    protected IMEMonitor<T> getMonitor() {
-        AENetworkProxy proxy = getProxy();
-        if (proxy == null) return null;
-
-        IStorageChannel<T> channel = getStorageChannel();
-
-        try {
-            return proxy.getStorage().getInventory(channel);
-        } catch (GridAccessException ignored) {
-            return null;
-        }
-    }
-
-    public EnumSet<EnumFacing> getConnectableSides() {
-        return this.allowExtraConnections ? EnumSet.allOf(EnumFacing.class) : EnumSet.of(getFrontFacing());
-    }
-
-    public void updateConnectableSides() {
-        if (this.aeProxy != null) {
-            this.aeProxy.setValidSides(getConnectableSides());
-        }
-    }
-
     @Override
-    public boolean onWireCutterClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
-                                     CuboidRayTraceResult hitResult) {
-        this.allowExtraConnections = !this.allowExtraConnections;
-        updateConnectableSides();
-
-        if (!getWorld().isRemote) {
-            playerIn.sendStatusMessage(new TextComponentTranslation(this.allowExtraConnections ?
-                    "gregtech.machine.me.extra_connections.enabled" : "gregtech.machine.me.extra_connections.disabled"),
-                    true);
+    public AENetworkProxy getProxy() {
+        if (aeProxy == null) {
+            return aeProxy = createProxy();
         }
 
-        return true;
+        if (!aeProxy.isReady() && getWorld() != null) {
+            aeProxy.onReady();
+        }
+
+        return aeProxy;
     }
 
-    public boolean isOnline() {
-        return isOnline;
+    protected IActionSource getActionSource() {
+        if (this.getHolder() instanceof IActionHost holder) {
+            return new MachineSource(holder);
+        }
+
+        return new BaseActionSource();
+    }
+
+    /**
+     * Update the connection status to the ME system.
+     */
+    public void updateMEStatus() {
+        if (!getWorld().isRemote) {
+            boolean isOnline = this.aeProxy != null && this.aeProxy.isActive() && this.aeProxy.isPowered();
+            if (this.isOnline != isOnline) {
+                writeCustomData(UPDATE_ONLINE_STATUS, buf -> buf.writeBoolean(isOnline));
+                this.isOnline = isOnline;
+                meStatusChanged = true;
+            } else {
+                meStatusChanged = false;
+            }
+        }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setBoolean("AllowExtraConnections", this.allowExtraConnections);
+        data.setBoolean("AllowExtraConnections", allowsExtraConnections);
+        data.setInteger(REFRESH_RATE_TAG, this.refreshRate);
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.allowExtraConnections = data.getBoolean("AllowExtraConnections");
+        allowsExtraConnections = data.getBoolean("AllowExtraConnections");
+        if (data.hasKey(REFRESH_RATE_TAG)) {
+            this.refreshRate = data.getInteger(REFRESH_RATE_TAG);
+        }
     }
 }

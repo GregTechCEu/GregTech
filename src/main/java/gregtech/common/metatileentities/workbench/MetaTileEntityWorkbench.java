@@ -1,4 +1,4 @@
-package gregtech.common.metatileentities.storage;
+package gregtech.common.metatileentities.workbench;
 
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.impl.ItemHandlerList;
