@@ -1,4 +1,4 @@
-//version: 1762213476
+//version: 1784768619
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -97,6 +97,8 @@ propertyDefaultIfUnset("modrinthRelations", "")
 propertyDefaultIfUnsetWithEnvVar("curseForgeProjectId", "", "CURSEFORGE_PROJECT_ID")
 propertyDefaultIfUnset("curseForgeRelations", "")
 propertyDefaultIfUnsetWithEnvVar("releaseType", "release", "RELEASE_TYPE")
+propertyDefaultIfUnset("clientEnvironment", true)
+propertyDefaultIfUnset("serverEnvironment", true)
 propertyDefaultIfUnset("generateDefaultChangelog", false)
 propertyDefaultIfUnset("customMavenPublishUrl", "")
 propertyDefaultIfUnset("mavenArtifactGroup", getDefaultArtifactGroup())
@@ -562,7 +564,7 @@ dependencies {
 
     compileOnlyApi 'org.jetbrains:annotations:24.1.0'
     annotationProcessor 'org.jetbrains:annotations:24.1.0'
-    patchedMinecraft('net.minecraft:launchwrapper:1.17.2') {
+    patchedMinecraft('net.minecraft:launchwrapper:1.17.4') {
         transitive = false
     }
 
@@ -1207,6 +1209,12 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
             mainFile.addModLoader 'Forge'
             mainFile.addJavaVersion "Java 8"
             mainFile.addGameVersion minecraftVersion
+            if (serverEnvironment.toBoolean()) {
+                mainFile.addEnvironment "Server"
+            }
+            if (clientEnvironment.toBoolean()) {
+                mainFile.addEnvironment "Client"
+            }
 
             if (curseForgeRelations.size() != 0) {
                 String[] deps = curseForgeRelations.split(';')
