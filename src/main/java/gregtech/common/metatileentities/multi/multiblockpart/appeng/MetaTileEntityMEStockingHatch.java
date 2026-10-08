@@ -28,10 +28,13 @@ import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IItemList;
+import appeng.fluids.util.FluidSorters;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -183,9 +186,20 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
             clearInventory(0);
             return;
         }
+        
+        Comparator<IAEFluidStack> c = FluidSorters.CONFIG_BASED_SORT_BY_SIZE;
+        
+        List<IAEFluidStack> fluids = new ArrayList<>();
+        
+        for(IAEFluidStack stack : storageList)
+        {
+        	fluids.add(stack);
+        }
 
+        fluids.sort(c);
+        
         int index = 0;
-        for (IAEFluidStack stack : storageList) {
+        for (IAEFluidStack stack : fluids) {
             if (index >= CONFIG_SIZE) break;
             if (stack.getStackSize() == 0) continue;
             stack = monitor.extractItems(stack, Actionable.SIMULATE, getActionSource());

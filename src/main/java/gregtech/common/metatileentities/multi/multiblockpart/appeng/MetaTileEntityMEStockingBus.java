@@ -28,10 +28,13 @@ import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
+import appeng.util.ItemSorters;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -216,9 +219,20 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
             clearInventory(0);
             return;
         }
+        
+        Comparator<IAEItemStack> c = ItemSorters.CONFIG_BASED_SORT_BY_SIZE;
+        
+        List<IAEItemStack> items = new ArrayList<>();
+        
+        for(IAEItemStack stack : storageList)
+        {
+        	items.add(stack);
+        }
 
+        items.sort(c);
+        
         int index = 0;
-        for (IAEItemStack stack : storageList) {
+        for (IAEItemStack stack : items) {
             if (index >= CONFIG_SIZE) break;
             if (stack.getStackSize() == 0) continue;
             stack = monitor.extractItems(stack, Actionable.SIMULATE, getActionSource());
