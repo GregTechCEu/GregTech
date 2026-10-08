@@ -27,6 +27,8 @@ public class MaterialIconType {
     public static final MaterialIconType dustImpure = new MaterialIconType("dustImpure");
     public static final MaterialIconType dustPure = new MaterialIconType("dustPure");
 
+    public static final MaterialIconType rawOre = new MaterialIconType("rawOre");
+    
     public static final MaterialIconType crushed = new MaterialIconType("crushed");
     public static final MaterialIconType crushedPurified = new MaterialIconType("crushedPurified");
     public static final MaterialIconType crushedCentrifuged = new MaterialIconType("crushedCentrifuged");

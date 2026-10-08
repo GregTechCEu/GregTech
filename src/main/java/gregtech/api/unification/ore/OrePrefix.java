@@ -139,6 +139,7 @@ public class OrePrefix {
             mat -> Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify")));
     public static final OrePrefix dust = new OrePrefix("dust", M, null, MaterialIconType.dust, ENABLE_UNIFICATION,
             hasDustProperty);
+    public static final OrePrefix rawOre = new OrePrefix("oreRaw", M, null, MaterialIconType.rawOre, ENABLE_UNIFICATION, hasRawOreProperty);
 
     // A Nugget. Introduced by Eloraam
     public static final OrePrefix nugget = new OrePrefix("nugget", M / 9, null, MaterialIconType.nugget,
@@ -341,6 +342,7 @@ public class OrePrefix {
         public static final Predicate<Material> hasOreProperty = mat -> mat.hasProperty(PropertyKey.ORE);
         public static final Predicate<Material> hasGemProperty = mat -> mat.hasProperty(PropertyKey.GEM);
         public static final Predicate<Material> hasDustProperty = mat -> mat.hasProperty(PropertyKey.DUST);
+        public static final Predicate<Material> hasRawOreProperty = mat -> mat.hasProperty(PropertyKey.RAW_ORE);
         public static final Predicate<Material> hasIngotProperty = mat -> mat.hasProperty(PropertyKey.INGOT);
         public static final Predicate<Material> hasBlastProperty = mat -> mat.hasProperty(PropertyKey.BLAST);
         public static final Predicate<Material> hasRotorProperty = mat -> mat.hasProperty(PropertyKey.ROTOR);

@@ -1,9 +1,12 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.ore.StoneTypes;
 import gregtech.api.util.GTUtility;
@@ -28,6 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -95,6 +99,26 @@ public class BlockOre extends Block implements IBlockOre {
         // which might not be the block with the vanilla stone type
         IBlockState stoneOre = OreConfigUtils.getOreForMaterial(this.material).get(StoneTypes.STONE);
         return Item.getItemFromBlock(stoneOre.getBlock());
+    }
+    
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
+    {
+    	if(fortune > 0)
+    	{
+    		int i = GTValues.RNG.nextInt((fortune + 2) - 1);
+
+            if (i < 0)
+            {
+                i = 0;
+            }
+
+            drops.add(OreDictUnifier.get(OrePrefix.rawOre, material, i + 1));
+    	}
+    	else
+    	{
+    		drops.add(OreDictUnifier.get(OrePrefix.rawOre, material, 1));
+    	}
     }
 
     @Override

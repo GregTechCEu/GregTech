@@ -33,6 +33,7 @@ import gregtech.common.blocks.MaterialItemBlock;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.OreItemBlock;
 import gregtech.common.blocks.StoneVariantBlock;
+import gregtech.api.util.Mods;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.pipelike.cable.BlockCable;
@@ -47,6 +48,7 @@ import gregtech.common.pipelike.optical.BlockOpticalPipe;
 import gregtech.common.pipelike.optical.ItemBlockOpticalPipe;
 import gregtech.datafix.GTDataFixers;
 import gregtech.integration.groovy.GroovyScriptModule;
+import gregtech.integration.jei.basic.OreByProduct;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
@@ -254,7 +256,12 @@ public class CommonProxy {
         for (IGTTool tool : ToolItems.getAllTools()) {
             registry.register(tool.get());
         }
-
+        
+        if (Mods.JustEnoughItems.isModLoaded())
+        {
+        	OreByProduct.addOreByProductPrefix(OrePrefix.rawOre);
+        }
+        
         GTRecipeManager.preLoad();
 
         for (MTERegistry r : GregTechAPI.mteManager.getRegistries()) {

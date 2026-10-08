@@ -13,6 +13,7 @@ public class PropertyKey<T extends IMaterialProperty> {
     public static final PropertyKey<ItemPipeProperties> ITEM_PIPE = new PropertyKey<>("item_pipe",
             ItemPipeProperties.class);
     public static final PropertyKey<OreProperty> ORE = new PropertyKey<>("ore", OreProperty.class);
+    public static final PropertyKey<RawOreProperty> RAW_ORE = new PropertyKey<>("raw_ore", RawOreProperty.class);
     public static final PropertyKey<MaterialToolProperty> TOOL = new PropertyKey<>("tool", MaterialToolProperty.class);
     public static final PropertyKey<ExtraToolProperty> EXTRATOOL = new PropertyKey<>("extra_tool",
             ExtraToolProperty.class);

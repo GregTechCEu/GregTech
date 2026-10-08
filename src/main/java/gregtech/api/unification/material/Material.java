@@ -26,6 +26,7 @@ import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PolymerProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.RawOreProperty;
 import gregtech.api.unification.material.properties.RotorProperty;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.material.properties.WoodProperty;
@@ -1040,21 +1041,25 @@ public class Material implements Comparable<Material> {
 
         public Builder ore() {
             properties.ensureSet(PropertyKey.ORE);
+            properties.ensureSet(PropertyKey.RAW_ORE);
             return this;
         }
 
         public Builder ore(boolean emissive) {
             properties.setProperty(PropertyKey.ORE, new OreProperty(1, 1, emissive));
+            properties.setProperty(PropertyKey.RAW_ORE, new RawOreProperty(1, 1));
             return this;
         }
 
         public Builder ore(int oreMultiplier, int byproductMultiplier) {
             properties.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier));
+            properties.setProperty(PropertyKey.RAW_ORE, new RawOreProperty(oreMultiplier, byproductMultiplier));
             return this;
         }
 
         public Builder ore(int oreMultiplier, int byproductMultiplier, boolean emissive) {
             properties.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier, emissive));
+            properties.setProperty(PropertyKey.RAW_ORE, new RawOreProperty(oreMultiplier, byproductMultiplier));
             return this;
         }
 
